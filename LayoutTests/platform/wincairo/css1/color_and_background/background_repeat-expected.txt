@@ -1,4 +1,4 @@
-layer at (0,0) size 888x1838
+layer at (0,0) size 887x1838
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1838
   RenderBlock {HTML} at (0,0) size 785x1838
@@ -7,35 +7,35 @@ layer at (0,0) size 785x1838
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x225
-        RenderText {#text} at (0,0) size 880x225
+        RenderText {#text} at (0,0) size 879x225
           text run at (0,0) width 672: ".one {background-image: url(../resources/oransqr.gif); background-repeat: repeat-y;}"
-          text run at (672,0) width 0: " "
+          text run at (671,0) width 1: " "
           text run at (0,15) width 672: ".two {background-image: url(../resources/oransqr.gif); background-repeat: repeat-x;}"
-          text run at (672,15) width 0: " "
+          text run at (671,15) width 1: " "
           text run at (0,30) width 696: ".three {background-image: url(../resources/oransqr.gif); background-repeat: no-repeat;}"
-          text run at (696,30) width 0: " "
-          text run at (0,45) width 880: ".four {background-image: url(../resources/bg.gif); background-position: 50% 50%; background-repeat: repeat-y;}"
-          text run at (880,45) width 0: " "
+          text run at (695,30) width 1: " "
+          text run at (0,45) width 879: ".four {background-image: url(../resources/bg.gif); background-position: 50% 50%; background-repeat: repeat-y;}"
+          text run at (878,45) width 1: " "
           text run at (0,60) width 704: ".five {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
-          text run at (704,60) width 0: " "
-          text run at (0,75) width 240: "       background-color: red;}"
-          text run at (240,75) width 0: " "
+          text run at (703,60) width 1: " "
+          text run at (0,75) width 239: "       background-color: red;}"
+          text run at (238,75) width 1: " "
           text run at (0,90) width 720: ".six {background-image: url(../resources/crosshair2.gif); background-position: center top;"
-          text run at (720,90) width 0: " "
-          text run at (0,105) width 232: "      background-color: red;}"
-          text run at (232,105) width 0: " "
+          text run at (719,90) width 1: " "
+          text run at (0,105) width 231: "      background-color: red;}"
+          text run at (230,105) width 1: " "
           text run at (0,120) width 720: ".seven {background-image: url(../resources/crosshair2.gif); background-position: top left;"
-          text run at (720,120) width 0: " "
-          text run at (0,135) width 248: "        background-color: red;}"
-          text run at (248,135) width 0: " "
+          text run at (719,120) width 1: " "
+          text run at (0,135) width 247: "        background-color: red;}"
+          text run at (246,135) width 1: " "
           text run at (0,150) width 752: ".eight {background-image: url(../resources/crosshair2.gif); background-position: bottom right;"
-          text run at (752,150) width 0: " "
-          text run at (0,165) width 248: "        background-color: red;}"
-          text run at (248,165) width 0: " "
+          text run at (751,150) width 1: " "
+          text run at (0,165) width 247: "        background-color: red;}"
+          text run at (246,165) width 1: " "
           text run at (0,180) width 704: ".nine {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
-          text run at (704,180) width 0: " "
-          text run at (0,195) width 240: "       background-color: red;}"
-          text run at (240,195) width 0: " "
+          text run at (703,180) width 1: " "
+          text run at (0,195) width 239: "       background-color: red;}"
+          text run at (238,195) width 1: " "
           text run at (0,210) width 0: " "
       RenderBlock {P} at (0,290) size 769x54
         RenderText {#text} at (0,0) size 762x35
@@ -80,14 +80,14 @@ layer at (0,0) size 785x1838
         RenderInline {CODE} at (0,0) size 64x15
           RenderText {#text} at (316,21) size 64x15
             text run at (316,21) width 64: "repeat-y"
-        RenderText {#text} at (380,18) size 114x17
-          text run at (380,18) width 114: " specifies tiling in "
-        RenderInline {EM} at (0,0) size 28x17
-          RenderText {#text} at (494,18) size 28x17
-            text run at (494,18) width 28: "both"
-        RenderText {#text} at (522,18) size 764x35
-          text run at (522,18) width 158: " directions on the y-axis. "
-          text run at (680,18) width 84: "Note that this"
+        RenderText {#text} at (379,18) size 115x17
+          text run at (379,18) width 115: " specifies tiling in "
+        RenderInline {EM} at (0,0) size 29x17
+          RenderText {#text} at (493,18) size 29x17
+            text run at (493,18) width 29: "both"
+        RenderText {#text} at (521,18) size 764x35
+          text run at (521,18) width 159: " directions on the y-axis. "
+          text run at (679,18) width 85: "Note that this"
           text run at (0,36) width 267: "test is only valid if the user agent supports "
         RenderInline {CODE} at (0,0) size 152x15
           RenderText {#text} at (267,39) size 152x15
@@ -221,13 +221,13 @@ layer at (0,0) size 785x1838
                 RenderInline {CODE} at (0,0) size 64x15
                   RenderText {#text} at (358,21) size 64x15
                     text run at (358,21) width 64: "repeat-y"
-                RenderText {#text} at (422,18) size 114x17
-                  text run at (422,18) width 114: " specifies tiling in "
-                RenderInline {EM} at (0,0) size 28x17
-                  RenderText {#text} at (536,18) size 28x17
-                    text run at (536,18) width 28: "both"
-                RenderText {#text} at (564,18) size 718x35
-                  text run at (564,18) width 154: " directions on the y-axis."
+                RenderText {#text} at (421,18) size 115x17
+                  text run at (421,18) width 115: " specifies tiling in "
+                RenderInline {EM} at (0,0) size 29x17
+                  RenderText {#text} at (535,18) size 29x17
+                    text run at (535,18) width 29: "both"
+                RenderText {#text} at (563,18) size 718x35
+                  text run at (563,18) width 155: " directions on the y-axis."
                   text run at (0,36) width 355: "Note that this test is only valid if the user agent supports "
                 RenderInline {CODE} at (0,0) size 152x15
                   RenderText {#text} at (355,39) size 152x15

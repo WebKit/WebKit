@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (11,11) size 146x15
   RenderBlock {DIV} at (3,3) size 146x15
-    RenderText {#text} at (0,0) size 102x15
-      text run at (0,0) width 102: "some sample text"
+    RenderText {#text} at (0,0) size 103x15
+      text run at (0,0) width 103: "some sample text"
 selection start: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body
 selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body

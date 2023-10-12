@@ -7,32 +7,32 @@ layer at (0,0) size 800x94
         RenderText {#text} at (0,0) size 292x17
           text run at (0,0) width 292: "The following two lines should look the same:"
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderInline {SPAN} at (0,0) size 3x17
-          RenderInline (generated) at (0,0) size 3x17
-            RenderCounter at (0,0) size 3x17
-              text run at (0,0) width 3: "i"
-        RenderText {#text} at (3,0) size 4x17
-          text run at (3,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 8x17
-          RenderInline (generated) at (0,0) size 8x17
-            RenderCounter at (7,0) size 8x17
-              text run at (7,0) width 8: "ii"
-        RenderText {#text} at (15,0) size 4x17
-          text run at (15,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 12x17
-          RenderInline (generated) at (0,0) size 12x17
-            RenderCounter at (19,0) size 12x17
-              text run at (19,0) width 12: "iii"
-        RenderText {#text} at (31,0) size 4x17
-          text run at (31,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 12x17
-          RenderInline (generated) at (0,0) size 12x17
-            RenderCounter at (35,0) size 12x17
-              text run at (35,0) width 12: "iv"
+        RenderInline {SPAN} at (0,0) size 5x17
+          RenderInline (generated) at (0,0) size 5x17
+            RenderCounter at (0,0) size 5x17
+              text run at (0,0) width 5: "i"
+        RenderText {#text} at (4,0) size 5x17
+          text run at (4,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 9x17
+          RenderInline (generated) at (0,0) size 9x17
+            RenderCounter at (8,0) size 9x17
+              text run at (8,0) width 9: "ii"
+        RenderText {#text} at (16,0) size 5x17
+          text run at (16,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 13x17
+          RenderInline (generated) at (0,0) size 13x17
+            RenderCounter at (20,0) size 13x17
+              text run at (20,0) width 13: "iii"
+        RenderText {#text} at (32,0) size 5x17
+          text run at (32,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 13x17
+          RenderInline (generated) at (0,0) size 13x17
+            RenderCounter at (36,0) size 13x17
+              text run at (36,0) width 13: "iv"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 47x17
-          text run at (0,0) width 7: "i "
-          text run at (7,0) width 12: "ii "
-          text run at (19,0) width 16: "iii "
-          text run at (35,0) width 12: "iv"
+        RenderText {#text} at (0,0) size 49x17
+          text run at (0,0) width 9: "i "
+          text run at (8,0) width 13: "ii "
+          text run at (20,0) width 17: "iii "
+          text run at (36,0) width 13: "iv"

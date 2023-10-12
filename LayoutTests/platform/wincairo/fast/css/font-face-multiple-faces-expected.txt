@@ -7,17 +7,17 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 175x17
           text run at (0,0) width 175: "Each font name in that font:"
       RenderBlock {DIV} at (4,34) size 776x27 [border: (1px solid #ADD8E6)]
-        RenderInline {B} at (0,0) size 108x18
-          RenderText {#text} at (1,3) size 108x18
-            text run at (1,3) width 108: "Helvetica bold"
-        RenderText {#text} at (109,3) size 75x18
-          text run at (109,3) width 75: " Helvetica "
-        RenderInline {I} at (0,0) size 385x18
-          RenderText {#text} at (184,5) size 200x18
-            text run at (184,5) width 200: "Courier syn. italic "
-          RenderInline {B} at (0,0) size 185x25
-            RenderText {#text} at (384,1) size 185x25
-              text run at (384,1) width 185: "Papyrus syn. bold syn. italic"
+        RenderInline {B} at (0,0) size 109x18
+          RenderText {#text} at (1,3) size 109x18
+            text run at (1,3) width 109: "Helvetica bold"
+        RenderText {#text} at (109,3) size 77x18
+          text run at (109,3) width 77: " Helvetica "
+        RenderInline {I} at (0,0) size 382x18
+          RenderText {#text} at (185,5) size 200x18
+            text run at (185,5) width 200: "Courier syn. italic "
+          RenderInline {B} at (0,0) size 183x25
+            RenderText {#text} at (384,1) size 183x25
+              text run at (384,1) width 183: "Papyrus syn. bold syn. italic"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (4,65) size 776x52 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x18
@@ -25,43 +25,43 @@ layer at (0,0) size 800x600
             text run at (1,5) width 70: "Courier"
         RenderText {#text} at (71,5) size 10x18
           text run at (71,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (81,5) size 70x18
-            text run at (81,5) width 70: "Courier"
-        RenderText {#text} at (151,5) size 10x18
-          text run at (151,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (161,5) size 70x18
-            text run at (161,5) width 70: "Courier"
-        RenderText {#text} at (231,5) size 10x18
-          text run at (231,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (241,5) size 70x18
-            text run at (241,5) width 70: "Courier"
-        RenderText {#text} at (311,5) size 10x18
-          text run at (311,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (321,5) size 70x18
-            text run at (321,5) width 70: "Courier"
-        RenderText {#text} at (391,5) size 10x18
-          text run at (391,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (401,3) size 110x18
-            text run at (401,3) width 110: "Helvetica Bold"
-        RenderText {#text} at (511,5) size 10x18
-          text run at (511,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (521,3) size 110x18
-            text run at (521,3) width 110: "Helvetica Bold"
-        RenderText {#text} at (631,5) size 10x18
-          text run at (631,5) width 10: " "
-        RenderInline {SPAN} at (0,0) size 120x25
-          RenderText {#text} at (641,1) size 120x25
-            text run at (641,1) width 120: "Papyrus syn. bold"
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (80,5) size 71x18
+            text run at (80,5) width 71: "Courier"
+        RenderText {#text} at (150,5) size 11x18
+          text run at (150,5) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (160,5) size 71x18
+            text run at (160,5) width 71: "Courier"
+        RenderText {#text} at (230,5) size 10x18
+          text run at (230,5) width 10: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (239,5) size 71x18
+            text run at (239,5) width 71: "Courier"
+        RenderText {#text} at (309,5) size 11x18
+          text run at (309,5) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (319,5) size 71x18
+            text run at (319,5) width 71: "Courier"
+        RenderText {#text} at (389,5) size 11x18
+          text run at (389,5) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (399,3) size 111x18
+            text run at (399,3) width 111: "Helvetica Bold"
+        RenderText {#text} at (509,5) size 11x18
+          text run at (509,5) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (519,3) size 111x18
+            text run at (519,3) width 111: "Helvetica Bold"
+        RenderText {#text} at (629,5) size 11x18
+          text run at (629,5) width 11: " "
+        RenderInline {SPAN} at (0,0) size 119x25
+          RenderText {#text} at (639,1) size 119x25
+            text run at (639,1) width 119: "Papyrus syn. bold"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 120x25
-          RenderText {#text} at (1,26) size 120x25
-            text run at (1,26) width 120: "Papyrus syn. bold"
+        RenderInline {SPAN} at (0,0) size 119x25
+          RenderText {#text} at (1,26) size 119x25
+            text run at (1,26) width 119: "Papyrus syn. bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (4,121) size 776x41 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x18
@@ -69,43 +69,43 @@ layer at (0,0) size 800x600
             text run at (1,3) width 70: "Courier"
         RenderText {#text} at (71,3) size 10x18
           text run at (71,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (81,3) size 70x18
-            text run at (81,3) width 70: "Courier"
-        RenderText {#text} at (151,3) size 10x18
-          text run at (151,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (161,3) size 70x18
-            text run at (161,3) width 70: "Courier"
-        RenderText {#text} at (231,3) size 10x18
-          text run at (231,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (241,3) size 70x18
-            text run at (241,3) width 70: "Courier"
-        RenderText {#text} at (311,3) size 10x18
-          text run at (311,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (321,3) size 70x18
-            text run at (321,3) width 70: "Courier"
-        RenderText {#text} at (391,3) size 10x18
-          text run at (391,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (401,1) size 110x18
-            text run at (401,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (511,3) size 10x18
-          text run at (511,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (521,1) size 110x18
-            text run at (521,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (631,3) size 10x18
-          text run at (631,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (641,1) size 110x18
-            text run at (641,1) width 110: "Helvetica Bold"
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (80,3) size 71x18
+            text run at (80,3) width 71: "Courier"
+        RenderText {#text} at (150,3) size 11x18
+          text run at (150,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (160,3) size 71x18
+            text run at (160,3) width 71: "Courier"
+        RenderText {#text} at (230,3) size 10x18
+          text run at (230,3) width 10: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (239,3) size 71x18
+            text run at (239,3) width 71: "Courier"
+        RenderText {#text} at (309,3) size 11x18
+          text run at (309,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (319,3) size 71x18
+            text run at (319,3) width 71: "Courier"
+        RenderText {#text} at (389,3) size 11x18
+          text run at (389,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (399,1) size 111x18
+            text run at (399,1) width 111: "Helvetica Bold"
+        RenderText {#text} at (509,3) size 11x18
+          text run at (509,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (519,1) size 111x18
+            text run at (519,1) width 111: "Helvetica Bold"
+        RenderText {#text} at (629,3) size 11x18
+          text run at (629,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (639,1) size 111x18
+            text run at (639,1) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (1,21) size 110x18
-            text run at (1,21) width 110: "Helvetica Bold"
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (1,21) size 111x18
+            text run at (1,21) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (4,166) size 776x41 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x18
@@ -113,43 +113,43 @@ layer at (0,0) size 800x600
             text run at (1,3) width 70: "Courier"
         RenderText {#text} at (71,3) size 10x18
           text run at (71,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (81,3) size 70x18
-            text run at (81,3) width 70: "Courier"
-        RenderText {#text} at (151,3) size 10x18
-          text run at (151,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (161,3) size 70x18
-            text run at (161,3) width 70: "Courier"
-        RenderText {#text} at (231,3) size 10x18
-          text run at (231,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (241,3) size 70x18
-            text run at (241,3) width 70: "Courier"
-        RenderText {#text} at (311,3) size 10x18
-          text run at (311,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 70x18
-          RenderText {#text} at (321,3) size 70x18
-            text run at (321,3) width 70: "Courier"
-        RenderText {#text} at (391,3) size 10x18
-          text run at (391,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (401,1) size 110x18
-            text run at (401,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (511,3) size 10x18
-          text run at (511,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (521,1) size 110x18
-            text run at (521,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (631,3) size 10x18
-          text run at (631,3) width 10: " "
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (641,1) size 110x18
-            text run at (641,1) width 110: "Helvetica Bold"
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (80,3) size 71x18
+            text run at (80,3) width 71: "Courier"
+        RenderText {#text} at (150,3) size 11x18
+          text run at (150,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (160,3) size 71x18
+            text run at (160,3) width 71: "Courier"
+        RenderText {#text} at (230,3) size 10x18
+          text run at (230,3) width 10: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (239,3) size 71x18
+            text run at (239,3) width 71: "Courier"
+        RenderText {#text} at (309,3) size 11x18
+          text run at (309,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (319,3) size 71x18
+            text run at (319,3) width 71: "Courier"
+        RenderText {#text} at (389,3) size 11x18
+          text run at (389,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (399,1) size 111x18
+            text run at (399,1) width 111: "Helvetica Bold"
+        RenderText {#text} at (509,3) size 11x18
+          text run at (509,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (519,1) size 111x18
+            text run at (519,1) width 111: "Helvetica Bold"
+        RenderText {#text} at (629,3) size 11x18
+          text run at (629,3) width 11: " "
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (639,1) size 111x18
+            text run at (639,1) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 110x18
-          RenderText {#text} at (1,21) size 110x18
-            text run at (1,21) width 110: "Helvetica Bold"
+        RenderInline {SPAN} at (0,0) size 111x18
+          RenderText {#text} at (1,21) size 111x18
+            text run at (1,21) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,223) size 784x18
         RenderText {#text} at (0,0) size 223x17

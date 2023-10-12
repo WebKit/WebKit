@@ -11,8 +11,8 @@ layer at (0,0) size 785x1452
           text run at (96,36) width 71: "TextRun1. "
           text run at (167,36) width 602: "The visual order should be TextRun3 TextRun1 TextRun2, not TextRun3 TextRun2 TextRun1."
       RenderBlock {P} at (0,88) size 769x18
-        RenderText {#text} at (314,0) size 455x17
-          text run at (314,0) width 339: "Pure text. The following 3 lines should all display as \""
+        RenderText {#text} at (312,0) size 457x17
+          text run at (312,0) width 341: "Pure text. The following 3 lines should all display as \""
           text run at (653,0) width 22 RTL: "\x{5E9}\x{5E0}\x{5D1}"
           text run at (675,0) width 94: " This is a Test\""
       RenderBlock {DIV} at (0,122) size 769x18 [bgcolor=#FF0000]

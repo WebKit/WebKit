@@ -12,18 +12,18 @@ layer at (8,8) size 769x708
         RenderBlock {HTML} at (0,0) size 700x700
           RenderBody {BODY} at (8,8) size 684x684
             RenderBlock {DIV} at (0,0) size 684x36
-              RenderText {#text} at (0,0) size 348x17
-                text run at (0,0) width 348: "Each line of this test should match its style description ("
-              RenderInline {I} at (0,0) size 174x17
-                RenderText {#text} at (348,0) size 174x17
-                  text run at (348,0) width 174: "-webkit-text-decoration-line"
-              RenderText {#text} at (522,0) size 43x17
-                text run at (522,0) width 43: " resets "
-              RenderInline {I} at (0,0) size 95x17
-                RenderText {#text} at (565,0) size 95x17
-                  text run at (565,0) width 95: "text-decoration"
-              RenderText {#text} at (660,0) size 664x35
-                text run at (660,0) width 4: ","
+              RenderText {#text} at (0,0) size 349x17
+                text run at (0,0) width 349: "Each line of this test should match its style description ("
+              RenderInline {I} at (0,0) size 175x17
+                RenderText {#text} at (348,0) size 175x17
+                  text run at (348,0) width 175: "-webkit-text-decoration-line"
+              RenderText {#text} at (522,0) size 44x17
+                text run at (522,0) width 44: " resets "
+              RenderInline {I} at (0,0) size 96x17
+                RenderText {#text} at (565,0) size 96x17
+                  text run at (565,0) width 96: "text-decoration"
+              RenderText {#text} at (660,0) size 665x35
+                text run at (660,0) width 5: ","
                 text run at (0,18) width 194: "except when the latter is set as "
               RenderInline {I} at (0,0) size 62x17
                 RenderText {#text} at (194,18) size 62x17

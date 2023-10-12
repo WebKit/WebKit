@@ -6,5 +6,5 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 279x17
           text run at (0,0) width 279: "This tests GraphicsContext::drawBidiText()."
-      RenderListBox {SELECT} at (0,34) size 326x199 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderListBox {SELECT} at (0,233) size 366x18 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (0,34) size 325x199 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (0,233) size 369x18 [bgcolor=#FFFFFF] [border: (1px inset #808080)]

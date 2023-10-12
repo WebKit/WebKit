@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
         RenderInline (generated) at (0,0) size 114x21
           RenderText at (0,0) size 114x21
             text run at (0,0) width 114: "Chapter One: "
-        RenderText {#text} at (114,0) size 63x21
-          text run at (114,0) width 63: "TEST 3"
+        RenderText {#text} at (113,0) size 63x21
+          text run at (113,0) width 63: "TEST 3"
       RenderBlock (anonymous) at (0,220) size 784x19
         RenderText {#text} at (0,0) size 238x17
           text run at (0,0) width 238: "Should read: \"Chapter One: TEST 3\""

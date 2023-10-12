@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 250x36
         RenderText {#text} at (0,0) size 202x17
           text run at (0,0) width 202: "Try to create a caret after this lin"
-        RenderInline {SPAN} at (0,0) size 7x17
-          RenderText {#text} at (202,0) size 7x17
-            text run at (202,0) width 7: "e"
-        RenderText {#text} at (209,0) size 4x17
-          text run at (209,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 8x17
+          RenderText {#text} at (202,0) size 8x17
+            text run at (202,0) width 8: "e"
+        RenderText {#text} at (209,0) size 5x17
+          text run at (209,0) width 5: " "
         RenderInline {SPAN} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 181x17
           text run at (0,18) width 181: "thisshouldbeonthesecondline"

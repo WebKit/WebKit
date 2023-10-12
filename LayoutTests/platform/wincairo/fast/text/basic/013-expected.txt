@@ -12,28 +12,28 @@ layer at (0,0) size 800x268
         RenderInline {CODE} at (0,0) size 8x15
           RenderText {#text} at (281,3) size 8x15
             text run at (281,3) width 8: "b"
-        RenderText {#text} at (289,0) size 8x17
-          text run at (289,0) width 8: ", "
-        RenderInline {CODE} at (0,0) size 8x15
-          RenderText {#text} at (297,3) size 8x15
-            text run at (297,3) width 8: "i"
-        RenderText {#text} at (305,0) size 8x17
-          text run at (305,0) width 8: ", "
-        RenderInline {CODE} at (0,0) size 48x15
-          RenderText {#text} at (313,3) size 48x15
-            text run at (313,3) width 48: "strong"
-        RenderText {#text} at (361,0) size 21x17
-          text run at (361,0) width 21: " or "
-        RenderInline {CODE} at (0,0) size 16x15
-          RenderText {#text} at (382,3) size 16x15
-            text run at (382,3) width 16: "em"
-        RenderText {#text} at (398,0) size 110x17
-          text run at (398,0) width 110: " element loses its "
-        RenderInline {CODE} at (0,0) size 112x15
-          RenderText {#text} at (508,3) size 112x15
-            text run at (508,3) width 112: "letter-spacing"
-        RenderText {#text} at (620,0) size 781x35
-          text run at (620,0) width 161: " CSS attribute that should"
+        RenderText {#text} at (288,0) size 9x17
+          text run at (288,0) width 9: ", "
+        RenderInline {CODE} at (0,0) size 9x15
+          RenderText {#text} at (296,3) size 9x15
+            text run at (296,3) width 9: "i"
+        RenderText {#text} at (304,0) size 9x17
+          text run at (304,0) width 9: ", "
+        RenderInline {CODE} at (0,0) size 49x15
+          RenderText {#text} at (312,3) size 49x15
+            text run at (312,3) width 49: "strong"
+        RenderText {#text} at (360,0) size 22x17
+          text run at (360,0) width 22: " or "
+        RenderInline {CODE} at (0,0) size 17x15
+          RenderText {#text} at (381,3) size 17x15
+            text run at (381,3) width 17: "em"
+        RenderText {#text} at (397,0) size 111x17
+          text run at (397,0) width 111: " element loses its "
+        RenderInline {CODE} at (0,0) size 113x15
+          RenderText {#text} at (507,3) size 113x15
+            text run at (507,3) width 113: "letter-spacing"
+        RenderText {#text} at (619,0) size 781x35
+          text run at (619,0) width 162: " CSS attribute that should"
           text run at (0,18) width 296: "be inherited. This was discovered in Safari 1.0."
       RenderBlock {DIV} at (0,110) size 784x121
         RenderBlock {P} at (0,0) size 784x18

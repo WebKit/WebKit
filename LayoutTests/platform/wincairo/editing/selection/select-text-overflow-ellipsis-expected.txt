@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 65x21
           text run at (0,0) width 65: "Test for "
         RenderInline {A} at (0,0) size 146x21 [color=#0000EE]
-          RenderText {#text} at (65,0) size 146x21
-            text run at (65,0) width 146: "WebKit bug 29968"
-        RenderText {#text} at (211,0) size 539x21
-          text run at (211,0) width 539: ": Selecting text with text-overflow ellipsis should not show cut off text"
+          RenderText {#text} at (64,0) size 146x21
+            text run at (64,0) width 146: "WebKit bug 29968"
+        RenderText {#text} at (209,0) size 537x21
+          text run at (209,0) width 537: ": Selecting text with text-overflow ellipsis should not show cut off text"
 layer at (8,49) size 95x18 scrollWidth 121
   RenderBlock {DIV} at (0,40) size 95x19
     RenderText {#text} at (0,0) size 121x17

@@ -11,14 +11,14 @@ layer at (0,0) size 800x492
           RenderTableRow {TR} at (0,0) size 156x23
             RenderTableCell {TD} at (0,9) size 33x5 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (32,0) size 46x23 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 11x17
-                text run at (3,3) width 11: "H"
+              RenderText {#text} at (3,3) size 12x17
+                text run at (3,3) width 12: "H"
             RenderTableCell {TD} at (77,0) size 34x23 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 9x17
-                text run at (3,3) width 9: "T"
-            RenderTableCell {TD} at (111,0) size 45x23 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (3,3) size 10x17
-                text run at (3,3) width 10: "R"
+                text run at (3,3) width 10: "T"
+            RenderTableCell {TD} at (111,0) size 45x23 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 11x17
+                text run at (3,3) width 11: "R"
           RenderTableRow {TR} at (0,23) size 156x41
             RenderTableCell {TD} at (0,32) size 33x23 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x17
@@ -26,14 +26,14 @@ layer at (0,0) size 800x492
             RenderTableCell {TD} at (32,23) size 46x41 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 12x17
                 text run at (3,3) width 8 RTL: "\x{5D0}"
-                text run at (11,3) width 4: "."
-              RenderBR {BR} at (15,3) size 0x17
+                text run at (10,3) width 5: "."
+              RenderBR {BR} at (14,3) size 1x17
               RenderText {#text} at (3,21) size 8x17
                 text run at (3,21) width 8: "b"
             RenderTableCell {TD} at (77,32) size 34x23 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 24x17
                 text run at (3,3) width 8 RTL: "\x{5D0}"
-                text run at (11,3) width 16: ". b"
+                text run at (10,3) width 17: ". b"
             RenderTableCell {TD} at (111,23) size 45x41 [border: (1px solid #008000)] [r=1 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
                 RenderText {#text} at (0,0) size 12x17
@@ -48,20 +48,20 @@ layer at (0,0) size 800x492
             RenderTableCell {TD} at (32,64) size 46x41 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 12x17
                 text run at (3,3) width 8 RTL: "\x{5D0}"
-                text run at (11,3) width 4: "."
-              RenderBR {BR} at (15,3) size 0x17
-              RenderText {#text} at (3,21) size 7x17
-                text run at (3,21) width 7 RTL: "\x{5D1}"
+                text run at (10,3) width 5: "."
+              RenderBR {BR} at (14,3) size 1x17
+              RenderText {#text} at (3,21) size 8x17
+                text run at (3,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (77,73) size 34x23 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 23x17
-                text run at (3,3) width 23 RTL: "\x{5D0}. \x{5D1}"
+              RenderText {#text} at (3,3) size 24x17
+                text run at (3,3) width 24 RTL: "\x{5D0}. \x{5D1}"
             RenderTableCell {TD} at (111,64) size 45x41 [border: (1px solid #008000)] [r=2 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
                 RenderText {#text} at (0,0) size 12x17
                   text run at (0,0) width 12: ".\x{5D0}"
               RenderBlock {P} at (3,21) size 40x18
-                RenderText {#text} at (0,0) size 7x17
-                  text run at (0,0) width 7: "\x{5D1}"
+                RenderText {#text} at (0,0) size 8x17
+                  text run at (0,0) width 8: "\x{5D1}"
           RenderTableRow {TR} at (0,105) size 156x41
             RenderTableCell {TD} at (0,114) size 33x23 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x17
@@ -117,14 +117,14 @@ layer at (0,0) size 800x492
               RenderText {#text} at (3,3) size 16x17
                 text run at (3,3) width 16 RTL: "\x{5D0}\x{5D0}"
               RenderBR {BR} at (3,3) size 0x17
-              RenderText {#text} at (3,21) size 19x17
-                text run at (3,21) width 11 RTL: " \x{5D1}"
-                text run at (14,21) width 8: "1"
+              RenderText {#text} at (3,21) size 20x17
+                text run at (3,21) width 12 RTL: " \x{5D1}"
+                text run at (14,21) width 9: "1"
             RenderTableCell {TD} at (77,187) size 34x41 [border: (1px solid #008000)] [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 28x35
                 text run at (3,3) width 8: "1"
                 text run at (11,3) width 20 RTL: "\x{5D0}\x{5D0} "
-                text run at (3,21) width 7 RTL: "\x{5D1}"
+                text run at (3,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (111,187) size 45x41 [border: (1px solid #008000)] [r=5 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
                 RenderText {#text} at (0,0) size 16x17
@@ -140,13 +140,13 @@ layer at (0,0) size 800x492
               RenderText {#text} at (3,3) size 14x17
                 text run at (3,3) width 14: "aa"
               RenderBR {BR} at (3,3) size 0x17
-              RenderText {#text} at (3,21) size 19x17
-                text run at (3,21) width 11 RTL: " \x{5D1}"
-                text run at (14,21) width 8: "1"
+              RenderText {#text} at (3,21) size 20x17
+                text run at (3,21) width 12 RTL: " \x{5D1}"
+                text run at (14,21) width 9: "1"
             RenderTableCell {TD} at (77,228) size 34x41 [border: (1px solid #008000)] [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 26x35
                 text run at (3,3) width 26: "aa 1"
-                text run at (3,21) width 7 RTL: "\x{5D1}"
+                text run at (3,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (111,228) size 45x41 [border: (1px solid #008000)] [r=6 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
                 RenderText {#text} at (0,0) size 14x17
@@ -159,9 +159,9 @@ layer at (0,0) size 800x492
               RenderText {#text} at (3,3) size 8x17
                 text run at (3,3) width 8: "7"
             RenderTableCell {TD} at (32,269) size 46x41 [border: (1px solid #008000)] [r=7 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 16x17
-                text run at (3,3) width 16: "a ("
-              RenderBR {BR} at (19,3) size 0x17
+              RenderText {#text} at (3,3) size 17x17
+                text run at (3,3) width 17: "a ("
+              RenderBR {BR} at (19,3) size 1x17
               RenderText {#text} at (3,21) size 17x17
                 text run at (3,21) width 17: "] b"
             RenderTableCell {TD} at (77,269) size 34x41 [border: (1px solid #008000)] [r=7 c=2 rs=1 cs=1]
@@ -170,8 +170,8 @@ layer at (0,0) size 800x492
                 text run at (3,21) width 8: "b"
             RenderTableCell {TD} at (111,269) size 45x41 [border: (1px solid #008000)] [r=7 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
-                RenderText {#text} at (0,0) size 16x17
-                  text run at (0,0) width 16: "a ("
+                RenderText {#text} at (0,0) size 17x17
+                  text run at (0,0) width 17: "a ("
               RenderBlock {P} at (3,21) size 40x18
                 RenderText {#text} at (0,0) size 17x17
                   text run at (0,0) width 17: "] b"
@@ -180,10 +180,10 @@ layer at (0,0) size 800x492
               RenderText {#text} at (3,3) size 8x17
                 text run at (3,3) width 8: "8"
             RenderTableCell {TD} at (32,310) size 46x41 [border: (1px solid #008000)] [r=8 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 17x17
+              RenderText {#text} at (3,3) size 18x17
                 text run at (3,3) width 8 RTL: "\x{5D0}"
-                text run at (11,3) width 9: " ("
-              RenderBR {BR} at (20,3) size 0x17
+                text run at (11,3) width 10: " ("
+              RenderBR {BR} at (20,3) size 1x17
               RenderText {#text} at (3,21) size 17x17
                 text run at (3,21) width 17: "] b"
             RenderTableCell {TD} at (77,310) size 34x41 [border: (1px solid #008000)] [r=8 c=2 rs=1 cs=1]
@@ -193,8 +193,8 @@ layer at (0,0) size 800x492
                 text run at (3,21) width 8: "b"
             RenderTableCell {TD} at (111,310) size 45x41 [border: (1px solid #008000)] [r=8 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
-                RenderText {#text} at (0,0) size 17x17
-                  text run at (0,0) width 17: "\x{5D0} ("
+                RenderText {#text} at (0,0) size 18x17
+                  text run at (0,0) width 18: "\x{5D0} ("
               RenderBlock {P} at (3,21) size 40x18
                 RenderText {#text} at (0,0) size 17x17
                   text run at (0,0) width 17: "] b"
@@ -203,43 +203,43 @@ layer at (0,0) size 800x492
               RenderText {#text} at (3,3) size 8x17
                 text run at (3,3) width 8: "9"
             RenderTableCell {TD} at (32,351) size 46x41 [border: (1px solid #008000)] [r=9 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 16x17
-                text run at (3,3) width 16: "a ("
-              RenderBR {BR} at (19,3) size 0x17
-              RenderText {#text} at (3,21) size 16x17
+              RenderText {#text} at (3,3) size 17x17
+                text run at (3,3) width 17: "a ("
+              RenderBR {BR} at (19,3) size 1x17
+              RenderText {#text} at (3,21) size 17x17
                 text run at (3,21) width 9: "] "
-                text run at (12,21) width 7 RTL: "\x{5D1}"
+                text run at (12,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (77,351) size 34x41 [border: (1px solid #008000)] [r=9 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 25x35
                 text run at (3,3) width 25: "a ( ]"
-                text run at (3,21) width 7 RTL: "\x{5D1}"
+                text run at (3,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (111,351) size 45x41 [border: (1px solid #008000)] [r=9 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
-                RenderText {#text} at (0,0) size 16x17
-                  text run at (0,0) width 16: "a ("
+                RenderText {#text} at (0,0) size 17x17
+                  text run at (0,0) width 17: "a ("
               RenderBlock {P} at (3,21) size 40x18
-                RenderText {#text} at (0,0) size 16x17
-                  text run at (0,0) width 16: "] \x{5D1}"
+                RenderText {#text} at (0,0) size 17x17
+                  text run at (0,0) width 17: "] \x{5D1}"
           RenderTableRow {TR} at (0,392) size 156x41
             RenderTableCell {TD} at (0,401) size 33x23 [border: (1px solid #008000)] [r=10 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 16x17
                 text run at (3,3) width 16: "10"
             RenderTableCell {TD} at (32,392) size 46x41 [border: (1px solid #008000)] [r=10 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 17x17
+              RenderText {#text} at (3,3) size 18x17
                 text run at (3,3) width 8 RTL: "\x{5D0}"
-                text run at (11,3) width 9: " ("
-              RenderBR {BR} at (20,3) size 0x17
-              RenderText {#text} at (3,21) size 16x17
+                text run at (11,3) width 10: " ("
+              RenderBR {BR} at (20,3) size 1x17
+              RenderText {#text} at (3,21) size 17x17
                 text run at (3,21) width 9: "] "
-                text run at (12,21) width 7 RTL: "\x{5D1}"
+                text run at (12,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (77,392) size 34x41 [border: (1px solid #008000)] [r=10 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 26x35
                 text run at (3,3) width 26 RTL: "\x{5D0} ( ]"
-                text run at (3,21) width 7 RTL: "\x{5D1}"
+                text run at (3,21) width 8 RTL: "\x{5D1}"
             RenderTableCell {TD} at (111,392) size 45x41 [border: (1px solid #008000)] [r=10 c=3 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 40x18
                 RenderText {#text} at (0,0) size 17x17
                   text run at (0,0) width 17: ") \x{5D0}"
               RenderBlock {P} at (3,21) size 40x18
-                RenderText {#text} at (0,0) size 16x17
-                  text run at (0,0) width 16: "\x{5D1} ["
+                RenderText {#text} at (0,0) size 17x17
+                  text run at (0,0) width 17: "\x{5D1} ["

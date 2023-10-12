@@ -30,29 +30,29 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x26
             text run at (0,0) width 59: "Tests:"
           RenderBR {BR} at (59,0) size 0x26
-          RenderText {#text} at (0,27) size 657x20
-            text run at (0,27) width 657: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
-          RenderBR {BR} at (657,27) size 0x20
-          RenderInline {I} at (0,0) size 99x20
-            RenderText {#text} at (0,48) size 99x20
-              text run at (0,48) width 99: "For this test: "
-          RenderText {#text} at (99,48) size 177x20
-            text run at (99,48) width 177: "Test typing after a table."
+          RenderText {#text} at (0,27) size 650x20
+            text run at (0,27) width 650: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
+          RenderBR {BR} at (649,27) size 1x20
+          RenderInline {I} at (0,0) size 98x20
+            RenderText {#text} at (0,48) size 98x20
+              text run at (0,48) width 98: "For this test: "
+          RenderText {#text} at (97,48) size 176x20
+            text run at (97,48) width 176: "Test typing after a table."
         RenderBlock (anonymous) at (20,89) size 744x21
           RenderBR {BR} at (0,0) size 0x20
         RenderBlock {DIV} at (20,110) size 744x90
           RenderText {#text} at (0,0) size 183x26
             text run at (0,0) width 183: "Expected Results:"
           RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 709x41
-            text run at (0,27) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
+          RenderText {#text} at (0,27) size 700x41
+            text run at (0,27) width 700: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,48) width 48: "color)."
           RenderBR {BR} at (48,48) size 0x20
-          RenderInline {I} at (0,0) size 99x20
-            RenderText {#text} at (0,69) size 99x20
-              text run at (0,69) width 99: "For this test: "
-          RenderText {#text} at (99,69) size 436x20
-            text run at (99,69) width 436: "Typed text should appear after (on the line below) the table."
+          RenderInline {I} at (0,0) size 98x20
+            RenderText {#text} at (0,69) size 98x20
+              text run at (0,69) width 98: "For this test: "
+          RenderText {#text} at (97,69) size 432x20
+            text run at (97,69) width 432: "Typed text should appear after (on the line below) the table."
       RenderBlock {DIV} at (0,230) size 784x107 [border: (2px solid #008000)]
         RenderTable {TABLE} at (2,2) size 46x76 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x74

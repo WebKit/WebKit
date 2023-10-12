@@ -11,9 +11,9 @@ layer at (0,0) size 785x7165
           RenderText {#text} at (0,0) size 51x25
             text run at (0,0) width 51: "fantasy"
           RenderBR {BR} at (51,0) size 0x25
-          RenderText {#text} at (0,25) size 12x25
-            text run at (0,25) width 12: "    "
-          RenderBR {BR} at (12,25) size 0x25
+          RenderText {#text} at (0,25) size 14x25
+            text run at (0,25) width 14: "    "
+          RenderBR {BR} at (13,25) size 1x25
           RenderText {#text} at (0,50) size 12x25
             text run at (0,50) width 12: "!!!!"
           RenderBR {BR} at (12,50) size 0x25
@@ -50,9 +50,9 @@ layer at (0,0) size 785x7165
           RenderText {#text} at (0,325) size 12x25
             text run at (0,325) width 12: ",,,,"
           RenderBR {BR} at (12,325) size 0x25
-          RenderText {#text} at (0,350) size 20x25
-            text run at (0,350) width 20: "----"
-          RenderBR {BR} at (20,350) size 0x25
+          RenderText {#text} at (0,350) size 22x25
+            text run at (0,350) width 22: "----"
+          RenderBR {BR} at (21,350) size 1x25
           RenderText {#text} at (0,375) size 12x25
             text run at (0,375) width 12: "...."
           RenderBR {BR} at (12,375) size 0x25
@@ -297,9 +297,9 @@ layer at (0,0) size 785x7165
         RenderInline {FONT} at (0,0) size 72x2350
           RenderText {#text} at (0,0) size 0x0
           RenderInline {B} at (0,0) size 72x2350
-            RenderText {#text} at (0,0) size 16x25
-              text run at (0,0) width 16: "    "
-            RenderBR {BR} at (16,0) size 0x25
+            RenderText {#text} at (0,0) size 14x25
+              text run at (0,0) width 14: "    "
+            RenderBR {BR} at (13,0) size 1x25
             RenderText {#text} at (0,25) size 12x25
               text run at (0,25) width 12: "!!!!"
             RenderBR {BR} at (12,25) size 0x25
@@ -336,9 +336,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,300) size 12x25
               text run at (0,300) width 12: ",,,,"
             RenderBR {BR} at (12,300) size 0x25
-            RenderText {#text} at (0,325) size 24x25
-              text run at (0,325) width 24: "----"
-            RenderBR {BR} at (24,325) size 0x25
+            RenderText {#text} at (0,325) size 23x25
+              text run at (0,325) width 23: "----"
+            RenderBR {BR} at (22,325) size 1x25
             RenderText {#text} at (0,350) size 12x25
               text run at (0,350) width 12: "...."
             RenderBR {BR} at (12,350) size 0x25
@@ -584,9 +584,9 @@ layer at (0,0) size 785x7165
         RenderInline {FONT} at (0,0) size 72x2350
           RenderText {#text} at (0,0) size 0x0
           RenderInline {I} at (0,0) size 72x2350
-            RenderText {#text} at (0,0) size 12x25
-              text run at (0,0) width 12: "    "
-            RenderBR {BR} at (12,0) size 0x25
+            RenderText {#text} at (0,0) size 14x25
+              text run at (0,0) width 14: "    "
+            RenderBR {BR} at (13,0) size 1x25
             RenderText {#text} at (0,25) size 12x25
               text run at (0,25) width 12: "!!!!"
             RenderBR {BR} at (12,25) size 0x25
@@ -623,9 +623,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,300) size 12x25
               text run at (0,300) width 12: ",,,,"
             RenderBR {BR} at (12,300) size 0x25
-            RenderText {#text} at (0,325) size 20x25
-              text run at (0,325) width 20: "----"
-            RenderBR {BR} at (20,325) size 0x25
+            RenderText {#text} at (0,325) size 22x25
+              text run at (0,325) width 22: "----"
+            RenderBR {BR} at (21,325) size 1x25
             RenderText {#text} at (0,350) size 12x25
               text run at (0,350) width 12: "...."
             RenderBR {BR} at (12,350) size 0x25

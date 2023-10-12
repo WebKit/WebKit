@@ -16,9 +16,9 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (0,0) size 5x15
             RenderCounter at (0,0) size 5x15
               text run at (0,0) width 5: "\x{25E6}"
-          RenderText {#text} at (5,0) size 46x15
-            text run at (5,0) width 46: "PASSED"
-          RenderInline (generated) at (0,0) size 8x15
-            RenderCounter at (51,0) size 8x15
-              text run at (51,0) width 8: "\x{25A0}"
+          RenderText {#text} at (4,0) size 47x15
+            text run at (4,0) width 47: "PASSED"
+          RenderInline (generated) at (0,0) size 9x15
+            RenderCounter at (50,0) size 9x15
+              text run at (50,0) width 9: "\x{25A0}"
         RenderText {#text} at (0,0) size 0x0

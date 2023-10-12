@@ -9,13 +9,13 @@ layer at (0,0) size 785x961
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 168x60
           text run at (0,0) width 152: ".one {clear: left;}"
-          text run at (152,0) width 0: " "
+          text run at (151,0) width 1: " "
           text run at (0,15) width 160: ".two {clear: right;}"
-          text run at (160,15) width 0: " "
+          text run at (159,15) width 1: " "
           text run at (0,30) width 168: ".three {clear: both;}"
-          text run at (168,30) width 0: " "
+          text run at (167,30) width 1: " "
           text run at (0,45) width 160: ".four {clear: none;}"
-          text run at (160,45) width 0: " "
+          text run at (159,45) width 1: " "
       RenderImage {IMG} at (0,117) size 15x50
       RenderBlock {P} at (0,125) size 769x18
         RenderText {#text} at (18,0) size 594x17

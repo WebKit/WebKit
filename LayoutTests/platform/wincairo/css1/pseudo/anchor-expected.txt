@@ -9,15 +9,15 @@ layer at (0,0) size 785x683
       RenderBlock {PRE} at (0,34) size 769x90
         RenderText {#text} at (0,0) size 200x90
           text run at (0,0) width 136: "A {color: green;}"
-          text run at (136,0) width 0: " "
+          text run at (135,0) width 1: " "
           text run at (0,15) width 184: "A:link {color: purple;}"
-          text run at (184,15) width 0: " "
+          text run at (183,15) width 1: " "
           text run at (0,30) width 192: "A:visited {color: lime;}"
-          text run at (192,30) width 0: " "
+          text run at (191,30) width 1: " "
           text run at (0,45) width 200: "A:active {color: maroon;}"
-          text run at (200,45) width 0: " "
+          text run at (199,45) width 1: " "
           text run at (0,60) width 176: "#one {color: #006600;}"
-          text run at (176,60) width 0: " "
+          text run at (175,60) width 1: " "
           text run at (0,75) width 0: " "
       RenderBlock {P} at (0,155) size 769x18
         RenderText {#text} at (0,0) size 500x17
@@ -73,14 +73,14 @@ layer at (0,0) size 785x683
                   text run at (0,0) width 124: "CWRU Web server"
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,349) size 769x36
-        RenderText {#text} at (0,0) size 118x17
-          text run at (0,0) width 118: "The quoted word \""
-        RenderInline {A} at (0,0) size 43x17 [color=#008000]
-          RenderText {#text} at (118,0) size 43x17
-            text run at (118,0) width 43: "anchor"
-        RenderText {#text} at (161,0) size 729x35
-          text run at (161,0) width 376: "\" should be green, NOT purple, since it's part of an anchor. "
-          text run at (537,0) width 192: "It's a named anchor, and styles"
+        RenderText {#text} at (0,0) size 120x17
+          text run at (0,0) width 120: "The quoted word \""
+        RenderInline {A} at (0,0) size 44x17 [color=#008000]
+          RenderText {#text} at (119,0) size 44x17
+            text run at (119,0) width 44: "anchor"
+        RenderText {#text} at (162,0) size 731x35
+          text run at (162,0) width 377: "\" should be green, NOT purple, since it's part of an anchor. "
+          text run at (538,0) width 193: "It's a named anchor, and styles"
           text run at (0,18) width 349: "declared for the A tag are applied to them under CSS1. "
           text run at (349,18) width 326: "It also should NOT turn orange when clicked upon."
       RenderTable {TABLE} at (0,401) size 769x266 [border: (1px outset #808080)]
@@ -149,14 +149,14 @@ layer at (0,0) size 785x683
                           text run at (0,0) width 124: "CWRU Web server"
                       RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,198) size 747x36
-                RenderText {#text} at (0,0) size 118x17
-                  text run at (0,0) width 118: "The quoted word \""
-                RenderInline {A} at (0,0) size 43x17 [color=#008000]
-                  RenderText {#text} at (118,0) size 43x17
-                    text run at (118,0) width 43: "anchor"
-                RenderText {#text} at (161,0) size 729x35
-                  text run at (161,0) width 376: "\" should be green, NOT purple, since it's part of an anchor. "
-                  text run at (537,0) width 192: "It's a named anchor, and styles"
+                RenderText {#text} at (0,0) size 120x17
+                  text run at (0,0) width 120: "The quoted word \""
+                RenderInline {A} at (0,0) size 44x17 [color=#008000]
+                  RenderText {#text} at (119,0) size 44x17
+                    text run at (119,0) width 44: "anchor"
+                RenderText {#text} at (162,0) size 731x35
+                  text run at (162,0) width 377: "\" should be green, NOT purple, since it's part of an anchor. "
+                  text run at (538,0) width 193: "It's a named anchor, and styles"
                   text run at (0,18) width 349: "declared for the A tag are applied to them under CSS1. "
                   text run at (349,18) width 326: "It also should NOT turn orange when clicked upon."
 layer at (8,145) size 769x2 clip at (0,0) size 0x0

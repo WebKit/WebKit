@@ -12,24 +12,24 @@ layer at (0,0) size 800x152
         RenderInline {CODE} at (0,0) size 72x15
           RenderText {#text} at (293,3) size 72x15
             text run at (293,3) width 72: "this part"
-        RenderText {#text} at (365,0) size 8x17
-          text run at (365,0) width 8: ", "
-        RenderInline {CITE} at (0,0) size 52x17
-          RenderText {#text} at (373,0) size 52x17
-            text run at (373,0) width 52: "this part"
-        RenderText {#text} at (425,0) size 8x17
-          text run at (425,0) width 8: ", "
-        RenderInline {EM} at (0,0) size 52x17
-          RenderText {#text} at (433,0) size 52x17
-            text run at (433,0) width 52: "this part"
-        RenderText {#text} at (485,0) size 35x17
-          text run at (485,0) width 8: ", "
-          text run at (493,0) width 27: "and "
-        RenderInline {STRONG} at (0,0) size 57x17
-          RenderText {#text} at (520,0) size 57x17
-            text run at (520,0) width 57: "this part"
-        RenderText {#text} at (577,0) size 4x17
-          text run at (577,0) width 4: "."
+        RenderText {#text} at (364,0) size 9x17
+          text run at (364,0) width 9: ", "
+        RenderInline {CITE} at (0,0) size 53x17
+          RenderText {#text} at (372,0) size 53x17
+            text run at (372,0) width 53: "this part"
+        RenderText {#text} at (424,0) size 9x17
+          text run at (424,0) width 9: ", "
+        RenderInline {EM} at (0,0) size 53x17
+          RenderText {#text} at (432,0) size 53x17
+            text run at (432,0) width 53: "this part"
+        RenderText {#text} at (484,0) size 36x17
+          text run at (484,0) width 9: ", "
+          text run at (492,0) width 28: "and "
+        RenderInline {STRONG} at (0,0) size 58x17
+          RenderText {#text} at (519,0) size 58x17
+            text run at (519,0) width 58: "this part"
+        RenderText {#text} at (576,0) size 5x17
+          text run at (576,0) width 5: "."
       RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 371x17
           text run at (0,0) width 278: "This sentence should also be underlined, as "

@@ -24,12 +24,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,104) size 784x108
         RenderText {#text} at (0,0) size 84x17
           text run at (0,0) width 84: "This is a para"
-        RenderInline {SPAN} at (0,0) size 7x17 [color=#0000FF]
-          RenderText {#text} at (84,0) size 7x17
-            text run at (84,0) width 7: "g"
-        RenderText {#text} at (91,0) size 32x17
-          text run at (91,0) width 32: "raph."
-        RenderBR {BR} at (123,0) size 0x17
+        RenderInline {SPAN} at (0,0) size 8x17 [color=#0000FF]
+          RenderText {#text} at (84,0) size 8x17
+            text run at (84,0) width 8: "g"
+        RenderText {#text} at (92,0) size 32x17
+          text run at (92,0) width 32: "raph."
+        RenderBR {BR} at (124,0) size 0x17
         RenderText {#text} at (0,18) size 63x17
           text run at (0,18) width 63: "Some text"
         RenderBR {BR} at (63,18) size 0x17
@@ -44,10 +44,10 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (63,72) size 0x17
         RenderText {#text} at (0,90) size 84x17
           text run at (0,90) width 84: "This is a para"
-        RenderInline {SPAN} at (0,0) size 7x17 [color=#FF0000]
-          RenderText {#text} at (84,90) size 7x17
-            text run at (84,90) width 7: "g"
-        RenderText {#text} at (91,90) size 32x17
-          text run at (91,90) width 32: "raph."
+        RenderInline {SPAN} at (0,0) size 8x17 [color=#FF0000]
+          RenderText {#text} at (84,90) size 8x17
+            text run at (84,90) width 8: "g"
+        RenderText {#text} at (92,90) size 32x17
+          text run at (92,90) width 32: "raph."
 selection start: position 11 of child 0 {#text} of child 5 {DIV} of body
 selection end:   position 4 of child 14 {#text} of child 5 {DIV} of body

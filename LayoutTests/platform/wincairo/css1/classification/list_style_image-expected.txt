@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {#text} at (0,0) size 440x45
           text run at (0,0) width 440: ".one {list-style-image: url(../resources/oransqr.gif);}"
-          text run at (440,0) width 0: " "
+          text run at (439,0) width 1: " "
           text run at (0,15) width 240: ".two {list-style-image: none;}"
-          text run at (240,15) width 0: " "
+          text run at (239,15) width 1: " "
           text run at (0,30) width 0: " "
       RenderBlock {UL} at (0,110) size 784x57
         RenderListItem {LI} at (40,0) size 744x19

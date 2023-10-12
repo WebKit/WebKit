@@ -127,7 +127,7 @@ layer at (100,8) size 700x190
       text run at (591,122) width 35: "and"
       text run at (626,122) width 6: " "
       text run at (632,122) width 11: "a"
-      text run at (643,122) width 6: " "
+      text run at (642,122) width 7: " "
       text run at (14,149) width 99: "horizontal"
       text run at (113,149) width 6: " "
       text run at (119,149) width 54: "scroll"

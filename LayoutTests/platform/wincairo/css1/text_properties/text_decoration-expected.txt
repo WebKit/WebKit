@@ -9,19 +9,19 @@ layer at (0,0) size 785x1151
       RenderBlock {PRE} at (0,34) size 769x120
         RenderText {#text} at (0,0) size 464x120
           text run at (0,0) width 272: ".one {text-decoration: underline;}"
-          text run at (272,0) width 0: " "
+          text run at (271,0) width 1: " "
           text run at (0,15) width 264: ".two {text-decoration: overline;}"
-          text run at (264,15) width 0: " "
+          text run at (263,15) width 1: " "
           text run at (0,30) width 312: ".three {text-decoration: line-through;}"
-          text run at (312,30) width 0: " "
+          text run at (311,30) width 1: " "
           text run at (0,45) width 248: ".four {text-decoration: blink;}"
-          text run at (248,45) width 0: " "
+          text run at (247,45) width 1: " "
           text run at (0,60) width 248: "B.five {text-decoration: none;}"
-          text run at (248,60) width 0: " "
+          text run at (247,60) width 1: " "
           text run at (0,75) width 344: ".six {text-decoration: underline overline;}"
-          text run at (344,75) width 0: " "
+          text run at (343,75) width 1: " "
           text run at (0,90) width 464: ".seven {text-decoration: underline overline line-through;}"
-          text run at (464,90) width 0: " "
+          text run at (463,90) width 1: " "
           text run at (0,105) width 0: " "
       RenderBlock {P} at (0,185) size 769x18
         RenderText {#text} at (0,0) size 226x17

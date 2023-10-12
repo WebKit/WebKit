@@ -12,9 +12,9 @@ layer at (0,0) size 785x1682
             text run at (444,0) width 4 RTL: "."
             text run at (448,0) width 321: "Well-formed pair of unicode bidi control characters"
         RenderBlock {DIV} at (0,68) size 769x18
-          RenderText {#text} at (756,0) size 13x17
-            text run at (756,0) width 0 RTL: "\x{202C}"
-            text run at (756,0) width 5 RTL: "!"
+          RenderText {#text} at (755,0) size 14x17
+            text run at (755,0) width 1 RTL: "\x{202C}"
+            text run at (755,0) width 6 RTL: "!"
             text run at (761,0) width 8: "\x{202B}b"
         RenderBlock {DIV} at (0,86) size 769x18
           RenderText {#text} at (756,0) size 13x17
@@ -25,8 +25,8 @@ layer at (0,0) size 785x1682
             text run at (509,0) width 4 RTL: "."
             text run at (513,0) width 256: "Unpaired unicode bidi control characters"
         RenderBlock {DIV} at (0,154) size 769x18
-          RenderText {#text} at (756,0) size 13x17
-            text run at (756,0) width 5 RTL: "!"
+          RenderText {#text} at (755,0) size 14x17
+            text run at (755,0) width 6 RTL: "!"
             text run at (761,0) width 8: "\x{202B}b"
         RenderBlock {DIV} at (0,172) size 769x18
           RenderText {#text} at (756,0) size 13x17
@@ -83,19 +83,19 @@ layer at (0,0) size 785x1682
             text run at (756,0) width 0 RTL: "\x{202C}"
             text run at (756,0) width 13: "\x{202A}\x{202A}b!"
         RenderBlock {DIV} at (0,570) size 769x18
-          RenderText {#text} at (756,0) size 13x17
-            text run at (756,0) width 0 RTL: "\x{202C}"
-            text run at (756,0) width 5 RTL: "!"
+          RenderText {#text} at (755,0) size 14x17
+            text run at (755,0) width 1 RTL: "\x{202C}"
+            text run at (755,0) width 6 RTL: "!"
             text run at (761,0) width 8: "\x{202B}\x{202B}b"
         RenderBlock {DIV} at (0,588) size 769x18
           RenderText {#text} at (756,0) size 13x17
             text run at (756,0) width 5 RTL: "!\x{202C}"
             text run at (761,0) width 8: "\x{202C}\x{202C}b"
         RenderBlock {DIV} at (0,606) size 769x18
-          RenderText {#text} at (749,0) size 20x17
-            text run at (749,0) width 0 RTL: "\x{202C}"
-            text run at (749,0) width 8: "\x{202C}1"
-            text run at (757,0) width 5 RTL: "!"
+          RenderText {#text} at (748,0) size 21x17
+            text run at (748,0) width 1 RTL: "\x{202C}"
+            text run at (748,0) width 9: "\x{202C}1"
+            text run at (756,0) width 6 RTL: "!"
             text run at (762,0) width 7: "\x{202B}c"
         RenderBlock {P} at (0,640) size 769x18
           RenderText {#text} at (494,0) size 275x17
@@ -117,8 +117,8 @@ layer at (0,0) size 785x1682
           RenderText {#text} at (753,0) size 16x17
             text run at (753,0) width 16 RTL: "\x{683}\x{684}\x{202C}\x{202A}"
         RenderBlock {DIV} at (0,746) size 769x18
-          RenderText {#text} at (757,0) size 12x17
-            text run at (757,0) width 12 RTL: "\x{1}\x{202C}\x{202A}"
+          RenderText {#text} at (756,0) size 13x17
+            text run at (756,0) width 13 RTL: "\x{1}\x{202C}\x{202A}"
         RenderBlock {DIV} at (0,764) size 769x18
           RenderText {#text} at (747,0) size 22x17
             text run at (747,0) width 0 RTL: "\x{202C}\x{202A}"
@@ -134,10 +134,10 @@ layer at (0,0) size 785x1682
           RenderText {#text} at (0,0) size 325x17
             text run at (0,0) width 325: "Well-formed pair of unicode bidi control characters."
         RenderBlock {DIV} at (0,68) size 769x18
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 5 RTL: "!"
-            text run at (5,0) width 8: "\x{202B}b"
-            text run at (13,0) width 0: "\x{202C}"
+          RenderText {#text} at (0,0) size 14x17
+            text run at (0,0) width 6 RTL: "!"
+            text run at (5,0) width 9: "\x{202B}b"
+            text run at (13,0) width 1: "\x{202C}"
         RenderBlock {DIV} at (0,86) size 769x18
           RenderText {#text} at (0,0) size 13x17
             text run at (0,0) width 13: "\x{202A}b!\x{202C}"
@@ -145,9 +145,9 @@ layer at (0,0) size 785x1682
           RenderText {#text} at (0,0) size 260x17
             text run at (0,0) width 260: "Unpaired unicode bidi control characters."
         RenderBlock {DIV} at (0,154) size 769x18
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 5 RTL: "!"
-            text run at (5,0) width 8: "\x{202B}b"
+          RenderText {#text} at (0,0) size 14x17
+            text run at (0,0) width 6 RTL: "!"
+            text run at (5,0) width 9: "\x{202B}b"
         RenderBlock {DIV} at (0,172) size 769x18
           RenderText {#text} at (0,0) size 13x17
             text run at (0,0) width 13: "\x{202A}b!"
@@ -195,19 +195,19 @@ layer at (0,0) size 785x1682
           RenderText {#text} at (0,0) size 13x17
             text run at (0,0) width 13: "\x{202A}\x{202A}b!\x{202C}"
         RenderBlock {DIV} at (0,570) size 769x18
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 5 RTL: "!"
-            text run at (5,0) width 8: "\x{202B}\x{202B}b"
-            text run at (13,0) width 0: "\x{202C}"
+          RenderText {#text} at (0,0) size 14x17
+            text run at (0,0) width 6 RTL: "!"
+            text run at (5,0) width 9: "\x{202B}\x{202B}b"
+            text run at (13,0) width 1: "\x{202C}"
         RenderBlock {DIV} at (0,588) size 769x18
           RenderText {#text} at (0,0) size 13x17
             text run at (0,0) width 13: "\x{202C}\x{202C}b!\x{202C}"
         RenderBlock {DIV} at (0,606) size 769x18
-          RenderText {#text} at (0,0) size 20x17
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 8: "\x{202C}1"
-            text run at (8,0) width 5 RTL: "!"
-            text run at (13,0) width 7: "\x{202B}c"
-            text run at (20,0) width 0: "\x{202C}"
+            text run at (8,0) width 6 RTL: "!"
+            text run at (13,0) width 8: "\x{202B}c"
+            text run at (20,0) width 1: "\x{202C}"
         RenderBlock {P} at (0,640) size 769x18
           RenderText {#text} at (0,0) size 275x17
             text run at (0,0) width 275: "Start with different directionality characters."
@@ -226,8 +226,8 @@ layer at (0,0) size 785x1682
             text run at (0,0) width 16 RTL: "\x{683}\x{684}"
             text run at (16,0) width 0: "\x{202C}\x{202A}"
         RenderBlock {DIV} at (0,746) size 769x18
-          RenderText {#text} at (0,0) size 12x17
-            text run at (0,0) width 12: "\x{1}\x{202C}\x{202A}"
+          RenderText {#text} at (0,0) size 13x17
+            text run at (0,0) width 13: "\x{1}\x{202C}\x{202A}"
         RenderBlock {DIV} at (0,764) size 769x18
           RenderText {#text} at (0,0) size 22x17
             text run at (0,0) width 22: "abc\x{202C}\x{202A}"

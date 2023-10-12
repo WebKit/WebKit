@@ -12,7 +12,7 @@ layer at (0,0) size 800x267
               text run at (94,18) width 200: "tightly squeezed in between the"
               text run at (0,36) width 194: "edge of the teal box and the "
               text run at (193,36) width 101: "outside edge of"
-              text run at (0,58) width 112: "the blue block. \x{21E8}"
+              text run at (0,58) width 113: "the blue block. \x{21E8}"
         RenderBlock {P} at (0,0) size 588x259
           RenderText {#text} at (0,0) size 277x39
             text run at (0,0) width 277: "Inside this blue block on the right there"

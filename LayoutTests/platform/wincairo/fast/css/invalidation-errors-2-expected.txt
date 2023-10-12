@@ -22,6 +22,6 @@ layer at (8,42) size 200x200 clip at (8,42) size 185x200
       text run at (0,48) width 182: "bold, normally spaced and"
       text run at (0,64) width 165: "wrapped, in a darkgreen"
       text run at (0,80) width 102: "200x200px div "
-      text run at (102,80) width 66: "in the top"
+      text run at (101,80) width 67: "in the top"
       text run at (0,96) width 182: "left corner with no borders"
       text run at (0,112) width 78: "or outlines."

@@ -8,5 +8,5 @@ layer at (0,0) size 800x110
           text run at (0,0) width 771: "This test makes sure punctuation laid out with the system font does not use vertical glyphs. The test passes if the semicolon"
           text run at (0,18) width 447: "below looks like a regular horizontal semicolon (;) and is not sideways."
       RenderBlock {DIV} at (0,36) size 784x58
-        RenderText {#text} at (0,1) size 13x56
-          text run at (0,1) width 13: ";"
+        RenderText {#text} at (0,1) size 14x56
+          text run at (0,1) width 14: ";"

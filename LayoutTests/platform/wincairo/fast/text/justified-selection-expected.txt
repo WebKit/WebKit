@@ -15,13 +15,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 251x17
           text run at (0,0) width 251: "The two blue boxes should be identical."
       RenderBlock {DIV} at (0,68) size 106x42 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 9x17
-          text run at (3,3) width 9: "L"
-        RenderInline {SPAN} at (0,0) size 41x17 [color=#008000] [bgcolor=#FFFF00]
-          RenderText {#text} at (12,3) size 41x17
-            text run at (12,3) width 41: "o r"
-        RenderText {#text} at (52,3) size 100x35
-          text run at (52,3) width 51: "e mi"
+        RenderText {#text} at (3,3) size 10x17
+          text run at (3,3) width 10: "L"
+        RenderInline {SPAN} at (0,0) size 42x17 [color=#008000] [bgcolor=#FFFF00]
+          RenderText {#text} at (12,3) size 42x17
+            text run at (12,3) width 42: "o r"
+        RenderText {#text} at (53,3) size 100x35
+          text run at (53,3) width 50: "e mi"
           text run at (3,21) width 67: "psumdolor"
       RenderBlock (anonymous) at (0,110) size 784x18
         RenderBR {BR} at (0,0) size 0x17

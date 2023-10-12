@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 12x26
                 text run at (0,0) width 12: "a"
             RenderBlock {DIV} at (0,27) size 756x27
-              RenderText {#text} at (0,0) size 13x26
-                text run at (0,0) width 13: "b"
+              RenderText {#text} at (0,0) size 14x26
+                text run at (0,0) width 14: "b"
           RenderBlock (anonymous) at (0,108) size 756x0
             RenderInline {B} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
@@ -44,8 +44,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 12x26
                 text run at (0,0) width 12: "a"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderInline {B} at (0,0) size 13x26
-              RenderText {#text} at (0,0) size 13x26
-                text run at (0,0) width 13: "b"
+            RenderInline {B} at (0,0) size 14x26
+              RenderText {#text} at (0,0) size 14x26
+                text run at (0,0) width 14: "b"
 selection start: position 1 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 1 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
