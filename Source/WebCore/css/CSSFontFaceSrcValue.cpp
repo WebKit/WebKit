@@ -89,7 +89,7 @@ Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(ResolvedURL
 std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
 {
     if (m_cachedFont)
-        return makeUnique<CachedFontLoadRequest>(*m_cachedFont);
+        return makeUnique<CachedFontLoadRequest>(*m_cachedFont, context);
 
     bool isFormatSVG;
     if (m_format.isEmpty()) {
