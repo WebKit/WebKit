@@ -502,15 +502,8 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
     ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     ASSERT(variant != AutoVariant);
 
-    FontCascadeDescription fontDescription(description);
-    auto fontSizeAdjust = description.fontSizeAdjust();
-    if (m_cachedPrimaryFont && fontSizeAdjust.isFromFont) {
-        auto aspectValue = fontSizeAdjust.resolve(description.computedSize(), m_cachedPrimaryFont->fontMetrics());
-        fontDescription.setFontSizeAdjust({ fontSizeAdjust.metric, fontSizeAdjust.isFromFont, aspectValue });
-    }
-
     if (variant != NormalVariant)
-        return glyphDataForVariant(c, fontDescription, variant, resolvedEmojiPolicy);
+        return glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
@@ -518,13 +511,13 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
 
     // Initialize cache with a full page of glyph mappings from a single font.
     if (cacheEntry.isNull())
-        cacheEntry.setSingleFontPage(glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(fontDescription, 0)));
+        cacheEntry.setSingleFontPage(glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, 0)));
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
     if (!glyphData.glyph) {
         // No glyph, resolve per-character.
         ASSERT(variant == NormalVariant);
-        glyphData = glyphDataForVariant(c, fontDescription, variant, resolvedEmojiPolicy);
+        glyphData = glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
         // Cache the results.
         cacheEntry.setGlyphDataForCharacter(c, glyphData);
     }

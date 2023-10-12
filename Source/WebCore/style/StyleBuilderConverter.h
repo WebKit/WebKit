@@ -67,6 +67,7 @@
 #include "ScrollbarGutter.h"
 #include "Settings.h"
 #include "StyleBuilderState.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextBoxEdge.h"
@@ -1608,7 +1609,7 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
     return settings;
 }
 
-inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, const CSSValue& value)
+inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -1621,9 +1622,9 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
             return { defaultMetric, false, primitiveValue.floatValue() };
 
         ASSERT(primitiveValue.valueID() == CSSValueFromFont);
-        // As we cannot determine the primary font here, we defer resolving the
-        // aspect value for from-font to FontCascadeFonts::glyphDataForCharacter.
-        return { defaultMetric, true, std::nullopt };
+        // The primary font could be null in the current builder state where
+        // a fallback font is used. So, we use the parent style instead.
+        return { defaultMetric, true, aspectValueOfPrimaryFont(builderState.parentStyle(), defaultMetric) };
     }
 
     ASSERT(value.isPair());
@@ -1635,7 +1636,7 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
         return { metric, false, primitiveValue.floatValue() };
 
     ASSERT(primitiveValue.valueID() == CSSValueFromFont);
-    return { metric, true, std::nullopt };
+    return { metric, true, aspectValueOfPrimaryFont(builderState.parentStyle(), metric) };
 }
 
 #if PLATFORM(IOS_FAMILY)
