@@ -40,6 +40,13 @@ typedef UInt32 AudioUnitRenderActionFlags;
 struct AudioBufferList;
 struct AudioTimeStamp;
 
+#if TARGET_OS_IPHONE || (defined(AUDIOCOMPONENT_NOCARBONINSTANCES) && AUDIOCOMPONENT_NOCARBONINSTANCES)
+typedef struct OpaqueAudioComponentInstance* AudioComponentInstance;
+#else
+typedef struct ComponentInstanceRecord* AudioComponentInstance;
+#endif
+typedef AudioComponentInstance AudioUnit;
+
 namespace WebCore {
 
 #if PLATFORM(IOS_FAMILY)
@@ -64,6 +71,7 @@ public:
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
         virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 20_s : 2_s; }
+        virtual void storeVPIOUnitIfNeeded() { }
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
@@ -87,6 +95,10 @@ public:
 #endif
 
     bool isUsingVPIO() const { return m_shouldUseVPIO; }
+
+    void setStoredVPIOUnit(AudioUnit);
+    bool iStoredVPIOUnit(AudioUnit unit) const { return unit == m_storedVPIOUnit; }
+    AudioUnit takeStoredVPIOUnit() { return std::exchange(m_storedVPIOUnit, nullptr); }
 
 private:
     static size_t preferredIOBufferSize();
@@ -168,6 +180,7 @@ private:
 #endif
 
     bool m_shouldUseVPIO { true };
+    AudioUnit m_storedVPIOUnit { nullptr };
 };
 
 } // namespace WebCore
