@@ -68,7 +68,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
             append = glyphs[i] != 0xFFFF;
 #endif
             if (append)
-                cairoGlyphs.uncheckedAppend({ glyphs[i], xOffset, yOffset });
+                cairoGlyphs.append({ glyphs[i], xOffset, yOffset });
             xOffset += advances[i].width();
             yOffset += advances[i].height();
         }
