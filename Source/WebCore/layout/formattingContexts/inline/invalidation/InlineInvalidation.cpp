@@ -112,6 +112,12 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
         if (!damagedContent->offset)
             return candidateLineIndex(leadingIndexForDisplayBox);
 
+        if (damagedContent->offset > displayBoxes[leadingIndexForDisplayBox].text().end()) {
+            // Protect against text updater providing bogus damage offset (offset is _after_ the last display box here).
+            // Let's just fallback to full invalidation.
+            return { };
+        }
+
         for (auto index = leadingIndexForDisplayBox; index > 0; --index) {
             auto& displayBox = displayBoxes[index];
             if (displayBox.isRootInlineBox() || (displayBox.isInlineBox() && !displayBox.isFirstForLayoutBox())) {
