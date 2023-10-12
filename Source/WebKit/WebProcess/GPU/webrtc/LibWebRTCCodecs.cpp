@@ -399,18 +399,28 @@ void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, const uint8_
     decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, IPC::DataReference { data, size }, width, height }, 0);
 }
 
-int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+static void sendFrameToDecode(LibWebRTCCodecs::Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
 {
-    Locker locker { m_connectionLock };
-    if (!decoder.connection || decoder.hasError) {
-        decoder.hasError = false;
-        return WEBRTC_VIDEO_CODEC_ERROR;
-    }
-
     if (decoder.type == VideoCodecType::VP9 && (width || height))
         decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetFrameSize { decoder.identifier, width, height }, 0);
 
     decoder.connection->send(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, IPC::DataReference { data, size } }, 0);
+}
+
+int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+{
+    Locker locker { m_connectionLock };
+    if (decoder.hasError) {
+        decoder.hasError = false;
+        return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+
+    if (!decoder.connection) {
+        decoder.pendingFrames.append({ timeStamp, std::span { data, size }, width, height });
+        return WEBRTC_VIDEO_CODEC_OK;
+    }
+
+    sendFrameToDecode(decoder, timeStamp, data, size, width, height);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -872,6 +882,9 @@ IPC::Connection* LibWebRTCCodecs::decoderConnection(Decoder& decoder)
 void LibWebRTCCodecs::setDecoderConnection(Decoder& decoder, RefPtr<IPC::Connection>&& connection)
 {
     decoder.connection = WTFMove(connection);
+    auto frames = std::exchange(decoder.pendingFrames, { });
+    for (auto& frame : frames)
+        sendFrameToDecode(decoder, frame.timeStamp, frame.data.data(), frame.data.size(), frame.width, frame.height);
 }
 
 inline RefPtr<RemoteVideoFrameObjectHeapProxy> LibWebRTCCodecs::protectedVideoFrameObjectHeapProxy() const

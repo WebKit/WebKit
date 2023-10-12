@@ -84,6 +84,13 @@ public:
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        struct EncodedFrame {
+            int64_t timeStamp { 0 };
+            Vector<uint8_t> data;
+            uint16_t width { 0 };
+            uint16_t height { 0 };
+        };
+
         VideoDecoderIdentifier identifier;
         VideoCodecType type;
         String codec;
@@ -92,6 +99,7 @@ public:
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
+        Vector<EncodedFrame> pendingFrames;
         Deque<Function<void()>> flushCallbacks WTF_GUARDED_BY_LOCK(flushCallbacksLock);
         Lock flushCallbacksLock;
     };
