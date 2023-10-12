@@ -5,24 +5,21 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot create an ImageBitmap from an empty buffer
-
-Harness Error (TIMEOUT), message = null
 
 PASS unhandledrejection: from Promise.reject
 PASS unhandledrejection: from a synchronous rejection in new Promise
@@ -64,7 +61,7 @@ PASS delayed handling: a nested-queueTask after promise creation/rejection, plus
 PASS delayed handling: delaying handling by setTimeout(,10) will cause both events to fire
 PASS delayed handling: delaying handling rejected promise created from createImageBitmap will cause both events to fire
 PASS mutationObserverMicrotask vs. queueTask ordering is not disturbed inside unhandledrejection events
-FAIL queueTask ordering vs. the task queued for unhandled rejection notification (1) assert_array_equals: property 1, expected "queueTask" but got object "[object Promise]"
-FAIL queueTask ordering vs. the task queued for unhandled rejection notification (2) assert_array_equals: property 0, expected "queueTask" but got object "[object Promise]"
-TIMEOUT rejectionhandled is dispatched from a queued task, and not immediately Test timed out
+FAIL queueTask ordering vs. the task queued for unhandled rejection notification (1) assert_array_equals: expected property 1 to be "queueTask" but got object "[object Promise]" (expected array [object "[object Promise]", "queueTask", object "[object Promise]"] got [object "[object Promise]", object "[object Promise]", "queueTask"])
+FAIL queueTask ordering vs. the task queued for unhandled rejection notification (2) assert_array_equals: expected property 0 to be "queueTask" but got object "[object Promise]" (expected array ["queueTask", object "[object Promise]"] got [object "[object Promise]", "queueTask"])
+FAIL rejectionhandled is dispatched from a queued task, and not immediately assert_array_equals: expected property 4 to be "handled" but got "task after catch" (expected array ["unhandled", "after catch", "catch", "task before catch", "handled", "task after catch"] got ["unhandled", "after catch", "catch", "task before catch", "task after catch", "handled"])
 

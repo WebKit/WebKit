@@ -57,7 +57,7 @@ if (!window.location.search) {
 
 function checkDidLoadVictim()
 {
-    if (secondOpenerDocument.location.href == "about:blank") {
+    if (secondOpenerDocument.location.href == "http://127.0.0.1:8000/security/xss-DENIED-script-inject-into-inactive-window3.html?actually-actually-attack") {
         // Victim loaded.
         window.clearInterval(intervalId);
 
