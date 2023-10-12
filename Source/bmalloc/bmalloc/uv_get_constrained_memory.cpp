@@ -47,11 +47,13 @@ static inline void assert(bool)
 
 static int uv__open_cloexec(const char* path, int flags)
 {
-    int fd;
-
-    fd = open(path, flags | O_CLOEXEC, 0);
+    int fd = -1;
+    do {
+        fd = open(path, flags | O_CLOEXEC, 0);
+    } while (fd == -1 && errno == EINTR);
+    
     if (fd == -1)
-        return errno;
+        return -1;
 
     return fd;
 }
