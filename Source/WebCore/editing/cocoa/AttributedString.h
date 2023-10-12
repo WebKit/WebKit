@@ -84,12 +84,17 @@ struct WEBCORE_EXPORT AttributedString {
     struct TextTableIDType;
     using TextTableID = ObjectIdentifier<TextTableIDType>;
 
+    struct TextTableBlockIDType;
+    using TextTableBlockID = ObjectIdentifier<TextTableBlockIDType>;
+
     struct TextListIDType;
     using TextListID = ObjectIdentifier<TextListIDType>;
 
+    using TableBlockAndTableIDPair = std::pair<TextTableBlockID, TextTableID>;
+
     struct ParagraphStyleWithTableAndListIDs {
         RetainPtr<NSParagraphStyle> style;
-        Vector<std::optional<TextTableID>> tableIDs; // Same length as `-textBlocks`.
+        Vector<std::optional<TableBlockAndTableIDPair>> tableBlockAndTableIDs; // Same length as `-textBlocks`.
         Vector<TextListID> listIDs; // Same length as `-textLists`.
     };
 
