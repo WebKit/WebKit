@@ -665,7 +665,12 @@ bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet& ruleSet)
 
 void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedProperties, DeclarationOrigin declarationOrigin)
 {
-    declarationsForOrigin(declarationOrigin).append(WTFMove(matchedProperties));
+    auto& declarations = declarationsForOrigin(declarationOrigin);
+    if (!declarations.isEmpty() && declarations.last() == matchedProperties) {
+        // It might also be beneficial to overwrite the previous declaration (insteading of appending) if it affects the same exact properties.
+        return;
+    }
+    declarations.append(WTFMove(matchedProperties));
 }
 
 void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyframe)
