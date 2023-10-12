@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
- * Copyright (C) 2014 Google. All rights reserved.
+ * Copyright (C) 2014-2015 Google. All rights reserved.
  * Copyright (C) 2020 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
@@ -916,6 +916,9 @@ void RenderLayerScrollableArea::setHasHorizontalScrollbar(bool hasScrollbar)
         ScrollableArea::setHorizontalScrollElasticity(elasticity);
 #endif
     } else {
+        if (!layerForHorizontalScrollbar())
+            m_hBar->invalidate();
+        // Otherwise we will remove the layer and just need recompositing.
         destroyScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticity::None);
@@ -942,6 +945,9 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
         ScrollableArea::setVerticalScrollElasticity(elasticity);
 #endif
     } else {
+        if (!layerForVerticalScrollbar())
+            m_vBar->invalidate();
+        // Otherwise we will remove the layer and just need recompositing.
         destroyScrollbar(ScrollbarOrientation::Vertical);
 #if HAVE(RUBBER_BANDING)
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticity::None);
