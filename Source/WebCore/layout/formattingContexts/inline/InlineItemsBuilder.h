@@ -40,7 +40,7 @@ public:
     void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
+    void collectInlineItems(InlineItems&, FormattingState::OutOfFlowBoxList&, InlineItemPosition startPosition);
     using LayoutQueue = Vector<CheckedRef<const Box>>;
     LayoutQueue initializeLayoutQueue(InlineItemPosition startPosition);
     bool traverseUntilDamaged(LayoutQueue&, const Box& subtreeRoot, const Box& firstDamagedLayoutBox);

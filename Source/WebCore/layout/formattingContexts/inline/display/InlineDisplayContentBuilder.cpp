@@ -451,12 +451,10 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
 #endif
     auto writingMode = root().style().writingMode();
     auto contentStartInVisualOrder = m_displayLine.topLeft();
-    Vector<size_t> blockLevelOutOfFlowBoxList;
 
     appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), writingMode), lineBox.rootInlineBox().hasContent(), boxes);
 
-    for (size_t index = 0; index < lineLayoutResult.inlineContent.size(); ++index) {
-        auto& lineRun = lineLayoutResult.inlineContent[index];
+    for (auto& lineRun : lineLayoutResult.inlineContent) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
@@ -500,18 +498,11 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             continue;
         }
         if (lineRun.isOpaque()) {
-            auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-            if (layoutBox.style().isOriginalDisplayInlineType()) {
-                auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                boxGeometry.setLogicalTopLeft(toLayoutPoint(logicalTopLeft));
-            } else
-                blockLevelOutOfFlowBoxList.append(index);
+            // Set geometry for this opaque box.
             continue;
         }
         ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
     }
-    setGeometryForBlockLevelOutOfFlowBoxes(blockLevelOutOfFlowBoxList, lineBox, lineLayoutResult.inlineContent);
 }
 
 struct DisplayBoxTree {
@@ -774,19 +765,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 }
                 continue;
             }
-            if (lineRun.isOpaque()) {
-                auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-                if (layoutBox.style().isOriginalDisplayInlineType()) {
-                    auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                    logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                    boxGeometry.setLogicalTopLeft(toLayoutPoint(logicalTopLeft));
-                } else
-                    blockLevelOutOfFlowBoxList.append(visualOrder);
-                continue;
-            }
             ASSERT_NOT_REACHED();
         }
-        setGeometryForBlockLevelOutOfFlowBoxes(blockLevelOutOfFlowBoxList, lineBox, inlineContent, lineLayoutResult.directionality.visualOrderList);
     };
     createDisplayBoxesInVisualOrder();
 
@@ -883,33 +863,6 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(InlineDisplay
             accumulatedInkOverflowRect = displayBox.inkOverflow();
         else
             accumulatedInkOverflowRect.expandToContain(displayBox.inkOverflow());
-    }
-}
-
-void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexListOfOutOfFlowBoxes, const LineBox& lineBox, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList)
-{
-    auto& formattingContext = this->formattingContext();
-    auto outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = false;
-
-    for (size_t i = 0; i < indexListOfOutOfFlowBoxes.size(); ++i) {
-        auto outOfFlowBoxIndex = indexListOfOutOfFlowBoxes[i];
-        ASSERT(outOfFlowBoxIndex < lineRuns.size());
-
-        auto hasPreviousInFlowContent = [&] {
-            if (outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration)
-                return true;
-            for (size_t previousRunIndex = !i ? 0 : indexListOfOutOfFlowBoxes[i - 1] + 1; previousRunIndex < outOfFlowBoxIndex; ++previousRunIndex) {
-                auto& previousRun = visualOrderList.isEmpty() ? lineRuns[previousRunIndex] : lineRuns[visualOrderList[previousRunIndex]];
-                if (Line::Run::isContentfulOrHasDecoration(previousRun, formattingContext)) {
-                    outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = true;
-                    return true;
-                }
-            }
-            return false;
-        };
-        // Block level boxes are placed either at the start of the line or "under" depending whether they have previous inflow sibling.
-        auto logicalTop = hasPreviousInFlowContent() ? lineBox.logicalRect().bottom() : lineBox.logicalRect().top();
-        formattingState().boxGeometry(lineRuns[outOfFlowBoxIndex].layoutBox()).setLogicalTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
     }
 }
 
