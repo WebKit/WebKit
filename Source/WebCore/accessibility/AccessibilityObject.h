@@ -264,6 +264,7 @@ public:
     void recomputeIsIgnored();
     AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
+    bool isARIAHidden() const;
 
     bool isShowingValidationMessage() const;
     String validationMessage() const;
@@ -361,7 +362,6 @@ public:
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     bool hasExplicitGenericRole() const { return ariaRoleAttribute() == AccessibilityRole::Generic; }
     bool hasImplicitGenericRole() const { return roleValue() == AccessibilityRole::Generic && !hasExplicitGenericRole(); }
-    bool isPresentationalChildOfAriaRole() const;
     bool ariaRoleHasPresentationalChildren() const;
     bool inheritsPresentationalRole() const override { return false; }
 

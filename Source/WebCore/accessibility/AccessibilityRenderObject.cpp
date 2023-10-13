@@ -1066,10 +1066,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    // If this element is within a parent that cannot have children, it should not be exposed.
-    if (isDescendantOfBarrenParent())
-        return true;    
-
     if (roleValue() == AccessibilityRole::Ignored)
         return true;
 

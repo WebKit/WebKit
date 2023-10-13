@@ -591,7 +591,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     // Elements that should not have children.
     switch (roleValue()) {
     case AccessibilityRole::Button:
+#if !USE(ATSPI)
+    // GTK/ATSPI layout tests expect popup buttons to have children.
     case AccessibilityRole::PopUpButton:
+#endif
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Tab:
@@ -654,9 +657,6 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IncludeObject)
         return false;
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
-        return true;
-    // If this element is within a parent that cannot have children, it should not be exposed.
-    if (isDescendantOfBarrenParent())
         return true;
 
     auto role = roleValue();
