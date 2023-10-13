@@ -261,6 +261,10 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                     current = fragment->host();
             }
 
+            ASSERT(current);
+            if (!current)
+                break;
+
             shouldAppendNode = !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
             shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
             if (shouldAppendNode && shouldEmitCloseTag)
