@@ -603,7 +603,6 @@ typedef enum {
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)_didRemoveSubview:(UIView *)subview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
-- (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
 @end
 

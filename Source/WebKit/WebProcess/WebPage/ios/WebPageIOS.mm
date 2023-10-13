@@ -404,7 +404,9 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
             // rather than the focused element. This causes caret colors in editable children to be
             // ignored in favor of the editing host's caret color. See: <https://webkit.org/b/229809>.
             if (RefPtr editableRoot = selection.rootEditableElement(); editableRoot && editableRoot->renderer()) {
-                postLayoutData.caretColor = CaretBase::computeCaretColor(editableRoot->renderer()->style(), editableRoot.get());
+                auto& style = editableRoot->renderer()->style();
+                postLayoutData.caretColor = CaretBase::computeCaretColor(style, editableRoot.get());
+                postLayoutData.hasCaretColorAuto = style.hasAutoCaretColor();
                 postLayoutData.hasGrammarDocumentMarkers = editableRoot->document().markers().hasMarkers(makeRangeSelectingNodeContents(*editableRoot), DocumentMarker::Grammar);
             }
         }
