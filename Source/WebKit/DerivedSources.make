@@ -400,6 +400,30 @@ all : $(SANDBOX_PROFILES_WITHOUT_WEBPUSHD) $(WEBPUSHD_SANDBOX_PROFILE) $(SANDBOX
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
 	grep -o '^[^;]*' $< | $(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(SANDBOX_DEFINES) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(EXTERNAL_FLAGS) -include "wtf/Platform.h" - > $@
+	if [ -e "/usr/local/bin/sbutil" ]; then \
+		if [[ $(SDK_NAME) =~ "iphoneos" ]]; then \
+			if [[ $* == "com.apple.WebKit.adattributiond" || $* == "com.apple.WebKit.webpushd" ]]; then \
+				sbutil compile -D IMPORT_DIR=$(SDKROOT)/usr/local/share/sandbox/profiles/embedded/imports $@ > /dev/null; \
+				if [[ $$? != 0 ]]; then \
+					exit 1; \
+				fi \
+			fi; \
+			if [[ $* == "com.apple.WebKit.GPU" || $* == "com.apple.WebKit.Networking" || $* == "com.apple.WebKit.WebContent" ]]; then \
+				sbutil compile $@ > /dev/null; \
+				if [[ $$? != 0 ]]; then \
+					exit 1; \
+				fi \
+			fi \
+		fi; \
+		if [[ $(SDK_NAME) =~ "mac" ]]; then \
+			if [[ $* == "com.apple.WebKit.GPUProcess" || $* == "com.apple.WebKit.NetworkProcess" || $* == "com.apple.WebProcess" ]]; then \
+				sbutil compile -D ENABLE_SANDBOX_MESSAGE_FILTER=YES -D WEBKIT2_FRAMEWORK_DIR=dir -D HOME_DIR=dir -D HOME_LIBRARY_PREFERENCES_DIR=dir -D DARWIN_USER_CACHE_DIR=dir -D DARWIN_USER_TEMP_DIR=dir $@ > /dev/null; \
+				if [[ $$? != 0 ]]; then \
+					exit 1; \
+				fi \
+			fi \
+		fi \
+	fi
 
 AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator_templates.py \

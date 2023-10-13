@@ -1057,6 +1057,19 @@
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
+#if HAVE(MACH_EVENTLINK)
+            (when (defined? 'mach_eventlink_associate)
+                (allow mach-message-send (kernel-mig-routine
+                    mach_eventlink_associate
+                    mach_eventlink_create
+                    mach_eventlink_destroy)))
+#endif
+#if HAVE(MACH_RANGE_CREATE)
+            ;; <rdar://105161083>
+            (when (defined? 'mach_vm_range_create)
+                (allow mach-message-send (kernel-mig-routine mach_vm_range_create)))
+#endif
+
             (allow mach-message-send (kernel-mig-routine
                 _mach_make_memory_entry
                 clock_get_time
@@ -1093,11 +1106,6 @@
                 io_service_get_matching_service_bin
                 io_service_get_matching_services_bin
                 io_service_open_extended
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-                mach_eventlink_associate
-                mach_eventlink_create
-                mach_eventlink_destroy
-#endif
                 mach_exception_raise
                 mach_memory_entry_ownership
                 mach_port_extract_right
@@ -1108,9 +1116,6 @@
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
-#if HAVE(MACH_RANGE_CREATE)
-                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
-#endif
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy

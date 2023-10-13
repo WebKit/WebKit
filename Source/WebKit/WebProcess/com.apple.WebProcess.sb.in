@@ -2104,12 +2104,6 @@
                 (mach-bootstrap-message-numbers)))))
 #endif
 
-#if HAVE(MACH_RANGE_CREATE)
-(define (kernel-mig-routine-only-in-use-during-launch)
-    (kernel-mig-routine
-        (when (defined? 'mach_vm_range_create) mach_vm_range_create))) ;; <rdar://105161083>
-#endif
-
 (define (kernel-mig-routines-in-use) (kernel-mig-routine
     _mach_make_memory_entry
     host_get_io_master
@@ -2206,8 +2200,10 @@
             (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
                 
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
+            ;; <rdar://105161083>
             (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine-only-in-use-during-launch)))
+                (when (defined? 'mach_vm_range_create)
+                    (allow mach-message-send (kernel-mig-routine mach_vm_range_create))))
 #endif
         )))
 
