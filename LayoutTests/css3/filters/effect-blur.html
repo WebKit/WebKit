@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="fuzzy" content="maxDifference=0-50; totalPixels=0-15059">
+    <meta name="fuzzy" content="maxDifference=0-50; totalPixels=0-5000">
     <link rel="stylesheet" href="resources/filter-helpers.css">
-    <script src="resources/filter-helpers.js"></script>
     <script>
     if (window.internals) {
         // Force software rendering mode.
@@ -12,15 +11,9 @@
     </script>
 </head>
 <body>
-    <script>
-        const filters = [
-            'blur(0)',
-            'blur(2px)',
-            'blur(3px)',
-            'blur(10px)',
-        ];
-
-        buildCSSFilteredBoxes(filters);
-    </script>
+    <img src="resources/reference.png" style="filter: blur(0)">
+    <img src="resources/reference.png" style="filter: blur(2px)">
+    <img src="resources/reference.png" style="filter: blur(3px)">
+    <img src="resources/reference.png" style="filter: blur(10px)"> 
 </body>
 </html>
