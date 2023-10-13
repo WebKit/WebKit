@@ -309,6 +309,9 @@ class Package(object):
 
             try:
                 shutil.rmtree(self.location, ignore_errors=True)
+                as_py_file = '{}.py'.format(self.location)
+                if os.path.isfile(as_py_file):
+                    os.remove(as_py_file)
 
                 AutoInstall.log('Downloading {}...'.format(archive))
                 archive.download()
