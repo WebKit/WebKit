@@ -1,7 +1,7 @@
 
 PASS Setup
 PASS Synthetic response without Content-Length header
-FAIL Synthetic response with Content-Length header with value larger than response body length assert_true: expected true got false
-FAIL Synthetic response with two Content-Length headers value larger than response body length assert_true: expected true got false
+PASS Synthetic response with Content-Length header with value larger than response body length
+PASS Synthetic response with two Content-Length headers value larger than response body length
 PASS Synthetic response with bogus Content-Length header
 

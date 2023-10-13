@@ -114,6 +114,9 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
     r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
 
+    if (auto expectedContentLength = parseContentLength(r->m_headers->fastGet(HTTPHeaderName::ContentLength)))
+        r->m_internalResponse.setExpectedContentLength(*expectedContentLength);
+
     // 3. Set response’s response’s status to init["status"].
     r->m_internalResponse.setHTTPStatusCode(init.status);
     // 4. Set response’s response’s status message to init["statusText"].
