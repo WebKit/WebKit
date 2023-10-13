@@ -4632,3 +4632,5 @@ imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.a
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.worker.html [ Crash ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.html [ Crash ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.worker.html  [ Crash ]
+
+ webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]

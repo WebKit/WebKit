@@ -2051,3 +2051,5 @@ webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-
 webkit.org/b/263085 [ Sonoma+ Release ] fast/attachment/attachment-uti.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/263095 [ Sonoma+ ] svg/clip-path/clip-path-objectboundingbox-003.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
