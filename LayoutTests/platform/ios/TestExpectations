@@ -4366,7 +4366,7 @@ webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
 
 webkit.org/b/256189 [ Debug ] ipc/wait-for-video-output-will-change.html [ Crash ]
 
-webkit.org/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.html [ Pass Crash ]
+webkit.org/b/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.html [ Pass Crash ]
 webkit.org/b/258328 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
 
 webkit.org/b/258532 svg/zoom/page/text-with-non-scaling-stroke.html [ Pass ImageOnlyFailure ]
