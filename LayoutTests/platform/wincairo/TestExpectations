@@ -1155,9 +1155,6 @@ editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/move-by-word-visually-mac.html [ Failure ]
 editing/selection/move-left-right.html [ Failure ]
 
-# Assertion failure in replaySavedEvents
-webkit.org/b/21796 [ Debug ] editing/selection/drag-in-iframe.html [ Skip ]
-
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
 editing/selection/caret-at-bidi-boundary.html [ Skip ]
 editing/selection/character-granularity-rect.html [ Skip ]
@@ -1808,6 +1805,7 @@ editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
+fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]
@@ -2566,9 +2564,9 @@ animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
 
-# Regressed by 269016@main
-fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
-fast/forms/listbox-zero-item-height.html [ Failure ]
+webkit.org/b/263101 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
+webkit.org/b/263101 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure Pass ]
+webkit.org/b/263101 fast/forms/listbox-zero-item-height.html [ Failure Pass ]
 
 fast/css/unicode-escape-in-8bit-string.html [ ImageOnlyFailure ]
 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
@@ -2583,3 +2581,12 @@ fast/text/simple-line-layout-fallback-space-glyph.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
 fast/text/tab-stops-with-offset-from-parent.html [ ImageOnlyFailure ]
 fast/text/word-break-keep-all-with-zero-width-space.html [ ImageOnlyFailure ]
+
+http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Failure Pass ]
+
+# Tests that rely on custom domain names.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
+
+http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure Pass ]
