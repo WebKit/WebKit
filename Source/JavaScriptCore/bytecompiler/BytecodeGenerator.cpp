@@ -4882,9 +4882,9 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
     emitLabel(mergePoint.get());
 }
 
-RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason result)
+RegisterID* BytecodeGenerator::emitYield(RegisterID* argument)
 {
-    emitYieldPoint(argument, result);
+    emitYieldPoint(argument, JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
 
     Ref<Label> normalLabel = newLabel();
     emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), normalLabel.get());
@@ -4908,6 +4908,19 @@ RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGenerator:
     return generatorValueRegister();
 }
 
+RegisterID* BytecodeGenerator::emitAwait(RegisterID* dst, RegisterID* src)
+{
+    emitYieldPoint(src, JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
+
+    Ref<Label> normalLabel = newLabel();
+    emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), normalLabel.get());
+
+    emitThrow(generatorValueRegister());
+
+    emitLabel(normalLabel.get());
+    return move(dst, generatorValueRegister());
+}
+
 RegisterID* BytecodeGenerator::emitCallIterator(RegisterID* iterator, RegisterID* argument, ThrowableExpressionData* node)
 {
     CallArguments args(*this, nullptr);
@@ -4915,12 +4928,6 @@ RegisterID* BytecodeGenerator::emitCallIterator(RegisterID* iterator, RegisterID
     emitCall(iterator, iterator, NoExpectedFunction, args, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
 
     return iterator;
-}
-
-void BytecodeGenerator::emitAwait(RegisterID* value)
-{
-    emitYield(value, JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
-    move(value, generatorValueRegister());
 }
 
 void BytecodeGenerator::emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData* node)
@@ -5068,6 +5075,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
             Ref<Label> branchOnResult = newLabel();
             {
                 emitYieldPoint(value.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
+                move(value.get(), generatorValueRegister());
 
                 Ref<Label> normalLabel = newLabel();
                 emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), generatorResumeModeRegister(), emitLoad(nullptr, JSGenerator::ResumeMode::NormalMode)), normalLabel.get());
@@ -5089,7 +5097,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     emitLabel(throwMethodFound.get());
                     CallArguments throwArguments(*this, nullptr, 1);
                     move(throwArguments.thisRegister(), iterator.get());
-                    move(throwArguments.argumentRegister(0), generatorValueRegister());
+                    move(throwArguments.argumentRegister(0), value.get());
                     emitCall(value.get(), throwMethod.get(), NoExpectedFunction, throwArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
 
                     emitJump(branchOnResult.get());
@@ -5102,8 +5110,6 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
                     emitJumpIfFalse(emitIsUndefinedOrNull(newTemporary(), returnMethod.get()), returnMethodFound.get());
 
-                    move(value.get(), generatorValueRegister());
-
                     if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
                         emitAwait(value.get());
 
@@ -5113,7 +5119,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     emitLabel(returnMethodFound.get());
                     CallArguments returnArguments(*this, nullptr, 1);
                     move(returnArguments.thisRegister(), iterator.get());
-                    move(returnArguments.argumentRegister(0), generatorValueRegister());
+                    move(returnArguments.argumentRegister(0), value.get());
                     emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
 
                     if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
@@ -5142,7 +5148,6 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
                 // Normal.
                 emitLabel(normalLabel.get());
-                move(value.get(), generatorValueRegister());
             }
 
             emitLabel(nextElement.get());

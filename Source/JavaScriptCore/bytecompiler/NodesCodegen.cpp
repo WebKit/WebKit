@@ -5061,8 +5061,6 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     }
 
     case SourceParseMode::AsyncGeneratorBodyMode:
-    case SourceParseMode::AsyncArrowFunctionBodyMode:
-    case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::GeneratorBodyMode: {
         Ref<Label> generatorBodyLabel = generator.newLabel();
         {
@@ -5078,11 +5076,13 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         }
 
         generator.emitLabel(generatorBodyLabel.get());
+        FALLTHROUGH;
+    }
 
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
+    case SourceParseMode::AsyncFunctionBodyMode: {
         emitStatementsBytecode(generator, generator.ignoredResult());
 
-        Ref<Label> done = generator.newLabel();
-        generator.emitLabel(done.get());
         generator.emitReturn(generator.emitLoad(nullptr, jsUndefined()));
         break;
     }
@@ -5160,7 +5160,7 @@ RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
             generator.emitNode(arg.get(), argument());
         } else
             arg = generator.emitLoad(nullptr, jsUndefined());
-        RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
+        RefPtr<RegisterID> value = generator.emitYield(arg.get());
         if (dst == generator.ignoredResult())
             return nullptr;
         return generator.move(generator.finalDestination(dst), value.get());
@@ -5179,10 +5179,7 @@ RegisterID* AwaitExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 {
     RefPtr<RegisterID> arg = generator.newTemporary();
     generator.emitNode(arg.get(), argument());
-    RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
-    if (dst == generator.ignoredResult())
-        return nullptr;
-    return generator.move(generator.finalDestination(dst), value.get());
+    return generator.emitAwait(dst ? dst : generator.newTemporary(), arg.get());
 }
 
 // ------------------------------ DefineFieldNode ---------------------------------
