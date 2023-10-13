@@ -436,6 +436,9 @@ public:
 
     bool canContainRangeEndPoint() const final { return true; }
 
+    bool shouldNotFireMutationEvents() const { return m_shouldNotFireMutationEvents; }
+    void setShouldNotFireMutationEvents(bool fire) { m_shouldNotFireMutationEvents = fire; }
+
     Element* elementForAccessKey(const String& key);
     void invalidateAccessKeyCache();
 
@@ -2259,6 +2262,8 @@ private:
     WeakHashSet<ValidationMessage> m_validationMessagesToPosition;
 
     MediaProducerMediaStateFlags m_mediaState;
+
+    bool m_shouldNotFireMutationEvents = false;
 
     unsigned m_writeRecursionDepth { 0 };
     unsigned m_numberOfRejectedSyncXHRs { 0 };
