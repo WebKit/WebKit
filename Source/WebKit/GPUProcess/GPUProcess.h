@@ -67,7 +67,6 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
-struct GPUProcessPreferencesForWebProcess;
 struct GPUProcessSessionParameters;
 class RemoteAudioSessionProxyManager;
 

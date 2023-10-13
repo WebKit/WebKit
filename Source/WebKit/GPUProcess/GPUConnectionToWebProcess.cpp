@@ -272,10 +272,13 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
     , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
+    , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
+    , m_isWebGLEnabled(parameters.isWebGLEnabled)
+    , m_isWebGPUEnabled(parameters.isWebGPUEnabled)
+    , m_isDOMRenderingEnabled(parameters.isDOMRenderingEnabled)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
-    , m_preferences(parameters.preferences)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -442,7 +445,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (hasOutstandingRenderingResourceUsage())
         return false;
 
-    if (m_preferences.isDOMRenderingEnabled)
+    if (m_isDOMRenderingEnabled)
         return false;
 
 #if ENABLE(WEB_AUDIO)

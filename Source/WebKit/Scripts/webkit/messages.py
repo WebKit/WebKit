@@ -145,6 +145,7 @@ def types_that_must_be_moved():
         'Vector<WebKit::SharedMemory::Handle>',
         'WebKit::WebGPU::ExternalTextureDescriptor',
         'WebCore::GraphicsContextGL::EGLImageSource',
+        'WebCore::ProcessIdentity',
         'WebKit::ConsumerSharedCARingBuffer::Handle',
         'WebKit::GPUProcessConnectionParameters',
         'WebKit::ImageBufferBackendHandle',

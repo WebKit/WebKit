@@ -102,6 +102,7 @@ public:
     WebKit::WebPageGroup* pageGroup();
     void setPageGroup(WebKit::WebPageGroup*);
 
+    const WebKit::WebPreferences* preferences() const;
     WebKit::WebPreferences* preferences();
     void setPreferences(WebKit::WebPreferences*);
 
@@ -224,10 +225,6 @@ public:
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
-
-#if ENABLE(GPU_PROCESS)
-    WebKit::GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
-#endif
 
 private:
     struct Data {

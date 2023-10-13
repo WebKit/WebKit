@@ -98,6 +98,7 @@ enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 struct FrameInfoData;
+struct NetworkProcessConnectionParameters;
 struct NetworkProcessCreationParameters;
 struct ResourceLoadInfo;
 struct WebPushMessage;
@@ -126,7 +127,7 @@ public:
 
     static Vector<Ref<NetworkProcessProxy>> allNetworkProcesses();
     
-    void getNetworkProcessConnection(WebProcessProxy&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
+    void getNetworkProcessConnection(WebProcessProxy&, NetworkProcessConnectionParameters&&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
     Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
     void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(API::DataTask&)>&&);

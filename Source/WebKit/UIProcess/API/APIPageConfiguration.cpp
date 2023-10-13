@@ -125,6 +125,11 @@ void PageConfiguration::setPageGroup(WebPageGroup* pageGroup)
     m_data.pageGroup = pageGroup;
 }
 
+const WebPreferences* PageConfiguration::preferences() const
+{
+    return m_data.preferences.get();
+}
+
 WebPreferences* PageConfiguration::preferences()
 {
     return m_data.preferences.get();
@@ -242,21 +247,6 @@ ApplicationManifest* PageConfiguration::applicationManifest() const
 void PageConfiguration::setApplicationManifest(ApplicationManifest* applicationManifest)
 {
     m_data.applicationManifest = applicationManifest;
-}
-#endif
-
-#if ENABLE(GPU_PROCESS)
-WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
-{
-    RefPtr preferences = m_data.preferences;
-    RELEASE_ASSERT(preferences);
-
-    return {
-        preferences->webGLEnabled(),
-        preferences->webGPUEnabled(),
-        preferences->useGPUProcessForDOMRenderingEnabled(),
-        allowTestOnlyIPC()
-    };
 }
 #endif
 

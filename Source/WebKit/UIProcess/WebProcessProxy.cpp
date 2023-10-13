@@ -36,6 +36,7 @@
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "NetworkProcessConnectionInfo.h"
+#include "NetworkProcessConnectionParameters.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "PlatformXRSystem.h"
@@ -216,26 +217,40 @@ Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> WebPro
     return result;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::createPrewarmed(WebProcessPool& processPool, LockdownMode lockdownMode)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode));
-    if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
-        if (liveProcessesLRU().computeSize() >= s_maxProcessCount) {
-            for (auto& processPool : WebProcessPool::allProcessPools())
-                processPool->webProcessCache().clear();
-            if (liveProcessesLRU().computeSize() >= s_maxProcessCount)
-                Ref { liveProcessesLRU().first() }->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
-        }
-        ASSERT(liveProcessesLRU().computeSize() < s_maxProcessCount);
-        liveProcessesLRU().add(proxy.get());
-        proxy->connect();
-    }
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, nullptr, std::nullopt, WebCore::CrossOriginMode::Shared, lockdownMode));
+    proxy->launchProcess();
     return proxy;
+}
+
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, PageConfigurationKey pageKey, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
+{
+    LockdownMode lockdownMode = pageKey.isLockdownModeEnabled ? LockdownMode::Enabled : LockdownMode::Disabled;
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, pageKey, crossOriginMode, lockdownMode));
+    if (shouldLaunchProcess == ShouldLaunchProcess::Yes)
+        proxy->launchProcess();
+    return proxy;
+}
+
+void WebProcessProxy::launchProcess()
+{
+    if (liveProcessesLRU().computeSize() >= s_maxProcessCount) {
+        for (auto& processPool : WebProcessPool::allProcessPools())
+            processPool->webProcessCache().clear();
+        if (liveProcessesLRU().computeSize() >= s_maxProcessCount)
+            Ref { liveProcessesLRU().first() }->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
+    }
+    ASSERT(liveProcessesLRU().computeSize() < s_maxProcessCount);
+    liveProcessesLRU().add(*this);
+    connect();
 }
 
 Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, LockdownMode::Disabled));
+    WebProcessProxy::PageConfigurationKey pageKey; // Currently we do not have any context to fill this.
+    LockdownMode lockdownMode = pageKey.isLockdownModeEnabled ? LockdownMode::Enabled : LockdownMode::Disabled;
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, pageKey, CrossOriginMode::Shared, lockdownMode));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerIdentifierForRemoteWorkers());
     proxy->connect();
@@ -245,7 +260,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
 Ref<WebProcessProxy> WebProcessProxy::createForWebContentCrashy(WebProcessPool& processPool)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, nullptr, IsPrewarmed::No, CrossOriginMode::Shared, LockdownMode::Disabled));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, nullptr, std::nullopt, CrossOriginMode::Shared, LockdownMode::Disabled));
     proxy->setIsCrashyProcess();
     proxy->connect();
     return proxy;
@@ -282,10 +297,10 @@ private:
 };
 #endif
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, std::optional<PageConfigurationKey> pageKey, CrossOriginMode crossOriginMode, LockdownMode lockdownMode)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_backgroundResponsivenessTimer(*this)
-    , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
+    , m_processPool(processPool, pageKey ? IsWeak::No : IsWeak::Yes)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
@@ -295,7 +310,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<UIProxyForCapture>(*this)))
 #endif
-    , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
+    , m_pageKey(pageKey)
     , m_lockdownMode(lockdownMode)
     , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
@@ -307,13 +322,15 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
-
+    ASSERT(!websiteDataStore == !m_pageKey); // Prewarmed does not have either, non-prewarmed has both.
+    ASSERT(!m_pageKey || m_pageKey->isLockdownModeEnabled == (lockdownMode == LockdownMode::Enabled));
     auto result = allProcessMap().add(coreProcessIdentifier(), WeakPtr { this });
     ASSERT_UNUSED(result, result.isNewEntry);
 
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 
     platformInitialize();
+
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -400,27 +417,6 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     }
 }
 
-void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
-{
-    ASSERT(!m_websiteDataStore);
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
-    m_websiteDataStore = &dataStore;
-    logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
-#if PLATFORM(COCOA)
-    if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
-        auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
-        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == &networkProcess);
-        m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
-    }
-#endif
-    updateRegistrationWithDataStore();
-    send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
-
-    // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
-    // LocalWebLockRegistry.
-    m_webLockRegistry = makeUnique<WebLockRegistryProxy>(*this);
-}
-
 bool WebProcessProxy::isDummyProcessProxy() const
 {
     return m_websiteDataStore && processPool().dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
@@ -436,28 +432,6 @@ void WebProcessProxy::updateRegistrationWithDataStore()
     }
 }
 
-void WebProcessProxy::initializePreferencesForGPUProcess(const WebPageProxy& page)
-{
-#if ENABLE(GPU_PROCESS)
-    if (!m_preferencesForGPUProcess)
-        m_preferencesForGPUProcess = page.preferencesForGPUProcess();
-    else
-        ASSERT(*m_preferencesForGPUProcess == page.preferencesForGPUProcess());
-#else
-    UNUSED_PARAM(page);
-#endif
-}
-
-bool WebProcessProxy::hasSameGPUProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
-{
-#if ENABLE(GPU_PROCESS)
-    return !m_preferencesForGPUProcess || *m_preferencesForGPUProcess == pageConfiguration.preferencesForGPUProcess();
-#else
-    UNUSED_PARAM(pageConfiguration);
-    return true;
-#endif
-}
-
 void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
@@ -466,7 +440,6 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
     ASSERT(!m_provisionalPages.contains(provisionalPage));
     markProcessAsRecentlyUsed();
     m_provisionalPages.add(provisionalPage);
-    initializePreferencesForGPUProcess(provisionalPage.page());
     updateRegistrationWithDataStore();
 }
 
@@ -491,7 +464,6 @@ void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
     ASSERT(!m_remotePages.contains(remotePage));
     m_remotePages.add(remotePage);
     markProcessAsRecentlyUsed();
-    initializePreferencesForGPUProcess(*remotePage.page());
 }
 
 void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
@@ -801,8 +773,6 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         m_processPool->pageBeginUsingWebsiteDataStore(webPage, webPage.websiteDataStore());
     }
 
-    initializePreferencesForGPUProcess(webPage);
-
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
         setRunningBoardThrottlingEnabled();
@@ -825,14 +795,36 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         didChangeThrottleState(throttler().currentState());
 }
 
-void WebProcessProxy::markIsNoLongerInPrewarmedPool()
+void WebProcessProxy::takePrewarmedIntoUse(WebsiteDataStore& dataStore, PageConfigurationKey pageKey)
 {
-    ASSERT(m_isPrewarmed);
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "markIsNoLongerInPrewarmedPool:");
-
-    m_isPrewarmed = false;
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "takePrewarmedIntoUse: dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
     RELEASE_ASSERT(m_processPool);
+    ASSERT(!m_websiteDataStore);
+    ASSERT(isPrewarmed());
+    ASSERT(pageKey.isLockdownModeEnabled == (m_lockdownMode == LockdownMode::Enabled));
     m_processPool.setIsWeak(IsWeak::No);
+
+    m_websiteDataStore = &dataStore;
+    m_pageKey = pageKey;
+#if ENABLE(IPC_TESTING_API)
+    if (m_pageKey->ignoreInvalidMessageForTesting)
+        connection()->setIgnoreInvalidMessageForTesting();
+#endif
+
+    logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
+#if PLATFORM(COCOA)
+    if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
+        auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
+        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == &networkProcess);
+        m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
+    }
+#endif
+    updateRegistrationWithDataStore();
+    send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(dataStore)), 0);
+
+    // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
+    // LocalWebLockRegistry.
+    m_webLockRegistry = makeUnique<WebLockRegistryProxy>(*this);
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 }
@@ -1034,18 +1026,28 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
         RELEASE_LOG_FAULT(Process, "WebProcessProxy should always have a WebsiteDataStore when used by a web process requesting a network process connection");
         return reply({ });
     }
-    dataStore->getNetworkProcessConnection(*this, WTFMove(reply));
+    NetworkProcessConnectionParameters parameters;
+    parameters.allowTestOnlyIPC = m_pageKey->allowTestOnlyIPC;
+    dataStore->getNetworkProcessConnection(*this, WTFMove(parameters), WTFMove(reply));
 }
 
 #if ENABLE(GPU_PROCESS)
-
-void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
+void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebCore::ProcessIdentity&& webProcessIdentity)
 {
-    auto& gpuPreferences = preferencesForGPUProcess();
-    ASSERT(gpuPreferences);
-    if (gpuPreferences)
-        parameters.preferences = *gpuPreferences;
-
+    GPUProcessConnectionParameters parameters;
+    parameters.isLockdownModeEnabled = m_pageKey->isLockdownModeEnabled;
+    parameters.allowTestOnlyIPC = m_pageKey->allowTestOnlyIPC;
+    parameters.isWebGPUEnabled = m_pageKey->isGPUProcessWebGPUEnabled;
+    parameters.isWebGLEnabled  = m_pageKey->isGPUProcessWebGLEnabled;
+    parameters.isDOMRenderingEnabled = m_pageKey->isGPUProcessDOMRenderingEnabled;
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = m_pageKey->ignoreInvalidMessageForTesting;
+#endif
+#if HAVE(AUDIT_TOKEN)
+    parameters.presentingApplicationAuditToken = m_processPool->configuration().presentingApplicationProcessToken();
+#endif
+    // FIXME: webProcessIdentity parameter should be removed, WebProcessProxy should know the identity.
+    parameters.webProcessIdentity = WTFMove(webProcessIdentity);
     m_processPool->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 
@@ -1257,15 +1259,6 @@ void WebProcessProxy::didChangeIsResponsive()
     }
 }
 
-#if ENABLE(IPC_TESTING_API)
-void WebProcessProxy::setIgnoreInvalidMessageForTesting()
-{
-    if (state() == State::Running)
-        connection()->setIgnoreInvalidMessageForTesting();
-    m_ignoreInvalidMessageForTesting = true;
-}
-#endif
-
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "didFinishLaunching:");
@@ -1300,8 +1293,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     m_backgroundResponsivenessTimer.updateState();
 
 #if ENABLE(IPC_TESTING_API)
-    if (m_ignoreInvalidMessageForTesting)
-        connection()->setIgnoreInvalidMessageForTesting();
+    if (!isPrewarmed()) {
+        if (m_pageKey->ignoreInvalidMessageForTesting)
+            connection()->setIgnoreInvalidMessageForTesting();
+    }
 #endif
 
 #if USE(RUNNINGBOARD)
@@ -2019,6 +2014,36 @@ void WebProcessProxy::updateBlobRegistryPartitioningState() const
         networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
 }
 
+// Keep in sync with WebPage.cpp adjustSettingsForLockdownMode.
+static void adjustPageConfigurationKeyForLockdownMode(WebProcessProxy::PageConfigurationKey key)
+{
+#if ENABLE(GPU_PROCESS)
+    key.isGPUProcessWebGPUEnabled = false;
+    key.isGPUProcessWebGLEnabled = false;
+#endif
+}
+
+WebProcessProxy::PageConfigurationKey WebProcessProxy::computePageConfigurationKey(const API::PageConfiguration& configuration, const API::WebsitePolicies* policy)
+{
+    WebProcessProxy::PageConfigurationKey key;
+    key.isLockdownModeEnabled = policy ? policy->lockdownModeEnabled() : configuration.lockdownModeEnabled();
+    key.allowTestOnlyIPC = configuration.allowTestOnlyIPC();
+#if ENABLE(GPU_PROCESS) || ENABLE(IPC_TESTING_API)
+    auto& preferences = *configuration.preferences();
+#if ENABLE(GPU_PROCESS)
+    key.isGPUProcessWebGPUEnabled =  preferences.webGPUEnabled();
+    key.isGPUProcessWebGLEnabled = preferences.webGLEnabled() && preferences.useGPUProcessForWebGLEnabled();
+    key.isGPUProcessDOMRenderingEnabled = preferences.useGPUProcessForDOMRenderingEnabled();
+#endif
+#if ENABLE(IPC_TESTING_API)
+    key.ignoreInvalidMessageForTesting = preferences.ipcTestingAPIEnabled() && preferences.ignoreInvalidMessageWhenIPCTestingAPIEnabled();
+#endif
+#endif
+    if (key.isLockdownModeEnabled)
+        adjustPageConfigurationKeyForLockdownMode(key);
+    return key;
+}
+
 #if !PLATFORM(COCOA)
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
@@ -2122,7 +2147,7 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
 
 WebProcessPool* WebProcessProxy::processPoolIfExists() const
 {
-    if (m_isPrewarmed || m_isInProcessCache)
+    if (isPrewarmed() || m_isInProcessCache)
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processPoolIfExists: trying to get WebProcessPool from an inactive WebProcessProxy");
     else
         ASSERT(m_processPool);

@@ -28,7 +28,6 @@
 #include "APIUserInitiatedAction.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
@@ -148,12 +147,25 @@ public:
     using UserInitiatedActionByAuthorizationTokenMap = HashMap<WTF::UUID, RefPtr<API::UserInitiatedAction>>;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
-    enum class IsPrewarmed : bool { No, Yes };
-
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class LockdownMode : bool { Disabled, Enabled };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    // Key describing page configurations that can share a WebProcess.
+    struct PageConfigurationKey {
+        bool isLockdownModeEnabled : 1 { false };
+        bool allowTestOnlyIPC : 1 { false };
+#if ENABLE(GPU_PROCESS)
+        bool isGPUProcessWebGPUEnabled : 1 { false };
+        bool isGPUProcessWebGLEnabled : 1 { false };
+        bool isGPUProcessDOMRenderingEnabled : 1 { false };
+#endif
+#if ENABLE(IPC_TESTING_API)
+        bool ignoreInvalidMessageForTesting : 1 { false };
+#endif
+        friend bool operator==(const PageConfigurationKey&, const PageConfigurationKey&) = default;
+    };
+    static Ref<WebProcessProxy> createPrewarmed(WebProcessPool&, LockdownMode);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, PageConfigurationKey, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
@@ -174,10 +186,6 @@ public:
     WebProcessPool* processPoolIfExists() const;
     WebProcessPool& processPool() const;
 
-#if ENABLE(GPU_PROCESS)
-    const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
-#endif
-
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
     const std::optional<WebCore::RegistrableDomain>& optionalRegistrableDomain() const { return m_registrableDomain; }
@@ -190,8 +198,8 @@ public:
     void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
-    void setWebsiteDataStore(WebsiteDataStore&);
-    
+    PageConfigurationKey pageConfigurationKey() const { return *m_pageKey; }
+
     PAL::SessionID sessionID() const;
 
     static bool hasReachedProcessCountLimit();
@@ -203,6 +211,7 @@ public:
 #if ENABLE(WEBXR) && !USE(OPENXR)
     static RefPtr<WebPageProxy> webPageWithActiveXRSession();
 #endif
+    static PageConfigurationKey computePageConfigurationKey(const API::PageConfiguration&, const API::WebsitePolicies* = nullptr);
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     enum class BeginsUsingDataStore : bool { No, Yes };
@@ -333,8 +342,8 @@ public:
     void endBackgroundActivityForFullscreenInput();
 #endif
 
-    bool isPrewarmed() const { return m_isPrewarmed; }
-    void markIsNoLongerInPrewarmedPool();
+    bool isPrewarmed() const { return !m_pageKey.has_value(); }
+    void takePrewarmedIntoUse(WebsiteDataStore&, PageConfigurationKey);
 
 #if PLATFORM(COCOA)
     Vector<String> mediaMIMETypes() const;
@@ -395,12 +404,10 @@ public:
     void sendAudioComponentRegistrations();
 #endif
 
-    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
-
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void enableRemoteInspectorIfNeeded();
 #endif
-    
+
 #if PLATFORM(COCOA)
     void unblockAccessibilityServerIfNeeded();
 #endif
@@ -440,14 +447,6 @@ public:
 #if ENABLE(ROUTING_ARBITRATION)
     AudioSessionRoutingArbitratorProxy& audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
 #endif
-
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
-    void setIgnoreInvalidMessageForTesting();
-#endif
-    
-    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
-    void setAllowTestOnlyIPC(bool allowTestOnlyIPC) { m_allowTestOnlyIPC = allowTestOnlyIPC; }
 
 #if ENABLE(MEDIA_STREAM)
     static void muteCaptureInPagesExcept(WebCore::PageIdentifier);
@@ -503,7 +502,7 @@ public:
     void resetState();
 
 protected:
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, std::optional<PageConfigurationKey>, WebCore::CrossOriginMode, LockdownMode);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -513,7 +512,7 @@ protected:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
     bool shouldSendPendingMessage(const PendingMessage&) final;
-    
+
 #if PLATFORM(COCOA)
     void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
@@ -532,13 +531,12 @@ protected:
 #endif
 
 private:
+    void launchProcess();
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, WeakPtr<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
     static Vector<RefPtr<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& globalPageMap();
     static Vector<RefPtr<WebPageProxy>> globalPages();
-
-    void initializePreferencesForGPUProcess(const WebPageProxy&);
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
@@ -558,11 +556,11 @@ private:
 
     bool hasProvisionalPageWithID(WebPageProxyIdentifier) const;
     bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
-    
+
     void getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
 #if ENABLE(GPU_PROCESS)
-    void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
+    void createGPUProcessConnection(IPC::Connection::Handle&&, WebCore::ProcessIdentity&&);
 #endif
 
     bool shouldAllowNonValidInjectedCode() const;
@@ -597,7 +595,7 @@ private:
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
-    
+
     void updateRegistrationWithDataStore();
 
     void maybeShutDown();
@@ -611,7 +609,7 @@ private:
     void destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier);
 
     void systemBeep();
-    
+
 #if PLATFORM(MAC)
     void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
 #endif
@@ -656,7 +654,7 @@ private:
     };
 
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
-    
+
     RefPtr<WebConnectionToWebProcess> m_webConnection;
     WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
 
@@ -711,8 +709,9 @@ private:
 
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_hasCommittedAnyMeaningfulProvisionalLoads { false }; // True if the process has committed a provisional load to a URL that was not about:*.
-    bool m_isPrewarmed;
-    LockdownMode m_lockdownMode { LockdownMode::Disabled };
+
+    std::optional<PageConfigurationKey> m_pageKey; // Set when the process becomes non-prewarmed.
+    LockdownMode m_lockdownMode; // Prewarmed process needs to duplicate this from m_pageKey.
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
@@ -752,12 +751,6 @@ private:
 
     ShutdownPreventingScopeCounter m_shutdownPreventingScopeCounter;
 
-#if ENABLE(IPC_TESTING_API)
-    bool m_ignoreInvalidMessageForTesting { false };
-#endif
-    
-    bool m_allowTestOnlyIPC { false };
-
     using SpeechRecognitionServerMap = HashMap<SpeechRecognitionServerIdentifier, std::unique_ptr<SpeechRecognitionServer>>;
     SpeechRecognitionServerMap m_speechRecognitionServerMap;
 #if ENABLE(MEDIA_STREAM)
@@ -773,9 +766,6 @@ private:
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
     mutable String m_environmentIdentifier;
-#if ENABLE(GPU_PROCESS)
-    mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
-#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
