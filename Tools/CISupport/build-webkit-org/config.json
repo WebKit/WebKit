@@ -817,10 +817,10 @@
                   { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-17", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-tvOS-Simulator-17-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-9", "branch": "main", "treeStableTimer": 45.0,
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-10", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-watchOS-10-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-9", "branch": "main", "treeStableTimer": 45.0,
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-10", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-watchOS-Simulator-10-Release-Build"]
                   },
                   { "type": "Triggerable", "name": "ios-simulator-17-release-tests-wk2",
