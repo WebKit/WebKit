@@ -256,6 +256,14 @@ RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
     return newAccessibilityRemoteToken([NSUUID UUID]);
 }
 
+void WebPage::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData)
+{
+    IPC::DataReference dataToken = { };
+    if ([notificationData length])
+        dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([notificationData bytes]), [notificationData length]);
+    send(Messages::WebPageProxy::RelayAccessibilityNotification(notificationName, dataToken));
+}
+
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)
 {
     data.hasContent = false;

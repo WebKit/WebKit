@@ -1108,6 +1108,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (UIScrollView *)_scroller;
 - (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
+- (void)accessibilityRelayNotification:(NSString *)notificationName notificationData:(NSData *)notificationData;
 - (UIRectEdge)_edgesApplyingSafeAreaInsetsToContentInset;
 @end
 

@@ -52,6 +52,10 @@ public:
     WebPage& page() const { return m_page.get(); }
     Ref<WebPage> protectedPage() const;
 
+#if PLATFORM(IOS_FAMILY)
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const final;
+#endif
+
 private:
     void chromeDestroyed() final;
     
@@ -494,6 +498,19 @@ private:
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
     CheckedRef<WebPage> m_page;
+};
+
+class AXRelayProcessSuspendedNotification {
+public:
+    enum class AutomaticallySend : bool { No, Yes };
+
+    explicit AXRelayProcessSuspendedNotification(Ref<WebPage>, AutomaticallySend = AutomaticallySend::Yes);
+    ~AXRelayProcessSuspendedNotification();
+
+    void sendProcessSuspendMessage(bool suspended);
+private:
+    CheckedRef<WebPage> m_page;
+    AutomaticallySend m_automaticallySend;
 };
 
 } // namespace WebKit

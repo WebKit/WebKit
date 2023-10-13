@@ -76,7 +76,12 @@ static NSString * const UIAccessibilityAcceptedInlineTextCompletion = @"UIAccess
 
 - (BOOL)isAttachment;
 
-- (void)postNotification:(NSString *)notificationName;
+// This interacts with Accessibility system to post-process some notifications.
+- (void)accessibilityOverrideProcessNotification:(NSString *)notificationName;
+
+// This is called by the Accessibility system to relay back to the chrome.
+- (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData;
+
 @end
 
 #endif // ENABLE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

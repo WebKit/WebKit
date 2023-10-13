@@ -476,6 +476,10 @@ public:
     std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
     void updateRelations(Element&, const QualifiedName&);
 
+#if PLATFORM(IOS_FAMILY)
+    void relayNotification(const String&, RetainPtr<NSData>);
+#endif
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }

@@ -179,6 +179,11 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
     return true;
 }
 
+void WebChromeClient::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData) const
+{
+    return protectedPage()->relayAccessibilityNotification(notificationName, notificationData);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

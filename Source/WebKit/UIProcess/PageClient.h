@@ -346,6 +346,9 @@ public:
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) = 0;
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) = 0;
+#endif
 #if PLATFORM(MAC)
     virtual WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) = 0;
 #endif

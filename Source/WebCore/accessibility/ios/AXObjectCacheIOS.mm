@@ -29,8 +29,9 @@
 #if ENABLE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)
 
 #import "AccessibilityObject.h"
-#import "WebAccessibilityObjectWrapperIOS.h"
+#import "Chrome.h"
 #import "RenderObject.h"
+#import "WebAccessibilityObjectWrapperIOS.h"
 
 #import <wtf/RetainPtr.h>
 
@@ -90,24 +91,27 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     return name;
 }
 
+void AXObjectCache::relayNotification(const String& notificationName, RetainPtr<NSData> notificationData)
+{
+    if (auto* page = document().page())
+        page->chrome().relayAccessibilityNotification(notificationName, notificationData);
+}
+
 void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
 {
     if (!object)
         return;
 
-    // iOS notifications must ultimately call UIKit UIAccessibilityPostNotification.
-    // But WebCore is not linked with UIKit. So a workaround is to override the wrapper's
-    // postNotification method in the system WebKitAccessibility bundle that does link UIKit.
-    auto notificationName = notificationPlatformName(notification);
-    if (notificationName.isNull())
+    auto stringNotification = notificationPlatformName(notification);
+    if (stringNotification.isEmpty())
         return;
 
-    auto nsNotificationName = notificationName.createNSString();
-    [object->wrapper() postNotification:nsNotificationName.get()];
+    auto notificationName = stringNotification.createNSString();
+    [object->wrapper() accessibilityOverrideProcessNotification:notificationName.get()];
 
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
-    [object->wrapper() accessibilityPostedNotification:nsNotificationName.get()];
+    [object->wrapper() accessibilityPostedNotification:notificationName.get()];
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

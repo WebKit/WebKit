@@ -253,7 +253,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 
     Vector<SandboxExtension::Handle> handleArray;
 #if PLATFORM(IOS_FAMILY)
-    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 #endif
 
     send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(handleArray), 0);

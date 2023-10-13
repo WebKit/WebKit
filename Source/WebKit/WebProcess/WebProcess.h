@@ -647,6 +647,7 @@ private:
 #endif
 
     void setNetworkProcessConnectionID(IPC::Connection::UniqueID);
+    void accessibilityRelayProcessSuspended(bool);
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

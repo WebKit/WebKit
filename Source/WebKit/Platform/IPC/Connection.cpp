@@ -797,8 +797,6 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
 
-    willSendSyncMessage(sendSyncOptions);
-
     bool timedOut = false;
     while (!timedOut) {
         // First, check if we have any messages that we need to process.
@@ -814,16 +812,12 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
             ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
 
             // We found the sync reply.
-            if (pendingSyncReply.didReceiveReply) {
-                didReceiveSyncReply(sendSyncOptions);
+            if (pendingSyncReply.didReceiveReply)
                 return { WTFMove(pendingSyncReply.replyDecoder) };
-            }
 
             // The connection was closed.
-            if (!m_shouldWaitForSyncReplies) {
-                didReceiveSyncReply(sendSyncOptions);
+            if (!m_shouldWaitForSyncReplies)
                 return Error::InvalidConnection;
-            }
         }
 
         // Processing a sync message could cause the connection to be invalidated.
@@ -832,7 +826,6 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
         // any more incoming messages.
         if (!isValid()) {
             RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Connection no longer valid, id=%" PRIu64, syncRequestID.toUInt64());
-            didReceiveSyncReply(sendSyncOptions);
             return Error::InvalidConnection;
         }
 
@@ -847,8 +840,6 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
 #else
     RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName), syncRequestID.toUInt64());
 #endif
-
-    didReceiveSyncReply(sendSyncOptions);
 
     return Error::Timeout;
 }

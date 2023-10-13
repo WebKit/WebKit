@@ -127,6 +127,13 @@ IntRect Chrome::rootViewToAccessibilityScreen(const IntRect& rect) const
     return m_client->rootViewToAccessibilityScreen(rect);
 }
 
+#if PLATFORM(IOS_FAMILY)
+void Chrome::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData) const
+{
+    return m_client->relayAccessibilityNotification(notificationName, notificationData);
+}
+#endif
+
 PlatformPageClient Chrome::platformPageClient() const
 {
     return m_client->platformPageClient();

@@ -566,14 +566,6 @@ SocketPair createPlatformConnection(unsigned options)
     return socketPair;
 }
 
-void Connection::willSendSyncMessage(OptionSet<SendSyncOption>)
-{
-}
-
-void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
-{
-}
-
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     SocketPair socketPair = createPlatformConnection();

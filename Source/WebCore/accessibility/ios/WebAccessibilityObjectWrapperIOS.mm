@@ -1687,7 +1687,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     if (result) {
         auto notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled).createNSString();
-        [self postNotification:notificationName.get()];
+        [self accessibilityOverrideProcessNotification:notificationName.get()];
 
         CGPoint scrollPos = [self _accessibilityScrollPosition];
         NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
@@ -1696,6 +1696,20 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.
     return result;
+}
+
+- (void)accessibilityOverrideProcessNotification:(NSString *)notificationName
+{
+    // This is overridden by the Accessibility system to post-process notifications.
+    // When it is done, it will call back into handleNotificationRelayToChrome.
+}
+
+- (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData
+{
+    if (![self _prepareAccessibilityCall])
+        return;
+
+    self.axBackingObject->axObjectCache()->relayNotification({ notificationName }, notificationData);
 }
 
 - (CGRect)_accessibilityRelativeFrame
@@ -2044,11 +2058,6 @@ static RenderObject* rendererForView(WAKView* view)
     if (obj)
         return obj->parentObjectUnignored()->wrapper();
     return nil;
-}
-
-- (void)postNotification:(NSString *)notificationName
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
 }
 
 // These will be used by the UIKit wrapper to calculate an appropriate description of scroll status.

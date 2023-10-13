@@ -453,7 +453,14 @@ IntPoint PageClientImpl::accessibilityScreenToRootView(const IntPoint& point)
         rootViewPoint = [contentView accessibilityConvertPointFromSceneReferenceCoordinates:rootViewPoint];
     return IntPoint(rootViewPoint);
 }
-    
+
+void PageClientImpl::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData)
+{
+    auto contentView = this->contentView();
+    if ([contentView respondsToSelector:@selector(accessibilityRelayNotification:notificationData:)])
+        [contentView accessibilityRelayNotification:notificationName notificationData:notificationData.get()];
+}
+
 IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
 {
     CGRect rootViewRect = rect;

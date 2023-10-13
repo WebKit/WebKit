@@ -225,6 +225,9 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const = 0;
+#endif
 
     virtual void didFinishLoadingImageForElement(HTMLImageElement&) = 0;
 
