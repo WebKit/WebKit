@@ -63,6 +63,9 @@ public:
     
     bool run()
     {
+        ASSERT(m_graph.m_planStage <= PlanStage::LICMAndLater);
+        m_graph.m_planStage = PlanStage::LICMAndLater;
+
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
         
         m_graph.ensureSSADominators();
