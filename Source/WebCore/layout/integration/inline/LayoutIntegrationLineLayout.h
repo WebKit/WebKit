@@ -79,6 +79,7 @@ public:
     static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
+    bool shouldSwitchToLegacyOnInvalidation() const;
 
     void updateInlineContentConstraints();
     void updateInlineContentDimensions();

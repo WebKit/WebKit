@@ -187,6 +187,24 @@ bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlo
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
+bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
+{
+    constexpr size_t maximimumBoxTreeSizeForInvalidation = 128;
+    if (m_boxTree.boxCount() <= maximimumBoxTreeSizeForInvalidation)
+        return false;
+    auto isOutOfFlowPositionedContentOnly = [&] {
+        auto renderers = m_boxTree.renderers();
+        if (renderers.isEmpty())
+            return false;
+        for (size_t index = 0; index < renderers.size() - 1; ++index) {
+            if (!renderers[index]->isOutOfFlowPositioned())
+                return false;
+        }
+        return true;
+    };
+    return isOutOfFlowPositionedContentOnly();
+}
+
 void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
 {
     updateLayoutBoxDimensions(replaced);
