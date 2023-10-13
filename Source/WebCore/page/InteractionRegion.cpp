@@ -105,6 +105,7 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::RadioButton:
+    case AccessibilityRole::Switch:
     case AccessibilityRole::ToggleButton:
         return true;
     default:

@@ -943,6 +943,7 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     case AccessibilityRole::RowHeader:
     case AccessibilityRole::Slider:
     case AccessibilityRole::SpinButton:
+    case AccessibilityRole::Switch:
     case AccessibilityRole::TableHeaderContainer:
     case AccessibilityRole::TextArea:
     case AccessibilityRole::TextField:
