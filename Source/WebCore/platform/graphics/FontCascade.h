@@ -319,7 +319,7 @@ private:
         return advancedTextRenderingMode();
     }
 
-    FontCascadeDescription m_fontDescription;
+    mutable FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;
     float m_letterSpacing { 0 };
     float m_wordSpacing { 0 };
