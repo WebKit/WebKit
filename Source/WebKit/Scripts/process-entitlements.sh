@@ -28,10 +28,6 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
             plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
         fi
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-        then
-            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
-        fi
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
             plistbuddy Add :com.apple.private.gpu-restricted bool YES
@@ -64,10 +60,6 @@ function mac_process_webcontent_captiveportal_entitlements()
             plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
             plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
-        fi
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-        then
-            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
         fi
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
@@ -205,6 +197,7 @@ function mac_process_webcontent_shared_entitlements()
         then
             plistbuddy Add :com.apple.private.verified-jit bool YES
             plistbuddy Add :com.apple.security.cs.single-jit bool YES
+            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
@@ -368,6 +361,7 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+    plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
     webcontent_sandbox_entitlements
 }
 
@@ -436,6 +430,8 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.systemstatus.activityattribution
     plistbuddy Add :com.apple.private.attribution.explicitly-assumed-identities array
     plistbuddy Add :com.apple.private.attribution.explicitly-assumed-identities:0:type string wildcard
+
+    plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
 }
 
 function ios_family_process_adattributiond_entitlements()
