@@ -1,4 +1,4 @@
-Tests the interfaces of the highlight API, which include Highlight, HighlightRegister, and extensions to the CSS namespace.
+Tests the interfaces of the highlight API, which include Highlight, HighlightRegistry, and extensions to the CSS namespace.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -8,10 +8,10 @@ PASS Highlight instanceof Function is true
 PASS typeof Highlight is "function"
 PASS new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof Highlight is true
 PASS Highlight.prototype[Symbol.iterator] is Highlight.prototype.values
-PASS HighlightRegister instanceof Function is true
-PASS typeof HighlightRegister is "function"
-PASS new HighlightRegister() instanceof HighlightRegister is true
-PASS new HighlightRegister().set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is defined.
+PASS HighlightRegistry instanceof Function is true
+PASS typeof HighlightRegistry is "function"
+PASS new HighlightRegistry() instanceof HighlightRegistry is true
+PASS new HighlightRegistry().set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is defined.
 PASS CSS.highlights is defined.
 PASS CSS.highlights.set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is CSS.highlights
 PASS successfullyParsed is true

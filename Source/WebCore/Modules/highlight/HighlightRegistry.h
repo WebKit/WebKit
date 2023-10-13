@@ -38,9 +38,9 @@ class DOMString;
 class Highlight;
 class StaticRange;
 
-class HighlightRegister : public RefCounted<HighlightRegister> {
+class HighlightRegistry : public RefCounted<HighlightRegistry> {
 public:
-    static Ref<HighlightRegister> create() { return adoptRef(*new HighlightRegister); }
+    static Ref<HighlightRegistry> create() { return adoptRef(*new HighlightRegistry); }
 
     void initializeMapLike(DOMMapAdapter&);
     void setFromMapLike(AtomString&&, Ref<Highlight>&&);
@@ -58,7 +58,7 @@ public:
     const Vector<AtomString>& highlightNames() const { return m_highlightNames; }
     
 private:
-    HighlightRegister() = default;
+    HighlightRegistry() = default;
     HashMap<AtomString, Ref<Highlight>> m_map;
     Vector<AtomString> m_highlightNames;
 
