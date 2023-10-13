@@ -5,6 +5,9 @@ if (window.internals)
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    if (testRunner.setShouldDownloadContentDispositionAttachments)
+        testRunner.setShouldDownloadContentDispositionAttachments(false);
+
     window.addEventListener('load', function() {
         // Due to the sandbox, it's not possible to run script in the iframe or even access its contentDocument.
         // Submit the form by clicking its button with synthetic mouse events.
