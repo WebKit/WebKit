@@ -50,6 +50,16 @@ class RTC_EXPORT SocketAddress {
   // Creates a copy of the given address.
   SocketAddress(const SocketAddress& addr);
 
+  // Construct after deserialization.
+#ifdef WEBRTC_WEBKIT_BUILD
+  SocketAddress(std::string&& hostname, IPAddress ip, uint16_t port, int scope_id, bool literal)
+    : hostname_(std::move(hostname))
+    , ip_(ip)
+    , port_(port)
+    , scope_id_(scope_id)
+    , literal_(literal) { }
+#endif
+
   // Resets to the nil address.
   void Clear();
 
@@ -107,6 +117,11 @@ class RTC_EXPORT SocketAddress {
   // a field for them.
   int scope_id() const { return scope_id_; }
   void SetScopeID(int id) { scope_id_ = id; }
+
+  // Expose literal_ for serialization.
+#ifdef WEBRTC_WEBKIT_BUILD
+  bool literal() const { return literal_; }
+#endif
 
   // Returns the 'host' portion of the address (hostname or IP) in a form
   // suitable for use in a URI. If both IP and hostname are present, hostname

@@ -5743,6 +5743,7 @@
 		5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-serializers.py"; sourceTree = "<group>"; };
 		5CD748B523C8EB190092A999 /* WebURLSchemeHandlerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLSchemeHandlerIdentifier.h; sourceTree = "<group>"; };
 		5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoadIdentifier.h; sourceTree = "<group>"; };
+		5CDFAD9C2ACFA9480040A8D8 /* RTCNetwork.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCNetwork.serialization.in; sourceTree = "<group>"; };
 		5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContextMenuElementInfo.cpp; sourceTree = "<group>"; };
 		5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuElementInfo.h; sourceTree = "<group>"; };
 		5CE0C368229F2D4A003695F0 /* WKContextMenuElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContextMenuElementInfo.mm; sourceTree = "<group>"; };
@@ -8366,6 +8367,7 @@
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
 				410482CC1DDD2FB500F006D0 /* RTCNetwork.h */,
+				5CDFAD9C2ACFA9480040A8D8 /* RTCNetwork.serialization.in */,
 				41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */,
 				41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */,
 				41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */,
