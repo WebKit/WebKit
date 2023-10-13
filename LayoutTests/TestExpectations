@@ -6664,6 +6664,8 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 # webkit.org/b/260546
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
 
+webkit.org/b/260823 http/tests/workers/service/self_registration.html [ Pass Failure ]
+
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/background-blending/background-blend-mode-plus-lighter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-blended-element-overflow-hidden-and-border-radius.html [ ImageOnlyFailure ]

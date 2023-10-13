@@ -148,8 +148,9 @@ void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContext
     });
 }
 
-static void forDedicatedAndSharedWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
+    SWContextManager::singleton().forEachServiceWorker(callback);
     Worker::forEachWorker(callback);
     SharedWorkerContextManager::singleton().forEachSharedWorker(callback);
 }
@@ -163,7 +164,7 @@ void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdenti
             container->updateRegistrationState(identifier, state, serviceWorkerData);
     }
 
-    forDedicatedAndSharedWorkers([identifier, state, &serviceWorkerData] {
+    forAllWorkers([identifier, state, &serviceWorkerData] {
         return [identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] (auto& context) mutable {
             if (auto* container = context.serviceWorkerContainer())
                 container->updateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
@@ -180,7 +181,7 @@ void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, S
             container->updateWorkerState(identifier, state);
     }
 
-    forDedicatedAndSharedWorkers([identifier, state] {
+    forAllWorkers([identifier, state] {
         return [identifier, state] (auto& context) {
             if (auto* container = context.serviceWorkerContainer())
                 container->updateWorkerState(identifier, state);
@@ -197,7 +198,7 @@ void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifie
             container->queueTaskToFireUpdateFoundEvent(identifier);
     }
 
-    forDedicatedAndSharedWorkers([identifier] {
+    forAllWorkers([identifier] {
         return [identifier] (auto& context) {
             if (auto* container = context.serviceWorkerContainer())
                 container->queueTaskToFireUpdateFoundEvent(identifier);
@@ -216,7 +217,7 @@ void SWClientConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistration
         }
     }
 
-    forDedicatedAndSharedWorkers([identifier, lastUpdateTime] {
+    forAllWorkers([identifier, lastUpdateTime] {
         return [identifier, lastUpdateTime] (auto& context) {
             if (auto* container = context.serviceWorkerContainer()) {
                 if (auto* registration = container->registration(identifier))
@@ -237,7 +238,7 @@ void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistration
         }
     }
 
-    forDedicatedAndSharedWorkers([identifier, updateViaCache] {
+    forAllWorkers([identifier, updateViaCache] {
         return [identifier, updateViaCache] (auto& context) {
             if (auto* container = context.serviceWorkerContainer()) {
                 if (auto* registration = container->registration(identifier))
@@ -247,18 +248,11 @@ void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistration
     });
 }
 
-static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
-{
-    SWContextManager::singleton().forEachServiceWorker(callback);
-    forDedicatedAndSharedWorkers(callback);
-}
-
 void SWClientConnection::updateBackgroundFetchRegistration(const BackgroundFetchInformation& information)
 {
     for (auto* document : Document::allDocuments())
         BackgroundFetchRegistration::updateIfExisting(*document, information);
 
-    // FIXME: this code path for service worker should follow background fetch event code path.
     forAllWorkers([&information] {
         return [information = crossThreadCopy(information)] (auto& context) {
             BackgroundFetchRegistration::updateIfExisting(context, information);

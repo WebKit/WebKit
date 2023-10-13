@@ -72,11 +72,6 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
         server->removeContextConnection(*this);
 }
 
-NetworkProcess& WebSWServerToContextConnection::networkProcess()
-{
-    return m_connection.networkProcess();
-}
-
 IPC::Connection& WebSWServerToContextConnection::ipcConnection() const
 {
     return m_connection.connection();
