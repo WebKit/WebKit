@@ -44,7 +44,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInFrame : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, readonly) NSArray *childFrames;
+@property (nonatomic, readonly) NSArray *childFrames WK_API_DEPRECATED("Child frames might not be in the same process", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @property (nonatomic, readonly) BOOL containsAnyFormElements;
 @property (nonatomic, readonly) BOOL isMainFrame;
 
