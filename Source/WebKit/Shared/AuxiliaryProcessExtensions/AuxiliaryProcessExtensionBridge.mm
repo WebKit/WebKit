@@ -25,9 +25,9 @@
 
 #import "AuxiliaryProcessExtensionBridge.h"
 
-#import <WebKit/WKMain.h>
+#import "ExtensionEventHandler.h"
 
-void extensionMain(int argc, char** argv)
+void handleNewConnection(xpc_connection_t connection)
 {
-    WKExtensionMain(argc, argv);
+    ExtensionEventHandler(connection);
 }

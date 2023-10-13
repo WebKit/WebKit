@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/spi/darwin/XPCSPI.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -33,6 +35,8 @@ extern "C" {
 void NetworkServiceInitializer();
 void WebContentServiceInitializer();
 void GPUServiceInitializer();
+
+void ExtensionEventHandler(xpc_connection_t);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,13 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKFoundation.h>
 
+#include <wtf/spi/darwin/XPCSPI.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT int WKXPCServiceMain(int argc, const char** argv) WK_API_AVAILABLE(macos(10.15), ios(13.0));
-WK_EXPORT int WKAdAttributionDaemonMain(int argc, const char** argv) WK_API_AVAILABLE(macos(13.0), ios(16.0));
-WK_EXPORT int WKWebPushDaemonMain(int argc, char** argv) WK_API_AVAILABLE(macos(13.0), ios(16.0));
-WK_EXPORT int WKWebPushToolMain(int argc, char** argv) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT void ExtensionEventHandler(xpc_connection_t);
 
 #ifdef __cplusplus
 }
