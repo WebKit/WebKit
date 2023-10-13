@@ -20,6 +20,7 @@ accessibility/ios-simulator/inline-prediction-attributed-string.html [ Skip ]
 
 # Only supported with iOS 17 and later.
 media/media-webm-opus-variable-length.html [ Failure ]
+media/media-source/media-managedmse-resume-after-stall.html [ Skip ]
 
 # webkit.org/b/262663 (REGRESSION(iOS17/Sonoma): 8 WebCryptoAPI tests are constantly crashing.)
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_X25519.https.any.html [ Pass ]

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-resume-after-stall</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        run('video.autoplay = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+
+        await sleepFor(2000);
+        sourceBuffer.timestampOffset = -0.5;
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(3))');
+        await waitFor(sourceBuffer, 'update');
+
+        await testExpectedEventually("video.currentTime", 3.5, ">=");
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

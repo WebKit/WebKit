@@ -334,11 +334,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
-    double m_rate;
-    bool m_playing;
-    bool m_synchronizerSeeking;
+    double m_rate { 1 };
+    bool m_playing { false };
+    bool m_synchronizerSeeking { false };
     SeekState m_seekState { SeekCompleted };
-    mutable bool m_loadingProgressed;
+    mutable bool m_loadingProgressed { false };
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
