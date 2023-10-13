@@ -41,9 +41,9 @@ typedef NS_ENUM(NSInteger, WKEditorInsertAction) {
     WKEditorInsertActionTyped,
     WKEditorInsertActionPasted,
     WKEditorInsertActionDropped,
-} WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
+} WK_API_AVAILABLE(macos(10.12.4), ios(10.3));
 
-WK_API_AVAILABLE(macos(10.12.3), ios(10.3))
+WK_API_AVAILABLE(macos(10.12.4), ios(10.3))
 @protocol WKWebProcessPlugInEditingDelegate <NSObject>
 
 @optional
