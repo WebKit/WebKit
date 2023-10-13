@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {#text} at (0,0) size 160x45
           text run at (0,0) width 152: ".one {float: left;}"
-          text run at (152,0) width 0: " "
+          text run at (151,0) width 1: " "
           text run at (0,15) width 160: ".two {float: right;}"
-          text run at (160,15) width 0: " "
+          text run at (159,15) width 1: " "
           text run at (0,30) width 0: " "
       RenderImage {IMG} at (0,102) size 15x50
       RenderBlock {P} at (0,110) size 784x36

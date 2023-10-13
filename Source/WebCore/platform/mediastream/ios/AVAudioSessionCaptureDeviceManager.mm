@@ -287,7 +287,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
         auto device = AVAudioSessionCaptureDevice::create(portDescription, currentInput);
         if (defaultMicrophoneInformation)
             device.setIsDefault((defaultMicrophoneInformation->isBuiltInMicrophoneDefault && portDescription.portType == builtinMicrophoneDefaultPortType) || [portDescription.UID isEqualToString: defaultMicrophoneInformation->routeUID]);
-        newAudioDevices.uncheckedAppend(WTFMove(device));
+        newAudioDevices.append(WTFMove(device));
     }
 
     return newAudioDevices;

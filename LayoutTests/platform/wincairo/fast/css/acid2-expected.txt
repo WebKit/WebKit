@@ -14,8 +14,8 @@ layer at (36,2638) size 764x226
           RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x12
-        RenderText {#text} at (0,-1) size 90x14
-          text run at (0,-1) width 90: "                              "
+        RenderText {#text} at (0,-1) size 101x14
+          text run at (0,-1) width 101: "                              "
     RenderBlock (floating) {DIV} at (36,96) size 168x48 [border: none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x48 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (60,12) size 24x24 [bgcolor=#FF0000]
@@ -79,10 +79,10 @@ layer at (48,84) size 704x82
       RenderInline {A} at (0,0) size 215x27 [color=#0000FF]
         RenderText {#text} at (0,0) size 215x27
           text run at (0,0) width 215: "Take The Acid2 Test"
-      RenderText {#text} at (215,0) size 198x27
-        text run at (215,0) width 198: " and compare it to "
+      RenderText {#text} at (214,0) size 197x27
+        text run at (214,0) width 197: " and compare it to "
       RenderInline {A} at (0,0) size 246x27 [color=#0000FF]
-        RenderText {#text} at (413,0) size 246x27
-          text run at (413,0) width 246: "the reference rendering"
-      RenderText {#text} at (659,0) size 7x27
-        text run at (659,0) width 7: "."
+        RenderText {#text} at (410,0) size 246x27
+          text run at (410,0) width 246: "the reference rendering"
+      RenderText {#text} at (655,0) size 8x27
+        text run at (655,0) width 8: "."

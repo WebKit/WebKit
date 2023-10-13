@@ -593,7 +593,7 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<cons
         auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer), WTFMove(*responseHeaders) }, index);
         if (*isCompleted)
             record->setAsCompleted();
-        records.uncheckedAppend(WTFMove(record));
+        records.append(WTFMove(record));
     }
     fetch->setRecords(WTFMove(records));
 

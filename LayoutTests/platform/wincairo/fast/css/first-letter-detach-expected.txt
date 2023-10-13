@@ -16,30 +16,30 @@ layer at (0,0) size 800x600
         RenderText {#text} at (189,18) size 4x17
           text run at (189,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 230x17
-          text run at (0,0) width 230: "The next three lines should all read \x{201C}"
+        RenderText {#text} at (0,0) size 232x17
+          text run at (0,0) width 232: "The next three lines should all read \x{201C}"
         RenderInline {SPAN} at (0,0) size 9x17 [color=#0000FF]
-          RenderText {#text} at (230,0) size 9x17
-            text run at (230,0) width 9: "P"
-        RenderText {#text} at (239,0) size 207x17
-          text run at (239,0) width 207: "ASS\x{201D}, with nothing before the P."
+          RenderText {#text} at (231,0) size 9x17
+            text run at (231,0) width 9: "P"
+        RenderText {#text} at (240,0) size 207x17
+          text run at (240,0) width 207: "ASS\x{201D}, with nothing before the P."
       RenderBlock {P} at (0,104) size 784x18
         RenderInline (generated) at (0,0) size 9x17 [color=#0000FF]
           RenderText at (0,0) size 9x17
             text run at (0,0) width 9: "P"
-        RenderText {#text} at (9,0) size 30x17
-          text run at (9,0) width 30: "ASS"
+        RenderText {#text} at (8,0) size 31x17
+          text run at (8,0) width 31: "ASS"
       RenderBlock {P} at (0,138) size 784x18
         RenderInline (generated) at (0,0) size 9x17 [color=#0000FF]
           RenderText at (0,0) size 9x17
             text run at (0,0) width 9: "P"
-        RenderText {#text} at (9,0) size 30x17
-          text run at (9,0) width 30: "ASS"
+        RenderText {#text} at (8,0) size 31x17
+          text run at (8,0) width 31: "ASS"
       RenderBlock {P} at (0,172) size 784x18
         RenderInline (generated) at (0,0) size 9x17 [color=#0000FF]
           RenderText at (0,0) size 9x17
             text run at (0,0) width 9: "P"
-        RenderText {#text} at (9,0) size 30x17
-          text run at (9,0) width 30: "ASS"
+        RenderText {#text} at (8,0) size 31x17
+          text run at (8,0) width 31: "ASS"
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]

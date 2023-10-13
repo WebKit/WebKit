@@ -171,7 +171,7 @@ Protocol::ErrorStringOr<void> InspectorTimelineAgent::setInstruments(Ref<JSON::A
         if (!instrument)
             return makeUnexpected(makeString("Unknown instrument: ", instrumentString));
 
-        newInstruments.uncheckedAppend(*instrument);
+        newInstruments.append(*instrument);
     }
 
     m_instruments.swap(newInstruments);

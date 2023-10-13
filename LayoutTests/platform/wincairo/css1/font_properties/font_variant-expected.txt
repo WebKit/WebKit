@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {#text} at (0,0) size 256x45
           text run at (0,0) width 256: ".one {font-variant: small-caps;}"
-          text run at (256,0) width 0: " "
+          text run at (255,0) width 1: " "
           text run at (0,15) width 224: ".two {font-variant: normal;}"
-          text run at (224,15) width 0: " "
+          text run at (223,15) width 1: " "
           text run at (0,30) width 0: " "
       RenderBlock {P} at (0,110) size 784x18
         RenderText {#text} at (0,0) size 268x17

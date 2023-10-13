@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x30
         RenderText {#text} at (0,0) size 400x30
           text run at (0,0) width 392: ".one {margin-left: 25px; background-color: aqua;}"
-          text run at (392,0) width 0: " "
+          text run at (391,0) width 1: " "
           text run at (0,15) width 400: ".two {margin-left: -10px; background-color: aqua;}"
-          text run at (400,15) width 0: " "
+          text run at (399,15) width 1: " "
       RenderBlock {P} at (0,95) size 784x36 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 542x17
           text run at (0,0) width 388: "This element is unstyled save for a background color of gray. "

@@ -13,7 +13,7 @@
   <body>
     <script>
       const port    = "{{ports[http][0]}}";
-      const wwwHost = "{{hosts[alt][]}}";
+      const wwwHost = "{{domains[www]}}";
 
       test(t => {
         const win = window.open(`http://${wwwHost}:${port}/cookies/attributes/resources/domain-child.sub.html`);

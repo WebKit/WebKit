@@ -155,7 +155,7 @@ public:
                 auto& controlBlock = pair.value;
                 auto* objectOfCorrectType = pair.key;
                 if (auto refPtr = controlBlock->template makeStrongReferenceIfPossible<T>(objectOfCorrectType)) {
-                    strongReferences.uncheckedAppend(refPtr.releaseNonNull());
+                    strongReferences.append(refPtr.releaseNonNull());
                     return false;
                 }
                 return true;

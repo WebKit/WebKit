@@ -866,13 +866,6 @@ public:
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 
-    // FIXME: Remove uncheckedAppend() alias to append() after confirming there is no performance
-    // regression and call sites have been ported over.
-    ALWAYS_INLINE void uncheckedAppend(ValueType&& value) { append(std::forward<ValueType>(value)); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(U&& value) { append(std::forward<U>(value)); }
-    template<typename... Args> ALWAYS_INLINE void uncheckedConstructAndAppend(Args&&... args) { constructAndAppend(std::forward<Args>(args)...); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(std::span<const U> span) { append(span); }
-
     void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
     template<typename U> void insert(size_t position, const U*, size_t);
     template<typename U> void insert(size_t position, U&&);

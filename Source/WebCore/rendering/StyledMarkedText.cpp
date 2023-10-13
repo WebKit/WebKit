@@ -258,7 +258,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
     // Compute frontmost overlapping styled marked texts.
     Vector<StyledMarkedText> frontmostMarkedTexts;
     frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
-    frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
+    frontmostMarkedTexts.append(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
     for (auto it = markedTexts.begin() + 1, end = markedTexts.end(); it != end; ++it) {
         StyledMarkedText& previousStyledMarkedText = frontmostMarkedTexts.last();
         // Marked texts completely cover each other.
@@ -266,7 +266,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
             previousStyledMarkedText = resolveStyleForMarkedText(*it, previousStyledMarkedText.style, renderer, lineStyle, paintInfo);
             continue;
         }
-        frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(*it, baseStyle, renderer, lineStyle, paintInfo));
+        frontmostMarkedTexts.append(resolveStyleForMarkedText(*it, baseStyle, renderer, lineStyle, paintInfo));
     }
 
     return frontmostMarkedTexts;
@@ -284,14 +284,14 @@ static Vector<StyledMarkedText> coalesceAdjacent(const Vector<StyledMarkedText>&
 
     Vector<StyledMarkedText> styledMarkedTexts;
     styledMarkedTexts.reserveInitialCapacity(textsToCoalesce.size());
-    styledMarkedTexts.uncheckedAppend(textsToCoalesce[0]);
+    styledMarkedTexts.append(textsToCoalesce[0]);
     for (auto it = textsToCoalesce.begin() + 1, end = textsToCoalesce.end(); it != end; ++it) {
         StyledMarkedText& previousStyledMarkedText = styledMarkedTexts.last();
         if (areAdjacentMarkedTextsWithSameStyle(previousStyledMarkedText, *it)) {
             previousStyledMarkedText.endOffset = it->endOffset;
             continue;
         }
-        styledMarkedTexts.uncheckedAppend(*it);
+        styledMarkedTexts.append(*it);
     }
 
     return styledMarkedTexts;

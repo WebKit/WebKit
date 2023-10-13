@@ -7,11 +7,11 @@ layer at (0,0) size 800x170
         RenderText {#text} at (0,0) size 415x17
           text run at (0,0) width 415: "The three boxes below should have progressively thinner borders."
       RenderBlock {P} at (0,34) size 784x28 [border: (5px solid #000000)]
-        RenderText {#text} at (5,5) size 11x17
-          text run at (5,5) width 11: "A"
+        RenderText {#text} at (5,5) size 12x17
+          text run at (5,5) width 12: "A"
       RenderBlock {P} at (0,78) size 784x24 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 10x17
-          text run at (3,3) width 10: "B"
+        RenderText {#text} at (3,3) size 11x17
+          text run at (3,3) width 11: "B"
       RenderBlock {P} at (0,118) size 784x20 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 11x17
           text run at (1,1) width 11: "C"

@@ -760,7 +760,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
                 return;
             }
 
-            identifiers.uncheckedAppend(tabIdentifer.value());
+            identifiers.append(tabIdentifer.value());
         }
     }
 

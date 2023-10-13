@@ -322,7 +322,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     // Elements that can be returned when performing fuzzy hit testing.
     switch (role) {
     case AccessibilityRole::Button:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ColorWell:
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::DisclosureTriangle:
@@ -871,7 +871,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         traits |= [self _axRadioButtonTrait] | [self _axToggleTrait];
         break;
     case AccessibilityRole::ToggleButton:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::Switch:
         traits |= ([self _axButtonTrait] | [self _axToggleTrait]);
         break;
@@ -945,7 +945,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
     case AccessibilityRole::PopUpButton:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ColorWell:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Slider:

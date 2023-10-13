@@ -138,7 +138,7 @@ void EntryPlan::prepare()
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_wasmToWasmExitStubs.uncheckedAppend(binding.value());
+        m_wasmToWasmExitStubs.append(binding.value());
     }
 #endif
 

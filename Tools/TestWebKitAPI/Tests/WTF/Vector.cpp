@@ -430,7 +430,7 @@ TEST(WTF_Vector, MoveOnly_UncheckedAppend)
     vector.reserveInitialCapacity(100);
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
-        vector.uncheckedAppend(WTFMove(moveOnly));
+        vector.append(WTFMove(moveOnly));
         EXPECT_EQ(0U, moveOnly.value());
     }
 
@@ -971,7 +971,7 @@ TEST(WTF_Vector, MapStaticFunctionMoveOnly)
 
     vector.reserveInitialCapacity(3);
     for (unsigned i = 0; i < 3; ++i)
-        vector.uncheckedAppend(MoveOnly { i });
+        vector.append(MoveOnly { i });
 
     auto mapped = WTF::map(vector, multiplyByTwoMoveOnly);
 
@@ -1003,7 +1003,7 @@ TEST(WTF_Vector, MapLambdaMove)
 
     vector.reserveInitialCapacity(3);
     for (unsigned i = 0; i < 3; ++i)
-        vector.uncheckedAppend(MoveOnly { i });
+        vector.append(MoveOnly { i });
 
 
     unsigned counter = 0;

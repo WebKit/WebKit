@@ -977,7 +977,7 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
     children.reserveCapacity(childIDs.size());
     for (const auto& childID : childIDs) {
         if (RefPtr object = tree()->objectForID(childID))
-            children.uncheckedAppend(object);
+            children.append(object);
     }
 }
 

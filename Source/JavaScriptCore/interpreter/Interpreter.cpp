@@ -423,7 +423,7 @@ public:
                 auto* nativeCallee = visitor->callee().asNativeCallee();
                 switch (nativeCallee->category()) {
                 case NativeCallee::Category::Wasm: {
-                    m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
+                    m_results.append(StackFrame(visitor->wasmFunctionIndexOrName()));
                     break;
                 }
                 case NativeCallee::Category::InlineCache: {
@@ -431,10 +431,10 @@ public:
                 }
                 }
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
-                m_results.uncheckedAppend(
+                m_results.append(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
             } else {
-                m_results.uncheckedAppend(
+                m_results.append(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell()));
             }
             return IterationStatus::Continue;

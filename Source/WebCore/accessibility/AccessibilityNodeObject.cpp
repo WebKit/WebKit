@@ -368,7 +368,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         if (input.isSwitch())
             return AccessibilityRole::Switch;
         if (input.isCheckbox())
-            return AccessibilityRole::CheckBox;
+            return AccessibilityRole::Checkbox;
         if (input.isRadioButton())
             return AccessibilityRole::RadioButton;
         if (input.isTextButton())
@@ -592,7 +592,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     switch (roleValue()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::PopUpButton:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Tab:
     case AccessibilityRole::ToggleButton:
@@ -824,7 +824,7 @@ bool AccessibilityNodeObject::isChecked() const
     bool validRole = false;
     switch (ariaRoleAttribute()) {
     case AccessibilityRole::RadioButton:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
@@ -931,7 +931,7 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
         return isFileUploadButton();
     case AccessibilityRole::Cell:
     case AccessibilityRole::ColumnHeader:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::Grid:
     case AccessibilityRole::GridCell:
@@ -1921,7 +1921,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         FALLTHROUGH;
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ListBoxOption:
     // MacOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
 #if !PLATFORM(COCOA)
@@ -2379,7 +2379,7 @@ String AccessibilityNodeObject::title() const
 
     switch (roleValue()) {
     case AccessibilityRole::Button:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ListBoxOption:
     case AccessibilityRole::ListItem:
     case AccessibilityRole::MenuButton:

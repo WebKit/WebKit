@@ -755,6 +755,16 @@ imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/mes
 [ Debug ] imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-revert.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/css/css-scoping/slotted-matches.html [ Skip ]
 
+# Cookie tests that are flaky since their import because they fail and and out some kind of unique id.
+imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.header.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.header.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.header.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/prefix/document-cookie.non-secure.html [ Pass Failure ]
+
 # These tests have generated UUIDs in their output.
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/ [ Pass Failure ]
 

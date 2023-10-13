@@ -40,7 +40,7 @@
 #include "sdk/objc/native/api/video_encoder_factory.h"
 
 @interface WK_RTCLocalVideoH264H265Encoder : NSObject
-- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo;
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo scalabilityMode:(webrtc::LocalEncoderScalabilityMode)scalabilityMode;
 - (webrtc::VideoCodecType)codecType;
 - (void)setCallback:(RTCVideoEncoderCallback)callback;
 - (NSInteger)releaseEncoder;
@@ -58,12 +58,14 @@
     RTCVideoEncoderH265 *m_h265Encoder;
 }
 
-- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo {
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo scalabilityMode:(webrtc::LocalEncoderScalabilityMode)scalabilityMode {
     if (self = [super init]) {
         if ([codecInfo.name isEqualToString:@"H265"])
             m_h265Encoder = [[RTCVideoEncoderH265 alloc] initWithCodecInfo:codecInfo];
         else {
             m_h264Encoder = [[RTCVideoEncoderH264 alloc] initWithCodecInfo:codecInfo];
+            if (scalabilityMode == webrtc::LocalEncoderScalabilityMode::L1T2)
+                [m_h264Encoder enableL1T2ScalabilityMode];
             if (!m_h264Encoder)
                 return nil;
         }
@@ -335,10 +337,10 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
     static_cast<EncodedImageCallback*>(callback)->OnEncodedImage(encodedImage, &codecSpecificInfo);
 }
 
-void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, LocalEncoderCallback frameCallback, LocalEncoderDescriptionCallback descriptionCallback)
+void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, webrtc::LocalEncoderScalabilityMode scalabilityMode, LocalEncoderCallback frameCallback, LocalEncoderDescriptionCallback descriptionCallback)
 {
     auto *codecInfo = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat: format];
-    auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo];
+    auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo scalabilityMode:scalabilityMode];
 
     if (!encoder)
         return nullptr;
@@ -359,6 +361,7 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, L
         info.contentType = encodedImage.content_type_;
         info.qp = encodedImage.qp_;
         info.timing = encodedImage.timing_;
+        info.temporalIndex = frame.temporalIndex;
 
         frameCallback(encodedImage.data(), encodedImage.size(), info);
         return YES;

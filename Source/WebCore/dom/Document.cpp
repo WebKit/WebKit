@@ -2128,8 +2128,15 @@ void Document::resolveStyle(ResolveStyleType type)
     auto& frameView = m_renderView->frameView();
     Ref protectedFrameView { frameView };
 
-    RELEASE_ASSERT(!frameView.isPainting());
-    RELEASE_ASSERT(!m_inStyleRecalc);
+    if (isInWebProcess()) {
+        RELEASE_ASSERT(!frameView.isPainting());
+        RELEASE_ASSERT(!m_inStyleRecalc);
+    } else {
+        if (frameView.isPainting())
+            return;
+        if (m_inStyleRecalc)
+            return;
+    }
 
     TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
@@ -3465,15 +3472,6 @@ bool Document::shouldScheduleLayout() const
     if (styleScope().hasPendingSheetsBeforeBody())
         return false;
     if (view() && !view()->isVisuallyNonEmpty())
-        return false;
-    auto isInsideDisplayNone = [&] {
-        for (auto* ownerElement = this->ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-            if (!ownerElement->renderer())
-                return true;
-        }
-        return false;
-    };
-    if (isInsideDisplayNone())
         return false;
     return true;
 }

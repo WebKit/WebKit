@@ -117,7 +117,7 @@ void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKey
         if (entry.value->removeKey(valueKey))
             index.notifyCursorsOfValueChange(entry.key, valueKey);
         if (!entry.value->getCount())
-            entryKeysToRemove.uncheckedAppend(entry.key);
+            entryKeysToRemove.append(entry.key);
     }
 
     for (auto& entry : entryKeysToRemove) {

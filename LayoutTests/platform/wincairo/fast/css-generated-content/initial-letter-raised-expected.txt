@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x108
-        RenderBlock (floating) at (2,1) size 45x49
-          RenderText at (0,-7) size 45x70
-            text run at (0,-7) width 45: "A"
-        RenderText {#text} at (49,18) size 400x89
-          text run at (49,18) width 340: "n example of first-letter. This letter should span 3 lines"
-          text run at (49,36) width 351: "of text, and so it should align itself cleanly with the cap-"
-          text run at (0,54) width 378: "height of the A lining up with the cap-height of the first line,"
-          text run at (0,72) width 399: "and the baseline of the A lining up with the baseline of the third"
-          text run at (0,90) width 27: "line."
+        RenderBlock (floating) at (2,1) size 46x50
+          RenderText at (0,-7) size 46x70
+            text run at (0,-7) width 46: "A"
+        RenderText {#text} at (49,18) size 397x89
+          text run at (49,18) width 341: "n example of first-letter. This letter should span 3 lines"
+          text run at (49,36) width 321: "of text, and so it should align itself cleanly with the"
+          text run at (0,54) width 374: "cap-height of the A lining up with the cap-height of the first"
+          text run at (0,72) width 397: "line, and the baseline of the A lining up with the baseline of the"
+          text run at (0,90) width 60: "third line."
       RenderBlock {SPAN} at (0,124) size 784x108
         RenderBlock {DIV} at (368,0) size 400x108
-          RenderBlock (floating) at (353,1) size 45x49
-            RenderText at (0,-7) size 45x70
-              text run at (0,-7) width 45: "A"
-          RenderText {#text} at (11,18) size 397x89
-            text run at (11,18) width 340: "n RTL example of first-letter. This letter should span 3"
-            text run at (21,36) width 330: "lines of text, and so it should align itself cleanly with"
+          RenderBlock (floating) at (352,1) size 46x50
+            RenderText at (0,-7) size 46x70
+              text run at (0,-7) width 46: "A"
+          RenderText {#text} at (10,18) size 397x89
+            text run at (10,18) width 341: "n RTL example of first-letter. This letter should span 3"
+            text run at (20,36) width 331: "lines of text, and so it should align itself cleanly with"
             text run at (3,54) width 397: "the cap-height of the A lining up with the cap-height of the first"
             text run at (3,72) width 397: "line, and the baseline of the A lining up with the baseline of the"
             text run at (340,90) width 4 RTL: "."

@@ -134,7 +134,11 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth() const
                 auto characterIndex = inlineTextItem.start() + index;
                 auto characterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem.inlineTextBox(), characterIndex, contentLength - index);
                 ASSERT(characterLength);
-                maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextItem, fontCascade, characterIndex, characterIndex + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
+                if (characterIndex + characterLength > inlineTextItem.end()) {
+                    // grapheme clusters could span across multiple adjacent inline text items.
+                    maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextItem.inlineTextBox(), fontCascade, characterIndex, characterIndex + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
+                } else
+                    maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextItem, fontCascade, characterIndex, characterIndex + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
                 index += characterLength;
             }
             continue;

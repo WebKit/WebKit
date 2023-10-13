@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x30
-        RenderText {#text} at (0,0) size 552x30
-          text run at (0,0) width 552: ".one {margin-right: 25px; text-align: right; background-color: aqua;}"
-          text run at (552,0) width 0: " "
+        RenderText {#text} at (0,0) size 551x30
+          text run at (0,0) width 551: ".one {margin-right: 25px; text-align: right; background-color: aqua;}"
+          text run at (550,0) width 1: " "
           text run at (0,15) width 408: ".two {margin-right: -10px; background-color: aqua;}"
-          text run at (408,15) width 0: " "
+          text run at (407,15) width 1: " "
       RenderBlock {P} at (0,95) size 784x36 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 542x17
           text run at (0,0) width 388: "This element is unstyled save for a background color of gray. "

@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (75,18) size 4x17
           text run at (75,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 367x17
-          text run at (0,0) width 367: "All four question marks below should be \x{201C}big\x{201D}, like this: ?"
+        RenderText {#text} at (0,0) size 368x17
+          text run at (0,0) width 368: "All four question marks below should be \x{201C}big\x{201D}, like this: ?"
       RenderBlock {P} at (0,104) size 784x18
         RenderText {#text} at (0,0) size 54x17
           text run at (0,0) width 54: "ATSUI: "

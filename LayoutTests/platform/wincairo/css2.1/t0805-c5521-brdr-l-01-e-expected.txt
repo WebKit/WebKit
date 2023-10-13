@@ -4,13 +4,13 @@ layer at (0,0) size 800x294
   RenderBlock {HTML} at (0,0) size 800x294
     RenderBody {BODY} at (8,16) size 784x262 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x49
-        RenderText {#text} at (0,21) size 478x17
-          text run at (0,21) width 478: "There should be a solid blue line to the left of every occurance of the word \""
-        RenderInline {SPAN} at (0,0) size 136x36 [border: none (2px solid #0000FF)]
-          RenderText {#text} at (480,6) size 134x36
-            text run at (480,6) width 134: "\x{21E6}THERE"
-        RenderText {#text} at (614,21) size 11x17
-          text run at (614,21) width 11: "\"."
+        RenderText {#text} at (0,21) size 480x17
+          text run at (0,21) width 480: "There should be a solid blue line to the left of every occurance of the word \""
+        RenderInline {SPAN} at (0,0) size 137x36 [border: none (2px solid #0000FF)]
+          RenderText {#text} at (481,6) size 135x36
+            text run at (481,6) width 135: "\x{21E6}THERE"
+        RenderText {#text} at (615,21) size 12x17
+          text run at (615,21) width 12: "\"."
       RenderTable {TABLE} at (0,65) size 290x163
         RenderTableSection {TBODY} at (0,0) size 290x163
           RenderTableRow {TR} at (0,2) size 290x51

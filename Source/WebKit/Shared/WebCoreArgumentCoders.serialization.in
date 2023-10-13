@@ -1340,6 +1340,15 @@ struct WebCore::WebCodecsEncodedAudioChunkData {
 };
 #endif
 
+header: <WebCore/VideoEncoderScalabilityMode.h>
+#if ENABLE(WEB_CODECS)
+enum class WebCore::VideoEncoderScalabilityMode : uint8_t {
+    L1T1,
+    L1T2,
+    L1T3
+}
+#endif
+
 struct WebCore::HTMLModelElementCamera {
     double pitch;
     double yaw;

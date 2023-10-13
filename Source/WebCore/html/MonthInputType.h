@@ -59,6 +59,7 @@ private:
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
     void handleDOMActivateEvent(Event&) final;
+    void showPicker() final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

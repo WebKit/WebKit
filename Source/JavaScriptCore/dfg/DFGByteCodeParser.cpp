@@ -7792,7 +7792,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* value = addToGraph(ExtractCatchLocal, OpInfo(numberOfLocals), OpInfo(localPredictions[numberOfLocals]));
                 ++numberOfLocals;
                 addToGraph(MovHint, OpInfo(operand), value);
-                localsToSet.uncheckedAppend(std::make_pair(operand, value));
+                localsToSet.append(std::make_pair(operand, value));
             });
             if (numberOfLocals)
                 addToGraph(ClearCatchLocals);

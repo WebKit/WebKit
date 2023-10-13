@@ -3965,7 +3965,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             return m_propertyWrappers[wrapperIndex].get();
         });
 
-        m_propertyWrappers.uncheckedAppend(makeUnique<ShorthandPropertyWrapper>(propertyID, WTFMove(longhandWrappers)));
+        m_propertyWrappers.append(makeUnique<ShorthandPropertyWrapper>(propertyID, WTFMove(longhandWrappers)));
         indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
     }
 

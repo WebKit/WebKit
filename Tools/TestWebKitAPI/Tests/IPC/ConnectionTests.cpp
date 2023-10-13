@@ -557,12 +557,12 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
                 b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(runLoop, [&, i] (Promise::Result result) {
                     EXPECT_TRUE(result.has_value());
                     EXPECT_EQ(result.value(), i);
-                    replies.uncheckedAppend(i);
+                    replies.append(i);
                 });
             } else {
                 b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, i] (uint64_t value) {
                     EXPECT_EQ(value, i);
-                    replies.uncheckedAppend(i);
+                    replies.append(i);
                 }, 100);
             }
         }

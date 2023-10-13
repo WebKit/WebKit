@@ -46,21 +46,9 @@ static void append(Vector<uint8_t>& vector, size_t length)
     vector.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
 }
 
-static void uncheckedAppend(Vector<uint8_t>& vector, size_t length)
-{
-    RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
-    uint32_t integer = length;
-    vector.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
-}
-
 static void append(Vector<uint8_t>& vector, const CString& string)
 {
     vector.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(string.data()), string.length() });
-}
-
-static void uncheckedAppend(Vector<uint8_t>& vector, const CString& string)
-{
-    vector.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(string.data()), string.length() });
 }
 
 static size_t deserializeLength(std::span<const uint8_t> span, size_t offset)
@@ -100,7 +88,7 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
             auto info = ModifyHeaderInfo::parse(value.get());
             if (!info)
                 return makeUnexpected(info.error());
-            vector.uncheckedAppend(WTFMove(*info));
+            vector.append(WTFMove(*info));
         }
         return vector;
     };
@@ -409,10 +397,10 @@ void RedirectAction::RegexSubstitutionAction::serialize(Vector<uint8_t>& vector)
         + sizeof(uint32_t)
         + regexSubstitutionUTF8.length()
         + regexFilterUTF8.length());
-    uncheckedAppend(vector, regexSubstitutionUTF8.length());
-    uncheckedAppend(vector, regexFilterUTF8.length());
-    uncheckedAppend(vector, regexSubstitutionUTF8);
-    uncheckedAppend(vector, regexFilterUTF8);
+    append(vector, regexSubstitutionUTF8.length());
+    append(vector, regexFilterUTF8.length());
+    append(vector, regexSubstitutionUTF8);
+    append(vector, regexFilterUTF8);
 }
 
 auto RedirectAction::RegexSubstitutionAction::deserialize(std::span<const uint8_t> span) -> RegexSubstitutionAction
@@ -571,8 +559,8 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
         + (hasQuery ? 1 + (queryString ? sizeof(uint32_t) + queryStringUTF8.length() : 0) : 0));
 
     auto beginIndex = vector.size();
-    uncheckedAppend(vector, 0);
-    vector.uncheckedAppend(
+    append(vector, 0);
+    vector.append(
         hasFragment << 7
         | hasHost << 6
         | hasPassword << 5
@@ -582,32 +570,32 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
         | hasUsername << 1
         | hasQuery << 0
     );
-    auto uncheckedAppendLengthAndString = [&] (const CString& string) {
-        uncheckedAppend(vector, string.length());
-        uncheckedAppend(vector, string);
+    auto appendLengthAndString = [&] (const CString& string) {
+        append(vector, string.length());
+        append(vector, string);
     };
     if (hasFragment)
-        uncheckedAppendLengthAndString(fragmentUTF8);
+        appendLengthAndString(fragmentUTF8);
     if (hasHost)
-        uncheckedAppendLengthAndString(hostUTF8);
+        appendLengthAndString(hostUTF8);
     if (hasPassword)
-        uncheckedAppendLengthAndString(passwordUTF8);
+        appendLengthAndString(passwordUTF8);
     if (hasPath)
-        uncheckedAppendLengthAndString(pathUTF8);
+        appendLengthAndString(pathUTF8);
     if (hasScheme)
-        uncheckedAppendLengthAndString(schemeUTF8);
+        appendLengthAndString(schemeUTF8);
     if (hasUsername)
-        uncheckedAppendLengthAndString(usernameUTF8);
+        appendLengthAndString(usernameUTF8);
     if (hasPort) {
-        vector.uncheckedAppend(!!*port);
+        vector.append(!!*port);
         if (*port)
             vector.appendList({ **port >> 0, **port >> 8 });
     }
     if (hasQuery) {
-        vector.uncheckedAppend(queryTransform.index());
+        vector.append(queryTransform.index());
         std::visit(WTF::makeVisitor([&](const String&) {
-            uncheckedAppend(vector, queryStringUTF8.length());
-            uncheckedAppend(vector, queryStringUTF8);
+            append(vector, queryStringUTF8.length());
+            append(vector, queryStringUTF8);
         }, [&](const QueryTransform& transform) {
             transform.serialize(vector);
         }), queryTransform);
@@ -696,7 +684,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         for (auto& parameter : *removeParametersArray) {
             if (parameter.get().type() != JSON::Value::Type::String)
                 return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
-            removeParametersVector.uncheckedAppend(parameter.get().asString());
+            removeParametersVector.append(parameter.get().asString());
         }
         parsedQueryTransform.removeParams = WTFMove(removeParametersVector);
     }
@@ -711,7 +699,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
             auto keyValue = QueryKeyValue::parse(queryKeyValue.get());
             if (!keyValue)
                 return makeUnexpected(keyValue.error());
-            keyValues.uncheckedAppend(WTFMove(*keyValue));
+            keyValues.append(WTFMove(*keyValue));
         }
         parsedQueryTransform.addOrReplaceParams = WTFMove(keyValues);
     }
@@ -895,11 +883,11 @@ void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serializ
     auto valueUTF8 = value.utf8();
     auto serializedLength = headerLength + keyUTF8.length() + valueUTF8.length();
     vector.reserveCapacity(vector.size() + serializedLength);
-    uncheckedAppend(vector, serializedLength);
-    uncheckedAppend(vector, keyUTF8.length());
-    vector.uncheckedAppend(replaceOnly);
-    uncheckedAppend(vector, keyUTF8);
-    uncheckedAppend(vector, valueUTF8);
+    append(vector, serializedLength);
+    append(vector, keyUTF8.length());
+    vector.append(replaceOnly);
+    append(vector, keyUTF8);
+    append(vector, valueUTF8);
 }
 
 auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::deserialize(std::span<const uint8_t> span) -> QueryKeyValue

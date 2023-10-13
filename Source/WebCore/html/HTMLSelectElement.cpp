@@ -1001,7 +1001,7 @@ FormControlState HTMLSelectElement::saveFormControlState() const
         auto& option = downcast<HTMLOptionElement>(*element);
         if (!option.selected())
             continue;
-        state.uncheckedAppend(option.value());
+        state.append(option.value());
         if (!multiple())
             break;
     }

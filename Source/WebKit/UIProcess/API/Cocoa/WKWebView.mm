@@ -2434,7 +2434,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
             frameID = identifiers->frameID;
             itemID = identifiers->itemID;
         }
-        coreItems.uncheckedAppend(WebCore::TextManipulationItem { frameID, false, false, itemID, WTFMove(coreTokens) });
+        coreItems.append(WebCore::TextManipulationItem { frameID, false, false, itemID, WTFMove(coreTokens) });
     }
 
     RetainPtr<NSArray<_WKTextManipulationItem *>> retainedItems = items;

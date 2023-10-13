@@ -1737,7 +1737,7 @@ static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoin
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
 
     uint32_t identifier = GPOINTER_TO_UINT(gdk_event_get_event_sequence(event));
-    touchPoints.uncheckedAppend(WebPlatformTouchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y)));
+    touchPoints.append(WebPlatformTouchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y)));
 }
 
 static inline WebPlatformTouchPoint::State touchPointStateForEvents(GdkEvent* current, GdkEvent* event)

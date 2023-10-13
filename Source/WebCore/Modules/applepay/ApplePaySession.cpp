@@ -112,7 +112,7 @@ static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(std::optional<Ve
         auto convertedLineItem = convertAndValidate(WTFMove(lineItem));
         if (convertedLineItem.hasException())
             return convertedLineItem.releaseException();
-        result.uncheckedAppend(convertedLineItem.releaseReturnValue());
+        result.append(convertedLineItem.releaseReturnValue());
     }
 
     return WTFMove(result);
@@ -135,7 +135,7 @@ static ExceptionOr<Vector<ApplePayShippingMethod>> convertAndValidate(Vector<App
         auto convertedShippingMethod = convertAndValidate(WTFMove(shippingMethod));
         if (convertedShippingMethod.hasException())
             return convertedShippingMethod.releaseException();
-        result.uncheckedAppend(convertedShippingMethod.releaseReturnValue());
+        result.append(convertedShippingMethod.releaseReturnValue());
     }
 
     return WTFMove(result);
@@ -217,7 +217,7 @@ static ExceptionOr<Vector<ApplePayPaymentTokenContext>> convertAndValidate(Vecto
         auto convertedTokenContext = convertAndValidate(WTFMove(tokenContext));
         if (convertedTokenContext.hasException())
             return convertedTokenContext.releaseException();
-        result.uncheckedAppend(convertedTokenContext.releaseReturnValue());
+        result.append(convertedTokenContext.releaseReturnValue());
     }
 
     return WTFMove(result);

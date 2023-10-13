@@ -254,7 +254,7 @@ Vector<Ref<EventTarget>> EventPath::computePathUnclosedToTarget(const EventTarge
         bool movedOutOfShadowTree = depth < currentDepthAllowed;
         if (movedOutOfShadowTree)
             currentDepthAllowed = depth;
-        path.uncheckedAppend(*currentContext.currentTarget());
+        path.append(*currentContext.currentTarget());
     };
 
     auto currentDepthAllowed = currentTargetDepth;

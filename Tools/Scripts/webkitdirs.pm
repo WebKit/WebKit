@@ -1035,7 +1035,7 @@ sub determineConfigurationProductDir
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
         } else {
-            if (shouldUseFlatpak() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
+            if (isGtk() or isWPE() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
                 $configurationProductDir = "$baseProductDir/$portName/$configuration";
             } else {
                 $configurationProductDir = "$baseProductDir/$configuration";

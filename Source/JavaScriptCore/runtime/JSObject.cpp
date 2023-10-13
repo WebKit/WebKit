@@ -4068,7 +4068,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             PropertyOffset offset;
             if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
                 structure = newStructure;
-                offsets.uncheckedAppend(offset);
+                offsets.append(offset);
                 continue;
             }
 
@@ -4076,7 +4076,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             offset = structure->get(vm, propertyName, currentAttributes);
             if (offset != invalidOffset) {
                 structure->didReplaceProperty(offset);
-                offsets.uncheckedAppend(offset);
+                offsets.append(offset);
                 continue;
             }
 
@@ -4096,7 +4096,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             ASSERT(newStructure->isValidOffset(offset));
 
             structure = newStructure;
-            offsets.uncheckedAppend(offset);
+            offsets.append(offset);
         }
 
         // Flush batching here. Note that it is possible that offsets.size() is not equal to size, if we stop batching due to transition-watchpoint-firing.

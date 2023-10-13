@@ -5050,8 +5050,8 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
         self.addLogObserver('json', self.log_observer_json)
 
         platform = self.getProperty('platform')
-        if platform == 'gtk':
-            self.command = ['python3', 'Tools/Scripts/run-gtk-tests',
+        if platform in ['gtk', 'wpe']:
+            self.command = ['python3', f'Tools/Scripts/run-{platform}-tests',
                            '--{0}'.format(self.getProperty('configuration')),
                            '--json-output={0}'.format(self.jsonFileName)]
         else:

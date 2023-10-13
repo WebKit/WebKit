@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 66x17
           text run at (0,0) width 11: "? "
           text run at (11,0) width 24 RTL: "\x{FEB2} \x{FEED}"
-          text run at (35,0) width 31: "hello"
+          text run at (34,0) width 32: "hello"
       RenderBlock {P} at (0,242) size 784x18
         RenderText {#text} at (714,0) size 70x17
           text run at (714,0) width 28 RTL: " \x{FEB2} \x{FEED}"

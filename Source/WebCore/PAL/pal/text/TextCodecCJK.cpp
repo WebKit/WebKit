@@ -1134,7 +1134,7 @@ static void entityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
     result.reserveCapacity(result.size() + 3 + maxUChar32Digits);
     result.appendList({ '&', '#' });
     appendDecimal(c, result);
-    result.uncheckedAppend(';');
+    result.append(';');
 }
 
 Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)

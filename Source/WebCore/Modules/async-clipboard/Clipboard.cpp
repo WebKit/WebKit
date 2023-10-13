@@ -369,7 +369,7 @@ void Clipboard::ItemWriter::didSetAllData()
             reject();
             return;
         }
-        customData.uncheckedAppend(*data);
+        customData.append(*data);
     }
 
     m_pasteboard->writeCustomData(WTFMove(customData));

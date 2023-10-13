@@ -9,11 +9,11 @@ layer at (0,0) size 785x753
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 368x60
           text run at (0,0) width 360: ".zero {background-color: silver; padding: 0;}"
-          text run at (360,0) width 0: " "
+          text run at (359,0) width 1: " "
           text run at (0,15) width 360: ".one {padding: 25px; background-color: aqua;}"
-          text run at (360,15) width 0: " "
+          text run at (359,15) width 1: " "
           text run at (0,30) width 368: ".two {padding: -10px; background-color: aqua;}"
-          text run at (368,30) width 0: " "
+          text run at (367,30) width 1: " "
           text run at (0,45) width 0: " "
       RenderBlock {P} at (0,125) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17

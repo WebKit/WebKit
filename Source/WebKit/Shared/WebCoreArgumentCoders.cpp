@@ -1788,7 +1788,7 @@ std::optional<Ref<CSSFilter>> ArgumentCoder<CSSFilter>::decode(Decoder& decoder)
         if (!function)
             return std::nullopt;
 
-        functions.uncheckedAppend(WTFMove(*function));
+        functions.append(WTFMove(*function));
     }
 
     auto filter = CSSFilter::create(WTFMove(functions));

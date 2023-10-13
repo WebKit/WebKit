@@ -6028,13 +6028,13 @@ static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
             double inputHigh = i < steps.size() ? *steps[i].input : std::max(1.0, largestInput);
             double inputAverage = (inputLow + inputHigh) / (i - *missingInputRunStart + 1);
             for (size_t j = *missingInputRunStart; j < i; ++j)
-                points.uncheckedAppend({ steps[j].output, inputAverage * (j - *missingInputRunStart + 1) });
+                points.append({ steps[j].output, inputAverage * (j - *missingInputRunStart + 1) });
 
             missingInputRunStart = std::nullopt;
         }
 
         if (i < steps.size() && steps[i].input)
-            points.uncheckedAppend({ steps[i].output, *steps[i].input });
+            points.append({ steps[i].output, *steps[i].input });
     }
     ASSERT(!missingInputRunStart);
     ASSERT(points.size() == steps.size());

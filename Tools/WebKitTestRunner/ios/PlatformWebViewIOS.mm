@@ -407,17 +407,17 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     Vector<WeakObjCPtr<UIView>, 3> viewsToUnhide;
     if (![selectionView isHidden]) {
         [selectionView setHidden:YES];
-        viewsToUnhide.uncheckedAppend(selectionView);
+        viewsToUnhide.append(selectionView);
     }
 
     if (![startGrabberView isHidden]) {
         [startGrabberView setHidden:YES];
-        viewsToUnhide.uncheckedAppend(startGrabberView);
+        viewsToUnhide.append(startGrabberView);
     }
 
     if (![endGrabberView isHidden]) {
         [endGrabberView setHidden:YES];
-        viewsToUnhide.uncheckedAppend(endGrabberView);
+        viewsToUnhide.append(endGrabberView);
     }
 #else
     UITextSelectionDisplayInteraction *interaction = [platformView().contentView valueForKeyPath:@"interactionAssistant._selectionViewManager"];

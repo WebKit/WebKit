@@ -151,7 +151,7 @@ END
 
     print F "    familyNamesData.construct();\n";
     for my $name (sort keys %parameters) {
-        print F "    familyNamesData->uncheckedAppend(&${name}Data);\n";
+        print F "    familyNamesData->append(&${name}Data);\n";
     }
 
     print F "\n";
@@ -162,7 +162,7 @@ END
     print F "\n";
     print F "    familyNames.construct();\n";
     for my $name (sort keys %parameters) {
-        print F "    familyNames->uncheckedAppend(${name}->impl());\n";
+        print F "    familyNames->append(${name}->impl());\n";
     }
 
     print F "}\n}\n}\n";

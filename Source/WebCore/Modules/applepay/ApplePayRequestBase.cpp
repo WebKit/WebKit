@@ -52,7 +52,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
         auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
             return Exception { TypeError, makeString("\"", supportedNetwork, "\" is not a valid payment network.") };
-        result.uncheckedAppend(*validatedNetwork);
+        result.append(*validatedNetwork);
     }
 
     return WTFMove(result);

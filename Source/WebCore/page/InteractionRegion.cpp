@@ -93,7 +93,7 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
 {
     switch (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr))) {
     case AccessibilityRole::Button:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::ImageMapLink:
     case AccessibilityRole::Link:

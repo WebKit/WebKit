@@ -65,7 +65,7 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
             return;
-        convertedCommandBuffers.uncheckedAppend(*convertedCommandBuffer);
+        convertedCommandBuffers.append(*convertedCommandBuffer);
     }
     m_backing->submit(WTFMove(convertedCommandBuffers));
 }

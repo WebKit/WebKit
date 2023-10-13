@@ -436,7 +436,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                     return Exception { SyntaxError, "ICE server protocol not supported"_s };
             }
             if (serverURLs.size())
-                servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
+                servers.append({ WTFMove(serverURLs), server.credential, server.username });
         }
     }
     return servers;
@@ -456,7 +456,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
         if (currentMilliSeconds > certificate->expires())
             return Exception { InvalidAccessError, "Certificate has expired"_s };
 
-        certificates.uncheckedAppend(MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), });
+        certificates.append(MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), });
     }
     return certificates;
 }

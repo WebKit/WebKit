@@ -165,7 +165,7 @@ void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 
     // Add main normal world.
     if (m_worldSet.contains(&mainNormalWorld))
-        worlds.uncheckedAppend(mainNormalWorld);
+        worlds.append(mainNormalWorld);
 
     // Add other normal worlds.
     for (auto* world : m_worldSet) {
@@ -173,14 +173,14 @@ void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
             continue;
         if (world == &mainNormalWorld)
             continue;
-        worlds.uncheckedAppend(*world);
+        worlds.append(*world);
     }
 
     // Add non-normal worlds.
     for (auto* world : m_worldSet) {
         if (world->type() == DOMWrapperWorld::Type::Normal)
             continue;
-        worlds.uncheckedAppend(*world);
+        worlds.append(*world);
     }
 }
 

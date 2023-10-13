@@ -25,11 +25,14 @@
 
 #pragma once
 
+// FIXME: forward declare xpc_connection_t to build with public SDK.
+#import <xpc/xpc.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void extensionMain(int argc, char** argv);
+void handleNewConnection(xpc_connection_t);
 
 #ifdef __cplusplus
 }

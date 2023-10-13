@@ -15,17 +15,17 @@ layer at (0,0) size 800x305
           RenderText {#text} at (0,0) size 120x15
             text run at (0,0) width 120: "Should be 13 px"
       RenderBlock {PRE} at (0,95) size 784x16
-        RenderInline {SPAN} at (0,0) size 86x15
-          RenderText {#text} at (0,0) size 86x15
-            text run at (0,0) width 86: "Should be 13px"
+        RenderInline {SPAN} at (0,0) size 87x15
+          RenderText {#text} at (0,0) size 87x15
+            text run at (0,0) width 87: "Should be 13px"
       RenderBlock {PRE} at (0,124) size 784x16
-        RenderInline {SPAN} at (0,0) size 86x15
-          RenderText {#text} at (0,0) size 86x15
-            text run at (0,0) width 86: "Should be 13px"
+        RenderInline {SPAN} at (0,0) size 87x15
+          RenderText {#text} at (0,0) size 87x15
+            text run at (0,0) width 87: "Should be 13px"
       RenderBlock {P} at (0,156) size 784x18
-        RenderInline {SPAN} at (0,0) size 86x15
-          RenderText {#text} at (0,2) size 86x15
-            text run at (0,2) width 86: "Should be 13px"
+        RenderInline {SPAN} at (0,0) size 87x15
+          RenderText {#text} at (0,2) size 87x15
+            text run at (0,2) width 87: "Should be 13px"
       RenderBlock {P} at (0,190) size 784x19
         RenderInline {TT} at (0,0) size 100x18
           RenderInline {SPAN} at (0,0) size 100x17

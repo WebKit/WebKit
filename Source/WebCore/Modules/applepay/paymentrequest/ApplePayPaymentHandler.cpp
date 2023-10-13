@@ -177,7 +177,7 @@ static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(const Vector<Pay
         auto convertedLineItem = convertAndValidate(lineItem, expectedCurrency);
         if (convertedLineItem.hasException())
             return convertedLineItem.releaseException();
-        result.uncheckedAppend(convertedLineItem.releaseReturnValue());
+        result.append(convertedLineItem.releaseReturnValue());
     }
     return { WTFMove(result) };
 }
@@ -339,7 +339,7 @@ ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShipp
                 shippingMethod.selected = true;
 #endif
 
-            shippingOptions.uncheckedAppend(WTFMove(shippingMethod));
+            shippingOptions.append(WTFMove(shippingMethod));
         }
     }
 

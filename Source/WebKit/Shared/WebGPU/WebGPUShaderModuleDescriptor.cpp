@@ -46,7 +46,7 @@ std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(
         auto value = convertToBacking(hint.value);
         if (!value)
             return std::nullopt;
-        hints.uncheckedAppend(makeKeyValuePair(hint.key, WTFMove(*value)));
+        hints.append(makeKeyValuePair(hint.key, WTFMove(*value)));
     }
 
     return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
@@ -64,7 +64,7 @@ std::optional<WebCore::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext
         auto value = convertFromBacking(hint.value);
         if (!value)
             return std::nullopt;
-        hints.uncheckedAppend(makeKeyValuePair(hint.key, WTFMove(*value)));
+        hints.append(makeKeyValuePair(hint.key, WTFMove(*value)));
     }
 
     return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };

@@ -69,7 +69,7 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
             continue;
         }
 
-        prepareBuffersData.uncheckedAppend({
+        prepareBuffersData.append({
             {
                 backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front),
                 backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Back),
@@ -79,7 +79,7 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
             backingStore.hasEmptyDirtyRegion(),
         });
         
-        backingStoreList.uncheckedAppend(backingStore);
+        backingStoreList.append(backingStore);
     }
 
     if (prepareBuffersData.size()) {

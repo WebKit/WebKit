@@ -91,7 +91,7 @@ bool MockGamepadProvider::connectMockGamepad(unsigned index)
         m_connectedGamepadVector.reserveCapacity(index + 1);
 
     while (m_connectedGamepadVector.size() <= index)
-        m_connectedGamepadVector.uncheckedAppend(nullptr);
+        m_connectedGamepadVector.append(nullptr);
 
     m_connectedGamepadVector[index] = m_mockGamepadVector[index].get();
 

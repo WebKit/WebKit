@@ -80,7 +80,7 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     if (is<Document>(context)) {
         m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
         for (auto& familyName : familyNames.get())
-            m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
+            m_fontFamilyNames.constructAndAppend(familyName);
     } else {
         m_fontFamilyNames.appendContainerWithMapping(familyNamesData.get(), [](auto& familyName) {
             return familyName;

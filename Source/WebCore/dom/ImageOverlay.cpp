@@ -405,7 +405,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 textContainer->classList().add(imageOverlayTextClass());
                 lineContainer->appendChild(textContainer);
                 textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : String { child.text }));
-                lineElements.children.uncheckedAppend(WTFMove(textContainer));
+                lineElements.children.append(WTFMove(textContainer));
             }
 
             if (line.hasTrailingNewline) {
@@ -413,7 +413,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 lineContainer->appendChild(*lineElements.lineBreak);
             }
 
-            elements.lines.uncheckedAppend(WTFMove(lineElements));
+            elements.lines.append(WTFMove(lineElements));
         }
 
 #if ENABLE(DATA_DETECTION)
@@ -422,7 +422,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document.get(), dataDetector);
             dataDetectorContainer->classList().add(imageOverlayDataDetectorClass());
             elements.root->appendChild(dataDetectorContainer);
-            elements.dataDetectors.uncheckedAppend(WTFMove(dataDetectorContainer));
+            elements.dataDetectors.append(WTFMove(dataDetectorContainer));
         }
 #endif // ENABLE(DATA_DETECTION)
 
@@ -442,7 +442,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 blockContainer->setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
 
             elements.root->appendChild(blockContainer);
-            elements.blocks.uncheckedAppend(WTFMove(blockContainer));
+            elements.blocks.append(WTFMove(blockContainer));
         }
     }
 

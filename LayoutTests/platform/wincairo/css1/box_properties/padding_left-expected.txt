@@ -9,17 +9,17 @@ layer at (0,0) size 785x991
       RenderBlock {PRE} at (0,34) size 769x90
         RenderText {#text} at (0,0) size 416x90
           text run at (0,0) width 400: ".zero {background-color: silver; padding-left: 0;}"
-          text run at (400,0) width 0: " "
+          text run at (399,0) width 1: " "
           text run at (0,15) width 408: ".one {padding-left: 0.5in; background-color: aqua;}"
-          text run at (408,15) width 0: " "
+          text run at (407,15) width 1: " "
           text run at (0,30) width 400: ".two {padding-left: 25px; background-color: aqua;}"
-          text run at (400,30) width 0: " "
+          text run at (399,30) width 1: " "
           text run at (0,45) width 408: ".three {padding-left: 5em; background-color: aqua;}"
-          text run at (408,45) width 0: " "
+          text run at (407,45) width 1: " "
           text run at (0,60) width 400: ".four {padding-left: 25%; background-color: aqua;}"
-          text run at (400,60) width 0: " "
+          text run at (399,60) width 1: " "
           text run at (0,75) width 416: ".five {padding-left: -20px; background-color: aqua;}"
-          text run at (416,75) width 0: " "
+          text run at (415,75) width 1: " "
       RenderBlock {P} at (0,155) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "This element has a class of zero."

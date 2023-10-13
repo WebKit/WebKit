@@ -50,7 +50,7 @@ header: <WebCore/ResourceRequest.h>
 
 [Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {
     RetainPtr<NSParagraphStyle> style
-    Vector<std::optional<WebCore::AttributedString::TextTableID>> tableIDs
+    Vector<std::optional<WebCore::AttributedString::TableBlockAndTableIDPair>> tableBlockAndTableIDs
     Vector<WebCore::AttributedString::TextListID> listIDs
 }
 

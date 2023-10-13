@@ -38,20 +38,20 @@ layer at (0,0) size 785x886
         RenderInline {CODE} at (0,0) size 8x15
           RenderText {#text} at (553,3) size 8x15
             text run at (553,3) width 8: "p"
-        RenderText {#text} at (561,0) size 740x35
-          text run at (561,0) width 179: " (paragraph) tag, after which"
+        RenderText {#text} at (560,0) size 740x35
+          text run at (560,0) width 180: " (paragraph) tag, after which"
           text run at (0,18) width 501: "we'd like to insert generated content. One way to do so would be the following:"
       RenderBlock {PRE} at (20,199) size 749x16 [color=#FF0000]
-        RenderInline {CODE} at (0,0) size 456x15
-          RenderText {#text} at (0,0) size 456x15
-            text run at (0,0) width 456: "div.box.one p:after{ content:'generated content here!'; }"
+        RenderInline {CODE} at (0,0) size 455x15
+          RenderText {#text} at (0,0) size 455x15
+            text run at (0,0) width 455: "div.box.one p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,230) size 769x19
         RenderText {#text} at (0,0) size 731x17
           text run at (0,0) width 731: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
       RenderBlock {PRE} at (20,264) size 749x16 [color=#008000]
-        RenderInline {CODE} at (0,0) size 424x15
-          RenderText {#text} at (0,0) size 424x15
-            text run at (0,0) width 424: "div.box p:after{ content:'generated content here!'; }"
+        RenderInline {CODE} at (0,0) size 423x15
+          RenderText {#text} at (0,0) size 423x15
+            text run at (0,0) width 423: "div.box p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,295) size 769x37
         RenderText {#text} at (0,0) size 288x17
           text run at (0,0) width 288: "Note also that the bug only applies to content "
@@ -74,13 +74,13 @@ layer at (0,0) size 785x886
         RenderText {#text} at (0,0) size 476x26
           text run at (0,0) width 476: "Example (view source to see CSS and HTML):"
       RenderBlock {P} at (0,444) size 769x19
-        RenderText {#text} at (0,0) size 335x17
-          text run at (0,0) width 335: "Both boxes below should contain generated content ("
-        RenderInline {SPAN} at (0,0) size 51x17 [color=#008000]
-          RenderText {#text} at (335,0) size 51x17
-            text run at (335,0) width 51: "in green"
-        RenderText {#text} at (386,0) size 9x17
-          text run at (386,0) width 9: "):"
+        RenderText {#text} at (0,0) size 336x17
+          text run at (0,0) width 336: "Both boxes below should contain generated content ("
+        RenderInline {SPAN} at (0,0) size 52x17 [color=#008000]
+          RenderText {#text} at (335,0) size 52x17
+            text run at (335,0) width 52: "in green"
+        RenderText {#text} at (386,0) size 10x17
+          text run at (386,0) width 10: "):"
       RenderBlock {DIV} at (0,487) size 769x164 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 717x23
           RenderText {#text} at (0,0) size 46x21

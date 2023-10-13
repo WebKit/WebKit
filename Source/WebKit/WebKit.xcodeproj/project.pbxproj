@@ -12,10 +12,10 @@
 			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework, XPC Services, Extensions, and daemons" */;
 			buildPhases = (
 				DDFA47222AA93C7F00C7C788 /* Check For Inappropriate Files In Framework */,
+				E3322DA32ACB68E2001194DA /* Copy extension to Safari app bundle (temporary workaround) */,
 			);
 			dependencies = (
 				5C400E6A29DB8AB500446F6F /* PBXTargetDependency */,
-				5C400E6C29DB8AB500446F6F /* PBXTargetDependency */,
 				5CE4B62329CF880B0038F565 /* PBXTargetDependency */,
 				5CE4B62529CF880B0038F565 /* PBXTargetDependency */,
 				5CE4B60729CEBB760038F565 /* PBXTargetDependency */,
@@ -1330,7 +1330,6 @@
 		57FE688C260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */; };
 		5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E8324101F7000486F9B /* FrameTreeNodeData.h */; };
 		5C121E89241029C900486F9B /* _WKFrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E882410290D00486F9B /* _WKFrameTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C139D9929DB82D900D5117B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		5C139DA629DB82E500D5117B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
@@ -2158,15 +2157,11 @@
 		DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41D27E94644005E086E /* WebKitLegacy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */; };
 		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
-		DDCED3A329F82D7500512877 /* AuxiliaryProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */; };
 		DDCED3A429F82D7900512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		DDCED3A529F82DB100512877 /* AuxiliaryProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */; };
 		DDCED3A629F82DB100512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		DDCED3A729F82DB200512877 /* AuxiliaryProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */; };
+		DDCED3A729F82DB200512877 /* WebContentProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */; };
 		DDCED3A829F82DB200512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		DDCED3A929F82DB300512877 /* AuxiliaryProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */; };
-		DDCED3AA29F82DB300512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		DDCED3AB29F82DB400512877 /* AuxiliaryProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */; };
+		DDCED3AB29F82DB400512877 /* WebContentProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */; };
 		DDCED3AC29F82DB400512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
 		DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */; };
 		DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */; };
@@ -2196,6 +2191,14 @@
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
+		E31586CD2AD610F30062ED2A /* ExtensionEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */; };
+		E31586CE2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586CF2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586D02AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586D12AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586D22AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586D32AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
+		E31586D42AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
 		E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */; };
 		E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
@@ -2209,6 +2212,8 @@
 		E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */; };
 		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
 		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
+		E3B9B5D52AB65795008568FE /* NetworkingProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */; };
+		E3B9B5D72AB65822008568FE /* GPUProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */; };
 		E3C6727329D4A3AD00AD4452 /* TextTrackRepresentationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */; };
 		E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
@@ -2489,13 +2494,6 @@
 			remoteGlobalIDString = 5C139DA129DB82E500D5117B;
 			remoteInfo = WebContentCaptivePortalExtension;
 		};
-		5C400E6B29DB8AB500446F6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C139D9429DB82D900D5117B;
-			remoteInfo = WebContentCrashyExtension;
-		};
 		5CAF7A9B26F93A750003F19E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2707,13 +2705,6 @@
 			remoteInfo = "Unlock Keychain";
 		};
 		E3B7469E2A9E584E0024BFAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit;
-		};
-		E3B746A02A9E58560024BFAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -5491,18 +5482,15 @@
 		5C121E8B2410306600486F9B /* APIFrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameTreeNode.cpp; sourceTree = "<group>"; };
 		5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePoliciesData.h; sourceTree = "<group>"; };
 		5C13559E27E250030022B527 /* AppStoreDaemonSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStoreDaemonSPI.h; sourceTree = "<group>"; };
-		5C139D9F29DB82D900D5117B /* WebContentCrashyExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = WebContentCrashyExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C139DAC29DB82E500D5117B /* WebContentCaptivePortalExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = WebContentCaptivePortalExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C139DB029DB847C00D5117B /* WebContentExtension-CaptivePortal-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WebContentExtension-CaptivePortal-Info.plist"; sourceTree = "<group>"; };
 		5C139DB129DB847D00D5117B /* WebContentExtension-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WebContentExtension-Info.plist"; sourceTree = "<group>"; };
-		5C139DB229DB847D00D5117B /* AuxiliaryProcessExtension.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = AuxiliaryProcessExtension.entitlements; sourceTree = "<group>"; };
 		5C139DB329DB847D00D5117B /* AuxiliaryProcessExtensionBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessExtensionBridge.h; sourceTree = "<group>"; };
-		5C139DB429DB847D00D5117B /* WebContentExtension-Crashy-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WebContentExtension-Crashy-Info.plist"; sourceTree = "<group>"; };
 		5C139DB529DB847D00D5117B /* com.apple.WebKit.appexpt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = com.apple.WebKit.appexpt; sourceTree = "<group>"; };
 		5C139DB629DB847E00D5117B /* GPUExtension-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GPUExtension-Info.plist"; sourceTree = "<group>"; };
 		5C139DB729DB847E00D5117B /* NetworkingExtension-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NetworkingExtension-Info.plist"; sourceTree = "<group>"; };
 		5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessExtensionBridge.mm; sourceTree = "<group>"; };
-		5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuxiliaryProcessExtension.swift; sourceTree = "<group>"; };
+		5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebContentProcessExtension.swift; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessSupplement.h; sourceTree = "<group>"; };
 		5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
@@ -5563,7 +5551,6 @@
 		5C400E6E29DB8D7000446F6F /* NetworkingExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkingExtension.xcconfig; sourceTree = "<group>"; };
 		5C400E6F29DB8D7100446F6F /* GPUExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GPUExtension.xcconfig; sourceTree = "<group>"; };
 		5C400E7029DB8D7100446F6F /* WebContentCaptivePortalExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentCaptivePortalExtension.xcconfig; sourceTree = "<group>"; };
-		5C400E7129DB8D7100446F6F /* WebContentCrashyExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentCrashyExtension.xcconfig; sourceTree = "<group>"; };
 		5C400E7229DB8D7100446F6F /* WebContentExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentExtension.xcconfig; sourceTree = "<group>"; };
 		5C411D9B27CED4200068241A /* UnifiedSource121.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource121.cpp; sourceTree = "<group>"; };
 		5C411D9C27CED4200068241A /* UnifiedSource123.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource123.cpp; sourceTree = "<group>"; };
@@ -7321,6 +7308,8 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
+		E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionEventHandler.h; path = Cocoa/ExtensionEventHandler.h; sourceTree = "<group>"; };
+		E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExtensionEventHandler.mm; path = Cocoa/ExtensionEventHandler.mm; sourceTree = "<group>"; };
 		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7348,7 +7337,8 @@
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
 		E3A86FBB26958D830059264D /* WebCaptionPreferencesDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCaptionPreferencesDelegate.h; sourceTree = "<group>"; };
 		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
-		E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityPreferences.cpp; sourceTree = "<group>"; };
+		E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingProcessExtension.swift; sourceTree = "<group>"; };
+		E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUProcessExtension.swift; sourceTree = "<group>"; };
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
 		E3C2BC93289CF8FB00ACC3E9 /* common.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
@@ -7592,14 +7582,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5C139D9829DB82D900D5117B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C139D9929DB82D900D5117B /* WebKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5C139DA529DB82E500D5117B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -7740,7 +7722,6 @@
 				A16E66002581930800EE1749 /* MediaFormatReader.bundle */,
 				5CE4B61329CF87680038F565 /* NetworkingExtension.appex */,
 				5C139DAC29DB82E500D5117B /* WebContentCaptivePortalExtension.appex */,
-				5C139D9F29DB82D900D5117B /* WebContentCrashyExtension.appex */,
 				5CA5A2CA29CBBA1B000F1046 /* WebContentExtension.appex */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
 			);
@@ -8155,7 +8136,6 @@
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
 				37E83D401B37D27B002079EE /* SandboxProfiles.xcconfig */,
 				5C400E7029DB8D7100446F6F /* WebContentCaptivePortalExtension.xcconfig */,
-				5C400E7129DB8D7100446F6F /* WebContentCrashyExtension.xcconfig */,
 				5C400E7229DB8D7100446F6F /* WebContentExtension.xcconfig */,
 				7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */,
 				65DC53C528CA5D07008DABD5 /* WebContentService.Crashy.xcconfig */,
@@ -11622,16 +11602,16 @@
 		5C139DAE29DB845500D5117B /* AuxiliaryProcessExtensions */ = {
 			isa = PBXGroup;
 			children = (
-				5C139DB229DB847D00D5117B /* AuxiliaryProcessExtension.entitlements */,
-				5C139DB929DB847E00D5117B /* AuxiliaryProcessExtension.swift */,
 				5C139DB329DB847D00D5117B /* AuxiliaryProcessExtensionBridge.h */,
 				5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */,
 				5C139DB529DB847D00D5117B /* com.apple.WebKit.appexpt */,
 				5C139DB629DB847E00D5117B /* GPUExtension-Info.plist */,
+				E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */,
 				5C139DB729DB847E00D5117B /* NetworkingExtension-Info.plist */,
+				E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */,
 				5C139DB029DB847C00D5117B /* WebContentExtension-CaptivePortal-Info.plist */,
-				5C139DB429DB847D00D5117B /* WebContentExtension-Crashy-Info.plist */,
 				5C139DB129DB847D00D5117B /* WebContentExtension-Info.plist */,
+				5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */,
 			);
 			path = AuxiliaryProcessExtensions;
 			sourceTree = "<group>";
@@ -13376,6 +13356,8 @@
 				5CB9310326E8375B0032B1C0 /* Daemon */,
 				BC82836B16B3587900A278FE /* XPCService */,
 				5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */,
+				E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */,
+				E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */,
 			);
 			path = EntryPointUtilities;
 			sourceTree = "<group>";
@@ -14831,6 +14813,7 @@
 				DD4DB788280F9471001700D4 /* EnterFullscreen.js in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
+				E31586CD2AD610F30062ED2A /* ExtensionEventHandler.h in Headers */,
 				572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */,
 				57B8264823050C5100B72EB0 /* FidoService.h in Headers */,
 				931A1BE226F870090081A7E5 /* FileSystemStorageError.h in Headers */,
@@ -16131,24 +16114,6 @@
 			productReference = 517B5F5B275A8D3E002DC22D /* webpushtool */;
 			productType = "com.apple.product-type.tool";
 		};
-		5C139D9429DB82D900D5117B /* WebContentCrashyExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5C139D9B29DB82D900D5117B /* Build configuration list for PBXNativeTarget "WebContentCrashyExtension" */;
-			buildPhases = (
-				5C139D9529DB82D900D5117B /* Sources */,
-				5C139D9829DB82D900D5117B /* Frameworks */,
-				5C139D9A29DB82D900D5117B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E3B746A12A9E58560024BFAE /* PBXTargetDependency */,
-			);
-			name = WebContentCrashyExtension;
-			productName = WebContentCrashyExtension;
-			productReference = 5C139D9F29DB82D900D5117B /* WebContentCrashyExtension.appex */;
-			productType = "com.apple.product-type.extensionkit-extension";
-		};
 		5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5C139DA829DB82E500D5117B /* Build configuration list for PBXNativeTarget "WebContentCaptivePortalExtension" */;
@@ -16156,6 +16121,7 @@
 				5C139DA229DB82E500D5117B /* Sources */,
 				5C139DA529DB82E500D5117B /* Frameworks */,
 				5C139DA729DB82E500D5117B /* Resources */,
+				E352B5512AB2612B006F6B0D /* Process entitlements */,
 			);
 			buildRules = (
 			);
@@ -16195,6 +16161,7 @@
 				5CA5A2C629CBBA1A000F1046 /* Sources */,
 				5CA5A2C729CBBA1A000F1046 /* Frameworks */,
 				5CA5A2C829CBBA1A000F1046 /* Resources */,
+				E352B54F2AB25EA8006F6B0D /* Process entitlements */,
 			);
 			buildRules = (
 			);
@@ -16234,6 +16201,7 @@
 				5CE4B60929CF87680038F565 /* Sources */,
 				5CE4B60C29CF87680038F565 /* Frameworks */,
 				5CE4B60E29CF87680038F565 /* Resources */,
+				E352B5522AB2663F006F6B0D /* Process entitlements */,
 			);
 			buildRules = (
 			);
@@ -16252,6 +16220,7 @@
 				5CE4B61629CF877F0038F565 /* Sources */,
 				5CE4B61929CF877F0038F565 /* Frameworks */,
 				5CE4B61B29CF877F0038F565 /* Resources */,
+				E352B5532AB2669A006F6B0D /* Process entitlements */,
 			);
 			buildRules = (
 			);
@@ -16482,6 +16451,9 @@
 						CreatedOnToolsVersion = 15.0;
 						LastSwiftMigration = 1500;
 					};
+					5CE4B61529CF877F0038F565 = {
+						LastSwiftMigration = 1500;
+					};
 					7B9FC59C28A28F87007570E7 = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -16543,7 +16515,6 @@
 				5CE4B60829CF87680038F565 /* NetworkingExtension */,
 				5CE4B61529CF877F0038F565 /* GPUExtension */,
 				5CA5A2C929CBBA1A000F1046 /* WebContentExtension */,
-				5C139D9429DB82D900D5117B /* WebContentCrashyExtension */,
 				5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */,
 			);
 		};
@@ -16562,13 +16533,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				372EBB412017E64300085064 /* WebContentProcess.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C139D9A29DB82D900D5117B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17487,6 +17451,104 @@
 			shellPath = /bin/sh;
 			shellScript = "echo \"Preprocessing sandbox\"\nScripts/generate-derived-sources.sh sandbox-profiles-ios\nmkdir -p ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.GPU.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.Networking.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebAuthn.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
 		};
+		E3322DA32ACB68E2001194DA /* Copy extension to Safari app bundle (temporary workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy extension to Safari app bundle (temporary workaround)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"macosx\" ]]; then\n    exit\nfi\n\nEXTENSIONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Extensions\"\nDESTINATION_PATH=\"${DSTROOT}/Applications/MobileSafari.app/Extensions\"\n\nif [[ ! -e \"${EXTENSIONS_PATH}/NetworkingExtension.appex\" ]]; then\n    exit\nfi\n\nmkdir -p \"${DESTINATION_PATH}\"\nditto  \"${EXTENSIONS_PATH}/NetworkingExtension.appex\" \"${DESTINATION_PATH}/NetworkingExtension.appex\"\nditto  \"${EXTENSIONS_PATH}/GPUExtension.appex\" \"${DESTINATION_PATH}/GPUExtension.appex\"\nditto  \"${EXTENSIONS_PATH}/WebContentExtension.appex\" \"${DESTINATION_PATH}/WebContentExtension.appex\"\nditto  \"${EXTENSIONS_PATH}/WebContentCaptivePortalExtension.appex\" \"${DESTINATION_PATH}/WebContentCaptivePortalExtension.appex\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier com.apple.mobilesafari.NetworkingExtension\" \"${DESTINATION_PATH}/NetworkingExtension.appex/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier com.apple.mobilesafari.GPUExtension\" \"${DESTINATION_PATH}/GPUExtension.appex/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier com.apple.mobilesafari.WebContentExtension\" \"${DESTINATION_PATH}/WebContentExtension.appex/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier com.apple.mobilesafari.WebContentCaptivePortalExtension\" \"${DESTINATION_PATH}/WebContentCaptivePortalExtension.appex/Info.plist\"\n";
+		};
+		E352B54F2AB25EA8006F6B0D /* Process entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		E352B5512AB2612B006F6B0D /* Process entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		E352B5522AB2663F006F6B0D /* Process entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		E352B5532AB2669A006F6B0D /* Process entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n\n";
+		};
 		EBE4D2AD28A2F3BD00C0FAE7 /* Copy Signpost Plists */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -17515,6 +17577,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D9FB21C237523830049F936 /* AuxiliaryProcessMain.cpp in Sources */,
+				E31586D42AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				41F898F028ED69470070549C /* LibWebRTCCodecs.cpp in Sources */,
 				2D9FB21D237523830049F936 /* XPCServiceMain.mm in Sources */,
 			);
@@ -17525,6 +17588,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE912112293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
+				E31586D22AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				5C9A9112228F69CC005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17537,21 +17601,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5C139D9529DB82D900D5117B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DDCED3A929F82DB300512877 /* AuxiliaryProcessExtension.swift in Sources */,
-				DDCED3AA29F82DB300512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5C139DA229DB82E500D5117B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDCED3AB29F82DB400512877 /* AuxiliaryProcessExtension.swift in Sources */,
 				DDCED3AC29F82DB400512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3AB29F82DB400512877 /* WebContentProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17567,8 +17622,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDCED3A729F82DB200512877 /* AuxiliaryProcessExtension.swift in Sources */,
 				DDCED3A829F82DB200512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3A729F82DB200512877 /* WebContentProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17584,8 +17639,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDCED3A329F82D7500512877 /* AuxiliaryProcessExtension.swift in Sources */,
 				DDCED3A429F82D7900512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				E3B9B5D52AB65795008568FE /* NetworkingProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17593,8 +17648,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDCED3A529F82DB100512877 /* AuxiliaryProcessExtension.swift in Sources */,
 				DDCED3A629F82DB100512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				E3B9B5D72AB65822008568FE /* GPUProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17604,6 +17659,7 @@
 			files = (
 				650994CF28C942B7006EE6DB /* AuxiliaryProcessMain.cpp in Sources */,
 				413E5C9429B15174002F4987 /* CacheStorageCache.cpp in Sources */,
+				E31586D12AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				650994D028C942B7006EE6DB /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17613,6 +17669,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A7E8DE92748392500DCC97A /* AuxiliaryProcessMain.cpp in Sources */,
+				E31586D02AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				7A7E8DEA2748392500DCC97A /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17693,6 +17750,7 @@
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */,
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
+				E31586CE2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				86760A6B28DB30DE00D07D06 /* GeneratedSerializers.mm in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
@@ -18156,6 +18214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE912102293C277005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
+				E31586CF2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				5C9A9111228F69CC005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18165,6 +18224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE912122293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
+				E31586D32AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				5C9A9113228F69CD005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18258,15 +18318,6 @@
 			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
-		};
-		5C400E6C29DB8AB500446F6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				xros,
-			);
-			target = 5C139D9429DB82D900D5117B /* WebContentCrashyExtension */;
-			targetProxy = 5C400E6B29DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
 		5CAF7A9A26F93A750003F19E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18434,11 +18485,6 @@
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = E3B7469E2A9E584E0024BFAE /* PBXContainerItemProxy */;
-		};
-		E3B746A12A9E58560024BFAE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = E3B746A02A9E58560024BFAE /* PBXContainerItemProxy */;
 		};
 		E3B746A32A9E585E0024BFAE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18622,27 +18668,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
-		5C139D9C29DB82D900D5117B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5C400E7129DB8D7100446F6F /* WebContentCrashyExtension.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		5C139D9D29DB82D900D5117B /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5C400E7129DB8D7100446F6F /* WebContentCrashyExtension.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		5C139D9E29DB82D900D5117B /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5C400E7129DB8D7100446F6F /* WebContentCrashyExtension.xcconfig */;
-			buildSettings = {
 			};
 			name = Production;
 		};
@@ -19161,16 +19186,6 @@
 				5325BDCE21DFF47800A0DEE1 /* Debug */,
 				5325BDCF21DFF47800A0DEE1 /* Release */,
 				5325BDD021DFF47800A0DEE1 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5C139D9B29DB82D900D5117B /* Build configuration list for PBXNativeTarget "WebContentCrashyExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5C139D9C29DB82D900D5117B /* Debug */,
-				5C139D9D29DB82D900D5117B /* Release */,
-				5C139D9E29DB82D900D5117B /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

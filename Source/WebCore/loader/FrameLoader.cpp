@@ -2868,7 +2868,7 @@ void FrameLoader::detachChildren()
         auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;
-        childrenToDetach.uncheckedAppend(*localChild);
+        childrenToDetach.append(*localChild);
     }
     for (auto& child : childrenToDetach)
         child->loader().detachFromParent();

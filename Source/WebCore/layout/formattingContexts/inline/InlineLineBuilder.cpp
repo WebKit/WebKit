@@ -84,8 +84,8 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
             continue;
         }
 
-        runLevels.uncheckedAppend(lineRuns[i].bidiLevel());
-        runIndexOffsetMap.uncheckedAppend(accumulatedOffset);
+        runLevels.append(lineRuns[i].bidiLevel());
+        runIndexOffsetMap.append(accumulatedOffset);
     }
 
     visualOrderList.resizeToFit(runLevels.size());

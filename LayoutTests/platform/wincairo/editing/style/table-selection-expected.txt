@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 30x50
             RenderTableRow {TR} at (0,2) size 30x22
               RenderTableCell {TD} at (2,2) size 26x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x19
-                  text run at (1,1) width 28: "foo "
+                RenderText {#text} at (1,1) size 29x19
+                  text run at (1,1) width 29: "foo "
             RenderTableRow {TR} at (0,26) size 30x22
               RenderTableCell {TD} at (2,26) size 26x22 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 24x19

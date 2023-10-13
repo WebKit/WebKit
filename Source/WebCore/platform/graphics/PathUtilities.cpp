@@ -283,7 +283,7 @@ static Vector<FloatPointGraph::Polygon> polygonsForRect(const Vector<FloatRect>&
         }
 
         if (!isContained)
-            rectPolygons.uncheckedAppend(edgesForRect(rect, graph));
+            rectPolygons.append(edgesForRect(rect, graph));
     }
     return unitePolygons(rectPolygons, graph);
 }

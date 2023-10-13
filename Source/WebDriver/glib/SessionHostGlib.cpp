@@ -75,7 +75,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
             gboolean isPaired;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
                 if (!g_strcmp0(type, "Automation"))
-                    targetList.uncheckedAppend({ targetID, name, static_cast<bool>(isPaired) });
+                    targetList.append({ targetID, name, static_cast<bool>(isPaired) });
             }
             sessionHost.setTargetList(connectionID, WTFMove(targetList));
         }}

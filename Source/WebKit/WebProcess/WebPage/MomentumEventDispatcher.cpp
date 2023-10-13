@@ -469,11 +469,11 @@ void MomentumEventDispatcher::equalizeTailGaps()
     deltas[Horizontal].reserveInitialCapacity(initialTableSize);
     deltas[Vertical].reserveInitialCapacity(initialTableSize);
     for (unsigned i = 0; i < initialTableSize; i++) {
-        deltas[Horizontal].uncheckedAppend(table[i].width());
+        deltas[Horizontal].append(table[i].width());
         if (!firstZeroIndex[Horizontal] && !table[i].width())
             firstZeroIndex[Horizontal] = i;
 
-        deltas[Vertical].uncheckedAppend(table[i].height());
+        deltas[Vertical].append(table[i].height());
         if (!firstZeroIndex[Vertical] && !table[i].height())
             firstZeroIndex[Vertical] = i;
     }

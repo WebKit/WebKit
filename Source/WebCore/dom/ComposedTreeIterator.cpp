@@ -72,7 +72,7 @@ ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, FirstChildTag)
         return;
     }
 
-    m_contextStack.uncheckedAppend(Context(root, FirstChild));
+    m_contextStack.append(Context(root, FirstChild));
 }
 
 ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
@@ -85,7 +85,7 @@ ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
     if (mayNeedShadowStack)
         initializeContextStack(root, current);
     else
-        m_contextStack.uncheckedAppend(Context(root, current));
+        m_contextStack.append(Context(root, current));
 }
 
 void ComposedTreeIterator::initializeContextStack(ContainerNode& root, Node& current)

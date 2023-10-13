@@ -26,7 +26,7 @@ import webkitscmpy
 from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.autoinstalled import twisted
 
-AutoInstall.install(Package('attrs', Version(21, 4, 0)))
+AutoInstall.install(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 AutoInstall.install(Package('constantly', Version(15, 1, 0)))
 AutoInstall.install(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.install(Package('future', Version(0, 18, 2)))

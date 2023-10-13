@@ -52,8 +52,8 @@ layer at (0,0) size 785x2706
         RenderBR {BR} at (15,1) size 0x17
       RenderBlock {P} at (0,483) size 769x54
         RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,0) size 21x36
-            text run at (0,0) width 21: "T"
+          RenderText {#text} at (0,0) size 22x36
+            text run at (0,0) width 22: "T"
         RenderText {#text} at (48,0) size 721x53
           text run at (48,0) width 721: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as"
           text run at (48,18) width 496: "well as bold, with a content width of 1.5em and a background-color of silver. "
@@ -218,8 +218,8 @@ layer at (0,0) size 785x2706
                 RenderBR {BR} at (15,1) size 0x17
               RenderBlock {P} at (4,487) size 747x72
                 RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
-                  RenderText {#text} at (0,0) size 21x36
-                    text run at (0,0) width 21: "T"
+                  RenderText {#text} at (0,0) size 22x36
+                    text run at (0,0) width 22: "T"
                 RenderText {#text} at (48,0) size 747x71
                   text run at (48,0) width 699: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as"
                   text run at (48,18) width 513: "well as bold, with a content width of 1.5em and a background-color of silver. "

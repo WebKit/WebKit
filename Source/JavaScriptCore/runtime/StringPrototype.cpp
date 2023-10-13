@@ -503,7 +503,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         int32_t start = result->get(cursor + cachedCount - 1).asInt32();
         int32_t end = start + asString(result->get(cursor))->length();
 
-        sourceRanges.uncheckedConstructAndAppend(lastIndex, start);
+        sourceRanges.constructAndAppend(lastIndex, start);
 
         cachedCall.setThis(jsUndefined());
         if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
@@ -515,13 +515,13 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         RETURN_IF_EXCEPTION(scope, nullptr);
         auto string = jsResult.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        replacements.uncheckedAppend(WTFMove(string));
+        replacements.append(WTFMove(string));
 
         lastIndex = end;
     }
 
     if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.uncheckedConstructAndAppend(lastIndex, sourceLen);
+        sourceRanges.constructAndAppend(lastIndex, sourceLen);
     RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 

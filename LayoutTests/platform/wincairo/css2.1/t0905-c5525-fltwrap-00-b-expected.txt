@@ -18,7 +18,7 @@ layer at (0,0) size 800x329
             text run at (0,56) width 72: "box"
             text run at (0,111) width 185: "should be"
             text run at (0,166) width 118: "on the"
-            text run at (0,230) width 159: "right. \x{21E8}"
+            text run at (0,230) width 160: "right. \x{21E8}"
       RenderBlock {P} at (0,0) size 784x313
         RenderText {#text} at (196,1) size 365x301
           text run at (196,1) width 365: "This text should be"

@@ -130,7 +130,7 @@ enum class AccessibilityRole {
     Canvas,
     Caption,
     Cell,
-    CheckBox,
+    Checkbox,
     Code,
     ColorWell,
     Column,
@@ -310,8 +310,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Caption"_s;
     case AccessibilityRole::Cell:
         return "Cell"_s;
-    case AccessibilityRole::CheckBox:
-        return "CheckBox"_s;
+    case AccessibilityRole::Checkbox:
+        return "Checkbox"_s;
     case AccessibilityRole::Code:
         return "Code"_s;
     case AccessibilityRole::ColorWell:
@@ -615,7 +615,7 @@ enum class AccessibilitySearchKey {
     Blockquote,
     BoldFont,
     Button,
-    CheckBox,
+    Checkbox,
     Control,
     DifferentType,
     FontChange,
@@ -851,7 +851,7 @@ public:
     virtual bool isSecureField() const = 0;
     virtual bool isNativeTextControl() const = 0;
     bool isWebArea() const { return roleValue() == AccessibilityRole::WebArea; }
-    bool isCheckbox() const { return roleValue() == AccessibilityRole::CheckBox; }
+    bool isCheckbox() const { return roleValue() == AccessibilityRole::Checkbox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
     virtual bool isListBoxOption() const = 0;

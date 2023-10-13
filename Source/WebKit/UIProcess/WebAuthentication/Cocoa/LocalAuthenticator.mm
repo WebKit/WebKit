@@ -207,7 +207,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
 
         response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
 
-        result.uncheckedAppend(WTFMove(response));
+        result.append(WTFMove(response));
     }
     return result;
 }

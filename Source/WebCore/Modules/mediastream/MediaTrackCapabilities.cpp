@@ -80,9 +80,9 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
 {
     Vector<bool> result;
     result.reserveInitialCapacity(2);
-    result.uncheckedAppend(true);
+    result.append(true);
     if (cancellation == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite)
-        result.uncheckedAppend(false);
+        result.append(false);
     return result;
 }
 

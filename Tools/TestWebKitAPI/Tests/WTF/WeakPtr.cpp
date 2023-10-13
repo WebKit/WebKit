@@ -1952,7 +1952,7 @@ TEST(WTF_WeakPtr, WeakHashMap_iterator_destruction)
     for (unsigned i = 0; i < objectCount; ++i) {
         auto object = makeUnique<Base>();
         weakHashMap.add(*object, i);
-        objects.uncheckedAppend(WTFMove(object));
+        objects.append(WTFMove(object));
     }
 
     auto a = objects.takeLast();
@@ -2765,8 +2765,8 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 100; i++) {
-            strongReferences.uncheckedAppend(counter);
-            strongReferences.uncheckedAppend(counter);
+            strongReferences.append(counter);
+            strongReferences.append(counter);
             strongReferences.takeLast();
         }
         counter = nullptr;
@@ -2776,8 +2776,8 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 100; i++) {
-            weakReferences.uncheckedAppend(counter);
-            weakReferences.uncheckedAppend(counter);
+            weakReferences.append(counter);
+            weakReferences.append(counter);
             weakReferences.takeLast();
         }
         counter = nullptr;
@@ -2789,10 +2789,10 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 50; i++) {
-            strongReferences.uncheckedAppend(counter.get());
-            weakReferences.uncheckedAppend(counter);
-            weakReferences.uncheckedAppend(counter);
-            strongReferences.uncheckedAppend(weakReferences.takeLast().get());
+            strongReferences.append(counter.get());
+            weakReferences.append(counter);
+            weakReferences.append(counter);
+            strongReferences.append(weakReferences.takeLast().get());
             strongReferences.takeLast();
         }
         counter = nullptr;
@@ -2831,7 +2831,7 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSet)
         Vector<Ref<ThreadSafeInstanceCounter>> strongReferences;
         strongReferences.reserveInitialCapacity(100);
         for (size_t i = 0; i < 100; i++)
-            strongReferences.uncheckedAppend(adoptRef(*new ThreadSafeInstanceCounter));
+            strongReferences.append(adoptRef(*new ThreadSafeInstanceCounter));
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 100; i++)
@@ -2854,7 +2854,7 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSet)
         Vector<Ref<ThreadSafeInstanceCounter>> strongReferences;
         strongReferences.reserveInitialCapacity(101);
         for (size_t i = 0; i < 101; i++)
-            strongReferences.uncheckedAppend(adoptRef(*new ThreadSafeInstanceCounter));
+            strongReferences.append(adoptRef(*new ThreadSafeInstanceCounter));
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 100; i++) {
@@ -3103,7 +3103,7 @@ TEST(WTF_ThreadSafeWeakPtr, RemoveInDestructor)
         vector.reserveInitialCapacity(i);
         ThreadSafeWeakHashSet<Struct> set;
         for (size_t j = 0; j < i; j++) {
-            vector.uncheckedAppend(adoptRef(*new Struct()));
+            vector.append(adoptRef(*new Struct()));
             set.add(vector.last().get());
         }
     }

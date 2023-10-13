@@ -621,8 +621,10 @@ public:
     IntPoint savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const IntPoint&);
 
-    // FIXME: <https://webkit.org/b/263034> Indicate isEventDefaultPrevented through the return value instead of as an out-param.
-    bool dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick = IsSyntheticClick::No, bool* isEventDefaultPrevented = nullptr);
+    enum class EventIsDefaultPrevented : bool { No, Yes };
+    enum class EventIsDispatched : bool { No, Yes };
+    using DispatchMouseEventResult = std::pair<EventIsDispatched, EventIsDefaultPrevented>;
+    DispatchMouseEventResult dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick = IsSyntheticClick::No);
     bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, EventIsCancelable = EventIsCancelable::Yes);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);

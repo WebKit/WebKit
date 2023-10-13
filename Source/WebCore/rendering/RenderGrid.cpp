@@ -1243,8 +1243,8 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
     tracks.reserveInitialCapacity(numPositions - 1);
     for (size_t i = 0; i < numPositions - 2; ++i)
-        tracks.uncheckedAppend(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
-    tracks.uncheckedAppend(positions[numPositions - 1] - positions[numPositions - 2]);
+        tracks.append(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
+    tracks.append(positions[numPositions - 1] - positions[numPositions - 2]);
 
     if (!hasCollapsedTracks)
         return tracks;

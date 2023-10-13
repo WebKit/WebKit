@@ -4,9 +4,9 @@ layer at (0,0) size 800x228
   RenderBlock {HTML} at (0,0) size 800x228
     RenderBody {BODY} at (8,16) size 784x202
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 649x17
-          text run at (0,0) width 388: "Below you should see four blocks side by side followed by a "
-          text run at (388,0) width 261: "matching cross section of the four blocks."
+        RenderText {#text} at (0,0) size 650x17
+          text run at (0,0) width 389: "Below you should see four blocks side by side followed by a "
+          text run at (388,0) width 262: "matching cross section of the four blocks."
       RenderBlock (floating) {DIV} at (0,44) size 140x130 [bgcolor=#FFFF00] [border: (20px solid #000000)]
         RenderBlock {P} at (40,56) size 60x18
           RenderText {#text} at (7,0) size 46x17

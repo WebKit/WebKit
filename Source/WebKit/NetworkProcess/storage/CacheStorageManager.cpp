@@ -87,7 +87,7 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
         if (!uniqueName)
             return std::nullopt;
 
-        result.uncheckedAppend({ WTFMove(*name), WTFMove(*uniqueName) });
+        result.append({ WTFMove(*name), WTFMove(*uniqueName) });
     }
 
     return result;

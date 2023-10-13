@@ -302,7 +302,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             }
         }
 
-        results.results.uncheckedAppend({ contentRuleListIdentifier, WTFMove(result) });
+        results.results.append({ contentRuleListIdentifier, WTFMove(result) });
     }
 
     if (currentDocument) {

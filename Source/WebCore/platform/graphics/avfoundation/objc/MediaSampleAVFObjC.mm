@@ -415,7 +415,7 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
         CMSampleBufferRef rawSample = nullptr;
         if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, m_sample.get(), range, &rawSample) != noErr || !rawSample)
             return { };
-        samples.uncheckedAppend(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
+        samples.append(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
     }
     return samples;
 }

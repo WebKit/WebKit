@@ -163,7 +163,7 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
     context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), ec, message = WTFMove(message)]() {
         deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             JSC::VM& vm = jsGlobalObject.vm();
-            JSC::JSObject* error = jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
+            JSC::JSObject* error = JSC::jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
             ASSERT(error);
             error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
             return error;

@@ -2006,7 +2006,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
             if (!virtualKey)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
 
-            actionsToPerform.uncheckedAppend([this, page, interactionType, virtualKey] {
+            actionsToPerform.append([this, page, interactionType, virtualKey] {
                 platformSimulateKeyboardInteraction(*page, interactionType.value(), virtualKey.value());
             });
         }
@@ -2020,7 +2020,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
 
             case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
-                actionsToPerform.uncheckedAppend([this, page, keySequence] {
+                actionsToPerform.append([this, page, keySequence] {
                     platformSimulateKeySequence(*page, keySequence);
                 });
                 break;
@@ -2310,7 +2310,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (auto duration = stateObject->getInteger("duration"_s))
                 sourceState.duration = Seconds::fromMilliseconds(*duration);
 
-            entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });
+            entries.append(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });
         }
         
         keyFrames.append(SimulatedInputKeyFrame(WTFMove(entries)));

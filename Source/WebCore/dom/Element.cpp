@@ -466,25 +466,26 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
     return ShouldIgnoreMouseEvent::No;
 }
 
-bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick, bool* isEventDefaultPrevented)
+Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick)
 {
+    auto eventIsDefaultPrevented = Element::EventIsDefaultPrevented::No;
     if (isDisabledFormControl() && !document().settings().sendMouseEventsToDisabledFormControlsEnabled())
-        return false;
+        return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
-        return false;
+        return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
     Ref<MouseEvent> mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, detail, relatedTarget);
 
     if (mouseEvent->type().isEmpty())
-        return true; // Shouldn't happen.
+        return { Element::EventIsDispatched::Yes, eventIsDefaultPrevented }; // Shouldn't happen.
 
     Ref protectedThis { *this };
     bool didNotSwallowEvent = true;
 
     if (dispatchPointerEventIfNeeded(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
-        return false;
-    
+        return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
+
     auto isParentProcessAFullWebBrowser = false;
 #if PLATFORM(IOS_FAMILY)
     if (auto* frame = document().frame())
@@ -493,12 +494,12 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     isParentProcessAFullWebBrowser = MacApplication::isSafari();
 #endif
     if (Quirks::StorageAccessResult::ShouldCancelEvent == document().quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser, isSyntheticClick))
-        return false;
+        return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
     dispatchEvent(mouseEvent);
-    if (mouseEvent->defaultPrevented() && isEventDefaultPrevented)
-        *isEventDefaultPrevented = true;
+    if (mouseEvent->defaultPrevented())
+        eventIsDefaultPrevented = Element::EventIsDefaultPrevented::Yes;
     if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
         didNotSwallowEvent = false;
 
@@ -520,9 +521,9 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
         dispatchEvent(doubleClickEvent);
         if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
-            return false;
+            return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
     }
-    return didNotSwallowEvent;
+    return { didNotSwallowEvent ? Element::EventIsDispatched::Yes : Element::EventIsDispatched::No, eventIsDefaultPrevented };
 }
 
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent, OptionSet<EventHandling>& processing, Event::IsCancelable isCancelable)

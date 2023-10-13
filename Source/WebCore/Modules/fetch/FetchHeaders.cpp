@@ -294,7 +294,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
             return header.key.convertToASCIILowercase();
         });
         if (hasSetCookie)
-            m_keys.uncheckedAppend(String());
+            m_keys.append(String());
         std::sort(m_keys.begin(), m_keys.end(), compareIteratorKeys);
 
         // We adjust the current index to work with Set-Cookie headers.

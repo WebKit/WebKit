@@ -29,11 +29,11 @@ layer at (0,0) size 800x600
         RenderInline {BDO} at (0,0) size 0x17
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x17
-        RenderInline {BDO} at (0,0) size 11x17
-          RenderText {#text} at (0,72) size 11x17
-            text run at (0,72) width 11 RTL: "A"
+        RenderInline {BDO} at (0,0) size 12x17
+          RenderText {#text} at (0,72) size 12x17
+            text run at (0,72) width 12 RTL: "A"
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (11,72) size 0x17
+        RenderBR {BR} at (11,72) size 1x17
         RenderInline {BDO} at (0,0) size 290x17
           RenderText {#text} at (0,90) size 26x17
             text run at (0,90) width 26: "My "

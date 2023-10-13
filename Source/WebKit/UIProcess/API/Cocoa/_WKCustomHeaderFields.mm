@@ -65,7 +65,7 @@
     vector.reserveInitialCapacity(fields.count);
     [fields enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&](id key, id value, BOOL* stop) {
         if (auto field = WebCore::HTTPHeaderField::create((NSString *)key, (NSString *)value); field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
-            vector.uncheckedAppend(WTFMove(*field));
+            vector.append(WTFMove(*field));
     }).get()];
     _fields->setFields(WTFMove(vector));
 }

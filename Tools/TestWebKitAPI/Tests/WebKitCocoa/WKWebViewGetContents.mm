@@ -319,6 +319,54 @@ TEST(WKWebView, AttributedStringFromTable)
     checkCellAtIndex(7, @"Eight", 1, 1, secondTable);
 }
 
+TEST(WKWebView, AttributedStringWithLinksInTableCell)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"<html>"
+        "  <body>"
+        "    <table>"
+        "      <tbody>"
+        "        <tr>"
+        "          <td><a href='https://webkit.org'>WebKit</a> One</td>"
+        "          <td><a href='https://apple.com'>Apple</a> Two</td>"
+        "        </tr>"
+        "      </tbody>"
+        "    </table>"
+        "  </body>"
+        "</html>"];
+
+    __block Vector<std::pair<NSString *, NSTextTableBlock *>> allTableCells;
+    RetainPtr string = [webView _contentsAsAttributedString];
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        auto trimmedSubstring = [[[string string] substringWithRange:range] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+        auto textBlocks = [attributes[NSParagraphStyleAttributeName] textBlocks];
+        EXPECT_EQ(textBlocks.count, 1U);
+        EXPECT_TRUE([textBlocks[0] isKindOfClass:NSClassFromString(@"NSTextTableBlock")]);
+        allTableCells.append({ trimmedSubstring, static_cast<NSTextTableBlock *>(textBlocks[0]) });
+    }];
+
+    auto checkCellAtIndex = ^(size_t index, NSString *expectedText, NSInteger expectedColumn, NSInteger expectedRow, NSTextTable *expectedTable) {
+        auto [text, cell] = allTableCells[index];
+        EXPECT_WK_STREQ(expectedText, text);
+        EXPECT_EQ(cell.startingColumn, expectedColumn);
+        EXPECT_EQ(cell.startingRow, expectedRow);
+        EXPECT_EQ(cell.columnSpan, static_cast<NSInteger>(1));
+        EXPECT_EQ(cell.rowSpan, static_cast<NSInteger>(1));
+        EXPECT_EQ(cell.table, expectedTable);
+    };
+
+    EXPECT_EQ(allTableCells.size(), 4U);
+    auto table = allTableCells.first().second.table;
+    checkCellAtIndex(0, @"WebKit", 0, 0, table);
+    checkCellAtIndex(1, @"One", 0, 0, table);
+    checkCellAtIndex(2, @"Apple", 1, 0, table);
+    checkCellAtIndex(3, @"Two", 1, 0, table);
+
+    EXPECT_EQ(allTableCells[0].second, allTableCells[1].second);
+    EXPECT_FALSE(allTableCells[1].second == allTableCells[2].second);
+    EXPECT_EQ(allTableCells[2].second, allTableCells[3].second);
+}
+
 TEST(WKWebView, AttributedStringFromList)
 {
     auto webView = adoptNS([TestWKWebView new]);

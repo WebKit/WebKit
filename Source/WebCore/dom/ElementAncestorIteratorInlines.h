@@ -76,6 +76,22 @@ inline ElementAncestorRange<const ElementType> lineageOfType(const Element& firs
 }
 
 template <typename ElementType>
+inline ElementAncestorRange<ElementType> lineageOfType(Node& first)
+{
+    if (is<ElementType>(first))
+        return ElementAncestorRange<ElementType>(&downcast<ElementType>(first));
+    return ancestorsOfType<ElementType>(first);
+}
+
+template <typename ElementType>
+inline ElementAncestorRange<const ElementType> lineageOfType(const Node& first)
+{
+    if (is<ElementType>(first))
+        return ElementAncestorRange<const ElementType>(&downcast<ElementType>(first));
+    return ancestorsOfType<ElementType>(first);
+}
+
+template <typename ElementType>
 inline ElementAncestorRange<ElementType> ancestorsOfType(Node& descendant)
 {
     return ElementAncestorRange<ElementType>(findElementAncestorOfType<ElementType>(descendant));

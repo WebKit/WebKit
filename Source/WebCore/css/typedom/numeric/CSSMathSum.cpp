@@ -140,7 +140,7 @@ RefPtr<CSSCalcExpressionNode> CSSMathSum::toCalcExpressionNode() const
         auto value = item->toCalcExpressionNode();
         if (!value)
             return nullptr;
-        values.uncheckedAppend(value.releaseNonNull());
+        values.append(value.releaseNonNull());
     }
     return CSSCalcOperationNode::createSum(WTFMove(values));
 }

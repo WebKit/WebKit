@@ -103,7 +103,7 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
 
     for (auto* map : { &nonInheritedCustomProperties, &inheritedCustomProperties }) {
         map->forEach([&](auto& it) {
-            values.uncheckedAppend(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(const_cast<CSSCustomPropertyValue*>(it.value.get()), std::nullopt, document)));
+            values.append(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(const_cast<CSSCustomPropertyValue*>(it.value.get()), std::nullopt, document)));
             return IterationStatus::Continue;
         });
     }

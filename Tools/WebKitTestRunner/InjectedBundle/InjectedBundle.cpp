@@ -427,7 +427,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         for (size_t i = 0; i < size; ++i) {
             auto item = WKArrayGetItemAtIndex(domainsArray, i);
             if (item && WKGetTypeID(item) == WKStringGetTypeID())
-                domains.uncheckedAppend(toWTFString(static_cast<WKStringRef>(item)));
+                domains.append(toWTFString(static_cast<WKStringRef>(item)));
         }
 
         m_testRunner->callDidReceiveLoadedSubresourceDomainsCallback(WTFMove(domains));

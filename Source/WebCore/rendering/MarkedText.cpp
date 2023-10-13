@@ -62,8 +62,8 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     unsigned numberOfOffsets = 2 * numberOfMarkedTexts;
     offsets.reserveInitialCapacity(numberOfOffsets);
     for (auto& markedText : markedTexts) {
-        offsets.uncheckedAppend({ Offset::Begin, markedText.startOffset, &markedText });
-        offsets.uncheckedAppend({ Offset::End, markedText.endOffset, &markedText });
+        offsets.append({ Offset::Begin, markedText.startOffset, &markedText });
+        offsets.append({ Offset::End, markedText.endOffset, &markedText });
     }
 
     // 2. Sort offsets such that begin offsets are in paint order and end offsets are in reverse paint order.
@@ -283,7 +283,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 #endif
         case DocumentMarker::TextMatch: {
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
-            markedTexts.uncheckedAppend({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
+            markedTexts.append({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
             break;
         }
         case DocumentMarker::Replacement:

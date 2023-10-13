@@ -16,20 +16,20 @@ layer at (0,0) size 800x544
         RenderText {#text} at (21,22) size 553x17
           text run at (21,22) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (495,22) width 79: "dummy text "
-        RenderInline {SPAN} at (0,0) size 17x23 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
-          RenderText {#text} at (577,22) size 11x17
-            text run at (577,22) width 11: "A"
-        RenderText {#text} at (591,22) size 4x17
-          text run at (591,22) width 4: " "
+        RenderInline {SPAN} at (0,0) size 18x23 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+          RenderText {#text} at (577,22) size 12x17
+            text run at (577,22) width 12: "A"
+        RenderText {#text} at (591,22) size 5x17
+          text run at (591,22) width 5: " "
         RenderBlock (floating) {P} at (21,41) size 150x58 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
           RenderText {#text} at (19,20) size 48x17
             text run at (19,20) width 48: "AAAA"
-        RenderText {#text} at (595,22) size 551x37
-          text run at (595,22) width 127: "dummy text dummy"
+        RenderText {#text} at (595,22) size 552x37
+          text run at (595,22) width 128: "dummy text dummy"
           text run at (171,42) width 343: "text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 16x23 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
-          RenderText {#text} at (517,42) size 10x17
-            text run at (517,42) width 10: "B"
+        RenderInline {SPAN} at (0,0) size 17x23 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
+          RenderText {#text} at (517,42) size 11x17
+            text run at (517,42) width 11: "B"
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {P} at (581,41) size 150x58 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
           RenderText {#text} at (19,20) size 44x17
@@ -46,9 +46,9 @@ layer at (0,0) size 800x544
         RenderText {#text} at (321,82) size 387x37
           text run at (321,82) width 233: "dummy text dummy text dummy text"
           text run at (471,102) width 237: "dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 17x23 [color=#FFFFFF] [bgcolor=#008000] [border: (3px solid #00FF00)]
-          RenderText {#text} at (711,102) size 11x17
-            text run at (711,102) width 11: "D"
+        RenderInline {SPAN} at (0,0) size 18x23 [color=#FFFFFF] [bgcolor=#008000] [border: (3px solid #00FF00)]
+          RenderText {#text} at (711,102) size 12x17
+            text run at (711,102) width 12: "D"
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {P} at (321,101) size 150x58 [color=#FFFFFF] [bgcolor=#008000] [border: (3px solid #00FF00)]
           RenderText {#text} at (19,20) size 48x17
