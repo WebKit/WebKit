@@ -58,7 +58,10 @@ private:
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
+#pragma clang diagnostic pop
 };
 
 template<typename T> inline NeverDestroyed<T> makeNeverDestroyed(T&& argument)
