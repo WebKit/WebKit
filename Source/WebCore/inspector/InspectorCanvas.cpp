@@ -39,7 +39,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
-#include "GPUCanvasContext.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -893,8 +892,6 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
         if (is<WebGL2RenderingContext>(m_context))
             return Protocol::Canvas::ContextType::WebGL2;
 #endif
-        if (is<GPUCanvasContext>(m_context))
-            return Protocol::Canvas::ContextType::WebGPU;
 
         ASSERT_NOT_REACHED();
         return Protocol::Canvas::ContextType::Canvas2D;
