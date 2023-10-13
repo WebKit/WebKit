@@ -54,10 +54,15 @@ void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("x-unicode20utf8", "UTF-8");
 }
 
+std::unique_ptr<TextCodecUTF8> TextCodecUTF8::codec()
+{
+    return makeUnique<TextCodecUTF8>();
+}
+
 void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("UTF-8", [] {
-        return makeUnique<TextCodecUTF8>();
+        return codec();
     });
 }
 
