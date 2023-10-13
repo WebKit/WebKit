@@ -3197,16 +3197,21 @@ class CompileWebKitWithoutChange(CompileWebKit):
 
     def send_email_for_unexpected_build_failure(self):
         try:
+            pr_number = self.getProperty('github.number')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+            owners = self.getProperty('owners', [])
+            author = owners[0] if owners else '?'
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
-            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            email_subject = '{} might be in bad state, unable to build WebKit'.format(worker_name)
-            email_text = '{} might be in bad state. It is unable to build WebKit.'.format(worker_name)
-            email_text += ' Same patch was built successfuly on builder queue previously.\n\nBuild: {}\n\nBuilder: {}'.format(build_url, builder_name)
-            reference = 'build-failure-{}'.format(worker_name)
-            send_email_to_bot_watchers(email_subject, email_text, builder_name, reference)
+            build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+            email_subject = f'{worker_name} might be in bad state, unable to build WebKit'
+            email_text = f'{worker_name} might be in bad state. It is unable to build WebKit.'
+            email_text += f' Same code was built successfuly on builder queue previously.'
+            email_text += f'\n\nBuild: {build_url}\n\nBuilder: {builder_name}'
+            email_text += f'\n\nPR: {pr_number}, Hash: {sha}, By: {author}\n'
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'build-failure-{worker_name}')
         except Exception as e:
-            print('Error in sending email for unexpected build failure: {}'.format(e))
+            print(f'Error in sending email for unexpected build failure: {e}')
 
 
 class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
