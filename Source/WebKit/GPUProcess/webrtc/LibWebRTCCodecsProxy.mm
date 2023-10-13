@@ -265,18 +265,33 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Func
     task(iterator->value);
 }
 
-static bool validateEncoderCodecString(VideoCodecType codecType, const String& codecString)
+static bool validateEncoderConfiguration(VideoCodecType codecType, const String& codecString, bool useLowLatency, VideoEncoderScalabilityMode scalabilityMode)
 {
     // FIXME: Further tighten checks.
     switch (codecType) {
     case VideoCodecType::H264: {
-        auto parameters = parseAVCCodecParameters(codecString);
-        // Limit to High Profile, level 5.2.
-        return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
+        if (scalabilityMode != VideoEncoderScalabilityMode::L1T1 && scalabilityMode != VideoEncoderScalabilityMode::L1T2)
+            return false;
+
+        if (scalabilityMode == VideoEncoderScalabilityMode::L1T2 && !useLowLatency)
+            return false;
+
+        if (!codecString.isNull()) {
+            auto parameters = parseAVCCodecParameters(codecString);
+            // Limit to High Profile, level 5.2.
+            return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
+        }
+        return true;
     }
     case VideoCodecType::H265: {
-        auto parameters = parseHEVCCodecParameters(codecString);
-        return parameters && validateHEVCParameters(*parameters, false, false);
+        if (scalabilityMode != VideoEncoderScalabilityMode::L1T1)
+            return false;
+
+        if (!codecString.isNull()) {
+            auto parameters = parseHEVCCodecParameters(codecString);
+            return parameters && validateHEVCParameters(*parameters, false, false);
+        }
+        return true;
     }
     case VideoCodecType::VP9:
     case VideoCodecType::AV1:
@@ -286,7 +301,7 @@ static bool validateEncoderCodecString(VideoCodecType codecType, const String& c
     return true;
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
@@ -297,8 +312,8 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
         callback(false);
         return;
     }
-    
-    if (!codecString.isNull() && !validateEncoderCodecString(codecType, codecString)) {
+
+    if (!validateEncoderConfiguration(codecType, codecString, useLowLatency, scalabilityMode)) {
         callback(false);
         return;
     }
@@ -312,7 +327,19 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
         connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, IPC::DataReference { buffer, size }, colorSpace }, 0);
     });
 
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, newFrameBlock.get(), newConfigurationBlock.get());
+    webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;
+    switch (scalabilityMode) {
+    case VideoEncoderScalabilityMode::L1T1:
+        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T1;
+        break;
+    case VideoEncoderScalabilityMode::L1T2:
+        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T2;
+        break;
+    case VideoEncoderScalabilityMode::L1T3:
+        callback(false);
+        return;
+    }
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get());
     if (!encoder) {
         callback(false);
         return;
