@@ -51,9 +51,9 @@ class WebSWServerToContextConnection;
 class ServiceWorkerDownloadTask : public NetworkDataTask, private FunctionDispatcher, private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, DownloadID downloadID)
+    static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, DownloadID downloadID)
     {
-        auto task = adoptRef(*new ServiceWorkerDownloadTask(session, client, connection, serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request, downloadID));
+        auto task = adoptRef(*new ServiceWorkerDownloadTask(session, client, connection, serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request, response, downloadID));
         task->startListeningForIPC();
         return task;
     }
@@ -65,7 +65,7 @@ public:
     void stop() { cancel(); }
 
 private:
-    ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, DownloadID);
+    ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& response, DownloadID);
     void startListeningForIPC();
 
     // IPC Message
@@ -99,7 +99,8 @@ private:
     Ref<NetworkProcess> m_networkProcess;
     RefPtr<SandboxExtension> m_sandboxExtension;
     FileSystem::PlatformFileHandle m_downloadFile { FileSystem::invalidPlatformFileHandle };
-    int64_t m_downloadBytesWritten { 0 };
+    uint64_t m_downloadBytesWritten { 0 };
+    std::optional<uint64_t> m_expectedContentLength;
     State m_state { State::Suspended };
 };
 

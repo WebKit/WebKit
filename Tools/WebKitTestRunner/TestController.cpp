@@ -1212,6 +1212,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setPluginSupportedMode({ });
 
     m_shouldLogDownloadSize = false;
+    m_shouldLogDownloadExpectedSize = false;
     m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
@@ -2463,6 +2464,8 @@ void TestController::downloadDidFinish(WKDownloadRef)
 {
     if (m_shouldLogDownloadSize)
         m_currentInvocation->outputText(makeString("Download size: ", m_downloadTotalBytesWritten.value_or(0), ".\n"));
+    if (m_shouldLogDownloadExpectedSize)
+        m_currentInvocation->outputText(makeString("Download expected size: ", m_downloadTotalBytesExpectedToWrite.value_or(0), ".\n"));
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download completed.\n"_s);
     m_currentInvocation->notifyDownloadDone();
@@ -2500,16 +2503,17 @@ void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WK
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
 }
 
-void TestController::downloadDidWriteData(long long totalBytesWritten)
+void TestController::downloadDidWriteData(long long totalBytesWritten, long long totalBytesExpectedToWrite)
 {
     if (!m_shouldLogDownloadCallbacks)
         return;
     m_downloadTotalBytesWritten = totalBytesWritten;
+    m_downloadTotalBytesExpectedToWrite = totalBytesExpectedToWrite;
 }
 
 void TestController::downloadDidWriteData(WKDownloadRef download, long long bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidWriteData(totalBytesWritten);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidWriteData(totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)

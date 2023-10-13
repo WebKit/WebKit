@@ -234,6 +234,7 @@ public:
     void setShouldLogDownloadCallbacks(bool);
     void setShouldLogDownloadSize(bool);
     void setShouldDownloadContentDispositionAttachments(bool);
+    void setShouldLogDownloadExpectedSize(bool);
 
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
 

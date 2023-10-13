@@ -1,5 +1,6 @@
 Download started.
 Downloading URL with suggested filename ""
 Download size: 34.
+Download expected size: 200.
 Download completed.
 
