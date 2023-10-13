@@ -4105,7 +4105,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         CSSValueListBuilder list;
         for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
             list.append(createConvertingToCSSValueID(currLayer->blendMode()));
-        return CSSValueList::createSpaceSeparated(WTFMove(list));
+        return CSSValueList::createCommaSeparated(WTFMove(list));
     }
     case CSSPropertyBackground:
         return getBackgroundShorthandValue();
