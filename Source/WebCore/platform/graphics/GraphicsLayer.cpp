@@ -796,13 +796,8 @@ void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
 
     FloatRect largestRepaintRect(FloatPoint(), m_size);
     largestRepaintRect.intersect(repaintRect);
-    RepaintMap::iterator repaintIt = repaintRectMap().find(this);
-    if (repaintIt == repaintRectMap().end())
-        repaintRectMap().set(this, Vector { WTFMove(largestRepaintRect) });
-    else {
-        Vector<FloatRect>& repaintRects = repaintIt->value;
-        repaintRects.append(largestRepaintRect);
-    }
+
+    repaintRectMap().add(this, Vector<FloatRect>()).iterator->value.append(WTFMove(largestRepaintRect));
 }
 
 void GraphicsLayer::traverse(GraphicsLayer& layer, const Function<void(GraphicsLayer&)>& traversalFunc)
