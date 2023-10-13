@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/plus-lighter.js
-/LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/transform-triangle-left.svg
-/LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/test-plan/css-blending-test-plan-proposal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/test-plan/test-plan.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/test-plan/test-plan.src.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/test-plan/test_template.png
