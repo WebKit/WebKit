@@ -46,8 +46,8 @@ struct FloatMarkableTraits {
 
 struct FontSizeAdjust {
     friend bool operator==(const FontSizeAdjust&, const FontSizeAdjust&) = default;
-    explicit operator bool() const { return value || isFromFont; }
 
+    enum class ValueType : bool { Number, FromFont };
     enum class Metric : uint8_t {
         ExHeight,
         CapHeight,
@@ -85,14 +85,17 @@ struct FontSizeAdjust {
             : std::nullopt;
     }
 
+    bool isNone() const { return !value && type != ValueType::FromFont; }
+    bool isFromFont() const { return type == ValueType::FromFont; }
+
     Metric metric { Metric::ExHeight };
-    bool isFromFont { false };
+    ValueType type { ValueType::Number };
     Markable<float, FloatMarkableTraits> value { };
 };
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)
 {
-    add(hasher, fontSizeAdjust.metric, fontSizeAdjust.isFromFont, *fontSizeAdjust.value);
+    add(hasher, fontSizeAdjust.metric, fontSizeAdjust.type, *fontSizeAdjust.value);
 }
 
 inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdjust)
@@ -112,12 +115,12 @@ inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdju
         break;
     case FontSizeAdjust::Metric::ExHeight:
     default:
-        if (fontSizeAdjust.isFromFont)
+        if (fontSizeAdjust.isFromFont())
             return ts << "from-font";
         return ts << *fontSizeAdjust.value;
     }
 
-    if (fontSizeAdjust.isFromFont)
+    if (fontSizeAdjust.isFromFont())
         return ts << " " << "from-font";
     return ts << " " << *fontSizeAdjust.value;
 }
