@@ -11,7 +11,6 @@ $(SDK_DIR_macosx)/usr/include/objc/objc-class.h
 $(SDK_DIR_macosx)/usr/include/objc/objc-runtime.h
 $(SDK_DIR_macosx)/usr/include/readline/history.h
 $(SDK_DIR_macosx)/usr/include/readline/readline.h
-$(SDK_DIR_iphoneos)/System/Library/Frameworks/AVKit.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/AudioToolbox.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/AudioUnit.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/CFNetwork.framework
