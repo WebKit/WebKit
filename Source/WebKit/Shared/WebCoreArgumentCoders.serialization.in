@@ -2028,6 +2028,53 @@ class WebCore::BlobPart {
     std::variant<Vector<uint8_t>, URL> m_dataOrURL;
 };
 
+enum class WebCore::ColorSpace : uint8_t {
+    A98RGB,
+    DisplayP3,
+    ExtendedA98RGB,
+    ExtendedDisplayP3,
+    ExtendedLinearSRGB,
+    ExtendedProPhotoRGB,
+    ExtendedRec2020,
+    ExtendedSRGB,
+    HSL,
+    HWB,
+    LCH,
+    Lab,
+    LinearSRGB,
+    OKLCH,
+    OKLab,
+    ProPhotoRGB,
+    Rec2020,
+    SRGB,
+    XYZ_D50,
+    XYZ_D65,
+}
+
+header: <WebCore/ColorTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PackedColor::RGBA {
+    uint32_t value;
+}
+
+header: <WebCore/Color.h>
+[Nested, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Color::ColorDataForIPC::OutOfLineColorData {
+    WebCore::ColorSpace colorSpace;
+    float c1;
+    float c2;
+    float c3;
+    float alpha;
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Color::ColorDataForIPC {
+    bool isSemantic;
+    bool usesFunctionSerialization;
+    std::variant<WebCore::PackedColor::RGBA, WebCore::Color::ColorDataForIPC::OutOfLineColorData> data;
+}
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Color {
+    std::optional<WebCore::Color::ColorDataForIPC> data();
+}
+
 struct WebCore::MediaCapabilitiesInfo {
     bool supported;
     bool smooth;
