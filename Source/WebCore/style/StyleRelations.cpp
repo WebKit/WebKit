@@ -123,21 +123,41 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
             element.setChildrenAffectedByLastChildRules();
             break;
         case Relation::FirstChild:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = update.elementStyle(element)) {
+                if (!style->firstChildState()) {
+                    if (auto* elementUpdate = update.elementUpdate(element))
+                        elementUpdate->change = std::max(elementUpdate->change, Change::NonInherited);
+                }
                 style->setFirstChildState();
+            }
             break;
         case Relation::LastChild:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = update.elementStyle(element)) {
+                if (!style->lastChildState()) {
+                    if (auto* elementUpdate = update.elementUpdate(element))
+                        elementUpdate->change = std::max(elementUpdate->change, Change::NonInherited);
+                }
                 style->setLastChildState();
+            }
             break;
         case Relation::NthChildIndex:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = update.elementStyle(element)) {
+                if (!style->unique()) {
+                    if (auto* elementUpdate = update.elementUpdate(element))
+                        elementUpdate->change = std::max(elementUpdate->change, Change::NonInherited);
+                }
                 style->setUnique();
+            }
             element.setChildIndex(relation.value);
             break;
         case Relation::Unique:
-            if (auto* style = update.elementStyle(element))
+            if (auto* style = update.elementStyle(element)) {
+                if (!style->unique()) {
+                    if (auto* elementUpdate = update.elementUpdate(element))
+                        elementUpdate->change = std::max(elementUpdate->change, Change::NonInherited);
+                }
                 style->setUnique();
+            }
             break;
         }
     }

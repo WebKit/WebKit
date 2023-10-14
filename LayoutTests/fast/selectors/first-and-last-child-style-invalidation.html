@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        span:first-child span,
+        span:last-child span {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="test-case">
+        <span id="first"><span>A</span></span>
+        <span><span>B</span></span>
+        <span><span>C</span></span>
+        <span id="last"><span>D</span></span>
+    </div>
+    <script>
+        window.addEventListener("load", function() {
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+            }
+
+            var firstChild = document.getElementById("first");
+            firstChild.remove();
+            var lastChild = document.getElementById("last");
+            lastChild.remove();
+
+            setTimeout(function() {
+                var testCase = document.getElementById("test-case");
+                testCase.prepend(firstChild);
+                testCase.append(lastChild);
+
+                if (window.testRunner) {
+                    testRunner.notifyDone();
+                }
+            }, 0)
+        });
+    </script>
+</body>
+</html>
