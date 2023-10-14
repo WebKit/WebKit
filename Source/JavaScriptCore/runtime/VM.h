@@ -870,6 +870,7 @@ public:
 
 #if ENABLE(GC_VALIDATION)
     bool isInitializingObject() const; 
+    const ClassInfo* initializingObjectClass() const; 
     void setInitializingObjectClass(const ClassInfo*);
 #endif
 
@@ -1168,6 +1169,11 @@ private:
 };
 
 #if ENABLE(GC_VALIDATION)
+inline const ClassInfo* VM::initializingObjectClass() const
+{
+    return m_initializingObjectClass;
+}
+
 inline bool VM::isInitializingObject() const
 {
     return !!m_initializingObjectClass;

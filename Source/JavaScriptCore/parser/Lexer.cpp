@@ -986,10 +986,12 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
         } else {
             ident = makeIdentifier(identifierStart, identifierLength);
             if (m_parsingBuiltinFunction) {
+#if !USE(BUN_JSC_ADDITIONS)
                 if (!isSafeBuiltinIdentifier(m_vm, ident)) {
                     m_lexErrorMessage = makeString("The use of '"_s, ident->string(), "' is disallowed in builtin functions."_s);
                     return ERRORTOK;
                 }
+#endif
                 if (*ident == m_vm.propertyNames->undefinedKeyword)
                     tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
             }

@@ -288,6 +288,8 @@ inline void BuiltinNames::checkPublicToPrivateMapConsistency(UniquedStringImpl* 
         ASSERT(String(privateName) != key);
     ASSERT(privateName->isSymbol());
     ASSERT(static_cast<SymbolImpl*>(privateName)->isPrivate());
+#else
+    UNUSED_PARAM(privateName);
 #endif
 #else
     UNUSED_PARAM(privateName);
@@ -298,6 +300,8 @@ inline void BuiltinNames::appendExternalName(const Identifier& publicName, const
 {
     #ifndef BUN_SKIP_FAILING_ASSERTIONS
     ASSERT_UNUSED(publicName, String(publicName.impl()) == String(privateName.impl()));
+    #else
+    UNUSED_PARAM(privateName);
     #endif
     checkPublicToPrivateMapConsistency(privateName.impl());
     

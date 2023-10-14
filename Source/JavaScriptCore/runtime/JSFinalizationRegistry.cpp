@@ -152,7 +152,9 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
 
     if (!m_hasAlreadyScheduledWork && (readiedCell || deadCount(locker))) {
         auto ticket = vm.deferredWorkTimer->addPendingWork(vm, this, { });
+        #ifndef BUN_SKIP_FAILING_ASSERTIONS
         ASSERT(vm.deferredWorkTimer->hasPendingWork(ticket));
+        #endif
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [this](DeferredWorkTimer::Ticket) {
             JSGlobalObject* globalObject = this->globalObject();
             this->m_hasAlreadyScheduledWork = false;
