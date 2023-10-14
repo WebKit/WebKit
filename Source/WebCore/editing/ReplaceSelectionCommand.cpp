@@ -54,6 +54,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
+#include "JSEventListener.h"
 #include "LocalFrame.h"
 #include "NodeList.h"
 #include "NodeName.h"
