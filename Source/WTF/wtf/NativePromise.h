@@ -88,7 +88,7 @@ namespace WTF {
  *
  * If the work is to be done at a later stage:
  * From the producer side:
- *  - Allocate a NativePromise::Producer (via NativePromise::Producer::create() and return it to the consumer has a Ref<NativePromise>
+ *  - Allocate a NativePromise::Producer and return it to the consumer has a Ref<NativePromise>
  *  - Do the work
  *  - Once the work has been completed, either resolve or reject the NativePromise::Producer object.
  * From the consumer side:
@@ -175,6 +175,72 @@ namespace WTF {
  *        ->whenSettled(RunLoop::main(), [] (const MyOtherPromise::Result&) -> void {
  *            // do something else
  *        });
+ *
+ * Another Example:
+ * Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
+ * The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
+ * The PhotoProducer uses its own WorkQueue to perform the work so that it won't block the thread it's called on.
+ * We want the PhotoProducer to be able to be called on any threads.
+ *
+ * // This would be the system framework.
+ * struct AVCaptureMethod {
+ *    // Note that we must use Function as std::function requires the lambda to be copyable.
+ *    static void captureImage(Function<void(std::vector<uint8_t>&&, std::string&&)>&& handler)
+ *    {
+ *        handler({ 1, 2, 3, 4, 5 }, "image/jpeg");
+ *    }
+ * };
+ *
+ * struct PhotoSettings { };
+ *
+ * class PhotoProducer : public ThreadSafeRefCounted<PhotoProducer> {
+ * public:
+ *    using PhotoPromise = NativePromise<std::pair<Vector<uint8_t>, String>, int>;
+ *    static Ref<PhotoProducer> create(const PhotoSettings& settings) { return adoptRef(*new PhotoProducer(settings)); }
+ *
+ *    Ref<PhotoPromise> takePhoto() const
+ *    {
+ *        // This can be called on any threads.
+ *        // It uses invokeAsync which returns a NativePromise that will be settled when the promise returned by the method will itself be settled.
+ *        // (the invokeAsync promise is "chained" to the promise returned by `takePhotoImpl()`)
+ *        return invokeAsync(m_generatePhotoQueue, [protectedThis = Ref { *this }] {
+ *            assertIsCurrent(protectedThis->m_generatePhotoQueue);
+ *            return protectedThis->takePhotoImpl();
+ *        });
+ *    }
+ * private:
+ *    explicit PhotoProducer(const PhotoSettings& settings)
+ *        : m_generatePhotoQueue(WorkQueue::create("takePhoto queue"))
+ *    {
+ *    }
+ *
+ *    Ref<PhotoPromise> takePhotoImpl() const
+ *    {
+ *        PhotoPromise::Producer producer;
+ *        Ref<PhotoPromise> promise = producer;
+ *
+ *        AVCaptureMethod::captureImage([producer = WTFMove(producer)] (std::vector<uint8_t>&& image, std::string&& mimeType) {
+ *            // Note that you can resolve a NativePromise on any threads. Unlike with a CompletionHandler it is not the responsibility of the producer
+ *            // to resolve the promise on a particular thread.
+ *            // The consumer specifies the thread on which it wants to be called back.
+ *            producer.resolve(std::make_pair<Vector<uint8_t>, String>({ image.data(), image.size() }, { mimeType.data(), static_cast<unsigned>(mimeType.size()) }));
+ *        });
+ *
+ *        // Return the promise which the producer will resolve at a later stage.
+ *        return promise;
+ *    }
+ *    Ref<WorkQueue> m_generatePhotoQueue;
+ * };
+ *
+ * And usage would be:
+ *  auto photoProducer = PhotoProducer::create(PhotoSettings { });
+ *  photoProducer->takePhoto()->whenSettled(RunLoop::main(), [] (PhotoProducer::PhotoPromise::Result&& result) mutable {
+ *      static_assert(std::is_same_v<decltype(result.value()), std::pair<Vector<uint8_t>, String>&>);
+ *      if (result)
+ *          EXPECT_EQ(result.value().second, "image/jpeg"_s);
+ *      else
+ *          EXPECT_TRUE(false); // Got an unexpected error.
+ *  });
  *
  * For additional examples on how to use NativePromise, refer to NativePromise.cpp API tests.
  */
