@@ -33,6 +33,9 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+// We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
+#if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
+
 static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
 {
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
@@ -56,9 +59,6 @@ static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
         TestWebKitAPI::Util::runFor(0.5_s);
     } while (true);
 }
-
-// We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
-#if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
 
 // FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000)

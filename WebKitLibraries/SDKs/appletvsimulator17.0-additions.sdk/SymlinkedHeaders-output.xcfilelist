@@ -11,6 +11,7 @@ $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/objc/objc-class.h
 $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/objc/objc-runtime.h
 $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/readline/history.h
 $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/readline/readline.h
+$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AVKit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AudioToolbox.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AudioUnit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/CFNetwork.framework
