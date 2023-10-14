@@ -52,7 +52,9 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     if (importObject)
         dependencies.append(Strong<JSCell>(vm, importObject));
     m_ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies), DeferredWorkTimer::WorkKind::WebAssembly);
+#ifndef BUN_SKIP_FAILING_ASSERTIONS
     ASSERT(vm.deferredWorkTimer->hasPendingWork(m_ticket));
+#endif
     ASSERT(vm.deferredWorkTimer->hasDependancyInPendingWork(m_ticket, globalObject));
     ASSERT(!importObject || vm.deferredWorkTimer->hasDependancyInPendingWork(m_ticket, importObject));
 }

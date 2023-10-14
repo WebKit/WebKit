@@ -107,9 +107,9 @@ JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* glo
 #if ASSERT_ENABLED
 void JSFunction::finishCreation(VM& vm)
 {
+    ASSERT(type() == JSFunctionType);
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<JSFunction*>(this));
-    ASSERT(type() == JSFunctionType);
     // JSCell::{getCallData,getConstructData} relies on the following conditions.
     ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable()->getCallData == &JSFunction::getCallData);

@@ -1068,10 +1068,10 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(jsDynamicCast<JSObject*>(this));
-        ASSERT(structure()->hasPolyProto() || getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
-        ASSERT(structure()->isObject());
         ASSERT(classInfo());
+        ASSERT(structure()->isObject());
+        ASSERT(structure()->hasPolyProto() || getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
+        ASSERT(jsDynamicCast<JSObject*>(this));
     }
 #endif
 
