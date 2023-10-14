@@ -253,7 +253,6 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
                 CRASH();
             }
         } else {
-            printf("Error In %s\n", source.toUTF8().data());
             RELEASE_ASSERT(error.isValid());
             RELEASE_ASSERT(error.type() == ParserError::StackOverflow);
         }
