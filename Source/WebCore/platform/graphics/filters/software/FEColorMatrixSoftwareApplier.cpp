@@ -127,7 +127,15 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
             static_cast<int16_t>(roundf(values[13] * divisor)),
             static_cast<int16_t>(roundf(values[18] * divisor)),
         };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
+
+        int32_t postBias[4] = {
+            static_cast<int32_t>(roundf(values[ 4] * divisor * 255)),
+            static_cast<int32_t>(roundf(values[ 9] * divisor * 255)),
+            static_cast<int32_t>(roundf(values[14] * divisor * 255)),
+            static_cast<int32_t>(roundf(values[19] * divisor * 255)),
+        };
+
+        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, postBias, kvImageNoFlags);
         break;
     }
 
@@ -242,16 +250,10 @@ void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixel
 void FEColorMatrixSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 {
 #if USE(ACCELERATE)
-    const auto& values = m_effect.values();
-
-    // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
-    // is not zero, fall back to non-vImage code.
-    if (m_effect.type() != FECOLORMATRIX_TYPE_MATRIX || (!values[4] && !values[9] && !values[14] && !values[19])) {
-        applyPlatformAccelerated(pixelBuffer);
-        return;
-    }
-#endif
+    applyPlatformAccelerated(pixelBuffer);
+#else
     applyPlatformUnaccelerated(pixelBuffer);
+#endif
 }
 
 bool FEColorMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
