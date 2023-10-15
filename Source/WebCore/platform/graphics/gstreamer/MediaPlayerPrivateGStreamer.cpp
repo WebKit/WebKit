@@ -96,6 +96,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -2336,7 +2337,11 @@ void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
     g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), this);
 
     // Set the GstDownloadBuffer size to our preferred value controls the thresholds for buffering events.
-    g_object_set(element, "max-size-bytes", 100 * KB, nullptr);
+    auto cacheSizeBytesStr = StringView::fromLatin1(std::getenv("WPE_SHELL_MEDIA_DISK_CACHE_SIZE_BYTES"));
+    auto cacheSizeBytes = parseInteger<unsigned long>(cacheSizeBytesStr).value_or(100 * KB);
+    auto cacheSizeNSecStr = StringView::fromLatin1(std::getenv("WPE_SHELL_MEDIA_DISK_CACHE_SIZE_NSEC"));
+    auto cacheSizeNSec = parseInteger<unsigned long long>(cacheSizeNSecStr).value_or(5000000000);
+    g_object_set(element, "max-size-bytes", cacheSizeBytes, "max-size-time", cacheSizeNSec, nullptr);
 
     GUniqueOutPtr<char> oldDownloadTemplate;
     g_object_get(element, "temp-template", &oldDownloadTemplate.outPtr(), nullptr);
