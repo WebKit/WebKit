@@ -192,10 +192,9 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         ChildListMutationScope(*this).willRemoveChild(childToRemove);
     }
 
-    Ref document = this->document();
     if (source == ChildChange::Source::API) {
         childToRemove.notifyMutationObserversNodeWillDetach();
-        if (!document->shouldNotFireMutationEvents()) {
+        if (!document().shouldNotFireMutationEvents()) {
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(childToRemove));
             dispatchChildRemovalEvents(protectedChildToRemove);
         }
@@ -226,7 +225,8 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
 
-        document->nodeWillBeRemoved(childToRemove);
+        // Unable to ref the document as it may have started destruction.
+        document().nodeWillBeRemoved(childToRemove);
 
         ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
         ASSERT(!childToRemove.isDocumentFragment());
@@ -241,7 +241,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
         willCreatePossiblyOrphanedTreeByRemoval(childToRemove);
 
-    ASSERT_WITH_SECURITY_IMPLICATION(!document->selection().selection().isOrphan());
+    ASSERT_WITH_SECURITY_IMPLICATION(!document().selection().selection().isOrphan());
 
     // FIXME: Move childrenChanged into ScriptDisallowedScope block.
     childrenChanged(childChange);
