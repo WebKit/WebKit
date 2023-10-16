@@ -530,14 +530,10 @@ private:
 
             m_resolveValues[index] = std::forward<ResolveValueType_>(resolveValue);
             if (!--m_outstandingPromises) {
-                Vector<ResolveValueType> resolveValues;
-                resolveValues.reserveInitialCapacity(m_resolveValues.size());
-                for (auto&& resolveValue : m_resolveValues)
-                    resolveValues.append(WTFMove(resolveValue.value()));
-
-                m_producer->resolve(WTFMove(resolveValues));
+                m_producer->resolve(WTF::map(std::exchange(m_resolveValues, { }), [](auto&& resolveValue) {
+                    return WTFMove(*resolveValue);
+                }));
                 m_producer = nullptr;
-                m_resolveValues.clear();
             }
         }
 
@@ -548,7 +544,6 @@ private:
                 // Already resolved or rejected.
                 return;
             }
-
             m_producer->reject(std::forward<RejectValueType_>(rejectValue));
             m_producer = nullptr;
             m_resolveValues.clear();
@@ -581,11 +576,9 @@ private:
 
             m_results[index].emplace(maybeMove(result));
             if (!--m_outstandingPromises) {
-                Vector<Result> results(m_results.size(), [&](size_t index) {
-                    return WTFMove(*m_results[index]);
-                });
-                m_results.clear();
-                m_producer->resolve(WTFMove(results));
+                m_producer->resolve(WTF::map(std::exchange(m_results, { }), [](auto&& result) {
+                    return WTFMove(*result);
+                }));
                 m_producer = nullptr;
             }
         }
