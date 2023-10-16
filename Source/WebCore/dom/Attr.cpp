@@ -72,6 +72,7 @@ Attr::~Attr()
     ASSERT_WITH_SECURITY_IMPLICATION(!isInShadowTree());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
 
+    // Unable to protect the document here as it may have started destruction.
     willBeDeletedFrom(document());
 }
 
@@ -118,9 +119,10 @@ CSSStyleDeclaration* Attr::style()
     RefPtr styledElement = dynamicDowncast<StyledElement>(m_element.get());
     if (!styledElement)
         return nullptr;
-    m_style = MutableStyleProperties::create();
-    styledElement->collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
-    return &m_style->ensureCSSStyleDeclaration();
+    Ref style = MutableStyleProperties::create();
+    m_style = style.copyRef();
+    styledElement->collectPresentationalHintsForAttribute(qualifiedName(), value(), style);
+    return &style->ensureCSSStyleDeclaration();
 }
 
 AtomString Attr::value() const
@@ -136,6 +138,7 @@ void Attr::detachFromElementWithValue(const AtomString& value)
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     m_element = nullptr;
+    // Unable to ref the document here because it may have started destruction.
     setTreeScopeRecursively(document());
 }
 

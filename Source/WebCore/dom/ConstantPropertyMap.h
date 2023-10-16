@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -71,9 +72,11 @@ private:
     void updateConstantsForSafeAreaInsets();
     void updateConstantsForFullscreen();
 
+    Ref<Document> protectedDocument() const;
+
     std::optional<Values> m_values;
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
 };
 
 } // namespace WebCore

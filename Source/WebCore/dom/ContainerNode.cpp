@@ -139,6 +139,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->willRemoveAllChildren(*this);
 
+        // Unable to ref the document here because it may have started destruction.
         document().nodeChildrenWillBeRemoved(*this);
 
         while (RefPtr child = m_firstChild) {
@@ -184,16 +185,17 @@ static ContainerNode::ChildChange makeChildChangeForRemoval(Node& childToRemove,
 
 ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRemove, ChildChange::Source source)
 {
-    Ref<Node> protectedChildToRemove(childToRemove);
+    Ref protectedChildToRemove { childToRemove };
     ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ChildListMutationScope(*this).willRemoveChild(childToRemove);
     }
 
+    Ref document = this->document();
     if (source == ChildChange::Source::API) {
         childToRemove.notifyMutationObserversNodeWillDetach();
-        if (!document().shouldNotFireMutationEvents()) {
+        if (!document->shouldNotFireMutationEvents()) {
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(childToRemove));
             dispatchChildRemovalEvents(protectedChildToRemove);
         }
@@ -224,13 +226,13 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
 
-        document().nodeWillBeRemoved(childToRemove);
+        document->nodeWillBeRemoved(childToRemove);
 
         ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
         ASSERT(!childToRemove.isDocumentFragment());
 
-        RefPtr<Node> previousSibling = childToRemove.previousSibling();
-        RefPtr<Node> nextSibling = childToRemove.nextSibling();
+        RefPtr previousSibling = childToRemove.previousSibling();
+        RefPtr nextSibling = childToRemove.nextSibling();
 
         removeBetween(previousSibling.get(), nextSibling.get(), childToRemove);
         subtreeObservability = notifyChildNodeRemoved(*this, childToRemove);
@@ -239,7 +241,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
         willCreatePossiblyOrphanedTreeByRemoval(childToRemove);
 
-    ASSERT_WITH_SECURITY_IMPLICATION(!document().selection().selection().isOrphan());
+    ASSERT_WITH_SECURITY_IMPLICATION(!document->selection().selection().isOrphan());
 
     // FIXME: Move childrenChanged into ScriptDisallowedScope block.
     childrenChanged(childChange);
@@ -338,7 +340,7 @@ ExceptionOr<void> ContainerNode::removeSelfOrChildNodesForInsertion(Node& child,
 void ContainerNode::removeDetachedChildren()
 {
     if (connectedSubframeCount()) {
-        for (Node* child = firstChild(); child; child = child->nextSibling())
+        for (RefPtr child = firstChild(); child; child = child->nextSibling())
             child->updateAncestorConnectedSubframeCountForRemoval();
     }
     // FIXME: We should be able to ASSERT(!attached()) here: https://bugs.webkit.org/show_bug.cgi?id=107801
@@ -390,7 +392,7 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
     if (!child.isDocumentFragment())
         return newParent.childTypeAllowed(child.nodeType());
 
-    for (Node* node = child.firstChild(); node; node = node->nextSibling()) {
+    for (RefPtr node = child.firstChild(); node; node = node->nextSibling()) {
         if (!newParent.childTypeAllowed(node->nodeType()))
             return false;
     }
@@ -536,19 +538,19 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     ASSERT(!newChild.previousSibling());
     ASSERT(!newChild.isShadowRoot());
 
-    Node* prev = nextChild.previousSibling();
-    ASSERT(m_lastChild != prev);
+    RefPtr previousSibling = nextChild.previousSibling();
+    ASSERT(m_lastChild != previousSibling);
     nextChild.setPreviousSibling(&newChild);
-    if (prev) {
+    if (previousSibling) {
         ASSERT(m_firstChild != &nextChild);
-        ASSERT(prev->nextSibling() == &nextChild);
-        prev->setNextSibling(&newChild);
+        ASSERT(previousSibling->nextSibling() == &nextChild);
+        previousSibling->setNextSibling(&newChild);
     } else {
         ASSERT(m_firstChild == &nextChild);
         m_firstChild = &newChild;
     }
     newChild.setParentNode(this);
-    newChild.setPreviousSibling(prev);
+    newChild.setPreviousSibling(previousSibling.get());
     newChild.setNextSibling(&nextChild);
 }
 
@@ -592,14 +594,14 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
 
     // Make sure replacing the old child with the new is ok
     auto validityResult = checkPreReplacementValidity(*this, newChild, oldChild, ShouldValidateChildParent::Yes);
     if (validityResult.hasException())
         return validityResult.releaseException();
 
-    RefPtr<Node> refChild = oldChild.nextSibling();
+    RefPtr refChild = oldChild.nextSibling();
     if (refChild.get() == &newChild)
         refChild = refChild->nextSibling();
 
@@ -619,7 +621,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     }
 
     // Remove the node we're replacing.
-    Ref<Node> protectOldChild(oldChild);
+    Ref protectOldChild { oldChild };
 
     ChildListMutationScope mutation(*this);
 
@@ -756,7 +758,7 @@ void ContainerNode::replaceAll(Node* node)
         return;
     }
 
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
     NodeVector removedChildren;
     auto didRemoveElements = removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::Yes);
@@ -781,6 +783,7 @@ void ContainerNode::stringReplaceAll(String&& string)
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
 {
+    // Unable to ref the document as it may have started destruction.
     if (document().svgExtensions() && !is<SVGUseElement>(shadowHost()))
         document().accessSVGExtensions().rebuildElements();
 }
@@ -792,7 +795,7 @@ void ContainerNode::removeChildren()
     if (!m_firstChild)
         return;
 
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
     NodeVector removedChildren;
     removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren);
 
@@ -816,7 +819,7 @@ ExceptionOr<void> ContainerNode::appendChild(Node& newChild)
 
 ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Node& newChild)
 {
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
 
     NodeVector targets;
     auto removeResult = removeSelfOrChildNodesForInsertion(newChild, targets);
@@ -833,7 +836,7 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
             return nodeTypeResult.releaseException();
     }
 
-    InspectorInstrumentation::willInsertDOMNode(document(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
 
     // Now actually add the child(ren)
     ChildListMutationScope mutation(*this);
@@ -882,6 +885,7 @@ ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& n
 
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
+    // Unable to ref the document as it may have started destruction.
     document().incDOMTreeVersion();
 
     if (change.affectsElements == ChildChange::AffectsElements::Yes)
@@ -905,12 +909,12 @@ void ContainerNode::childrenChanged(const ChildChange& change)
 
 void ContainerNode::cloneChildNodes(ContainerNode& clone)
 {
-    Document& targetDocument = clone.document();
+    Ref targetDocument = clone.document();
 
     NodeVector postInsertionNotificationTargets;
     bool hadElement = false;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
-        auto clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
+        Ref clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
         {
             WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -954,11 +958,11 @@ static void dispatchChildInsertionEvents(Node& child)
 
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(child));
 
-    RefPtr<Node> c = &child;
-    Ref<Document> document(child.document());
+    RefPtr c = &child;
+    Ref document = child.document();
 
     if (c->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeInserted))
-        c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->parentNode()));
+        c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->protectedParentNode().get()));
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     if (c->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeInsertedIntoDocument)) {
@@ -975,22 +979,22 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
     if (child->isInShadowTree())
         return;
 
-    Ref<Document> document = child->document();
+    Ref document = child->document();
 
     // dispatch pre-removal mutation events
     if (child->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeRemoved))
-        child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, child->parentNode()));
+        child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, child->protectedParentNode().get()));
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
     if (child->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeRemovedFromDocument)) {
-        for (RefPtr<Node> currentNode = child.copyRef(); currentNode; currentNode = NodeTraversal::next(*currentNode, child.ptr()))
+        for (RefPtr currentNode = child.copyRef(); currentNode; currentNode = NodeTraversal::next(*currentNode, child.ptr()))
             currentNode->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, Event::CanBubble::No));
     }
 }
 
 ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 {
-    auto query = document().selectorQueryForString(selectors);
+    auto query = protectedDocument()->selectorQueryForString(selectors);
     if (query.hasException())
         return query.releaseException();
     return query.releaseReturnValue().queryFirst(*this);
@@ -998,7 +1002,7 @@ ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 
 ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)
 {
-    auto query = document().selectorQueryForString(selectors);
+    auto query = protectedDocument()->selectorQueryForString(selectors);
     if (query.hasException())
         return query.releaseException();
     return query.releaseReturnValue().queryAll(*this);

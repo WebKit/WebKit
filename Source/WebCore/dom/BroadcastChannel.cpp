@@ -106,19 +106,19 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
     if (!m_broadcastChannel)
         return;
 
-    auto* context = m_broadcastChannel->scriptExecutionContext();
+    RefPtr context = m_broadcastChannel->scriptExecutionContext();
     if (!context)
         return;
     ASSERT(context->isContextThread());
 
     Ref protectedThis { *this };
     if (auto* document = dynamicDowncast<Document>(*context)) {
-        task(document->page());
+        task(document->checkedPage().get());
         return;
     }
 
     downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
-        task(downcast<Document>(context).page());
+        task(downcast<Document>(context).checkedPage().get());
     });
 }
 
@@ -157,11 +157,12 @@ BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, const String
     : ActiveDOMObject(&context)
     , m_mainThreadBridge(MainThreadBridge::create(*this, name))
 {
+    Ref mainThreadBridge = m_mainThreadBridge;
     {
         Locker locker { allBroadcastChannelsLock };
-        allBroadcastChannels().add(m_mainThreadBridge->identifier(), this);
+        allBroadcastChannels().add(mainThreadBridge->identifier(), this);
     }
-    m_mainThreadBridge->registerChannel();
+    mainThreadBridge->registerChannel();
 }
 
 BroadcastChannel::~BroadcastChannel()
@@ -171,6 +172,11 @@ BroadcastChannel::~BroadcastChannel()
         Locker locker { allBroadcastChannelsLock };
         allBroadcastChannels().remove(m_mainThreadBridge->identifier());
     }
+}
+
+auto BroadcastChannel::protectedMainThreadBridge() const -> Ref<MainThreadBridge>
+{
+    return m_mainThreadBridge;
 }
 
 BroadcastChannelIdentifier BroadcastChannel::identifier() const
@@ -197,7 +203,7 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
         return messageData.releaseException();
     ASSERT(ports.isEmpty());
 
-    m_mainThreadBridge->postMessage(messageData.releaseReturnValue());
+    protectedMainThreadBridge()->postMessage(messageData.releaseReturnValue());
     return { };
 }
 
@@ -207,7 +213,7 @@ void BroadcastChannel::close()
         return;
 
     m_isClosed = true;
-    m_mainThreadBridge->unregisterChannel();
+    protectedMainThreadBridge()->unregisterChannel();
 }
 
 void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
@@ -279,7 +285,7 @@ bool BroadcastChannel::virtualHasPendingActivity() const
 // https://html.spec.whatwg.org/#eligible-for-messaging
 bool BroadcastChannel::isEligibleForMessaging() const
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return false;
 

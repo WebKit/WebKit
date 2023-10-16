@@ -76,6 +76,8 @@ ActiveDOMObject::~ActiveDOMObject()
     // ContextDestructionObserver::contextDestroyed() (which we implement /
     // inherit). Hence, we should ensure that this is not 0 before use it
     // here.
+
+    // Unable to ref the context as it may have started destruction.
     auto* context = scriptExecutionContext();
     if (!context)
         return;
@@ -91,6 +93,7 @@ void ActiveDOMObject::suspendIfNeeded()
     ASSERT(!m_suspendIfNeededWasCalled);
     m_suspendIfNeededWasCalled = true;
 #endif
+    // Unable to ref the context as it may have started destruction.
     if (auto* context = scriptExecutionContext())
         context->suspendActiveDOMObjectIfNeeded(*this);
 }
@@ -168,7 +171,7 @@ private:
 void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, TaskSource source, Ref<Event>&& event)
 {
     ASSERT(!event->target() || &target == event->target());
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
@@ -181,7 +184,7 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
 void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& target, TaskSource source, TaskCancellationGroup& cancellationGroup, Ref<Event>&& event)
 {
     ASSERT(!event->target() || &target == event->target());
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();

@@ -106,7 +106,7 @@ AbortSignal::~AbortSignal() = default;
 void AbortSignal::addSourceSignal(AbortSignal& signal)
 {
     if (signal.isDependent()) {
-        for (auto& sourceSignal : signal.sourceSignals())
+        for (Ref sourceSignal : signal.sourceSignals())
             addSourceSignal(sourceSignal);
         return;
     }
@@ -145,8 +145,8 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     // 5. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-    for (auto& dependentSignal : std::exchange(m_dependentSignals, { }))
-        Ref { dependentSignal }->signalAbort(reason);
+    for (Ref dependentSignal : std::exchange(m_dependentSignals, { }))
+        dependentSignal->signalAbort(reason);
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-follow
@@ -163,8 +163,8 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     ASSERT(!m_followingSignal);
     m_followingSignal = signal;
     signal.addAlgorithm([weakThis = WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> { this }](JSC::JSValue reason) {
-        if (weakThis)
-            weakThis->signalAbort(reason);
+        if (RefPtr signal = weakThis.get())
+            signal->signalAbort(reason);
     });
 }
 

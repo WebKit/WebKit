@@ -45,7 +45,7 @@ ChildNodeList::ChildNodeList(ContainerNode& parent)
 
 ChildNodeList::~ChildNodeList()
 {
-    m_parent.get().nodeLists()->removeChildNodeList(this);
+    Ref { m_parent }->nodeLists()->removeChildNodeList(this);
 }
 
 unsigned ChildNodeList::length() const

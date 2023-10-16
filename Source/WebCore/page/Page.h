@@ -1465,6 +1465,11 @@ inline Page* Document::page() const
     return m_frame ? m_frame->page() : nullptr;
 }
 
+inline CheckedPtr<Page> Document::checkedPage() const
+{
+    return page();
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);
 
 } // namespace WebCore
