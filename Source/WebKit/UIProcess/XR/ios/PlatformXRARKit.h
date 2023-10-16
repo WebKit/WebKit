@@ -30,7 +30,12 @@
 
 #import "PlatformXRCoordinator.h"
 
+#import <wtf/RetainPtr.h>
+#import <wtf/Threading.h>
+#import <wtf/threads/BinarySemaphore.h>
+
 @class ARSession;
+@protocol WKARPresentationSession;
 
 namespace WebKit {
 
@@ -50,10 +55,13 @@ public:
     void submitFrame(WebPageProxy&) override;
 
 protected:
+    void createSessionIfNeeded();
     void currentSessionHasEnded();
+    void renderLoop();
 
 private:
     XRDeviceIdentifier m_deviceIdentifier = XRDeviceIdentifier::generate();
+    RetainPtr<ARSession> m_session;
 
     struct Idle {
     };
@@ -61,6 +69,9 @@ private:
         WebCore::PageIdentifier pageIdentifier;
         WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
         PlatformXR::Device::RequestFrameCallback onFrameUpdate;
+        RetainPtr<id<WKARPresentationSession>> presentationSession;
+        RefPtr<Thread> renderThread;
+        Box<BinarySemaphore> renderSemaphore;
     };
     struct Terminating {
         WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;

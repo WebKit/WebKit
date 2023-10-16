@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || ((PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
+#if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
-#import <wtf/SoftLinking.h>
+NS_ASSUME_NONNULL_BEGIN
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
+@class ARSession;
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARSession);
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARWorldTrackingConfiguration);
+@interface WKARPresentationSessionDescriptor : NSObject <NSCopying>
+@property (nonatomic, nullable, weak, readwrite) UIViewController *presentingViewController;
+@end
 
-#if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
-#import <WebKitAdditions/ARKitSoftLinkAdditions.mm>
-#endif
+@protocol WKARPresentationSession <NSObject>
+@property (nonatomic, retain, readonly) ARSession *session;
+- (NSUInteger)startFrame;
+- (void)present;
+- (void)terminate;
+@end
 
-#endif
+id<WKARPresentationSession> createPresesentationSession(ARSession *, WKARPresentationSessionDescriptor *);
+
+NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEBXR) && USE(ARKITXR_IOS)

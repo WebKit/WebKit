@@ -33,6 +33,7 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, ARKit)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARQuickLookPreviewItem);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARSession);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARWorldTrackingConfiguration)
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>)

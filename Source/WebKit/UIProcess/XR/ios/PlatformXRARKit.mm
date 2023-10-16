@@ -29,6 +29,7 @@
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
 #import "APIUIClient.h"
+#import "WKARPresentationSession.h"
 #import "WebPageProxy.h"
 
 #import "ARKitSoftLink.h"
@@ -90,7 +91,26 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
 
     WTF::switchOn(m_state,
         [&](Idle&) {
-            m_state = Active { page.webPageID(), WTFMove(sessionEventClient), nullptr };
+            createSessionIfNeeded();
+
+            auto* presentingViewController = page.uiClient().presentingViewController();
+            if (!presentingViewController) {
+                RELEASE_LOG_ERROR(XR, "ARKitCoordinator: failed to obtain presenting ViewController from page.");
+                return;
+            }
+
+            auto presentationSessionDesc = adoptNS([WKARPresentationSessionDescriptor new]);
+            [presentationSessionDesc setPresentingViewController:presentingViewController];
+
+            auto presentationSession = adoptNS(createPresesentationSession(m_session.get(), presentationSessionDesc.get()));
+
+            m_state = Active {
+                .pageIdentifier = page.webPageID(),
+                .sessionEventClient = WTFMove(sessionEventClient),
+                .presentationSession = WTFMove(presentationSession),
+                .renderThread = Thread::create("ARKitCoordinator session renderer", [this] { renderLoop(); }),
+                .renderSemaphore = Box<BinarySemaphore>::create(),
+            };
         },
         [&](Active&) {
             RELEASE_LOG_ERROR(XR, "ARKitCoordinator: an existing immersive session is active");
@@ -116,11 +136,11 @@ void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
             if (active.onFrameUpdate)
                 active.onFrameUpdate({ });
 
+            active.renderSemaphore->signal();
+
             m_state = Terminating { WTFMove(active.sessionEventClient) };
         },
         [&](Terminating&) { });
-
-    currentSessionHasEnded();
 }
 
 void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
@@ -138,6 +158,7 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::De
             }
 
             active.onFrameUpdate = WTFMove(onFrameUpdateCallback);
+            active.renderSemaphore->signal();
         },
         [&](Terminating&) {
             RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame for terminating session");
@@ -164,6 +185,17 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
         });
 }
 
+void ARKitCoordinator::createSessionIfNeeded()
+{
+    ASSERT(RunLoop::isMain());
+    RELEASE_LOG(XR, "ARKitCoordinator::createSessionIfNeeded");
+
+    if (m_session)
+        return;
+
+    m_session = adoptNS([WebKit::allocARSessionInstance() init]);
+}
+
 void ARKitCoordinator::currentSessionHasEnded()
 {
     ASSERT(RunLoop::isMain());
@@ -177,6 +209,35 @@ void ARKitCoordinator::currentSessionHasEnded()
 
     RELEASE_LOG(XR, "... immersive session ended");
     m_state = Idle { };
+}
+
+void ARKitCoordinator::renderLoop()
+{
+    for (;;) {
+        auto* maybeActive = std::get_if<Active>(&m_state);
+        if (!maybeActive)
+            break;
+
+        auto& active = *maybeActive;
+        active.renderSemaphore->wait();
+        if (!active.onFrameUpdate)
+            break;
+
+        @autoreleasepool {
+            [active.presentationSession startFrame];
+
+            PlatformXR::Device::FrameData frameData = { };
+            callOnMainRunLoop([callback = WTFMove(active.onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
+                callback(WTFMove(frameData));
+            });
+
+            [active.presentationSession present];
+        }
+    }
+
+    callOnMainRunLoop([this]() {
+        currentSessionHasEnded();
+    });
 }
 
 } // namespace WebKit
