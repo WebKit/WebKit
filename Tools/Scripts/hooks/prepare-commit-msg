@@ -121,26 +121,7 @@ def message(source=None, sha=None):
 
     bugs_string = get_bugs_string()
 
-    if os.environ.get('COMMIT_MESSAGE_TITLE').startswith('Unreviewed'):
-        return '''{title}
-{bugs}
-
-Reviewed by NOBODY (OOPS!).
-
-{title2}
-
-Reverted changeset:
-
-{content}
-'''.format(
-        title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
-        bugs=bugs_string,
-        title2=os.environ.get('REV_COMMIT_TITLE', '') or '<title of existing bug about the regression>',
-        content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
-    )
-
-    else:
-        return '''{title}
+    return '''{title}
 {bugs}
 
 Reviewed by NOBODY (OOPS!).
@@ -154,15 +135,6 @@ Explanation of why this fixes the bug (OOPS!).
         content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
     )
 
-def revert(content):
-    print('are we reverting?')
-    bugs_string = get_bugs_string()
-
-    return '{title}\n{bugs}\n<title of existing bug about the regression>\nReverted changeset:\n{content}'.format(
-        title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
-        bugs=bugs_string,
-        content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', '')
-    )
 
 def source_branches():
     proc = None
