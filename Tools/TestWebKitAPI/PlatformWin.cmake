@@ -76,3 +76,10 @@ if (ENABLE_WEBKIT)
         win/PlatformWebViewWin.cpp
     )
 endif ()
+
+# TestIPC
+if (ENABLE_IPC_TESTING_API)
+    list(APPEND TestIPC_SOURCES
+        ${test_main_SOURCES}
+    )
+endif ()

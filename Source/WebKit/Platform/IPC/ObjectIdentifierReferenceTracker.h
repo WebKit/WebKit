@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
 #include <atomic>
 #include <utility>
 #include <wtf/HashTraits.h>
@@ -238,6 +237,4 @@ template<typename T> struct DefaultHash<IPC::ObjectIdentifierReference<T>> {
     static constexpr bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::safeToCompareToEmptyOrDeleted;
 };
 
-}
-
-#endif
+} // namespace IPC

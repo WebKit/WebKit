@@ -71,9 +71,7 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, IPC
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebKit::SharedMemory::Handle&&);
 
 template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, T)
-{
-}
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, T);
 
 template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, E value)

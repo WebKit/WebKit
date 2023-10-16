@@ -46,7 +46,7 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #endif
 
-#if defined(BUILDING_TestWebCore)
+#if defined(BUILDING_TestWebCore) || defined(BUILDING_TestIPC)
 #include <JavaScriptCore/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>

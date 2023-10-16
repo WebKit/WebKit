@@ -34,13 +34,14 @@
 #include "IPCTesterMessages.h"
 #include "IPCTesterReceiverMessages.h"
 #include "IPCUtilities.h"
-
 #include <atomic>
-#include <dlfcn.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/threads/BinarySemaphore.h>
+
+#if HAVE(DLADDR)
+#include <dlfcn.h>
+#endif
 
 // The tester API.
 extern "C" {
@@ -97,7 +98,11 @@ static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
         driverName = String::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
     if (driverName.isEmpty() || driverName == "default"_s)
         return defaultTestDriver;
+#if HAVE(DLADDR)
     auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, driverName.utf8().data()));
+#else
+    WKMessageTestDriverFunc testDriver = nullptr;
+#endif
     RELEASE_ASSERT(testDriver);
     return testDriver;
 }

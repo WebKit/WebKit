@@ -60,6 +60,13 @@ if (ENABLE_WEBKIT)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-deprecated-declarations)
 endif ()
 
+# TestIPC
+if (ENABLE_IPC_TESTING_API)
+    list(APPEND TestIPC_SOURCES
+        ${test_main_SOURCES}
+    )
+endif ()
+
 # Set the debugger working directory for Visual Studio
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     set_target_properties(TestWTF PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
