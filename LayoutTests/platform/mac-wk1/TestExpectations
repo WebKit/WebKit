@@ -1087,6 +1087,8 @@ imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
 
+imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html [ Failure ]
+
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 

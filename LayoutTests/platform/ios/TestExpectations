@@ -3268,7 +3268,7 @@ webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padd
 
 webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
 
-fast/text/selection-is-prevent-defaulted.html [ Failure ]
+fast/text/canceled-mousemove-does-not-prevent-selectionchange.html [ Failure ]
 
 # FIXME: These tests require UIScriptControllerIOS additions to know when a date/time picker is presented
 fast/forms/date/date-show-hide-picker.html [ Skip ]

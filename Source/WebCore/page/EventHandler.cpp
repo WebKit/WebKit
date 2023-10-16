@@ -2198,7 +2198,7 @@ HandleMouseEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEve
     swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mouseEvent.targetNode(), 0, platformMouseEvent, FireMouseOverOut::Yes);
 
 #if ENABLE(DRAG_SUPPORT)
-    if (!swallowEvent)
+    if (!swallowEvent || m_capturesDragging.inabilityReason() == CapturesDragging::InabilityReason::MouseMoveIsCancelled)
         swallowEvent = handleMouseDraggedEvent(mouseEvent);
 #endif
 
@@ -2892,8 +2892,13 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     if (auto elementUnderMouse = m_elementUnderMouse) {
         auto [eventIsDispatched, eventIsDefaultPrevented] = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No);
-        auto dragCaptureInabilityReason = eventIsDefaultPrevented == Element::EventIsDefaultPrevented::Yes && isMouseDownEvent ? CapturesDragging::InabilityReason::MousePressIsCancelled : CapturesDragging::InabilityReason::Unknown;
-        m_capturesDragging = dragCaptureInabilityReason;
+        m_capturesDragging = CapturesDragging::InabilityReason::Unknown;
+        if (eventIsDefaultPrevented == Element::EventIsDefaultPrevented::Yes) {
+            if (isMouseDownEvent)
+                m_capturesDragging = CapturesDragging::InabilityReason::MousePressIsCancelled;
+            else if (eventType == eventNames().mousemoveEvent)
+                m_capturesDragging = CapturesDragging::InabilityReason::MouseMoveIsCancelled;
+        }
         if (eventIsDispatched == Element::EventIsDispatched::No)
             return false;
     }
