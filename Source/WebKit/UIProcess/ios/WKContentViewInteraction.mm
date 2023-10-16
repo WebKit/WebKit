@@ -6722,6 +6722,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!self.webView.scrollView.scrollEnabled)
         return NO;
 
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+    if (!self.webView.scrollView.allowsKeyboardScrolling)
+        return NO;
+#endif
+
     return YES;
 }
 
