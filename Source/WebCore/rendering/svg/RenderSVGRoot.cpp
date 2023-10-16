@@ -473,14 +473,6 @@ void RenderSVGRoot::updateLayerTransform()
         layer()->dirtyVisibleContentStatus();
 }
 
-LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
-{
-    if (isInsideEntirelyHiddenLayer())
-        return { };
-
-    return computeRect(borderBoxRect(), repaintContainer, context);
-}
-
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     auto adjustedLocation = accumulatedOffset + location();
