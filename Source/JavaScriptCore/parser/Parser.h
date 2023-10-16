@@ -353,7 +353,6 @@ public:
         // We want to track if callee is captured, but we don't want to act like it's a 'var'
         // because that would cause the BytecodeGenerator to emit bad code.
         addResult.iterator->value.clearIsVar();
-        addResult.iterator->value.setIsFunction();
 
         DeclarationResultMask result = DeclarationResult::Valid;
         if (isEvalOrArgumentsIdentifier(m_vm, ident))
@@ -584,8 +583,8 @@ public:
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
-        bool isValidStrictMode = (addResult.isNewEntry || !addResult.iterator->value.isParameter())
-            && m_vm.propertyNames->eval != *ident && !isArgumentsIdent;
+        bool isDuplicateParameter = !addResult.isNewEntry && addResult.iterator->value.isParameter();
+        bool isValidStrictMode = !isDuplicateParameter && m_vm.propertyNames->eval != *ident && !isArgumentsIdent;
         addResult.iterator->value.clearIsVar();
         addResult.iterator->value.setIsParameter();
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
@@ -594,7 +593,7 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         if (isArgumentsIdent)
             m_shadowsArguments = true;
-        if (!addResult.isNewEntry && !addResult.iterator->value.isFunction())
+        if (isDuplicateParameter)
             result |= DeclarationResult::InvalidDuplicateDeclaration;
 
         return result;
