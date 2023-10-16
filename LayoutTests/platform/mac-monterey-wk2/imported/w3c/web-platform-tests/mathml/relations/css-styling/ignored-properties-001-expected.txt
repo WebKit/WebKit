@@ -1,14 +1,14 @@
 
 PASS maction preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL maction layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL maction layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by white-space: normal;
-FAIL maction layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL maction layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by float: right;
-FAIL maction layout is not affected by float: right; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL maction layout is not affected by float: right; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by align-content: end; justify-content: end;
-FAIL maction layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL maction layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by align-self: end; justify-self: end;
-FAIL maction layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL maction layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS menclose preferred width calculation is not affected by writing-mode: vertical-rl;
 PASS menclose layout is not affected by writing-mode: vertical-rl;
 PASS menclose preferred width calculation is not affected by white-space: normal;
@@ -240,13 +240,13 @@ PASS munderover layout is not affected by align-content: end; justify-content: e
 PASS munderover preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS munderover layout is not affected by align-self: end; justify-self: end;
 PASS semantics preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL semantics layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL semantics layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by white-space: normal;
-FAIL semantics layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL semantics layout is not affected by white-space: normal; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by float: right;
-FAIL semantics layout is not affected by float: right; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL semantics layout is not affected by float: right; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by align-content: end; justify-content: end;
-FAIL semantics layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL semantics layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by align-self: end; justify-self: end;
-FAIL semantics layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -96.75 +/- 1 but got -8
+FAIL semantics layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 
