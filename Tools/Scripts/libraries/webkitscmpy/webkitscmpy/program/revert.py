@@ -30,8 +30,8 @@ from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
 
-from webkitbugspy import Tracker
-from webkitcorepy import arguments, run, Terminal
+from webkitbugspy import Tracker, radar
+from webkitcorepy import arguments, run, Terminal, string_utils
 from webkitscmpy import local, log, remote
 from ..commit import Commit
 
@@ -39,8 +39,8 @@ from ..commit import Commit
 class Revert(Command):
     name = 'revert'
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
-    REVERT_TITLE_TEMPLATE = 'Revert [{}] {}'
-    REVERT_TITLE_RE = re.compile(r'^Revert \[{}\] [\s\S]*'.format(Commit.IDENTIFIER_RE.pattern))
+    REVERT_TITLE_TEMPLATE = 'Unreviewed, reverting {}'
+    REVERT_TITLE_RE = re.compile(r'^Unreviewed, reverting {}'.format(Commit.IDENTIFIER_RE.pattern))
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -53,10 +53,45 @@ class Revert(Command):
 
         parser.add_argument(
             '--pr',
-            default=False,
+            default=True,
             action='store_true',
             help='Create a pull request at the same time'
         )
+
+    @classmethod
+    def get_issue_info(cls, args, repository, **kwargs):
+        if not args.issue:
+            if Tracker.instance() and getattr(args, 'update_issue', True):
+                prompt = 'Enter issue URL or title of new issue: '
+            else:
+                prompt = 'Enter name of new branch (or issue URL): '
+            args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
+            log.info(' args.issue: {}'.format(args.issue))
+
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
+            issue = Tracker.instance().issue(int(args.issue))
+            if issue and issue.title and not issue.redacted:
+                args.issue = cls.to_branch_name(issue.title)
+                log.info(' args.issue 2: {}'.format(args.issue))
+        else:
+            issue = Tracker.from_string(args.issue)
+            log.info(' issue: {}'.format(issue))
+
+        if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
+            if getattr(Tracker.instance(), 'credentials', None):
+                Tracker.instance().credentials(required=True, validate=True)
+            issue = Tracker.instance().create(
+                title=args.issue,
+                description=Terminal.input('Issue description: '),
+            )
+            if not issue:
+                sys.stderr.write('Failed to create new issue\n')
+                return 1
+            print("Created '{}'".format(issue))
+            if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
+                args.issue = cls.to_branch_name(issue.title)
+            elif issue:
+                args.issue = str(issue.id)
 
     @classmethod
     def revert_commit(cls, args, repository, **kwargs):
@@ -110,10 +145,13 @@ class Revert(Command):
                 commit_title = line
             tracker = Tracker.from_string(line)
             if tracker:
-                bug_urls.append(line)
+                bug_urls.append(line)  # something weird happening here with too many bug urls
+            # but can also add whatever revert stuff here to be added to the commit message?
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title)
-        env['COMMIT_MESSAGE_BUG'] = '\n'.join(bug_urls)
+        env['COMMIT_MESSAGE_BUG'] = '{}\n\nTitle of current PR, regression\n\nReverted changeset:\n\n{}'.format(args.issue, commit_title)
+        env['COMMIT_MESSAGE_BUG'] += '\n'.join(bug_urls)
+        env['REV_COMMIT_TITLE'] = commit_title
 
         cls.write_branch_variables(
             repository, repository.branch,
@@ -137,6 +175,10 @@ class Revert(Command):
 
         if not PullRequest.check_pull_request_args(repository, args):
             return 1
+
+        issue = cls.get_issue_info(args, repository, **kwargs)
+        if issue:
+            return issue
 
         branch_point = PullRequest.pull_request_branch_point(repository, args, **kwargs)
         if not branch_point:
