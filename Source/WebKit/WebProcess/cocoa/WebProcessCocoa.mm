@@ -793,7 +793,8 @@ static void registerLogHook()
         static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
 
         queue.get()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
-            os_log_message_s msg = { 0 };
+            os_log_message_s msg;
+            memset(&msg, 0, sizeof(msg));
 
             msg.format = logFormat.data();
             msg.buffer = buffer.data();
