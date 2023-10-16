@@ -52,11 +52,12 @@ void LegacyRenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    clearPath();
     m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
+    m_strokeBoundingBox = std::nullopt;
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
-    clearPath();
 
     SVGLengthContext lengthContext(&rectElement());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
@@ -71,8 +72,8 @@ void LegacyRenderSVGRect::updateShapeFromElement()
         m_shapeType = ShapeType::Rectangle;
 
     if (m_shapeType != ShapeType::Rectangle || hasNonScalingStroke()) {
-        // Fall back to LegacyRenderSVGShape
-        LegacyRenderSVGShape::updateShapeFromElement();
+        // Fallback to path-based approach.
+        m_fillBoundingBox = ensurePath().boundingRect();
         return;
     }
 
@@ -96,7 +97,7 @@ void LegacyRenderSVGRect::updateShapeFromElement()
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
     if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
-        m_strokeBoundingBox.inflate(1);
+        m_strokeBoundingBox->inflate(1);
 #endif
 }
 

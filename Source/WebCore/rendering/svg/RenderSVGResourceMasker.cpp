@@ -178,7 +178,7 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
              continue;
-        m_maskContentBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates()));
+        m_maskContentBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
     }
 }
 

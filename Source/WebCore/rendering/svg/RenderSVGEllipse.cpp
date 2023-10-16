@@ -50,12 +50,12 @@ void RenderSVGEllipse::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    clearPath();
     m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
-    m_strokeBoundingBox = FloatRect();
+    m_strokeBoundingBox = std::nullopt;
     m_center = FloatPoint();
     m_radii = FloatSize();
-    clearPath();
 
     calculateRadiiAndCenter();
 
@@ -69,15 +69,15 @@ void RenderSVGEllipse::updateShapeFromElement()
         m_shapeType = ShapeType::Ellipse;
 
     if (hasNonScalingStroke()) {
-        // Fallback to RenderSVGShape if shape has a non-scaling stroke.
-        RenderSVGShape::updateShapeFromElement();
+        // Fallback to path-based approach if shape has a non-scaling stroke.
+        m_fillBoundingBox = ensurePath().boundingRect();
         return;
     }
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;
     if (style().svgStyle().hasStroke())
-        m_strokeBoundingBox.inflate(strokeWidth() / 2);
+        m_strokeBoundingBox->inflate(strokeWidth() / 2);
 }
 
 void RenderSVGEllipse::calculateRadiiAndCenter()

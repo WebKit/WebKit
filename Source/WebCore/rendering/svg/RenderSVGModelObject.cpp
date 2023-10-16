@@ -226,7 +226,7 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
     auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates(RenderObject::RepaintRectCalculation::Accurate)));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -240,7 +240,7 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
     auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates(RenderObject::RepaintRectCalculation::Accurate)));
+    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const

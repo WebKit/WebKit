@@ -44,7 +44,8 @@ public:
         IncludeOutline                      = 1 << 5, /* WebKit extension - internal    */
         IgnoreTransformations               = 1 << 6, /* WebKit extension - internal    */
         OverrideBoxWithFilterBox            = 1 << 7, /* WebKit extension - internal    */
-        OverrideBoxWithFilterBoxForChildren = 1 << 8  /* WebKit extension - internal    */
+        OverrideBoxWithFilterBoxForChildren = 1 << 8, /* WebKit extension - internal    */
+        CalculateFastRepaintRect            = 1 << 9  /* WebKit extension - internal    */
     };
 
     using DecorationOptions = OptionSet<DecorationOption>;
@@ -52,7 +53,7 @@ public:
     static constexpr DecorationOptions objectBoundingBoxDecoration = { DecorationOption::IncludeFillShape };
     static constexpr DecorationOptions strokeBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape };
     static constexpr DecorationOptions filterBoundingBoxDecoration = { DecorationOption::OverrideBoxWithFilterBox, DecorationOption::OverrideBoxWithFilterBoxForChildren };
-    static constexpr DecorationOptions repaintBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers, DecorationOption::IncludeClippers, DecorationOption::IncludeMaskers, DecorationOption::OverrideBoxWithFilterBox };
+    static constexpr DecorationOptions repaintBoundingBoxDecoration = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers, DecorationOption::IncludeClippers, DecorationOption::IncludeMaskers, DecorationOption::OverrideBoxWithFilterBox, DecorationOption::CalculateFastRepaintRect };
 
     FloatRect computeDecoratedBoundingBox(const DecorationOptions&, bool* boundingBoxValid = nullptr) const;
 

@@ -66,7 +66,7 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
@@ -125,7 +125,7 @@ private:
     IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
-    FloatRect m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
     WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
 };
 

@@ -51,12 +51,12 @@ RenderSVGPath::~RenderSVGPath() = default;
 
 void RenderSVGPath::updateShapeFromElement()
 {
+    clearPath();
     m_shapeType = ShapeType::Empty;
-    RenderSVGShape::updateShapeFromElement();
+    m_fillBoundingBox = ensurePath().boundingRect();
+    m_strokeBoundingBox = std::nullopt;
     processMarkerPositions();
     updateZeroLengthSubpaths();
-
-    m_strokeBoundingBox = adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(m_strokeBoundingBox);
 
     ASSERT(hasPath());
     if (path().isEmpty())
@@ -67,7 +67,7 @@ void RenderSVGPath::updateShapeFromElement()
         m_shapeType = ShapeType::Path;
 }
 
-FloatRect RenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(FloatRect strokeBoundingBox) const
+FloatRect RenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const
 {
     if (style().svgStyle().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
@@ -242,7 +242,7 @@ void RenderSVGPath::drawMarkers(PaintInfo&)
     }
 }
 
-FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const
+FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions& options) const
 {
     if (m_markerPositions.isEmpty())
         return FloatRect();
@@ -262,7 +262,8 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
         if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
             // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
             // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-            boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
+            RepaintRectCalculation repaintRectCalculation = options.contains(SVGBoundingBoxComputation::DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
+            boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
         }
     }
     return boundaries;

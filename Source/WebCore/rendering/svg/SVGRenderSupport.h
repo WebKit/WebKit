@@ -61,7 +61,8 @@ public:
     // Determines whether the passed point lies in a clipping area
     static bool pointInClippingArea(const RenderElement&, const FloatPoint&);
 
-    static void computeContainerBoundingBoxes(const RenderElement& container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox);
+    static void computeContainerBoundingBoxes(const RenderElement& container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& repaintBoundingBox, RepaintRectCalculation = RepaintRectCalculation::Fast);
+    static FloatRect computeContainerStrokeBoundingBox(const RenderElement& container);
     static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo&);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations

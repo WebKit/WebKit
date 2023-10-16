@@ -44,7 +44,7 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 protected:
@@ -67,7 +67,7 @@ protected:
     bool m_didTransformToRootUpdate { false };
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
-    FloatRect m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
 
 private:
     bool isSVGContainer() const final { return true; }

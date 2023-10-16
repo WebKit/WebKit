@@ -95,6 +95,8 @@ namespace Style {
 class PseudoElementRequest;
 }
 
+enum class RepaintRectCalculation { Fast, Accurate };
+
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
@@ -506,7 +508,6 @@ public:
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers
     // This returns approximate rectangle for SVG renderers when RepaintRectCalculation::Fast is specified.
-    enum class RepaintRectCalculation { Fast, Accurate };
     virtual FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const;
 
     // This only returns the transform="" value from the element

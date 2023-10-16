@@ -99,8 +99,11 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
     //    assumption that the element has no dash pattern.
     //
     // Note: The values of the stroke-opacity, stroke-dasharray and stroke-dashoffset do not affect the calculation of the stroke shape.
-    if (options.contains(DecorationOption::IncludeStrokeShape))
+    if (options.contains(DecorationOption::IncludeStrokeShape)) {
+        // FIXME: We need to use approximate stroke-bounding-box computation when it gets implemented and CalculateFastRepaintRect is specified.
+        // https://bugs.webkit.org/show_bug.cgi?id=263077
         box.unite(m_renderer.strokeBoundingBox());
+    }
 
     // 5. If markers is true, then for each marker marker rendered on the element:
     // - For each descendant graphics element child of the "marker" element that defines marker's content:
@@ -112,7 +115,9 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
         DecorationOptions optionsForMarker = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers };
         if (options.contains(DecorationOption::IncludeClippers))
             optionsForMarker.add(DecorationOption::IncludeClippers);
-        box.unite(downcast<RenderSVGPath>(m_renderer).computeMarkerBoundingBox(options));
+        if (options.contains(DecorationOption::CalculateFastRepaintRect))
+            optionsForMarker.add(DecorationOption::CalculateFastRepaintRect);
+        box.unite(downcast<RenderSVGPath>(m_renderer).computeMarkerBoundingBox(optionsForMarker));
     }
 
     // 6. If clipped is true and the value of clip-path on element is not none, then set box to be the tightest rectangle
@@ -168,8 +173,12 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
 
         SVGBoundingBoxComputation childBoundingBoxComputation(child);
         auto childBox = childBoundingBoxComputation.computeDecoratedBoundingBox(options);
-        if (options.contains(DecorationOption::OverrideBoxWithFilterBoxForChildren) && is<RenderSVGContainer>(child))
-            childBoundingBoxComputation.adjustBoxForClippingAndEffects({ DecorationOption::OverrideBoxWithFilterBox }, childBox);
+        if (options.contains(DecorationOption::OverrideBoxWithFilterBoxForChildren) && is<RenderSVGContainer>(child)) {
+            DecorationOptions optionsForChild = { DecorationOption::OverrideBoxWithFilterBox };
+            if (options.contains(DecorationOption::CalculateFastRepaintRect))
+                optionsForChild.add(DecorationOption::CalculateFastRepaintRect);
+            childBoundingBoxComputation.adjustBoxForClippingAndEffects(optionsForChild, childBox);
+        }
 
         if (!options.contains(DecorationOption::IgnoreTransformations)) {
             if (auto transform = transformationMatrixFromChild(child))

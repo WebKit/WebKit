@@ -86,7 +86,7 @@ private:
     const AffineTransform& localToParentTransform() const override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const override { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const override;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override { return m_repaintBoundingBox; }
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -110,7 +110,7 @@ private:
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid { false };
     bool m_inLayout { false };
-    FloatRect m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;

@@ -95,6 +95,7 @@ void RenderSVGContainer::layoutChildren()
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration, &m_objectBoundingBoxValid);
+    m_strokeBoundingBox = std::nullopt;
 
     if (auto objectBoundingBoxWithoutTransformations = overridenObjectBoundingBoxWithoutTransformations())
         m_objectBoundingBoxWithoutTransformations = objectBoundingBoxWithoutTransformations.value();
@@ -103,10 +104,18 @@ void RenderSVGContainer::layoutChildren()
         m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
     }
 
-    m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBoxWithoutTransformations));
 
     containerLayout.positionChildrenRelativeToContainer();
+}
+
+FloatRect RenderSVGContainer::strokeBoundingBox() const
+{
+    if (!m_strokeBoundingBox) {
+        SVGBoundingBoxComputation boundingBoxComputation(*this);
+        m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
+    }
+    return *m_strokeBoundingBox;
 }
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

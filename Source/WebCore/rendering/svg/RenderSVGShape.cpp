@@ -61,13 +61,6 @@ RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, RenderSty
 
 RenderSVGShape::~RenderSVGShape() = default;
 
-void RenderSVGShape::updateShapeFromElement()
-{
-    m_path = createPath();
-    m_fillBoundingBox = calculateObjectBoundingBox();
-    m_strokeBoundingBox = calculateStrokeBoundingBox();
-}
-
 bool RenderSVGShape::isEmpty() const
 {
     // This function should never be called before assigning a new Path to m_path.
@@ -343,7 +336,7 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 
         if (hitRules.canHitStroke && (svgStyle.hasStroke() || !hitRules.requireStroke) && strokeContains(localPoint, hitRules.requireStroke)) {
             updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-            if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer, m_strokeBoundingBox) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer, strokeBoundingBox()) == HitTestProgress::Stop)
                 return true;
             return false;
         }
@@ -360,9 +353,13 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-FloatRect RenderSVGShape::calculateObjectBoundingBox() const
+FloatRect RenderSVGShape::strokeBoundingBox() const
 {
-    return path().boundingRect();
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+    if (!m_strokeBoundingBox)
+        m_strokeBoundingBox = calculateStrokeBoundingBox();
+    return *m_strokeBoundingBox;
 }
 
 FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
@@ -388,7 +385,7 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
         }
     }
 
-    return strokeBoundingBox;
+    return adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
 }
 
 float RenderSVGShape::strokeWidth() const
@@ -406,10 +403,11 @@ bool RenderSVGShape::hasSmoothStroke() const
         && style().capStyle() == LineCap::Butt;
 }
 
-void RenderSVGShape::ensurePath()
+Path& RenderSVGShape::ensurePath()
 {
     if (!hasPath())
         m_path = createPath();
+    return path();
 }
 
 std::unique_ptr<Path> RenderSVGShape::createPath() const

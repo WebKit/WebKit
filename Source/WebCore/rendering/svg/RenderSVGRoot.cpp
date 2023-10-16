@@ -240,11 +240,11 @@ void RenderSVGRoot::layoutChildren()
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
+    m_strokeBoundingBox = std::nullopt;
 
     constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
     m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
 
-    m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     containerLayout.positionChildrenRelativeToContainer();
 
     if (!m_resourcesNeedingToInvalidateClients.isEmptyIgnoringNullReferences()) {
@@ -257,6 +257,15 @@ void RenderSVGRoot::layoutChildren()
         SetForScope clearLayoutSizeChanged(m_isLayoutSizeChanged, false);
         containerLayout.layoutChildren(false);
     }
+}
+
+FloatRect RenderSVGRoot::strokeBoundingBox() const
+{
+    if (!m_strokeBoundingBox) {
+        SVGBoundingBoxComputation boundingBoxComputation(*this);
+        m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
+    }
+    return *m_strokeBoundingBox;
 }
 
 bool RenderSVGRoot::shouldApplyViewportClip() const
