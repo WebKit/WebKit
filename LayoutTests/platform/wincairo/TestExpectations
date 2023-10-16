@@ -1223,6 +1223,8 @@ storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
 storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 
+webkit.org/b/210046 storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
+
 # WPT diff failures that need more investigation
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-leading-period.sub.https.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
@@ -1742,6 +1744,7 @@ imported/w3c/web-platform-tests/webrtc [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
 imported/w3c/web-platform-tests/webrtc-extensions [ Skip ]
 imported/w3c/web-platform-tests/webrtc-priority [ Skip ]
+imported/w3c/web-platform-tests/webrtc-stats [ Skip ]
 imported/w3c/web-platform-tests/websockets [ Skip ]
 imported/w3c/web-platform-tests/webstorage [ Skip ]
 imported/w3c/web-platform-tests/webvtt [ Skip ]
