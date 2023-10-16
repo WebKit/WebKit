@@ -326,7 +326,9 @@ bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatP
 void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [scrollView() _stopScrollingAndZoomingAnimations];
+ALLOW_DEPRECATED_DECLARATIONS_END
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -342,8 +344,9 @@ void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEv
 void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([scrollView() _isAnimatingScroll])
+ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     [scrollView() setContentOffset:scrollingNode().currentScrollOffset()];
