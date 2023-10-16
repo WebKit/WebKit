@@ -19,6 +19,9 @@ namespace vk
 {
 namespace
 {
+#include "libANGLE/renderer/vulkan/shaders/gen/Blit3DSrc.frag.00000000.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/Blit3DSrc.frag.00000001.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/Blit3DSrc.frag.00000002.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolve.frag.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolve.frag.00000001.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolve.frag.00000002.inc"
@@ -173,6 +176,11 @@ struct CompressedShaderBlob
     uint32_t size;
 };
 
+constexpr CompressedShaderBlob kBlit3DSrc_frag_shaders[] = {
+    {kBlit3DSrc_frag_00000000, sizeof(kBlit3DSrc_frag_00000000)},
+    {kBlit3DSrc_frag_00000001, sizeof(kBlit3DSrc_frag_00000001)},
+    {kBlit3DSrc_frag_00000002, sizeof(kBlit3DSrc_frag_00000002)},
+};
 constexpr CompressedShaderBlob kBlitResolve_frag_shaders[] = {
     {kBlitResolve_frag_00000000, sizeof(kBlitResolve_frag_00000000)},
     {kBlitResolve_frag_00000001, sizeof(kBlitResolve_frag_00000001)},
@@ -406,6 +414,10 @@ ShaderLibrary::~ShaderLibrary() {}
 
 void ShaderLibrary::destroy(VkDevice device)
 {
+    for (RefCounted<ShaderModule> &shader : mBlit3DSrc_frag_shaders)
+    {
+        shader.get().destroy(device);
+    }
     for (RefCounted<ShaderModule> &shader : mBlitResolve_frag_shaders)
     {
         shader.get().destroy(device);
@@ -466,6 +478,14 @@ void ShaderLibrary::destroy(VkDevice device)
     {
         shader.get().destroy(device);
     }
+}
+
+angle::Result ShaderLibrary::getBlit3DSrc_frag(Context *context,
+                                               uint32_t shaderFlags,
+                                               RefCounted<ShaderModule> **shaderOut)
+{
+    return GetShader(context, mBlit3DSrc_frag_shaders, kBlit3DSrc_frag_shaders,
+                     ArraySize(kBlit3DSrc_frag_shaders), shaderFlags, shaderOut);
 }
 
 angle::Result ShaderLibrary::getBlitResolve_frag(Context *context,

@@ -22,8 +22,6 @@
 #
 #   COMPILE_FAIL : the compilation of the capture_replay exec is expected to fail
 #
-#   CRASH : the test is expected to crash
-#
 # For test batches that run more than one test TIMEOUT, COMPILE_FAIL, and CRASH
 # will have to be set for all tests that run a batch, because one test that fails
 # with one of these outcomes will bring down the whole batch.
@@ -74,25 +72,25 @@
 6180 : VertexAttributeTestES3.DrawWithUnalignedData/* = FLAKY
 
 # Skip because crashes
-6313 : CopyTextureTestES3.InvalidateBlitThenBlend1000Layers/* = CRASH
-6313 : CopyTextureTestES3.InvalidateBlitThenBlend3Layers/* = CRASH
-6314 : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = CRASH
-6314 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = CRASH
-6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = CRASH
-6399 : Texture2DTestES3.TexStorage2DCycleThroughYuvSourcesNoData/* = CRASH
-6399 : Texture2DTestES3.TexStorage2DSimultaneousUseOfMultipleYuvSourcesNoData/* = CRASH
-6400 : Texture2DTestES3.TextureCompletenessChangesWithBaseLevel/* = CRASH
-6399 : Texture2DTestES3.TexStorage2DLargeYuvTextureCount/* = CRASH
-6335 DEBUG : VulkanExternalImageTest.ShouldImportSemaphoreOpaqueFd/* = CRASH
+6313 : CopyTextureTestES3.InvalidateBlitThenBlend1000Layers/* = SKIP_FOR_CAPTURE
+6313 : CopyTextureTestES3.InvalidateBlitThenBlend3Layers/* = SKIP_FOR_CAPTURE
+6314 : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = SKIP_FOR_CAPTURE
+6314 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = SKIP_FOR_CAPTURE
+6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
+6399 : Texture2DTestES3.TexStorage2DCycleThroughYuvSourcesNoData/* = SKIP_FOR_CAPTURE
+6399 : Texture2DTestES3.TexStorage2DSimultaneousUseOfMultipleYuvSourcesNoData/* = SKIP_FOR_CAPTURE
+6400 : Texture2DTestES3.TextureCompletenessChangesWithBaseLevel/* = SKIP_FOR_CAPTURE
+6399 : Texture2DTestES3.TexStorage2DLargeYuvTextureCount/* = SKIP_FOR_CAPTURE
+6335 DEBUG : VulkanExternalImageTest.ShouldImportSemaphoreOpaqueFd/* = SKIP_FOR_CAPTURE
 
 
 # Skip because Timeout
 
 # ES3 Flaky
-6631 : MultithreadingTest.MultiContextCreateAndDeleteResources/* = CRASH
-6631 WIN : MultithreadingTestES3.MultithreadFenceDraw/* = CRASH
-6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = CRASH
-6631 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = CRASH
+6631 : MultithreadingTest.MultiContextCreateAndDeleteResources/* = SKIP_FOR_CAPTURE
+6631 WIN : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP_FOR_CAPTURE
+6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP_FOR_CAPTURE
+6631 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP_FOR_CAPTURE
 
 # Uses multiple contexts, don't want to run
 6752 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = SKIP_FOR_CAPTURE
@@ -101,8 +99,8 @@
 6180 : ProgramPipelineTest31.VerifyPpoLinkErrorSignalledCorrectly/* = FAIL
 
 # ES3_1 Crashed
-6180 : EGLMultiContextTest.ComputeShaderOkayWithRendering/* = CRASH
-6180 : EGLMultiContextTest.TestContextDestroySimple/* = CRASH
+6180 : EGLMultiContextTest.ComputeShaderOkayWithRendering/* = SKIP_FOR_CAPTURE
+6180 : EGLMultiContextTest.TestContextDestroySimple/* = SKIP_FOR_CAPTURE
 
 # ES3_1 gtest skips
 6180 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = NOT_RUN
@@ -118,14 +116,11 @@
 7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
 
 # GLES 3.2 tests that fail because of missing features
-5366 : GeometryShaderTestES32.MaxGeometryImageUniforms/* = CRASH
-5366 : ProgramPipelineTest32.MaxGeometryImageUniforms/* = CRASH
+5366 : GeometryShaderTestES32.MaxGeometryImageUniforms/* = SKIP_FOR_CAPTURE
+5366 : ProgramPipelineTest32.MaxGeometryImageUniforms/* = SKIP_FOR_CAPTURE
 
 7088 : VulkanPerformanceCounterTest* = SKIP_FOR_CAPTURE
 
-7291 : BlitFramebufferTest.Blit3D/* = SKIP_FOR_CAPTURE
-7291 : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP_FOR_CAPTURE
-7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.drawBlitAndDrawAgain/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP_FOR_CAPTURE
 

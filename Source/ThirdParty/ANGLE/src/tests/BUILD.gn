@@ -1307,6 +1307,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   config("angle_deqp_framework_opengl_config") {
     include_dirs = [
+      "$deqp_path/framework/egl/wrapper",
       "$deqp_path/framework/opengl",
       "$deqp_path/framework/opengl/simplereference",
       "$deqp_path/framework/opengl/wrapper",
@@ -1855,13 +1856,11 @@ group("angle_tests") {
       ":angle_deqp_egl_tests",
       ":angle_deqp_gl46_tests",
       ":angle_deqp_gles2_tests",
-      ":angle_deqp_gles31_565-no-depth-no-stencil_tests",
       ":angle_deqp_gles31_multisample_tests",
       ":angle_deqp_gles31_rotate180_tests",
       ":angle_deqp_gles31_rotate270_tests",
       ":angle_deqp_gles31_rotate90_tests",
       ":angle_deqp_gles31_tests",
-      ":angle_deqp_gles3_565-no-depth-no-stencil_tests",
       ":angle_deqp_gles3_multisample_tests",
       ":angle_deqp_gles3_rotate180_tests",
       ":angle_deqp_gles3_rotate270_tests",
@@ -1875,6 +1874,13 @@ group("angle_tests") {
       ":angle_deqp_khr_noctx_gles32_tests",
       ":angle_deqp_khr_single_gles32_tests",
     ]
+
+    if (is_android) {
+      deps += [
+        ":angle_deqp_gles31_565-no-depth-no-stencil_tests",
+        ":angle_deqp_gles3_565-no-depth-no-stencil_tests",
+      ]
+    }
   }
   if (build_angle_gles1_conform_tests) {
     deps += [

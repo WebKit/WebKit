@@ -253,8 +253,7 @@ class CommandProcessorTask
     egl::ContextPriority mPriority;
     ProtectionType mProtectionType;
 };
-using CommandProcessorTaskQueue =
-    angle::FixedQueue<CommandProcessorTask, kMaxCommandProcessorTasksLimit>;
+using CommandProcessorTaskQueue = angle::FixedQueue<CommandProcessorTask>;
 
 struct CommandBatch final : angle::NonCopyable
 {
@@ -282,7 +281,7 @@ struct CommandBatch final : angle::NonCopyable
     QueueSerial queueSerial;
     ProtectionType protectionType;
 };
-using CommandBatchQueue = angle::FixedQueue<CommandBatch, kInFlightCommandsLimit>;
+using CommandBatchQueue = angle::FixedQueue<CommandBatch>;
 
 class DeviceQueueMap;
 
@@ -521,7 +520,7 @@ class CommandQueue : angle::NonCopyable
     std::mutex mQueueSubmitMutex;
     CommandBatchQueue mInFlightCommands;
     // Temporary storage for finished command batches that should be reset.
-    angle::FixedQueue<CommandBatch, kMaxFinishedCommandsLimit> mFinishedCommandBatches;
+    CommandBatchQueue mFinishedCommandBatches;
 
     CommandsStateMap mCommandsStateMap;
     // Keeps a free list of reusable primary command buffers.

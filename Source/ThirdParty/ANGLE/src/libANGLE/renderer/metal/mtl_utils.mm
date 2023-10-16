@@ -317,6 +317,12 @@ static angle::Result InitializeCompressedTextureContents(const gl::Context *cont
     gl::Extents extents    = texture->size(index);
     if (texture->isCPUAccessible())
     {
+        if (textureObjFormat.isPVRTC())
+        {
+            // Replace Region Validation: rowBytes must be 0
+            bytesPerRow = 0;
+        }
+
         angle::MemoryBuffer buffer;
         if (!buffer.resize(bytesPerImage))
         {

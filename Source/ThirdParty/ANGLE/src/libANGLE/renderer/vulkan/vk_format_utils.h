@@ -249,6 +249,9 @@ bool IsBCFormat(angle::FormatID formatID);
 
 angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID);
 
+// Get Etc format cpu transcoding to Bc function.
+LoadImageFunctionInfo GetEtcToBcTransCodingFunc(angle::FormatID formatID);
+
 // Get the swizzle state based on format's requirements and emulations.
 gl::SwizzleState GetFormatSwizzle(const angle::Format &angleFormat, const bool sized);
 

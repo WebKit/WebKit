@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 
+#include "image_util/loadimage.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/load_functions_table.h"
@@ -419,6 +420,56 @@ bool IsBCFormat(angle::FormatID formatID)
 {
     return formatID >= angle::FormatID::BC1_RGBA_UNORM_BLOCK &&
            formatID <= angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK;
+}
+
+static constexpr int kNumETCFormats = 12;
+
+static_assert((int)angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + kNumETCFormats - 1);
+
+static_assert((int)angle::FormatID::EAC_R11G11_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 1);
+static_assert((int)angle::FormatID::EAC_R11_SNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 2);
+static_assert((int)angle::FormatID::EAC_R11_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 3);
+static_assert((int)angle::FormatID::ETC1_LOSSY_DECODE_R8G8B8_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 4);
+static_assert((int)angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 5);
+static_assert((int)angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 6);
+static_assert((int)angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 7);
+static_assert((int)angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 8);
+static_assert((int)angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 9);
+static_assert((int)angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK ==
+              (int)angle::FormatID::EAC_R11G11_SNORM_BLOCK + 10);
+
+static const std::array<LoadImageFunction, kNumETCFormats> kEtcToBcLoadingFunc = {
+    angle::LoadEACRG11SToBC5,     // EAC_R11G11_SNORM
+    angle::LoadEACRG11ToBC5,      // EAC_R11G11_UNORM
+    angle::LoadEACR11SToBC4,      // EAC_R11_SNORM
+    angle::LoadEACR11ToBC4,       // EAC_R11_UNORM_BLOCK
+    angle::LoadETC1RGB8ToBC1,     // ETC1_LOSSY_DECODE_R8G8B8_UNORM
+    angle::LoadETC2RGB8ToBC1,     // ETC1_R8G8B8_UNORM
+    angle::LoadETC2SRGB8A1ToBC1,  // ETC2_R8G8B8A1_SRGB
+    angle::LoadETC2RGB8A1ToBC1,   // ETC2_R8G8B8A1_UNORM
+    angle::LoadETC2SRGBA8ToBC3,   // ETC2_R8G8B8A8_SRGB
+    angle::LoadETC2RGBA8ToBC3,    // ETC2_R8G8B8A8_UNORM
+    angle::LoadETC2SRGB8ToBC1,    // ETC2_R8G8B8_SRGB
+    angle::LoadETC2RGB8ToBC1,     // ETC2_R8G8B8_UNORM
+};
+
+LoadImageFunctionInfo GetEtcToBcTransCodingFunc(angle::FormatID formatID)
+{
+    ASSERT(IsETCFormat(formatID));
+    return LoadImageFunctionInfo(
+        kEtcToBcLoadingFunc[static_cast<uint32_t>(formatID) -
+                            static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)],
+        true);
 }
 
 static constexpr angle::FormatID kEtcToBcFormatMapping[] = {

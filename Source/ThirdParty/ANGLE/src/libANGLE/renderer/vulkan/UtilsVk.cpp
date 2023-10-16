@@ -26,6 +26,7 @@ namespace ImageClear_frag                   = vk::InternalShader::ImageClear_fra
 namespace ImageCopy_frag                    = vk::InternalShader::ImageCopy_frag;
 namespace CopyImageToBuffer_comp            = vk::InternalShader::CopyImageToBuffer_comp;
 namespace BlitResolve_frag                  = vk::InternalShader::BlitResolve_frag;
+namespace Blit3DSrc_frag                    = vk::InternalShader::Blit3DSrc_frag;
 namespace BlitResolveStencilNoExport_comp   = vk::InternalShader::BlitResolveStencilNoExport_comp;
 namespace ExportStencil_frag                = vk::InternalShader::ExportStencil_frag;
 namespace ConvertIndexIndirectLineLoop_comp = vk::InternalShader::ConvertIndexIndirectLineLoop_comp;
@@ -1338,6 +1339,11 @@ void UtilsVk::destroy(ContextVk *contextVk)
         }
     }
     for (GraphicsShaderProgramAndPipelines &programAndPipelines : mBlitResolve)
+    {
+        programAndPipelines.program.destroy(renderer);
+        programAndPipelines.pipelines.destroy(contextVk);
+    }
+    for (GraphicsShaderProgramAndPipelines &programAndPipelines : mBlit3DSrc)
     {
         programAndPipelines.program.destroy(renderer);
         programAndPipelines.pipelines.destroy(contextVk);
@@ -2763,6 +2769,17 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
         GetBlitResolveFlags(blitColor, blitDepth, blitStencil, src->getIntendedFormat());
     flags |= src->getLayerCount() > 1 ? BlitResolve_frag::kSrcIsArray : 0;
     flags |= isResolve ? BlitResolve_frag::kIsResolve : 0;
+    Function function = Function::BlitResolve;
+
+    // Note: a different shader is used for 3D color blits, but otherwise the desc sets, parameters
+    // etc are identical.
+    const bool isSrc3D = src->getType() == VK_IMAGE_TYPE_3D;
+    ASSERT(!isSrc3D || (blitColor && !isResolve));
+    if (isSrc3D)
+    {
+        flags = GetFormatFlags(src->getIntendedFormat(), Blit3DSrc_frag::kBlitInt,
+                               Blit3DSrc_frag::kBlitUint, Blit3DSrc_frag::kBlitFloat);
+    }
 
     vk::GraphicsPipelineDesc pipelineDesc;
     pipelineDesc.initDefaults(contextVk, vk::GraphicsPipelineSubset::Complete,
@@ -2870,11 +2887,19 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     vk::RefCounted<vk::ShaderModule> *vertexShader   = nullptr;
     vk::RefCounted<vk::ShaderModule> *fragmentShader = nullptr;
     ANGLE_TRY(shaderLibrary.getFullScreenTri_vert(contextVk, 0, &vertexShader));
-    ANGLE_TRY(shaderLibrary.getBlitResolve_frag(contextVk, flags, &fragmentShader));
+    if (isSrc3D)
+    {
+        ANGLE_TRY(shaderLibrary.getBlit3DSrc_frag(contextVk, flags, &fragmentShader));
+    }
+    else
+    {
+        ANGLE_TRY(shaderLibrary.getBlitResolve_frag(contextVk, flags, &fragmentShader));
+    }
 
-    ANGLE_TRY(setupGraphicsProgram(contextVk, Function::BlitResolve, vertexShader, fragmentShader,
-                                   &mBlitResolve[flags], &pipelineDesc, descriptorSet,
-                                   &shaderParams, sizeof(shaderParams), commandBuffer));
+    ANGLE_TRY(setupGraphicsProgram(contextVk, function, vertexShader, fragmentShader,
+                                   isSrc3D ? &mBlit3DSrc[flags] : &mBlitResolve[flags],
+                                   &pipelineDesc, descriptorSet, &shaderParams,
+                                   sizeof(shaderParams), commandBuffer));
 
     // Set dynamic state
     VkViewport viewport;

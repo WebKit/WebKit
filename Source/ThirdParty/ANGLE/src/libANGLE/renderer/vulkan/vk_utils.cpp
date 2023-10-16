@@ -520,12 +520,12 @@ void StagingBuffer::release(ContextVk *contextVk)
 
 void StagingBuffer::collectGarbage(RendererVk *renderer, const QueueSerial &queueSerial)
 {
-    GarbageList garbageList;
-    garbageList.emplace_back(GetGarbage(&mBuffer));
-    garbageList.emplace_back(GetGarbage(&mAllocation));
+    GarbageObjects garbageObjects;
+    garbageObjects.emplace_back(GetGarbage(&mBuffer));
+    garbageObjects.emplace_back(GetGarbage(&mAllocation));
 
     ResourceUse use(queueSerial);
-    renderer->collectGarbage(use, std::move(garbageList));
+    renderer->collectGarbage(use, std::move(garbageObjects));
 }
 
 angle::Result InitMappableAllocation(Context *context,

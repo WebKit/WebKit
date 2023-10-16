@@ -5443,7 +5443,6 @@ void DescriptorSetDescBuilder::updateUniformBuffer(uint32_t bindingIndex,
     infoDesc.imageViewSerialOrOffset = 0;
     SetBitField(infoDesc.imageLayoutOrRange, bufferRange);
     infoDesc.imageSubresourceRange = 0;
-    infoDesc.binding               = 0;
 
     mHandles[infoIndex].buffer = bufferHelper.getBuffer().getHandle();
 }
@@ -5472,7 +5471,6 @@ void DescriptorSetDescBuilder::updateTransformFeedbackBuffer(
     SetBitField(infoDesc.imageViewSerialOrOffset, alignedOffset);
     SetBitField(infoDesc.imageLayoutOrRange, adjustedRange);
     infoDesc.imageSubresourceRange = 0;
-    infoDesc.binding               = 0;
 
     mHandles[infoIndex].buffer = bufferHelper.getBuffer().getHandle();
 }
@@ -5560,7 +5558,6 @@ void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
             uint32_t infoIndex = writeDescriptorDescs[info.binding].descriptorInfoIndex +
                                  arrayElement + samplerUniform.getOuterArrayOffset();
             DescriptorInfoDesc &infoDesc = desc->getInfoDesc(infoIndex);
-            infoDesc.binding             = info.binding;
 
             if (textureVk->getState().getType() == gl::TextureType::Buffer)
             {
@@ -5639,7 +5636,6 @@ angle::Result DescriptorSetDescBuilder::updateFullActiveTextures(
             uint32_t infoIndex = writeDescriptorDescs[info.binding].descriptorInfoIndex +
                                  arrayElement + samplerUniform.getOuterArrayOffset();
             DescriptorInfoDesc &infoDesc = mDesc.getInfoDesc(infoIndex);
-            infoDesc.binding             = info.binding;
 
             if (textureTypes[textureUnit] == gl::TextureType::Buffer)
             {
@@ -5820,7 +5816,6 @@ void DescriptorSetDescBuilder::updateOneShaderBuffer(
     }
     SetBitField(infoDesc.imageLayoutOrRange, size);
     infoDesc.imageSubresourceRange = 0;
-    infoDesc.binding               = 0;
 
     mHandles[infoDescIndex].buffer = bufferHelper.getBuffer().getHandle();
 }
@@ -5916,7 +5911,6 @@ void DescriptorSetDescBuilder::updateAtomicCounters(
         SetBitField(infoDesc.imageViewSerialOrOffset, offset);
         infoDesc.samplerOrBufferSerial = bufferHelper.getBlockSerial().getValue();
         infoDesc.imageSubresourceRange = 0;
-        infoDesc.binding               = 0;
 
         mHandles[infoIndex].buffer = bufferHelper.getBuffer().getHandle();
     }
@@ -6052,7 +6046,6 @@ angle::Result DescriptorSetDescBuilder::updateImages(
                 infoDesc.imageLayoutOrRange    = 0;
                 infoDesc.imageSubresourceRange = 0;
                 infoDesc.samplerOrBufferSerial = 0;
-                infoDesc.binding               = 0;
 
                 mHandles[infoIndex].bufferView = view->getHandle();
             }
@@ -6083,7 +6076,6 @@ angle::Result DescriptorSetDescBuilder::updateImages(
                 memcpy(&infoDesc.imageSubresourceRange, &serial.subresource, sizeof(uint32_t));
                 infoDesc.imageViewSerialOrOffset = serial.viewSerial.getValue();
                 infoDesc.samplerOrBufferSerial   = 0;
-                infoDesc.binding                 = 0;
 
                 mHandles[infoIndex].imageView = imageView->getHandle();
             }
@@ -6134,7 +6126,6 @@ angle::Result DescriptorSetDescBuilder::updateInputAttachments(
         infoDesc.imageViewSerialOrOffset = serial.viewSerial.getValue();
         memcpy(&infoDesc.imageSubresourceRange, &serial.subresource, sizeof(uint32_t));
         infoDesc.samplerOrBufferSerial = 0;
-        infoDesc.binding               = 0;
 
         mHandles[infoIndex].imageView = imageView->getHandle();
     }

@@ -103,6 +103,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     gl::LevelIndex getLevelIndex() const { return mLevelIndexGL; }
     uint32_t getLayerIndex() const { return mLayerIndex; }
     uint32_t getLayerCount() const { return mLayerCount; }
+    bool is3DImage() const { return getOwnerOfData()->getType() == VK_IMAGE_TYPE_3D; }
 
     gl::ImageIndex getImageIndexForClear(uint32_t layerCount) const;
 

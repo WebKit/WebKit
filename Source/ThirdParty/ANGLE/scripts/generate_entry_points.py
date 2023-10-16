@@ -3068,8 +3068,8 @@ def get_unlocked_tail_call(api, cmd_name):
     # - eglSwapBuffers, eglSwapBuffersWithDamageKHR and
     #   eglSwapBuffersWithFrameTokenANGLE -> May throttle the CPU in tail call
     #
-    # - eglClientWaitSyncKHR, eglClientWaitSync, glClientWaitSync -> May wait on
-    #   fence in tail call
+    # - eglClientWaitSyncKHR, eglClientWaitSync, glClientWaitSync,
+    #   glFinishFenceNV -> May wait on fence in tail call
     #
     # - glTexImage2D, glTexImage3D, glTexSubImage2D, glTexSubImage3D,
     #   glCompressedTexImage2D, glCompressedTexImage3D,
@@ -3080,7 +3080,7 @@ def get_unlocked_tail_call(api, cmd_name):
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
             'eglPrepareSwapBuffersANGLE', 'eglSwapBuffers', 'eglSwapBuffersWithDamageKHR',
-            'eglSwapBuffersWithFrameTokenANGLE'
+            'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or

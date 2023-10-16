@@ -4248,10 +4248,14 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
         // Imply the strictest spec interpretation to pass on all OpenGL drivers:
         // dual-source blending is considered active if the blend state contains
         // any SRC1 factor no matter what.
-        const DrawBufferMask bufferMask = framebuffer->getDrawBufferMask();
-        if (bufferMask.any() && bufferMask.last() >= context->getCaps().maxDualSourceDrawBuffers)
+        const size_t drawBufferCount = framebuffer->getDrawbufferStateCount();
+        for (size_t drawBufferIndex = context->getCaps().maxDualSourceDrawBuffers;
+             drawBufferIndex < drawBufferCount; ++drawBufferIndex)
         {
-            return kDualSourceBlendingDrawBuffersLimit;
+            if (framebuffer->getDrawBufferState(drawBufferIndex) != GL_NONE)
+            {
+                return kDualSourceBlendingDrawBuffersLimit;
+            }
         }
     }
 
