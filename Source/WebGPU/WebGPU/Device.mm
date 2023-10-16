@@ -308,7 +308,7 @@ void Device::generateAnInternalError(String&& message)
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 {
     ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
-    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers - 1;
+    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
 }
 
 uint32_t Device::maxBuffersForFragmentStage() const
