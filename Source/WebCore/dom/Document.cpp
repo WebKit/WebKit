@@ -1404,6 +1404,21 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
 
 ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
 {
+    auto opportunisticallyMatchedBuiltinElement = ([&]() -> RefPtr<Element> {
+        if (namespaceURI == xhtmlNamespaceURI)
+            return HTMLElementFactory::createKnownElement(qualifiedName, *this, nullptr, /* createdByParser */ false);
+        if (namespaceURI == SVGNames::svgNamespaceURI)
+            return SVGElementFactory::createKnownElement(qualifiedName, *this, /* createdByParser */ false);
+#if ENABLE(MATHML)
+        if (settings().mathMLEnabled() && namespaceURI == MathMLNames::mathmlNamespaceURI)
+            return MathMLElementFactory::createKnownElement(qualifiedName, *this, /* createdByParser */ false);
+        return nullptr;
+    })();
+#endif
+
+    if (LIKELY(opportunisticallyMatchedBuiltinElement))
+        return opportunisticallyMatchedBuiltinElement.releaseNonNull();
+
     auto parseResult = parseQualifiedName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
         return parseResult.releaseException();
@@ -5870,6 +5885,21 @@ static inline bool isValidNameASCII(const CharType* characters, unsigned length)
     return true;
 }
 
+static bool isValidNameASCIIWithoutColon(const LChar* characters, unsigned length)
+{
+    auto c = characters[0];
+    if (!(isASCIIAlpha(c) || c == '_'))
+        return false;
+
+    for (unsigned i = 1; i < length; ++i) {
+        c = characters[i];
+        if (!(isASCIIAlphanumeric(c) || c == '_' || c == '-' || c == '.'))
+            return false;
+    }
+
+    return true;
+}
+
 bool Document::isValidName(const String& name)
 {
     unsigned length = name.length();
@@ -5903,6 +5933,10 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
     bool nameStart = true;
     bool sawColon = false;
     unsigned colonPosition = 0;
+
+    bool isValidLocalName = qualifiedName.is8Bit() && isValidNameASCIIWithoutColon(qualifiedName.characters8(), qualifiedName.length());
+    if (LIKELY(isValidLocalName))
+        return std::pair<AtomString, AtomString> { { }, { qualifiedName } };
 
     for (unsigned i = 0; i < length; ) {
         UChar32 c;
