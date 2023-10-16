@@ -2025,3 +2025,5 @@ webkit.org/b/263085 [ Sonoma+ Release ] fast/attachment/attachment-uti.html [ Pa
 webkit.org/b/263095 [ Sonoma+ ] svg/clip-path/clip-path-objectboundingbox-003.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
+
+webkit.org/b/263221 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-iceRestart.html [ Pass Failure ]
