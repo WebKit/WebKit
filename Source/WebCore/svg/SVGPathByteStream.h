@@ -89,6 +89,7 @@ public:
     void shrinkToFit() { m_data.shrinkToFit(); }
 
     const Data& data() const { return m_data; }
+    void setData(const Data& data) { m_data = data; }
 
 private:
     Data m_data;
