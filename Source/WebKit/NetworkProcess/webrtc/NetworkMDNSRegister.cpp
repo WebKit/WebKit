@@ -45,16 +45,22 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
 {
 }
 
-NetworkMDNSRegister::~NetworkMDNSRegister() = default;
+NetworkMDNSRegister::~NetworkMDNSRegister()
+{
+#if ENABLE_MDNS
+    for (auto& value : m_services.values())
+        DNSServiceRefDeallocate(value);
+#endif
+}
 
 #if ENABLE_MDNS
-struct NetworkMDNSRegister::DNSServiceDeallocator {
-    void operator()(DNSServiceRef service) const { DNSServiceRefDeallocate(service); }
-};
-
 void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
 {
-    m_services.remove(documentIdentifier);
+    auto iterator = m_services.find(documentIdentifier);
+    if (iterator == m_services.end())
+        return;
+    DNSServiceRefDeallocate(iterator->value);
+    m_services.remove(iterator);
 }
 
 struct PendingRegistrationRequest {
@@ -70,29 +76,22 @@ struct PendingRegistrationRequest {
     Ref<NetworkConnectionToWebProcess> connection;
     String name;
     PAL::SessionID sessionID;
+    DNSRecordRef record;
     CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
 };
 
 void NetworkMDNSRegister::closeAndForgetService(DNSServiceRef service)
 {
-    m_services.removeIf([service] (auto& iterator) {
-        return iterator.value.get() == service;
-    });
-}
+    DNSServiceRefDeallocate(service);
 
-struct PendingRegistrationRequestIdentifierType { };
-using PendingRegistrationRequestIdentifier = ObjectIdentifier<PendingRegistrationRequestIdentifierType>;
-static HashMap<PendingRegistrationRequestIdentifier, std::unique_ptr<PendingRegistrationRequest>>& pendingRegistrationRequestMap()
-{
-    static NeverDestroyed<HashMap<PendingRegistrationRequestIdentifier, std::unique_ptr<PendingRegistrationRequest>>> map;
-    return map.get();
+    m_services.removeIf([service] (auto& iterator) {
+        return iterator.value == service;
+    });
 }
 
 static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record, DNSServiceFlags, DNSServiceErrorType errorCode, void* context)
 {
-    auto request = pendingRegistrationRequestMap().take(PendingRegistrationRequestIdentifier(reinterpret_cast<uintptr_t>(context)));
-    if (!request)
-        return;
+    std::unique_ptr<PendingRegistrationRequest> request { reinterpret_cast<PendingRegistrationRequest*>(context) };
 
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
@@ -122,9 +121,9 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
             return completionHandler(name, WebCore::MDNSRegisterError::DNSSD);
         }
         ASSERT(service);
-        m_services.add(documentIdentifier, std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>(service));
+        m_services.add(documentIdentifier, service);
     } else
-        service = iterator->value.get();
+        service = iterator->value;
 
     auto ip = inet_addr(ipAddress.utf8().data());
 
@@ -134,31 +133,32 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
         return completionHandler(name, WebCore::MDNSRegisterError::BadParameter);
     }
 
-    auto identifier = PendingRegistrationRequestIdentifier::generate();
-    auto pendingRequest = makeUnique<PendingRegistrationRequest>(m_connection.get(), WTFMove(name), sessionID(), WTFMove(completionHandler));
-    auto addResult = pendingRegistrationRequestMap().add(identifier, WTFMove(pendingRequest));
-    DNSRecordRef record { nullptr };
+    auto* pendingRequest = new PendingRegistrationRequest(m_connection, WTFMove(name), sessionID(), WTFMove(completionHandler));
+    auto* record = &pendingRequest->record;
     auto error = DNSServiceRegisterRecord(service,
-        &record,
+        record,
 #if HAVE(MDNS_FAST_REGISTRATION)
         kDNSServiceFlagsKnownUnique,
 #else
         kDNSServiceFlagsUnique,
 #endif
         0,
-        addResult.iterator->value->name.utf8().data(),
+        pendingRequest->name.utf8().data(),
         kDNSServiceType_A,
         kDNSServiceClass_IN,
         4,
         &ip,
         0,
         registerMDNSNameCallback,
-        reinterpret_cast<void*>(identifier.toUInt64()));
+        pendingRequest);
     if (error) {
         MDNS_RELEASE_LOG("registerMDNSName DNSServiceRegisterRecord error %d", error);
+
+        DNSServiceRefDeallocate(service);
         m_services.remove(documentIdentifier);
-        if (auto pendingRequest = pendingRegistrationRequestMap().take(identifier))
-            pendingRequest->completionHandler(pendingRequest->name, WebCore::MDNSRegisterError::DNSSD);
+
+        pendingRequest->completionHandler(pendingRequest->name, WebCore::MDNSRegisterError::DNSSD);
+        delete pendingRequest;
         return;
     }
 }
@@ -181,7 +181,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
 
 PAL::SessionID NetworkMDNSRegister::sessionID() const
 {
-    return m_connection->sessionID();
+    return m_connection.sessionID();
 }
 
 } // namespace WebKit
