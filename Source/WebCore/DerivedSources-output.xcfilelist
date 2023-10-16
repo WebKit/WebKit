@@ -2283,8 +2283,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceGatheringState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceGatheringState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceProtocol.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceProtocol.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceRole.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceRole.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceServer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceServer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceServerTransportProtocol.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceServerTransportProtocol.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTcpCandidateType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTcpCandidateType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransport.cpp

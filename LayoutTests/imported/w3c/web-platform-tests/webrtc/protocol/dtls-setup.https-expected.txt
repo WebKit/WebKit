@@ -2,8 +2,8 @@
 PASS PC should accept initial offer with setup=actpass
 PASS PC should accept initial offer with setup=active
 PASS PC should accept initial offer with setup=passive
-FAIL PC with setup=actpass should have a dtlsRole of client promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transportStats.dtlsRole')"
-FAIL PC with setup=active should have a dtlsRole of server promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transportStats.dtlsRole')"
-FAIL PC with setup=passive should have a dtlsRole of client promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transportStats.dtlsRole')"
-FAIL dtlsRole is `unknown` before negotiation of the DTLS handshake promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transportStats.dtlsRole')"
+PASS PC with setup=actpass should have a dtlsRole of client
+PASS PC with setup=active should have a dtlsRole of server
+PASS PC with setup=passive should have a dtlsRole of client
+PASS dtlsRole is `unknown` before negotiation of the DTLS handshake
 

@@ -1904,6 +1904,9 @@ webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout F
 
 webkit.org/b/261226 [ Sonoma+ ] fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Pass ] # backing functionality only in Sonoma+
 
+# The test takes an incredibly long time to run and typically times out when run in stress-test.
+webkit.org/b/263044 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Pass Failure ]
+
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
 

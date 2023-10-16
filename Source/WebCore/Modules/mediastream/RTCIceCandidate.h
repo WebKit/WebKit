@@ -63,8 +63,8 @@ public:
     std::optional<RTCIceTcpCandidateType> tcpType() const { return m_fields.tcpType; }
     String relatedAddress() const { return m_fields.relatedAddress; }
     std::optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
-    String usernameFragment() const { return m_fields.usernameFragment; }
 
+    String usernameFragment() const { return m_fields.usernameFragment; }
     RTCIceCandidateInit toJSON() const;
 
 private:

@@ -479,7 +479,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCIceConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCIceGatheringState.idl \
     $(WebCore)/Modules/mediastream/RTCIceProtocol.idl \
+    $(WebCore)/Modules/mediastream/RTCIceRole.idl \
     $(WebCore)/Modules/mediastream/RTCIceServer.idl \
+    $(WebCore)/Modules/mediastream/RTCIceServerTransportProtocol.idl \
     $(WebCore)/Modules/mediastream/RTCIceTcpCandidateType.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransport.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransportState.idl \

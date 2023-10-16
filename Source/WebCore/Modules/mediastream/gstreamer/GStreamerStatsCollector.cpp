@@ -104,24 +104,9 @@ static inline void fillReceivedRTPStreamStats(RTCStatsReport::ReceivedRtpStreamS
         stats.packetsLost = packetsLost;
 #endif
 
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-repaired", &value))
-        stats.packetsRepaired = value;
-
     double jitter;
     if (gst_structure_get_double(structure, "jitter", &jitter))
         stats.jitter = jitter;
-
-    // FIXME:
-    // stats.burstLossCount
-    // stats.burstDiscardCount
-    // stats.burstLossRate
-    // stats.burstDiscardRate
-    // stats.gapLossRate
-    // stats.gapDiscardRate
-    // stats.framesDropped
-    // stats.partialFramesLost
-    // stats.fullFramesLost
 }
 
 static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
@@ -272,7 +257,7 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
     // stats.srtpCipher =
 }
 
-static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& type)
+static inline RTCIceCandidateType iceCandidateType(const String& type)
 {
     if (type == "host"_s)
         return RTCIceCandidateType::Host;
@@ -282,8 +267,8 @@ static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& 
         return RTCIceCandidateType::Prflx;
     if (type == "relay"_s)
         return RTCIceCandidateType::Relay;
-
-    return { };
+    ASSERT_NOT_REACHED();
+    return RTCIceCandidateType::Host;
 }
 
 static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stats, GstWebRTCStatsType statsType, const GstStructure* structure)

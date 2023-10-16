@@ -1,0 +1,4 @@
+
+FAIL Do not expose in stats remote addresses that are not known to be already exposed to JS assert_equals: address should be null expected (object) null but got (undefined) undefined
+PASS Expose in stats remote addresses that are already exposed to JS
+

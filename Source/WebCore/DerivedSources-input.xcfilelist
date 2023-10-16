@@ -605,7 +605,9 @@ $(PROJECT_DIR)/Modules/mediastream/RTCIceComponent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceConnectionState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceGatheringState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceProtocol.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCIceRole.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceServer.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCIceServerTransportProtocol.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTcpCandidateType.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTransport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceTransportState.idl

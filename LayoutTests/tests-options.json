@@ -6167,6 +6167,15 @@
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html": [
         "slow"
     ],

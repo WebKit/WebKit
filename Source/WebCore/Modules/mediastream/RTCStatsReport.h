@@ -25,7 +25,13 @@
 
 #pragma once
 
+#include "RTCDtlsTransportState.h"
 #include "RTCIceCandidateType.h"
+#include "RTCIceRole.h"
+#include "RTCIceServerTransportProtocol.h"
+#include "RTCIceTcpCandidateType.h"
+#include "RTCIceTransportState.h"
+#include <wtf/KeyValuePair.h>
 
 namespace WebCore {
 
@@ -39,19 +45,20 @@ public:
     void initializeMapLike(DOMMapAdapter& adapter) { m_mapInitializer(adapter); }
 
     enum class Type {
-        CandidatePair,
-        Certificate,
         Codec,
-        DataChannel,
         InboundRtp,
-        LocalCandidate,
-        MediaSource,
         OutboundRtp,
-        PeerConnection,
-        RemoteCandidate,
         RemoteInboundRtp,
-        Track,
-        Transport
+        RemoteOutboundRtp,
+        MediaSource,
+        MediaPlayout,
+        PeerConnection,
+        DataChannel,
+        Transport,
+        CandidatePair,
+        LocalCandidate,
+        RemoteCandidate,
+        Certificate,
     };
     struct Stats {
         double timestamp;
@@ -70,18 +77,6 @@ public:
         std::optional<uint64_t> packetsReceived;
         std::optional<int64_t> packetsLost;
         std::optional<double> jitter;
-        std::optional<uint64_t> packetsRepaired;
-        std::optional<uint64_t> burstPacketsLost;
-        std::optional<uint64_t> burstPacketsDiscarded;
-        std::optional<uint32_t> burstLossCount;
-        std::optional<uint32_t> burstDiscardCount;
-        std::optional<double> burstLossRate;
-        std::optional<double> burstDiscardRate;
-        std::optional<double> gapLossRate;
-        std::optional<double> gapDiscardRate;
-        std::optional<uint32_t> framesDropped;
-        std::optional<uint32_t> partialFramesLost;
-        std::optional<uint32_t> fullFramesLost;
     };
 
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
@@ -92,6 +87,7 @@ public:
         String remoteId;
         std::optional<uint32_t> framesDecoded;
         std::optional<uint32_t> keyFramesDecoded;
+        std::optional<uint32_t> framesRendered;
         std::optional<uint32_t> framesDropped;
         std::optional<uint32_t> frameWidth;
         std::optional<uint32_t> frameHeight;
@@ -100,9 +96,14 @@ public:
         std::optional<double> totalDecodeTime;
         std::optional<double> totalInterFrameDelay;
         std::optional<double> totalSquaredInterFrameDelay;
+        std::optional<uint32_t> pauseCount;
+        std::optional<double> totalPausesDuration;
+        std::optional<uint32_t> freezeCount;
+        std::optional<double> totalFreezesDuration;
         std::optional<double> lastPacketReceivedTimestamp;
         std::optional<uint64_t> headerBytesReceived;
         std::optional<uint64_t> packetsDiscarded;
+        std::optional<uint64_t> fecBytesReceived;
         std::optional<uint64_t> fecPacketsReceived;
         std::optional<uint64_t> fecPacketsDiscarded;
         std::optional<uint64_t> bytesReceived;
@@ -114,7 +115,9 @@ public:
         std::optional<double> totalProcessingDelay;
         std::optional<double> estimatedPlayoutTimestamp;
         std::optional<double> jitterBufferDelay;
+        std::optional<double> jitterBufferTargetDelay;
         std::optional<uint64_t> jitterBufferEmittedCount;
+        std::optional<double> jitterBufferMinimumDelay;
         std::optional<uint64_t> totalSamplesReceived;
         std::optional<uint64_t> samplesDecodedWithSilk;
         std::optional<uint64_t> samplesDecodedWithCelt;
@@ -127,6 +130,15 @@ public:
         std::optional<double> totalAudioEnergy;
         std::optional<double> totalSamplesDuration;
         std::optional<uint32_t> framesReceived;
+        String decoderImplementation;
+        String playoutId;
+        std::optional<bool> powerEfficientDecoder;
+        std::optional<uint32_t> framesAssembledFromMultiplePackets;
+        std::optional<double> totalAssemblyTime;
+        std::optional<uint64_t> retransmittedPacketsReceived;
+        std::optional<uint64_t> retransmittedBytesReceived;
+        std::optional<uint32_t> rtxSsrc;
+        std::optional<uint32_t> fecSsrc;
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
@@ -136,7 +148,6 @@ public:
         std::optional<double> roundTripTime;
         std::optional<double> totalRoundTripTime;
         std::optional<double> fractionLost;
-        std::optional<uint64_t> reportsReceived;
         std::optional<uint64_t> roundTripTimeMeasurements;
     };
 
@@ -145,54 +156,60 @@ public:
         std::optional<uint64_t> bytesSent;
     };
 
+    enum class QualityLimitationReason {
+        None,
+        Cpu,
+        Bandwidth,
+        Other
+    };
+
     struct OutboundRtpStreamStats : SentRtpStreamStats {
         OutboundRtpStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
 
-        std::optional<uint32_t> rtxSsrc;
+        String mid;
         String mediaSourceId;
-        String senderId;
         String remoteId;
         String rid;
-        std::optional<double> lastPacketSentTimestamp;
         std::optional<uint64_t> headerBytesSent;
-        std::optional<uint32_t> packetsDiscardedOnSend;
-        std::optional<uint64_t> bytesDiscardedOnSend;
-        std::optional<uint32_t> fecPacketsSent;
         std::optional<uint64_t> retransmittedPacketsSent;
         std::optional<uint64_t> retransmittedBytesSent;
+        std::optional<uint32_t> rtxSsrc;
         std::optional<double> targetBitrate;
         std::optional<uint64_t> totalEncodedBytesTarget;
         std::optional<uint32_t> frameWidth;
         std::optional<uint32_t> frameHeight;
-        std::optional<uint32_t> frameBitDepth;
         std::optional<double> framesPerSecond;
         std::optional<uint32_t> framesSent;
         std::optional<uint32_t> hugeFramesSent;
         std::optional<uint32_t> framesEncoded;
         std::optional<uint32_t> keyFramesEncoded;
-        std::optional<uint32_t> framesDiscardedOnSend;
         std::optional<uint64_t> qpSum;
-        std::optional<uint64_t> totalSamplesSent;
-        std::optional<uint64_t> samplesEncodedWithSilk;
-        std::optional<uint64_t> samplesEncodedWithCelt;
-        std::optional<bool> voiceActivityFlag;
         std::optional<double> totalEncodeTime;
         std::optional<double> totalPacketSendDelay;
-        std::optional<double> averageRtcpInterval;
-        // std::optional<RTCQualityLimitationReason qualityLimitationReason;
-        // std::optional<record<DOMString, double> qualityLimitationDurations;
+        std::optional<QualityLimitationReason> qualityLimitationReason;
+        std::optional<Vector<KeyValuePair<String, double>>> qualityLimitationDurations;
         std::optional<uint32_t> qualityLimitationResolutionChanges;
-        // std::optional<record<USVString, unsigned long long> perDscpPacketsSent;
         std::optional<uint32_t> nackCount;
         std::optional<uint32_t> firCount;
         std::optional<uint32_t> pliCount;
-        std::optional<uint32_t> sliCount;
-        // DOMString encoderImplementation;
+        std::optional<bool> active;
+        String scalabilityMode;
+    };
+
+    struct RemoteOutboundRtpStreamStats : SentRtpStreamStats {
+        RemoteOutboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteOutboundRtp; }
+
+        String localId;
+        std::optional<double> remoteTimestamp;
+        std::optional<uint64_t> reportsSent;
+        std::optional<double> roundTripTime;
+        std::optional<double> totalRoundTripTime;
+        std::optional<uint64_t> roundTripTimeMeasurements;
     };
 
     struct DataChannelStats : Stats {
         DataChannelStats() { type = RTCStatsReport::Type::DataChannel; }
-        
+
         String label;
         String protocol;
         std::optional<int> datachannelid;
@@ -206,10 +223,9 @@ public:
     enum class IceCandidatePairState {
         Frozen,
         Waiting,
-        Inprogress,
+        InProgress,
         Failed,
-        Succeeded,
-        Cancelled
+        Succeeded
     };
 
     struct IceCandidatePairStats : Stats {
@@ -220,10 +236,12 @@ public:
         String remoteCandidateId;
         IceCandidatePairState state;
         std::optional<bool> nominated;
-        std::optional<bool> writable;
-        std::optional<bool> readable;
+        std::optional<uint64_t> packetsSent;
+        std::optional<uint64_t> packetsReceived;
         std::optional<uint64_t> bytesSent;
         std::optional<uint64_t> bytesReceived;
+        std::optional<double> lastPacketSentTimestamp;
+        std::optional<double> lastPacketReceivedTimestamp;
         std::optional<double> totalRoundTripTime;
         std::optional<double> currentRoundTripTime;
         std::optional<double> availableOutgoingBitrate;
@@ -232,12 +250,9 @@ public:
         std::optional<uint64_t> requestsSent;
         std::optional<uint64_t> responsesReceived;
         std::optional<uint64_t> responsesSent;
-        std::optional<uint64_t> retransmissionsReceived;
-        std::optional<uint64_t> retransmissionsSent;
-        std::optional<uint64_t> consentRequestsReceived;
         std::optional<uint64_t> consentRequestsSent;
-        std::optional<uint64_t> consentResponsesReceived;
-        std::optional<uint64_t> consentResponsesSent;
+        std::optional<uint32_t> packetsDiscardedOnSend;
+        std::optional<uint64_t> bytesDiscardedOnSend;
     };
 
     struct IceCandidateStats : Stats {
@@ -245,9 +260,15 @@ public:
         String address;
         std::optional<int32_t> port;
         String protocol;
-        std::optional<RTCIceCandidateType> candidateType;
+        RTCIceCandidateType candidateType;
         std::optional<int32_t> priority;
         String url;
+        std::optional<RTCIceServerTransportProtocol> relayProtocol;
+        String foundation;
+        String relatedAddress;
+        std::optional<int32_t> relatedPort;
+        String usernameFragment;
+        std::optional<RTCIceTcpCandidateType> tcpType;
     };
 
     struct CertificateStats : Stats {
@@ -268,7 +289,6 @@ public:
         CodecStats() { type = RTCStatsReport::Type::Codec; }
 
         std::optional<uint32_t> payloadType;
-        std::optional<CodecType> codecType;
         String transportId;
         String mimeType;
         std::optional<uint32_t> clockRate;
@@ -277,19 +297,42 @@ public:
         String implementation;
     };
 
+    enum DtlsRole {
+        Client,
+        Server,
+        Unknown
+    };
+
     struct TransportStats : Stats {
         TransportStats() { type = RTCStatsReport::Type::Transport; }
 
+        std::optional<uint64_t> packetsSent;
+        std::optional<uint64_t> packetsReceived;
         std::optional<uint64_t> bytesSent;
         std::optional<uint64_t> bytesReceived;
-        String rtcpTransportStatsId;
+        std::optional<RTCIceRole> iceRole;
+        String iceLocalUsernameFragment;
+        RTCDtlsTransportState dtlsState;
+        std::optional<RTCIceTransportState> iceState;
         String selectedCandidatePairId;
         String localCertificateId;
         String remoteCertificateId;
-        String dtlsState;
         String tlsVersion;
         String dtlsCipher;
+        std::optional<DtlsRole> dtlsRole;
         String srtpCipher;
+        std::optional<uint32_t> selectedCandidatePairChanges;
+    };
+
+    struct AudioPlayoutStats : Stats {
+        AudioPlayoutStats() { type = RTCStatsReport::Type::MediaPlayout; }
+
+        String kind;
+        std::optional<double> synthesizedSamplesDuration;
+        std::optional<uint32_t> synthesizedSamplesEvents;
+        std::optional<double> totalSamplesDuration;
+        std::optional<double> totalPlayoutDelay;
+        std::optional<uint64_t> totalSamplesCount;
     };
 
     struct PeerConnectionStats : Stats {
@@ -313,6 +356,10 @@ public:
         std::optional<double> totalSamplesDuration;
         std::optional<double> echoReturnLoss;
         std::optional<double> echoReturnLossEnhancement;
+        std::optional<double> droppedSamplesDuration;
+        std::optional<uint64_t> droppedSamplesEvents;
+        std::optional<double> totalCaptureDelay;
+        std::optional<uint64_t> totalSamplesCaptured;
     };
 
     struct VideoSourceStats : MediaSourceStats {
@@ -320,7 +367,6 @@ public:
 
         std::optional<unsigned long> width;
         std::optional<unsigned long> height;
-        std::optional<unsigned long> bitDepth;
         std::optional<unsigned long> frames;
         std::optional<double> framesPerSecond;
     };
