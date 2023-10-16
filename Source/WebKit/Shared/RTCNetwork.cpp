@@ -50,7 +50,7 @@ RTCNetwork::RTCNetwork(const rtc::Network& network)
 
 rtc::Network RTCNetwork::value() const
 {
-    rtc::Network network(name.data(), description.data(), prefix.value, prefixLength, rtc::AdapterType(type));
+    rtc::Network network(name.data(), description.data(), prefix.rtcAddress(), prefixLength, rtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
     network.set_active(active);
@@ -58,54 +58,6 @@ rtc::Network RTCNetwork::value() const
     network.set_scope_id(scopeID);
     network.SetIPs(ips, true);
     return network;
-}
-
-auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> std::optional<IPAddress>
-{
-    IPAddress result;
-    int family;
-    if (!decoder.decode(family))
-        return std::nullopt;
-
-    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
-
-    if (family == AF_UNSPEC)
-        return result;
-
-    IPC::DataReference data;
-    if (!decoder.decode(data))
-        return std::nullopt;
-
-    if (family == AF_INET) {
-        if (data.size() != sizeof(in_addr))
-            return std::nullopt;
-        result.value = rtc::IPAddress(*reinterpret_cast<const in_addr*>(data.data()));
-        return result;
-    }
-
-    if (data.size() != sizeof(in6_addr))
-        return std::nullopt;
-    result.value = rtc::IPAddress(*reinterpret_cast<const in6_addr*>(data.data()));
-    return result;
-}
-
-void RTCNetwork::IPAddress::encode(IPC::Encoder& encoder) const
-{
-    auto family = value.family();
-    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
-    encoder << family;
-
-    if (family == AF_UNSPEC)
-        return;
-
-    if (family == AF_INET) {
-        auto address = value.ipv4_address();
-        encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
-        return;
-    }
-
-    auto address = value.ipv6_address();
-    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
 }
 
 rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
@@ -146,7 +98,7 @@ auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> std::optional<S
     decoder >> ipAddress;
     if (!ipAddress)
         return std::nullopt;
-    result.value.SetResolvedIP(ipAddress->value);
+    result.value.SetResolvedIP(ipAddress->rtcAddress());
     return result;
 }
 
@@ -208,7 +160,7 @@ std::optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
         int flags;
         if (!decoder.decode(flags))
             return std::nullopt;
-        result.ips.push_back({ address->value, flags });
+        result.ips.push_back({ address->rtcAddress(), flags });
     }
     return result;
 }
@@ -232,6 +184,57 @@ void RTCNetwork::encode(IPC::Encoder& encoder) const
         encoder << IPAddress { ip };
         encoder << ip.ipv6_flags();
     }
+}
+
+namespace RTC::Network {
+
+IPAddress::IPAddress(const rtc::IPAddress& input)
+{
+    switch (input.family()) {
+    case AF_INET6: {
+        in6_addr addr = input.ipv6_address();
+        std::array<uint32_t, 4> array;
+        static_assert(sizeof(array) == sizeof(addr));
+        memcpy(array.data(), &addr, sizeof(array));
+        value = array;
+        return;
+    }
+    case AF_INET:
+        value = input.ipv4_address().s_addr;
+        return;
+    case AF_UNSPEC:
+        value = UnspecifiedFamily { };
+        return;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+rtc::IPAddress IPAddress::rtcAddress() const
+{
+    return WTF::switchOn(value, [](UnspecifiedFamily) {
+        return rtc::IPAddress();
+    }, [] (uint32_t ipv4) {
+        in_addr addressv4;
+        addressv4.s_addr = ipv4;
+        return rtc::IPAddress(addressv4);
+    }, [] (std::array<uint32_t, 4> ipv6) {
+        in6_addr result;
+        static_assert(sizeof(ipv6) == sizeof(result));
+        memcpy(&result, ipv6.data(), sizeof(ipv6));
+        return rtc::IPAddress(result);
+    });
+}
+
+InterfaceAddress::InterfaceAddress(const rtc::InterfaceAddress& address)
+    : address(address)
+    , ipv6Flags(address.ipv6_flags()) { }
+
+rtc::InterfaceAddress InterfaceAddress::rtcAddress() const
+{
+    return rtc::InterfaceAddress(address.rtcAddress(), ipv6Flags);
+}
+
 }
 
 }
