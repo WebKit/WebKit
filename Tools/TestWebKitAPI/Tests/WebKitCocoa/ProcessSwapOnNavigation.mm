@@ -8980,3 +8980,34 @@ TEST(WebProcessCache, ReusedCrashedBackForwardSuspendedWebProcess)
 
     EXPECT_EQ(crashCount, 1u);
 }
+
+#if PLATFORM(MAC)
+TEST(ProcessSwap, MouseEventDuringCrossSiteProvisionalNavigation)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto handler = adoptNS([PSONScheme new]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([PSONNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/source.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    navigationDelegate->didStartProvisionalNavigationHandler = ^{
+        for (unsigned i = 0; i < 5; ++i)
+            [webView mouseMoveToPoint:CGPointMake(50 + i, 50 + i) withFlags:0];
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/destination.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+#endif

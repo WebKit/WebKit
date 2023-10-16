@@ -3264,8 +3264,10 @@ void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const
     sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
         if (!m_pageClient)
             return;
-        if (!eventType)
+        if (!eventType) {
+            mouseEventHandlingCompleted(eventType, handled);
             return;
+        }
         handleMouseEventReply(*eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
     });
 }
@@ -3598,23 +3600,21 @@ void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
     auto handleKeyEventReply = [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
         if (!m_pageClient)
             return;
-        if (!eventType)
+        if (!eventType) {
+            keyEventHandlingCompleted(eventType, handled);
             return;
+        }
         didReceiveEvent(*eventType, handled);
     };
 
     if (m_focusedFrame) {
         if (auto remotePageProxy = m_focusedFrame->remotePageProxy()) {
-            remotePageProxy->sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
-                handleKeyEventReply(eventType, handled);
-            });
+            remotePageProxy->sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame->frameID(), event), WTFMove(handleKeyEventReply));
             return;
         }
     }
 
-    sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame ? m_focusedFrame->frameID() : m_mainFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
-        handleKeyEventReply(eventType, handled);
-    });
+    sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame ? m_focusedFrame->frameID() : m_mainFrame->frameID(), event), WTFMove(handleKeyEventReply));
 }
 
 bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -3879,6 +3879,20 @@ void WebPageProxy::handleUnpreventableTouchEvent(const NativeWebTouchEvent& even
 }
 
 #elif ENABLE(TOUCH_EVENTS)
+void WebPageProxy::touchEventHandlingCompleted(std::optional<WebEventType> eventType, bool handled)
+{
+    MESSAGE_CHECK(m_process, !internals().touchEventQueue.isEmpty());
+    auto queuedEvents = internals().touchEventQueue.takeFirst();
+    if (eventType)
+        MESSAGE_CHECK(m_process, *eventType == queuedEvents.forwardedEvent.type());
+
+    pageClient().doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+    for (size_t i = 0; i < queuedEvents.deferredTouchEvents.size(); ++i) {
+        bool isEventHandled = false;
+        pageClient().doneWithTouchEvent(queuedEvents.deferredTouchEvents.at(i), isEventHandled);
+    }
+}
+
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!hasRunningProcess())
@@ -3898,8 +3912,10 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
         sendWithAsyncReply(Messages::WebPage::TouchEvent(event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
             if (!m_pageClient)
                 return;
-            if (!eventType)
+            if (!eventType) {
+                touchEventHandlingCompleted(eventType, handled);
                 return;
+            }
             didReceiveEvent(*eventType, handled);
         });
     } else {
@@ -8642,6 +8658,70 @@ void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     pageClient().setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
+void WebPageProxy::mouseEventHandlingCompleted(std::optional<WebEventType> eventType, bool handled)
+{
+    // Retire the last sent event now that WebProcess is done handling it.
+    MESSAGE_CHECK(m_process, !internals().mouseEventQueue.isEmpty());
+    auto event = internals().mouseEventQueue.takeFirst();
+    if (eventType) {
+        MESSAGE_CHECK(m_process, *eventType == event.type());
+#if ENABLE(CONTEXT_MENU_EVENT)
+        if (event.button() == WebMouseEventButton::Right) {
+            if (event.type() == WebEventType::MouseDown) {
+                ASSERT(m_contextMenuPreventionState == EventPreventionState::Waiting);
+                m_contextMenuPreventionState = handled ? EventPreventionState::Prevented : EventPreventionState::Allowed;
+            } else if (m_contextMenuPreventionState != EventPreventionState::Waiting)
+                m_contextMenuPreventionState = EventPreventionState::None;
+
+            processContextMenuCallbacks();
+        }
+#endif
+    }
+
+    if (!internals().mouseEventQueue.isEmpty()) {
+        LOG(MouseHandling, " UIProcess: handling a queued mouse event from mouseEventHandlingCompleted");
+        processNextQueuedMouseEvent();
+    } else {
+        if (auto* automationSession = process().processPool().automationSession())
+            automationSession->mouseEventsFlushedForPage(*this);
+        didFinishProcessingAllPendingMouseEvents();
+    }
+}
+
+void WebPageProxy::keyEventHandlingCompleted(std::optional<WebEventType> eventType, bool handled)
+{
+    MESSAGE_CHECK(m_process, !internals().keyEventQueue.isEmpty());
+    auto event = internals().keyEventQueue.takeFirst();
+    if (eventType)
+        MESSAGE_CHECK(m_process, *eventType == event.type());
+
+#if PLATFORM(WIN)
+    if (!handled && eventType && *eventType == WebEventType::RawKeyDown)
+        dispatchPendingCharEvents(event);
+#endif
+
+    bool canProcessMoreKeyEvents = !internals().keyEventQueue.isEmpty();
+    if (canProcessMoreKeyEvents && m_mainFrame) {
+        auto nextEvent = internals().keyEventQueue.first();
+        LOG(KeyHandling, " UI process: sent keyEvent from keyEventHandlingCompleted");
+        sendKeyEvent(nextEvent);
+    }
+
+    // The call to doneWithKeyEvent may close this WebPage.
+    // Protect against this being destroyed.
+    Ref<WebPageProxy> protectedThis(*this);
+
+    pageClient().doneWithKeyEvent(event, handled);
+    if (!handled)
+        m_uiClient->didNotHandleKeyEvent(this, event);
+
+    // Notify the session after -[NSApp sendEvent:] has a crack at turning the event into an action.
+    if (!canProcessMoreKeyEvents) {
+        if (auto* automationSession = process().processPool().automationSession())
+            automationSession->keyboardEventsFlushedForPage(*this);
+    }
+}
+
 void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
 {
     switch (eventType) {
@@ -8681,32 +8761,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
     case WebEventType::MouseDown:
     case WebEventType::MouseUp: {
         LOG_WITH_STREAM(MouseHandling, stream << "WebPageProxy::didReceiveEvent: " << eventType << " (queue size " << internals().mouseEventQueue.size() << ")");
-
-        // Retire the last sent event now that WebProcess is done handling it.
-        MESSAGE_CHECK(m_process, !internals().mouseEventQueue.isEmpty());
-        auto event = internals().mouseEventQueue.takeFirst();
-        MESSAGE_CHECK(m_process, eventType == event.type());
-
-#if ENABLE(CONTEXT_MENU_EVENT)
-        if (event.button() == WebMouseEventButton::Right) {
-            if (event.type() == WebEventType::MouseDown) {
-                ASSERT(m_contextMenuPreventionState == EventPreventionState::Waiting);
-                m_contextMenuPreventionState = handled ? EventPreventionState::Prevented : EventPreventionState::Allowed;
-            } else if (m_contextMenuPreventionState != EventPreventionState::Waiting)
-                m_contextMenuPreventionState = EventPreventionState::None;
-
-            processContextMenuCallbacks();
-        }
-#endif
-
-        if (!internals().mouseEventQueue.isEmpty()) {
-            LOG(MouseHandling, " UIProcess: handling a queued mouse event from didReceiveEvent");
-            processNextQueuedMouseEvent();
-        } else {
-            if (auto* automationSession = process().processPool().automationSession())
-                automationSession->mouseEventsFlushedForPage(*this);
-            didFinishProcessingAllPendingMouseEvents();
-        }
+        mouseEventHandlingCompleted(eventType, handled);
         break;
     }
 
@@ -8723,37 +8778,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
     case WebEventType::RawKeyDown:
     case WebEventType::Char: {
         LOG_WITH_STREAM(KeyHandling, stream << "WebPageProxy::didReceiveEvent: " << eventType << " (queue empty " << internals().keyEventQueue.isEmpty() << ")");
-
-        MESSAGE_CHECK(m_process, !internals().keyEventQueue.isEmpty());
-        auto event = internals().keyEventQueue.takeFirst();
-        MESSAGE_CHECK(m_process, eventType == event.type());
-
-#if PLATFORM(WIN)
-        if (!handled && eventType == WebEventType::RawKeyDown)
-            dispatchPendingCharEvents(event);
-#endif
-
-        bool canProcessMoreKeyEvents = !internals().keyEventQueue.isEmpty();
-        if (canProcessMoreKeyEvents && m_mainFrame) {
-            auto nextEvent = internals().keyEventQueue.first();
-            LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
-            m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
-            sendKeyEvent(nextEvent);
-        }
-
-        // The call to doneWithKeyEvent may close this WebPage.
-        // Protect against this being destroyed.
-        Ref<WebPageProxy> protect(*this);
-
-        pageClient().doneWithKeyEvent(event, handled);
-        if (!handled)
-            m_uiClient->didNotHandleKeyEvent(this, event);
-
-        // Notify the session after -[NSApp sendEvent:] has a crack at turning the event into an action.
-        if (!canProcessMoreKeyEvents) {
-            if (auto* automationSession = process().processPool().automationSession())
-                automationSession->keyboardEventsFlushedForPage(*this);
-        }
+        keyEventHandlingCompleted(eventType, handled);
         break;
     }
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -8780,15 +8805,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
     case WebEventType::TouchMove:
     case WebEventType::TouchEnd:
     case WebEventType::TouchCancel: {
-        MESSAGE_CHECK(m_process, !internals().touchEventQueue.isEmpty());
-        auto queuedEvents = internals().touchEventQueue.takeFirst();
-        MESSAGE_CHECK(m_process, eventType == queuedEvents.forwardedEvent.type());
-
-        pageClient().doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
-        for (size_t i = 0; i < queuedEvents.deferredTouchEvents.size(); ++i) {
-            bool isEventHandled = false;
-            pageClient().doneWithTouchEvent(queuedEvents.deferredTouchEvents.at(i), isEventHandled);
-        }
+        touchEventHandlingCompleted(eventType, handled);
         break;
     }
 #endif
@@ -9373,15 +9390,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
-    // Can't expect DidReceiveEvent notifications from a crashed web process.
-    internals().mouseEventQueue.clear();
-    internals().keyEventQueue.clear();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();
-
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    internals().touchEventQueue.clear();
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     invalidateAllAttachments();

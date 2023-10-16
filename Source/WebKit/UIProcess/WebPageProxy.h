@@ -2592,6 +2592,8 @@ private:
 
     void discardQueuedMouseEvents();
 
+    void mouseEventHandlingCompleted(std::optional<WebEventType>, bool handled);
+    void keyEventHandlingCompleted(std::optional<WebEventType>, bool handled);
     void didReceiveEvent(WebEventType, bool handled);
     void didUpdateRenderingAfterCommittingLoad();
 #if PLATFORM(IOS_FAMILY)
@@ -2684,6 +2686,7 @@ private:
     void updateWheelEventActivityAfterProcessSwap();
 
 #if ENABLE(TOUCH_EVENTS)
+    void touchEventHandlingCompleted(std::optional<WebEventType>, bool handled);
     void updateTouchEventTracking(const WebTouchEvent&);
     WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
 #endif
