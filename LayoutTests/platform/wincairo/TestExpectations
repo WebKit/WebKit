@@ -2564,9 +2564,8 @@ animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
 
-webkit.org/b/263101 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
-webkit.org/b/263101 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure Pass ]
-webkit.org/b/263101 fast/forms/listbox-zero-item-height.html [ Failure Pass ]
+fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
+fast/forms/listbox-zero-item-height.html [ Failure ]
 
 fast/css/unicode-escape-in-8bit-string.html [ ImageOnlyFailure ]
 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]

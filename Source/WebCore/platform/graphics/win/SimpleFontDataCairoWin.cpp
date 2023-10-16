@@ -62,7 +62,8 @@ void Font::platformInit()
     GetTextFace(dc, LF_FACESIZE, faceName);
 
     OUTLINETEXTMETRIC metrics;
-    GetOutlineTextMetrics(dc, sizeof(metrics), &metrics);
+    if (!GetOutlineTextMetrics(dc, sizeof(metrics), &metrics))
+        return;
 
     float xHeight = metrics.otmTextMetrics.tmAscent * 0.56f; // Best guess for xHeight if no x glyph is present.
     GLYPHMETRICS gm;
