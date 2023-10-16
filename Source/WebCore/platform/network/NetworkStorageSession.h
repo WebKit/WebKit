@@ -32,6 +32,7 @@
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include <optional>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -40,6 +41,7 @@
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cf/CFNetworkSPI.h>
@@ -90,7 +92,7 @@ enum class ApplyTrackingPrevention : bool { No, Yes };
 enum class ScriptWrittenCookiesOnly : bool { No, Yes };
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-class CookieChangeObserver {
+class CookieChangeObserver : public CanMakeCheckedPtr {
 public:
     virtual ~CookieChangeObserver() { }
     virtual void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) = 0;
