@@ -1902,9 +1902,7 @@
         SYS_psynch_mutexwait
         SYS_read
         SYS_readlink
-#if ASAN_ENABLED
         SYS_sigaltstack
-#endif
         SYS_stat64
         SYS_sysctl
         SYS_thread_selfid
