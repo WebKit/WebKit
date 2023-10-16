@@ -38,8 +38,7 @@ PAL_EXPORT void registerNotifyCallback(ASCIILiteral, Function<void()>&&);
 #endif
 
 #define PAL_LOG_CHANNELS(M) \
-    M(Media) \
-    M(TextEncoding)
+    M(Media)
 
 #undef DECLARE_LOG_CHANNEL
 #define DECLARE_LOG_CHANNEL(name) \
