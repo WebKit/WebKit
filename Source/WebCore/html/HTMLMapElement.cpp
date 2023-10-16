@@ -77,7 +77,7 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
     return defaultArea;
 }
 
-HTMLImageElement* HTMLMapElement::imageElement()
+RefPtr<HTMLImageElement> HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
         return nullptr;

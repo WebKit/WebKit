@@ -121,7 +121,7 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
-    Element* popoverTargetElement() const final;
+    RefPtr<Element> popoverTargetElement() const final;
     AccessibilityObject* internalLinkElement() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
@@ -198,8 +198,8 @@ protected:
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;
-    Vector<Element*> ariaLabeledByElements() const;
-    String descriptionForElements(Vector<Element*>&&) const;
+    Vector<Ref<Element>> ariaLabeledByElements() const;
+    String descriptionForElements(const Vector<Ref<Element>>&) const;
     LayoutRect boundingBoxRect() const override;
     String ariaDescribedByAttribute() const override;
     

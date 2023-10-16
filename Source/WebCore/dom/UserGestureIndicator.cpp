@@ -56,24 +56,24 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
     // as well as all same-origin documents on the page.
     m_documentsImpactedByUserGesture.add(*document);
 
-    auto* documentFrame = document->frame();
+    RefPtr documentFrame = document->frame();
     if (!documentFrame)
         return;
 
-    for (auto* ancestorFrame = documentFrame->tree().parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
-        auto* localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame);
+    for (RefPtr ancestorFrame = documentFrame->tree().parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
+        RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame);
         if (!localAncestor)
             continue;
-        if (auto* ancestorDocument = localAncestor->document())
+        if (RefPtr ancestorDocument = localAncestor->document())
             m_documentsImpactedByUserGesture.add(*ancestorDocument);
     }
 
     auto& documentOrigin = document->securityOrigin();
-    for (Frame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* frameDocument = localFrame->document();
+        RefPtr frameDocument = localFrame->document();
         if (frameDocument && documentOrigin.isSameOriginDomain(frameDocument->securityOrigin()))
             m_documentsImpactedByUserGesture.add(*frameDocument);
     }
@@ -119,21 +119,17 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
         if (processInteractionStyle == ProcessInteractionStyle::Immediate)
             ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(document->topDocument());
         document->topDocument().setUserDidInteractWithPage(true);
-        if (auto* frame = document->frame()) {
-            if (!frame->hasHadUserInteraction()) {
-                for (Frame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
-                    auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor);
-                    if (!localAncestor)
-                        continue;
+        if (RefPtr frame = document->frame(); frame && !frame->hasHadUserInteraction()) {
+            for (RefPtr<Frame> ancestor = WTFMove(frame); ancestor; ancestor = ancestor->tree().parent()) {
+                if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor))
                     localAncestor->setHasHadUserInteraction();
-                }
             }
         }
 
         // https://html.spec.whatwg.org/multipage/interaction.html#user-activation-processing-model
         // When a user interaction causes firing of an activation triggering input event in a Document...
         // NOTE: Only activate the relevent DOMWindow when the gestureType is an ActivationTriggering one
-        auto* window = document->domWindow();
+        RefPtr window = document->domWindow();
         if (window && gestureType == UserGestureType::ActivationTriggering)
             window->notifyActivated(currentToken()->startTime());
     }

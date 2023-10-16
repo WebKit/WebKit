@@ -35,6 +35,7 @@
 #include "SelectorChecker.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
+#include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
@@ -208,12 +209,12 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
 
     const AtomString& idToMatch = idSelector->value();
     if (UNLIKELY(rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {
-        const Vector<Element*>* elements = rootNode.treeScope().getAllElementsById(idToMatch);
+        auto* elements = rootNode.treeScope().getAllElementsById(idToMatch);
         ASSERT(elements);
         bool rootNodeIsTreeScopeRoot = rootNode.isTreeScope();
         for (auto& element : *elements) {
-            if ((rootNodeIsTreeScopeRoot || element->isDescendantOf(rootNode)) && selectorMatches(selectorData, *element, rootNode)) {
-                appendOutputForElement(output, *element);
+            if ((rootNodeIsTreeScopeRoot || element->isDescendantOf(rootNode)) && selectorMatches(selectorData, element, rootNode)) {
+                appendOutputForElement(output, element);
                 if constexpr (std::is_same_v<OutputType, Element*>)
                     return;
             }
@@ -221,7 +222,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
         return;
     }
 
-    Element* element = rootNode.treeScope().getElementById(idToMatch);
+    RefPtr element = rootNode.treeScope().getElementById(idToMatch);
     if (!element || !(rootNode.isTreeScope() || element->isDescendantOf(rootNode)))
         return;
     if (selectorMatches(selectorData, *element, rootNode))
@@ -249,7 +250,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     for (; selector; selector = selector->tagHistory()) {
         if (canBeUsedForIdFastPath(*selector)) {
             const AtomString& idToMatch = selector->value();
-            if (ContainerNode* searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
+            if (RefPtr<ContainerNode> searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
                 if (LIKELY(!rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {
                     if (inAdjacentChain)
                         searchRoot = searchRoot->parentNode();

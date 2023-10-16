@@ -764,7 +764,7 @@ void RenderObject::addPDFURLRect(const PaintInfo& paintInfo, const LayoutPoint& 
 
     if (paintInfo.context().supportsInternalLinks()) {
         String outAnchorName;
-        Element* linkTarget = element.findAnchorElementForLink(outAnchorName);
+        RefPtr linkTarget = element.findAnchorElementForLink(outAnchorName);
         if (linkTarget) {
             paintInfo.context().setDestinationForRect(outAnchorName, urlRect);
             return;

@@ -502,9 +502,9 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
     if (isDomain("airtable.com"_s)) {
         // We want to limit simulated mouse events to elements under <div id="paneContainer"> to allow for column re-ordering and multiple cell selection.
         if (is<Node>(target)) {
-            auto* node = downcast<Node>(target);
-            if (auto* paneContainer = node->treeScope().getElementById(AtomString("paneContainer"_s))) {
-                if (paneContainer->contains(node))
+            RefPtr node = downcast<Node>(target);
+            if (RefPtr paneContainer = node->treeScope().getElementById(AtomString("paneContainer"_s))) {
+                if (paneContainer->contains(node.get()))
                     return Event::IsCancelable::Yes;
             }
         }

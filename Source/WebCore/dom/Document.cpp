@@ -9018,8 +9018,8 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
 
                     if (!invokerPopover) {
                         if (auto* button = dynamicDowncast<HTMLFormControlElement>(*htmlElement)) {
-                            if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
-                                invokerPopover = popover;
+                            if (RefPtr popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
+                                invokerPopover = WTFMove(popover);
                         }
                     }
                     if (clickedPopover && invokerPopover)

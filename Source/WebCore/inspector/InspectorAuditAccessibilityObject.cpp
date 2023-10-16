@@ -246,15 +246,10 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
     std::optional<Vector<RefPtr<Node>>> result;
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
-        Vector<RefPtr<Node>> controlledNodes;
-
         auto controlledElements = axObject->elementsFromAttribute(HTMLNames::aria_controlsAttr);
-        for (Element* controlledElement : controlledElements) {
-            if (controlledElement)
-                controlledNodes.append(controlledElement);
-        }
-
-        result = WTFMove(controlledNodes);
+        result = WTF::map(WTFMove(controlledElements), [](auto&& element) -> RefPtr<Node> {
+            return WTFMove(element);
+        });
     }
 
     return result;
@@ -267,15 +262,10 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
     std::optional<Vector<RefPtr<Node>>> result;
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
-        Vector<RefPtr<Node>> flowedNodes;
-
         auto flowedElements = axObject->elementsFromAttribute(HTMLNames::aria_flowtoAttr);
-        for (Element* flowedElement : flowedElements) {
-            if (flowedElement)
-                flowedNodes.append(flowedElement);
-        }
-
-        result = WTFMove(flowedNodes);
+        result = WTF::map(WTFMove(flowedElements), [](auto&& element) -> RefPtr<Node> {
+            return WTFMove(element);
+        });
     }
 
     return result;
@@ -301,15 +291,10 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
         if (axObject->supportsARIAOwns()) {
-            Vector<RefPtr<Node>> ownedNodes;
-
             auto ownedElements = axObject->elementsFromAttribute(HTMLNames::aria_ownsAttr);
-            for (Element* ownedElement : ownedElements) {
-                if (ownedElement)
-                    ownedNodes.append(ownedElement);
-            }
-
-            result = WTFMove(ownedNodes);
+            result = WTF::map(WTFMove(ownedElements), [](auto&& element) -> RefPtr<Node> {
+                return WTFMove(element);
+            });
         }
     }
 

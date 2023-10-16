@@ -29,6 +29,7 @@
 #include "CollectionIndexCacheInlines.h"
 #include "CollectionTraversalInlines.h"
 #include "HTMLCollectionInlines.h"
+#include "TreeScopeInlines.h"
 
 namespace WebCore {
 
@@ -108,7 +109,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
 
     ContainerNode& root = rootNode();
     if (traversalType != CollectionTraversalType::CustomForwardOnly && root.isInTreeScope()) {
-        Element* candidate = nullptr;
+        RefPtr<Element> candidate;
 
         TreeScope& treeScope = root.treeScope();
         if (treeScope.hasElementWithId(*name.impl())) {
@@ -128,7 +129,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
 
         if (candidate && collection().elementMatches(*candidate)) {
             if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == &root : candidate->isDescendantOf(root))
-                return candidate;
+                return candidate.get();
         }
     }
 

@@ -67,7 +67,7 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
                 ASSERT(collection->length() > 1);
                 namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
             } else
-                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
+                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName).get());
             slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), namedItem);
             return true;
         }

@@ -3062,8 +3062,8 @@ bool AccessibilityObject::isTabItemSelected() const
         return false;
 
     auto elements = elementsFromAttribute(aria_controlsAttr);
-    for (const auto& element : elements) {
-        auto* tabPanel = cache->getOrCreate(element);
+    for (auto& element : elements) {
+        auto* tabPanel = cache->getOrCreate(element.ptr());
 
         // A tab item should only control tab panels.
         if (!tabPanel || tabPanel->roleValue() != AccessibilityRole::TabPanel)
@@ -3439,7 +3439,7 @@ bool AccessibilityObject::isExpanded() const
     }
 
     if (supportsExpanded()) {
-        if (WeakPtr popoverTargetElement = this->popoverTargetElement())
+        if (RefPtr popoverTargetElement = this->popoverTargetElement())
             return popoverTargetElement->isPopoverShowing();
         return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);
     }
@@ -4041,24 +4041,24 @@ bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cach
     return ignored;
 }
 
-Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
+Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
 {
-    Node* node = this->node();
+    RefPtr node = this->node();
     if (!node || !node->isElementNode())
         return { };
 
-    auto& element = downcast<Element>(*node);
+    Ref element = downcast<Element>(node.releaseNonNull());
     if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
         if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
-            if (auto reflectedElement = element.getElementAttribute(attribute)) {
-                Vector<Element*> elements;
-                elements.append(reflectedElement);
+            if (RefPtr reflectedElement = element->getElementAttribute(attribute)) {
+                Vector<Ref<Element>> elements;
+                elements.append(reflectedElement.releaseNonNull());
                 return elements;
             }
         } else if (Element::isElementsArrayReflectionAttribute(document()->settings(), attribute)) {
-            if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
-                return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Element* {
-                    return element.get();
+            if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
+                return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
+                    return *element;
                 });
             }
         }
@@ -4066,21 +4066,21 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
-        if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
-            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Element* {
-                return element.get();
+        if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
+            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
+                return *element;
             });
         }
         return { };
     }
 
-    Vector<Element*> elements;
-    auto& treeScope = node->treeScope();
+    Vector<Ref<Element>> elements;
+    auto& treeScope = element->treeScope();
     SpaceSplitString spaceSplitString(idsString, SpaceSplitString::ShouldFoldCase::No);
     size_t length = spaceSplitString.size();
     for (size_t i = 0; i < length; ++i) {
-        if (auto* element = treeScope.getElementById(spaceSplitString[i]))
-            elements.append(element);
+        if (RefPtr element = treeScope.getElementById(spaceSplitString[i]))
+            elements.append(element.releaseNonNull());
     }
     return elements;
 }

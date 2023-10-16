@@ -192,11 +192,11 @@ int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, dou
 
 int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, double pageWidthInPixels, double pageHeightInPixels)
 {
-    auto* coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
     if (!coreFrame)
         return -1;
 
-    auto* element = coreFrame->document()->getElementById(id);
+    RefPtr element = coreFrame->document()->getElementById(id);
     if (!element)
         return -1;
 
@@ -205,7 +205,7 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
     if (!pageHeightInPixels)
         pageHeightInPixels = coreFrame->view()->height();
 
-    return PrintContext::pageNumberForElement(element, FloatSize(pageWidthInPixels, pageHeightInPixels));
+    return PrintContext::pageNumberForElement(element.get(), FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
 String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)

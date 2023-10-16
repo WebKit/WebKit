@@ -142,7 +142,7 @@ private:
     RefPtr<LocalFrame> frameForCurrentScale() const;
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
-    SVGViewElement* findViewAnchor(StringView fragmentIdentifier) const;
+    RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
     SVGSVGElement* findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
 

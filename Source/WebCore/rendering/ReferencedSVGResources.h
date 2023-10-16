@@ -58,12 +58,12 @@ public:
 
     // Clipping needs a renderer, filters use an element.
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
-    static SVGFilterElement* referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
+    static RefPtr<SVGFilterElement> referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 
 private:
-    static SVGElement* elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
+    static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
 
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(TreeScope&, const AtomString&);

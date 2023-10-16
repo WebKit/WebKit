@@ -1544,13 +1544,13 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
     }
     case PathOperation::Reference: {
         const auto& referencePathOperation = downcast<ReferencePathOperation>(*style().clipPath());
-        auto* element = document().getElementById(referencePathOperation.fragment());
+        RefPtr element = document().getElementById(referencePathOperation.fragment());
         if (!element || !element->renderer())
             break;
         if (!is<SVGClipPathElement>(*element))
             break;
-        auto& clipper = downcast<LegacyRenderSVGResourceClipper>(*element->renderer());
-        if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
+        CheckedRef clipper = downcast<LegacyRenderSVGResourceClipper>(*element->renderer());
+        if (!clipper->hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
             return false;
         break;
     }

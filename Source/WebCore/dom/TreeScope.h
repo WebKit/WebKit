@@ -27,7 +27,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "TreeScopeOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
@@ -57,6 +56,7 @@ class Node;
 class RadioButtonGroups;
 class SVGElement;
 class ShadowRoot;
+class TreeScopeOrderedMap;
 class WeakPtrImplWithEventTargetData;
 struct SVGResourcesMap;
 
@@ -70,18 +70,18 @@ public:
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
 
-    WEBCORE_EXPORT Element* getElementById(const AtomString&) const;
-    WEBCORE_EXPORT Element* getElementById(const String&) const;
-    Element* getElementById(StringView) const;
-    const Vector<Element*>* getAllElementsById(const AtomString&) const;
-    bool hasElementWithId(const AtomStringImpl&) const;
-    bool containsMultipleElementsWithId(const AtomString& id) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementById(const AtomString&) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementById(const String&) const;
+    RefPtr<Element> getElementById(StringView) const;
+    const Vector<CheckedRef<Element>>* getAllElementsById(const AtomString&) const;
+    inline bool hasElementWithId(const AtomStringImpl&) const; // Defined in TreeScopeInlines.h.
+    inline bool containsMultipleElementsWithId(const AtomString& id) const; // Defined in TreeScopeInlines.h.
     void addElementById(const AtomStringImpl& elementId, Element&, bool notifyObservers = true);
     void removeElementById(const AtomStringImpl& elementId, Element&, bool notifyObservers = true);
 
-    WEBCORE_EXPORT Element* getElementByName(const AtomString&) const;
-    bool hasElementWithName(const AtomStringImpl&) const;
-    bool containsMultipleElementsWithName(const AtomString&) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementByName(const AtomString&) const;
+    inline bool hasElementWithName(const AtomStringImpl&) const; // Defined in TreeScopeInlines.h.
+    inline bool containsMultipleElementsWithName(const AtomString&) const; // Defined in TreeScopeInlines.h.
     void addElementByName(const AtomStringImpl&, Element&);
     void removeElementByName(const AtomStringImpl&, Element&);
 
@@ -97,17 +97,17 @@ public:
 
     void addImageMap(HTMLMapElement&);
     void removeImageMap(HTMLMapElement&);
-    HTMLMapElement* getImageMap(const AtomString&) const;
+    RefPtr<HTMLMapElement> getImageMap(const AtomString&) const;
 
     void addImageElementByUsemap(const AtomStringImpl&, HTMLImageElement&);
     void removeImageElementByUsemap(const AtomStringImpl&, HTMLImageElement&);
-    HTMLImageElement* imageElementByUsemap(const AtomStringImpl&) const;
+    RefPtr<HTMLImageElement> imageElementByUsemap(const AtomStringImpl&) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
     void addLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
     void removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
-    const Vector<Element*>* labelElementsForId(const AtomString& forAttributeValue);
+    const Vector<CheckedRef<Element>>* labelElementsForId(const AtomString& forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);
     WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY);
@@ -118,7 +118,7 @@ public:
     // for an anchor with the given name. ID matching is always case sensitive, but
     // Anchor name matching is case sensitive in strict mode and not case sensitive in
     // quirks mode for historical compatibility reasons.
-    Element* findAnchor(StringView name);
+    RefPtr<Element> findAnchor(StringView name);
 
     ContainerNode& rootNode() const { return m_rootNode; }
 
@@ -180,26 +180,6 @@ private:
 
     std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
 };
-
-inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const
-{
-    return m_elementsById && m_elementsById->contains(id);
-}
-
-inline bool TreeScope::containsMultipleElementsWithId(const AtomString& id) const
-{
-    return m_elementsById && id.impl() && m_elementsById->containsMultiple(*id.impl());
-}
-
-inline bool TreeScope::hasElementWithName(const AtomStringImpl& id) const
-{
-    return m_elementsByName && m_elementsByName->contains(id);
-}
-
-inline bool TreeScope::containsMultipleElementsWithName(const AtomString& name) const
-{
-    return m_elementsByName && name.impl() && m_elementsByName->containsMultiple(*name.impl());
-}
 
 TreeScope* commonTreeScope(Node*, Node*);
 

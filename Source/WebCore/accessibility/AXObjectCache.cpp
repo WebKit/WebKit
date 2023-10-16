@@ -459,11 +459,11 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     if (!areaElement)
         return nullptr;
     
-    HTMLImageElement* imageElement = areaElement->imageElement();
+    RefPtr imageElement = areaElement->imageElement();
     if (!imageElement)
         return nullptr;
     
-    AccessibilityObject* axRenderImage = areaElement->document().axObjectCache()->getOrCreate(imageElement);
+    AccessibilityObject* axRenderImage = areaElement->document().axObjectCache()->getOrCreate(imageElement.get());
     if (!axRenderImage)
         return nullptr;
     
@@ -4688,7 +4688,7 @@ void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute
     if (m_document->settings().ariaReflectionForElementReferencesEnabled()) {
         if (Element::isElementReflectionAttribute(m_document->settings(), attribute)) {
             if (auto reflectedElement = origin.getElementAttribute(attribute)) {
-                addRelation(&origin, reflectedElement, attributeToRelationType(attribute));
+                addRelation(&origin, reflectedElement.get(), attributeToRelationType(attribute));
                 return;
             }
         } else if (Element::isElementsArrayReflectionAttribute(m_document->settings(), attribute)) {
@@ -4711,11 +4711,11 @@ void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute
 
     SpaceSplitString ids(value, SpaceSplitString::ShouldFoldCase::No);
     for (size_t i = 0; i < ids.size(); ++i) {
-        auto* target = origin.treeScope().getElementById(ids[i]);
+        RefPtr target = origin.treeScope().getElementById(ids[i]);
         if (!target || target == &origin)
             continue;
 
-        addRelation(&origin, target, attributeToRelationType(attribute));
+        addRelation(&origin, target.get(), attributeToRelationType(attribute));
     }
 }
 

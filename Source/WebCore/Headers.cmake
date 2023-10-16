@@ -1036,6 +1036,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Touch.h
     dom/Traversal.h
     dom/TreeScope.h
+    dom/TreeScopeInlines.h
     dom/TreeScopeOrderedMap.h
     dom/TreeWalker.h
     dom/TypedElementDescendantIterator.h

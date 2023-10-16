@@ -674,7 +674,7 @@ bool HTMLImageElement::matchesUsemap(const AtomStringImpl& name) const
     return m_parsedUsemap.impl() == &name;
 }
 
-HTMLMapElement* HTMLImageElement::associatedMapElement() const
+RefPtr<HTMLMapElement> HTMLImageElement::associatedMapElement() const
 {
     return treeScope().getImageMap(m_parsedUsemap);
 }

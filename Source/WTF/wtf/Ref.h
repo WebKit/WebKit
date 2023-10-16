@@ -142,12 +142,6 @@ private:
     template<typename X, typename Y, typename W, typename Z>
     friend bool operator==(const Ref<X, Y>&, const Ref<W, Z>&);
 
-    template<typename X, typename Y, typename W>
-    friend bool operator==(const Ref<X, Y>&, W*);
-
-    template<typename X, typename Y, typename W>
-    friend bool operator==(W*, const Ref<X, Y>&);
-
     enum AdoptTag { Adopt };
     Ref(T& object, AdoptTag)
         : m_ptr(&object)

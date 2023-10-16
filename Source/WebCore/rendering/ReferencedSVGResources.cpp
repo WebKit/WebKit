@@ -88,9 +88,8 @@ void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const A
 {
     auto client = m_elementClients.take(targetID);
 
-    auto* targetElement = treeScope.getElementById(targetID);
-    if (auto* svgElement = dynamicDowncast<SVGElement>(targetElement))
-        svgElement->removeReferencingCSSClient(*client);
+    if (RefPtr targetElement = dynamicDowncast<SVGElement>(treeScope.getElementById(targetID)))
+        targetElement->removeReferencingCSSClient(*client);
 }
 
 Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style)
@@ -124,7 +123,7 @@ void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, con
         oldKeys.add(key);
 
     for (auto& [targetID, tagName] : referencedResources) {
-        auto* element = elementForResourceID(treeScope, targetID, tagName);
+        RefPtr element = elementForResourceID(treeScope, targetID, tagName);
         if (!element)
             continue;
 
@@ -138,21 +137,21 @@ void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, con
 
 // SVG code uses getRenderSVGResourceById<>, but that works in terms of renderers. We need to find resources
 // before the render tree is fully constructed, so this works on Elements.
-SVGElement* ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const QualifiedName& tagName)
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const QualifiedName& tagName)
 {
-    auto* element = treeScope.getElementById(resourceID);
+    RefPtr element = treeScope.getElementById(resourceID);
     if (!element || !element->hasTagName(tagName))
         return nullptr;
 
-    return downcast<SVGElement>(element);
+    return downcast<SVGElement>(WTFMove(element));
 }
 
-SVGFilterElement* ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
+RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
 {
     if (referenceFilter.fragment().isEmpty())
         return nullptr;
-    auto* element = elementForResourceID(treeScope, referenceFilter.fragment(), SVGNames::filterTag);
-    return element ? downcast<SVGFilterElement>(element) : nullptr;
+    RefPtr element = elementForResourceID(treeScope, referenceFilter.fragment(), SVGNames::filterTag);
+    return element ? downcast<SVGFilterElement>(WTFMove(element)) : nullptr;
 }
 
 LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)

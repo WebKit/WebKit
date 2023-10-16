@@ -866,7 +866,7 @@ LayoutRect Node::renderRect(bool* isReplaced)
     CheckedPtr hitRenderer = this->renderer();
     if (!hitRenderer && is<HTMLAreaElement>(*this)) {
         auto& area = downcast<HTMLAreaElement>(*this);
-        if (auto* imageElement = area.imageElement())
+        if (RefPtr imageElement = area.imageElement())
             hitRenderer = imageElement->renderer();
     }
     CheckedPtr renderer = WTFMove(hitRenderer);
