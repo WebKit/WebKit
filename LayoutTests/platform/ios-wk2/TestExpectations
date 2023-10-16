@@ -2479,6 +2479,9 @@ webkit.org/b/260322 imported/w3c/web-platform-tests/html/semantics/popovers/popo
 
 webkit.org/b/261957 media/audio-play-with-video-element-interrupted.html [ Pass Timeout ]
 
+# WebGPU
+http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture.html [ Pass ]
+
 # Requires the fix in rdar://108457321.
 css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]
 
