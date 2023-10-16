@@ -49,15 +49,12 @@ GST_DEBUG_CATEGORY_STATIC(webkit_dmabuf_video_sink_debug);
 
 #define GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST "{ RGBA, RGBx, BGRA, BGRx, I420, YV12, A420, NV12, NV21, Y444, Y41B, Y42B, VUYA, P010_10LE, P010_10BE, P016_LE, P016BE }"
 
-#define GST_WEBKIT_DMABUF_SINK_DRM_FORMAT_LIST "{ (string) P010:0x0100000000000002, (string) NV12:0x0100000000000002, (string) P010, (string) NV12 }"
-
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
     GST_STATIC_CAPS(
 #if GST_CHECK_VERSION(1, 23, 0)
-        GST_VIDEO_DMA_DRM_CAPS_MAKE ", drm-format = " GST_WEBKIT_DMABUF_SINK_DRM_FORMAT_LIST
-#else
-        GST_VIDEO_CAPS_MAKE(GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST)
+        GST_VIDEO_DMA_DRM_CAPS_MAKE ";"
 #endif
+        GST_VIDEO_CAPS_MAKE(GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST)
         ));
 
 // TODO: this is a list of remaining YUV formats we want to support, but don't currently work (due to improper handling in TextureMapper):
@@ -104,14 +101,13 @@ static void webKitDMABufVideoSinkConstructed(GObject* object)
     // MediaPlayerPrivateGStreamer). The format list corresponds to the formats we are able to then handle in the graphics pipeline.
     // In case of dmabuf data, that dmabuf is handled most optimally and just relayed to the graphics pipeline.
     // In case of raw data, dmabuf objects are produced on the spot and filled with that data, and then pushed to the graphics pipeline.
+
+    static GstStaticCaps s_dmabufCaps = GST_STATIC_CAPS(
 #if GST_CHECK_VERSION(1, 23, 0)
-#define DMABUF_CAPS GST_VIDEO_DMA_DRM_CAPS_MAKE ", drm-format = " GST_WEBKIT_DMABUF_SINK_DRM_FORMAT_LIST
-#else
-#define DMABUF_CAPS GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_MEMORY_DMABUF, GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST)
+        GST_VIDEO_DMA_DRM_CAPS_MAKE ";"
 #endif
-    static GstStaticCaps s_dmabufCaps = GST_STATIC_CAPS(DMABUF_CAPS);
+        GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_MEMORY_DMABUF, GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST));
     static GstStaticCaps s_fallbackCaps = GST_STATIC_CAPS(GST_VIDEO_CAPS_MAKE(GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST));
-#undef DMABUF_CAPS
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
     {
