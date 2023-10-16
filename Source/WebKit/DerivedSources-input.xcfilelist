@@ -235,7 +235,6 @@ $(PROJECT_DIR)/Shared/PlatformPopupMenuData.serialization.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/PolicyDecision.serialization.in
 $(PROJECT_DIR)/Shared/PushMessageForTesting.serialization.in
-$(PROJECT_DIR)/Shared/RTCNetwork.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerInitializationData.serialization.in

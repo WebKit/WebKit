@@ -167,13 +167,13 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 
 #if PLATFORM(COCOA)
     if (m_platformUDPSocketsEnabled) {
-        auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, address.rtcAddress(), m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain));
+        auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, address.value, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain));
         addSocket(identifier, WTFMove(socket));
         return;
     }
 #endif
 
-    std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address.rtcAddress(), minPort, maxPort));
+    std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address.value, minPort, maxPort));
     createSocket(identifier, WTFMove(socket), Socket::Type::UDP, m_ipcConnection.copyRef());
 }
 
@@ -190,7 +190,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
 
 #if PLATFORM(COCOA)
     if (m_platformTCPSocketsEnabled) {
-        auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.rtcAddress(), options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, m_ipcConnection.copyRef());
+        auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.value, options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, m_ipcConnection.copyRef());
         if (socket)
             addSocket(identifier, WTFMove(socket));
         else
@@ -208,7 +208,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             signalSocketIsClosed(identifier);
             return;
         }
-        callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.rtcAddress()), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.rtcAddress()), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
+        callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
 
             rtc::PacketSocketTcpOptions tcpOptions;
             tcpOptions.opts = options;
@@ -233,7 +233,7 @@ void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, cons
     auto iterator = m_sockets.find(identifier);
     if (iterator == m_sockets.end())
         return;
-    iterator->second->sendTo(data.data(), data.size(), address.rtcAddress(), options.options);
+    iterator->second->sendTo(data.data(), data.size(), address.value, options.options);
 }
 
 void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
