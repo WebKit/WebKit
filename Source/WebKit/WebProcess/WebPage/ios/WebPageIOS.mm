@@ -1119,7 +1119,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
     }
 
     if (is<HTMLAreaElement>(node)) {
-        node = downcast<HTMLAreaElement>(node)->imageElement();
+        node = downcast<HTMLAreaElement>(node)->imageElement().get();
         if (!node)
             return;
     }
