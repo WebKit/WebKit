@@ -66,7 +66,9 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     if (name == SVGNames::dAttr) {
         auto& cache = pathSegListCache();
-        if (auto it = cache.find(newValue); it != cache.end())
+        if (newValue.isEmpty())
+            m_pathSegList->baseVal()->updateByteStreamData({ });
+        else if (auto it = cache.find(newValue); it != cache.end())
             m_pathSegList->baseVal()->updateByteStreamData(it->value);
         else {
             if (m_pathSegList->baseVal()->parse(newValue)) {
