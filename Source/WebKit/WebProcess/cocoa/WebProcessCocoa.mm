@@ -727,13 +727,6 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 
 #endif // USE(OS_STATE)
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
-{
-    CRASH();
-}
-#endif
-
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 static void prewarmLogs()
 {
@@ -848,11 +841,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
         m_processType = ProcessType::PrewarmedWebContent;
     else
         m_processType = ProcessType::WebContent;
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("is-webcontent-crashy"_s) == "1"_s)
-        deliberateCrashForTesting();
-#endif
 
 #if USE(OS_STATE)
     registerWithStateDumper("WebContent state"_s);

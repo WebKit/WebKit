@@ -116,9 +116,6 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
 #else
 static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
-    if (launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("is-webcontent-crashy"_s) == "1"_s)
-        return "com.apple.WebKit.WebContent.Crashy";
-
     if (client && client->shouldEnableLockdownMode())
         return "com.apple.WebKit.WebContent.CaptivePortal";
 
