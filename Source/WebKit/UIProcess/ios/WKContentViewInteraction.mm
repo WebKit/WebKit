@@ -840,9 +840,13 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @end
 
+#if USE(UICONTEXTMENU)
+
 @protocol UIContextMenuInteractionDelegate_LegacyAsyncSupport<NSObject>
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion;
 @end
+
+#endif
 
 @interface WKContentView (WKInteractionPrivate)
 - (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
