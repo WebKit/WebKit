@@ -2058,28 +2058,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case DEFAULT:
         // These tokens imply the end of a set of source elements
         return 0;
-    case LET: {
-        // https://tc39.es/ecma262/#sec-expression-statement
-        // ExpressionStatement's lookahead includes `let [` sequence.
-        SavePoint savePoint = createSavePoint(context);
-        next();
-        failIfTrue(match(OPENBRACKET), "Cannot use lexical declaration in single-statement context");
-        restoreSavePoint(context, savePoint);
-        if (!strictMode())
-            goto identcase;
-        goto defaultCase;
-    }
+    case LET:
     case IDENT:
-        if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
-            SavePoint savePoint = createSavePoint(context);
-            next();
-            failIfTrue(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken(), "Cannot use async function declaration in single-statement context");
-            restoreSavePoint(context, savePoint);
-        }
-        FALLTHROUGH;
     case AWAIT:
     case YIELD: {
-        identcase:
         bool allowFunctionDeclarationAsStatement = false;
         result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
         shouldSetPauseLocation = !context.shouldSkipPauseLocation(result);
@@ -2092,7 +2074,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         nonTrivialExpressionCount = m_parserState.nonTrivialExpressionCount;
         FALLTHROUGH;
     default:
-        defaultCase:
         TreeStatement exprStatement = parseExpressionStatement(context);
         if (directive && nonTrivialExpressionCount != m_parserState.nonTrivialExpressionCount)
             directive = nullptr;
@@ -3426,24 +3407,21 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
     Vector<LabelInfo> labels;
     JSTokenLocation location;
     do {
-        JSTextPosition start = tokenStartPosition();
-        location = tokenLocation();
         if (!nextTokenIsColon()) {
             // If we hit this path we're making a expression statement, which
             // by definition can't make use of continue/break so we can just
             // ignore any labels we might have accumulated.
-            TreeExpression expression = parseExpression(context, IsOnlyChildOfStatement::Yes);
-            failIfFalse(expression, "Cannot parse expression statement");
-            if (!autoSemiColon())
-                failDueToUnexpectedToken();
-            return context.createExprStatement(location, expression, start, m_lastTokenEndPosition.line);
+            return parseExpressionStatement(context);
         }
 
+        semanticFailIfTrue(isPossiblyEscapedLet(m_token) && strictMode(), "Cannot use 'let' as a label ", disallowedIdentifierLetReason());
         semanticFailIfTrue(isDisallowedIdentifierAwait(m_token), "Cannot use 'await' as a label ", disallowedIdentifierAwaitReason());
         semanticFailIfTrue(isDisallowedIdentifierYield(m_token), "Cannot use 'yield' as a label ", disallowedIdentifierYieldReason());
 
         const Identifier* ident = m_token.m_data.ident;
+        JSTextPosition start = tokenStartPosition();
         JSTextPosition end = tokenEndPosition();
+        location = tokenLocation();
         next();
         consumeOrFail(COLON, "Labels must be followed by a ':'");
 
@@ -3485,23 +3463,38 @@ template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionStatement(TreeBuilder& context)
 {
     switch (m_token.m_type) {
-    // Consult: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-expression-statement
-    // The ES6 spec mandates that we should fail from FUNCTION token here. We handle this case 
-    // in parseStatement() which is the only caller of parseExpressionStatement().
-    // We actually allow FUNCTION in situations where it should not be allowed unless we're in strict mode.
+    // https://tc39.es/ecma262/#sec-expression-statement
+    // Despite the spec's requirement to fail from FUNCTION token here, Annex B.3.1
+    // permits a labelled FunctionDeclaration in sloppy mode for web compatibility
+    // reasons. We implement this semantics in parseStatement().
     case CLASSTOKEN:
         failWithMessage("'class' declaration is not directly within a block statement");
         break;
-    default:
-        // FIXME: when implementing 'let' we should fail when we see the token sequence "let [".
-        // https://bugs.webkit.org/show_bug.cgi?id=142944
+    case LET: {
+        SavePoint savePoint = createSavePoint(context);
+        next();
+        failIfTrue(match(OPENBRACKET), "Cannot use lexical declaration in single-statement context");
+        restoreSavePoint(context, savePoint);
         break;
     }
+    case IDENT:
+        if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
+            SavePoint savePoint = createSavePoint(context);
+            next();
+            failIfTrue(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken(), "Cannot use async function declaration in single-statement context");
+            restoreSavePoint(context, savePoint);
+        }
+        break;
+    default:
+        break;
+    }
+
     JSTextPosition start = tokenStartPosition();
     JSTokenLocation location(tokenLocation());
     TreeExpression expression = parseExpression(context, IsOnlyChildOfStatement::Yes);
     failIfFalse(expression, "Cannot parse expression statement");
-    failIfFalse(autoSemiColon(), "Parse error");
+    if (!autoSemiColon())
+        failDueToUnexpectedToken();
     return context.createExprStatement(location, expression, start, m_lastTokenEndPosition.line);
 }
 
