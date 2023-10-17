@@ -1656,3 +1656,11 @@
     || PLATFORM(VISION)
 #define HAVE_UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING 1
 #endif
+
+#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIAsyncDragInteraction.h>)
+#define HAVE_UI_ASYNC_DRAG_INTERACTION 1
+#endif
+
+#if !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIContextMenuAsyncConfiguration.h>)
+#define HAVE_UI_CONTEXT_MENU_ASYNC_CONFIGURATION 1
+#endif

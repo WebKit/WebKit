@@ -126,6 +126,10 @@
 #import <UIKit/_UIAsyncDragInteraction.h>
 #endif
 
+#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+#import <UIKit/_UIContextMenuAsyncConfiguration.h>
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 #import <UIKit/UIFindSession_Private.h>
 #import <UIKit/_UIFindInteraction.h>

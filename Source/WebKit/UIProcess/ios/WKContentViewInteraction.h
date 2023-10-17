@@ -581,9 +581,6 @@ struct ImageAnalysisContextMenuActionData {
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
     , _UIAsyncDragInteractionDelegate
 #endif
-#if HAVE(UI_ASYNC_TEXT_INPUT)
-    , UIAsyncTextInput
-#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
