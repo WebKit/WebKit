@@ -484,6 +484,10 @@ typedef enum {
 
 // Start of UIKit IPI
 
+@interface UITextInteractionAssistant (IPI)
+@property (nonatomic, readonly) UIView *selectionView;
+@end
+
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
 @end
