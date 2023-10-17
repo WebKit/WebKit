@@ -146,6 +146,7 @@ Tests/WebKitCocoa/IndexedDBSuspendImminently.html
 Tests/WebKitCocoa/IndexedDBSuspendImminently.mm
 Tests/WebKitCocoa/IndexedDBTempFileSize.mm
 Tests/WebKitCocoa/IndexedDBUserDelete.mm
+Tests/WebKitCocoa/InitializeWebViewWhenChangingUserDefaults.mm
 Tests/WebKitCocoa/InjectedBundleNodeHandleIsSelectElement.mm
 Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm
 Tests/WebKitCocoa/InsertTextAlternatives.mm

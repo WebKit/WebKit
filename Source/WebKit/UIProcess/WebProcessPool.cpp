@@ -168,8 +168,6 @@ bool WebProcessPool::s_shouldCrashWhenCreatingWebProcess = false;
 
 static constexpr Seconds audibleActivityClearDelay = 5_s;
 
-bool WebProcessPool::s_didGlobalStaticInitialization = false;
-
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -238,7 +236,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
-    if (!s_didGlobalStaticInitialization) {
+    static auto s_needsGlobalStaticInitialization = NeedsGlobalStaticInitialization::Yes;
+    auto needsGlobalStaticInitialization = std::exchange(s_needsGlobalStaticInitialization, NeedsGlobalStaticInitialization::No);
+    if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::Yes) {
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
@@ -262,7 +262,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     for (const auto& urlScheme : m_configuration->cachePartitionedURLSchemes())
         m_schemesToRegisterAsCachePartitioned.add(urlScheme);
 
-    platformInitialize();
+    platformInitialize(needsGlobalStaticInitialization);
 
 #if OS(LINUX)
     MemoryPressureMonitor::singleton().start();
@@ -301,8 +301,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         });
     }
 #endif
-
-    s_didGlobalStaticInitialization = true;
 }
 
 WebProcessPool::~WebProcessPool()

@@ -59,7 +59,7 @@ static void initializeRemoteInspectorServer(StringView address)
 }
 #endif
 
-void WebProcessPool::platformInitialize()
+void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 {
 #if ENABLE(REMOTE_INSPECTOR)
     if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER"))

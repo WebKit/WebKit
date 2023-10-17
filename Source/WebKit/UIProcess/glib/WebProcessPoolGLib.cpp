@@ -61,7 +61,7 @@
 
 namespace WebKit {
 
-void WebProcessPool::platformInitialize()
+void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 {
     m_alwaysUsesComplexTextCodePath = true;
 

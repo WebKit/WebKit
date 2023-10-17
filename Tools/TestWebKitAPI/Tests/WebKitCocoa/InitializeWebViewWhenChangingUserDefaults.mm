@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,47 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebProcessPool.h"
+#import "config.h"
 
-#include "WebProcessCreationParameters.h"
+#import <WebKit/WebKit.h>
+#import <wtf/RetainPtr.h>
 
-#if USE(WPE_RENDERER)
-#include <wpe/wpe.h>
-#endif
+@interface UserDefaultChangeObserver : NSObject
+@end
 
-namespace WebKit {
-
-void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
-{
-    m_userId = m_configuration->userId();
+@implementation UserDefaultChangeObserver {
+    RetainPtr<WKWebView> _webView;
 }
 
-void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters&)
+- (instancetype)init
 {
-    notImplemented();
+    if (self = [super init])
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+    return self;
 }
 
-void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
+- (void)defaultsChanged:(NSNotification *)notification
 {
-#if USE(WPE_RENDERER)
-    parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
-
-    if (!parameters.isServiceWorkerProcess)
-        parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
-#else
-    UNUSED_PARAM(process);
-    UNUSED_PARAM(parameters);
-#endif
+    _webView = adoptNS([WKWebView new]);
 }
 
-void WebProcessPool::platformInvalidateContext()
+@end
+
+namespace TestWebKitAPI {
+
+TEST(WebKit2, NoCrashWhenInitializeWebViewWhenChangingUserDefaults)
 {
-    notImplemented();
+    auto observer = adoptNS([UserDefaultChangeObserver new]);
+    auto webView = adoptNS([WKWebView new]);
 }
 
-void WebProcessPool::platformResolvePathsForSandboxExtensions()
-{
-}
-
-} // namespace WebKit
+} // namespace TestWebKitAPI
