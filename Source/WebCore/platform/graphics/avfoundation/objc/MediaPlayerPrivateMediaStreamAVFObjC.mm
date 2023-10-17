@@ -426,6 +426,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
     [m_boundsChangeListener begin:m_sampleBufferDisplayLayer->rootLayer()];
 
     m_canEnqueueDisplayLayer = true;
+
+    if (m_layerHostingContextIDCallback)
+        m_layerHostingContextIDCallback(m_sampleBufferDisplayLayer->hostingContextID());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -1199,6 +1202,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSi
     m_storedBounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
     m_storedBounds->size = size;
     m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, WTFMove(fence));
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::requestHostingContextID(LayerHostingContextIDCallback&& callback)
+{
+    if (auto contextID = hostingContextID()) {
+        callback(contextID);
+        return;
+    }
+    m_layerHostingContextIDCallback = WTFMove(callback);
 }
 
 }
