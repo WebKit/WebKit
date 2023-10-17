@@ -5905,6 +5905,7 @@ enum class WebCore::WebGPU::TextureFormat : uint8_t {
     Bgra8unorm,
     Bgra8unormSRGB,
     Rgb9e5ufloat,
+    Rgb10a2uint,
     Rgb10a2unorm,
     Rg11b10ufloat,
     Rg32uint,
