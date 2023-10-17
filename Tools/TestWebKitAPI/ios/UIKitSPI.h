@@ -301,6 +301,12 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+// Start of UIKit IPI
+
+@interface UITextInteractionAssistant (IPI)
+@property (nonatomic, readonly) UIView *selectionView;
+@end
+
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
 @end
