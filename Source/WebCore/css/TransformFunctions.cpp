@@ -326,6 +326,9 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         } else
             ASSERT(firstValue.valueID() == CSSValueNone);
 
+        if (perspectiveLength && perspectiveLength->isUndefined())
+            perspectiveLength = { };
+
         return PerspectiveTransformOperation::create(perspectiveLength);
     }
 
@@ -363,6 +366,9 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
             tz = convertToFloatLength(valueItem, conversionData);
         }
     }
+
+    if (tx.isUndefined() || ty.isUndefined() || tz.isUndefined())
+        return nullptr;
 
     return TranslateTransformOperation::create(tx, ty, tz, type);
 }
