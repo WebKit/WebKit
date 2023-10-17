@@ -59,7 +59,9 @@ public:
     constexpr Type(const Type&) = default;
     constexpr Type(TypeKind kind)
         : m_kind(kind)
-    { }
+    {
+        ASSERT(kind != Tuple);
+    }
 
     ~Type() = default;
 
