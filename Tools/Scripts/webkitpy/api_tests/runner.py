@@ -23,6 +23,7 @@
 import os
 import logging
 import time
+import re
 
 from webkitcorepy import string_utils
 from webkitcorepy import TaskPool
@@ -163,6 +164,10 @@ class Runner(object):
 
 class _Worker(object):
     instance = None
+    NOISY_OUTPUT = [
+        re.compile(r'^objc\[.+'),
+        re.compile(r'.+UITextInteractionAssistant selectionView.+'),
+    ]
 
     @classmethod
     def setup(cls, port=None):
@@ -183,8 +188,9 @@ class _Worker(object):
     def _filter_noisy_output(cls, output):
         result = ''
         for line in output.splitlines():
-            if line.lstrip().startswith('objc['):
-                continue
+            for expression in cls.NOISY_OUTPUT:
+                if expression.match(line):
+                    continue
             result += line + '\n'
         return result
 
