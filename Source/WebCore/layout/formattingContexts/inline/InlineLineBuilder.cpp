@@ -710,7 +710,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, layoutRange.endIndex());
         if (firstInlineTextItemIndex)
             hangingContentWidth += leadingPunctuationWidthForLineCandiate(*firstInlineTextItemIndex, currentInlineItemIndex);
-        lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);
+        if (hangingContentWidth)
+            lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);
     };
     setLeadingAndTrailingHangingPunctuation();
 
