@@ -88,6 +88,10 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
 
     auto& inlineItems = inlineFormattingState.inlineItems();
     auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItems.size(), 0 } };
+    if (needsLayoutRange.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
         if (!needsLayoutStartPosition)
