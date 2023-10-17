@@ -160,6 +160,7 @@
 (allow file-read*
     (literal "/dev/urandom")
     (literal "/private/etc/master.passwd")
+    (literal "/private/var/db/DarwinDirectory/local/recordStore.data")
     (subpath "/private/var/preferences/Logging")
     (subpath "/Library/Keychains")
     (subpath "/private/var/db/mds")
@@ -171,7 +172,6 @@
     (require-all (file-mode #o0004)
     (subpath "/AppleInternal/Library/Preferences/Logging")
     (system-attribute apple-internal)))
-
 
 (allow file-read* (subpath "/usr/share"))
 
