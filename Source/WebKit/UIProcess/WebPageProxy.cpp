@@ -7489,6 +7489,8 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, Complet
 
     m_process->pageMutedStateChanged(internals().webPageID, state);
 
+    WEBPAGEPROXY_RELEASE_LOG(Media, "setMuted: %d", state.toRaw());
+
     sendWithAsyncReply(Messages::WebPage::SetMuted(state), WTFMove(completionHandler));
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 }
