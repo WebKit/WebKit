@@ -245,13 +245,15 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
     if (const char* selectedCandidatePairId = gst_structure_get_string(structure, "selected-candidate-pair-id"))
         stats.selectedCandidatePairId = String::fromLatin1(selectedCandidatePairId);
 
+    // FIXME: This field is required, GstWebRTC doesn't provide it, so hard-code a value here.
+    stats.dtlsState = RTCDtlsTransportState::Connected;
+
     // FIXME
     // stats.bytesSent =
     // stats.bytesReceived =
     // stats.rtcpTransportStatsId =
     // stats.localCertificateId =
     // stats.remoteCertificateId =
-    // stats.dtlsState =
     // stats.tlsVersion =
     // stats.dtlsCipher =
     // stats.srtpCipher =
