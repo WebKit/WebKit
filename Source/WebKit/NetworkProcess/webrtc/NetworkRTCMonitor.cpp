@@ -110,10 +110,12 @@ void NetworkManagerWrapper::onNetworksChanged()
 {
     RELEASE_LOG(WebRTC, "NetworkManagerWrapper::onNetworksChanged");
 
-    RTCNetwork::IPAddress ipv4;
-    m_manager->GetDefaultLocalAddress(AF_INET, &ipv4.value);
-    RTCNetwork::IPAddress ipv6;
-    m_manager->GetDefaultLocalAddress(AF_INET6, &ipv6.value);
+    rtc::IPAddress ipv4RTC;
+    m_manager->GetDefaultLocalAddress(AF_INET, &ipv4RTC);
+    RTCNetwork::IPAddress ipv4(ipv4RTC);
+    rtc::IPAddress ipv6RTC;
+    m_manager->GetDefaultLocalAddress(AF_INET6, &ipv6RTC);
+    RTCNetwork::IPAddress ipv6(ipv6RTC);
 
     auto networks = m_manager->GetNetworks();
 

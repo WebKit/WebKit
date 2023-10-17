@@ -23,6 +23,7 @@
 #pragma once
 
 #include "Document.h"
+#include "TreeScopeOrderedMap.h"
 
 namespace WebCore {
 
@@ -40,13 +41,13 @@ public:
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 
-    Element* documentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
+    RefPtr<Element> documentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
     bool hasDocumentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.contains(name); }
     bool documentNamedItemContainsMultipleElements(const AtomStringImpl& name) const { return m_documentNamedItem.containsMultiple(name); }
     void addDocumentNamedItem(const AtomStringImpl&, Element&);
     void removeDocumentNamedItem(const AtomStringImpl&, Element&);
 
-    Element* windowNamedItem(const AtomStringImpl& name) const { return m_windowNamedItem.getElementByWindowNamedItem(name, *this); }
+    RefPtr<Element> windowNamedItem(const AtomStringImpl& name) const { return m_windowNamedItem.getElementByWindowNamedItem(name, *this); }
     bool hasWindowNamedItem(const AtomStringImpl& name) const { return m_windowNamedItem.contains(name); }
     bool windowNamedItemContainsMultipleElements(const AtomStringImpl& name) const { return m_windowNamedItem.containsMultiple(name); }
     void addWindowNamedItem(const AtomStringImpl&, Element&);

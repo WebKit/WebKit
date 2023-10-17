@@ -52,9 +52,6 @@
 6730 VULKAN : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8LineIds/* = SKIP
 7198 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation90 = SKIP
 7198 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation270 = SKIP
-7291 VULKAN : BlitFramebufferTest.Blit3D/* = SKIP
-7291 VULKAN : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP
-7291 VULKAN : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP
 235877059 VULKAN : MultisampleTestES3.ResolveToFBO/ES3_Vulkan_EmulatedPrerotation180 = SKIP
 235877059 VULKAN : MultisampleTestES3.ResolveToFBO/ES3_Vulkan_EmulatedPrerotation270 = SKIP
 
@@ -1014,9 +1011,9 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 7085 : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisable/* = SKIP
 
-// Flaking due to threading usage of the queue
-7204 : VulkanImageTest.PreInitializedOnGLImport/*AsyncCommandQueue = SKIP
-8174 : VulkanMemoryTest.*/*AsyncCommandQueue = SKIP
+// Flaking due to threading usage of the queue.  EGL_ANGLE_device_vulkan and asyncCommandQueue are incompatible.
+7204 : VulkanImageTest.*/*AsyncCommandQueue = SKIP
+7204 : VulkanMemoryTest.*/*AsyncCommandQueue = SKIP
 
 // Causes incompatible error in GL back-end.
 7218 OPENGL : TransformFeedbackTest.DrawAfterDeletingPausedBuffer/* = SKIP

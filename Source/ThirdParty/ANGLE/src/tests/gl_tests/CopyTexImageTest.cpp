@@ -585,6 +585,7 @@ TEST_P(CopyTexImageTest, DeleteAfterCopyingToTextures)
     // Crashes on Intel GPUs on macOS.
     texture2.reset();
 }
+
 // Test if glCopyTexImage2D() implementation performs conversions well from GL_TEXTURE_3D to
 // GL_TEXTURE_2D.
 // This is similar to CopyTexImageTestES3.CopyTexSubImageFromTexture3D but for GL_OES_texture_3D

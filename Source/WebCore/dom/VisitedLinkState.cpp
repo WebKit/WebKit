@@ -65,9 +65,9 @@ void VisitedLinkState::invalidateStyleForAllLinks()
 {
     if (m_linksCheckedForVisitedState.isEmpty())
         return;
-    for (auto& element : descendantsOfType<Element>(m_document)) {
-        if (element.isLink())
-            element.invalidateStyleForSubtree();
+    for (Ref element : descendantsOfType<Element>(m_document)) {
+        if (element->isLink())
+            element->invalidateStyleForSubtree();
     }
 }
 
@@ -84,9 +84,9 @@ void VisitedLinkState::invalidateStyleForLink(SharedStringHash linkHash)
 {
     if (!m_linksCheckedForVisitedState.contains(linkHash))
         return;
-    for (auto& element : descendantsOfType<Element>(m_document)) {
-        if (element.isLink() && linkHashForElement(element) == linkHash)
-            element.invalidateStyleForSubtree();
+    for (Ref element : descendantsOfType<Element>(m_document)) {
+        if (element->isLink() && linkHashForElement(element) == linkHash)
+            element->invalidateStyleForSubtree();
     }
 }
 
@@ -110,11 +110,11 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (!hash)
         return InsideLink::InsideVisited;
 
-    auto* frame = element.document().frame();
+    RefPtr frame = element.document().frame();
     if (!frame)
         return InsideLink::InsideUnvisited;
 
-    Page* page = frame->page();
+    CheckedPtr page = frame->page();
     if (!page)
         return InsideLink::InsideUnvisited;
 

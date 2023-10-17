@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include "Element.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -37,7 +39,6 @@
 
 namespace WebCore {
 
-class Element;
 class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
@@ -55,23 +56,23 @@ public:
     bool containsMultiple(const AtomStringImpl&) const;
 
     // concrete instantiations of the get<>() method template
-    Element* getElementById(const AtomStringImpl&, const TreeScope&) const;
-    Element* getElementByName(const AtomStringImpl&, const TreeScope&) const;
-    HTMLMapElement* getElementByMapName(const AtomStringImpl&, const TreeScope&) const;
-    HTMLImageElement* getElementByUsemap(const AtomStringImpl&, const TreeScope&) const;
-    const Vector<Element*>* getElementsByLabelForAttribute(const AtomStringImpl&, const TreeScope&) const;
-    Element* getElementByWindowNamedItem(const AtomStringImpl&, const TreeScope&) const;
-    Element* getElementByDocumentNamedItem(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<Element> getElementById(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<Element> getElementByName(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<HTMLMapElement> getElementByMapName(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<HTMLImageElement> getElementByUsemap(const AtomStringImpl&, const TreeScope&) const;
+    const Vector<CheckedRef<Element>>* getElementsByLabelForAttribute(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<Element> getElementByWindowNamedItem(const AtomStringImpl&, const TreeScope&) const;
+    RefPtr<Element> getElementByDocumentNamedItem(const AtomStringImpl&, const TreeScope&) const;
 
-    const Vector<Element*>* getAllElementsById(const AtomStringImpl&, const TreeScope&) const;
+    const Vector<CheckedRef<Element>>* getAllElementsById(const AtomStringImpl&, const TreeScope&) const;
 
     const Vector<AtomString> keys() const;
 
 private:
     template <typename KeyMatchingFunction>
-    Element* get(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
+    RefPtr<Element> get(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
     template <typename KeyMatchingFunction>
-    Vector<Element*>* getAll(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
+    Vector<CheckedRef<Element>>* getAll(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry() { }
@@ -80,15 +81,15 @@ private:
             , count(1)
         { }
 
-        Element* element { nullptr };
+        CheckedPtr<Element> element;
         unsigned count { 0 };
-        Vector<Element*> orderedList;
+        Vector<CheckedRef<Element>> orderedList;
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-        HashSet<Element*> registeredElements;
+        HashSet<CheckedPtr<Element>> registeredElements;
 #endif
     };
 
-    typedef HashMap<const AtomStringImpl*, MapEntry> Map;
+    using Map = HashMap<const AtomStringImpl*, MapEntry>;
 
     mutable Map m_map;
 };

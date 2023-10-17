@@ -314,14 +314,6 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     return false;
 }
 
-void Connection::willSendSyncMessage(OptionSet<SendSyncOption>)
-{
-}
-
-void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
-{
-}
-
 void Connection::EventListener::open(Function<void()>&& handler)
 {
     m_handler = WTFMove(handler);

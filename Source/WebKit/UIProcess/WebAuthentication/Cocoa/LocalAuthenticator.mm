@@ -582,7 +582,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     if (error) {
         LOG_ERROR("Couldn't attest: %s", String(error.localizedDescription).utf8().data());
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
+        finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
         return;
     }
     // Attestation Certificate and Attestation Issuing CA

@@ -162,10 +162,6 @@ constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-bool WebProcessPool::s_shouldCrashWhenCreatingWebProcess = false;
-#endif
-
 static constexpr Seconds audibleActivityClearDelay = 5_s;
 
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
@@ -663,14 +659,6 @@ Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websi
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
     m_processes.append(processProxy.copyRef());
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    if (shouldCrashWhenCreatingWebProcess()) {
-        auto crashyProcessProxy = WebProcessProxy::createForWebContentCrashy(*this);
-        initializeNewWebProcess(crashyProcessProxy, nullptr);
-        m_processes.append(crashyProcessProxy.copyRef());
-    }
-#endif
 
     return processProxy;
 }
@@ -2225,10 +2213,6 @@ bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
 void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Function<void(WebProcessProxy&)>& apply)
 {
     for (auto& process : m_processes) {
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-        if (process->isCrashyProcess())
-            continue;
-#endif
         if (process->isPrewarmed() || process->sessionID() != sessionID)
             continue;
         apply(process.get());

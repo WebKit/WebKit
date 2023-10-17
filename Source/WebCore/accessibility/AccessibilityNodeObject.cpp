@@ -219,8 +219,8 @@ static Vector<Ref<HTMLLabelElement>> labelsForNode(Node* node)
     const auto& id = element->getIdAttribute();
     if (!id.isEmpty()) {
         if (auto* treeScopeLabels = element->treeScope().labelElementsForId(id); treeScopeLabels && !treeScopeLabels->isEmpty()) {
-            return WTF::compactMap(*treeScopeLabels, [](auto* label) {
-                return RefPtr { dynamicDowncast<HTMLLabelElement>(label) };
+            return WTF::compactMap(*treeScopeLabels, [](auto& label) {
+                return RefPtr<HTMLLabelElement> { dynamicDowncast<HTMLLabelElement>(label.get()) };
             });
         }
     }
@@ -591,7 +591,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     // Elements that should not have children.
     switch (roleValue()) {
     case AccessibilityRole::Button:
+#if !USE(ATSPI)
+    // GTK/ATSPI layout tests expect popup buttons to have children.
     case AccessibilityRole::PopUpButton:
+#endif
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Tab:
@@ -654,9 +657,6 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IncludeObject)
         return false;
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
-        return true;
-    // If this element is within a parent that cannot have children, it should not be exposed.
-    if (isDescendantOfBarrenParent())
         return true;
 
     auto role = roleValue();
@@ -943,6 +943,7 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     case AccessibilityRole::RowHeader:
     case AccessibilityRole::Slider:
     case AccessibilityRole::SpinButton:
+    case AccessibilityRole::Switch:
     case AccessibilityRole::TableHeaderContainer:
     case AccessibilityRole::TextArea:
     case AccessibilityRole::TextField:
@@ -1145,7 +1146,7 @@ Element* AccessibilityNodeObject::anchorElement() const
     return nullptr;
 }
 
-Element* AccessibilityNodeObject::popoverTargetElement() const
+RefPtr<Element> AccessibilityNodeObject::popoverTargetElement() const
 {
     WeakPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
     return formControlElement ? formControlElement->popoverTargetElement() : nullptr;
@@ -1168,12 +1169,12 @@ AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
     if (!document || !equalIgnoringFragmentIdentifier(document->url(), linkURL))
         return nullptr;
 
-    auto linkedNode = document->findAnchor(fragmentIdentifier);
+    RefPtr linkedNode = document->findAnchor(fragmentIdentifier);
     if (!linkedNode)
         return nullptr;
 
     // The element we find may not be accessible, so find the first accessible object.
-    return firstAccessibleObjectFromNode(linkedNode);
+    return firstAccessibleObjectFromNode(linkedNode.get());
 }
 
 void AccessibilityNodeObject::addRadioButtonGroupChildren(AXCoreObject& parent, AccessibilityChildrenVector& linkedUIElements) const
@@ -2328,7 +2329,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             // This could happen when this node labels multiple child nodes and we didn't
             // skip in the above ignoredChildNode check.
             auto labeledByElements = downcast<AccessibilityNodeObject>(*child).ariaLabeledByElements();
-            if (labeledByElements.contains(node))
+            if (labeledByElements.containsIf([&](auto& element) { return element.ptr() == node; }))
                 continue;
             
             Vector<AccessibilityText> textOrder;
@@ -2607,11 +2608,11 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
     return builder.toString();
 }
 
-String AccessibilityNodeObject::descriptionForElements(Vector<Element*>&& elements) const
+String AccessibilityNodeObject::descriptionForElements(const Vector<Ref<Element>>& elements) const
 {
     StringBuilder builder;
-    for (auto* element : elements)
-        appendNameToStringBuilder(builder, accessibleNameForNode(element, node()));
+    for (auto& element : elements)
+        appendNameToStringBuilder(builder, accessibleNameForNode(element.ptr(), node()));
     return builder.toString();
 }
 
@@ -2620,7 +2621,7 @@ String AccessibilityNodeObject::ariaDescribedByAttribute() const
     return descriptionForElements(elementsFromAttribute(aria_describedbyAttr));
 }
 
-Vector<Element*> AccessibilityNodeObject::ariaLabeledByElements() const
+Vector<Ref<Element>> AccessibilityNodeObject::ariaLabeledByElements() const
 {
     // FIXME: should walk the DOM elements only once.
     auto elements = elementsFromAttribute(aria_labelledbyAttr);

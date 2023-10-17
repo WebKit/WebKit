@@ -63,13 +63,6 @@ LegacyRenderSVGShape::LegacyRenderSVGShape(Type type, SVGGraphicsElement& elemen
 
 LegacyRenderSVGShape::~LegacyRenderSVGShape() = default;
 
-void LegacyRenderSVGShape::updateShapeFromElement()
-{
-    m_path = createPath();
-    m_fillBoundingBox = calculateObjectBoundingBox();
-    m_strokeBoundingBox = calculateStrokeBoundingBox();
-}
-
 bool LegacyRenderSVGShape::isEmpty() const
 {
     // This function should never be called before assigning a new Path to m_path.
@@ -355,9 +348,13 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     return false;
 }
 
-FloatRect LegacyRenderSVGShape::calculateObjectBoundingBox() const
+FloatRect LegacyRenderSVGShape::strokeBoundingBox() const
 {
-    return path().boundingRect();
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+    if (!m_strokeBoundingBox)
+        m_strokeBoundingBox = calculateStrokeBoundingBox();
+    return *m_strokeBoundingBox;
 }
 
 FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
@@ -383,7 +380,7 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
         }
     }
 
-    return strokeBoundingBox;
+    return adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
 }
 
 void LegacyRenderSVGShape::updateRepaintBoundingBox()
@@ -409,10 +406,11 @@ bool LegacyRenderSVGShape::hasSmoothStroke() const
         && style().capStyle() == LineCap::Butt;
 }
 
-void LegacyRenderSVGShape::ensurePath()
+Path& LegacyRenderSVGShape::ensurePath()
 {
     if (!hasPath())
         m_path = createPath();
+    return path();
 }
 
 std::unique_ptr<Path> LegacyRenderSVGShape::createPath() const

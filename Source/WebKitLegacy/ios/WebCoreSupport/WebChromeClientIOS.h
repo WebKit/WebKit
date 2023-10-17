@@ -96,7 +96,7 @@ private:
     bool selectItemAlignmentFollowsMenuWritingDirection() final;
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
-
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const final { }
     void webAppOrientationsUpdated() final;
     void focusedElementChanged(WebCore::Element*) final;
     void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;

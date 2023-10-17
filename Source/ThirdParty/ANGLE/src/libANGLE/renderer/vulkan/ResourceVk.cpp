@@ -66,7 +66,7 @@ SharedGarbage::SharedGarbage(SharedGarbage &&other)
     *this = std::move(other);
 }
 
-SharedGarbage::SharedGarbage(const ResourceUse &use, GarbageList &&garbage)
+SharedGarbage::SharedGarbage(const ResourceUse &use, GarbageObjects &&garbage)
     : mLifetime(use), mGarbage(std::move(garbage))
 {}
 

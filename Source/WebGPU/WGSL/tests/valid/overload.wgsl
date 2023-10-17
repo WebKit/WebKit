@@ -2542,8 +2542,6 @@ fn testTextureSampleGrad()
 @compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
-    // FIXME: add declarations for texture depth
-
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
     _ = textureSampleLevel(t2d, s, vec2f(0), 0);
 

@@ -1,141 +1,3 @@
-diff --git a/.gitmodules b/.gitmodules
-index 6a5d4a9f2b638ddb9f3d59d01b37ccb4c76adcab..dc46d33d4b2f870675a483e95d9a0bb0bb824f6f 100644
---- a/.gitmodules
-+++ b/.gitmodules
-@@ -1,47 +1,11 @@
--[submodule "build"]
--	path = build
--	url = https://chromium.googlesource.com/chromium/src/build.git
--	gclient-condition = not build_with_chromium
--[submodule "buildtools"]
--	path = buildtools
--	url = https://chromium.googlesource.com/chromium/src/buildtools.git
--	gclient-condition = not build_with_chromium
- [submodule "third_party/clang-format/script"]
- 	path = third_party/clang-format/script
- 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format.git
- 	gclient-condition = not build_with_chromium
--[submodule "testing"]
--	path = testing
--	url = https://chromium.googlesource.com/chromium/src/testing
--	gclient-condition = not build_with_chromium
--[submodule "third_party/abseil-cpp"]
--	path = third_party/abseil-cpp
--	url = https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp
--	gclient-condition = not build_with_chromium
--[submodule "third_party/android_build_tools"]
--	path = third_party/android_build_tools
--	url = https://chromium.googlesource.com/chromium/src/third_party/android_build_tools
--	gclient-condition = checkout_android and not build_with_chromium
--[submodule "third_party/android_deps"]
--	path = third_party/android_deps
--	url = https://chromium.googlesource.com/chromium/src/third_party/android_deps
--	gclient-condition = checkout_android and not build_with_chromium
--[submodule "third_party/android_platform"]
--	path = third_party/android_platform
--	url = https://chromium.googlesource.com/chromium/src/third_party/android_platform
--	gclient-condition = checkout_android and not build_with_chromium
--[submodule "third_party/android_sdk"]
--	path = third_party/android_sdk
--	url = https://chromium.googlesource.com/chromium/src/third_party/android_sdk
--	gclient-condition = checkout_android and not build_with_chromium
- [submodule "third_party/astc-encoder/src"]
- 	path = third_party/astc-encoder/src
- 	url = https://chromium.googlesource.com/external/github.com/ARM-software/astc-encoder
- 	gclient-condition = not build_with_chromium
--[submodule "third_party/catapult"]
--	path = third_party/catapult
--	url = https://chromium.googlesource.com/catapult.git
--	gclient-condition = not build_with_chromium
- [submodule "third_party/cherry"]
- 	path = third_party/cherry
- 	url = https://android.googlesource.com/platform/external/cherry
-@@ -54,18 +18,10 @@
- 	path = third_party/cpu_features/src
- 	url = https://chromium.googlesource.com/external/github.com/google/cpu_features.git
- 	gclient-condition = checkout_android and not build_with_chromium
--[submodule "third_party/depot_tools"]
--	path = third_party/depot_tools
--	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
--	gclient-condition = not build_with_chromium
- [submodule "third_party/EGL-Registry/src"]
- 	path = third_party/EGL-Registry/src
- 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
- 	gclient-condition = not build_with_chromium
--[submodule "third_party/flatbuffers/src"]
--	path = third_party/flatbuffers/src
--	url = https://chromium.googlesource.com/external/github.com/google/flatbuffers.git
--	gclient-condition = checkout_android and not build_with_chromium
- [submodule "third_party/gles1_conform"]
- 	path = third_party/gles1_conform
- 	url = https://chrome-internal.googlesource.com/angle/es-cts.git
-@@ -101,18 +57,6 @@
- 	path = third_party/jsoncpp
- 	url = https://chromium.googlesource.com/chromium/src/third_party/jsoncpp
- 	gclient-condition = not build_with_chromium
--[submodule "third_party/libc++/src"]
--	path = third_party/libc++/src
--	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx.git
--	gclient-condition = not build_with_chromium
--[submodule "third_party/libc++abi/src"]
--	path = third_party/libc++abi/src
--	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi.git
--	gclient-condition = not build_with_chromium
--[submodule "third_party/libunwind/src"]
--	path = third_party/libunwind/src
--	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind.git
--	gclient-condition = not build_with_chromium
- [submodule "third_party/markupsafe"]
- 	path = third_party/markupsafe
- 	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
-@@ -160,17 +104,6 @@
- 	path = third_party/six
- 	url = https://chromium.googlesource.com/chromium/src/third_party/six
- 	gclient-condition = checkout_android and not build_with_chromium
--[submodule "third_party/SwiftShader"]
--	path = third_party/SwiftShader
--	url = https://swiftshader.googlesource.com/SwiftShader
--	gclient-condition = not build_with_chromium
--[submodule "third_party/VK-GL-CTS/src"]
--	path = third_party/VK-GL-CTS/src
--	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS
--[submodule "third_party/vulkan-deps"]
--	path = third_party/vulkan-deps
--	url = https://chromium.googlesource.com/vulkan-deps
--	gclient-condition = not build_with_chromium
- [submodule "third_party/vulkan_memory_allocator"]
- 	path = third_party/vulkan_memory_allocator
- 	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-@@ -183,18 +116,6 @@
- 	path = third_party/zlib
- 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
- 	gclient-condition = not build_with_chromium
--[submodule "tools/android"]
--	path = tools/android
--	url = https://chromium.googlesource.com/chromium/src/tools/android
--	gclient-condition = checkout_android and not build_with_chromium
--[submodule "tools/clang"]
--	path = tools/clang
--	url = https://chromium.googlesource.com/chromium/src/tools/clang.git
--	gclient-condition = not build_with_chromium
--[submodule "tools/mb"]
--	path = tools/mb
--	url = https://chromium.googlesource.com/chromium/src/tools/mb
--	gclient-condition = not build_with_chromium
- [submodule "tools/md_browser"]
- 	path = tools/md_browser
- 	url = https://chromium.googlesource.com/chromium/src/tools/md_browser
-@@ -203,10 +124,6 @@
- 	path = tools/memory
- 	url = https://chromium.googlesource.com/chromium/src/tools/memory
- 	gclient-condition = not build_with_chromium
--[submodule "tools/perf"]
--	path = tools/perf
--	url = https://chromium.googlesource.com/chromium/src/tools/perf
--	gclient-condition = not build_with_chromium
- [submodule "tools/protoc_wrapper"]
- 	path = tools/protoc_wrapper
- 	url = https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
@@ -616,10 +478,10 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0
  {
  namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 3147bf515a36a7157d2cb2e7e826ce54d4b19f29..8f78ce3a0e089543b6d8fac281dc56444abc1b02 100644
+index ea0c0df6638aaaec5092b85930669ff74ed756c2..3fc1f9097f613cac238a47adf0f151c6dd2ba17b 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1556,6 +1556,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1562,6 +1562,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -644,7 +506,7 @@ index 3147bf515a36a7157d2cb2e7e826ce54d4b19f29..8f78ce3a0e089543b6d8fac281dc5644
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1570,10 +1588,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1576,10 +1594,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -657,7 +519,7 @@ index 3147bf515a36a7157d2cb2e7e826ce54d4b19f29..8f78ce3a0e089543b6d8fac281dc5644
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1596,7 +1614,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1602,7 +1620,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

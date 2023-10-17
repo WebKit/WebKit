@@ -48,7 +48,7 @@ template<typename CharacterType> void CSSVariableData::updateBackingStringsInTok
         if (!token.hasStringBacking())
             continue;
         unsigned length = token.value().length();
-        token.updateString({ currentOffset, length });
+        token.updateCharacters(currentOffset, length);
         currentOffset += length;
     }
     ASSERT(currentOffset == m_backingString.characters<CharacterType>() + m_backingString.length());

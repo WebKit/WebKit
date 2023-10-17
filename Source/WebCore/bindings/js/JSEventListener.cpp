@@ -93,8 +93,8 @@ void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, 
 
 JSValue eventHandlerAttribute(EventTarget& eventTarget, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    if (auto* jsListener = eventTarget.attributeEventListener(eventType, isolatedWorld)) {
-        if (auto* context = eventTarget.scriptExecutionContext()) {
+    if (RefPtr jsListener = eventTarget.attributeEventListener(eventType, isolatedWorld)) {
+        if (RefPtr context = eventTarget.scriptExecutionContext()) {
             if (auto* jsFunction = jsListener->ensureJSFunction(*context))
                 return jsFunction;
         }

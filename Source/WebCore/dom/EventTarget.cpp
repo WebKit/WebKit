@@ -103,7 +103,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (options.signal) {
         options.signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, listener = WeakPtr { listener }, capture = options.capture](JSC::JSValue) {
             if (weakThis && listener)
-                weakThis->removeEventListener(eventType, *listener, capture);
+                Ref { *weakThis }->removeEventListener(eventType, *listener, capture);
         });
     }
 
@@ -166,8 +166,8 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
 template<typename JSMaybeErrorEventListener>
 void EventTarget::setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
-    auto& isolatedWorld = worldForDOMObject(jsEventTarget);
-    auto* existingListener = attributeEventListener(eventType, isolatedWorld);
+    Ref isolatedWorld = worldForDOMObject(jsEventTarget);
+    RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener.isObject()) {
         if (existingListener)
             removeEventListener(eventType, *existingListener, false);
@@ -186,7 +186,7 @@ template void EventTarget::setAttributeEventListener<JSEventListener>(const Atom
 
 bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
 {
-    auto* existingListener = attributeEventListener(eventType, isolatedWorld);
+    RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener) {
         if (existingListener)
             removeEventListener(eventType, *existingListener, false);
@@ -199,26 +199,21 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
         listener->checkValidityForEventTarget(*this);
 #endif
 
-        auto listenerPointer = listener.copyRef();
-        eventTargetData()->eventListenerMap.replace(eventType, *existingListener, listener.releaseNonNull(), { });
+        eventTargetData()->eventListenerMap.replace(eventType, *existingListener, *listener, { });
 
-        InspectorInstrumentation::didAddEventListener(*this, eventType, *listenerPointer, false);
+        InspectorInstrumentation::didAddEventListener(*this, eventType, *listener, false);
 
         return true;
     }
     return addEventListener(eventType, listener.releaseNonNull(), { });
 }
 
-JSEventListener* EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+RefPtr<JSEventListener> EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    for (auto& eventListener : eventListeners(eventType)) {
-        auto& listener = eventListener->callback();
-        if (listener.type() != EventListener::JSEventListenerType)
-            continue;
-
-        auto& jsListener = downcast<JSEventListener>(listener);
-        if (jsListener.isAttribute() && jsListener.isolatedWorld() == &isolatedWorld)
-            return &jsListener;
+    for (RefPtr eventListener : eventListeners(eventType)) {
+        RefPtr jsListener = dynamicDowncast<JSEventListener>(eventListener->callback());
+        if (jsListener && jsListener->isAttribute() && jsListener->isolatedWorld() == &isolatedWorld)
+            return jsListener;
     }
 
     return nullptr;
@@ -289,7 +284,7 @@ static const AtomString& legacyType(const Event& event)
 void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
 {
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    if (auto* node = dynamicDowncast<Node>(*this))
+    if (RefPtr node = dynamicDowncast<Node>(*this))
         ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(*node));
     else
         ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isScriptAllowedInMainThread());
@@ -329,10 +324,10 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     ASSERT(!listeners.isEmpty());
     ASSERT(scriptExecutionContext());
 
-    auto& context = *scriptExecutionContext();
+    Ref context = *scriptExecutionContext();
     bool contextIsDocument = is<Document>(context);
     if (contextIsDocument)
-        InspectorInstrumentation::willDispatchEvent(downcast<Document>(context), event);
+        InspectorInstrumentation::willDispatchEvent(downcast<Document>(context.get()), event);
 
     for (auto& registeredListener : listeners) {
         if (UNLIKELY(registeredListener->wasRemoved()))
@@ -343,7 +338,8 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         if (phase == EventInvokePhase::Bubbling && registeredListener->useCapture())
             continue;
 
-        if (InspectorInstrumentation::isEventListenerDisabled(*this, event.type(), registeredListener->callback(), registeredListener->useCapture()))
+        Ref callback = registeredListener->callback();
+        if (InspectorInstrumentation::isEventListenerDisabled(*this, event.type(), callback, registeredListener->useCapture()))
             continue;
 
         // If stopImmediatePropagation has been called, we just break out immediately, without
@@ -354,22 +350,22 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         // Make sure the JS wrapper and function stay alive until the end of this scope. Otherwise,
         // event listeners with 'once' flag may get collected as soon as they get unregistered below,
         // before we call the js function.
-        JSC::EnsureStillAliveScope wrapperProtector(registeredListener->callback().wrapper());
-        JSC::EnsureStillAliveScope jsFunctionProtector(registeredListener->callback().jsFunction());
+        JSC::EnsureStillAliveScope wrapperProtector(callback->wrapper());
+        JSC::EnsureStillAliveScope jsFunctionProtector(callback->jsFunction());
 
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
-            removeEventListener(event.type(), registeredListener->callback(), registeredListener->useCapture());
+            removeEventListener(event.type(), callback, registeredListener->useCapture());
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);
 
 #if ASSERT_ENABLED
-        registeredListener->callback().checkValidityForEventTarget(*this);
+        callback->checkValidityForEventTarget(*this);
 #endif
 
         InspectorInstrumentation::willHandleEvent(context, event, *registeredListener);
-        registeredListener->callback().handleEvent(context, event);
+        callback->handleEvent(context, event);
         InspectorInstrumentation::didHandleEvent(context, event, *registeredListener);
 
         if (registeredListener->isPassive())
@@ -377,7 +373,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     }
 
     if (contextIsDocument)
-        InspectorInstrumentation::didDispatchEvent(downcast<Document>(context), event);
+        InspectorInstrumentation::didDispatchEvent(downcast<Document>(context.get()), event);
 }
 
 Vector<AtomString> EventTarget::eventTypes() const
@@ -422,7 +418,7 @@ void EventTarget::invalidateEventListenerRegions()
         return;
     }
 
-    auto* document = [&]() -> Document* {
+    CheckedPtr document = [&]() -> Document* {
         if (is<Document>(*this))
             return &downcast<Document>(*this);
         if (is<LocalDOMWindow>(*this))

@@ -1,0 +1,14 @@
+
+PASS powerEfficientEncoder not exposed when not capturing.
+PASS powerEfficientEncoder not exposed when fullscreen and not capturing.
+FAIL powerEfficientEncoder exposed when capturing. assert_own_property: expected property "powerEfficientEncoder" missing
+PASS encoderImplementation not exposed when not capturing.
+PASS encoderImplementation not exposed when fullscreen and not capturing.
+FAIL encoderImplementation exposed when capturing. assert_own_property: expected property "encoderImplementation" missing
+PASS powerEfficientDecoder not exposed when not capturing.
+PASS powerEfficientDecoder not exposed when fullscreen and not capturing.
+FAIL powerEfficientDecoder exposed when capturing. assert_own_property: expected property "powerEfficientDecoder" missing
+PASS decoderImplementation not exposed when not capturing.
+PASS decoderImplementation not exposed when fullscreen and not capturing.
+FAIL decoderImplementation exposed when capturing. assert_own_property: expected property "decoderImplementation" missing
+

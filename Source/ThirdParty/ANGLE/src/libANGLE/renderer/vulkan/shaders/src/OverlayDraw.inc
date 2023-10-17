@@ -1,3 +1,9 @@
+//
+// Copyright 2022 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
 // Limits:
 // Note that max length and size is defined such that each buffer length is below 16KB, the minimum
 // guaranteed supported size for uniform buffers.

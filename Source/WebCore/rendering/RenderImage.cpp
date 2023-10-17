@@ -769,7 +769,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
     return imageResource().errorOccurred() ? intrinsicSize().height() : 0_lu;
 }
 
-HTMLMapElement* RenderImage::imageMap() const
+RefPtr<HTMLMapElement> RenderImage::imageMap() const
 {
     auto* imageElement = element();
     if (!imageElement || !is<HTMLImageElement>(imageElement))
@@ -783,7 +783,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool inside = RenderReplaced::nodeAtPoint(request, tempResult, locationInContainer, accumulatedOffset, hitTestAction);
 
     if (tempResult.innerNode() && element()) {
-        if (HTMLMapElement* map = imageMap()) {
+        if (RefPtr map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
             float scaleFactor = 1 / style().effectiveZoom();
             LayoutPoint mapLocation = locationInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());

@@ -3062,8 +3062,8 @@ bool AccessibilityObject::isTabItemSelected() const
         return false;
 
     auto elements = elementsFromAttribute(aria_controlsAttr);
-    for (const auto& element : elements) {
-        auto* tabPanel = cache->getOrCreate(element);
+    for (auto& element : elements) {
+        auto* tabPanel = cache->getOrCreate(element.ptr());
 
         // A tab item should only control tab panels.
         if (!tabPanel || tabPanel->roleValue() != AccessibilityRole::TabPanel)
@@ -3439,7 +3439,7 @@ bool AccessibilityObject::isExpanded() const
     }
 
     if (supportsExpanded()) {
-        if (WeakPtr popoverTargetElement = this->popoverTargetElement())
+        if (RefPtr popoverTargetElement = this->popoverTargetElement())
             return popoverTargetElement->isPopoverShowing();
         return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);
     }
@@ -3915,6 +3915,11 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
     return defaultObjectInclusion() == AccessibilityObjectInclusion::IgnoreObject;
 }
 
+bool AccessibilityObject::isARIAHidden() const
+{
+    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s) && !isFocused();
+}
+
 // ARIA component of hidden definition.
 // https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isAXHidden() const
@@ -3923,7 +3928,7 @@ bool AccessibilityObject::isAXHidden() const
         return false;
     
     return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true"_s) && !object.isFocused();
+        return object.isARIAHidden();
     }) != nullptr;
 }
 
@@ -3969,10 +3974,16 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     }
 
     bool useParentData = !m_isIgnoredFromParentData.isNull();
-    if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
+    if (useParentData && (m_isIgnoredFromParentData.isAXHidden || m_isIgnoredFromParentData.isPresentationalChildOfAriaRole))
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
+    if (isARIAHidden())
+        return AccessibilityObjectInclusion::IgnoreObject;
+
+    bool ignoreARIAHidden = isFocused();
+    if (Accessibility::findAncestor<AccessibilityObject>(*this, false, [&] (const auto& object) {
+        return (!ignoreARIAHidden && object.isARIAHidden()) || object.ariaRoleHasPresentationalChildren() || !object.canHaveChildren();
+    }))
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // Include <dialog> elements and elements with role="dialog".
@@ -4030,24 +4041,24 @@ bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cach
     return ignored;
 }
 
-Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
+Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
 {
-    Node* node = this->node();
+    RefPtr node = this->node();
     if (!node || !node->isElementNode())
         return { };
 
-    auto& element = downcast<Element>(*node);
+    Ref element = downcast<Element>(node.releaseNonNull());
     if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
         if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
-            if (auto reflectedElement = element.getElementAttribute(attribute)) {
-                Vector<Element*> elements;
-                elements.append(reflectedElement);
+            if (RefPtr reflectedElement = element->getElementAttribute(attribute)) {
+                Vector<Ref<Element>> elements;
+                elements.append(reflectedElement.releaseNonNull());
                 return elements;
             }
         } else if (Element::isElementsArrayReflectionAttribute(document()->settings(), attribute)) {
-            if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
-                return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Element* {
-                    return element.get();
+            if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
+                return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
+                    return *element;
                 });
             }
         }
@@ -4055,21 +4066,21 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
-        if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
-            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Element* {
-                return element.get();
+        if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
+            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
+                return *element;
             });
         }
         return { };
     }
 
-    Vector<Element*> elements;
-    auto& treeScope = node->treeScope();
+    Vector<Ref<Element>> elements;
+    auto& treeScope = element->treeScope();
     SpaceSplitString spaceSplitString(idsString, SpaceSplitString::ShouldFoldCase::No);
     size_t length = spaceSplitString.size();
     for (size_t i = 0; i < length; ++i) {
-        if (auto* element = treeScope.getElementById(spaceSplitString[i]))
-            elements.append(element);
+        if (RefPtr element = treeScope.getElementById(spaceSplitString[i]))
+            elements.append(element.releaseNonNull());
     }
     return elements;
 }
@@ -4332,13 +4343,6 @@ bool AccessibilityObject::ariaRoleHasPresentationalChildren() const
     }
 }
 
-bool AccessibilityObject::isPresentationalChildOfAriaRole() const
-{
-    return Accessibility::findAncestor(*this, false, [] (const auto& ancestor) {
-        return ancestor.ariaRoleHasPresentationalChildren();
-    });
-}
-
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
 {
     if (!child)
@@ -4350,9 +4354,20 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {
-        result.isAXHidden = child->isAXHidden();
-        result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
-        result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
+        if (child->isARIAHidden())
+            result.isAXHidden = true;
+
+        bool ignoreARIAHidden = child->isFocused();
+        for (auto* object = child->parentObject(); object; object = object->parentObject()) {
+            if (!result.isAXHidden && !ignoreARIAHidden && object->isARIAHidden())
+                result.isAXHidden = true;
+
+            if (!result.isPresentationalChildOfAriaRole && object->ariaRoleHasPresentationalChildren())
+                result.isPresentationalChildOfAriaRole = true;
+
+            if (!result.isDescendantOfBarrenParent && !object->canHaveChildren())
+                result.isDescendantOfBarrenParent = true;
+        }
     }
 
     child->setIsIgnoredFromParentData(result);

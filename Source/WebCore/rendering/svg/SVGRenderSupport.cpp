@@ -146,15 +146,11 @@ static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& o
     objectBoundingBox.uniteEvenIfEmpty(otherBoundingBox);
 }
 
-void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
+void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& repaintBoundingBox, RepaintRectCalculation repaintRectCalculation)
 {
     objectBoundingBox = FloatRect();
     objectBoundingBoxValid = false;
-    strokeBoundingBox = FloatRect();
-
-    // When computing the strokeBoundingBox, we use the repaintRects of the container's children so that the container's stroke includes
-    // the resources applied to the children (such as clips and filters). This allows filters applied to containers to correctly bound
-    // the children, and also improves inlining of SVG content, as the stroke bound is used in that situation also.
+    repaintBoundingBox = FloatRect();
     for (auto& current : childrenOfType<RenderObject>(container)) {
         if (current.isLegacySVGHiddenContainer())
             continue;
@@ -166,14 +162,36 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
         const AffineTransform& transform = current.localToParentTransform();
         if (transform.isIdentity()) {
             updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, &current, current.objectBoundingBox());
-            strokeBoundingBox.unite(current.repaintRectInLocalCoordinates());
+            repaintBoundingBox.unite(current.repaintRectInLocalCoordinates(repaintRectCalculation));
         } else {
             updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, &current, transform.mapRect(current.objectBoundingBox()));
-            strokeBoundingBox.unite(transform.mapRect(current.repaintRectInLocalCoordinates()));
+            repaintBoundingBox.unite(transform.mapRect(current.repaintRectInLocalCoordinates(repaintRectCalculation)));
         }
     }
+}
 
-    repaintBoundingBox = strokeBoundingBox;
+FloatRect SVGRenderSupport::computeContainerStrokeBoundingBox(const RenderElement& container)
+{
+    ASSERT(container.isLegacySVGRoot() || container.isLegacySVGContainer());
+    FloatRect strokeBoundingBox = FloatRect();
+    for (auto& current : childrenOfType<RenderObject>(container)) {
+        if (current.isLegacySVGHiddenContainer())
+            continue;
+
+        // Don't include elements in the union that do not render.
+        if (is<LegacyRenderSVGShape>(current) && downcast<LegacyRenderSVGShape>(current).isRenderingDisabled())
+            continue;
+
+        FloatRect childStrokeBoundingBox = current.strokeBoundingBox();
+        if (is<RenderElement>(current))
+            SVGRenderSupport::intersectRepaintRectWithResources(downcast<RenderElement>(current), childStrokeBoundingBox);
+        const AffineTransform& transform = current.localToParentTransform();
+        if (transform.isIdentity())
+            strokeBoundingBox.unite(childStrokeBoundingBox);
+        else
+            strokeBoundingBox.unite(transform.mapRect(childStrokeBoundingBox));
+    }
+    return strokeBoundingBox;
 }
 
 bool SVGRenderSupport::paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo& paintInfo)

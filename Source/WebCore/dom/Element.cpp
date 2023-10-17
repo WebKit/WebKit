@@ -2180,7 +2180,7 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
     return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
 }
 
-Element* Element::getElementAttribute(const QualifiedName& attributeName) const
+RefPtr<Element> Element::getElementAttribute(const QualifiedName& attributeName) const
 {
     ASSERT(isElementReflectionAttribute(document().settings(), attributeName));
 
@@ -2188,7 +2188,7 @@ Element* Element::getElementAttribute(const QualifiedName& attributeName) const
         auto it = map->find(attributeName);
         if (it != map->end()) {
             ASSERT(it->value.size() == 1);
-            auto* element = it->value[0].get();
+            RefPtr element = it->value[0].get();
             if (element && isDescendantOrShadowDescendantOf(element->rootNode()))
                 return element;
             return nullptr;
@@ -2245,8 +2245,8 @@ std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const 
     SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
     Vector<RefPtr<Element>> elements;
     for (unsigned i = 0; i < ids.size(); ++i) {
-        if (auto* element = treeScope().getElementById(ids[i]))
-            elements.append(element);
+        if (RefPtr element = treeScope().getElementById(ids[i]))
+            elements.append(WTFMove(element));
     }
     return elements;
 }
@@ -5243,7 +5243,7 @@ ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text
     return { };
 }
 
-Element* Element::findAnchorElementForLink(String& outAnchorName)
+RefPtr<Element> Element::findAnchorElementForLink(String& outAnchorName)
 {
     if (!isLink())
         return nullptr;

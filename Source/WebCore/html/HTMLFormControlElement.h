@@ -98,7 +98,7 @@ public:
 
     virtual String resultForDialogSubmit() const;
 
-    HTMLElement* popoverTargetElement() const;
+    RefPtr<HTMLElement> popoverTargetElement() const;
     const AtomString& popoverTargetAction() const;
     void setPopoverTargetAction(const AtomString& value);
 

@@ -1980,9 +1980,12 @@ void TestRunner::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
     }));
 }
 
-void TestRunner::triggerMockMicrophoneConfigurationChange()
+void TestRunner::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
-    postSynchronousMessage("TriggerMockMicrophoneConfigurationChange");
+    postSynchronousMessage("TriggerMockCaptureConfigurationChange", createWKDictionary({
+        { "microphone", adoptWK(WKBooleanCreate(forMicrophone)) },
+        { "display", adoptWK(WKBooleanCreate(forDisplay)) },
+    }));
 }
 
 #if ENABLE(GAMEPAD)

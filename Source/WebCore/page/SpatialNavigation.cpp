@@ -69,11 +69,11 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
 
     if (is<HTMLAreaElement>(*node)) {
         HTMLAreaElement& area = downcast<HTMLAreaElement>(*node);
-        HTMLImageElement* image = area.imageElement();
+        RefPtr image = area.imageElement();
         if (!image || !image->renderer())
             return;
 
-        visibleNode = image;
+        visibleNode = image.get();
         rect = virtualRectForAreaElementAndDirection(&area, direction);
     } else {
         if (!node->renderer())

@@ -10418,7 +10418,7 @@ void GL_APIENTRY GL_FinishFenceNV(GLuint fence)
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_GenFencesNV(GLsizei n, GLuint *fences)

@@ -10,14 +10,6 @@
         <dict>
         </dict>
     </dict>
-    <key>com.apple.webkit.webcontent.crashy.extension</key>
-    <dict>
-        <key>EXExtensionPointIsPublic</key>
-        <false/>
-        <key>EXRequiredEntitlements</key>
-        <dict>
-        </dict>
-    </dict>
     <key>com.apple.webkit.webcontent.captiveportal.extension</key>
     <dict>
         <key>EXExtensionPointIsPublic</key>

@@ -84,11 +84,15 @@ GLenum ConvertToNearestMipFilterMode(GLenum filterMode)
 
 bool IsMipmapSupported(const TextureType &type)
 {
-    if (type == TextureType::_2DMultisample || type == TextureType::Buffer)
+    switch (type)
     {
-        return false;
+        case TextureType::_2DMultisample:
+        case TextureType::_2DMultisampleArray:
+        case TextureType::Buffer:
+            return false;
+        default:
+            return true;
     }
-    return true;
 }
 
 SwizzleState::SwizzleState()
@@ -325,60 +329,61 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
         return false;
     }
 
-    const ImageDesc &baseImageDesc = getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel());
-
-    // According to es 3.1 spec, texture is justified as incomplete if sized internalformat is
-    // unfilterable(table 20.11) and filter is not GL_NEAREST(8.16). The default value of minFilter
-    // is NEAREST_MIPMAP_LINEAR and magFilter is LINEAR(table 20.11,). For multismaple texture,
-    // filter state of multisample texture is ignored(11.1.3.3). So it shouldn't be judged as
-    // incomplete texture. So, we ignore filtering for multisample texture completeness here.
-    if (!IsMultisampled(mType) &&
-        !baseImageDesc.format.info->filterSupport(state.getClientVersion(),
-                                                  state.getExtensions()) &&
-        !IsPointSampled(samplerState))
+    // OpenGL ES 3.2, Sections 8.8 and 11.1.3.3
+    // Multisample textures do not have mipmaps and filter state is ignored.
+    if (IsMultisampled(mType))
     {
-        return false;
+        return true;
     }
 
-    // OpenGLES 3.0.2 spec section 3.8.13 states that a texture is not mipmap complete if:
-    // The internalformat specified for the texture arrays is a sized internal depth or
-    // depth and stencil format (see table 3.13), the value of TEXTURE_COMPARE_-
-    // MODE is NONE, and either the magnification filter is not NEAREST or the mini-
-    // fication filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
-    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
-        state.getClientMajorVersion() >= 3)
+    // OpenGL ES 3.2, Section 8.17
+    // A texture is complete unless either the magnification filter is not NEAREST,
+    // or the minification filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST; and any of
+    if (IsPointSampled(samplerState))
+    {
+        return true;
+    }
+
+    const InternalFormat *info =
+        getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel()).format.info;
+
+    // The effective internal format specified for the texture images
+    // is a sized internal color format that is not texture-filterable.
+    if (!info->isDepthOrStencil())
+    {
+        return info->filterSupport(state.getClientVersion(), state.getExtensions());
+    }
+
+    // The effective internal format specified for the texture images
+    // is a sized internal depth or depth and stencil format (see table 8.11),
+    // and the value of TEXTURE_COMPARE_MODE is NONE.
+    if (info->depthBits > 0 && samplerState.getCompareMode() == GL_NONE)
     {
         // Note: we restrict this validation to sized types. For the OES_depth_textures
         // extension, due to some underspecification problems, we must allow linear filtering
-        // for legacy compatibility with WebGL 1.
+        // for legacy compatibility with WebGL 1.0.
         // See http://crbug.com/649200
-        if (samplerState.getCompareMode() == GL_NONE && baseImageDesc.format.info->sized)
+        if (state.getClientMajorVersion() >= 3 && info->sized)
         {
-            if ((samplerState.getMinFilter() != GL_NEAREST &&
-                 samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
-                samplerState.getMagFilter() != GL_NEAREST)
+            return false;
+        }
+    }
+
+    if (info->stencilBits > 0)
+    {
+        if (info->depthBits > 0)
+        {
+            // The internal format of the texture is DEPTH_STENCIL,
+            // and the value of DEPTH_STENCIL_TEXTURE_MODE for the
+            // texture is STENCIL_INDEX.
+            if (mDepthStencilTextureMode == GL_STENCIL_INDEX)
             {
                 return false;
             }
         }
-    }
-
-    // OpenGLES 3.1 spec section 8.16 states that a texture is not mipmap complete if:
-    // The internalformat specified for the texture is DEPTH_STENCIL format, the value of
-    // DEPTH_STENCIL_TEXTURE_MODE is STENCIL_INDEX, and either the magnification filter is
-    // not NEAREST or the minification filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
-    // However, the ES 3.1 spec differs from the statement above, because it is incorrect.
-    // See the issue at https://github.com/KhronosGroup/OpenGL-API/issues/33.
-    // For multismaple texture, filter state of multisample texture is ignored(11.1.3.3).
-    // So it shouldn't be judged as incomplete texture. So, we ignore filtering for multisample
-    // texture completeness here.
-    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
-        mDepthStencilTextureMode == GL_STENCIL_INDEX)
-    {
-        if ((samplerState.getMinFilter() != GL_NEAREST &&
-             samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
-            samplerState.getMagFilter() != GL_NEAREST)
+        else
         {
+            // The internal format is STENCIL_INDEX.
             return false;
         }
     }

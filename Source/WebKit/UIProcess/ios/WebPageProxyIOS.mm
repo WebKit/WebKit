@@ -776,6 +776,13 @@ void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference
     pageClient().accessibilityWebProcessTokenReceived(data);
 }    
 
+
+void WebPageProxy::relayAccessibilityNotification(const String& notificationName, const IPC::DataReference& data)
+{
+    NSData *notificationData = [NSData dataWithBytes:data.data() length:data.size()];
+    pageClient().relayAccessibilityNotification(notificationName, notificationData);
+}
+
 void WebPageProxy::assistiveTechnologyMakeFirstResponder()
 {
     pageClient().assistiveTechnologyMakeFirstResponder();

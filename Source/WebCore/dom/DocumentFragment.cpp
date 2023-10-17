@@ -113,7 +113,7 @@ Element* DocumentFragment::getElementById(const AtomString& id) const
 
     // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.
     if (isTreeScope())
-        return treeScope().getElementById(id);
+        return treeScope().getElementById(id).get();
 
     // Otherwise, fall back to iterating all of the element descendants.
     for (auto& element : descendantsOfType<Element>(*this)) {

@@ -61,11 +61,25 @@ public:
         UseColorFunctionSerialization   = 1 << 1,
     };
 
+    struct ColorDataForIPC {
+        struct OutOfLineColorData {
+            ColorSpace colorSpace;
+            float c1;
+            float c2;
+            float c3;
+            float alpha;
+        };
+        bool isSemantic;
+        bool usesFunctionSerialization;
+        std::variant<PackedColor::RGBA, OutOfLineColorData> data;
+    };
+
     Color() = default;
 
     Color(SRGBA<uint8_t>, OptionSet<Flags> = { });
     Color(std::optional<SRGBA<uint8_t>>, OptionSet<Flags> = { });
-    
+    WEBCORE_EXPORT Color(std::optional<ColorDataForIPC>&&);
+
     template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
     Color(const ColorType&, OptionSet<Flags> = { });
     
@@ -89,6 +103,7 @@ public:
     bool usesColorFunctionSerialization() const;
 
     ColorSpace colorSpace() const;
+    WEBCORE_EXPORT std::optional<ColorDataForIPC> data() const;
 
     bool isOpaque() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() == 1.0 : asInline().resolved().alpha == 255; }
     bool isVisible() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() > 0.0 : asInline().resolved().alpha > 0; }
@@ -162,9 +177,6 @@ public:
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
     friend bool outOfLineComponentsEqual(const Color&, const Color&);
     friend bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Color> decode(Decoder&);
 
     // Returns the underlying color converted to pre-resolved 8-bit sRGBA, useful for debugging purposes.
     struct DebugRGBA {
@@ -537,89 +549,6 @@ inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, Colo
     flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::OutOfLine });
     m_colorAndFlags = encodedOutOfLineComponents(WTFMove(color)) | encodedColorSpace(colorSpace) | encodedFlags(flags);
     ASSERT(isOutOfLine());
-}
-
-template<class Encoder> void Color::encode(Encoder& encoder) const
-{
-    if (!isValid()) {
-        encoder << false;
-        return;
-    }
-    encoder << true;
-
-    encoder << flags().contains(FlagsIncludingPrivate::Semantic);
-    encoder << flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization);
-    
-    if (isOutOfLine()) {
-        encoder << true;
-        encoder << colorSpace();
-
-        auto& outOfLineComponents = asOutOfLine();
-        auto [c1, c2, c3, alpha] = outOfLineComponents.unresolvedComponents();
-        encoder << c1;
-        encoder << c2;
-        encoder << c3;
-        encoder << alpha;
-        return;
-    }
-    encoder << false;
-
-    encoder << asPackedInline().value;
-}
-
-template<class Decoder> std::optional<Color> Color::decode(Decoder& decoder)
-{
-    bool isValid;
-    if (!decoder.decode(isValid))
-        return std::nullopt;
-
-    if (!isValid)
-        return Color { };
-
-    OptionSet<Flags> flags;
-
-    bool isSemantic;
-    if (!decoder.decode(isSemantic))
-        return std::nullopt;
-
-    if (isSemantic)
-        flags.add(Flags::Semantic);
-
-    bool usesColorFunctionSerialization;
-    if (!decoder.decode(usesColorFunctionSerialization))
-        return std::nullopt;
-
-    if (usesColorFunctionSerialization)
-        flags.add(Flags::UseColorFunctionSerialization);
-
-    bool isOutOfLine;
-    if (!decoder.decode(isOutOfLine))
-        return std::nullopt;
-
-    if (isOutOfLine) {
-        ColorSpace colorSpace;
-        if (!decoder.decode(colorSpace))
-            return std::nullopt;
-        float c1;
-        if (!decoder.decode(c1))
-            return std::nullopt;
-        float c2;
-        if (!decoder.decode(c2))
-            return std::nullopt;
-        float c3;
-        if (!decoder.decode(c3))
-            return std::nullopt;
-        float alpha;
-        if (!decoder.decode(alpha))
-            return std::nullopt;
-        return Color { OutOfLineComponents::create({ c1, c2, c3, alpha }), colorSpace, flags };
-    }
-
-    uint32_t value;
-    if (!decoder.decode(value))
-        return std::nullopt;
-
-    return Color { asSRGBA(PackedColor::RGBA { value }), flags };
 }
 
 } // namespace WebCore

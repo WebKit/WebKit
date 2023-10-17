@@ -120,7 +120,55 @@ class BufferBlock final : angle::NonCopyable
     // Manages the descriptorSet cache that created with this BufferBlock.
     DescriptorSetCacheManager mDescriptorSetCacheManager;
 };
-using BufferBlockPointerVector = std::vector<std::unique_ptr<BufferBlock>>;
+using BufferBlockPointer       = std::unique_ptr<BufferBlock>;
+using BufferBlockPointerVector = std::vector<BufferBlockPointer>;
+
+class BufferBlockGarbageList final : angle::NonCopyable
+{
+  public:
+    BufferBlockGarbageList() : mBufferBlockQueue(kInitialQueueCapacity) {}
+    ~BufferBlockGarbageList() { ASSERT(mBufferBlockQueue.empty()); }
+
+    void add(BufferBlock *bufferBlock)
+    {
+        std::unique_lock<std::mutex> lock(mMutex);
+        if (mBufferBlockQueue.full())
+        {
+            size_t newCapacity = mBufferBlockQueue.capacity() << 1;
+            mBufferBlockQueue.updateCapacity(newCapacity);
+        }
+        mBufferBlockQueue.push(bufferBlock);
+    }
+
+    void pruneEmptyBufferBlocks(RendererVk *renderer)
+    {
+        if (!mBufferBlockQueue.empty())
+        {
+            std::unique_lock<std::mutex> lock(mMutex);
+            size_t count = mBufferBlockQueue.size();
+            for (size_t i = 0; i < count; i++)
+            {
+                BufferBlock *block = mBufferBlockQueue.front();
+                mBufferBlockQueue.pop();
+                if (block->isEmpty())
+                {
+                    block->destroy(renderer);
+                }
+                else
+                {
+                    mBufferBlockQueue.push(block);
+                }
+            }
+        }
+    }
+
+    bool empty() const { return mBufferBlockQueue.empty(); }
+
+  private:
+    static constexpr size_t kInitialQueueCapacity = 4;
+    std::mutex mMutex;
+    angle::FixedQueue<BufferBlock *> mBufferBlockQueue;
+};
 
 // BufferSuballocation
 class BufferSuballocation final : angle::NonCopyable
@@ -179,21 +227,28 @@ class BufferSuballocation final : angle::NonCopyable
     VkDeviceSize mSize;
 };
 
-class SharedBufferSuballocationGarbage
+class BufferSuballocationGarbage
 {
   public:
-    SharedBufferSuballocationGarbage() = default;
-    SharedBufferSuballocationGarbage(SharedBufferSuballocationGarbage &&other)
+    BufferSuballocationGarbage() = default;
+    BufferSuballocationGarbage(BufferSuballocationGarbage &&other)
         : mLifetime(other.mLifetime),
           mSuballocation(std::move(other.mSuballocation)),
           mBuffer(std::move(other.mBuffer))
     {}
-    SharedBufferSuballocationGarbage(const ResourceUse &use,
-                                     BufferSuballocation &&suballocation,
-                                     Buffer &&buffer)
+    BufferSuballocationGarbage &operator=(BufferSuballocationGarbage &&other)
+    {
+        mLifetime      = other.mLifetime;
+        mSuballocation = std::move(other.mSuballocation);
+        mBuffer        = std::move(other.mBuffer);
+        return *this;
+    }
+    BufferSuballocationGarbage(const ResourceUse &use,
+                               BufferSuballocation &&suballocation,
+                               Buffer &&buffer)
         : mLifetime(use), mSuballocation(std::move(suballocation)), mBuffer(std::move(buffer))
     {}
-    ~SharedBufferSuballocationGarbage() = default;
+    ~BufferSuballocationGarbage() = default;
 
     bool destroyIfComplete(RendererVk *renderer);
     bool hasResourceUseSubmitted(RendererVk *renderer) const;
@@ -205,7 +260,6 @@ class SharedBufferSuballocationGarbage
     BufferSuballocation mSuballocation;
     Buffer mBuffer;
 };
-using SharedBufferSuballocationGarbageList = std::queue<SharedBufferSuballocationGarbage>;
 
 // BufferBlock implementation.
 ANGLE_INLINE VkMemoryPropertyFlags BufferBlock::getMemoryPropertyFlags() const

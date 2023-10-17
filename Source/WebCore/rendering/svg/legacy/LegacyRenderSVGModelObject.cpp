@@ -179,7 +179,7 @@ bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, cons
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RenderObject::RepaintRectCalculation::Accurate)));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -194,7 +194,7 @@ bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const F
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RenderObject::RepaintRectCalculation::Accurate)));
+    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 } // namespace WebCore

@@ -135,9 +135,9 @@ const char *gTestExpectationsFiles[] = {
     "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gles3_multisample_test_expectations.txt",
-    "deqp_gles3_565_no_depth_no_stencil_test_expectations.txt",
+    "deqp_gles3_565-no-depth-no-stencil_test_expectations.txt",
     "deqp_gles31_multisample_test_expectations.txt",
-    "deqp_gles31_565_no_depth_no_stencil_test_expectations.txt",
+    "deqp_gles31_565-no-depth-no-stencil_test_expectations.txt",
     "deqp_gl46_test_expectations.txt",
 };
 
@@ -157,15 +157,30 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
     {"x11", GPUTestConfig::kAPIUnknown},
 };
 
-constexpr char kdEQPEGLString[]     = "--deqp-egl-display-type=";
-constexpr char kANGLEEGLString[]    = "--use-angle=";
-constexpr char kANGLEPreRotation[]  = "--emulated-pre-rotation=";
-constexpr char kdEQPCaseString[]    = "--deqp-case=";
-constexpr char kVerboseString[]     = "--verbose";
-constexpr char kRenderDocString[]   = "--renderdoc";
-constexpr char kNoRenderDocString[] = "--no-renderdoc";
-constexpr char kdEQPFlagsPrefix[]   = "--deqp-";
-constexpr char kGTestFilter[]       = "--gtest_filter=";
+constexpr char kdEQPEGLString[]             = "--deqp-egl-display-type=";
+constexpr char kANGLEEGLString[]            = "--use-angle=";
+constexpr char kANGLEPreRotation[]          = "--emulated-pre-rotation=";
+constexpr char kdEQPCaseString[]            = "--deqp-case=";
+constexpr char kVerboseString[]             = "--verbose";
+constexpr char kRenderDocString[]           = "--renderdoc";
+constexpr char kNoRenderDocString[]         = "--no-renderdoc";
+constexpr char kdEQPFlagsPrefix[]           = "--deqp-";
+constexpr char kGTestFilter[]               = "--gtest_filter=";
+constexpr char kdEQPSurfaceWidth[]          = "--deqp-surface-width=";
+constexpr char kdEQPSurfaceHeight[]         = "--deqp-surface-height=";
+constexpr char kdEQPBaseSeed[]              = "--deqp-base-seed";
+constexpr const char gdEQPLogImagesString[] = "--deqp-log-images=";
+
+// Use the config name defined in gTestSuiteConfigParameters by default
+// If gEGLConfigNameFromCmdLine is overwritten by --deqp-gl-config-name passed from command
+// line arguments, for example:
+// out/Debug/angle_deqp_egl_tests --verbose --deqp-gl-config-name=rgba8888d24s8
+// use gEGLConfigNameFromCmdLine (rgba8888d24s8) instead.
+// Invalid --deqp-gl-config-name value passed from command line arguments will be caught by
+// glu::parseConfigBitsFromName() defined in gluRenderConfig.cpp, and it will cause tests
+// to fail
+constexpr const char gdEQPEGLConfigNameString[] = "--deqp-gl-config-name=";
+const char *gEGLConfigNameFromCmdLine           = "";
 
 angle::base::NoDestructor<std::vector<char>> gFilterStringBuffer;
 
@@ -191,19 +206,6 @@ dEQPOptions gOptions    = {
     kDefaultPreRotation,      // preRotation
     kEnableRenderDocCapture,  // enableRenderDocCapture
 };
-
-constexpr const char gdEQPEGLConfigNameString[] = "--deqp-gl-config-name=";
-constexpr const char gdEQPLogImagesString[]     = "--deqp-log-images=";
-
-// Use the config name defined in gTestSuiteConfigParameters by default
-// If gEGLConfigNameFromCmdLine is overwritten by --deqp-gl-config-name passed from command
-// line arguments, for example:
-// out/Debug/angle_deqp_egl_tests --verbose --deqp-gl-config-name=rgba8888d24s8
-// use gEGLConfigNameFromCmdLine (rgba8888d24s8) instead.
-// Invalid --deqp-gl-config-name value passed from command line arguments will be caught by
-// glu::parseConfigBitsFromName() defined in gluRenderConfig.cpp, and it will cause tests
-// to fail
-const char *gEGLConfigNameFromCmdLine = "";
 
 std::vector<const char *> gdEQPForwardFlags;
 
@@ -940,6 +942,18 @@ int RunGLCTSTests(int *argc, char **argv)
             gOptions.enableRenderDocCapture = false;
         }
         else if (strncmp(argv[argIndex], kdEQPFlagsPrefix, strlen(kdEQPFlagsPrefix)) == 0)
+        {
+            gdEQPForwardFlags.push_back(argv[argIndex]);
+        }
+        else if (strncmp(argv[argIndex], kdEQPSurfaceWidth, strlen(kdEQPSurfaceWidth)) == 0)
+        {
+            gdEQPForwardFlags.push_back(argv[argIndex]);
+        }
+        else if (strncmp(argv[argIndex], kdEQPSurfaceHeight, strlen(kdEQPSurfaceHeight)) == 0)
+        {
+            gdEQPForwardFlags.push_back(argv[argIndex]);
+        }
+        else if (strncmp(argv[argIndex], kdEQPBaseSeed, strlen(kdEQPBaseSeed)) == 0)
         {
             gdEQPForwardFlags.push_back(argv[argIndex]);
         }

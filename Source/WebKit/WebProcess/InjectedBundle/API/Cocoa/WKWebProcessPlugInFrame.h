@@ -44,7 +44,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInFrame : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, readonly) NSArray *childFrames;
+@property (nonatomic, readonly) NSArray *childFrames WK_API_DEPRECATED("Child frames might not be in the same process", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @property (nonatomic, readonly) BOOL containsAnyFormElements;
 @property (nonatomic, readonly) BOOL isMainFrame;
 
@@ -61,6 +61,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point options:(WKHitTestOptions)options WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (JSValue *)jsCSSStyleDeclarationForCSSStyleDeclarationHandle:(WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandle inWorld:(WKWebProcessPlugInScriptWorld *)world WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world;
-- (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
+- (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world WK_API_AVAILABLE(macos(10.12.4), ios(10.3));
 
 @end

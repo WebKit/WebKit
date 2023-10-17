@@ -533,8 +533,9 @@ private:
     void setFrameWasScrolledByUser();
 
     struct CapturesDragging {
-        enum class InabilityReason : bool {
+        enum class InabilityReason : uint8_t {
             MousePressIsCancelled,
+            MouseMoveIsCancelled,
             Unknown,
         };
 

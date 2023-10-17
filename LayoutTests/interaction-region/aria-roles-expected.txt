@@ -3,6 +3,7 @@ This works like a link
 Menu option 1
 Menu option 2
 Menu option 3
+This works like a switch.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -25,6 +26,8 @@ Menu option 3
         (interaction (40,76) width=760 height=20)
         (borderRadius 8.00),
         (interaction (40,96) width=760 height=20)
+        (borderRadius 8.00),
+        (interaction (0,132) width=800 height=20)
         (borderRadius 8.00)])
       )
     )

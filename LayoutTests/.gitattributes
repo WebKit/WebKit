@@ -84,7 +84,9 @@ fast/css/only-of-type-pseudo-class.html -crlf
 fast/css/text-input-with-webkit-border-radius.html -crlf
 fast/dom/Document/open-with-pending-load.html -crlf
 fast/dom/Element/hostname-host.html -crlf
+fast/dom/Range/surround-contents-font-face-crash.svg -crlf
 fast/dom/Window/window-property-clearing-expected.txt -crlf
+fast/dom/adopt-attribute-crash.svg -crlf
 fast/dom/everything-to-string.html -crlf
 fast/dom/insert-span-into-long-text-bug-28245.html -crlf
 fast/dom/simultaneouslyRegsiteredTimerFireOrder-expected.txt -crlf
@@ -123,6 +125,10 @@ fast/text/resources/line-breaks-crlf.txt -crlf
 fast/text/text-large-negative-letter-spacing-with-opacity.html -crlf
 fast/text/text-letter-spacing.html -crlf
 http/tests/appcache/max-size.html -crlf
+http/tests/inspector/network/resource-sizes-memory-cache.html -crlf
+http/tests/inspector/network/resources/data.json -crlf
+http/tests/inspector/network/resources/data.txt -crlf
+http/tests/inspector/network/resources/lorem.txt -crlf
 http/tests/misc/location-test-xsl-style-sheet.xml -crlf
 http/tests/misc/resources/location-test-xsl-style-sheet.xsl -crlf
 http/tests/misc/single-character-pi-stylesheet.xhtml -crlf
@@ -137,6 +143,9 @@ http/tests/security/isolatedWorld/resources/iframe.html -crlf
 http/tests/security/isolatedWorld/resources/userGestureEvents-second-window.html -crlf
 http/tests/security/isolatedWorld/userGestureEvents.html -crlf
 http/tests/security/resources/empty-svg.php -crlf
+http/tests/xmlhttprequest/resources/reply.xml -crlf
+js/dom/modules/script-tests/module-integrity-bad-value-success-with-cache.js -crlf
+js/dom/modules/script-tests/module-integrity-non-top-level.js -crlf
 platform/win/fast/events/panScroll-event-fired.html -crlf
 platform/win/fast/events/panScroll-image-no-scroll.html -crlf
 platform/win/fast/events/panScroll-imageMap-href-no-scroll.html -crlf

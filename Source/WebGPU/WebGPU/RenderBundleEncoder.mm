@@ -321,6 +321,8 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
     RELEASE_ASSERT(m_indexBuffer);
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
+    if (m_indexBuffer)
+        addResource(m_resources, m_indexBuffer, MTLRenderStageVertex);
 }
 
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)

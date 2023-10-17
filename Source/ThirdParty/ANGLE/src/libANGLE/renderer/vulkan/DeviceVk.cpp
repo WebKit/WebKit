@@ -87,6 +87,11 @@ egl::Error DeviceVk::getAttribute(const egl::Display *display, EGLint attribute,
         }
         case EGL_VULKAN_QUEUE_ANGLE:
         {
+            // Usage of the Vulkan queue by the application is incompatible with the
+            // asyncCommandQueue feature; there is no way for the application to synchronize with
+            // the async thread's usage of the queue.
+            ASSERT(!mRenderer->getFeatures().asyncCommandQueue.enabled);
+
             // egl::ContextPriority::Medium is the default context priority.
             *outValue = mRenderer->getQueue(egl::ContextPriority::Medium);
             return egl::NoError();

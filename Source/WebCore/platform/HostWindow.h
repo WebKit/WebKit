@@ -28,6 +28,10 @@
 #include "GraphicsClient.h"
 #include "Widget.h"
 
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS NSData;
+#endif
+
 namespace WebCore {
 
 class Cursor;
@@ -57,6 +61,9 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const = 0;
+#endif
 
     // Method for retrieving the native client of the page.
     virtual PlatformPageClient platformPageClient() const = 0;

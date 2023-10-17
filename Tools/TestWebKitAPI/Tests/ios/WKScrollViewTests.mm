@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
+#import <WebCore/WebEvent.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 constexpr CGFloat blackColorComponents[4] = { 0, 0, 0, 1 };
@@ -295,5 +296,55 @@ TEST(WKScrollViewTests, DecelerationSetByClient)
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"second"];
     EXPECT_FLOAT_EQ([webView scrollView].decelerationRate, UIScrollViewDecelerationRateFast);
 }
+
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+TEST(WKScrollViewTests, AllowsKeyboardScrolling)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView waitForNextPresentationUpdate];
+
+    __block id<UITextInputPrivate> contentView = (id<UITextInputPrivate>)[webView wkContentView];
+
+    auto pressSpacebar = ^(void(^completionHandler)(void)) {
+        auto firstWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@" " charactersIgnoringModifiers:@" " modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+
+        auto secondWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:@" " charactersIgnoringModifiers:@" " modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+
+        [contentView handleKeyWebEvent:firstWebEvent.get() withCompletionHandler:^(WebEvent *theEvent, BOOL wasHandled) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [contentView handleKeyWebEvent:secondWebEvent.get() withCompletionHandler:^(WebEvent *theEvent, BOOL wasHandled) {
+                    completionHandler();
+                }];
+            });
+        }];
+    };
+
+    __block bool doneWaiting = false;
+
+    [webView scrollView].allowsKeyboardScrolling = NO;
+
+    pressSpacebar(^{
+        NSInteger scrollY = [[webView stringByEvaluatingJavaScript:@"window.scrollY"] integerValue];
+        EXPECT_EQ(scrollY, 0);
+        doneWaiting = true;
+    });
+
+    TestWebKitAPI::Util::run(&doneWaiting);
+
+    doneWaiting = false;
+
+    [webView scrollView].allowsKeyboardScrolling = YES;
+
+    pressSpacebar(^{
+        NSInteger scrollY = [[webView stringByEvaluatingJavaScript:@"window.scrollY"] integerValue];
+        EXPECT_GT(scrollY, 0);
+        doneWaiting = true;
+    });
+
+    TestWebKitAPI::Util::run(&doneWaiting);
+}
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)

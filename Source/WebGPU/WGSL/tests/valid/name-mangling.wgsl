@@ -12,7 +12,7 @@ struct MyStruct2 {
   myStructField2: MyStruct1,
 };
 
-// FIXME: this still appears in a struct field
+// CHECK-NOT-L: myGlobal1
 @group(0) @binding(0) var<storage> myGlobal1: MyStruct2;
 
 // CHECK-NOT-L: myGlobal2

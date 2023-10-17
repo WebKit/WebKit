@@ -4025,7 +4025,9 @@ JSRTCIceComponent.cpp
 JSRTCIceConnectionState.cpp
 JSRTCIceGatheringState.cpp
 JSRTCIceProtocol.cpp
+JSRTCIceRole.cpp
 JSRTCIceServer.cpp
+JSRTCIceServerTransportProtocol.cpp
 JSRTCIceTcpCandidateType.cpp
 JSRTCIceTransport.cpp
 JSRTCIceTransportState.cpp

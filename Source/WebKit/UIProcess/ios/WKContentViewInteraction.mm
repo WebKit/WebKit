@@ -192,6 +192,10 @@
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIAsyncDragInteraction)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIContextMenuAsyncConfiguration)
+
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
@@ -836,10 +840,21 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @end
 
+#if USE(UICONTEXTMENU)
+
+@protocol UIContextMenuInteractionDelegate_LegacyAsyncSupport<NSObject>
+- (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion;
+@end
+
+#endif
+
 @interface WKContentView (WKInteractionPrivate)
 - (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
 - (NSArray *)webSelectionRectsForSelectionGeometries:(const Vector<WebCore::SelectionGeometry>&)selectionRects;
 - (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
+#if USE(UICONTEXTMENU)
+- (void)_internalContextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion;
+#endif
 @end
 
 @implementation WKContentView (WKInteraction)
@@ -892,6 +907,42 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 }
 
+- (BOOL)_shouldUseUIContextMenuAsyncConfiguration
+{
+#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+    if (!_page->preferences().useAsyncUIKitInteractions())
+        return NO;
+
+    static BOOL hasAsyncConfigurationClass = !!get_UIContextMenuAsyncConfigurationClass();
+    return hasAsyncConfigurationClass;
+#else
+    return NO;
+#endif
+}
+
+- (void)_ensureBinaryCompatibilityWithAsyncInteractionsIfNeeded
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, ^{
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+        if (_page->preferences().useAsyncUIKitInteractions())
+            class_addProtocol(self.class, @protocol(UIAsyncTextInput));
+#endif
+#if USE(UICONTEXTMENU)
+        if (!self._shouldUseUIContextMenuAsyncConfiguration) {
+            // Only fall back to the legacy asynchronous delegate method when UI_CONTEXT_MENU_ASYNC_CONFIGURATION
+            // is set, if the requisite class is unavailable at runtime (i.e. older builds that do not have the
+            // changes in <rdar://112292302>.
+            auto legacyAsyncConfigurationSelector = @selector(_contextMenuInteraction:configurationForMenuAtLocation:completion:);
+            auto internalAsyncConfigurationSelector = @selector(_internalContextMenuInteraction:configurationForMenuAtLocation:completion:);
+            auto internalMethod = class_getInstanceMethod(self.class, internalAsyncConfigurationSelector);
+            auto internalImplementation = method_getImplementation(internalMethod);
+            class_addMethod(self.class, legacyAsyncConfigurationSelector, internalImplementation, method_getTypeEncoding(internalMethod));
+        }
+#endif // USE(UICONTEXTMENU)
+    });
+}
+
 - (void)setUpInteraction
 {
     // If the page is not valid yet then delay interaction setup until the process is launched/relaunched.
@@ -900,6 +951,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     if (_hasSetUpInteractions)
         return;
+
+    [self _ensureBinaryCompatibilityWithAsyncInteractionsIfNeeded];
+
+    _cachedHasCustomTintColor = std::nullopt;
 
     if (!_interactionViewsContainerView) {
         _interactionViewsContainerView = adoptNS([[UIView alloc] init]);
@@ -1274,6 +1329,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
 
+    _cachedHasCustomTintColor = std::nullopt;
     _cachedSelectedTextRange = nil;
 }
 
@@ -3926,6 +3982,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [self.textInputTraits selectionHighlightColor];
 }
 
+- (BOOL)_hasCustomTintColor
+{
+    if (!_cachedHasCustomTintColor) {
+        auto defaultTintColor = WebCore::colorFromCocoaColor([adoptNS([UIView new]) tintColor]);
+        _cachedHasCustomTintColor = defaultTintColor != WebCore::colorFromCocoaColor(self.tintColor);
+    }
+    return *_cachedHasCustomTintColor;
+}
+
 - (UIColor *)_cascadeInteractionTintColor
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -3936,12 +4001,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->preferences().textInteractionEnabled())
         return [UIColor clearColor];
 
+    RetainPtr<UIColor> caretColorFromStyle;
+    BOOL hasExplicitlySetCaretColorFromStyle = NO;
     if (_page->editorState().hasPostLayoutData()) {
-        if (auto caretColor = _page->editorState().postLayoutData->caretColor; caretColor.isValid())
-            return cocoaColor(caretColor).autorelease();
+        auto& postLayoutData = *_page->editorState().postLayoutData;
+        if (auto caretColor = postLayoutData.caretColor; caretColor.isValid()) {
+            caretColorFromStyle = cocoaColor(caretColor);
+            hasExplicitlySetCaretColorFromStyle = !postLayoutData.hasCaretColorAuto;
+        }
     }
 
-    return [self _inheritedInteractionTintColor];
+    if (hasExplicitlySetCaretColorFromStyle)
+        return caretColorFromStyle.autorelease();
+
+    auto tintColorFromNativeView = self.tintColor;
+    if (self._hasCustomTintColor)
+        return tintColorFromNativeView;
+
+    return caretColorFromStyle.autorelease() ?: tintColorFromNativeView;
 }
 
 - (void)_updateInteractionTintColor:(UITextInputTraits *)traits
@@ -3952,6 +4029,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)tintColorDidChange
 {
     [super tintColorDidChange];
+
+    _cachedHasCustomTintColor = std::nullopt;
 
     BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
     if (shouldUpdateTextSelection)
@@ -6696,6 +6775,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!self.webView.scrollView.scrollEnabled)
         return NO;
 
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+    if (!self.webView.scrollView.allowsKeyboardScrolling)
+        return NO;
+#endif
+
     return YES;
 }
 
@@ -9007,8 +9091,10 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 - (Class)_dragInteractionClass
 {
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
-    if (_page->preferences().useAsyncUIKitInteractions())
-        return _UIAsyncDragInteraction.class;
+    if (_page->preferences().useAsyncUIKitInteractions()) {
+        if (auto interactionClass = get_UIAsyncDragInteractionClass())
+            return interactionClass;
+    }
 #endif
     return UIDragInteraction.class;
 }
@@ -12390,12 +12476,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
-    // Required to conform to UIContextMenuInteractionDelegate, but SPI version should be called instead.
-    ASSERT_NOT_REACHED();
-    return nil;
+    RetainPtr<UIContextMenuConfiguration> configuration;
+#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+    if (self._shouldUseUIContextMenuAsyncConfiguration) {
+        auto asyncConfiguration = adoptNS([alloc_UIContextMenuAsyncConfigurationInstance() init]);
+        [self _internalContextMenuInteraction:interaction configurationForMenuAtLocation:location completion:[asyncConfiguration](UIContextMenuConfiguration *finalConfiguration) {
+            [asyncConfiguration fulfillWithConfiguration:finalConfiguration];
+        }];
+        configuration = asyncConfiguration.get();
+    }
+#endif // HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+    return configuration.get();
 }
 
-- (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
+- (void)_internalContextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
     _useContextMenuInteractionDismissalPreview = YES;
 

@@ -196,7 +196,7 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
     return path;
 }
 
-HTMLImageElement* HTMLAreaElement::imageElement() const
+RefPtr<HTMLImageElement> HTMLAreaElement::imageElement() const
 {
     RefPtr<Node> mapElement = parentNode();
     if (!is<HTMLMapElement>(mapElement))
@@ -217,7 +217,7 @@ bool HTMLAreaElement::isMouseFocusable() const
 
 bool HTMLAreaElement::isFocusable() const
 {
-    RefPtr<HTMLImageElement> image = imageElement();
+    RefPtr image = imageElement();
     if (!image || !image->hasFocusableStyle())
         return false;
 
@@ -231,7 +231,7 @@ void HTMLAreaElement::setFocus(bool shouldBeFocused, FocusVisibility visibility)
 
     HTMLAnchorElement::setFocus(shouldBeFocused, visibility);
 
-    RefPtr<HTMLImageElement> imageElement = this->imageElement();
+    RefPtr imageElement = this->imageElement();
     if (!imageElement)
         return;
 

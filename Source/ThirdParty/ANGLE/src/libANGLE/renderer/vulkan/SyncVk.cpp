@@ -184,63 +184,48 @@ angle::Result SyncHelper::clientWait(Context *context,
                                      ContextVk *contextVk,
                                      bool flushCommands,
                                      uint64_t timeout,
-                                     VkResult *resultOut)
+                                     MapVkResultToApiType mappingFunction,
+                                     void *resultOut)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper clientWait");
-    ANGLE_TRY(prepareForClientWait(context, contextVk, flushCommands, timeout, resultOut));
+    ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper::clientWait");
 
-    if (*resultOut == VK_INCOMPLETE)
-    {
-        ANGLE_TRY(contextVk->getRenderer()->waitForResourceUseToFinishWithUserTimeout(
-            context, mUse, timeout, resultOut));
-
-        // Check for errors, but don't consider timeout as such.
-        if (*resultOut != VK_TIMEOUT)
-        {
-            ANGLE_VK_TRY(context, *resultOut);
-        }
-    }
-
-    return angle::Result::Continue;
-}
-
-angle::Result SyncHelper::clientWaitUnlocked(Context *context,
-                                             ContextVk *contextVk,
-                                             bool flushCommands,
-                                             uint64_t timeout,
-                                             void *resultOut,
-                                             MapVkResultToApiType mappingFunction)
-{
-    ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper clientWaitUnlocked");
     VkResult status = VK_INCOMPLETE;
     ANGLE_TRY(prepareForClientWait(context, contextVk, flushCommands, timeout, &status));
 
-    if (status == VK_INCOMPLETE)
-    {
-        RendererVk *renderer = context->getRenderer();
-
-        // If we need to perform a CPU wait don't set the resultOut parameter passed into the
-        // method, instead set the parameter passed into the unlocked tail call.
-        auto clientWaitUnlocked = [renderer, context, mappingFunction, use = mUse,
-                                   timeout](void *resultOut) {
-            ANGLE_TRACE_EVENT0("gpu.angle", "UnlockedTailCall clientWait");
-            ASSERT(resultOut);
-
-            VkResult status = VK_INCOMPLETE;
-            angle::Result angleResult =
-                renderer->waitForResourceUseToFinishWithUserTimeout(context, use, timeout, &status);
-            mappingFunction(status, angleResult, resultOut);
-        };
-
-        egl::Display::GetCurrentThreadUnlockedTailCall()->add(clientWaitUnlocked);
-        return angle::Result::Continue;
-    }
-    else
+    if (status != VK_INCOMPLETE)
     {
         mappingFunction(status, angle::Result::Continue, resultOut);
+        return angle::Result::Continue;
     }
 
+    RendererVk *renderer = context->getRenderer();
+
+    // If we need to perform a CPU wait don't set the resultOut parameter passed into the
+    // method, instead set the parameter passed into the unlocked tail call.
+    auto clientWaitUnlocked = [renderer, context, mappingFunction, use = mUse,
+                               timeout](void *resultOut) {
+        ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper::clientWait block (unlocked)");
+
+        VkResult status = VK_INCOMPLETE;
+        angle::Result angleResult =
+            renderer->waitForResourceUseToFinishWithUserTimeout(context, use, timeout, &status);
+        // Note: resultOut may be nullptr through the glFinishFenceNV path, which does not have a
+        // return value.
+        if (resultOut != nullptr)
+        {
+            mappingFunction(status, angleResult, resultOut);
+        }
+    };
+
+    // Schedule the wait to be run at the tail of the current call.
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add(clientWaitUnlocked);
     return angle::Result::Continue;
+}
+
+angle::Result SyncHelper::finish(ContextVk *contextVk)
+{
+    GLenum result;
+    return clientWait(contextVk, contextVk, true, UINT64_MAX, MapVkResultToGlenum, &result);
 }
 
 angle::Result SyncHelper::serverWait(ContextVk *contextVk)
@@ -450,14 +435,12 @@ angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int 
     return angle::Result::Continue;
 }
 
-angle::Result SyncHelperNativeFence::clientWait(Context *context,
-                                                ContextVk *contextVk,
-                                                bool flushCommands,
-                                                uint64_t timeout,
-                                                VkResult *resultOut)
+angle::Result SyncHelperNativeFence::prepareForClientWait(Context *context,
+                                                          ContextVk *contextVk,
+                                                          bool flushCommands,
+                                                          uint64_t timeout,
+                                                          VkResult *resultOut)
 {
-    RendererVk *renderer = context->getRenderer();
-
     // If already signaled, don't wait
     bool alreadySignaled = false;
     ANGLE_TRY(getStatus(context, contextVk, &alreadySignaled));
@@ -480,29 +463,41 @@ angle::Result SyncHelperNativeFence::clientWait(Context *context,
             contextVk->flushImpl(nullptr, nullptr, RenderPassClosureReason::SyncObjectClientWait));
     }
 
-    *resultOut = mExternalFence->wait(renderer->getDevice(), timeout);
-    if (*resultOut != VK_TIMEOUT)
-    {
-        ANGLE_VK_TRY(contextVk, *resultOut);
-    }
-
+    *resultOut = VK_INCOMPLETE;
     return angle::Result::Continue;
 }
 
-angle::Result SyncHelperNativeFence::clientWaitUnlocked(Context *context,
-                                                        ContextVk *contextVk,
-                                                        bool flushCommands,
-                                                        uint64_t timeout,
-                                                        void *resultOut,
-                                                        MapVkResultToApiType mappingFunction)
+angle::Result SyncHelperNativeFence::clientWait(Context *context,
+                                                ContextVk *contextVk,
+                                                bool flushCommands,
+                                                uint64_t timeout,
+                                                MapVkResultToApiType mappingFunction,
+                                                void *resultOut)
 {
-    // Unlocked clientWait is not supported for SyncHelperNativeFence, yet.
-    // For now call into clientWait(...)
-    VkResult status           = VK_INCOMPLETE;
-    angle::Result angleResult = clientWait(context, contextVk, flushCommands, timeout, &status);
+    ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelperNativeFence::clientWait");
 
-    mappingFunction(status, angleResult, resultOut);
-    return angleResult;
+    VkResult status = VK_INCOMPLETE;
+    ANGLE_TRY(prepareForClientWait(context, contextVk, flushCommands, timeout, &status));
+
+    if (status != VK_INCOMPLETE)
+    {
+        mappingFunction(status, angle::Result::Continue, resultOut);
+        return angle::Result::Continue;
+    }
+
+    RendererVk *renderer = context->getRenderer();
+
+    auto clientWaitUnlocked = [device = renderer->getDevice(), fence = mExternalFence,
+                               mappingFunction, timeout](void *resultOut) {
+        ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelperNativeFence::clientWait block (unlocked)");
+        ASSERT(resultOut);
+
+        VkResult status = fence->wait(device, timeout);
+        mappingFunction(status, angle::Result::Continue, resultOut);
+    };
+
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add(clientWaitUnlocked);
+    return angle::Result::Continue;
 }
 
 angle::Result SyncHelperNativeFence::serverWait(ContextVk *contextVk)
@@ -593,9 +588,8 @@ angle::Result SyncVk::clientWait(const gl::Context *context,
 
     bool flush = (flags & GL_SYNC_FLUSH_COMMANDS_BIT) != 0;
 
-    return mSyncHelper.clientWaitUnlocked(contextVk, contextVk, flush,
-                                          static_cast<uint64_t>(timeout), outResult,
-                                          MapVkResultToGlenum);
+    return mSyncHelper.clientWait(contextVk, contextVk, flush, static_cast<uint64_t>(timeout),
+                                  MapVkResultToGlenum, outResult);
 }
 
 angle::Result SyncVk::serverWait(const gl::Context *context, GLbitfield flags, GLuint64 timeout)
@@ -677,9 +671,9 @@ egl::Error EGLSyncVk::clientWait(const egl::Display *display,
     bool flush = (flags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) != 0;
 
     ContextVk *contextVk = context ? vk::GetImpl(context) : nullptr;
-    if (mSyncHelper->clientWaitUnlocked(vk::GetImpl(display), contextVk, flush,
-                                        static_cast<uint64_t>(timeout), outResult,
-                                        MapVkResultToEglint) == angle::Result::Stop)
+    if (mSyncHelper->clientWait(vk::GetImpl(display), contextVk, flush,
+                                static_cast<uint64_t>(timeout), MapVkResultToEglint,
+                                outResult) == angle::Result::Stop)
     {
         return egl::Error(EGL_BAD_ALLOC);
     }

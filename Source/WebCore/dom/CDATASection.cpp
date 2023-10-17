@@ -56,7 +56,7 @@ Ref<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOpera
 
 Ref<Text> CDATASection::virtualCreate(String&& data)
 {
-    return create(document(), WTFMove(data));
+    return create(protectedDocument(), WTFMove(data));
 }
 
 } // namespace WebCore

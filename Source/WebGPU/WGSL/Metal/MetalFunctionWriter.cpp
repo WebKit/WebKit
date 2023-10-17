@@ -1534,7 +1534,6 @@ void FunctionDefinitionWriter::visit(AST::BoolLiteral& literal)
 
 void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
 {
-    // FIXME: this might not serialize all values correctly
     m_stringBuilder.append(literal.value());
     auto& primitiveType = std::get<Types::Primitive>(*literal.inferredType());
     if (primitiveType.kind == Types::Primitive::U32)
@@ -1543,19 +1542,16 @@ void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
 
 void FunctionDefinitionWriter::visit(AST::Signed32Literal& literal)
 {
-    // FIXME: this might not serialize all values correctly
     m_stringBuilder.append(literal.value());
 }
 
 void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 {
-    // FIXME: this might not serialize all values correctly
     m_stringBuilder.append(literal.value(), "u");
 }
 
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 {
-    // FIXME: this might not serialize all values correctly
     NumberToStringBuffer buffer;
     WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
 
@@ -1564,7 +1560,6 @@ void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 {
-    // FIXME: this might not serialize all values correctly
     NumberToStringBuffer buffer;
     WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
 

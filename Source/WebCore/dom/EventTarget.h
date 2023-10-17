@@ -109,7 +109,7 @@ public:
     template<typename JSMaybeErrorEventListener>
     void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
-    JSEventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
+    RefPtr<JSEventListener> attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
 
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomString& eventType) const;

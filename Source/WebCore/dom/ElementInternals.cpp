@@ -155,7 +155,7 @@ const AtomString& ElementInternals::attributeWithoutSynchronization(const Qualif
     return defaultARIA->valueForAttribute(*element, name);
 }
 
-Element* ElementInternals::getElementAttribute(const QualifiedName& name) const
+RefPtr<Element> ElementInternals::getElementAttribute(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
     auto* defaultARIA = m_element->customElementDefaultARIAIfExists();

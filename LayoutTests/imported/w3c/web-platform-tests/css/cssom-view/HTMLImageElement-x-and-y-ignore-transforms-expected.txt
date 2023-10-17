@@ -1,0 +1,4 @@
+
+
+PASS HTMLImageElement's 'x' and 'y' property values ignore transforms
+

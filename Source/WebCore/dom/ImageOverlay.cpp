@@ -57,6 +57,7 @@
 #include "Text.h"
 #include "TextIterator.h"
 #include "TextRecognitionResult.h"
+#include "TreeScopeInlines.h"
 #include "UserAgentStyleSheets.h"
 #include "VisibleSelection.h"
 #include <wtf/Range.h>

@@ -275,7 +275,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
     if (imageSize.isEmpty())
         return;
 
-    if (intrinsicSize() != imageSize) {
+    if (intrinsicSize() != imageSize || size() != imageSize) {
         setIntrinsicSize(imageSize);
         setSize(imageSize);
     }

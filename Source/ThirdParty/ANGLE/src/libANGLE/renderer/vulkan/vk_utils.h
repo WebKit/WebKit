@@ -409,42 +409,7 @@ GarbageObject GetGarbage(T *obj)
 }
 
 // A list of garbage objects. Has no object lifetime information.
-using GarbageList = std::vector<GarbageObject>;
-
-// A list of garbage objects and the associated serial after which the objects can be destroyed.
-class GarbageAndQueueSerial final : angle::NonCopyable
-{
-  public:
-    GarbageAndQueueSerial() {}
-
-    GarbageAndQueueSerial(GarbageList &&object, QueueSerial serial)
-        : mObject(std::move(object)), mQueueSerial(serial)
-    {}
-
-    GarbageAndQueueSerial(GarbageAndQueueSerial &&other)
-        : mObject(std::move(other.mObject)), mQueueSerial(std::move(other.mQueueSerial))
-    {}
-    GarbageAndQueueSerial &operator=(GarbageAndQueueSerial &&other)
-    {
-        mObject      = std::move(other.mObject);
-        mQueueSerial = std::move(other.mQueueSerial);
-        return *this;
-    }
-
-    QueueSerial getQueueSerial() const { return mQueueSerial; }
-    void updateQueueSerial(const QueueSerial &newQueueSerial) { mQueueSerial = newQueueSerial; }
-
-    const GarbageList &get() const { return mObject; }
-    GarbageList &get() { return mObject; }
-
-  private:
-    GarbageList mObject;
-    QueueSerial mQueueSerial;
-};
-
-// Houses multiple lists of garbage objects. Each sub-list has a different lifetime. They should be
-// sorted such that later-living garbage is ordered later in the list.
-using GarbageQueue = std::queue<GarbageAndQueueSerial>;
+using GarbageObjects = std::vector<GarbageObject>;
 
 class MemoryProperties final : angle::NonCopyable
 {

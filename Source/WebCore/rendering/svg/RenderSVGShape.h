@@ -89,7 +89,7 @@ public:
     ShapeType shapeType() const { return m_shapeType; }
 
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
     bool needsHasSVGTransformFlags() const final;
@@ -99,9 +99,9 @@ public:
 protected:
     void element() const = delete;
 
-    void ensurePath();
+    Path& ensurePath();
 
-    virtual void updateShapeFromElement();
+    virtual void updateShapeFromElement() = 0;
     virtual bool isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
@@ -112,8 +112,7 @@ protected:
     AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
-    FloatRect m_fillBoundingBox;
-    FloatRect m_strokeBoundingBox;
+    virtual FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -129,7 +128,6 @@ private:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
 
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
@@ -145,6 +143,9 @@ private:
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
+protected:
+    FloatRect m_fillBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
 private:
     bool m_needsShapeUpdate { true };
 protected:

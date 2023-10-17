@@ -336,12 +336,8 @@ void ServiceWorkerThreadProxy::fireMessageEvent(MessageWithMessagePorts&& messag
 
 void ServiceWorkerThreadProxy::fireInstallEvent()
 {
-    ASSERT(!isMainThread());
-
-    callOnMainRunLoop([protectedThis = Ref { *this }] {
-        protectedThis->thread().willPostTaskToFireInstallEvent();
-    });
-
+    ASSERT(isMainThread());
+    thread().willPostTaskToFireInstallEvent();
     thread().runLoop().postTask([this, protectedThis = Ref { *this }](auto&) mutable {
         thread().queueTaskToFireInstallEvent();
     });
@@ -349,13 +345,9 @@ void ServiceWorkerThreadProxy::fireInstallEvent()
 
 void ServiceWorkerThreadProxy::fireActivateEvent()
 {
-    ASSERT(!isMainThread());
-
-    callOnMainRunLoop([protectedThis = Ref { *this }] {
-        protectedThis->thread().willPostTaskToFireActivateEvent();
-    });
-
-    thread().runLoop().postTask([this, protectedThis = Ref { *this }](auto&) {
+    ASSERT(isMainThread());
+    thread().willPostTaskToFireActivateEvent();
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }](auto&) mutable {
         thread().queueTaskToFireActivateEvent();
     });
 }

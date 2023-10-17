@@ -81,7 +81,7 @@ static const HTMLFormControlElement* invokerForPopoverShowingState(const Node* n
     RefPtr invoker = dynamicDowncast<HTMLFormControlElement>(node);
     if (!invoker)
         return nullptr;
-    HTMLElement* popover = invoker->popoverTargetElement();
+    RefPtr popover = invoker->popoverTargetElement();
     if (popover && popover->isPopoverShowing() && popover->popoverData()->invoker() == invoker)
         return invoker.get();
     return nullptr;
@@ -383,8 +383,8 @@ FocusNavigationScope FocusNavigationScope::scopeOwnedByIFrame(HTMLFrameOwnerElem
 FocusNavigationScope FocusNavigationScope::scopeOwnedByPopoverInvoker(const HTMLFormControlElement& invoker)
 {
     ASSERT(invokerForPopoverShowingState(&invoker));
-    HTMLElement* popover = invoker.popoverTargetElement();
-    ASSERT(isOpenPopoverWithInvoker(popover));
+    RefPtr popover = invoker.popoverTargetElement();
+    ASSERT(isOpenPopoverWithInvoker(popover.get()));
     return FocusNavigationScope(*popover);
 }
 
@@ -1243,7 +1243,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
         } else if (is<HTMLAreaElement>(*focusedElement)) {
             HTMLAreaElement& area = downcast<HTMLAreaElement>(*focusedElement);
-            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement());
+            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement().get());
             startingRect = virtualRectForAreaElementAndDirection(&area, direction);
         }
     }

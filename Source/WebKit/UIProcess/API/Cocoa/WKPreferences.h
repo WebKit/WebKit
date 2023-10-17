@@ -62,7 +62,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @abstract If tabFocusesLinks is YES, the tab key will focus links and form controls.
  The Option key temporarily reverses this preference.
  */
-@property (nonatomic) BOOL tabFocusesLinks WK_API_AVAILABLE(macos(10.12.3));
+@property (nonatomic) BOOL tabFocusesLinks WK_API_AVAILABLE(macos(10.12.4));
 #endif
 
 /*! @abstract A Boolean value indicating whether text interaction is disabled.

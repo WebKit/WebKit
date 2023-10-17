@@ -257,13 +257,13 @@ class TestLand(testing.PathTestCase):
 
     def test_canonicalize_with_bugzilla(self):
         with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
-                mocks.local.Svn(), MockTerminal.input('n'), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), bmocks.Bugzilla(
+                mocks.local.Svn(), MockTerminal.input('n'), bmocks.Bugzilla(
                     self.BUGZILLA.split('://')[-1],
                     issues=bmocks.ISSUES,
                     environment=Environment(
                         BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
                         BUGS_EXAMPLE_COM_PASSWORD='password',
-                )):
+                )), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
 
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
@@ -314,14 +314,13 @@ class TestLand(testing.PathTestCase):
     def test_svn_with_bugzilla(self):
         with MockTime, OutputCapture(level=logging.INFO) as captured, \
                 repository(self.path, has_oops=False, git_svn=True, issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA)), \
-                mocks.local.Svn(), MockTerminal.input('n'), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), \
-                bmocks.Bugzilla(
+                mocks.local.Svn(), MockTerminal.input('n'), bmocks.Bugzilla(
                     self.BUGZILLA.split('://')[-1],
                     issues=bmocks.ISSUES,
                     environment=Environment(
                         BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
                         BUGS_EXAMPLE_COM_PASSWORD='password',
-                )):
+                )), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
 
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
@@ -529,7 +528,6 @@ class TestLandGitHub(testing.PathTestCase):
         )
 
     def test_merge_queue_linked_bug(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
             approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
             environment=Environment(
@@ -541,13 +539,13 @@ class TestLandGitHub(testing.PathTestCase):
             issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA),
             remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), bmocks.Bugzilla(
+        ), bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],
             issues=bmocks.ISSUES,
             environment=Environment(
             BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
             BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
+        )), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             self.assertEqual(0, program.main(
                 args=('land', '-v'),
                 path=self.path,

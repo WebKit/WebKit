@@ -36,12 +36,12 @@ public:
     virtual ~LegacyRenderSVGPath();
 
     void drawMarkers(PaintInfo&) final;
+    FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const override;
 
 private:
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
-    FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(FloatRect strokeBoundingBox) const;
 
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
@@ -54,7 +54,7 @@ private:
 
     bool shouldGenerateMarkerPositions() const;
     void processMarkerPositions();
-    FloatRect markerRect(float strokeWidth) const;
+    FloatRect markerRect(RepaintRectCalculation, float strokeWidth) const;
 
     bool isRenderingDisabled() const override;
 

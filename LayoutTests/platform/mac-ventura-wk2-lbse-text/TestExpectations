@@ -545,9 +545,6 @@ svg/custom/object-sizing-no-width-height.xhtml                                [ 
 svg/custom/object-sizing.xhtml                                                [ Failure ]
 svg/wicd/sizing-flakiness.html                                                [ ImageOnlyFailure ]
 
-# Opacity clipping placement issue
-svg/as-background-image/svg-as-background-5.html [ ImageOnlyFailure ]
-
 # CSS 'mix-blend-mode' broken
 svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]

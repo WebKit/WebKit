@@ -49,12 +49,12 @@ LegacyRenderSVGPath::~LegacyRenderSVGPath() = default;
 
 void LegacyRenderSVGPath::updateShapeFromElement()
 {
+    clearPath();
     m_shapeType = ShapeType::Empty;
-    LegacyRenderSVGShape::updateShapeFromElement();
+    m_fillBoundingBox = ensurePath().boundingRect();
+    m_strokeBoundingBox = std::nullopt;
     processMarkerPositions();
     updateZeroLengthSubpaths();
-
-    m_strokeBoundingBox = adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(m_strokeBoundingBox);
 
     ASSERT(hasPath());
     if (path().isEmpty())
@@ -65,12 +65,12 @@ void LegacyRenderSVGPath::updateShapeFromElement()
         m_shapeType = ShapeType::Path;
 }
 
-FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(FloatRect strokeBoundingBox) const
+FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation repaintRectCalculation, FloatRect strokeBoundingBox) const
 {
     float strokeWidth = this->strokeWidth();
 
     if (!m_markerPositions.isEmpty())
-        strokeBoundingBox.unite(markerRect(strokeWidth));
+        strokeBoundingBox.unite(markerRect(repaintRectCalculation, strokeWidth));
 
     if (style().svgStyle().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
@@ -236,7 +236,7 @@ void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
     }
 }
 
-FloatRect LegacyRenderSVGPath::markerRect(float strokeWidth) const
+FloatRect LegacyRenderSVGPath::markerRect(RepaintRectCalculation repaintRectCalculation, float strokeWidth) const
 {
     ASSERT(!m_markerPositions.isEmpty());
 
@@ -252,7 +252,7 @@ FloatRect LegacyRenderSVGPath::markerRect(float strokeWidth) const
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
         if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
-            boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth)));
+            boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth)));
     }
     return boundaries;
 }

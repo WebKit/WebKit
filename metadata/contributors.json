@@ -6924,6 +6924,19 @@
    },
    {
       "emails" : [
+         "simon.lewis@apple.com"
+      ],
+      "expertise" : "Security",
+      "github" : "sheeparegreat",
+      "name" : "Simon Lewis",
+      "nicks" : [
+         "sheeparegreat",
+         "simon.lewis"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "simon.pena@samsung.com",
          "spenap@gmail.com",
          "spena@igalia.com"

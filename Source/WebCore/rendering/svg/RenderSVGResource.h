@@ -43,6 +43,8 @@ enum class RenderSVGResourceMode {
     ApplyToText    = 1 << 2 // used in combination with ApplyTo{Fill|Stroke}Mode
 };
 
+enum class RepaintRectCalculation;
+
 class Color;
 class FloatRect;
 class GraphicsContext;

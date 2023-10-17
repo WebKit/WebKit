@@ -84,6 +84,8 @@ private:
     void stop() final { close(); }
 
     class MainThreadBridge;
+    Ref<MainThreadBridge> protectedMainThreadBridge() const;
+
     Ref<MainThreadBridge> m_mainThreadBridge;
     bool m_isClosed { false };
     bool m_hasRelevantEventListener { false };

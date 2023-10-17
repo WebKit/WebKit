@@ -37,6 +37,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPathElement);
 
+static constexpr uint64_t maxPathSegListCacheSize = 150 * 1024; // 150 Kb.
+static uint64_t pathSegListCacheSize = 0;
+
+static HashMap<AtomString, SVGPathByteStream::Data>& pathSegListCache()
+{
+    static MainThreadNeverDestroyed<HashMap<AtomString, SVGPathByteStream::Data>> cache;
+    return cache;
+}
+
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
@@ -56,11 +65,33 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
 void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::dAttr) {
-        if (!m_pathSegList->baseVal()->parse(newValue))
-            document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
+        auto& cache = pathSegListCache();
+        if (auto it = cache.find(newValue); it != cache.end())
+            m_pathSegList->baseVal()->updateByteStreamData(it->value);
+        else {
+            if (m_pathSegList->baseVal()->parse(newValue)) {
+                size_t newDataSize = m_pathSegList->baseVal()->existingPathByteStream().data().size();
+                if (LIKELY(newDataSize <= (maxPathSegListCacheSize / 2))) {
+                    pathSegListCacheSize += newDataSize;
+                    while (pathSegListCacheSize > maxPathSegListCacheSize) {
+                        auto iteratorToRemove = cache.random();
+                        ASSERT(pathSegListCacheSize >= iteratorToRemove->value.size());
+                        pathSegListCacheSize -= iteratorToRemove->value.size();
+                        cache.remove(iteratorToRemove);
+                    }
+                    cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
+                }
+            } else
+                document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
+        }
     }
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+}
+
+void SVGPathElement::clearCache()
+{
+    pathSegListCache().clear();
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)

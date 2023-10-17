@@ -52,6 +52,7 @@
 #include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
+#include "WebChromeClient.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
@@ -685,8 +686,7 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
     }
 
     updateProcessName(IsInProcessInitialization::No);
-
-    IPC::AccessibilityProcessSuspendedNotification(isInProcessCache);
+    accessibilityRelayProcessSuspended(isInProcessCache);
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
@@ -1615,7 +1615,7 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    IPC::AccessibilityProcessSuspendedNotification(true);
+    accessibilityRelayProcessSuspended(true);
     updateFreezerStatus();
 #endif
 
@@ -1623,6 +1623,16 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
         completionHandler();
     });
+}
+
+void WebProcess::accessibilityRelayProcessSuspended(bool suspended)
+{
+    if (m_pageMap.isEmpty())
+        return;
+
+    // Take the first webpage. We only need to have the process on the other side relay this for the WebProcess.
+    auto* webPage = m_pageMap.values().begin().get()->get();
+    AXRelayProcessSuspendedNotification(*webPage, AXRelayProcessSuspendedNotification::AutomaticallySend::No).sendProcessSuspendMessage(suspended);
 }
 
 void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHandler)
@@ -1680,7 +1690,7 @@ void WebProcess::processDidResume()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    IPC::AccessibilityProcessSuspendedNotification(false);
+    accessibilityRelayProcessSuspended(false);
 #endif
 
 #if ENABLE(VIDEO)

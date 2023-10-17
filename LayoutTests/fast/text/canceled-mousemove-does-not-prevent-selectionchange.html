@@ -1,0 +1,46 @@
+<body onload="test()">
+  <p id="prompt"></p>
+  <p id="testResult"></p>
+</body>
+<script>
+const promptText = "Try to select this text. Pass if non-selection is visible.";
+
+function mousemoveFunction(event) {
+  event.preventDefault();
+}
+
+function getTestResult(testOutput) {
+  return (promptText === testOutput) ? "PASS" : "FAIL";
+}
+
+document.body.onmousemove = mousemoveFunction;
+
+function test() {
+  const testResult = document.getElementById("testResult");
+  document.getElementById("prompt").innerHTML = promptText;
+
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  if (!window.eventSender)
+    return;
+
+  eventSender.mouseMoveTo(0, 0);
+  eventSender.mouseDown();
+  eventSender.mouseMoveTo(400, 400);
+  eventSender.mouseUp();
+
+  const result_with_default_prevent = getTestResult(window.getSelection().toString());
+
+  document.body.onmousemove = "";
+
+  eventSender.mouseMoveTo(0, 0);
+  eventSender.mouseDown();
+  eventSender.mouseMoveTo(400, 400);
+  eventSender.mouseUp();
+ 
+  const result_without_default_prevent = getTestResult(window.getSelection().toString());
+
+  testResult.innerHTML += (result_with_default_prevent + " Can select with defaultPrevented mousemove");
+  testResult.innerHTML += ("<br>" + result_without_default_prevent + " Can select with regular mousemove");
+}
+</script>

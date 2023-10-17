@@ -175,9 +175,9 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
     return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
-static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
+static RefPtr<SVGFilterElement> referenceFilterElement(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
 {
-    auto* filterElement = ReferencedSVGResources::referencedFilterElement(renderer.treeScopeForSVGReferences(), filterOperation);
+    RefPtr filterElement = ReferencedSVGResources::referencedFilterElement(renderer.treeScopeForSVGReferences(), filterOperation);
 
     if (!filterElement) {
         LOG_WITH_STREAM(Filters, stream << " buildReferenceFilter: failed to find filter renderer, adding pending resource " << filterOperation.fragment());
@@ -192,7 +192,7 @@ static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& 
 
 static bool isIdentityReferenceFilter(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
 {
-    auto filterElement = referenceFilterElement(filterOperation, renderer);
+    RefPtr filterElement = referenceFilterElement(filterOperation, renderer);
     if (!filterElement)
         return false;
 
@@ -201,7 +201,7 @@ static bool isIdentityReferenceFilter(const ReferenceFilterOperation& filterOper
 
 static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
-    auto filterElement = referenceFilterElement(filterOperation, renderer);
+    RefPtr filterElement = referenceFilterElement(filterOperation, renderer);
     if (!filterElement)
         return { };
 
@@ -210,11 +210,11 @@ static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation
 
 static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
-    auto filterElement = referenceFilterElement(filterOperation, renderer);
+    RefPtr filterElement = referenceFilterElement(filterOperation, renderer);
     if (!filterElement)
         return nullptr;
 
-    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
+    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.get(), filterElement->filterUnits(), targetBoundingBox);
 
     return SVGFilter::create(*filterElement, preferredFilterRenderingModes, filter.filterScale(), filterRegion, targetBoundingBox, destinationContext);
 }

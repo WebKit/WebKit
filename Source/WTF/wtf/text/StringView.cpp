@@ -261,15 +261,15 @@ String convertASCIICase(const CharacterType* input, unsigned length)
 String StringView::convertToASCIILowercase() const
 {
     if (m_is8Bit)
-        return convertASCIICase<ASCIICase::Lower>(static_cast<const LChar*>(m_characters.get()), m_length);
-    return convertASCIICase<ASCIICase::Lower>(static_cast<const UChar*>(m_characters.get()), m_length);
+        return convertASCIICase<ASCIICase::Lower>(static_cast<const LChar*>(m_characters), m_length);
+    return convertASCIICase<ASCIICase::Lower>(static_cast<const UChar*>(m_characters), m_length);
 }
 
 String StringView::convertToASCIIUppercase() const
 {
     if (m_is8Bit)
-        return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters.get()), m_length);
-    return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters.get()), m_length);
+        return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters), m_length);
+    return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
 }
 
 template<typename CharacterType>

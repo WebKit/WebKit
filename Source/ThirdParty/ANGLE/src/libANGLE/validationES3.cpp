@@ -407,7 +407,8 @@ static bool ValidateES3CompressedFormatForTexture2DArray(const Context *context,
                                                          angle::EntryPoint entryPoint,
                                                          GLenum format)
 {
-    if (IsETC1Format(format) || IsPVRTC1Format(format))
+    if ((IsETC1Format(format) && !context->getExtensions().compressedETC1RGB8SubTextureEXT) ||
+        IsPVRTC1Format(format))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
         return false;

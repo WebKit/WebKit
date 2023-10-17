@@ -108,7 +108,9 @@ DOMWindowExtensionBasic::DOMWindowExtensionBasic(const std::string& identifier)
 
 void DOMWindowExtensionBasic::frameLoadFinished(WKBundleFrameRef frame)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     bool mainFrame = !WKBundleFrameGetParentFrame(frame);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (mainFrame)
         m_finishedOneMainFrameLoad = true;
 
@@ -197,10 +199,12 @@ void DOMWindowExtensionBasic::globalObjectIsAvailableForFrame(WKBundleFrameRef f
     bool standard;
     standard = world == WKBundleScriptWorldNormalWorld();
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (WKBundleFrameGetParentFrame(frame))
         index = standard ? 2 : 3;
     else
         index = m_finishedOneMainFrameLoad ? (standard ? 4 : 5) : (standard ? 0 : 1);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     m_extensionToRecordMap.set(extension, index);
 

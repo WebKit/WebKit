@@ -126,6 +126,10 @@
 #import <UIKit/_UIAsyncDragInteraction.h>
 #endif
 
+#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+#import <UIKit/_UIContextMenuAsyncConfiguration.h>
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 #import <UIKit/UIFindSession_Private.h>
 #import <UIKit/_UIFindInteraction.h>
@@ -603,7 +607,6 @@ typedef enum {
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)_didRemoveSubview:(UIView *)subview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
-- (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
 @end
 
@@ -1108,6 +1111,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (UIScrollView *)_scroller;
 - (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
+- (void)accessibilityRelayNotification:(NSString *)notificationName notificationData:(NSData *)notificationData;
 - (UIRectEdge)_edgesApplyingSafeAreaInsetsToContentInset;
 @end
 

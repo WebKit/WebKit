@@ -552,6 +552,20 @@ float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem
     return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
+template<typename CharacterType>
+static bool canUseSimplifiedTextMeasuringForCharacters(const CharacterType* characters, unsigned length, const FontCascade& fontCascade, const Font& primaryFont, bool whitespaceIsCollapsed)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        auto character = characters[i];
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
+            return false;
+        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+            return false;
+    }
+    return true;
+}
+
 bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const RenderStyle& style, const RenderStyle* firstLineStyle)
 {
     ASSERT(textContent.is8Bit() || FontCascade::characterRangeCodePath(textContent.characters16(), textContent.length()) == FontCascade::CodePath::Simple);
@@ -574,15 +588,9 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
         return false;
 
     auto whitespaceIsCollapsed = style.collapseWhiteSpace();
-    for (unsigned i = 0; i < textContent.length(); ++i) {
-        auto character = textContent[i];
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
-            return false;
-    }
-    return true;
+    if (textContent.is8Bit())
+        return canUseSimplifiedTextMeasuringForCharacters(textContent.characters8(), textContent.length(), fontCascade, primaryFont, whitespaceIsCollapsed);
+    return canUseSimplifiedTextMeasuringForCharacters(textContent.characters16(), textContent.length(), fontCascade, primaryFont, whitespaceIsCollapsed);
 }
 
 void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)

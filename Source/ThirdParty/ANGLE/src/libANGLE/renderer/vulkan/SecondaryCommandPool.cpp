@@ -18,7 +18,7 @@ namespace rx
 namespace vk
 {
 
-SecondaryCommandPool::SecondaryCommandPool() {}
+SecondaryCommandPool::SecondaryCommandPool() : mCollectedBuffers(kFixedQueueLimit) {}
 
 SecondaryCommandPool::~SecondaryCommandPool()
 {

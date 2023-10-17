@@ -88,9 +88,9 @@ public:
 protected:
     void element() const = delete;
 
-    void ensurePath();
+    Path& ensurePath();
 
-    virtual void updateShapeFromElement();
+    virtual void updateShapeFromElement() = 0;
     virtual bool isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
@@ -101,8 +101,7 @@ protected:
     AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
-    FloatRect m_fillBoundingBox;
-    FloatRect m_strokeBoundingBox;
+    virtual FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -124,8 +123,7 @@ private:
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;
 
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
-    FloatRect calculateObjectBoundingBox() const;
+    FloatRect strokeBoundingBox() const final;
     FloatRect calculateStrokeBoundingBox() const;
     void updateRepaintBoundingBox();
 
@@ -140,6 +138,9 @@ private:
 
     virtual void drawMarkers(PaintInfo&) { }
 
+protected:
+    FloatRect m_fillBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
 private:
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;

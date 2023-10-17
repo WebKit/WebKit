@@ -47,6 +47,7 @@
 #include "RenderImage.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
+#include "TreeScopeInlines.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/AtomString.h>
 

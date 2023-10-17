@@ -1001,6 +1001,7 @@ platform/mac/media/media-source/media-source-change-source.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
 # WebM not supported in WK1 on macOS.
+http/tests/media/cross-origin-webm-video.html [ Skip ]
 http/tests/media/video-webm-stall.html
 media/W3C/video/canPlayType/canPlayType_codecs_order_1.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
@@ -1085,6 +1086,8 @@ imported/w3c/web-platform-tests/editing/run/multitest.html?4001-5000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
+
+imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
@@ -1325,8 +1328,9 @@ webrtc/datachannel [ Pass ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 webrtc/datachannel/filter-ice-candidate.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-
 imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
+imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html

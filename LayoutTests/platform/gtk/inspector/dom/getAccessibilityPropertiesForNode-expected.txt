@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label:
     role:
-    childNodeIds.length: 92
+    childNodeIds.length: 93
 
 
-Total elements to be tested: 122.
+Total elements to be tested: 123.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -713,6 +713,14 @@ Total elements to be tested: 122.
     parentNodeId: exists
     readonly: true
     required: false
+
+<div role="switch" aria-required="true">Required switch.</div>
+    exists: true
+    label: Required switch.
+    role: switch
+    checked: false
+    parentNodeId: exists
+    required: true
 
 <input readonly="" value="readonly">
     exists: true

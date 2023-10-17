@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "DFGSpeculativeJIT.h"
 #include "DOMJITGetterSetter.h"
 #include "DirectArguments.h"
+#include "ECMAMode.h"
 #include "ExecutableBaseInlines.h"
 #include "FTLThunks.h"
 #include "FullCodeOrigin.h"
@@ -70,6 +71,32 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
+
+#if ENABLE(JIT)
+
+static ECMAMode ecmaModeFor(PutByKind putByKind)
+{
+    switch (putByKind) {
+    case PutByKind::ByIdSloppy:
+    case PutByKind::ByValSloppy:
+    case PutByKind::ByIdDirectSloppy:
+    case PutByKind::ByValDirectSloppy:
+        return ECMAMode::sloppy();
+
+    case PutByKind::ByIdStrict:
+    case PutByKind::ByValStrict:
+    case PutByKind::ByIdDirectStrict:
+    case PutByKind::ByValDirectStrict:
+    case PutByKind::DefinePrivateNameById:
+    case PutByKind::DefinePrivateNameByVal:
+    case PutByKind::SetPrivateNameById:
+    case PutByKind::SetPrivateNameByVal:
+        return ECMAMode::strict();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+#endif // ENABLE(JIT)
 
 static void linkSlowPathTo(VM&, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
 {
@@ -1111,7 +1138,7 @@ void repatchPutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue ba
     }
 }
 
-static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo)
+static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
     if (!baseValue.isCell())
         return GiveUpOnCache;
@@ -1190,7 +1217,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
         }
 
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
@@ -1206,7 +1233,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
 
 void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
-    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putByKind) == GiveUpOnCache)
         repatchSlowPathCall(codeBlock, stubInfo, appropriatePutByGaveUpFunction(putByKind));
 }
 

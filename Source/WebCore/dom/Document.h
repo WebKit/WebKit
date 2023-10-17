@@ -641,7 +641,8 @@ public:
     void setStateForNewFormElements(const Vector<AtomString>&);
 
     inline LocalFrameView* view() const; // Defined in LocalFrame.h.
-    inline Page* page() const; // Defined in Page.h
+    inline Page* page() const; // Defined in Page.h.
+    inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
 

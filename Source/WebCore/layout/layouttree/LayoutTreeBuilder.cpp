@@ -86,6 +86,20 @@ static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuatio
     return block.relativePositionOffset();
 }
 
+template<typename CharacterType>
+static bool canUseSimplifiedTextMeasuringForCharacters(const CharacterType* characters, unsigned length, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
+{
+    auto& primaryFont = fontCascade.primaryFont();
+    for (unsigned i = 0; i < length; ++i) {
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(characters[i], whitespaceIsCollapsed))
+            return false;
+        auto glyphData = fontCascade.glyphDataForCharacter(characters[i], false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+            return false;
+    }
+    return true;
+}
+
 static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
     if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
@@ -94,15 +108,9 @@ static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade&
     if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;
 
-    auto& primaryFont = fontCascade.primaryFont();
-    for (unsigned i = 0; i < content.length(); ++i) {
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(content[i], whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(content[i], false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
-            return false;
-    }
-    return true;
+    if (content.is8Bit())
+        return canUseSimplifiedTextMeasuringForCharacters(content.characters8(), content.length(), fontCascade, whitespaceIsCollapsed);
+    return canUseSimplifiedTextMeasuringForCharacters(content.characters16(), content.length(), fontCascade, whitespaceIsCollapsed);
 }
 
 std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderView& renderView)

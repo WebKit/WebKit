@@ -897,8 +897,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 
             auto& div = downcast<HTMLDivElement>(*m_element);
             if (div.hasClass() && div.classNames().contains(instreamNativeVideoDivClass)) {
-                auto* video = div.treeScope().getElementById(videoElementID);
-                if (is<HTMLVideoElement>(video) && downcast<HTMLVideoElement>(*video).isFullscreen())
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(div.treeScope().getElementById(videoElementID));
+                if (video && video->isFullscreen())
                     style.setEffectiveDisplay(DisplayType::Block);
             }
         }

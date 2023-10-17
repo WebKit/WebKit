@@ -2405,6 +2405,9 @@ private:
     void rootViewToScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(const WebCore::IntRect&)>&&);
     void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, CompletionHandler<void(WebCore::IntPoint)>&&);
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(WebCore::IntRect)>&&);
+#if PLATFORM(IOS_FAMILY)
+    void relayAccessibilityNotification(const String&, const IPC::DataReference&);
+#endif
     void runBeforeUnloadConfirmPanel(WebCore::FrameIdentifier, FrameInfoData&&, const String& message, CompletionHandler<void(bool)>&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll(const WebCore::IntPoint&);
@@ -2589,6 +2592,8 @@ private:
 
     void discardQueuedMouseEvents();
 
+    void mouseEventHandlingCompleted(std::optional<WebEventType>, bool handled);
+    void keyEventHandlingCompleted(std::optional<WebEventType>, bool handled);
     void didReceiveEvent(WebEventType, bool handled);
     void didUpdateRenderingAfterCommittingLoad();
 #if PLATFORM(IOS_FAMILY)
@@ -2681,6 +2686,7 @@ private:
     void updateWheelEventActivityAfterProcessSwap();
 
 #if ENABLE(TOUCH_EVENTS)
+    void touchEventHandlingCompleted(std::optional<WebEventType>, bool handled);
     void updateTouchEventTracking(const WebTouchEvent&);
     WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
 #endif

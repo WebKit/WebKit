@@ -29,8 +29,10 @@
 #include "Logging.h"
 #include "ProcessThrottlerClient.h"
 #include <optional>
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(COCOA)
@@ -42,8 +44,59 @@
 
 namespace WebKit {
     
-static const Seconds processSuspensionTimeout { 20_s };
-static const Seconds removeAllAssertionsTimeout { 8_min };
+static constexpr Seconds processSuspensionTimeout { 20_s };
+static constexpr Seconds removeAllAssertionsTimeout { 8_min };
+static constexpr Seconds processAssertionCacheLifetime { 3_s };
+
+class ProcessThrottler::ProcessAssertionCache : public CanMakeCheckedPtr {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    void add(Ref<ProcessAssertion>&& assertion)
+    {
+        auto type = assertion->type();
+        assertion->setInvalidationHandler(nullptr);
+        ASSERT(!m_entries.contains(type));
+        m_entries.add(type, makeUniqueRef<CachedAssertion>(*this, WTFMove(assertion)));
+    }
+
+    RefPtr<ProcessAssertion> tryTake(ProcessAssertionType type)
+    {
+        if (auto assertion = m_entries.take(type); assertion && assertion->isValid())
+            return assertion->release();
+        return nullptr;
+    }
+
+    void remove(ProcessAssertionType type) { m_entries.remove(type); }
+
+private:
+    class CachedAssertion {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        CachedAssertion(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
+            : m_cache(cache)
+            , m_assertion(WTFMove(assertion))
+            , m_expirationTimer(RunLoop::main(), this, &CachedAssertion::entryExpired)
+        {
+            m_expirationTimer.startOneShot(processAssertionCacheLifetime);
+        }
+
+        bool isValid() const { return m_assertion->isValid(); }
+        Ref<ProcessAssertion> release() { return m_assertion.releaseNonNull(); }
+
+    private:
+        void entryExpired()
+        {
+            ASSERT(m_assertion);
+            m_cache->remove(m_assertion->type());
+        }
+
+        CheckedRef<ProcessAssertionCache> m_cache;
+        RefPtr<ProcessAssertion> m_assertion;
+        RunLoop::Timer m_expirationTimer;
+    };
+
+    HashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
+};
 
 static uint64_t generatePrepareToSuspendRequestID()
 {
@@ -52,7 +105,8 @@ static uint64_t generatePrepareToSuspendRequestID()
 }
 
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
-    : m_process(process)
+    : m_assertionCache(makeUniqueRef<ProcessAssertionCache>())
+    , m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
     , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
     , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
@@ -188,16 +242,21 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 
     // Keep the previous assertion active until the new assertion is taken asynchronously.
     auto previousAssertion = std::exchange(m_assertion, nullptr);
-    if (m_shouldTakeUIBackgroundAssertion) {
-        auto assertion = ProcessAndUIAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
-        assertion->setUIAssertionExpirationHandler([weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                weakThis->uiAssertionWillExpireImminently();
-        });
-        m_assertion = WTFMove(assertion);
-    } else
-        m_assertion = ProcessAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+    if (previousAssertion)
+        m_assertionCache->add(*previousAssertion);
 
+    m_assertion = m_assertionCache->tryTake(newType);
+    if (!m_assertion) {
+        if (m_shouldTakeUIBackgroundAssertion) {
+            auto assertion = ProcessAndUIAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+            assertion->setUIAssertionExpirationHandler([weakThis = WeakPtr { *this }] {
+                if (weakThis)
+                    weakThis->uiAssertionWillExpireImminently();
+            });
+            m_assertion = WTFMove(assertion);
+        } else
+            m_assertion = ProcessAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+    }
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->assertionWasInvalidated();

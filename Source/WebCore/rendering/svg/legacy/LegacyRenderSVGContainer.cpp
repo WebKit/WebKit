@@ -154,8 +154,25 @@ void LegacyRenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, cons
 
 void LegacyRenderSVGContainer::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_repaintBoundingBox);
+    // FIXME: Once we move to the model strictly separating m_repaintBoundingBox and m_strokeBoundingBox, we will just null out m_strokeBoundingBox
+    // here, and lazily compute it in strokeBoundingBox(), which solves conflation. This will happen when we enable approximate repainting bounding box computation.
+    // https://bugs.webkit.org/show_bug.cgi?id=262409
+    //
+    // When computing the strokeBoundingBox, we use the repaintRects of the container's children so that the container's stroke includes
+    // the resources applied to the children (such as clips and filters). This allows filters applied to containers to correctly bound
+    // the children, and also improves inlining of SVG content, as the stroke bound is used in that situation also.
+    m_strokeBoundingBox = m_repaintBoundingBox;
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
+}
+
+FloatRect LegacyRenderSVGContainer::strokeBoundingBox() const
+{
+    // FIXME: Once we enable approximate repainting bounding box computation, m_strokeBoundingBox becomes std::nullopt in updateCachedBoundaries and gets lazily computed.
+    // https://bugs.webkit.org/show_bug.cgi?id=262409
+    if (!m_strokeBoundingBox)
+        m_strokeBoundingBox = SVGRenderSupport::computeContainerStrokeBoundingBox(*this);
+    return *m_strokeBoundingBox;
 }
 
 bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

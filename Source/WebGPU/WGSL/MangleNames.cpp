@@ -116,8 +116,10 @@ void NameManglerVisitor::run()
         String originalName = function.name();
         introduceVariable(function.name(), MangledName::Function);
         auto it = m_result.entryPoints.find(originalName);
-        if (it != m_result.entryPoints.end())
+        if (it != m_result.entryPoints.end()) {
+            it->value.originalName = originalName;
             it->value.mangledName = function.name();
+        }
         visit(function);
     }
 }
@@ -207,7 +209,6 @@ MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName:
 
 void NameManglerVisitor::readVariable(AST::Identifier& name) const
 {
-    // FIXME: this should be unconditional
     if (const auto* mangledName = ContextProvider::readVariable(name))
         m_callGraph.ast().replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }

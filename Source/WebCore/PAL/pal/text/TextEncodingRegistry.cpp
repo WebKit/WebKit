@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextEncodingRegistry.h"
 
+#include "Logging.h"
 #include "TextCodecCJK.h"
 #include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
@@ -254,8 +255,19 @@ std::unique_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
     Locker locker { encodingRegistryLock };
 
     ASSERT(textCodecMap);
+    if (!encoding.isValid()) {
+        RELEASE_LOG_ERROR(TextEncoding, "Trying to create new text codec with invalid (null) encoding name. Will default to UTF-8.");
+        return TextCodecUTF8::codec();
+    }
     auto result = textCodecMap->find(encoding.name());
-    ASSERT(result != textCodecMap->end());
+    if (result == textCodecMap->end()) {
+        RELEASE_LOG_ERROR(TextEncoding, "Can't find codec for valid encoding %" PUBLIC_LOG_STRING ". Will default to UTF-8.", encoding.name());
+        return TextCodecUTF8::codec();
+    }
+    if (!result->value) {
+        RELEASE_LOG_ERROR(TextEncoding, "Codec for encoding %" PUBLIC_LOG_STRING " is null. Will default to UTF-8", encoding.name());
+        return TextCodecUTF8::codec();
+    }
     return result->value();
 }
 

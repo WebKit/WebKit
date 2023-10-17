@@ -100,6 +100,8 @@ public:
     Path path() const { return m_pathSegList->currentPath(); }
     size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }
 
+    static void clearCache();
+
 private:
     SVGPathElement(const QualifiedName&, Document&);
 

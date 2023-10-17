@@ -1788,6 +1788,7 @@ enum class ImageLayout
     ComputeShaderWrite,
     AllGraphicsShadersReadOnly,
     AllGraphicsShadersWrite,
+    TransferDstAndComputeWrite,
 
     InvalidEnum,
     EnumCount = InvalidEnum,
@@ -2792,6 +2793,14 @@ class ImageHelper final : public Resource, public angle::Subject
         return actualFormatLinear == srcDataFormatIDLinear;
     }
 
+    static constexpr int kThreadholdForComputeTransCoding = 4096;
+    bool shouldUseComputeForTransCoding(LevelIndex level)
+    {
+        // Using texture size instead of extent size to simplify the problem.
+        gl::Extents ext = getLevelExtents2D(level);
+        return ext.width * ext.height > kThreadholdForComputeTransCoding;
+    }
+
     // Vulkan objects.
     Image mImage;
     DeviceMemory mDeviceMemory;
@@ -3403,6 +3412,16 @@ class CommandBufferAccess : angle::NonCopyable
     {
         onImageWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags,
                      ImageLayout::ComputeShaderWrite, image);
+    }
+    void onImageTransferDstAndComputeWrite(gl::LevelIndex levelStart,
+                                           uint32_t levelCount,
+                                           uint32_t layerStart,
+                                           uint32_t layerCount,
+                                           VkImageAspectFlags aspectFlags,
+                                           ImageHelper *image)
+    {
+        onImageWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags,
+                     ImageLayout::TransferDstAndComputeWrite, image);
     }
     void onExternalAcquireRelease(ImageHelper *image) { onResourceAccess(image); }
     void onQueryAccess(QueryHelper *query) { onResourceAccess(query); }

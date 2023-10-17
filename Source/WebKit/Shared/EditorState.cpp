@@ -97,6 +97,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
             ts.dumpProperty("insideFixedPosition", editorState.postLayoutData->insideFixedPosition);
         if (editorState.postLayoutData->caretColor.isValid())
             ts.dumpProperty("caretColor", editorState.postLayoutData->caretColor);
+        if (editorState.postLayoutData->hasCaretColorAuto)
+            ts.dumpProperty("hasCaretColorAuto", editorState.postLayoutData->hasCaretColorAuto);
 #endif
 #if PLATFORM(MAC)
         if (editorState.postLayoutData->selectionBoundingRect != IntRect())

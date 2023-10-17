@@ -457,6 +457,8 @@ MediaProducerMediaStateFlags MediaStreamTrack::captureState(Document& document)
 
 void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
+    RELEASE_LOG_INFO(WebRTC, "MediaStreamTrack::updateCaptureAccordingToMutedState");
+
     for (RefPtr captureTrack : allCaptureTracks()) {
         if (captureTrack->scriptExecutionContext() == &document && !captureTrack->ended())
             captureTrack->updateToPageMutedState();
@@ -465,6 +467,8 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 
 void MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption(Document& document, bool isMicrophoneInterrupted)
 {
+    RELEASE_LOG_INFO(WebRTC, "MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption %d", isMicrophoneInterrupted);
+
     auto* page = document.page();
     for (RefPtr captureTrack : allCaptureTracks()) {
         RefPtr context = captureTrack->scriptExecutionContext();

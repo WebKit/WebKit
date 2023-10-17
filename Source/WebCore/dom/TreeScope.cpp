@@ -53,6 +53,7 @@
 #include "SVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "TreeScopeOrderedMap.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomStringHash.h>
@@ -106,7 +107,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
     setDocumentScope(newParentScope.documentScope());
 }
 
-Element* TreeScope::getElementById(const AtomString& elementId) const
+RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
 {
     if (elementId.isEmpty())
         return nullptr;
@@ -115,7 +116,7 @@ Element* TreeScope::getElementById(const AtomString& elementId) const
     return m_elementsById->getElementById(*elementId.impl(), *this);
 }
 
-Element* TreeScope::getElementById(const String& elementId) const
+RefPtr<Element> TreeScope::getElementById(const String& elementId) const
 {
     if (!m_elementsById)
         return nullptr;
@@ -126,7 +127,7 @@ Element* TreeScope::getElementById(const String& elementId) const
     return nullptr;
 }
 
-Element* TreeScope::getElementById(StringView elementId) const
+RefPtr<Element> TreeScope::getElementById(StringView elementId) const
 {
     if (!m_elementsById)
         return nullptr;
@@ -137,7 +138,7 @@ Element* TreeScope::getElementById(StringView elementId) const
     return nullptr;
 }
 
-const Vector<Element*>* TreeScope::getAllElementsById(const AtomString& elementId) const
+const Vector<CheckedRef<Element>>* TreeScope::getAllElementsById(const AtomString& elementId) const
 {
     if (elementId.isEmpty())
         return nullptr;
@@ -164,7 +165,7 @@ void TreeScope::removeElementById(const AtomStringImpl& elementId, Element& elem
         m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
-Element* TreeScope::getElementByName(const AtomString& name) const
+RefPtr<Element> TreeScope::getElementByName(const AtomString& name) const
 {
     if (name.isEmpty())
         return nullptr;
@@ -261,7 +262,7 @@ void TreeScope::removeImageMap(HTMLMapElement& imageMap)
     m_imageMapsByName->remove(*name, imageMap);
 }
 
-HTMLMapElement* TreeScope::getImageMap(const AtomString& name) const
+RefPtr<HTMLMapElement> TreeScope::getImageMap(const AtomString& name) const
 {
     if (!m_imageMapsByName || !name.impl())
         return nullptr;
@@ -282,7 +283,7 @@ void TreeScope::removeImageElementByUsemap(const AtomStringImpl& name, HTMLImage
     m_imagesByUsemap->remove(name, element);
 }
 
-HTMLImageElement* TreeScope::imageElementByUsemap(const AtomStringImpl& name) const
+RefPtr<HTMLImageElement> TreeScope::imageElementByUsemap(const AtomStringImpl& name) const
 {
     if (!m_imagesByUsemap)
         return nullptr;
@@ -301,7 +302,7 @@ void TreeScope::removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelEl
     m_labelsByForAttribute->remove(forAttributeValue, element);
 }
 
-const Vector<Element*>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
+const Vector<CheckedRef<Element>>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
 {
     if (forAttributeValue.isEmpty())
         return nullptr;
@@ -452,23 +453,23 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(const FloatPoint& p)
 
 // FIXME: Would be nice to change this to take a StringView, since that's what callers have
 // and there is no particular advantage to already having a String.
-Element* TreeScope::findAnchor(StringView name)
+RefPtr<Element> TreeScope::findAnchor(StringView name)
 {
     if (name.isEmpty())
         return nullptr;
-    if (Element* element = getElementById(name))
+    if (RefPtr element = getElementById(name))
         return element;
-    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(m_rootNode)) {
+    for (Ref anchor : descendantsOfType<HTMLAnchorElement>(m_rootNode)) {
         if (m_rootNode.document().inQuirksMode()) {
             // Quirks mode, ASCII case-insensitive comparison of names.
             // FIXME: This behavior is not mentioned in the HTML specification.
             // We should either remove this or get this into the specification.
-            if (equalIgnoringASCIICase(anchor.name(), name))
-                return &anchor;
+            if (equalIgnoringASCIICase(anchor->name(), name))
+                return anchor;
         } else {
             // Strict mode, names need to match exactly.
-            if (anchor.name() == name)
-                return &anchor;
+            if (anchor->name() == name)
+                return anchor;
         }
     }
     return nullptr;

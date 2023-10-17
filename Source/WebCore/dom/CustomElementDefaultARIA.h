@@ -46,7 +46,7 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomString& valueForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setValueForAttribute(const QualifiedName&, const AtomString&);
-    Element* elementForAttribute(const Element& thisElement, const QualifiedName&) const;
+    RefPtr<Element> elementForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementForAttribute(const QualifiedName&, Element*);
     Vector<RefPtr<Element>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementsForAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);

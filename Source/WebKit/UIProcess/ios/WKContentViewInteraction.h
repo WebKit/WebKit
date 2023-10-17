@@ -484,6 +484,7 @@ struct ImageAnalysisContextMenuActionData {
     NSInteger _dropAnimationCount;
 
     BOOL _hasSetUpInteractions;
+    std::optional<BOOL> _cachedHasCustomTintColor;
     NSUInteger _ignoreSelectionCommandFadeCount;
     NSUInteger _activeTextInteractionCount;
     NSInteger _suppressNonEditableSingleTapTextInteractionCount;
@@ -579,9 +580,6 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
     , _UIAsyncDragInteractionDelegate
-#endif
-#if HAVE(UI_ASYNC_TEXT_INPUT)
-    , UIAsyncTextInput
 #endif
 >
 

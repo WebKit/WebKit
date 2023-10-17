@@ -182,8 +182,8 @@ VkResult BufferSuballocation::map(Context *context)
     return mBufferBlock->map(context->getDevice());
 }
 
-// SharedBufferSuballocationGarbage implementation.
-bool SharedBufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer)
+// BufferSuballocationGarbage implementation.
+bool BufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer)
 {
     if (renderer->hasResourceUseFinished(mLifetime))
     {
@@ -194,7 +194,7 @@ bool SharedBufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer)
     return false;
 }
 
-bool SharedBufferSuballocationGarbage::hasResourceUseSubmitted(RendererVk *renderer) const
+bool BufferSuballocationGarbage::hasResourceUseSubmitted(RendererVk *renderer) const
 {
     return renderer->hasResourceUseSubmitted(mLifetime);
 }

@@ -365,7 +365,7 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
         for (auto& entry : bindGroupLayout.entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
             wgslEntry.binding = entry.value.binding;
-            wgslEntry.visibility.fromRaw(entry.value.visibility);
+            wgslEntry.visibility = wgslEntry.visibility.fromRaw(entry.value.visibility);
             wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
             wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Vertex];
             wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Vertex];

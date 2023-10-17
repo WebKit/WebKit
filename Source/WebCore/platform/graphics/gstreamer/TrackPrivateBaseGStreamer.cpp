@@ -301,12 +301,14 @@ void TrackPrivateBaseGStreamer::installUpdateConfigurationHandlers()
 {
     if (m_pad) {
         g_signal_connect_swapped(m_pad.get(), "notify::caps", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
-            track->m_taskQueue.enqueueTask([track]() {
-                if (!track->m_pad)
-                    return;
-                auto caps = adoptGRef(gst_pad_get_current_caps(track->m_pad.get()));
-                if (!caps)
-                    return;
+            if (!track->m_pad)
+                return;
+            auto caps = adoptGRef(gst_pad_get_current_caps(track->m_pad.get()));
+            // We will receive a synchronous notification for caps being unset during pipeline teardown.
+            if (!caps)
+                return;
+
+            track->m_taskQueue.enqueueTask([track, caps = WTFMove(caps)]() mutable {
                 track->capsChanged(String::fromLatin1(GUniquePtr<char>(gst_pad_get_stream_id(track->m_pad.get())).get()), WTFMove(caps));
             });
         }), this);

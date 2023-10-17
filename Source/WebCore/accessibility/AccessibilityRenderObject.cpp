@@ -1066,10 +1066,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    // If this element is within a parent that cannot have children, it should not be exposed.
-    if (isDescendantOfBarrenParent())
-        return true;    
-
     if (roleValue() == AccessibilityRole::Ignored)
         return true;
 
@@ -1511,12 +1507,12 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
     if (!map)
         return nullptr;
 
-    HTMLImageElement* imageElement = map->imageElement();
+    RefPtr imageElement = map->imageElement();
     if (!imageElement)
         return nullptr;
     
-    if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(imageElement);
+    if (CheckedPtr cache = axObjectCache())
+        return cache->getOrCreate(imageElement.get());
     
     return nullptr;
 }
@@ -1538,7 +1534,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         } else {
             auto* parent = current->parentNode();
             if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
-                auto* parentImage = downcast<HTMLMapElement>(parent)->imageElement();
+                RefPtr parentImage = downcast<HTMLMapElement>(parent)->imageElement();
                 auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
                 if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
                     for (const auto& child : parentImageAxObject->children()) {

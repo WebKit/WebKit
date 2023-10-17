@@ -80,7 +80,7 @@ public:
     void setLoadManually(bool);
 
     bool matchesUsemap(const AtomStringImpl&) const;
-    HTMLMapElement* associatedMapElement() const;
+    RefPtr<HTMLMapElement> associatedMapElement() const;
 
     WEBCORE_EXPORT const AtomString& alt() const;
 

@@ -83,20 +83,20 @@ bool CustomElementDefaultARIA::hasAttribute(const QualifiedName& name) const
     return m_map.find(name) != m_map.end();
 }
 
-Element* CustomElementDefaultARIA::elementForAttribute(const Element& thisElement, const QualifiedName& name) const
+RefPtr<Element> CustomElementDefaultARIA::elementForAttribute(const Element& thisElement, const QualifiedName& name) const
 {
     auto it = m_map.find(name);
     if (it == m_map.end())
         return nullptr;
 
-    Element* result = nullptr;
+    RefPtr<Element> result;
     std::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
         if (thisElement.isInTreeScope())
             result = thisElement.treeScope().getElementById(stringValue);
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
         RefPtr elementValue = weakElementValue.get();
         if (elementValue && isElementVisible(*elementValue, thisElement))
-            result = elementValue.get();
+            result = WTFMove(elementValue);
     }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>&) {
         RELEASE_ASSERT_NOT_REACHED();
     }), it->value);

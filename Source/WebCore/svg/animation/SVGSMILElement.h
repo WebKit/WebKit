@@ -161,7 +161,7 @@ private:
     };
     bool parseCondition(StringView, BeginOrEnd);
     void parseBeginOrEnd(StringView, BeginOrEnd);
-    Element* eventBaseFor(const Condition&);
+    RefPtr<Element> eventBaseFor(const Condition&);
 
     void disconnectConditions();
 

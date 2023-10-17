@@ -623,32 +623,11 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         // The resulting segment is brand new, but with a different start time.
         WebKitMediaSrcPrivate* priv = stream->source->priv;
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
-        streamingMembers->segment.base = 0;
         streamingMembers->segment.rate = priv->rate;
         streamingMembers->segment.start = streamingMembers->segment.time = priv->startTime;
-    } else {
-        // In the case of non-seeking flushes we don't reset the timeline, so instead we need to increase the `base` field
-        // by however running time we're starting after the flush.
-
-        GstClockTime pipelineStreamTime;
-        gst_element_query_position(findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source))).get(), GST_FORMAT_TIME,
-            reinterpret_cast<gint64*>(&pipelineStreamTime));
-        GST_DEBUG_OBJECT(stream->source, "pipelineStreamTime from position query: %" GST_TIME_FORMAT, GST_TIME_ARGS(pipelineStreamTime));
-        // GST_CLOCK_TIME_NONE is returned when the pipeline is not yet pre-rolled (e.g. just after a seek). In this case
-        // we don't need to adjust the segment though, as running time has not advanced.
-        if (GST_CLOCK_TIME_IS_VALID(pipelineStreamTime)) {
-            DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
-            // We need to increase the base by the running time accumulated during the previous segment.
-
-            GstClockTime pipelineRunningTime = gst_segment_to_running_time(&streamingMembers->segment, GST_FORMAT_TIME, pipelineStreamTime);
-            assert(GST_CLOCK_TIME_IS_VALID(pipelineRunningTime));
-            GST_DEBUG_OBJECT(stream->source, "Resetting segment to current pipeline running time (%" GST_TIME_FORMAT") and stream time (%" GST_TIME_FORMAT ")",
-                GST_TIME_ARGS(pipelineRunningTime), GST_TIME_ARGS(pipelineStreamTime));
-            streamingMembers->segment.base = pipelineRunningTime;
-
-            streamingMembers->segment.start = streamingMembers->segment.time = static_cast<GstClockTime>(pipelineStreamTime);
-        }
     }
+    // In the case of non-seeking flushes we don't reset the timeline, so the buffers will
+    // have the same running time as before and we don't need to alter the segment.
 
     if (!skipFlush) {
         // By taking the stream lock we are waiting for the streaming thread task to stop if it hadn't yet.

@@ -722,9 +722,7 @@
         SYS_shared_region_map_and_slide_2_np
 #endif
         SYS_sigaction
-#if ASAN_ENABLED
         SYS_sigaltstack
-#endif
         SYS_sigprocmask
         SYS_sigreturn
         SYS_socketpair
@@ -751,6 +749,10 @@
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
+#if HAVE(MACH_RANGE_CREATE)
+            (when (defined? 'mach_vm_range_create)
+                (allow mach-message-send (kernel-mig-routine mach_vm_range_create))) ;; <rdar://105161083>
+#endif
             (allow mach-message-send (kernel-mig-routine
                 _mach_make_memory_entry
                 host_get_io_master
@@ -779,9 +781,6 @@
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
-#if HAVE(MACH_RANGE_CREATE)
-                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
-#endif
                 mach_vm_map_external
                 mach_vm_remap_external
                 semaphore_create

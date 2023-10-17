@@ -44,7 +44,7 @@ class SVGResources {
 public:
     SVGResources();
 
-    bool buildCachedResources(const RenderElement&, const RenderStyle&);
+    static std::unique_ptr<SVGResources> buildCachedResources(const RenderElement&, const RenderStyle&);
     void layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot*);
 
     // Ordinary resources
