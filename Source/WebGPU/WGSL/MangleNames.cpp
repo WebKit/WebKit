@@ -116,8 +116,10 @@ void NameManglerVisitor::run()
         String originalName = function.name();
         introduceVariable(function.name(), MangledName::Function);
         auto it = m_result.entryPoints.find(originalName);
-        if (it != m_result.entryPoints.end())
+        if (it != m_result.entryPoints.end()) {
+            it->value.originalName = originalName;
             it->value.mangledName = function.name();
+        }
         visit(function);
     }
 }

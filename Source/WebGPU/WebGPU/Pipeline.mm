@@ -45,7 +45,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     RELEASE_ASSERT(ast);
 
     std::optional<WGSL::PipelineLayout> wgslPipelineLayout { std::nullopt };
-    if (pipelineLayout)
+    if (pipelineLayout && pipelineLayout->numberOfBindGroupLayouts())
         wgslPipelineLayout = ShaderModule::convertPipelineLayout(*pipelineLayout);
 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout);
