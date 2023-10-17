@@ -279,15 +279,6 @@ public:
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
 
-    struct NodeChange {
-        Ref<AXIsolatedObject> isolatedObject;
-#if PLATFORM(COCOA)
-        RetainPtr<AccessibilityObjectWrapper> wrapper;
-#elif USE(ATSPI)
-        RefPtr<AccessibilityObjectWrapper> wrapper;
-#endif
-    };
-
     void generateSubtree(AccessibilityObject&);
     void labelCreated(AccessibilityObject&);
     void updateNode(AccessibilityObject&);
@@ -346,7 +337,18 @@ private:
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
     constexpr void updatingSubtree(AccessibilityObject* axObject) { m_rootOfSubtreeBeingUpdated = axObject; }
+
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
+    struct NodeChange {
+        Ref<AXIsolatedObject> isolatedObject;
+#if PLATFORM(COCOA)
+        RetainPtr<AccessibilityObjectWrapper> wrapper;
+#elif USE(ATSPI)
+        RefPtr<AccessibilityObjectWrapper> wrapper;
+#endif
+        AttachWrapper attachWrapper { AttachWrapper::OnMainThread };
+    };
+
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
