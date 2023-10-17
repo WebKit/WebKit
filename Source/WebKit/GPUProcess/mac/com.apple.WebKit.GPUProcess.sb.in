@@ -1275,7 +1275,9 @@
         SYS_sendto
         SYS_setrlimit
         SYS_setsockopt
+#if ASAN_ENABLED
         SYS_sigaltstack
+#endif
         SYS_sigprocmask
 #if !PLATFORM(MAC)
         SYS_shared_region_map_and_slide_2_np
