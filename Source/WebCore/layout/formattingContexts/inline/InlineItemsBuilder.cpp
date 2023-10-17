@@ -43,7 +43,9 @@ struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
 };
-static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringView textContent, size_t startPosition, bool preserveNewline, bool preserveTab, bool stopAtWordSeparatorBoundary)
+
+template<typename CharacterType>
+static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(CharacterType* textContent, unsigned length, size_t startPosition, bool preserveNewline, bool preserveTab, bool stopAtWordSeparatorBoundary)
 {
     auto hasWordSeparatorCharacter = false;
     auto isWordSeparatorCharacter = false;
@@ -55,7 +57,7 @@ static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringVi
         return isTreatedAsSpaceCharacter || character == tabCharacter;
     };
     auto nextNonWhiteSpacePosition = startPosition;
-    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition])) {
+    while (nextNonWhiteSpacePosition < length && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition])) {
         if (UNLIKELY(stopAtWordSeparatorBoundary && hasWordSeparatorCharacter && !isWordSeparatorCharacter))
             break;
         ++nextNonWhiteSpacePosition;
@@ -683,7 +685,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
         auto handleWhitespace = [&] {
             auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && style.fontCascade().wordSpacing();
-            auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
+            auto whitespaceContent = text.is8Bit() ?
+                moveToNextNonWhitespacePosition(text.characters8(), text.length(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary) :
+                moveToNextNonWhitespacePosition(text.characters16(), text.length(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
             if (!whitespaceContent)
                 return false;
 
