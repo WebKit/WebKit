@@ -29,6 +29,7 @@
 #import "TestController.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <objc/runtime.h>
 
 static int _argc;
 static const char **_argv;
@@ -64,12 +65,24 @@ static const char **_argv;
 
 @end
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+static UIView *overrideSelectionViewToSuppressLogging(id, SEL)
+{
+    return nil;
+}
+#endif
+
 int main(int argc, const char* argv[])
 {
     _argc = argc;
     _argv = argv;
 
     [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    auto method = class_getInstanceMethod(UITextInteractionAssistant.class, @selector(selectionView));
+    method_setImplementation(method, reinterpret_cast<IMP>(overrideSelectionViewToSuppressLogging));
+#endif
 
     UIApplicationMain(argc, (char**)argv, @"WebKitTestRunnerApp", @"WebKitTestRunnerApp");
     return 0;

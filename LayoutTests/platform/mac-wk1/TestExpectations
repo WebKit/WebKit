@@ -2667,6 +2667,8 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 
 webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
 
+fast/forms/select/select-show-picker.html [ Skip ]
+
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
 
@@ -2695,6 +2697,3 @@ webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-wi
 
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
-
-fast/events/cancel-mousedown-and-drag-from-frame-to-other-frame.html [ Failure ]
-fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]

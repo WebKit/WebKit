@@ -411,31 +411,19 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
 
 bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
+    unsigned startFragment = fragment.characterOffset - start();
+    unsigned endFragment = startFragment + fragment.length;
+
+    // Find intersection between the intervals: [startFragment..endFragment) and [startPosition..endPosition)
+    startPosition = std::max(startFragment, startPosition);
+    endPosition = std::min(endFragment, endPosition);
+
     if (startPosition >= endPosition)
         return false;
 
-    ASSERT(fragment.characterOffset >= start());
-    unsigned offset = fragment.characterOffset - start();
-    unsigned length = fragment.length;
+    startPosition -= startFragment;
+    endPosition -= startFragment;
 
-    if (startPosition >= offset + length || endPosition <= offset)
-        return false;
-
-    if (startPosition < offset)
-        startPosition = 0;
-    else {
-        ASSERT(startPosition >= offset);
-        startPosition -= offset;
-    }
-
-    if (endPosition > offset + length)
-        endPosition = length;
-    else {
-        ASSERT(endPosition >= offset);
-        endPosition -= offset;
-    }
-
-    ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     return true;
 }
 

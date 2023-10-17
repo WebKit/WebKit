@@ -6741,11 +6741,6 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-f
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-002.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
 
-webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-disabled.tentative.html [ Skip ]
-webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html [ Skip ]
-webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html [ Skip ]
-webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html [ Skip ]
-
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]

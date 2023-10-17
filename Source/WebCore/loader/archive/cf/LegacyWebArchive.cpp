@@ -71,7 +71,7 @@ static const CFStringRef LegacyWebArchiveResourceDataKey = CFSTR("WebResourceDat
 static const CFStringRef LegacyWebArchiveResourceFrameNameKey = CFSTR("WebResourceFrameName");
 static const CFStringRef LegacyWebArchiveResourceMIMETypeKey = CFSTR("WebResourceMIMEType");
 static const CFStringRef LegacyWebArchiveResourceURLKey = CFSTR("WebResourceURL");
-static const CFStringRef LegacyWebArchiveResourceFileNameKey = CFSTR("WebResourceFileName");
+static const CFStringRef LegacyWebArchiveResourceFilePathKey = CFSTR("WebResourceFilePath");
 static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("WebResourceTextEncodingName");
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
@@ -122,9 +122,9 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
         return nullptr;
     }
 
-    auto& fileName = resource->fileName();
-    if (!fileName.isEmpty())
-        CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceFileNameKey, fileName.createCFString().get());
+    auto& filePath = resource->relativeFilePath();
+    if (!filePath.isEmpty())
+        CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceFilePathKey, filePath.createCFString().get());
 
     // FrameName should be left out if empty for subresources, but always included for main resources
     auto& frameName = resource->frameName();
@@ -251,14 +251,14 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    auto fileNameValue = CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceFileNameKey);
-    auto fileName = dynamic_cf_cast<CFStringRef>(fileNameValue);
-    if (fileNameValue && !fileName) {
-        LOG(Archives, "LegacyWebArchive - File name is not of type CFString, cannot create invalid resource");
+    auto filePathValue = CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceFilePathKey);
+    auto filePath = dynamic_cf_cast<CFStringRef>(filePathValue);
+    if (filePathValue && !filePath) {
+        LOG(Archives, "LegacyWebArchive - File path is not of type CFString, cannot create invalid resource");
         return nullptr;
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response, fileName);
+    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response, filePath);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()
@@ -443,7 +443,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFileName)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFilePath)
 {
     auto* frame = node.document().frame();
     if (!frame)
@@ -464,7 +464,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node.document()) + markupString;
 
-    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), mainResourceFileName);
+    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), mainResourceFilePath);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -538,7 +538,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainFrameFileName)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainFrameFilePath)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -556,7 +556,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<ArchiveResource>> subresources;
     HashMap<String, String> uniqueSubresources;
     HashSet<String> uniqueFileNames;
-    String subresourcesDirectoryName = mainFrameFileName.isNull() ? String { } : makeString(mainFrameFileName, "_files");
+    String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files");
 
     for (auto& node : nodes) {
         RefPtr<LocalFrame> childFrame;
@@ -564,14 +564,15 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node.get()).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
-            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), mainFrameFileName)) {
+            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), mainFrameFilePath)) {
                 auto subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {
+                    auto subframeMainResourceRelativePath = frame.isMainFrame() ? subframeMainResource->relativeFilePath() : FileSystem::lastComponentOfPathIgnoringTrailingSlash(subframeMainResource->relativeFilePath());
                     if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank() || subframeMainResourceURL.protocolIsData())
-                        uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResource->fileName());
+                        uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResourceRelativePath);
                     else
-                        uniqueSubresources.add(subframeMainResourceURL.string(), subframeMainResource->fileName());
+                        uniqueSubresources.add(subframeMainResourceURL.string(), subframeMainResourceRelativePath);
                 }
                 subframeArchives.append(subframeArchive.releaseNonNull());
             } else
@@ -611,8 +612,8 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 if (!subresourcesDirectoryName.isNull()) {
                     String subresourceFileName = generateValidFileName(subresourceURL, uniqueFileNames);
                     uniqueFileNames.add(subresourceFileName);
-                    String subresourceFilePath = makeString(subresourcesDirectoryName, "/", subresourceFileName);
-                    resource->setFileName(subresourceFilePath);
+                    String subresourceFilePath = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
+                    resource->setRelativeFilePath(subresourceFilePath);
                     addResult.iterator->value = frame.isMainFrame() ? subresourceFilePath : subresourceFileName;
                 }
 
@@ -635,7 +636,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         }
     }
 
-    if (!mainFrameFileName.isNull()) {
+    if (!mainFrameFilePath.isNull()) {
         auto* document = frame.document();
         if (!document)
             return nullptr;
@@ -646,10 +647,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         auto extension = MIMETypeRegistry::preferredExtensionForMIMEType("text/html"_s);
         if (!extension.isEmpty())
             extension = makeString(".", extension);
-        auto mainFrameFileNameWithExtension = mainFrameFileName.endsWith(extension) ? mainFrameFileName : makeString(mainFrameFileName, extension);
-        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileNameWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
+        auto mainFrameFilePathWithExtension = mainFrameFilePath.endsWith(extension) ? mainFrameFilePath : makeString(mainFrameFilePath, extension);
+        auto filePathWithExtension = frame.isMainFrame() ? mainFrameFilePathWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
         String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, nullptr, std::nullopt, WTFMove(uniqueSubresources));
-        mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), fileNameWithExtension);
+        mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), filePathWithExtension);
     }
 
     return create(mainResource.releaseNonNull(), WTFMove(subresources), WTFMove(subframeArchives));

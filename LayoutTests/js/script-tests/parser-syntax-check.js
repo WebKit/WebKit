@@ -536,6 +536,15 @@ valid("let: function foo() { }");
 valid("yield: function foo() { }");
 valid("yield: let: function foo() { }");
 invalid("'use strict'; yield: let: function foo() { }");
+valid("if (true) label: undefined");
+valid("if (true) let: {}");
+valid("if (true) async: undefined");
+valid("while (false) label: {}");
+valid("while (false) let: undefined");
+valid("while (false) async: {}");
+invalid("label: async function foo() {}");
+invalid("if (false) async function* foo() {}");
+invalid("if (false) label: async function foo() {}");
 
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")

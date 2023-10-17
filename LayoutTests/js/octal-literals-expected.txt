@@ -9,7 +9,7 @@ PASS 0O1 is 1
 PASS 0o000000000000 is 0
 PASS 0O8 threw exception SyntaxError: No octal digits after '0o'.
 PASS 0oa threw exception SyntaxError: No octal digits after '0o'.
-PASS 0o0.0 threw exception SyntaxError: Unexpected number '.0'. Parse error..
+PASS 0o0.0 threw exception SyntaxError: Unexpected number '.0'.
 PASS x=0o1y=42 threw exception SyntaxError: No space between octal literal and identifier.
 PASS 0o12 is 0xa
 PASS 0o110642547 is 0x01234567

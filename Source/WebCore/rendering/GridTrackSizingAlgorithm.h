@@ -133,7 +133,7 @@ public:
     std::optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
     std::optional<LayoutUnit> estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
-    void cacheBaselineAlignedItem(const RenderBox&, GridAxis);
+    void cacheBaselineAlignedItem(const RenderBox&, GridAxis, bool cachingRowSubgridsForRootGrid);
     void copyBaselineItemsCache(const GridTrackSizingAlgorithm&, GridAxis);
     void clearBaselineItemsCache();
 
@@ -255,6 +255,8 @@ private:
     typedef HashMap<const RenderBox*, bool> BaselineItemsCache;
     BaselineItemsCache m_columnBaselineItemsMap;
     BaselineItemsCache m_rowBaselineItemsMap;
+
+    WeakHashSet<RenderGrid> m_rowSubgridsWithBaselineAlignedItems;
 
     // This is a RAII class used to ensure that the track sizing algorithm is
     // executed as it is suppossed to be, i.e., first resolve columns and then

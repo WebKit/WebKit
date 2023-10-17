@@ -716,23 +716,27 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         if (isBottom(base))
             return m_types.bottomType();
 
+
+        const Type* result = nullptr;
         if (auto* array = std::get_if<Types::Array>(base)) {
             // FIXME: check bounds if index is constant
-            return array->element;
-        }
-
-        if (auto* vector = std::get_if<Types::Vector>(base)) {
+            result = array->element;
+        } else if (auto* vector = std::get_if<Types::Vector>(base)) {
             // FIXME: check bounds if index is constant
-            return vector->element;
-        }
-
-        if (auto* matrix = std::get_if<Types::Matrix>(base)) {
+            result = vector->element;
+        } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
             // FIXME: check bounds if index is constant
-            return m_types.vectorType(matrix->rows, matrix->element);
+            result = m_types.vectorType(matrix->rows, matrix->element);
         }
 
-        typeError(access.span(), "cannot index type '", *base, "'");
-        return nullptr;
+        if (!result) {
+            typeError(access.span(), "cannot index type '", *base, "'");
+            return nullptr;
+        }
+
+        if (!access.index().constantValue().has_value())
+            result = concretize(result, m_types);
+        return result;
     };
 
     auto* base = infer(access.base());

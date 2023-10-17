@@ -3339,8 +3339,11 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     if (!stackValue.isUndefinedOrNull()) {
         auto stackString = stackValue.toWTFString(globalObject);
         CHECK_EXCEPTION();
-        if (stackString.length())
-            printf("%s\n", stackString.utf8().data());
+        if (stackString.length()) {
+            auto expectedUtf8 = stackString.tryGetUTF8();
+            if (expectedUtf8)
+                printf("%s\n", expectedUtf8.value().data());
+        }
     }
 
     fflush(stdout);

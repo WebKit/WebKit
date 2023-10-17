@@ -44,6 +44,7 @@
 #include "HTMLOptionsCollectionInlines.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -1665,6 +1666,33 @@ unsigned HTMLSelectElement::length() const
     }
 
     return options;
+}
+
+ExceptionOr<void> HTMLSelectElement::showPicker()
+{
+    RefPtr frame = document().frame();
+    if (!frame)
+        return { };
+
+    if (!isMutable())
+        return Exception { InvalidStateError, "Select showPicker() cannot be used on immutable controls."_s };
+
+    // In cross-origin iframes it should throw a "SecurityError" DOMException. In same-origin iframes it should work fine.
+    auto* localTopFrame = dynamicDowncast<LocalFrame>(frame->tree().top());
+    if (!localTopFrame || !frame->document()->securityOrigin().isSameOriginAs(localTopFrame->document()->securityOrigin()))
+        return Exception { SecurityError, "Select showPicker() called from cross-origin iframe."_s };
+
+    auto* window = frame->window();
+    if (!window || !window->hasTransientActivation())
+        return Exception { NotAllowedError, "Select showPicker() requires a user gesture."_s };
+
+#if !PLATFORM(IOS_FAMILY)
+    auto* renderer = this->renderer();
+    if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
+        renderMenuList->showPopup();
+#endif
+
+    return { };
 }
 
 } // namespace

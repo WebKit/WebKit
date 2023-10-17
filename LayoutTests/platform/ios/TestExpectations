@@ -3276,6 +3276,9 @@ fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 fast/forms/date/date-show-picker.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-show-picker.html [ Skip ]
 
+# showPicker not yet implemented for iOS
+webkit.org/b/261703 fast/forms/select/select-show-picker.html [ Skip ]
+
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
 

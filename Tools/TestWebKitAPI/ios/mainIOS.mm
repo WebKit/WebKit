@@ -24,13 +24,28 @@
  */
 
 #import "config.h"
+
 #import "TestsController.h"
 #import "UIKitMacHelperSPI.h"
+#import "UIKitSPIForTesting.h"
+#import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
-#if !defined(BUILDING_TEST_IPC) && !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_WGSL)
-#import <WebKit/WKProcessPoolPrivate.h>
+#if defined(BUILDING_TEST_IPC) || defined(BUILDING_TEST_WTF) || defined(BUILDING_TEST_WGSL)
+#define BUILDING_FOR_UI_TESTING 0
+#else
+#define BUILDING_FOR_UI_TESTING 1
 #endif
+
+#if BUILDING_FOR_UI_TESTING
+#import <WebKit/WKProcessPoolPrivate.h>
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+static UIView *overrideSelectionViewToSuppressLogging(id, SEL)
+{
+    return nil;
+}
+#endif
+#endif // BUILDING_FOR_UI_TESTING
 
 int main(int argc, char** argv)
 {
@@ -49,9 +64,13 @@ int main(int argc, char** argv)
 
         [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 
-#if !defined(BUILDING_TEST_IPC) && !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_WGSL)
-        [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#if BUILDING_FOR_UI_TESTING
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+        auto method = class_getInstanceMethod(UITextInteractionAssistant.class, @selector(selectionView));
+        method_setImplementation(method, reinterpret_cast<IMP>(overrideSelectionViewToSuppressLogging));
 #endif
+        [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#endif // BUILDING_FOR_UI_TESTING
 
         passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
     }

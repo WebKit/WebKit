@@ -1943,4 +1943,10 @@ TEST(WKNavigation, NavigationToUnknownBlankURL)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:google.com"]]];
     TestWebKitAPI::Util::run(&done);
     EXPECT_TRUE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about://newtab/"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
 }

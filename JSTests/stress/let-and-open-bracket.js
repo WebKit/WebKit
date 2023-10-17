@@ -22,11 +22,24 @@ function testSyntaxError(script, message) {
 }
 
 testSyntaxError(`
+foo: let [ok] = 40;
+`, `SyntaxError: Unexpected token '['. Cannot use lexical declaration in single-statement context.`);
+
+testSyntaxError(`
 if (false) let [ok] = 40;
 `, `SyntaxError: Unexpected token '['. Cannot use lexical declaration in single-statement context.`);
 
 testSyntaxError(`
+if (false) foo: let [ok] = 40;
+`, `SyntaxError: Unexpected token '['. Cannot use lexical declaration in single-statement context.`);
+
+testSyntaxError(`
 if (false) let
+[ok] = 40;
+`, `SyntaxError: Unexpected token '['. Cannot use lexical declaration in single-statement context.`);
+
+testSyntaxError(`
+if (false) foo: let
 [ok] = 40;
 `, `SyntaxError: Unexpected token '['. Cannot use lexical declaration in single-statement context.`);
 
