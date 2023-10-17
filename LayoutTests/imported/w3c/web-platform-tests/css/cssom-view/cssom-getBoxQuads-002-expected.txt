@@ -1,0 +1,4 @@
+hello1 hello2
+
+FAIL CSSOM View - getBoxQuads() returns consistent box for SVG test element.getBoxQuads is not a function. (In 'element.getBoxQuads()', 'element.getBoxQuads' is undefined)
+

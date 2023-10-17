@@ -5180,6 +5180,9 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 
 webkit.org/b/230237 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-inline-image.html [ Failure ]
 
+# Timeout
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-navigation.html [ Skip ]
+
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-012.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-014.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-018.html [ ImageOnlyFailure ]

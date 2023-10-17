@@ -1,0 +1,8 @@
+An SVG text element with no "transform" attribute
+An SVG with a "transform" attribute
+An SVG with a "rotate" attribute
+
+PASS Element.getBoundingClientRect() and Range.getBoudingClientRect() should match for an SVG <text>
+PASS Element.getBoundingClientRect() and Range.getBoudingClientRect() should match for an SVG <text> with a transform
+PASS Element.getBoundingClientRect() and Range.getBoudingClientRect() should match for an SVG <text> with a rotate
+
