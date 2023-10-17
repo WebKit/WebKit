@@ -2886,3 +2886,12 @@ webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/repo
 [ Sonoma ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.worker.html [ Crash ]
 
 webkit.org/b/262732 [ Sonoma+ ] fast/css/text-overflow-input.html [ Failure ]
+
+# webkit.org/b/263226 (REGRESSION(268692@main?): [ macOS ] 7 tests under imported/w3c/web-platform-tests/media-source/mediasource-* are flaky failures.)
+imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Failure ]
