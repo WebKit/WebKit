@@ -120,8 +120,10 @@ endif ()
 # Create pdb files for debugging purposes, also for Release builds
 add_compile_options(/Zi /GS)
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:ICF /OPT:REF")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG /OPT:ICF /OPT:REF")
+# Disable ICF (identical code folding) optimization,
+# as it makes it unsafe to pointer-compare functions with identical definitions.
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:NOICF /OPT:REF")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG /OPT:NOICF /OPT:REF")
 
 # We do not use exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
