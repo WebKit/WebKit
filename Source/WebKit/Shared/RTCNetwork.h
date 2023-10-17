@@ -90,14 +90,17 @@ struct RTCNetwork {
     using IPAddress = RTC::Network::IPAddress;
     using InterfaceAddress = RTC::Network::InterfaceAddress;
 
+    RTCNetwork() = default;
     explicit RTCNetwork(const rtc::Network&);
-    explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<char>&& key, size_t length, Vector<InterfaceAddress>&& ips);
 
     rtc::Network value() const;
     static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
 
-    Vector<char> name;
-    Vector<char> description;
+    void encode(IPC::Encoder&) const;
+    static std::optional<RTCNetwork> decode(IPC::Decoder&);
+
+    std::string name;
+    std::string description;
     IPAddress prefix;
     int prefixLength;
     int type;
@@ -106,9 +109,9 @@ struct RTCNetwork {
     bool active;
     bool ignored;
     int scopeID;
-    Vector<char> key;
+    std::string key;
     size_t length;
-    Vector<InterfaceAddress> ips;
+    std::vector<rtc::InterfaceAddress> ips;
 };
 
 }

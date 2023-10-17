@@ -36,7 +36,7 @@ namespace WebKit {
 RTCNetwork::RTCNetwork(const rtc::Network& network)
     : name(network.name())
     , description(network.description())
-    , prefix(network.prefix())
+    , prefix { network.prefix() }
     , prefixLength(network.prefix_length())
     , type(network.type())
     , id(network.id())
@@ -44,24 +44,9 @@ RTCNetwork::RTCNetwork(const rtc::Network& network)
     , active(network.active())
     , ignored(network.ignored())
     , scopeID(network.scope_id())
-    , ips(WTF::map(network.GetIPs(), [] (const auto& ip) {
-        return InterfaceAddress(ip);
-    })) { }
-
-RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<char>&& key, size_t length, Vector<InterfaceAddress>&& ips)
-    : name(WTFMove(name))
-    , description(WTFMove(description))
-    , prefix(prefix)
-    , prefixLength(prefixLength)
-    , type(type)
-    , id(id)
-    , preference(preference)
-    , active(active)
-    , ignored(ignored)
-    , scopeID(scopeID)
-    , key(WTFMove(key))
-    , length(length)
-    , ips(WTFMove(ips)) { }
+    , ips(network.GetIPs())
+{
+}
 
 rtc::Network RTCNetwork::value() const
 {
@@ -71,13 +56,7 @@ rtc::Network RTCNetwork::value() const
     network.set_active(active);
     network.set_ignored(ignored);
     network.set_scope_id(scopeID);
-
-    std::vector<rtc::InterfaceAddress> vector;
-    vector.reserve(ips.size());
-    for (auto& ip : ips)
-        vector.push_back(ip.rtcAddress());
-    network.SetIPs(WTFMove(vector), true);
-
+    network.SetIPs(ips, true);
     return network;
 }
 
@@ -137,6 +116,74 @@ void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
     }
     encoder << false;
     encoder << RTCNetwork::IPAddress(value.ipaddr());
+}
+
+std::optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
+{
+    RTCNetwork result;
+    IPC::DataReference name, description;
+    if (!decoder.decode(name))
+        return std::nullopt;
+    result.name = std::string(reinterpret_cast<const char*>(name.data()), name.size());
+    if (!decoder.decode(description))
+        return std::nullopt;
+    result.description = std::string(reinterpret_cast<const char*>(description.data()), description.size());
+    std::optional<IPAddress> prefix;
+    decoder >> prefix;
+    if (!prefix)
+        return std::nullopt;
+    result.prefix = WTFMove(*prefix);
+    if (!decoder.decode(result.prefixLength))
+        return std::nullopt;
+    if (!decoder.decode(result.type))
+        return std::nullopt;
+    if (!decoder.decode(result.id))
+        return std::nullopt;
+    if (!decoder.decode(result.preference))
+        return std::nullopt;
+    if (!decoder.decode(result.active))
+        return std::nullopt;
+    if (!decoder.decode(result.ignored))
+        return std::nullopt;
+    if (!decoder.decode(result.scopeID))
+        return std::nullopt;
+
+    uint64_t length;
+    if (!decoder.decode(length))
+        return std::nullopt;
+    result.ips.reserve(length);
+    for (size_t index = 0; index < length; ++index) {
+        std::optional<IPAddress> address;
+        decoder >> address;
+        if (!address)
+            return std::nullopt;
+        int flags;
+        if (!decoder.decode(flags))
+            return std::nullopt;
+        result.ips.push_back({ address->rtcAddress(), flags });
+    }
+    return result;
+}
+
+void RTCNetwork::encode(IPC::Encoder& encoder) const
+{
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(name.data()), name.length());
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(description.data()), description.length());
+    encoder << prefix;
+    encoder << prefixLength;
+    encoder << type;
+
+    encoder << id;
+    encoder << preference;
+    encoder << active;
+    encoder << ignored;
+    encoder << scopeID;
+
+    encoder << (uint64_t)ips.size();
+    for (auto& ip : ips) {
+        encoder << IPAddress { ip };
+        encoder << ip.ipv6_flags();
+    }
 }
 
 namespace RTC::Network {
