@@ -523,7 +523,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
 {
     ASSERT_UNUSED(sessionId, sessionId == m_sessionID);
     KeyStatusVector keyStatusVector = m_keyStore.convertToJSKeyStatusVector();
-    callOnMainThread([weakThis = WeakPtr { *this }, callback = WTFMove(callback), &keyStatusVector]() mutable {
+    callOnMainThread([weakThis = WeakPtr { *this }, callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector)]() mutable {
         if (!weakThis)
             return;
 
