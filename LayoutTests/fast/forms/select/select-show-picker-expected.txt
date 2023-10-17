@@ -1,0 +1,4 @@
+
+Is showing popup? true
+
+This test verifies that the popup is presented when calling showPicker on a select.
