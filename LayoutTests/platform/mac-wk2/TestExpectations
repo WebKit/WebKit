@@ -1973,14 +1973,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
 
-# rdar://113666519 (REGRESSION ( Sonoma ): [ Sonoma wk2 ] 6 fast/selectors/style-invalidation tests are a consistent failure)
-[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-descendants.html [ Failure ]
-[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-siblings.html [ Failure ]
-[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-descendants.html [ Failure ]
-[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-siblings.html [ Failure ]
-[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-descendants.html [ Failure ]
-[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
-
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/text/canvas-color-fonts/fill-color-shadow-COLR.html [ ImageOnlyFailure ]

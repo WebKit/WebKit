@@ -12475,6 +12475,7 @@ void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory)
 void WebPageProxy::dispatchActivityStateUpdateForTesting()
 {
     RunLoop::current().dispatch([protectedThis = Ref { *this }] {
+        protectedThis->updateActivityState();
         protectedThis->dispatchActivityStateChange();
     });
 }
