@@ -1412,9 +1412,9 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
 #if ENABLE(MATHML)
         if (settings().mathMLEnabled() && namespaceURI == MathMLNames::mathmlNamespaceURI)
             return MathMLElementFactory::createKnownElement(qualifiedName, *this, /* createdByParser */ false);
+#endif
         return nullptr;
     })();
-#endif
 
     if (LIKELY(opportunisticallyMatchedBuiltinElement))
         return opportunisticallyMatchedBuiltinElement.releaseNonNull();
