@@ -112,10 +112,10 @@ void RenderPassEncoder::executePreDrawCommands()
     }
 
     if (m_vertexDynamicOffsets.size())
-        [m_renderCommandEncoder setVertexBytes:&m_vertexDynamicOffsets[0] length:m_vertexDynamicOffsets.size() atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
+        [m_renderCommandEncoder setVertexBytes:&m_vertexDynamicOffsets[0] length:m_vertexDynamicOffsets.size() * sizeof(m_vertexDynamicOffsets[0]) atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
 
     if (m_fragmentDynamicOffsets.size())
-        [m_renderCommandEncoder setFragmentBytes:&m_fragmentDynamicOffsets[0] length:m_fragmentDynamicOffsets.size() atIndex:m_device->maxBuffersForFragmentStage()];
+        [m_renderCommandEncoder setFragmentBytes:&m_fragmentDynamicOffsets[0] length:m_fragmentDynamicOffsets.size() * sizeof(m_fragmentDynamicOffsets[0]) atIndex:m_device->maxBuffersForFragmentStage()];
 
     m_bindGroupDynamicOffsets.clear();
 }

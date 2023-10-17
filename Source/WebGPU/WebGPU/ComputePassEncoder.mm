@@ -89,7 +89,7 @@ void ComputePassEncoder::executePreDispatchCommands()
         }
     }
 
-    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() atIndex:m_device->maxBuffersForComputeStage()];
+    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
 
     m_bindGroupDynamicOffsets.clear();
 }

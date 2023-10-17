@@ -62,8 +62,6 @@ public:
     void visit(AST::Expression&) override;
 
 private:
-    enum class Context : uint8_t { Local, Global };
-
     struct Global {
         struct Resource {
             unsigned group;
@@ -92,6 +90,7 @@ private:
 
     static AST::Identifier argumentBufferParameterName(unsigned group);
     static AST::Identifier argumentBufferStructName(unsigned group);
+    static AST::Identifier dynamicOffsetVariableName();
 
     void def(const AST::Identifier&, AST::Variable*);
 
@@ -99,6 +98,7 @@ private:
     void visitEntryPoint(const CallGraph::EntryPoint&);
     void visitCallee(const CallGraph::Callee&);
     UsedGlobals determineUsedGlobals();
+    void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
     Vector<unsigned> insertStructs(const UsedResources&);
     Vector<unsigned> insertStructs(const PipelineLayout&);
@@ -108,7 +108,7 @@ private:
     void insertParameters(AST::Function&, const Vector<unsigned>&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
-    void readVariable(AST::IdentifierExpression&, AST::Variable&, Context);
+    void readVariable(AST::IdentifierExpression&, const Global&);
     void insertBeforeCurrentStatement(AST::Statement&);
     AST::Expression& bufferLengthType();
     AST::Expression& bufferLengthReferenceType();
@@ -156,6 +156,7 @@ private:
     HashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
     AST::Expression* m_bufferLengthType { nullptr };
     AST::Expression* m_bufferLengthReferenceType { nullptr };
+    HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
 };
 
 void RewriteGlobalVariables::run()
@@ -367,16 +368,13 @@ auto RewriteGlobalVariables::getPacking(AST::IdentifierExpression& identifier) -
     auto packing = Packing::Unpacked;
 
     auto def = m_defs.find(identifier.identifier());
-    if (def != m_defs.end()) {
-        if (def->value)
-            readVariable(identifier, *def->value, Context::Local);
+    if (def != m_defs.end())
         return packing;
-    }
 
     auto it = m_globals.find(identifier.identifier());
     if (it == m_globals.end())
         return packing;
-    readVariable(identifier, *it->value.declaration, Context::Global);
+    readVariable(identifier, it->value);
 
     if (it->value.resource.has_value())
         return packingForType(identifier.inferredType());
@@ -755,21 +753,13 @@ const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
 
 void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryPoint)
 {
-    m_reads.clear();
-    m_structTypes.clear();
-
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting entrypoint: ", entryPoint.function.name());
 
+    m_reads.clear();
+    m_structTypes.clear();
+    m_globalsUsingDynamicOffset.clear();
+
     m_entryPointInformation = &entryPoint.information;
-
-    auto it = m_pipelineLayouts.find(m_entryPointInformation->originalName);
-    ASSERT(it != m_pipelineLayouts.end());
-
-    if (!it->value.has_value()) {
-        m_entryPointInformation->defaultLayout = { PipelineLayout { } };
-        m_generatedLayout = &*m_entryPointInformation->defaultLayout;
-    } else
-        m_generatedLayout = nullptr;
 
     switch (entryPoint.stage) {
     case AST::StageAttribute::Stage::Compute:
@@ -783,6 +773,17 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
         break;
     }
 
+    auto it = m_pipelineLayouts.find(m_entryPointInformation->originalName);
+    ASSERT(it != m_pipelineLayouts.end());
+
+    if (!it->value.has_value()) {
+        m_entryPointInformation->defaultLayout = { PipelineLayout { } };
+        m_generatedLayout = &*m_entryPointInformation->defaultLayout;
+    } else {
+        m_generatedLayout = nullptr;
+        collectDynamicOffsetGlobals(*it->value);
+    }
+
     visit(entryPoint.function);
     if (m_reads.isEmpty())
         return;
@@ -794,6 +795,44 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
     insertParameters(entryPoint.function, groups);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
+}
+
+void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& pipelineLayout)
+{
+    unsigned group = 0;
+    for (const auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
+        for (const auto& entry : bindGroupLayout.entries) {
+            if (!entry.visibility.contains(m_stage))
+                continue;
+
+            auto argumentBufferIndex = [&] {
+                switch (m_stage) {
+                case ShaderStage::Vertex:
+                    return entry.vertexArgumentBufferIndex;
+                case ShaderStage::Fragment:
+                    return entry.fragmentArgumentBufferIndex;
+                case ShaderStage::Compute:
+                    return entry.computeArgumentBufferIndex;
+                }
+            }();
+            auto bufferDynamicOffset = [&] {
+                switch (m_stage) {
+                case ShaderStage::Vertex:
+                    return entry.vertexBufferDynamicOffset;
+                case ShaderStage::Fragment:
+                    return entry.fragmentBufferDynamicOffset;
+                case ShaderStage::Compute:
+                    return entry.computeBufferDynamicOffset;
+                }
+            }();
+
+            if (!bufferDynamicOffset.has_value())
+                continue;
+
+            m_globalsUsingDynamicOffset.add({ group + 1, *argumentBufferIndex + 1 }, *bufferDynamicOffset);
+        }
+        ++group;
+    }
 }
 
 static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
@@ -1214,20 +1253,43 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
 void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
 {
     auto span = function.span();
-    for (auto group : groups) {
-        auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
-        type.m_inferredType = m_structTypes.get(group);
+    const auto& insertParameter = [&](unsigned group, AST::Identifier&& name, AST::Expression* type = nullptr, AST::ParameterRole parameterRole = AST::ParameterRole::BindGroup) {
+        if (!type) {
+            type = &m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
+            type->m_inferredType = m_structTypes.get(group);
+        }
         auto& groupValue = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group);
         groupValue.m_inferredType = m_callGraph.ast().types().abstractIntType();
         groupValue.setConstantValue(group);
         auto& groupAttribute = m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, groupValue);
         m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             span,
-            argumentBufferParameterName(group),
-            type,
+            WTFMove(name),
+            *type,
             AST::Attribute::List { groupAttribute },
-            AST::ParameterRole::BindGroup
+            parameterRole
         ));
+    };
+    for (auto group : groups)
+        insertParameter(group, argumentBufferParameterName(group));
+    if (!m_globalsUsingDynamicOffset.isEmpty()) {
+        unsigned group;
+        switch (m_stage) {
+        case ShaderStage::Vertex:
+            group = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage;
+            break;
+        case ShaderStage::Fragment:
+            group = m_callGraph.ast().configuration().maxBuffersForFragmentStage;
+            break;
+        case ShaderStage::Compute:
+            group = m_callGraph.ast().configuration().maxBuffersForComputeStage;
+            break;
+        }
+
+        auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, AST::Identifier::make("u32"_s));
+        type.m_inferredType = m_callGraph.ast().types().pointerType(AddressSpace::Uniform, m_callGraph.ast().types().u32Type(), AccessMode::Read);
+
+        insertParameter(group, AST::Identifier::make(dynamicOffsetVariableName()), &type, AST::ParameterRole::UserDefined);
     }
 }
 
@@ -1240,7 +1302,7 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
             AST::Identifier::make(argumentBufferParameterName(group))
         );
 
-        for (auto& [_, global] : bindings) {
+        for (auto& [binding, global] : bindings) {
             auto& name = global->declaration->name();
             String fieldName = name;
             auto* storeType = global->declaration->storeType();
@@ -1253,13 +1315,35 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
                 argument,
                 AST::Identifier::make(WTFMove(fieldName))
             );
+            AST::Expression* initializer = &access;
+
+            auto it = m_globalsUsingDynamicOffset.find({ group + 1, binding + 1 });
+            if (it != m_globalsUsingDynamicOffset.end()) {
+                auto offset = it->value;
+                auto& target = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+                    SourceSpan::empty(),
+                    AST::Identifier::make("__dynamicOffset"_s)
+                );
+                auto& reference = std::get<Types::Reference>(*global->declaration->maybeReferenceType()->inferredType());
+                target.m_inferredType = m_callGraph.ast().types().pointerType(reference.addressSpace, storeType, reference.accessMode);
+
+                auto& offsetExpression = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(span, offset);
+                offsetExpression.m_inferredType = m_callGraph.ast().types().u32Type();
+                offsetExpression.setConstantValue(offset);
+                initializer = &m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
+                    SourceSpan::empty(),
+                    target,
+                    AST::Expression::List { access, offsetExpression }
+                );
+            }
+
             auto& variable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Let,
                 AST::Identifier::make(name),
                 nullptr,
                 global->declaration->maybeReferenceType(),
-                &access,
+                initializer,
                 AST::Attribute::List { }
             );
             auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
@@ -1286,14 +1370,13 @@ void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* var
     m_defs.add(name, variable);
 }
 
-void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable, Context context)
+void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, const Global& global)
 {
-    if (variable.flavor() == AST::VariableFlavor::Const)
+    if (global.declaration->flavor() == AST::VariableFlavor::Const)
         return;
-    if (context == Context::Global) {
-        dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
-        m_reads.add(identifier.identifier());
-    }
+
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
+    m_reads.add(identifier.identifier());
 }
 
 void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)
@@ -1309,6 +1392,11 @@ AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned gro
 AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
     return AST::Identifier::make(makeString("__ArgumentBufferT_", String::number(group)));
+}
+
+AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
+{
+    return AST::Identifier::make(makeString("__DynamicOffsets"));
 }
 
 void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)

@@ -108,12 +108,13 @@ public:
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
+    void visit(const Type*);
+
     StringBuilder& stringBuilder() { return m_stringBuilder; }
     Indentation<4>& indent() { return m_indent; }
 
 private:
     void emitNecessaryHelpers();
-    void visit(const Type*);
     void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
@@ -128,6 +129,23 @@ private:
     unsigned m_functionConstantIndex { 0 };
     HashSet<AST::Function*> m_visitedFunctions;
 };
+
+static const char* serializeAddressSpace(AddressSpace addressSpace)
+{
+    switch (addressSpace) {
+    case AddressSpace::Function:
+    case AddressSpace::Private:
+        return "thread";
+    case AddressSpace::Workgroup:
+        return "threadgroup";
+    case AddressSpace::Uniform:
+        return "constant";
+    case AddressSpace::Storage:
+        return "device";
+    case AddressSpace::Handle:
+        return nullptr;
+    }
+}
 
 void FunctionDefinitionWriter::write()
 {
@@ -801,24 +819,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(base, "<float>");
         },
         [&](const Reference& reference) {
-            const char* addressSpace = nullptr;
-            switch (reference.addressSpace) {
-            case AddressSpace::Function:
-            case AddressSpace::Private:
-                addressSpace = "thread";
-                break;
-            case AddressSpace::Workgroup:
-                addressSpace = "threadgroup";
-                break;
-            case AddressSpace::Uniform:
-                addressSpace = "constant";
-                break;
-            case AddressSpace::Storage:
-                addressSpace = "device";
-                break;
-            case AddressSpace::Handle:
-                break;
-            }
+            const char* addressSpace = serializeAddressSpace(reference.addressSpace);
             if (!addressSpace) {
                 visit(reference.element);
                 return;
@@ -830,24 +831,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append("&");
         },
         [&](const Pointer& pointer) {
-            const char* addressSpace = nullptr;
-            switch (pointer.addressSpace) {
-            case AddressSpace::Function:
-            case AddressSpace::Private:
-                addressSpace = "thread";
-                break;
-            case AddressSpace::Workgroup:
-                addressSpace = "threadgroup";
-                break;
-            case AddressSpace::Uniform:
-                addressSpace = "constant";
-                break;
-            case AddressSpace::Storage:
-                addressSpace = "device";
-                break;
-            case AddressSpace::Handle:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            const char* addressSpace = serializeAddressSpace(pointer.addressSpace);
             if (pointer.accessMode == AccessMode::Read)
                 m_stringBuilder.append("const ");
             if (addressSpace)
@@ -1273,6 +1257,21 @@ static void emitArrayLength(FunctionDefinitionWriter* writer, AST::CallExpressio
     writer->stringBuilder().append(".size()");
 }
 
+static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto* targetType = call.target().inferredType();
+    auto& pointer = std::get<Types::Pointer>(*targetType);
+    auto* addressSpace = serializeAddressSpace(pointer.addressSpace);
+
+    writer->stringBuilder().append("(*(");
+    writer->visit(targetType);
+    writer->stringBuilder().append(")(((", addressSpace, " uint8_t*)&(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(")) + __DynamicOffsets[");
+    writer->visit(call.arguments()[1]);
+    writer->stringBuilder().append("]))");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -1304,6 +1303,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "__dynamicOffset", emitDynamicOffset },
             { "arrayLength", emitArrayLength },
             { "atomicAdd", emitAtomicAdd },
             { "atomicExchange", emitAtomicExchange },
