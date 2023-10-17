@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT static void resetDevices();
     WEBCORE_EXPORT static void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
 
-    WEBCORE_EXPORT void triggerMockMicrophoneConfigurationChange();
+    WEBCORE_EXPORT void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
 
     void setMockAudioCaptureEnabled(bool isEnabled) { m_isMockAudioCaptureEnabled = isEnabled; }
     void setMockVideoCaptureEnabled(bool isEnabled) { m_isMockVideoCaptureEnabled = isEnabled; }

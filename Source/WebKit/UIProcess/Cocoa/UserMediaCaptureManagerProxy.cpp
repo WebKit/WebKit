@@ -127,6 +127,39 @@ public:
     void setShouldApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = true; }
     void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
 
+    bool updateVideoConstraints(const WebCore::MediaConstraints& constraints)
+    {
+        m_videoConstraints = constraints;
+
+        auto resultingConstraints = m_source->extractVideoFrameSizeConstraints(constraints);
+
+        bool didChange = false;
+        if (resultingConstraints.width) {
+            didChange |= m_widthConstraint != *resultingConstraints.width;
+            m_widthConstraint = *resultingConstraints.width;
+        } else if (resultingConstraints.height) {
+            didChange |= !!m_widthConstraint;
+            m_widthConstraint = 0;
+        }
+        if (resultingConstraints.height) {
+            didChange |= m_heightConstraint != *resultingConstraints.height;
+            m_heightConstraint = *resultingConstraints.height;
+        } else if (resultingConstraints.width) {
+            didChange |= !!m_heightConstraint;
+            m_heightConstraint = 0;
+        }
+
+        if (resultingConstraints.frameRate) {
+            didChange |= m_frameRateConstraint != *resultingConstraints.frameRate;
+            m_frameRateConstraint = *resultingConstraints.frameRate;
+        } else {
+            didChange |= !!m_frameRateConstraint;
+            m_frameRateConstraint = 0;
+        }
+
+        return didChange;
+    }
+
     std::optional<WebCore::RealtimeMediaSource::ApplyConstraintsError> applyConstraints(const WebCore::MediaConstraints& constraints)
     {
         if (m_source->type() != RealtimeMediaSource::Type::Video)
@@ -135,22 +168,8 @@ public:
         m_source->removeVideoFrameObserver(*this);
 
         auto result = m_source->applyConstraints(constraints);
-        if (!result) {
-            auto resultingConstraints = m_source->extractVideoFrameSizeConstraints(constraints);
-
-            if (resultingConstraints.width)
-                m_widthConstraint = *resultingConstraints.width;
-            else if (resultingConstraints.height)
-                m_widthConstraint = 0;
-            if (resultingConstraints.height)
-                m_heightConstraint = *resultingConstraints.height;
-            else if (resultingConstraints.width)
-                m_heightConstraint = 0;
-            if (resultingConstraints.frameRate)
-                m_frameRateConstraint = *resultingConstraints.frameRate;
-
+        if (!result && updateVideoConstraints(constraints))
             m_settings = { };
-        }
 
         m_source->addVideoFrameObserver(*this, { m_widthConstraint, m_heightConstraint }, m_frameRateConstraint);
 
@@ -216,6 +235,12 @@ private:
 
     void sourceConfigurationChanged() final
     {
+        auto deviceType = m_source->deviceType();
+        if ((deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window) && m_videoConstraints && updateVideoConstraints(*m_videoConstraints)) {
+            m_source->removeVideoFrameObserver(*this);
+            m_source->addVideoFrameObserver(*this, { m_widthConstraint, m_heightConstraint }, m_frameRateConstraint);
+        }
+
         m_connection->send(Messages::UserMediaCaptureManager::SourceConfigurationChanged(m_id, m_source->persistentID(), settings(), m_source->capabilities()), 0);
     }
 
@@ -330,6 +355,8 @@ private:
     int m_widthConstraint { 0 };
     int m_heightConstraint { 0 };
     double m_frameRateConstraint { 0 };
+
+    std::optional<MediaConstraints> m_videoConstraints;
 };
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)

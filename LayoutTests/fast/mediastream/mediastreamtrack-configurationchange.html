@@ -21,7 +21,7 @@
 
         assert_equals(track.label, "Mock audio device 1");
 
-        testRunner.triggerMockMicrophoneConfigurationChange();
+        testRunner.triggerMockCaptureConfigurationChange(true, false);
 
         await new Promise((resolve, reject) => {
             track.onconfigurationchange = resolve;

@@ -46,7 +46,7 @@ messages -> GPUProcess LegacyReceiver {
     SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral)
     ResetMockMediaDevices()
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
-    TriggerMockMicrophoneConfigurationChange()
+    TriggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     SetUseSCContentSharingPicker(bool use)

@@ -1839,6 +1839,8 @@ webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure 
 
 webkit.org/b/261099 webrtc/video-lowercase-media-subtype.html [ Skip ]
 
+fast/mediastream/getDisplayMedia-max-constraints4.html [ Skip ]
+
 # DataChannel GstWebRTC implementation incomplete, missing stats support.
 webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
 webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Skip ]
