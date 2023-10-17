@@ -156,7 +156,6 @@ private:
 
     TypeStore& m_types;
     Vector<Error> m_errors;
-    // FIXME: maybe these should live in the context
     HashMap<String, Vector<OverloadCandidate>> m_overloadedOperations;
     HashMap<String, ConstantFunction> m_constantFunctions;
 };
@@ -329,8 +328,6 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> TypeChecker::check()
 {
-    // FIXME: fill in struct fields in a second pass since declarations might be
-    // out of order
     for (auto& structure : m_shaderModule.structures())
         visit(structure);
 
@@ -1081,8 +1078,7 @@ void TypeChecker::visit(AST::ElaboratedTypeExpression& type)
 
 void TypeChecker::visit(AST::ReferenceTypeExpression&)
 {
-    // FIXME: we don't yet parse reference types
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void TypeChecker::visitAttributes(AST::Attribute::List& attributes)

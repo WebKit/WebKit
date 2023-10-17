@@ -69,7 +69,6 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
 
-    // FIXME: add more validation
     CHECK_PASS(parse);
     CHECK_PASS(reorderGlobals);
     CHECK_PASS(typeCheck);

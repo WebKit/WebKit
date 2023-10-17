@@ -133,7 +133,6 @@ FOREACH_KEYWORD(ENUM_ENTRY)
     Placeholder,
     TemplateArgsLeft,
     TemplateArgsRight,
-    // FIXME: add all the other special tokens
 };
 
 String toString(TokenType);

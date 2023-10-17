@@ -209,7 +209,6 @@ MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName:
 
 void NameManglerVisitor::readVariable(AST::Identifier& name) const
 {
-    // FIXME: this should be unconditional
     if (const auto* mangledName = ContextProvider::readVariable(name))
         m_callGraph.ast().replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }

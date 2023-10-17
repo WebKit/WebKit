@@ -583,7 +583,6 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
 
     if (ident.ident == "workgroup_size"_s) {
         CONSUME_TYPE(ParenLeft);
-        // FIXME: should more kinds of literals be accepted here?
         PARSE(x, Expression);
         AST::Expression::Ptr maybeY = nullptr;
         AST::Expression::Ptr maybeZ = nullptr;
@@ -866,7 +865,6 @@ Result<AddressSpace> Parser<Lexer>::parseAddressSpace()
     START_PARSE();
 
     CONSUME_TYPE_NAMED(identifier, Identifier);
-    // FIXME: remove `handle` from the parsing
     if (auto* addressSpace = WGSL::parseAddressSpace(identifier.ident); addressSpace && *addressSpace != AddressSpace::Handle)
         return { *addressSpace };
 
@@ -1357,8 +1355,6 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePostfixExpression(AST::Expressi
     START_PARSE();
 
     AST::Expression::Ref expr = WTFMove(base);
-    // FIXME: add the case for array/vector/matrix access
-
     for (;;) {
         switch (current().type) {
         case TokenType::BracketLeft: {
@@ -1414,11 +1410,6 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
             PARSE(arguments, ArgumentExpressionList);
             RETURN_ARENA_NODE(CallExpression, WTFMove(arrayType), WTFMove(arguments));
         }
-        // FIXME: WGSL grammar has an ambiguity when trying to distinguish the
-        // use of < as either the less-than operator or the beginning of a
-        // template-parameter list. Here we are checking for vector or matrix
-        // type names. Alternatively, those names could be turned into keywords
-
         if (current().type == TokenType::TemplateArgsLeft || current().type == TokenType::ParenLeft) {
             PARSE(type, TypeNameAfterIdentifier, WTFMove(ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
@@ -1466,7 +1457,6 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
 template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseExpression()
 {
-    // FIXME: Fill in
     PARSE(unary, UnaryExpression);
     if (canContinueBitwiseExpression(current()))
         return parseBitwiseExpressionPostUnary(WTFMove(unary));
