@@ -196,8 +196,10 @@ bool RenderGrid::canPerformSimplifiedLayout() const
 }
 
 template<typename F>
-static void cacheBaselineAlignedChildren(const RenderGrid& grid, GridTrackSizingAlgorithm& algorithm, uint32_t axes, F& callback)
+static void cacheBaselineAlignedChildren(const RenderGrid& grid, GridTrackSizingAlgorithm& algorithm, uint32_t axes, F& callback, bool cachingRowSubgridsForRootGrid)
 {
+    ASSERT_IMPLIES(cachingRowSubgridsForRootGrid, !algorithm.renderGrid()->isSubgridRows() && (algorithm.renderGrid() == &grid || grid.isSubgridOf(GridLayoutFunctions::flowAwareDirectionForChild(*algorithm.renderGrid(), grid, GridTrackSizingDirection::ForRows), *algorithm.renderGrid())));
+
     for (auto* child = grid.firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->isOutOfFlowPositioned() || child->isLegend())
             continue;
@@ -214,18 +216,21 @@ static void cacheBaselineAlignedChildren(const RenderGrid& grid, GridTrackSizing
             if (inner && inner->isSubgridInParentDirection(GridTrackSizingDirection::ForRows))
                 innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? static_cast<uint8_t>(GridAxis::GridRowAxis) : static_cast<uint8_t>(GridAxis::GridColumnAxis);
             else if (grid.isBaselineAlignmentForChild(*child, GridAxis::GridColumnAxis))
-                algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridColumnAxis);
+                algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridColumnAxis, cachingRowSubgridsForRootGrid);
         }
 
         if (axes & static_cast<uint8_t>(GridAxis::GridRowAxis)) {
             if (inner && inner->isSubgridInParentDirection(GridTrackSizingDirection::ForColumns))
                 innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? static_cast<uint8_t>(GridAxis::GridColumnAxis) : static_cast<uint8_t>(GridAxis::GridRowAxis);
             else if (grid.isBaselineAlignmentForChild(*child, GridAxis::GridRowAxis))
-                algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridRowAxis);
+                algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridRowAxis, cachingRowSubgridsForRootGrid);
         }
 
+        if (inner && cachingRowSubgridsForRootGrid)
+            cachingRowSubgridsForRootGrid = GridLayoutFunctions::isOrthogonalChild(*algorithm.renderGrid(), *inner) ? inner->isSubgridColumns() : inner->isSubgridRows();
+
         if (innerAxes)
-            cacheBaselineAlignedChildren(*inner, algorithm, innerAxes, callback);
+            cacheBaselineAlignedChildren(*inner, algorithm, innerAxes, callback, cachingRowSubgridsForRootGrid);
     }
 }
 
@@ -255,7 +260,7 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
         }
     };
 
-    cacheBaselineAlignedChildren(*this, m_trackSizingAlgorithm, static_cast<uint8_t>(GridAxis::GridRowAxis) | static_cast<uint8_t>(GridAxis::GridColumnAxis), computeOrthogonalAndDependentItems);
+    cacheBaselineAlignedChildren(*this, m_trackSizingAlgorithm, static_cast<uint8_t>(GridAxis::GridRowAxis) | static_cast<uint8_t>(GridAxis::GridColumnAxis), computeOrthogonalAndDependentItems, !isSubgridRows());
     return dependentGridItems;
 }
 
@@ -645,7 +650,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridAxis::GridRowAxis);
     else {
         auto emptyCallback = [](RenderBox*) { };
-        cacheBaselineAlignedChildren(*this, algorithm, static_cast<uint8_t>(GridAxis::GridRowAxis), emptyCallback);
+        cacheBaselineAlignedChildren(*this, algorithm, static_cast<uint8_t>(GridAxis::GridRowAxis), emptyCallback, !isSubgridRows());
     }
 
     computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForColumns, &minLogicalWidth, &maxLogicalWidth);
@@ -2089,7 +2094,7 @@ bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirec
     return isSubgrid(direction);
 }
 
-bool RenderGrid::isSubgridOf(GridTrackSizingDirection direction, const RenderGrid& ancestor)
+bool RenderGrid::isSubgridOf(GridTrackSizingDirection direction, const RenderGrid& ancestor) const
 {
     if (!isSubgrid(direction))
         return false;
