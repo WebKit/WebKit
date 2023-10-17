@@ -43,3 +43,5 @@ swipe/pushState-cached-back-swipe.html [ Pass Timeout ]
 
 # Asserts on pre-Sonoma macOS: rdar://116291539
 [ Debug ] http/tests/site-isolation/window-properties.html [ Skip ]
+
+webkit.org/b/263221 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-iceRestart.html [ Pass Failure ]
