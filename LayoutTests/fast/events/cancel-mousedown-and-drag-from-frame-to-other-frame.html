@@ -7,18 +7,16 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+var unexpectedMouseMove = false;
+var unexpectedMouseUp = false;
+
 function log(msg) {
     var msgNode = document.createTextNode(msg);
     var li = document.createElement("li");
     li.appendChild(msgNode);
-    document.getElementById("logElem").appendChild(li);
+    document.getElementById("log").appendChild(li);
 }
-function dragStarted() {
-    log("Drag Started");
-}
-window.onmouseup = function() {
-    log("Root frame received mouse up");
-}
+
 window.onload = function() {
     try {
         if (!frames[0] || !frames[0].document || !frames[0].document.getElementById("dragSource")) {
@@ -26,21 +24,27 @@ window.onload = function() {
         }
         
         if (!window.testRunner) {
-            log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the parent frame.");
+            log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the other frame.");
             return;
         }
+
         var dragSource = frames[0].document.getElementById("dragSource");
         var sourceFrame = document.getElementById("sourceFrame");
         var targetFrame = document.getElementById("targetFrame");
-        var x = dragSource.offsetLeft + sourceFrame.offsetLeft + 10;
-        var y = dragSource.offsetTop + sourceFrame.offsetTop + dragSource.offsetHeight / 2;
-        var x1 = targetFrame.offsetLeft + 10;
-        var y1 = targetFrame.offsetTop + 10;
-        eventSender.mouseMoveTo(x,y);
+        var startX = dragSource.offsetLeft + sourceFrame.offsetLeft + 10;
+        var startY = dragSource.offsetTop + sourceFrame.offsetTop + dragSource.offsetHeight / 2;
+        var endX = targetFrame.offsetLeft + 10;
+        var endY = targetFrame.offsetTop + 10;
+        eventSender.mouseMoveTo(startX, startY);
         eventSender.mouseDown();
-        eventSender.mouseMoveTo(x1, y1);
+        eventSender.mouseMoveTo(endX, endY);
         eventSender.mouseUp();
     } finally {
+        if (unexpectedMouseUp || unexpectedMouseMove)
+            log("FAIL! Received unexpected mouse event on other frame.");
+        else
+            log("PASS!");
+
         if (window.testRunner)
             testRunner.notifyDone();
     }
@@ -48,10 +52,10 @@ window.onload = function() {
 </script>
 </head>
 <body>
-    <div>This tests that dragging from an element that returns <emph>false</emph> from its mousedown handler will not let the subsequent mousemove events be captured by the containing frame, and allows the mouse move to get to other subframes.</div>
+    <div>This tests that dragging from an element that returns <emph>false</emph> from its mousedown handler will let the subsequent mousemove events be captured by the containing frame, and not by other frames.</div>
     <iframe id="sourceFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-subframe.html"></iframe>
     <iframe id="targetFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-target-subframe.html"></iframe>
-    <ul id="logElem">
+    <ul id="log">
     </ul>
 </body>
 </html>

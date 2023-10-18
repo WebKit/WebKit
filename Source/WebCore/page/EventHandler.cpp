@@ -450,7 +450,7 @@ void EventHandler::clear()
     m_mousePressNode = nullptr;
     m_mousePressed = false;
     m_capturesDragging = false;
-    m_capturingMouseEventsElement = nullptr;
+    resetCapturingMouseEventsElement();
     clearLatchedState();
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
@@ -1787,7 +1787,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     cancelFakeMouseMoveEvent();
 #endif
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
-        m_capturingMouseEventsElement = nullptr;
+        resetCapturingMouseEventsElement();
 
     m_mousePressed = true;
     m_capturesDragging = true;
@@ -1826,17 +1826,28 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
 
     if (!passedToScrollbar) {
         RefPtr subframe = subframeForHitTestResult(mouseEvent);
+        auto captureMouseEventsElementIfNeeded = [&](RefPtr<Element>&& element = nullptr) {
+            if (m_mousePressed && (m_capturesDragging || m_capturesDragging.inabilityReason() == CapturesDragging::InabilityReason::MousePressIsCancelled)) {
+                if (element)
+                    m_capturingMouseEventsElement = WTFMove(element);
+                else
+                    m_isCapturingRootElementForMouseEvents = true;
+                m_eventHandlerWillResetCapturingMouseEventsElement = true;
+            }
+        };
+
         if (subframe && passMousePressEventToSubframe(mouseEvent, *subframe)) {
             // Start capturing future events for this frame. We only do this if we didn't clear
             // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
-            m_capturesDragging = subframe->eventHandler().capturesDragging();
-            if (m_mousePressed && m_capturesDragging) {
-                m_capturingMouseEventsElement = subframe->ownerElement();
-                m_eventHandlerWillResetCapturingMouseEventsElement = true;
-            }
+            if (auto subframeCapturesDragging = subframe->eventHandler().capturesDragging())
+                m_capturesDragging = true;
+            else
+                m_capturesDragging = subframeCapturesDragging.inabilityReason();
+            captureMouseEventsElementIfNeeded(subframe->ownerElement());
             invalidateClick();
             return true;
-        }
+        } else
+            captureMouseEventsElementIfNeeded();
     }
 
 #if ENABLE(PAN_SCROLLING)
@@ -1876,7 +1887,10 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     m_frame.selection().setCaretBlinkingSuspended(true);
 
     bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
-    m_capturesDragging = !swallowEvent || mouseEvent.scrollbar();
+    if (!swallowEvent || mouseEvent.scrollbar())
+        m_capturesDragging = true;
+    else
+        m_capturesDragging = m_capturesDragging ? CapturesDragging::InabilityReason::Unknown : m_capturesDragging.inabilityReason();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
     // in case the scrollbar widget was destroyed when the mouse event was handled.
@@ -1931,7 +1945,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
     auto subframe = subframeForHitTestResult(mouseEvent);
 
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
-        m_capturingMouseEventsElement = nullptr;
+        resetCapturingMouseEventsElement();
 
     if (subframe && passMousePressEventToSubframe(mouseEvent, *subframe))
         return true;
@@ -2120,7 +2134,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     }
 
     bool swallowEvent = false;
-    RefPtr newSubframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
+    RefPtr newSubframe = isCapturingMouseEventsElement() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
  
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
     if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree().isDescendantOf(&m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
@@ -2252,9 +2266,9 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent };
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(hitType, platformMouseEvent);
-    RefPtr subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
+    RefPtr subframe = isCapturingMouseEventsElement() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
-        m_capturingMouseEventsElement = nullptr;
+        resetCapturingMouseEventsElement();
     if (subframe && passMouseReleaseEventToSubframe(mouseEvent, *subframe))
         return true;
 
@@ -2588,7 +2602,7 @@ void EventHandler::clearDragState()
     stopAutoscrollTimer();
     m_dragStartSelection = std::nullopt;
     m_dragTarget = nullptr;
-    m_capturingMouseEventsElement = nullptr;
+    resetCapturingMouseEventsElement();
     m_shouldOnlyFireDragOverEvent = false;
 #if PLATFORM(COCOA)
     m_sendingEventToSubview = false;
@@ -2600,6 +2614,7 @@ void EventHandler::clearDragState()
 void EventHandler::setCapturingMouseEventsElement(Element* element)
 {
     m_capturingMouseEventsElement = element;
+    m_isCapturingRootElementForMouseEvents = false;
     m_eventHandlerWillResetCapturingMouseEventsElement = false;
 }
 
@@ -2833,12 +2848,18 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     updateMouseEventTargetNode(eventType, targetNode, platformMouseEvent, fireMouseOverOut);
 
+    bool isMouseDownEvent = eventType == eventNames().mousedownEvent;
+
     if (auto elementUnderMouse = m_elementUnderMouse) {
-        if (!elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount))
+        bool isEventDefaultPrevented = false;
+        bool dispatchedMouseEvent = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No, &isEventDefaultPrevented);
+        auto dragCaptureInabilityReason = isEventDefaultPrevented && isMouseDownEvent ? CapturesDragging::InabilityReason::MousePressIsCancelled : CapturesDragging::InabilityReason::Unknown;
+        m_capturesDragging = dragCaptureInabilityReason;
+        if (!dispatchedMouseEvent)
             return false;
     }
 
-    if (eventType != eventNames().mousedownEvent)
+    if (!isMouseDownEvent)
         return true;
 
     m_mouseDownDelegatedFocus = false;

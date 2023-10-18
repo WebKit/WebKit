@@ -1,0 +1,4 @@
+This tests that dragging from an element that returns false from its mousedown handler will let the subsequent mousemove events be captured by the containing frame, and not by other frames.
+
+Drag Started
+PASS!
