@@ -2303,8 +2303,6 @@ webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 webkit.org/b/244228 [ Release arm64 ] imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html [ Pass ImageOnlyFailure ]
 webkit.org/b/244228 [ Release arm64 ] imported/w3c/web-platform-tests/css/css-transforms/css-skew-002.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244297 [ Release arm64 ] svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
-
 # Cocoa ports run WPT tests over localhost so the URL is treated as secure even though not HTTPs.
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]

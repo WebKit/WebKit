@@ -905,9 +905,6 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
 webkit.org/b/230313 [ Monterey+ ] fast/canvas/canvas-draw-canvas-on-canvas-flushing-order.html [ Pass ImageOnlyFailure ]
 
-# SVG gradients are not bit-for-bit equivalent through a scale.
-webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
-
 # Underlines' starting and ending positions need to be pixel-snapped
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 
@@ -1897,9 +1894,6 @@ imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturat
 
 # rdar://66842535 ([AS Layout Tests] REGRESSION (r265488): fast/text/letter-spacing-shaping.html is a constant ImageOnlyFailure)
 [ arm64 ] fast/text/letter-spacing-shaping.html [ Pass ImageOnlyFailure ]
-
-# rdar://66861801 ([AS Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
-[ arm64 ] svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 
 webkit.org/b/223002 [ Monterey+ arm64 ] webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Skip ]
 webkit.org/b/223002 [ Monterey+ arm64 ] webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Skip ]
