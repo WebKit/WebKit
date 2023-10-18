@@ -1046,7 +1046,7 @@ CSSContainmentEnabled:
 
 CSSContentVisibilityEnabled:
   type: bool
-  status: stable
+  status: preview
   category: css
   humanReadableName: "CSS Content Visibility"
   humanReadableDescription: "Enable CSS content-visibility"
