@@ -3885,6 +3885,11 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
     return defaultObjectInclusion() == AccessibilityObjectInclusion::IgnoreObject;
 }
 
+bool AccessibilityObject::isARIAHidden() const
+{
+    return equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "true"_s) && !isFocused();
+}
+
 // ARIA component of hidden definition.
 // https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isAXHidden() const
@@ -3893,7 +3898,7 @@ bool AccessibilityObject::isAXHidden() const
         return false;
     
     return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true"_s) && !object.isFocused();
+        return object.isARIAHidden();
     }) != nullptr;
 }
 
@@ -3939,10 +3944,16 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     }
 
     bool useParentData = !m_isIgnoredFromParentData.isNull();
-    if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
+    if (useParentData && (m_isIgnoredFromParentData.isAXHidden || m_isIgnoredFromParentData.isPresentationalChildOfAriaRole))
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
+    if (isARIAHidden())
+        return AccessibilityObjectInclusion::IgnoreObject;
+
+    bool ignoreARIAHidden = isFocused();
+    if (Accessibility::findAncestor<AccessibilityObject>(*this, false, [&] (const auto& object) {
+        return (!ignoreARIAHidden && object.isARIAHidden()) || object.ariaRoleHasPresentationalChildren() || !object.canHaveChildren();
+    }))
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // Include <dialog> elements and elements with role="dialog".
@@ -4302,13 +4313,6 @@ bool AccessibilityObject::ariaRoleHasPresentationalChildren() const
     }
 }
 
-bool AccessibilityObject::isPresentationalChildOfAriaRole() const
-{
-    return Accessibility::findAncestor(*this, false, [] (const auto& ancestor) {
-        return ancestor.ariaRoleHasPresentationalChildren();
-    });
-}
-
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
 {
     if (!child)
@@ -4320,9 +4324,20 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {
-        result.isAXHidden = child->isAXHidden();
-        result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
-        result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
+        if (child->isARIAHidden())
+            result.isAXHidden = true;
+
+        bool ignoreARIAHidden = child->isFocused();
+        for (auto* object = child->parentObject(); object; object = object->parentObject()) {
+            if (!result.isAXHidden && !ignoreARIAHidden && object->isARIAHidden())
+                result.isAXHidden = true;
+
+            if (!result.isPresentationalChildOfAriaRole && object->ariaRoleHasPresentationalChildren())
+                result.isPresentationalChildOfAriaRole = true;
+
+            if (!result.isDescendantOfBarrenParent && !object->canHaveChildren())
+                result.isDescendantOfBarrenParent = true;
+        }
     }
 
     child->setIsIgnoredFromParentData(result);
