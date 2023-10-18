@@ -83,7 +83,7 @@ void silk_insertion_sort_increasing(
     }
 }
 
-#ifdef FIXED_POINT
+#if defined(FIXED_POINT) || defined(WEBRTC_WEBKIT_BUILD)
 /* This function is only used by the fixed-point build */
 void silk_insertion_sort_decreasing_int16(
     opus_int16                  *a,                 /* I/O   Unsorted / Sorted vector                                   */
@@ -130,7 +130,7 @@ void silk_insertion_sort_decreasing_int16(
         }
     }
 }
-#endif
+#endif // defined(FIXED_POINT) || defined(WEBRTC_WEBKIT_BUILD)
 
 void silk_insertion_sort_increasing_all_values_int16(
      opus_int16                 *a,                 /* I/O   Unsorted / Sorted vector                                   */
