@@ -213,10 +213,7 @@ void LayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
         return;
 
     m_viewportController.didScroll(rect.location());
-    if (m_isDiscardable)
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
-    else
-        didChangeViewport();
+    didChangeViewport();
 }
 
 void LayerTreeHost::forceRepaint()
@@ -256,12 +253,6 @@ void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
 {
-    if (m_isDiscardable) {
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateSize);
-        m_viewportController.didChangeViewportSize(size);
-        return;
-    }
-
     if (m_surface->hostResize(size))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
@@ -296,19 +287,13 @@ GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 void LayerTreeHost::contentsSizeChanged(const IntSize& newSize)
 {
     m_viewportController.didChangeContentsSize(newSize);
-    if (m_isDiscardable)
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
-    else
-        didChangeViewport();
+    didChangeViewport();
 }
 
 void LayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
 {
     m_viewportController.didChangeViewportAttributes(WTFMove(attr));
-    if (m_isDiscardable)
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
-    else
-        didChangeViewport();
+    didChangeViewport();
 }
 
 void LayerTreeHost::didChangeViewport()
@@ -350,37 +335,8 @@ void LayerTreeHost::didChangeViewport()
     }
 }
 
-void LayerTreeHost::setIsDiscardable(bool discardable)
-{
-    m_isDiscardable = discardable;
-    if (m_isDiscardable) {
-        m_discardableSyncActions = OptionSet<DiscardableSyncActions>();
-        return;
-    }
-
-    if (m_discardableSyncActions.isEmpty())
-        return;
-
-    if (m_discardableSyncActions.contains(DiscardableSyncActions::UpdateSize)) {
-        // Size changes already sets the scale factor and updates the viewport.
-        sizeDidChange(m_webPage.size());
-        return;
-    }
-
-    if (m_discardableSyncActions.contains(DiscardableSyncActions::UpdateScale))
-        deviceOrPageScaleFactorChanged();
-
-    if (m_discardableSyncActions.contains(DiscardableSyncActions::UpdateViewport))
-        didChangeViewport();
-}
-
 void LayerTreeHost::deviceOrPageScaleFactorChanged()
 {
-    if (m_isDiscardable) {
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateScale);
-        return;
-    }
-
     if (m_surface->hostResize(m_webPage.size()))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 

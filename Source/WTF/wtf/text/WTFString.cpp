@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -171,12 +171,13 @@ String String::foldCase() const
     return m_impl ? m_impl->foldCase() : String { };
 }
 
-Vector<UChar> String::charactersWithoutNullTermination() const
+Expected<Vector<UChar>, UTF8ConversionError> String::charactersWithoutNullTermination() const
 {
     Vector<UChar> result;
 
     if (m_impl) {
-        result.reserveInitialCapacity(length() + 1);
+        if (!result.tryReserveInitialCapacity(length() + 1))
+            return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
         if (is8Bit()) {
             const LChar* characters8 = m_impl->characters8();
@@ -190,10 +191,11 @@ Vector<UChar> String::charactersWithoutNullTermination() const
     return result;
 }
 
-Vector<UChar> String::charactersWithNullTermination() const
+Expected<Vector<UChar>, UTF8ConversionError> String::charactersWithNullTermination() const
 {
     auto result = charactersWithoutNullTermination();
-    result.append(0);
+    if (result)
+        result.value().append(0);
     return result;
 }
 

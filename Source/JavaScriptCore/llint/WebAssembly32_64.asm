@@ -1134,7 +1134,7 @@ end
 
 # GC ops
 
-wasmOp(i31_new, WasmI31New, macro(ctx)
+wasmOp(ref_i31, WasmRefI31, macro(ctx)
     mloadi(ctx, m_value, t0)
     andi 0x7fffffff, t0
     move Int32Tag, t1
@@ -1165,7 +1165,7 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
     throwException(NullArrayLen)
 end)
 
-wasmOp(extern_externalize, WasmExternExternalize, macro(ctx)
+wasmOp(extern_convert_any, WasmExternConvertAny, macro(ctx)
     mload2i(ctx, m_reference, t1, t0)
     return2i(ctx, t1, t0)
 end)

@@ -1040,25 +1040,54 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
 
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::Property);
 
-    auto propertyDescriptor = StyleRuleProperty::Descriptor { name };
+    auto descriptor = StyleRuleProperty::Descriptor { name };
 
     for (auto& property : declarations) {
         switch (property.id()) {
         case CSSPropertySyntax:
-            propertyDescriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
+            descriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
             continue;
         case CSSPropertyInherits:
-            propertyDescriptor.inherits = property.value()->valueID() == CSSValueTrue;
+            descriptor.inherits = property.value()->valueID() == CSSValueTrue;
             break;
         case CSSPropertyInitialValue:
-            propertyDescriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).asVariableData();
+            descriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).asVariableData();
             break;
         default:
             break;
         };
     };
 
-    return StyleRuleProperty::create(WTFMove(propertyDescriptor));
+    // "The inherits descriptor is required for the @property rule to be valid; if it’s missing, the @property rule is invalid."
+    // https://drafts.css-houdini.org/css-properties-values-api/#inherits-descriptor
+    if (!descriptor.inherits)
+        return nullptr;
+
+    // "If the provided string is not a valid syntax string, the descriptor is invalid and must be ignored."
+    // https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor
+    if (descriptor.syntax.isNull())
+        return nullptr;
+    auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
+    if (!syntax)
+        return nullptr;
+
+    // "The initial-value descriptor is optional only if the syntax is the universal syntax definition,
+    // otherwise the descriptor is required; if it's missing, the entire rule is invalid and must be ignored."
+    if (!syntax->isUniversal()) {
+        if (!descriptor.initialValue)
+            return nullptr;
+    }
+
+    auto initialValueIsValid = [&] {
+        auto tokenRange = descriptor.initialValue->tokenRange();
+        auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenRange, strictCSSParserContext());
+        return dependencies.isComputationallyIndependent();
+        // FIXME: We should also check values like "var(--foo)"
+    };
+    if (descriptor.initialValue && !initialValueIsValid())
+        return nullptr;
+
+    return StyleRuleProperty::create(WTFMove(descriptor));
 }
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

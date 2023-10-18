@@ -6974,6 +6974,7 @@
 		C5BCE5DB1C50761D00CDE3FA /* InteractionInformationAtPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InteractionInformationAtPosition.mm; path = ios/InteractionInformationAtPosition.mm; sourceTree = "<group>"; };
 		C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKAirPlayRoutePicker.h; path = ios/forms/WKAirPlayRoutePicker.h; sourceTree = "<group>"; };
 		C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAirPlayRoutePicker.mm; path = ios/forms/WKAirPlayRoutePicker.mm; sourceTree = "<group>"; };
+		C68BA2622ADBA6EC00770791 /* APICaptionUserPreferencesTestingModeToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APICaptionUserPreferencesTestingModeToken.h; sourceTree = "<group>"; };
 		C6A4CA092252899800169289 /* WKBundlePageMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBundlePageMac.h; sourceTree = "<group>"; };
 		C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageMac.mm; sourceTree = "<group>"; };
 		CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentAsStringIncludesChildFrames.h; sourceTree = "<group>"; };
@@ -13509,6 +13510,7 @@
 				37DFA6FE1810BB2D001F4A9F /* Cocoa */,
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
+				C68BA2622ADBA6EC00770791 /* APICaptionUserPreferencesTestingModeToken.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				1AAB037B185F99D800EDF501 /* APIData.cpp */,
 				51578B821209ECEF00A37C4A /* APIData.h */,

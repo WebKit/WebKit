@@ -100,8 +100,6 @@ public:
     void contentsSizeChanged(const WebCore::IntSize&);
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&);
 
-    void setIsDiscardable(bool);
-
     void deviceOrPageScaleFactorChanged();
 
 #if !HAVE(DISPLAY_LINK)
@@ -153,11 +151,6 @@ private:
     void applyTransientZoomToLayers(double, WebCore::FloatPoint);
 #endif
 
-    enum class DiscardableSyncActions {
-        UpdateSize = 1 << 1,
-        UpdateViewport = 1 << 2,
-        UpdateScale = 1 << 3
-    };
 #endif // USE(COORDINATED_GRAPHICS)
 
     WebPage& m_webPage;
@@ -170,8 +163,6 @@ private:
     bool m_scheduledWhileWaitingForRenderer { false };
     float m_lastPageScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
-    bool m_isDiscardable { false };
-    OptionSet<DiscardableSyncActions> m_discardableSyncActions;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;
@@ -219,7 +210,6 @@ inline void LayerTreeHost::resumeRendering() { }
 inline WebCore::GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory() { return nullptr; }
 inline void LayerTreeHost::contentsSizeChanged(const WebCore::IntSize&) { }
 inline void LayerTreeHost::didChangeViewportAttributes(WebCore::ViewportAttributes&&) { }
-inline void LayerTreeHost::setIsDiscardable(bool) { }
 inline void LayerTreeHost::deviceOrPageScaleFactorChanged() { }
 #if PLATFORM(GTK)
 inline void LayerTreeHost::adjustTransientZoom(double, WebCore::FloatPoint) { }

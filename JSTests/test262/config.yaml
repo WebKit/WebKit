@@ -55,7 +55,9 @@ skip:
     - test/intl402/Temporal/PlainYearMonth
     - test/intl402/Temporal/TimeZone
     - test/intl402/Temporal/ZonedDateTime
-    - test/staging
+    - test/staging/Intl402
+    - test/staging/JSON
+    - test/staging/Temporal
   files:
     # https://github.com/claudepache/es-legacy-function-reflection
     - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js

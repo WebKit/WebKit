@@ -1,0 +1,15 @@
+
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, path with display: default
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, path with display: none
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, path with display: none and inline style assert_approx_equals: expected 50 +/- 0.00001 but got 0
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, rect with display: default
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, rect with display: none The object is in an invalid state.
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, circle with display: default
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, circle with display: none The object is in an invalid state.
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, polygon with display: default
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, polygon with display: none The object is in an invalid state.
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, polyline with display: default
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, polyline with display: none The object is in an invalid state.
+PASS SVGGeometryElement.getPointAtLength: 'display' and a valid path, ellipse with display: default
+FAIL SVGGeometryElement.getPointAtLength: 'display' and a valid path, ellipse with display: none The object is in an invalid state.
+

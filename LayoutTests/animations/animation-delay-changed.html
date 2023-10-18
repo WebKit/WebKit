@@ -17,7 +17,7 @@
     .move1 {
       -webkit-animation-name: move1;
       -webkit-animation-delay: 1s;
-      -webkit-animation-duration: 1s;
+      -webkit-animation-duration: 4s;
       -webkit-animation-timing-function: linear;
     }
 
@@ -29,7 +29,7 @@
     .move2 {
       -webkit-animation-name: move2;
       -webkit-animation-delay: 1s;
-      -webkit-animation-duration: 1s;
+      -webkit-animation-duration: 4s;
       -webkit-animation-timing-function: linear;
     }
 
@@ -43,12 +43,12 @@
     window.onload = function() {
       document.querySelector('#box1').classList.add('move1');
       // Start the animation on box2 after 500ms
-      setTimeout(function() { document.querySelector('#box2').classList.add('move2'); }, 500);
+      setTimeout(function() { document.querySelector('#box2').classList.add('move2'); }, 2000);
 
       const expectedValues = [
         // [animation-name, time, element-id, property, expected-value, tolerance]
-        [null, 0.5, "box1", "left",  100, 10],
-        [null, 1.0, "box2", "left",  100, 10],
+        [null, 3.0, "box1", "left",  150, 10],
+        [null, 3.0, "box2", "left",  50, 10],
       ];
 
       runAnimationTest(expectedValues);

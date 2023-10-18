@@ -117,7 +117,13 @@ JSValue IntlSegmenter::segment(JSGlobalObject* globalObject, JSValue stringValue
     RETURN_IF_EXCEPTION(scope, { });
     String string = jsString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto upconvertedCharacters = Box<Vector<UChar>>::create(string.charactersWithoutNullTermination());
+    auto expectedCharacters = string.charactersWithoutNullTermination();
+    if (!expectedCharacters) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    auto upconvertedCharacters = Box<Vector<UChar>>::create(expectedCharacters.value());
 
     UErrorCode status = U_ZERO_ERROR;
     auto segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(cloneUBreakIterator(m_segmenter.get(), &status));

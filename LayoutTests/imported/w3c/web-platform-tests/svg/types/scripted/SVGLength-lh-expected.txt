@@ -1,0 +1,4 @@
+
+FAIL lh unit in SVGLength undefined is not an object (evaluating 'lh_length.unitType')
+FAIL Convert back to lh from new user unit value undefined is not an object (evaluating 'lh_length.value = ref_width * 2')
+

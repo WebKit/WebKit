@@ -161,8 +161,8 @@ public:
     size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
     size_t reverseFind(StringView, unsigned start = MaxLength) const;
 
-    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
-    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithoutNullTermination() const;
+    WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithNullTermination() const;
+    WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithoutNullTermination() const;
 
     WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const;
 

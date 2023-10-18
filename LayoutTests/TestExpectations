@@ -2574,6 +2574,8 @@ storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 storage/indexeddb/modern/exceed-open-file-limit.html [ Skip ]
 webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
 
+webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
+
 ### END OF IndexedDB failures
 ########################################
 
@@ -6161,6 +6163,7 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/004.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-global-scope.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment-fire-load-event.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-parent-then-fragment.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/008.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_004.html [ Skip ]
@@ -6665,8 +6668,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 
 # webkit.org/b/260546
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
-
-webkit.org/b/260823 http/tests/workers/service/self_registration.html [ Pass Failure ]
 
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/background-blending/background-blend-mode-plus-lighter.html [ ImageOnlyFailure ]

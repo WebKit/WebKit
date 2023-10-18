@@ -98,7 +98,7 @@ template<typename CharacterType> constexpr bool skipOptionalSVGSpacesOrDelimiter
     if (characters.hasCharactersRemaining() && !isSVGSpace(*characters) && *characters != delimiter)
         return false;
     if (skipOptionalSVGSpaces(characters)) {
-        if (characters.hasCharactersRemaining() && *characters == delimiter) {
+        if (*characters == delimiter) {
             characters++;
             skipOptionalSVGSpaces(characters);
         }

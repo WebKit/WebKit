@@ -569,10 +569,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {
                     auto subframeMainResourceRelativePath = frame.isMainFrame() ? subframeMainResource->relativeFilePath() : FileSystem::lastComponentOfPathIgnoringTrailingSlash(subframeMainResource->relativeFilePath());
-                    if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank() || subframeMainResourceURL.protocolIsData())
-                        uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResourceRelativePath);
-                    else
-                        uniqueSubresources.add(subframeMainResourceURL.string(), subframeMainResourceRelativePath);
+                    uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResourceRelativePath);
                 }
                 subframeArchives.append(subframeArchive.releaseNonNull());
             } else

@@ -130,7 +130,8 @@ WK_EXPORT void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, 
 WK_EXPORT void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin);
 WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
 
-WK_EXPORT void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode);
+WK_EXPORT void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode);
+WK_EXPORT WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef page);
 
 enum {
     kWKEventThrottlingBehaviorResponsive = 0,

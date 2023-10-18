@@ -1461,9 +1461,9 @@
                 (kernel-mig-routine-only-in-use-during-launch)))
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
         (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
-            (allow mach-message-send
+            (allow mach-message-send (kernel-mig-routine
                 io_service_get_matching_service_bin
-                io_service_get_matching_services_bin))
+                io_service_get_matching_services_bin)))
 #endif
 #endif
 

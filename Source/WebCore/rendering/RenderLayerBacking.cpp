@@ -4127,7 +4127,7 @@ void RenderLayerBacking::animationPaused(double timeOffset, const String& animat
 
 void RenderLayerBacking::animationFinished(const String& animationName)
 {
-    m_graphicsLayer->removeAnimation(animationName);
+    m_graphicsLayer->removeAnimation(animationName, std::nullopt);
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();
 }

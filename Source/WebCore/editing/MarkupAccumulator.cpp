@@ -277,11 +277,9 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const Strin
 {
     if (!m_replacementURLStrings.isEmpty()) {
         if (auto frame = frameForAttributeReplacement(element)) {
-            if (frame->loader().documentLoader()->response().url().protocolIsData()) {
-                auto replacementString = m_replacementURLStrings.get(frame->frameID().toString());
-                if (!replacementString.isEmpty())
-                    return replacementString;
-            }
+            auto replacementString = m_replacementURLStrings.get(frame->frameID().toString());
+            if (!replacementString.isEmpty())
+                return replacementString;
         }
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);

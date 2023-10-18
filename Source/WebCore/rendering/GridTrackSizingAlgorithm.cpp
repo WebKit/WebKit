@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GridTrackSizingAlgorithm.h"
 
+#include "AncestorSubgridIterator.h"
 #include "Grid.h"
 #include "GridArea.h"
 #include "GridLayoutFunctions.h"
@@ -1399,28 +1400,26 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
                     return std::nullopt;
 
                 auto gutterTotal = 0_lu;
-                const auto* currentAncestor = dynamicDowncast<RenderGrid>(gridItem->parent());
                 auto flowAwareDirection = iterator.direction();
 
-                while (currentAncestor && currentAncestor->isSubgrid(flowAwareDirection)) {
+                for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(*gridItem, flowAwareDirection)) {
                     std::optional<LayoutUnit> availableSpace;
-                    if (!GridLayoutFunctions::hasRelativeOrIntrinsicSizeForChild(*currentAncestor, flowAwareDirection))
-                        availableSpace = currentAncestor->availableSpaceForGutters(flowAwareDirection);
+                    if (!GridLayoutFunctions::hasRelativeOrIntrinsicSizeForChild(currentAncestorSubgrid, flowAwareDirection))
+                        availableSpace = currentAncestorSubgrid.availableSpaceForGutters(flowAwareDirection);
 
-                    auto gridItemSpanInAncestor = currentAncestor->gridSpanForChild(*gridItem, flowAwareDirection);
-                    auto numTracksForCurrentAncestor = currentAncestor->numTracks(flowAwareDirection);
+                    auto gridItemSpanInAncestor = currentAncestorSubgrid.gridSpanForChild(*gridItem, flowAwareDirection);
+                    auto numTracksForCurrentAncestor = currentAncestorSubgrid.numTracks(flowAwareDirection);
 
-                    const auto* currentAncestorParent = dynamicDowncast<RenderGrid>(currentAncestor->parent());
-                    ASSERT(currentAncestorParent);
-                    if (!currentAncestorParent)
+                    const auto* currentAncestorSubgridParent = dynamicDowncast<RenderGrid>(currentAncestorSubgrid.parent());
+                    ASSERT(currentAncestorSubgridParent);
+                    if (!currentAncestorSubgridParent)
                         return std::nullopt;
 
                     if (gridItemSpanInAncestor.startLine())
-                        gutterTotal += (currentAncestor->gridGap(flowAwareDirection) - currentAncestorParent->gridGap(flowAwareDirection)) / 2;
+                        gutterTotal += (currentAncestorSubgrid.gridGap(flowAwareDirection) - currentAncestorSubgridParent->gridGap(flowAwareDirection)) / 2;
                     if (span.endLine() != numTracksForCurrentAncestor)
-                        gutterTotal += (currentAncestor->gridGap(flowAwareDirection) - currentAncestorParent->gridGap(flowAwareDirection)) / 2;
-                    flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForParent(*currentAncestor, *currentAncestorParent, flowAwareDirection);
-                    currentAncestor = currentAncestorParent;
+                        gutterTotal += (currentAncestorSubgrid.gridGap(flowAwareDirection) - currentAncestorSubgridParent->gridGap(flowAwareDirection)) / 2;
+                    flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForParent(currentAncestorSubgrid, *currentAncestorSubgridParent, flowAwareDirection);
                 }
                 return gutterTotal;
             }();

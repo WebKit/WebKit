@@ -15,7 +15,8 @@ addEventListener("load", (event) => {
     window.scrollTo(50, 50);
 
     function checkScrollPosition() {
-        if (window.scrollX === 50 && window.scrollY === 50)
+        // FIXME: <rdar://114836034> This probably needs to change back to 50,50 once scrolling works in site-isolated iframes.
+        if (window.scrollX === 23 && window.scrollY === 50)
             window.parent.postMessage("scrolled", "*");
         else
             requestAnimationFrame(checkScrollPosition);

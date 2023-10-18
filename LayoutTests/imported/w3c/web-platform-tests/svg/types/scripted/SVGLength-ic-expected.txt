@@ -1,0 +1,4 @@
+
+FAIL ic unit in SVGLength undefined is not an object (evaluating 'ic_length.unitType')
+FAIL Convert back to ic from new user unit value undefined is not an object (evaluating 'ic_length.value = ref_width * 2')
+

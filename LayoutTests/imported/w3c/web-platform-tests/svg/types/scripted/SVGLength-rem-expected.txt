@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="25rem"
+
+FAIL rem unit in SVGLength assert_equals: expected 0 but got 1
+FAIL Convert back to rem from new user unit value assert_equals: expected 50 but got 450
+

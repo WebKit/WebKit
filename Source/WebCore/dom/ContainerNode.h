@@ -63,6 +63,7 @@ public:
     void replaceAll(Node*);
 
     ContainerNode& rootNode() const { return downcast<ContainerNode>(Node::rootNode()); }
+    Ref<ContainerNode> protectedRootNode() const { return downcast<ContainerNode>(Node::rootNode()); }
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
@@ -114,7 +115,8 @@ public:
 
     void disconnectDescendantFrames();
 
-    RenderElement* renderer() const;
+    inline RenderElement* renderer() const; // Defined in RenderElement.h.
+    inline CheckedPtr<RenderElement> checkedRenderer() const; // Defined in RenderElement.h.
 
     // Return a bounding box in absolute coordinates enclosing this node and all its descendants.
     // This gives the area within which events may get handled by a hander registered on this node.

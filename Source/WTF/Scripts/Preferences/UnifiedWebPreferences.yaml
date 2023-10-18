@@ -1046,7 +1046,7 @@ CSSContainmentEnabled:
 
 CSSContentVisibilityEnabled:
   type: bool
-  status: stable
+  status: preview
   category: css
   humanReadableName: "CSS Content Visibility"
   humanReadableDescription: "Enable CSS content-visibility"
@@ -7350,20 +7350,6 @@ WebAPIsInShadowRealmEnabled:
       default: false
     WebCore:
       default: false
-
-WebAnimationsCompositeOperationsEnabled:
-  type: bool
-  status: stable
-  category: animation
-  humanReadableName: "Web Animations composite operations"
-  humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 WebAnimationsCustomEffectsEnabled:
   type: bool

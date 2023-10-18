@@ -307,7 +307,7 @@ void WebFullScreenManager::updateMainVideoElement()
             if (!rendererAndBounds)
                 continue;
 
-            auto [renderer, bounds] = *rendererAndBounds;
+            auto& [renderer, bounds] = *rendererAndBounds;
             if (!renderer || bounds.isEmpty())
                 continue;
 

@@ -35,13 +35,15 @@ document.addEventListener("touchend", async () => {
     startGrabberRect = await UIHelper.getSelectionStartGrabberViewRect();
     shouldBe("Math.round(startGrabberRect.left)", "0");
     shouldBe("Math.round(startGrabberRect.top)", "3");
-    shouldBe("Math.round(startGrabberRect.width)", "2");
+    shouldBeLessThanOrEqual("Math.round(startGrabberRect)", "Math.round(selectionRects[0].left)");
+    shouldBeGreaterThan("Math.round(startGrabberRect.left + startGrabberRect.width)", "Math.round(selectionRects[0].left)");
     shouldBe("Math.round(startGrabberRect.height)", "167");
 
     endGrabberRect = await UIHelper.getSelectionEndGrabberViewRect();
     shouldBe("Math.round(endGrabberRect.left)", "249");
     shouldBe("Math.round(endGrabberRect.top)", "3");
-    shouldBe("Math.round(endGrabberRect.width)", "2");
+    shouldBeLessThanOrEqual("Math.round(endGrabberRect.left)", "Math.round(selectionRects[0].left + selectionRects[0].width)");
+    shouldBeGreaterThan("Math.round(endGrabberRect.left + endGrabberRect.width)", "Math.round(selectionRects[0].left + selectionRects[0].width)");
     shouldBe("Math.round(endGrabberRect.height)", "167");
 
     observedTouchEnd = true;

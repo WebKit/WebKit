@@ -552,6 +552,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
 #endif
 #endif
+#if ENABLE(VIDEO)
+    if (!m_captionUserPreferencesTestingModeToken)
+        m_captionUserPreferencesTestingModeToken = WKBundlePageCreateCaptionUserPreferencesTestingModeToken(page()->page());
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanValue(settings, "UseFlexibleViewport"));
@@ -580,7 +584,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     clearResourceLoadStatistics();
 
 #if ENABLE(VIDEO)
-    WKBundleSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
+    WKBundlePageSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
 #endif
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow
     // https://bugs.webkit.org/show_bug.cgi?id=96862

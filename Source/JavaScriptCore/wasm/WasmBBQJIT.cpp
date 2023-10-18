@@ -3659,11 +3659,11 @@ public:
     }
 
     // GC
-    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result)
     {
         if (value.isConst()) {
             result = Value::fromI64((value.asI32() & 0x7fffffff) | JSValue::NumberTag);
-            LOG_INSTRUCTION("I31New", value, RESULT(result));
+            LOG_INSTRUCTION("RefI31", value, RESULT(result));
             return { };
         }
 
@@ -3673,7 +3673,7 @@ public:
         result = topValue(TypeKind::I64);
         Location resultLocation = allocateWithHint(result, initialValue);
 
-        LOG_INSTRUCTION("I31New", value, RESULT(result));
+        LOG_INSTRUCTION("RefI31", value, RESULT(result));
 
         m_jit.and32(TrustedImm32(0x7fffffff), initialValue.asGPR(), resultLocation.asGPR());
         m_jit.or64(TrustedImm64(JSValue::NumberTag), resultLocation.asGPR());
@@ -4208,17 +4208,17 @@ public:
     }
 
 
-    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result)
     {
         Vector<Value, 8> arguments = {
             reference
         };
         result = topValue(TypeKind::Anyref);
-        emitCCall(&operationWasmExternInternalize, arguments, result);
+        emitCCall(&operationWasmAnyConvertExtern, arguments, result);
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result)
     {
         result = reference;
         return { };

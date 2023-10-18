@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -50,12 +51,13 @@ public:
     ExceptionOr<void> setNamedItem(const String& name, const AtomString& value);
     bool deleteNamedProperty(const String& name);
 
-    Element& element() { return m_element; }
+    Element& element() { return m_element.get(); }
+    Ref<Element> protectedElement() const;
 
 private:
     const AtomString* item(const String& name) const;
 
-    Element& m_element;
+    CheckedRef<Element> m_element;
 };
 
 } // namespace WebCore

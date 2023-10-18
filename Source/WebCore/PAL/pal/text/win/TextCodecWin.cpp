@@ -298,7 +298,7 @@ void TextCodecWin::enumerateSupportedEncodings(EncodingReceiver& receiver)
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
         HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
-        if (j != knownCharsets().end() && !receiver.receive(j->value.m_name.data(), j->value.m_friendlyName.charactersWithNullTermination().data(), j->value.m_codePage))
+        if (j != knownCharsets().end() && !receiver.receive(j->value.m_name.data(), j->value.m_friendlyName.charactersWithNullTermination()->data(), j->value.m_codePage))
             break;
     }
 }

@@ -74,16 +74,16 @@ public:
     WEBCORE_EXPORT RefPtr<Element> getElementById(const String&) const;
     RefPtr<Element> getElementById(StringView) const;
     const Vector<CheckedRef<Element>>* getAllElementsById(const AtomString&) const;
-    inline bool hasElementWithId(const AtomStringImpl&) const; // Defined in TreeScopeInlines.h.
+    inline bool hasElementWithId(const AtomString&) const; // Defined in TreeScopeInlines.h.
     inline bool containsMultipleElementsWithId(const AtomString& id) const; // Defined in TreeScopeInlines.h.
-    void addElementById(const AtomStringImpl& elementId, Element&, bool notifyObservers = true);
-    void removeElementById(const AtomStringImpl& elementId, Element&, bool notifyObservers = true);
+    void addElementById(const AtomString& elementId, Element&, bool notifyObservers = true);
+    void removeElementById(const AtomString& elementId, Element&, bool notifyObservers = true);
 
     WEBCORE_EXPORT RefPtr<Element> getElementByName(const AtomString&) const;
-    inline bool hasElementWithName(const AtomStringImpl&) const; // Defined in TreeScopeInlines.h.
+    inline bool hasElementWithName(const AtomString&) const; // Defined in TreeScopeInlines.h.
     inline bool containsMultipleElementsWithName(const AtomString&) const; // Defined in TreeScopeInlines.h.
-    void addElementByName(const AtomStringImpl&, Element&);
-    void removeElementByName(const AtomStringImpl&, Element&);
+    void addElementByName(const AtomString&, Element&);
+    void removeElementByName(const AtomString&, Element&);
 
     Document& documentScope() const { return m_documentScope.get(); }
     Ref<Document> protectedDocumentScope() const;
@@ -99,14 +99,14 @@ public:
     void removeImageMap(HTMLMapElement&);
     RefPtr<HTMLMapElement> getImageMap(const AtomString&) const;
 
-    void addImageElementByUsemap(const AtomStringImpl&, HTMLImageElement&);
-    void removeImageElementByUsemap(const AtomStringImpl&, HTMLImageElement&);
-    RefPtr<HTMLImageElement> imageElementByUsemap(const AtomStringImpl&) const;
+    void addImageElementByUsemap(const AtomString&, HTMLImageElement&);
+    void removeImageElementByUsemap(const AtomString&, HTMLImageElement&);
+    RefPtr<HTMLImageElement> imageElementByUsemap(const AtomString&) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
-    void addLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
-    void removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
+    void addLabel(const AtomString& forAttributeValue, HTMLLabelElement&);
+    void removeLabel(const AtomString& forAttributeValue, HTMLLabelElement&);
     const Vector<CheckedRef<Element>>* labelElementsForId(const AtomString& forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);

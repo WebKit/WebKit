@@ -108,7 +108,7 @@ bool RenderMultiColumnSet::containsRendererInFragmentedFlow(const RenderObject& 
 {
     if (!previousSiblingMultiColumnSet() && !nextSiblingMultiColumnSet()) {
         // There is only one set. This is easy, then.
-        return renderer.isDescendantOf(m_fragmentedFlow);
+        return renderer.isDescendantOf(m_fragmentedFlow.get());
     }
 
     RenderObject* firstRenderer = firstRendererInFragmentedFlow();

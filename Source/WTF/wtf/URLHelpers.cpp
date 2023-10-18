@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -648,8 +648,11 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
 
     unsigned length = string.length();
 
-    auto sourceBuffer = string.charactersWithNullTermination();
-    
+    auto expectedSourceBuffer = string.charactersWithNullTermination();
+    if (!expectedSourceBuffer)
+        return std::nullopt;
+    auto sourceBuffer = expectedSourceBuffer.value();
+
     UChar destinationBuffer[URLParser::hostnameBufferLength];
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;

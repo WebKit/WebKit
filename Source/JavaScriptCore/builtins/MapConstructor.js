@@ -36,7 +36,7 @@ function groupBy(items, callback)
     var groups = new @Map;
     var k = 0;
     for (var item of items) {
-        var key = callback.@call(@undefined, item, k, items);
+        var key = callback.@call(@undefined, item, k);
         var group = groups.@get(key);
         if (!group) {
             group = [];

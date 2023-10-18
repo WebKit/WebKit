@@ -759,6 +759,11 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         break;
     }
 
+    case ExtGC:
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExtendedConstantExpressions(), "unknown init_expr opcode ", opcode);
+        break;
+
     default:
         WASM_PARSER_FAIL_IF(true, "unknown init_expr opcode ", opcode);
     }
@@ -769,7 +774,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     WASM_PARSER_FAIL_IF(offset() >= length(), "can't get init_expr's end opcode");
     endOpcode = source()[offset()];
 
-    if (endOpcode == OpType::End) {
+    if (endOpcode == OpType::End && opcode != OpType::ExtGC) {
         m_offset++;
         isExtendedConstantExpression = false;
         return { };
@@ -784,6 +789,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(source() + initialOffset, initExprOffset), "could not allocate memory for init expr");
     bitsOrImportNumber = m_info->constantExpressions.size() - 1;
     isExtendedConstantExpression = true;
+    resultType = expectedType;
 
     return { };
 }

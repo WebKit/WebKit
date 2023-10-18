@@ -2753,7 +2753,7 @@ macro notSupported()
         # smallest instructions exist, we should pick the one that is most
         # likely result in execution being halted. Currently that is the break
         # instruction on all architectures we're interested in. (Break is int3
-        # on Intel, which is 1 byte, and bkpt on ARMv7, which is 2 bytes.)
+        # on Intel, which is 1 byte, and udf on ARMv7, which is 2 bytes.)
         break
     end
 end

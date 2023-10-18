@@ -145,6 +145,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         if ([_delegate inspectorViewControllerInspectorIsUnderTest:self]) {
             preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
             preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+            preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
         }
     }
 

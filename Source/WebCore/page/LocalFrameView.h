@@ -1095,6 +1095,11 @@ inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String
     incrementVisuallyNonEmptyCharacterCountSlowCase(inlineText);
 }
 
+inline RefPtr<LocalFrameView> LocalFrame::protectedView() const
+{
+    return m_view;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);
 
 } // namespace WebCore

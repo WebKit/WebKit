@@ -1462,7 +1462,7 @@ void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, doubl
     didChangeAnimations();
 }
 
-void CoordinatedGraphicsLayer::removeAnimation(const String& animationName)
+void CoordinatedGraphicsLayer::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
 {
     m_animations.remove(animationName);
     didChangeAnimations();

@@ -882,15 +882,15 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
 {
     ASSERT(page());
 
-    bool isMainFrame = this->isMainFrame();
+    bool isRootFrame = this->isRootFrame();
 
-    if (isMainFrame && view())
+    if (isRootFrame && view())
         view()->setParentVisible(false);
 
     setView(nullptr);
 
     RefPtr<LocalFrameView> frameView;
-    if (isMainFrame) {
+    if (isRootFrame) {
         frameView = LocalFrameView::create(*this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
 #if USE(COORDINATED_GRAPHICS)
@@ -908,7 +908,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
 
     frameView->updateBackgroundRecursively(backgroundColor);
 
-    if (isMainFrame)
+    if (isRootFrame)
         frameView->setParentVisible(true);
 
     if (ownerRenderer())

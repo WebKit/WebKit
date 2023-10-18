@@ -1874,7 +1874,7 @@ op_group :CatchAll,
         exception: VirtualRegister,
     }
 
-op :i31_new,
+op :ref_i31,
     args: {
         dst: VirtualRegister,
         value: VirtualRegister,
@@ -1941,7 +1941,7 @@ op :struct_set,
         value: VirtualRegister,
     }
 
-op :extern_externalize,
+op :extern_convert_any,
     args: {
         dst: VirtualRegister,
         reference: VirtualRegister,

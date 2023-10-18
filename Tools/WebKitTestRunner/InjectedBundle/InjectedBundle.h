@@ -221,6 +221,8 @@ private:
     Vector<String> m_allowedHosts;
 
     size_t m_userScriptInjectedCount { 0 };
+
+    WKRetainPtr<WKCaptionUserPreferencesTestingModeTokenRef> m_captionUserPreferencesTestingModeToken;
 };
 
 void postMessage(const char* name);

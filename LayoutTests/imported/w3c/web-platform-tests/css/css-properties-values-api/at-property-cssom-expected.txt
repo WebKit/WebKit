@@ -1,16 +1,17 @@
 
+PASS Rule for --no-descriptors is invalid
+PASS Rule for --no-syntax is invalid
+PASS Rule for --no-inherits is invalid
+PASS Rule for --no-initial-color-value is invalid
+PASS Rule for --syntax-only is invalid
+PASS Rule for --inherits-only is invalid
+PASS Rule for --initial-value-only is invalid
 PASS Rule for --valid has expected cssText
 PASS Rule for --valid-reverse has expected cssText
 PASS Rule for --valid-universal has expected cssText
 PASS Rule for --valid-whitespace has expected cssText
 PASS Rule for --vALId has expected cssText
-PASS Rule for --no-descriptors has expected cssText
-PASS Rule for --no-syntax has expected cssText
-PASS Rule for --no-inherits has expected cssText
-PASS Rule for --no-initial-value has expected cssText
-PASS Rule for --syntax-only has expected cssText
-PASS Rule for --inherits-only has expected cssText
-PASS Rule for --initial-value-only has expected cssText
+PASS Rule for --no-initial-universal-value has expected cssText
 PASS Rule for --tab	tab has expected cssText
 PASS CSSRule.type returns 0
 PASS Rule for --valid returns expected value for CSSPropertyRule.name
@@ -18,47 +19,23 @@ PASS Rule for --valid-reverse returns expected value for CSSPropertyRule.name
 PASS Rule for --valid-universal returns expected value for CSSPropertyRule.name
 PASS Rule for --valid-whitespace returns expected value for CSSPropertyRule.name
 PASS Rule for --vALId returns expected value for CSSPropertyRule.name
-PASS Rule for --no-descriptors returns expected value for CSSPropertyRule.name
-PASS Rule for --no-syntax returns expected value for CSSPropertyRule.name
-PASS Rule for --no-inherits returns expected value for CSSPropertyRule.name
-PASS Rule for --no-initial-value returns expected value for CSSPropertyRule.name
-PASS Rule for --syntax-only returns expected value for CSSPropertyRule.name
-PASS Rule for --inherits-only returns expected value for CSSPropertyRule.name
-PASS Rule for --initial-value-only returns expected value for CSSPropertyRule.name
+PASS Rule for --no-initial-universal-value returns expected value for CSSPropertyRule.name
 PASS Rule for --valid returns expected value for CSSPropertyRule.syntax
 PASS Rule for --valid-reverse returns expected value for CSSPropertyRule.syntax
 PASS Rule for --valid-universal returns expected value for CSSPropertyRule.syntax
 PASS Rule for --valid-whitespace returns expected value for CSSPropertyRule.syntax
 PASS Rule for --vALId returns expected value for CSSPropertyRule.syntax
-PASS Rule for --no-descriptors returns expected value for CSSPropertyRule.syntax
-PASS Rule for --no-syntax returns expected value for CSSPropertyRule.syntax
-PASS Rule for --no-inherits returns expected value for CSSPropertyRule.syntax
-PASS Rule for --no-initial-value returns expected value for CSSPropertyRule.syntax
-PASS Rule for --syntax-only returns expected value for CSSPropertyRule.syntax
-PASS Rule for --inherits-only returns expected value for CSSPropertyRule.syntax
-PASS Rule for --initial-value-only returns expected value for CSSPropertyRule.syntax
+PASS Rule for --no-initial-universal-value returns expected value for CSSPropertyRule.syntax
 PASS Rule for --valid returns expected value for CSSPropertyRule.inherits
 PASS Rule for --valid-reverse returns expected value for CSSPropertyRule.inherits
 PASS Rule for --valid-universal returns expected value for CSSPropertyRule.inherits
 PASS Rule for --valid-whitespace returns expected value for CSSPropertyRule.inherits
 PASS Rule for --vALId returns expected value for CSSPropertyRule.inherits
-PASS Rule for --no-descriptors returns expected value for CSSPropertyRule.inherits
-PASS Rule for --no-syntax returns expected value for CSSPropertyRule.inherits
-PASS Rule for --no-inherits returns expected value for CSSPropertyRule.inherits
-PASS Rule for --no-initial-value returns expected value for CSSPropertyRule.inherits
-PASS Rule for --syntax-only returns expected value for CSSPropertyRule.inherits
-PASS Rule for --inherits-only returns expected value for CSSPropertyRule.inherits
-PASS Rule for --initial-value-only returns expected value for CSSPropertyRule.inherits
+PASS Rule for --no-initial-universal-value returns expected value for CSSPropertyRule.inherits
 PASS Rule for --valid returns expected value for CSSPropertyRule.initialValue
 PASS Rule for --valid-reverse returns expected value for CSSPropertyRule.initialValue
 PASS Rule for --valid-universal returns expected value for CSSPropertyRule.initialValue
 PASS Rule for --valid-whitespace returns expected value for CSSPropertyRule.initialValue
 PASS Rule for --vALId returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --no-descriptors returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --no-syntax returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --no-inherits returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --no-initial-value returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --syntax-only returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --inherits-only returns expected value for CSSPropertyRule.initialValue
-PASS Rule for --initial-value-only returns expected value for CSSPropertyRule.initialValue
+PASS Rule for --no-initial-universal-value returns expected value for CSSPropertyRule.initialValue
 

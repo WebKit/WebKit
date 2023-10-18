@@ -99,7 +99,7 @@ class CustomElementQueue {
     WTF_MAKE_NONCOPYABLE(CustomElementQueue);
 public:
     CustomElementQueue();
-    ~CustomElementQueue();
+    WEBCORE_EXPORT ~CustomElementQueue();
 
     void add(Element&);
     void processQueue(JSC::JSGlobalObject*);
@@ -233,7 +233,7 @@ public:
 private:
     WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
 
-    CustomElementQueue* m_queue { nullptr }; // Use raw pointer to avoid generating delete in the destructor.
+    std::unique_ptr<CustomElementQueue> m_queue;
     CustomElementReactionStack* const m_previousProcessingStack;
     JSC::JSGlobalObject* const m_state;
 

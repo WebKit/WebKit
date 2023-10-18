@@ -56,7 +56,7 @@ function groupBy(items, callback)
     var groups = @Object.@create(null);
     var k = 0;
     for (var item of items) {
-        var key = @toPropertyKey(callback.@call(@undefined, item, k, items));
+        var key = @toPropertyKey(callback.@call(@undefined, item, k));
         var group = groups[key];
         if (!group) {
             group = [];

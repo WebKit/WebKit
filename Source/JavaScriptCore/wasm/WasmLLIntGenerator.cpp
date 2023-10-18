@@ -313,7 +313,7 @@ public:
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type, Type);
 
     // GC
-    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
@@ -330,8 +330,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -1991,10 +1991,10 @@ auto LLIntGenerator::truncSaturated(Ext1OpType op, ExpressionType operand, Expre
     return { };
 }
 
-auto LLIntGenerator::addI31New(ExpressionType value, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addRefI31(ExpressionType value, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmI31New::emit(this, result, value);
+    WasmRefI31::emit(this, result, value);
 
     return { };
 }
@@ -2177,19 +2177,19 @@ auto LLIntGenerator::addRefCast(ExpressionType reference, bool allowNull, int32_
     return { };
 }
 
-auto LLIntGenerator::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addAnyConvertExtern(ExpressionType reference, ExpressionType& result) -> PartialResult
 {
     ResultList results;
-    addCallBuiltin(LLIntBuiltin::ExternInternalize, { reference }, results);
+    addCallBuiltin(LLIntBuiltin::AnyConvertExtern, { reference }, results);
     ASSERT(results.size() == 1);
     result = results.at(0);
     return { };
 }
 
-auto LLIntGenerator::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addExternConvertAny(ExpressionType reference, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmExternExternalize::emit(this, result, reference);
+    WasmExternConvertAny::emit(this, result, reference);
     return { };
 }
 

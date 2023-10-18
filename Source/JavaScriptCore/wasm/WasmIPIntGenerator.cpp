@@ -284,7 +284,7 @@ public:
 
     // GC
 
-    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&);
@@ -301,8 +301,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType, ExpressionType&);
 
     // Basic operators
 
@@ -814,7 +814,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicFence(ExtAtomicOpType, ui
 
 // Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31New(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefI31(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetS(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetU(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
@@ -831,8 +831,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExpressionType, co
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefTest(ExpressionType, bool, int32_t, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefCast(ExpressionType, bool, int32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternInternalize(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternExternalize(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addAnyConvertExtern(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternConvertAny(ExpressionType, ExpressionType&) { return { }; }
 
 // Integer Arithmetic
 

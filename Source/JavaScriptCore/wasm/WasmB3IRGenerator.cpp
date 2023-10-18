@@ -619,7 +619,7 @@ public:
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
     // GC
-    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
@@ -636,8 +636,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -2911,7 +2911,7 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
     return { };
 }
 
-auto B3IRGenerator::addI31New(ExpressionType value, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addRefI31(ExpressionType value, ExpressionType& result) -> PartialResult
 {
     Value* i64 = m_currentBlock->appendNew<Value>(m_proc, B3::ZExt32, origin(), get(value));
     Value* truncated = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), i64, constant(Int64, 0x7fffffff));
@@ -3539,13 +3539,13 @@ Value* B3IRGenerator::emitNotRTTKind(Value* rtt, RTTKind targetKind)
     return m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), kind, constant(Int32, static_cast<uint8_t>(targetKind)));
 }
 
-auto B3IRGenerator::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addAnyConvertExtern(ExpressionType reference, ExpressionType& result) -> PartialResult
 {
-    result = push(callWasmOperation(m_currentBlock, toB3Type(anyrefType()), operationWasmExternInternalize, get(reference)));
+    result = push(callWasmOperation(m_currentBlock, toB3Type(anyrefType()), operationWasmAnyConvertExtern, get(reference)));
     return { };
 }
 
-auto B3IRGenerator::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addExternConvertAny(ExpressionType reference, ExpressionType& result) -> PartialResult
 {
     result = push(get(reference));
     return { };

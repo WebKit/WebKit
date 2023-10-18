@@ -895,7 +895,7 @@ static bool tryFastParsingHTMLFragmentImpl(const std::span<const CharacterType>&
     return parser.parse(contextElement);
 }
 
-bool tryFastParsingHTMLFragment(const String& source, Document& document, ContainerNode& destinationParent, Element& contextElement, OptionSet<ParserContentPolicy> policy)
+bool tryFastParsingHTMLFragment(StringView source, Document& document, ContainerNode& destinationParent, Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
     if (!canUseFastPath(contextElement, policy))
         return false;

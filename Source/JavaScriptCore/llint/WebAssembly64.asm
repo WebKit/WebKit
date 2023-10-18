@@ -1262,7 +1262,7 @@ end
 
 # GC ops
 
-wasmOp(i31_new, WasmI31New, macro(ctx)
+wasmOp(ref_i31, WasmRefI31, macro(ctx)
     mloadi(ctx, m_value, t0)
     andq 0x7fffffff, t0
     orq TagNumber, t0
@@ -1293,7 +1293,7 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
     throwException(NullArrayLen)
 end)
 
-wasmOp(extern_externalize, WasmExternExternalize, macro(ctx)
+wasmOp(extern_convert_any, WasmExternConvertAny, macro(ctx)
     mloadp(ctx, m_reference, t0)
     returnq(ctx, t0)
 end)

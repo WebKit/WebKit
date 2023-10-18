@@ -34,4 +34,4 @@ let console = {
 };
 
 load("./gc-spec-harness/sync_index.js", "caller relative");
-load("./spec-harness/wasm-constants.js", "caller relative");
+load("./gc-spec-harness/wasm-constants.js", "caller relative");

@@ -49,8 +49,16 @@ shouldBe(new Date(NaN).toLocaleString(), "Invalid Date");
 // Test for DateTimeFormat behavior.
 // Test that locale parameter is passed through properly.
 shouldThrow(() => new Date().toLocaleString('i'), RangeError);
-shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ '一九七〇/一/一 〇〇:〇〇:〇〇', '一九七〇/一/一 上午一二:〇〇:〇〇' ]);
-shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [ '一九七〇/一/一 〇〇:〇〇:〇〇', '一九七〇/一/一 上午一二:〇〇:〇〇' ]);
+shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [
+    '一九七〇/一/一 〇:〇〇:〇〇',
+    '一九七〇/一/一 〇〇:〇〇:〇〇',
+    '一九七〇/一/一 上午一二:〇〇:〇〇'
+]);
+shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [
+    '一九七〇/一/一 〇:〇〇:〇〇',
+    '一九七〇/一/一 〇〇:〇〇:〇〇',
+    '一九七〇/一/一 上午一二:〇〇:〇〇'
+]);
 shouldBe(new Date(0).toLocaleString('en-u-ca-chinese', { timeZone: 'UTC', year: 'numeric' }), '1969(ji-you)');
 shouldBe(new Date(0).toLocaleString('en', { timeZone: 'UTC', year: 'numeric', calendar: 'chinese' }), '1969(ji-you)');
 
@@ -129,8 +137,8 @@ shouldBe(new Date(NaN).toLocaleTimeString(), 'Invalid Date');
 // Test for DateTimeFormat behavior.
 // Test that locale parameter is passed through properly.
 shouldThrow(() => new Date().toLocaleTimeString('i'), RangeError);
-shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
-shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [ "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
+shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ "〇:〇〇:〇〇", "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
+shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [ "〇:〇〇:〇〇", "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
 shouldBe(new Date(0).toLocaleTimeString('en-u-ca-chinese', { timeZone: 'UTC', year: 'numeric' }), '1969(ji-you), 12:00:00 AM');
 shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', calendar: 'chinese' }), '1969(ji-you), 12:00:00 AM');
 

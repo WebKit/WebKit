@@ -1,0 +1,18 @@
+
+PASS CSS Transitions: property <text-underline-offset> from [15px] to [0px] at (0) should be [15px]
+PASS CSS Transitions: property <text-underline-offset> from [15px] to [0px] at (0.3) should be [10.5px]
+PASS CSS Transitions: property <text-underline-offset> from [15px] to [0px] at (0.6) should be [6px]
+PASS CSS Transitions: property <text-underline-offset> from [15px] to [0px] at (1) should be [0px]
+PASS CSS Transitions with transition: all: property <text-underline-offset> from [15px] to [0px] at (0) should be [15px]
+PASS CSS Transitions with transition: all: property <text-underline-offset> from [15px] to [0px] at (0.3) should be [10.5px]
+PASS CSS Transitions with transition: all: property <text-underline-offset> from [15px] to [0px] at (0.6) should be [6px]
+PASS CSS Transitions with transition: all: property <text-underline-offset> from [15px] to [0px] at (1) should be [0px]
+PASS CSS Animations: property <text-underline-offset> from [15px] to [0px] at (0) should be [15px]
+PASS CSS Animations: property <text-underline-offset> from [15px] to [0px] at (0.3) should be [10.5px]
+PASS CSS Animations: property <text-underline-offset> from [15px] to [0px] at (0.6) should be [6px]
+PASS CSS Animations: property <text-underline-offset> from [15px] to [0px] at (1) should be [0px]
+PASS Web Animations: property <text-underline-offset> from [15px] to [0px] at (0) should be [15px]
+PASS Web Animations: property <text-underline-offset> from [15px] to [0px] at (0.3) should be [10.5px]
+PASS Web Animations: property <text-underline-offset> from [15px] to [0px] at (0.6) should be [6px]
+PASS Web Animations: property <text-underline-offset> from [15px] to [0px] at (1) should be [0px]
+

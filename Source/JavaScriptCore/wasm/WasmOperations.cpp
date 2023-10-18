@@ -1092,7 +1092,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* ta
     return maybeSubRTT->isSubRTT(*targetRTT);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmExternInternalize, EncodedJSValue, (EncodedJSValue reference))
+JSC_DEFINE_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue reference))
 {
     return externInternalize(reference);
 }

@@ -97,7 +97,6 @@ private:
 
     void exitAcceleratedCompositingModeSoon();
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
-    void discardPreviousLayerTreeHost();
 
     void suspendPainting();
     void resumePainting();
@@ -132,9 +131,6 @@ private:
 
     // The layer tree host that handles accelerated compositing.
     std::unique_ptr<LayerTreeHost> m_layerTreeHost;
-
-    std::unique_ptr<LayerTreeHost> m_previousLayerTreeHost;
-    RunLoop::Timer m_discardPreviousLayerTreeHostTimer;
 
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;

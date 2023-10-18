@@ -1071,8 +1071,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     // So it should be called after putting our lexical environment to the TDZ stack correctly.
 
     for (FunctionMetadataNode* function : moduleProgramNode->functionStack()) {
-        const auto& iterator = moduleProgramNode->varDeclarations().find(function->ident().impl());
-        RELEASE_ASSERT(iterator != moduleProgramNode->varDeclarations().end());
+        const auto& iterator = moduleProgramNode->lexicalVariables().find(function->ident().impl());
+        RELEASE_ASSERT(iterator != moduleProgramNode->lexicalVariables().end());
         RELEASE_ASSERT(!iterator->value.isImported());
 
         VarKind varKind = lookUpVarKind(iterator->key.get(), iterator->value);

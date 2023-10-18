@@ -29,24 +29,24 @@
 
 namespace WebCore {
 
-inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const
+inline bool TreeScope::hasElementWithId(const AtomString& id) const
 {
     return m_elementsById && m_elementsById->contains(id);
 }
 
 inline bool TreeScope::containsMultipleElementsWithId(const AtomString& id) const
 {
-    return m_elementsById && id.impl() && m_elementsById->containsMultiple(*id.impl());
+    return m_elementsById && !id.isEmpty() && m_elementsById->containsMultiple(id);
 }
 
-inline bool TreeScope::hasElementWithName(const AtomStringImpl& id) const
+inline bool TreeScope::hasElementWithName(const AtomString& id) const
 {
     return m_elementsByName && m_elementsByName->contains(id);
 }
 
 inline bool TreeScope::containsMultipleElementsWithName(const AtomString& name) const
 {
-    return m_elementsByName && name.impl() && m_elementsByName->containsMultiple(*name.impl());
+    return m_elementsByName && !name.isEmpty() && m_elementsByName->containsMultiple(name);
 }
 
 } // namespace WebCore
