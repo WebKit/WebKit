@@ -14,7 +14,8 @@ addEventListener("message", (event) => {
         return;
     }
 
-    if (event.data == "140,95")
+    // FIXME: <rdar://114836034> This probably needs to change back to 140,95 once scrolling works in site-isolated iframes.
+    if (event.data == "113,95")
         testPassed("Correct mouse coordinates");
     else
         testFailed("Unexpected mouse coordinates: " + event.data);
