@@ -638,7 +638,7 @@ void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, dou
     m_animations.pause(animationName, Seconds(timeOffset));
 }
 
-void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
+void GraphicsLayerTextureMapper::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
 {
     m_animations.remove(animationName);
 }

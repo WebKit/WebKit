@@ -117,7 +117,7 @@ public:
     void setBackdropFiltersRect(const FloatRoundedRect&) override;
     bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
     void pauseAnimation(const String&, double) override;
-    void removeAnimation(const String&) override;
+    void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
     bool usesContentsLayer() const override;
