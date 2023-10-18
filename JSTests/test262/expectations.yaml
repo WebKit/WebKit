@@ -175,15 +175,9 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-test/built-ins/Map/groupBy/callback-arg.js:
-  default: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
-  strict mode: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
 test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
-test/built-ins/Object/groupBy/callback-arg.js:
-  default: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
-  strict mode: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
