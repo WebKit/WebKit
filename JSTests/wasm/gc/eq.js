@@ -60,7 +60,7 @@ function testRefEq() {
     instantiate(`
        (module
          (func (export "f") (result i32)
-           (ref.eq (i31.new (i32.const 42)) (i31.new (i32.const 42)))))
+           (ref.eq (ref.i31 (i32.const 42)) (ref.i31 (i32.const 42)))))
     `).exports.f(),
     1
   );

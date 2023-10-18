@@ -8,7 +8,7 @@ function testInternalize() {
     let m = instantiate(`
       (module
         (func (export "f") (param externref) (result i32)
-          (i31.get_s (ref.cast (ref i31) (extern.internalize (local.get 0)))))
+          (i31.get_s (ref.cast (ref i31) (any.convert_extern (local.get 0)))))
       )
     `);
     assert.eq(m.exports.f(0), 0);
@@ -54,7 +54,7 @@ function testInternalize() {
     let m = instantiate(`
       (module
         (func (export "f") (param externref)
-          (ref.cast (ref eq) (extern.internalize (local.get 0)))
+          (ref.cast (ref eq) (any.convert_extern (local.get 0)))
           drop)
       )
     `);
@@ -80,7 +80,7 @@ function testInternalize() {
     let m = instantiate(`
       (module
         (func (export "f") (param externref)
-          (ref.cast (ref array) (extern.internalize (local.get 0)))
+          (ref.cast (ref array) (any.convert_extern (local.get 0)))
           drop)
       )
     `);
@@ -107,7 +107,7 @@ function testExternalize() {
     let m = instantiate(`
       (module
         (func (export "f") (param i32) (result externref)
-          (extern.externalize (i31.new (local.get 0))))
+          (extern.convert_any (ref.i31 (local.get 0))))
       )
     `);
     assert.eq(m.exports.f(0), 0);
@@ -119,7 +119,7 @@ function testExternalize() {
       (module
         (type (array i32))
         (func (export "f") (result externref)
-          (extern.externalize (array.new 0 (i32.const 42) (i32.const 5))))
+          (extern.convert_any (array.new 0 (i32.const 42) (i32.const 5))))
       )
     `);
     assert.eq(typeof m.exports.f(), "object");
@@ -131,9 +131,9 @@ function testRoundtrip() {
     let m = instantiate(`
       (module
         (func (param anyref) (result anyref)
-          (extern.internalize (extern.externalize (local.get 0))))
+          (any.convert_extern (extern.convert_any (local.get 0))))
         (func (export "f") (param i32) (result i32)
-          (i31.get_s (ref.cast (ref i31) (call 0 (i31.new (local.get 0))))))
+          (i31.get_s (ref.cast (ref i31) (call 0 (ref.i31 (local.get 0))))))
       )
     `);
     assert.eq(m.exports.f(0), 0);
@@ -146,7 +146,7 @@ function testRoundtrip() {
       (module
         (type (array i32))
         (func (param anyref) (result anyref)
-          (extern.internalize (extern.externalize (local.get 0))))
+          (any.convert_extern (extern.convert_any (local.get 0))))
         (func (export "f") (result i32)
           (array.get 0
                      (ref.cast (ref 0) (call 0 (array.new 0 (i32.const 42) (i32.const 5))))
@@ -163,9 +163,9 @@ function testTable() {
       (module
         (type (struct))
         (table (export "t") 10 externref)
-        (func (table.set (i32.const 0) (extern.externalize (struct.new 0))))
+        (func (table.set (i32.const 0) (extern.convert_any (struct.new 0))))
         (func (export "isStruct") (result i32)
-          (ref.test (ref 0) (extern.internalize (table.get (i32.const 1)))))
+          (ref.test (ref 0) (any.convert_extern (table.get (i32.const 1)))))
         (start 0)
       )
     `);

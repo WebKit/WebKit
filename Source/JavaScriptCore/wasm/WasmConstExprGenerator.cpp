@@ -188,7 +188,7 @@ public:
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN truncTrapping(OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
@@ -205,8 +205,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType, ExpressionType&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN addI32Add(ExpressionType lhs, ExpressionType rhs, ExpressionType& result)

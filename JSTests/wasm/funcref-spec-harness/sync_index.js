@@ -108,6 +108,7 @@ function reinitializeRegistry() {
         print_f32: console.log.bind(console),
         print_f64: console.log.bind(console),
         global_i32: 666,
+        global_i64: 666n,
         global_f32: 666,
         global_f64: 666,
         table: new WebAssembly.Table({initial: 10, maximum: 20, element: 'anyfunc'}),
@@ -365,6 +366,9 @@ function assert_return(action, ...expected) {
                     return;
                 case "ref.extern":
                     assert_true(actual[i] !== null, `expected Wasm reference, got ${actual[i]}`);
+                    return;
+                case "ref.null":
+                    assert_true(actual[i] === null, `expected Wasm null return value, got ${actual[i]}`);
                     return;
                 default:
                     assert_equals(actual[i], expected[i]);

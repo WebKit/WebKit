@@ -585,7 +585,7 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::ArrayNewData:
     case LLIntBuiltin::ArrayNewElem:
         return *singleton().m_Arrayref_I32I32I32I32;
-    case LLIntBuiltin::ExternInternalize:
+    case LLIntBuiltin::AnyConvertExtern:
         return *singleton().m_Anyref_Externref;
     }
     RELEASE_ASSERT_NOT_REACHED();

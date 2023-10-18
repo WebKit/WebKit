@@ -1892,13 +1892,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
         switch (op) {
-        case ExtGCOpType::I31New: {
+        case ExtGCOpType::RefI31: {
             TypedExpression value;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "i31.new");
-            WASM_VALIDATOR_FAIL_IF(!value.type().isI32(), "i31.new value to type ", value.type(), " expected ", TypeKind::I32);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "ref.i31");
+            WASM_VALIDATOR_FAIL_IF(!value.type().isI32(), "ref.i31 value to type ", value.type(), " expected ", TypeKind::I32);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addI31New(value, result));
+            WASM_TRY_ADD_TO_CONTEXT(addRefI31(value, result));
 
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
             return { };
@@ -2179,8 +2179,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         // The struct.new and struct.new_canon instructions are identical but with different opcodes for compatibility with both the spec & other implementations.
         // FIXME: Remove this redundancy when the GC proposal's opcode numbering is finalized.
-        case ExtGCOpType::StructNew:
-        case ExtGCOpType::StructNewCanon: {
+        case ExtGCOpType::StructNew: {
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"));
 
@@ -2208,8 +2207,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
             return { };
         }
-        case ExtGCOpType::StructNewDefault:
-        case ExtGCOpType::StructNewCanonDefault: {
+        case ExtGCOpType::StructNewDefault: {
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new_default"));
 
@@ -2303,23 +2301,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             return { };
         }
-        case ExtGCOpType::ExternInternalize: {
+        case ExtGCOpType::AnyConvertExtern: {
             TypedExpression reference;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.internalize");
-            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "extern.internalize reference to type ", reference.type(), " expected ", TypeKind::Externref);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "any.convert_extern");
+            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "any.convert_extern reference to type ", reference.type(), " expected ", TypeKind::Externref);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExternInternalize(reference, result));
+            WASM_TRY_ADD_TO_CONTEXT(addAnyConvertExtern(reference, result));
             m_expressionStack.constructAndAppend(anyrefType(reference.type().isNullable()), result);
             return { };
         }
-        case ExtGCOpType::ExternExternalize: {
+        case ExtGCOpType::ExternConvertAny: {
             TypedExpression reference;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.externalize");
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), anyrefType()), "extern.externalize reference to type ", reference.type(), " expected ", TypeKind::Anyref);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.convert_any");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), anyrefType()), "extern.convert_any reference to type ", reference.type(), " expected ", TypeKind::Anyref);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExternExternalize(reference, result));
+            WASM_TRY_ADD_TO_CONTEXT(addExternConvertAny(reference, result));
             m_expressionStack.constructAndAppend(externrefType(reference.type().isNullable()), result);
             return { };
         }
@@ -3422,7 +3420,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 #endif
 
         switch (op) {
-        case ExtGCOpType::I31New:
+        case ExtGCOpType::RefI31:
         case ExtGCOpType::I31GetS:
         case ExtGCOpType::I31GetU:
             return { };
@@ -3458,14 +3456,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
         case ExtGCOpType::ArrayLen:
             return { };
-        case ExtGCOpType::StructNew:
-        case ExtGCOpType::StructNewCanon: {
+        case ExtGCOpType::StructNew: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
             return { };
         }
-        case ExtGCOpType::StructNewDefault:
-        case ExtGCOpType::StructNewCanonDefault: {
+        case ExtGCOpType::StructNewDefault: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new_default"));
             return { };

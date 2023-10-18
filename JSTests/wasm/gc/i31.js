@@ -22,11 +22,11 @@ function testI31New() {
     () => instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.new (f32.const 42.42)))
+          (ref.i31 (f32.const 42.42)))
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: i31.new value to type F32 expected I32, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: ref.i31 value to type F32 expected I32, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   )
 
   // Use i31 in global and also export to JS via global.
@@ -35,7 +35,7 @@ function testI31New() {
       (module
         (global (export "g") (mut i31ref) (ref.null i31))
         (func (export "f")
-          (global.set 0 (i31.new (i32.const 42))))
+          (global.set 0 (ref.i31 (i32.const 42))))
       )
     `);
     m.exports.f();
@@ -47,7 +47,7 @@ function testI31New() {
     let m = instantiate(`
       (module
         (func (export "f") (result i31ref)
-          (i31.new (i32.const 42)))
+          (ref.i31 (i32.const 42)))
       )
     `);
     assert.eq(m.exports.f(), 42);
@@ -59,7 +59,7 @@ function testI31New() {
       (module
         (import "m" "f" (func (param i31ref)))
         (func (export "g")
-          (call 0 (i31.new (i32.const 42))))
+          (call 0 (ref.i31 (i32.const 42))))
       )`,
       { m: { f: (i31) => assert.eq(i31, 42) } }
     );
@@ -72,7 +72,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_s (i31.new (i32.const 42))))
+          (i31.get_s (ref.i31 (i32.const 42))))
       )
     `);
     assert.eq(m.exports.f(), 42);
@@ -82,7 +82,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_u (i31.new (i32.const 42))))
+          (i31.get_u (ref.i31 (i32.const 42))))
       )
     `);
     assert.eq(m.exports.f(), 42);
@@ -92,7 +92,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_s (i31.new (i32.const 0x4000_0000))))
+          (i31.get_s (ref.i31 (i32.const 0x4000_0000))))
       )
     `);
     assert.eq(m.exports.f(), -0x40000000);
@@ -102,7 +102,7 @@ function testI31Get() {
     let m = instantiate(
       `(module
          (func (export "f") (result i32)
-           (i31.get_u (i31.new (i32.const 0x4000_0000))))
+           (i31.get_u (ref.i31 (i32.const 0x4000_0000))))
        )
     `);
     assert.eq(m.exports.f(), 0x40000000);
@@ -112,7 +112,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_s (i31.new (i32.const 0xaaaa_aaaa))))
+          (i31.get_s (ref.i31 (i32.const 0xaaaa_aaaa))))
       )
     `);
     assert.eq(m.exports.f(), 0x2aaaaaaa);
@@ -122,7 +122,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_u (i31.new (i32.const 0xaaaa_aaaa))))
+          (i31.get_u (ref.i31 (i32.const 0xaaaa_aaaa))))
       )
     `);
     assert.eq(m.exports.f(), 0x2aaaaaaa);
@@ -132,7 +132,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_s (i31.new (i32.const -1))))
+          (i31.get_s (ref.i31 (i32.const -1))))
       )
     `);
     assert.eq(m.exports.f(), -1);
@@ -142,7 +142,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (result i32)
-          (i31.get_u (i31.new (i32.const -1))))
+          (i31.get_u (ref.i31 (i32.const -1))))
       )
     `);
     assert.eq(m.exports.f(), 0x7fffffff);
@@ -152,7 +152,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (param $arg i32) (result i32)
-          (i31.get_u (i31.new (local.get $arg))))
+          (i31.get_u (ref.i31 (local.get $arg))))
       )
     `);
     assert.eq(m.exports.f(0x7fffffff), 0x7fffffff);
@@ -165,7 +165,7 @@ function testI31Get() {
     let m = instantiate(`
       (module
         (func (export "f") (param $arg i32) (result i32)
-          (i31.get_s (i31.new (local.get $arg))))
+          (i31.get_s (ref.i31 (local.get $arg))))
       )
     `);
     assert.eq(m.exports.f(0x7fffffff), -1);
@@ -258,7 +258,7 @@ function testI31Table() {
       (module
         (table 10 (ref null i31))
         (func (export "set") (param i32) (result)
-          (table.set (local.get 0) (i31.new (i32.const 42))))
+          (table.set (local.get 0) (ref.i31 (i32.const 42))))
         (func (export "get") (param i32) (result i32)
           (i31.get_s (table.get (local.get 0)))))
     `);
@@ -284,7 +284,7 @@ function testI31Table() {
         (table (export "t") 10 (ref null i31))
         (start 0)
         (func
-          (table.fill (i32.const 0) (i31.new (i32.const 42)) (i32.const 10))))
+          (table.fill (i32.const 0) (ref.i31 (i32.const 42)) (i32.const 10))))
     `);
     const m2 = instantiate(`
       (module
