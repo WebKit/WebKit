@@ -27,7 +27,7 @@
 
 #import "TestsController.h"
 #import "UIKitMacHelperSPI.h"
-#import "UIKitSPIForTesting.h"
+#import "UIKitSPI.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
