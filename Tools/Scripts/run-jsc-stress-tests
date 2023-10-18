@@ -1955,7 +1955,7 @@ def runWebAssemblyFunctionReferenceSpecTest(mode)
 end
 
 def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--useWebAssemblyExtendedConstantExpressions=true")
 end
 
 def runWebAssemblyThreadsSpecTest(mode)

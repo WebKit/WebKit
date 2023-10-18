@@ -2033,8 +2033,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             uint32_t dataIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataIndex), "can't get data segment index for array.new_data");
-            WASM_VALIDATOR_FAIL_IF(!(m_info.numberOfDataSegments.value()), "array.new_data in module with no data segments");
-            WASM_VALIDATOR_FAIL_IF(dataIndex >= m_info.numberOfDataSegments, "array.new_data segment index ",
+            WASM_VALIDATOR_FAIL_IF(!(m_info.dataSegmentsCount()), "array.new_data in module with no data segments");
+            WASM_VALIDATOR_FAIL_IF(dataIndex >= m_info.dataSegmentsCount(), "array.new_data segment index ",
                 dataIndex, " is out of bounds (maximum data segment index is ", *m_info.numberOfDataSegments -1, ")");
 
             // Get the array size
