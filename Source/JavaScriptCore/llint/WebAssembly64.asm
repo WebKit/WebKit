@@ -1173,11 +1173,9 @@ if X86_64 or ARM64E or ARM64 or RISCV64
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         if X86_64 or ARM64E
-            bqa t0GPR , 0xff, .fail
+            andq 0xff, t0GPR
             atomicweakcasb t0GPR, t2GPR, mem
             jmp .done
-        .fail:
-            atomicloadb mem, t0GPR
         .done:
         else
         .loop:
@@ -1196,11 +1194,9 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         if X86_64 or ARM64E
-            bqa t0GPR, 0xffff, .fail
+            andq 0xffff, t0GPR
             atomicweakcash t0GPR, t2GPR, mem
             jmp .done
-        .fail:
-            atomicloadh mem, t0GPR
         .done:
         else
         .loop:
@@ -1219,11 +1215,9 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         if X86_64 or ARM64E
-            bqa t0GPR, 0xffffffff, .fail
+            andq 0xffffffff, t0GPR
             atomicweakcasi t0GPR, t2GPR, mem
             jmp .done
-        .fail:
-            atomicloadi mem, t0GPR
         .done:
         else
         .loop:

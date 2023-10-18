@@ -3119,7 +3119,7 @@ public:
         return { };
     }
 
-    Value WARN_UNUSED_RETURN emitAtomicCompareExchange(ExtAtomicOpType op, Type valueType, Location pointer, Value expected, Value value, uint32_t uoffset)
+    Value WARN_UNUSED_RETURN emitAtomicCompareExchange(ExtAtomicOpType op, Type, Location pointer, Value expected, Value value, uint32_t uoffset)
     {
         ASSERT(pointer.isGPR());
 
@@ -3127,7 +3127,6 @@ public:
         if (uoffset)
             m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
-        Width valueWidth = widthForType(toB3Type(valueType));
         Width accessWidth = this->accessWidth(op);
 
         if (accessWidth != Width8)
@@ -3214,77 +3213,22 @@ public:
             }
         };
 
-        if (valueWidth == accessWidth) {
-            emitStrongCAS(expectedLocation.asGPR(), valueLocation.asGPR(), resultLocation.asGPR());
-            emitSanitizeAtomicResult(op, expected.type(), resultLocation.asGPR());
-            return result;
-        }
-
-        emitSanitizeAtomicResult(op, expected.type(), expectedLocation.asGPR(), scratchGPR);
-
-        Jump failure;
-        switch (valueWidth) {
+        switch (accessWidth) {
         case Width8:
-        case Width16:
-        case Width32:
-            failure = m_jit.branch32(RelationalCondition::NotEqual, expectedLocation.asGPR(), scratchGPR);
+            m_jit.and64(TrustedImm64(0xFF), expectedLocation.asGPR());
             break;
-        case Width64:
-            failure = m_jit.branch64(RelationalCondition::NotEqual, expectedLocation.asGPR(), scratchGPR);
+        case Width16:
+            m_jit.and64(TrustedImm64(0xFFFF), expectedLocation.asGPR());
+            break;
+        case Width32:
+            m_jit.and64(TrustedImm64(0xFFFFFFFF), expectedLocation.asGPR());
             break;
         default:
-            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
 
         emitStrongCAS(expectedLocation.asGPR(), valueLocation.asGPR(), resultLocation.asGPR());
-        auto done = m_jit.jump();
-
-        failure.link(&m_jit);
-        if (isARM64_LSE() || isX86_64()) {
-            m_jit.move(TrustedImm32(0), resultLocation.asGPR());
-            switch (accessWidth) {
-            case Width8:
-#if CPU(ARM64)
-                m_jit.atomicXchgAdd8(resultLocation.asGPR(), address, resultLocation.asGPR());
-#else
-                m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
-#endif
-                break;
-            case Width16:
-#if CPU(ARM64)
-                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
-#else
-                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
-#endif
-                break;
-            case Width32:
-#if CPU(ARM64)
-                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
-#else
-                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
-#endif
-                break;
-            case Width64:
-#if CPU(ARM64)
-                m_jit.atomicXchgAdd64(resultLocation.asGPR(), address, resultLocation.asGPR());
-#else
-                m_jit.atomicXchgAdd64(resultLocation.asGPR(), address);
-#endif
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-        } else {
-            emitAtomicOpGeneric(op, address, resultLocation.asGPR(), scratchGPR, [&](GPRReg oldGPR, GPRReg newGPR) {
-                emitSanitizeAtomicResult(op, canonicalWidth(accessWidth) == Width64 ? TypeKind::I64 : TypeKind::I32, oldGPR, newGPR);
-            });
-        }
-
-        done.link(&m_jit);
         emitSanitizeAtomicResult(op, expected.type(), resultLocation.asGPR());
-
         return result;
     }
 

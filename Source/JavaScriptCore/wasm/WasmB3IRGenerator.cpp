@@ -2585,59 +2585,18 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    BasicBlock* failureCase = m_proc.addBlock();
-    BasicBlock* successCase = m_proc.addBlock();
-    BasicBlock* continuation = m_proc.addBlock();
+    auto truncatedExpected = expected;
+    auto truncatedValue = value;
 
-    auto condition = m_currentBlock->appendNew<Value>(m_proc, Above, origin(), expected, maximum);
-    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), condition, FrequentedBlock(failureCase, FrequencyClass::Rare), FrequentedBlock(successCase, FrequencyClass::Normal));
-    failureCase->addPredecessor(m_currentBlock);
-    successCase->addPredecessor(m_currentBlock);
+    truncatedExpected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::BitAnd, origin(), maximum, expected);
 
-    m_currentBlock = successCase;
-    B3::UpsilonValue* successValue = nullptr;
-    {
-        auto truncatedExpected = expected;
-        auto truncatedValue = value;
-        if (valueType.isI64()) {
-            truncatedExpected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), expected);
-            truncatedValue = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
-        }
-
-        auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, truncatedExpected, truncatedValue, pointer);
-        successValue = m_currentBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), result);
-        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
-        continuation->addPredecessor(m_currentBlock);
+    if (valueType.isI64()) {
+        truncatedExpected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), expected);
+        truncatedValue = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
     }
 
-    m_currentBlock = failureCase;
-    B3::UpsilonValue* failureValue = nullptr;
-    {
-        Value* addingValue = nullptr;
-        switch (accessWidth) {
-        case Width8:
-        case Width16:
-        case Width32:
-            addingValue = constant(Int32, 0);
-            break;
-        case Width64:
-            addingValue = constant(Int64, 0);
-            break;
-        case Width128:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchgAdd), origin(), accessWidth, addingValue, pointer);
-        failureValue = m_currentBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), result);
-        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
-        continuation->addPredecessor(m_currentBlock);
-    }
-
-    m_currentBlock = continuation;
-    Value* phi = continuation->appendNew<Value>(m_proc, Phi, accessWidth == Width64 ? Int64 : Int32, origin());
-    successValue->setPhi(phi);
-    failureValue->setPhi(phi);
-    return sanitizeAtomicResult(op, valueType, phi);
+    auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, truncatedExpected, truncatedValue, pointer);
+    return sanitizeAtomicResult(op, valueType, result);
 }
 
 void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const StructType& structType, Value* argument)
