@@ -57,4 +57,9 @@ RefPtr<RemotePageProxy> ProvisionalFrameProxy::takeRemotePageProxy()
     return std::exchange(m_remotePageProxy, nullptr);
 }
 
+WebPageProxy* ProvisionalFrameProxy::page()
+{
+    return m_frame->page();
+}
+
 }

@@ -36,6 +36,7 @@ namespace WebKit {
 class RemotePageProxy;
 class VisitedLinkStore;
 class WebFrameProxy;
+class WebPageProxy;
 class WebProcessProxy;
 
 class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
@@ -46,6 +47,7 @@ public:
 
     WebProcessProxy& process() { return m_process.get(); }
     RefPtr<RemotePageProxy> takeRemotePageProxy();
+    WebPageProxy* page();
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 

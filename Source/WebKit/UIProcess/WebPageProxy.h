@@ -416,6 +416,7 @@ struct FocusedElementInformation;
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct FrameTreeNodeData;
+struct GPUProcessPreferencesForWebProcess;
 struct GeolocationIdentifierType;
 struct InputMethodState;
 struct InsertTextOptions;
@@ -533,6 +534,13 @@ public:
 
     bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
     bool shouldEnableLockdownMode() const;
+
+#if ENABLE(GPU_PROCESS)
+    GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
+#endif
+
+    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
+    bool hasSameGPUProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUProcessPreferencesAs(page.configuration()); }
 
     void processIsNoLongerAssociatedWithPage(WebProcessProxy&);
 

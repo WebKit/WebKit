@@ -49,6 +49,8 @@ class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
+struct GPUProcessPreferencesForWebProcess;
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 class WebExtensionController;
 #endif
@@ -219,6 +221,10 @@ public:
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
+
+#if ENABLE(GPU_PROCESS)
+    WebKit::GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
+#endif
 
 private:
     struct Data {

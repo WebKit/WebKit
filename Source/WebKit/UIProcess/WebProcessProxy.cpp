@@ -435,6 +435,28 @@ void WebProcessProxy::updateRegistrationWithDataStore()
     }
 }
 
+void WebProcessProxy::initializePreferencesForGPUProcess(const WebPageProxy& page)
+{
+#if ENABLE(GPU_PROCESS)
+    if (!m_preferencesForGPUProcess)
+        m_preferencesForGPUProcess = page.preferencesForGPUProcess();
+    else
+        ASSERT(*m_preferencesForGPUProcess == page.preferencesForGPUProcess());
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+bool WebProcessProxy::hasSameGPUProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
+{
+#if ENABLE(GPU_PROCESS)
+    return !m_preferencesForGPUProcess || *m_preferencesForGPUProcess == pageConfiguration.preferencesForGPUProcess();
+#else
+    UNUSED_PARAM(pageConfiguration);
+    return true;
+#endif
+}
+
 void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
@@ -443,6 +465,7 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
     ASSERT(!m_provisionalPages.contains(provisionalPage));
     markProcessAsRecentlyUsed();
     m_provisionalPages.add(provisionalPage);
+    initializePreferencesForGPUProcess(provisionalPage.page());
     updateRegistrationWithDataStore();
 }
 
@@ -467,6 +490,8 @@ void WebProcessProxy::addProvisionalFrameProxy(ProvisionalFrameProxy& provisiona
     ASSERT(!m_provisionalFrames.contains(provisionalFrame));
     markProcessAsRecentlyUsed();
     m_provisionalFrames.add(provisionalFrame);
+    if (RefPtr page = provisionalFrame.page())
+        initializePreferencesForGPUProcess(*page);
     updateRegistrationWithDataStore();
 }
 
@@ -764,6 +789,8 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         m_processPool->pageBeginUsingWebsiteDataStore(webPage, webPage.websiteDataStore());
     }
 
+    initializePreferencesForGPUProcess(webPage);
+
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
         setRunningBoardThrottlingEnabled();
@@ -778,7 +805,6 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
     updateBlobRegistryPartitioningState();
-    updatePreferencesForGPUProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -817,7 +843,6 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    updatePreferencesForGPUProcess();
     updateBlobRegistryPartitioningState();
 
     maybeShutDown();
@@ -1001,11 +1026,13 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
 }
 
 #if ENABLE(GPU_PROCESS)
+
 void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
 {
-    if (!m_preferencesForGPUProcess)
-        m_preferencesForGPUProcess = computePreferencesForGPUProcess();
-    parameters.preferences = *m_preferencesForGPUProcess;
+    auto& gpuPreferences = preferencesForGPUProcess();
+    ASSERT(gpuPreferences);
+    if (gpuPreferences)
+        parameters.preferences = *gpuPreferences;
 
     m_processPool->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
@@ -1980,32 +2007,6 @@ void WebProcessProxy::updateBlobRegistryPartitioningState() const
     auto* dataStore = websiteDataStore();
     if (auto* networkProcess = dataStore ? dataStore->networkProcessIfExists() : nullptr)
         networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
-}
-
-#if ENABLE(GPU_PROCESS)
-GPUProcessPreferencesForWebProcess WebProcessProxy::computePreferencesForGPUProcess() const
-{
-    GPUProcessPreferencesForWebProcess preferences;
-    for (auto& page : pages()) {
-        preferences.isWebGPUEnabled |= page->preferences().webGPUEnabled();
-        preferences.isWebGLEnabled |= page->preferences().webGLEnabled();
-        preferences.isDOMRenderingEnabled |= page->preferences().useGPUProcessForDOMRenderingEnabled();
-    }
-    return preferences;
-}
-#endif
-
-void WebProcessProxy::updatePreferencesForGPUProcess()
-{
-#if ENABLE(GPU_PROCESS)
-    if (auto* process = processPool().gpuProcess()) {
-        auto newPreferences = computePreferencesForGPUProcess();
-        if (m_preferencesForGPUProcess != newPreferences) {
-            m_preferencesForGPUProcess = newPreferences;
-            process->updatePreferencesForWebProcess(*this, newPreferences);
-        }
-    }
-#endif
 }
 
 #if !PLATFORM(COCOA)

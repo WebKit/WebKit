@@ -26,6 +26,7 @@ struct WebKit::GPUProcessPreferencesForWebProcess {
     bool isWebGLEnabled;
     bool isWebGPUEnabled;
     bool isDOMRenderingEnabled;
+    bool allowTestOnlyIPC;
 };
 
 #endif

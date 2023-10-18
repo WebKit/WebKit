@@ -1007,6 +1007,16 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
     });
 }
 
+bool WebPageProxy::hasSameGPUProcessPreferencesAs(const API::PageConfiguration& configuration) const
+{
+#if ENABLE(GPU_PROCESS)
+    return preferencesForGPUProcess() == configuration.preferencesForGPUProcess();
+#else
+    UNUSED_PARAM(configuration);
+    return true;
+#endif
+}
+
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
 {
     ASSERT(!m_isClosed);
@@ -1024,11 +1034,11 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     auto& processPool = m_process->processPool();
 
     auto* relatedPage = m_configuration->relatedPage();
-    if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess) {
+    if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUProcessPreferencesAs(*relatedPage)) {
         m_process = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_process.ptr(), m_process->processID());
     } else
-        m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), registrableDomain, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
+        m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), registrableDomain, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, configuration());
 
     m_hasRunningProcess = true;
     m_shouldReloadDueToCrashWhenVisible = false;
@@ -6160,6 +6170,13 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
     m_speechRecognitionPermissionManager = nullptr;
 }
 
+#if ENABLE(GPU_PROCESS)
+GPUProcessPreferencesForWebProcess WebPageProxy::preferencesForGPUProcess() const
+{
+    return configuration().preferencesForGPUProcess();
+}
+#endif
+
 void WebPageProxy::viewIsBecomingVisible()
 {
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "viewIsBecomingVisible:");
@@ -6705,7 +6722,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
         processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), m_process->lockdownMode(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
     else
-        processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->lockdownMode());
+        processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->lockdownMode(), configuration());
 
     auto processIdentifier = processForNavigation->coreProcessIdentifier();
     auto preventProcessShutdownScope = processForNavigation->shutdownPreventingScope();

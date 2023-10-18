@@ -44,7 +44,7 @@ public:
     explicit WebProcessCache(WebProcessPool&);
 
     bool addProcessIfPossible(Ref<WebProcessProxy>&&);
-    RefPtr<WebProcessProxy> takeProcess(const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode);
+    RefPtr<WebProcessProxy> takeProcess(const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }

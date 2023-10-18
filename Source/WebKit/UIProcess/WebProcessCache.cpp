@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessCache.h"
 
+#include "APIPageConfiguration.h"
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "WebProcessPool.h"
@@ -146,7 +147,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
@@ -156,6 +157,9 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
         return nullptr;
 
     if (it->value->process().lockdownMode() != lockdownMode)
+        return nullptr;
+
+    if (!it->value->process().hasSameGPUProcessPreferencesAs(pageConfiguration))
         return nullptr;
 
     auto process = it->value->takeProcess();

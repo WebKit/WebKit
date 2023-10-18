@@ -272,7 +272,6 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
     , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
-    , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
