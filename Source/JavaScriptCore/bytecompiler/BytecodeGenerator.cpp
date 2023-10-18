@@ -595,17 +595,22 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     m_outOfMemoryDuringConstruction = true;
                     return;
                 }
+
+                unsigned varOrAnonymous = UINT_MAX;
+
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i).first)) {
                     VarOffset varOffset(offset);
                     SymbolTableEntry entry(varOffset);
-                    // Stores to these variables via the ScopedArguments object will not do
-                    // notifyWrite(), since that would be cumbersome. Also, watching formal
-                    // parameters when "arguments" is in play is unlikely to be super profitable.
-                    // So, we just disable it.
-                    entry.disableWatching(m_vm);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
+IGNORE_WARNINGS_BEGIN("dangling-reference")
+                    const Identifier& ident =
+                        static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
+IGNORE_WARNINGS_END
+
+                    varOrAnonymous = addConstant(ident);
                 }
-                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
+
+                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, varOrAnonymous, virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, ResolvedClosureVar, InitializationMode::ScopedArgumentInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
             }
             
             // This creates a scoped arguments object and copies the overflow arguments into the
@@ -639,10 +644,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             }
             
             ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
+IGNORE_WARNINGS_BEGIN("dangling-reference")
             const Identifier& ident =
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
-IGNORE_GCC_WARNINGS_END
+IGNORE_WARNINGS_END
             functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
             OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
@@ -1338,7 +1343,9 @@ void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantI
 UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatternNode* pattern)
 {
     if (pattern->isBindingNode()) {
+IGNORE_WARNINGS_BEGIN("dangling-reference")
         const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
+IGNORE_WARNINGS_END
         if (!m_functions.contains(ident.impl()))
             return ident.impl();
     }
@@ -5583,4 +5590,5 @@ void printInternal(PrintStream& out, JSC::Variable::VariableKind kind)
 }
 
 } // namespace WTF
+
 
