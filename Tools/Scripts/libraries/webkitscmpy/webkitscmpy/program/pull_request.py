@@ -336,7 +336,10 @@ class PullRequest(Command):
             num_checks += 1
             name = key.split('.')[-1]
             log.info('    Running {}...'.format(name))
-            command = run(path.split(' '), cwd=repository.root_path)
+            command_line = path.split(' ')
+            if command_line[0] == 'python3' and os.name == 'nt':
+                command_line[0] = sys.executable
+            command = run(command_line, cwd=repository.root_path)
             if command.returncode:
                 if Terminal.choose(
                     '{} failed, continue uploading pull request?'.format(name),
