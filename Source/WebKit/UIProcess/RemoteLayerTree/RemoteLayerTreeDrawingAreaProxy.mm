@@ -518,7 +518,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 {
     ASSERT(activityStateChangeID != ActivityStateChangeAsynchronous);
 
-    if (!process.hasConnection())
+    if (!process.hasConnection() || activityStateChangeID == ActivityStateChangeAsynchronous)
         return;
 
     ProcessState& state = processStateForConnection(*process.connection());
@@ -537,8 +537,11 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     WeakPtr weakThis { *this };
     auto startTime = MonotonicTime::now();
     while (process.connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_identifier, activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError) {
-        if (!weakThis || activityStateChangeID == ActivityStateChangeAsynchronous || activityStateChangeID <= state.activityStateChangeID)
+        if (!weakThis || activityStateChangeID <= state.activityStateChangeID)
             return;
+
+        if (state.commitLayerTreeMessageState == NeedsDisplayDidRefresh)
+            didRefreshDisplay(process.connection());
     }
 }
 
