@@ -43,6 +43,10 @@ class HTMLSelectElement;
 class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
     WTF_MAKE_ISO_ALLOCATED(RenderListBox);
 public:
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->decrementPtrCount(); }
+
     RenderListBox(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderListBox();
 

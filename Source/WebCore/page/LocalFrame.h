@@ -141,6 +141,7 @@ public:
     Document* document() const;
     RefPtr<Document> protectedDocument() const;
     LocalFrameView* view() const;
+    inline RefPtr<LocalFrameView> protectedView() const; // Defined in LocalFrameView.h.
 
     Editor& editor() { return document()->editor(); }
     const Editor& editor() const { return document()->editor(); }

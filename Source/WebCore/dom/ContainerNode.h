@@ -114,7 +114,8 @@ public:
 
     void disconnectDescendantFrames();
 
-    RenderElement* renderer() const;
+    inline RenderElement* renderer() const; // Defined in RenderElement.h.
+    inline CheckedPtr<RenderElement> checkedRenderer() const; // Defined in RenderElement.h.
 
     // Return a bounding box in absolute coordinates enclosing this node and all its descendants.
     // This gives the area within which events may get handled by a hander registered on this node.

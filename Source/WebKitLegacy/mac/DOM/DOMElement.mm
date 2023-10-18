@@ -165,7 +165,7 @@ DOMElement *kit(WebCore::Element* value)
 - (DOMElement *)offsetParent
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).offsetParentForBindings());
+    return kit(unwrap(*self).offsetParentForBindings().get());
 }
 
 - (NSString *)innerHTML
