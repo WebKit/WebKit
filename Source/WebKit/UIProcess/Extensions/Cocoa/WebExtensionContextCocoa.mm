@@ -1748,11 +1748,11 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 
     configuration._processDisplayName = extension().webProcessDisplayName();
 
+    // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
     auto *preferences = configuration.preferences;
-#if PLATFORM(MAC)
-    preferences._domTimersThrottlingEnabled = NO;
-#endif
+    preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
     preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+    preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
 
     // FIXME: Configure other extension web view configuration properties.
 
