@@ -122,8 +122,8 @@ add_compile_options(/Zi /GS)
 
 # Disable ICF (identical code folding) optimization,
 # as it makes it unsafe to pointer-compare functions with identical definitions.
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:NOICF /OPT:REF")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG /OPT:NOICF /OPT:REF")
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " /DEBUG /OPT:NOICF /OPT:REF")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " /DEBUG /OPT:NOICF /OPT:REF")
 
 # We do not use exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
@@ -144,8 +144,8 @@ add_compile_options(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 add_compile_options(/utf-8 /validate-charset)
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " /OPT:NOREF")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " /OPT:NOREF")
 
     # To debug linking time issues, uncomment the following three lines:
     #add_compile_options(/Bv)
