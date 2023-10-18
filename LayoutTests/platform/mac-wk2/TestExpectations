@@ -2021,3 +2021,6 @@ webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/protocol/handover-dat
 webkit.org/b/262344 [ Sonoma+ x86_64 ] imported/blink/css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
+
+webkit.org/b/263296 [ Sonoma+ arm64 ] compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html [ ImageOnlyFailure ]
+
