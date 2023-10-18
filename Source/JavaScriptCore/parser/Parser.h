@@ -257,8 +257,12 @@ public:
             break;
 
         case SourceParseMode::ProgramMode:
+            setIsGlobalCode();
+            break;
+
         case SourceParseMode::ModuleAnalyzeMode:
         case SourceParseMode::ModuleEvaluateMode:
+            setIsModuleCode();
             break;
         }
     }
@@ -271,11 +275,10 @@ public:
     bool isAsyncFunctionBoundary() const { return m_isAsyncFunctionBoundary; }
     bool isPrivateNameScope() const { return m_isClassScope; }
     bool isClassScope() const { return m_isClassScope; }
+    bool isGlobalCode() const { return m_isGlobalCode; }
+    bool isModuleCode() const { return m_isModuleCode; }
 
     bool hasArguments() const { return m_hasArguments; }
-
-    void setIsGlobalCodeScope() { m_isGlobalCodeScope = true; }
-    bool isGlobalCodeScope() const { return m_isGlobalCodeScope; }
 
     void setIsSimpleCatchParameterScope() { m_isSimpleCatchParameterScope = true; }
     bool isSimpleCatchParameterScope() { return m_isSimpleCatchParameterScope; }
@@ -394,7 +397,6 @@ public:
     DeclarationResultMask declareFunctionAsLet(const Identifier* ident, bool isFunctionDeclaration)
     {
         ASSERT(m_allowsLexicalDeclarations);
-        ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed.");
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         if (!isValidStrictMode)
@@ -406,7 +408,7 @@ public:
             if (strictMode() || !addResult.iterator->value.isFunctionDeclaration() || !isFunctionDeclaration)
                 result |= DeclarationResult::InvalidDuplicateDeclaration;
         }
-        if (m_variablesBeingHoisted.contains(ident->impl()))
+        if (m_declaredVariables.contains(ident->impl()) || m_variablesBeingHoisted.contains(ident->impl()))
             result |= DeclarationResult::InvalidDuplicateDeclaration;
 
         addResult.iterator->value.setIsLet();
@@ -930,6 +932,17 @@ private:
         m_isAsyncFunctionBoundary = true;
     }
 
+    void setIsGlobalCode()
+    {
+        m_isGlobalCode = true;
+    }
+
+    void setIsModuleCode()
+    {
+        setIsGlobalCode();
+        m_isModuleCode = true;
+    }
+
     const VM& m_vm;
     ImplementationVisibility m_implementationVisibility;
     LexicalScopeFeatures m_lexicalScopeFeatures;
@@ -949,7 +962,8 @@ private:
     bool m_isAsyncFunction : 1;
     bool m_isAsyncFunctionBoundary : 1 { false };
     bool m_isLexicalScope : 1 { false };
-    bool m_isGlobalCodeScope : 1 { false };
+    bool m_isGlobalCode : 1 { false };
+    bool m_isModuleCode : 1 { false };
     bool m_isSimpleCatchParameterScope : 1 { false };
     bool m_isCatchBlockScope : 1 { false };
     bool m_isStaticBlock : 1 { false };
@@ -1459,9 +1473,10 @@ private:
 
     std::pair<DeclarationResultMask, ScopeRef> declareFunction(const Identifier* ident)
     {
-        if (m_statementDepth == 1) {
+        if (m_statementDepth == 1 && !currentScope()->isModuleCode()) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
-            // for backwards compatibility. This allows us to declare functions with the same name more than once.
+            // for backwards compatibility, allowing us to declare functions with the same name more than once, except
+            // Module code. Please see https://webkit.org/b/263269 for detailed explanation and ECMA-262 references.
             ScopeRef variableScope = currentVariableScope();
             return std::make_pair(variableScope->declareFunctionAsVar(ident), variableScope);
         }

@@ -1361,10 +1361,6 @@ test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
 test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/dynamic-import/catch/nested-async-gen-await-eval-script-code-target.js:
-  module: 'Test262:AsyncTestFailure:Test262Error: [object Object]'
-test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eval-script-code-target.js:
-  module: 'Test262:AsyncTestFailure:Test262Error: [object Object]'
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
@@ -1494,22 +1490,10 @@ test/language/import/import-assertions/json-via-namespace.js:
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/language/module-code/early-dup-top-function-async-generator.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/module-code/early-dup-top-function-async.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/module-code/early-dup-top-function-generator.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/module-code/early-dup-top-function.js:
-  module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/import-assertions/eval-gtbndng-indirect-faux-assertion.js:
   raw: "SyntaxError: Unexpected token '*'. import call expects one or two arguments."
 test/language/module-code/import-assertions/import-assertion-empty.js:
   module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/parse-err-hoist-lex-fun.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/module-code/parse-err-hoist-lex-gen.js:
-  module: 'Test262: This statement should not be evaluated.'
 test/language/statements/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'

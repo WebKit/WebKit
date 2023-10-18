@@ -172,9 +172,6 @@ Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibi
     if (isModuleParseMode(parseMode))
         m_moduleScopeData = ModuleScopeData::create();
 
-    if (isProgramOrModuleParseMode(parseMode))
-        scope->setIsGlobalCodeScope();
-
     next();
 }
 
@@ -2608,7 +2605,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         // BytecodeGenerator emits code to throw TypeError when a class constructor is "call"ed.
         // Set ConstructorKind to None for non-constructor methods of classes.
     
-        if (parentScope->isGlobalCodeScope() && m_defaultConstructorKindForTopLevelFunction != ConstructorKind::None) {
+        if (parentScope->isGlobalCode() && m_defaultConstructorKindForTopLevelFunction != ConstructorKind::None) {
             constructorKind = m_defaultConstructorKindForTopLevelFunction;
             expectedSuperBinding = m_defaultConstructorKindForTopLevelFunction == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded;
         }
@@ -5332,7 +5329,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             semanticFailIfFalse(currentScope()->isFunction() || currentScope()->isStaticBlock() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is only valid inside functions or static blocks");
             baseIsNewTarget = true;
             if (currentScope()->isArrowFunction()) {
-                semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCodeScope() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is not valid inside arrow functions in global code");
+                semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCode() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is not valid inside arrow functions in global code");
                 currentScope()->setInnerArrowFunctionUsesNewTarget();
             }
             ASSERT(lastNewTokenLocation.line);
