@@ -1105,7 +1105,7 @@ webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Cras
 
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
 
-webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Timeout ]
+webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Slow Pass ]
 
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
