@@ -213,7 +213,6 @@ function typedArrayMergeSort(array, valueCount, comparator)
     }
 
     if (src != array) {
-        valueCount = @min(@typedArrayLength(array), valueCount);
         for (var i = 0; i < valueCount; ++i)
             array[i] = src[i];
     }
