@@ -44,10 +44,8 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
       caller()->pc()->SetLocalDescription(sld_observer);
       EXPECT_TRUE_WAIT(sld_observer->called(), 100);
     }
-#if !defined(WEBRTC_WEBKIT_BUILD)
     // If there is an EXPECT failure, die here.
     RTC_CHECK(!HasFailure());
-#endif // !defined(WEBRTC_WEBKIT_BUILD)
   }
 
   // This test isn't using the test definition macros, so we have to
