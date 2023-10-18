@@ -1096,9 +1096,6 @@ test/harness/verifyProperty-desc-is-not-object.js:
 test/harness/verifyProperty-value-error.js:
   default: 'Error: The error thrown did not define the specified message.'
   strict mode: 'Error: The error thrown did not define the specified message.'
-test/intl402/Collator/prototype/compare/ignorePunctuation.js:
-  default: 'Test262Error: Compare to space Expected SameValue(«0», «-1») to be true'
-  strict mode: 'Test262Error: Compare to space Expected SameValue(«0», «-1») to be true'
 test/intl402/DateTimeFormat/prototype/format/offset-timezone-gmt-same.js:
   default: 'RangeError: invalid time zone: +0300'
   strict mode: 'RangeError: invalid time zone: +0300'
