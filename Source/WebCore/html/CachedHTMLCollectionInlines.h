@@ -112,10 +112,10 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
         RefPtr<Element> candidate;
 
         TreeScope& treeScope = root.treeScope();
-        if (treeScope.hasElementWithId(*name.impl())) {
+        if (treeScope.hasElementWithId(name)) {
             if (!treeScope.containsMultipleElementsWithId(name))
                 candidate = treeScope.getElementById(name);
-        } else if (treeScope.hasElementWithName(*name.impl())) {
+        } else if (treeScope.hasElementWithName(name)) {
             if (!treeScope.containsMultipleElementsWithName(name)) {
                 if ((candidate = treeScope.getElementByName(name))) {
                     if (!is<HTMLElement>(*candidate))

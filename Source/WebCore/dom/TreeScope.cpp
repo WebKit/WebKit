@@ -113,7 +113,7 @@ RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
         return nullptr;
     if (!m_elementsById)
         return nullptr;
-    return m_elementsById->getElementById(*elementId.impl(), *this);
+    return m_elementsById->getElementById(elementId, *this);
 }
 
 RefPtr<Element> TreeScope::getElementById(const String& elementId) const
@@ -121,8 +121,8 @@ RefPtr<Element> TreeScope::getElementById(const String& elementId) const
     if (!m_elementsById)
         return nullptr;
 
-    if (auto atomElementId = AtomStringImpl::lookUp(elementId.impl()))
-        return m_elementsById->getElementById(*atomElementId, *this);
+    if (auto atomElementId = elementId.toExistingAtomString(); !atomElementId.isNull())
+        return m_elementsById->getElementById(atomElementId, *this);
 
     return nullptr;
 }
@@ -133,7 +133,7 @@ RefPtr<Element> TreeScope::getElementById(StringView elementId) const
         return nullptr;
 
     if (auto atomElementId = elementId.toExistingAtomString(); !atomElementId.isNull())
-        return m_elementsById->getElementById(*atomElementId.impl(), *this);
+        return m_elementsById->getElementById(atomElementId, *this);
 
     return nullptr;
 }
@@ -144,10 +144,10 @@ const Vector<CheckedRef<Element>>* TreeScope::getAllElementsById(const AtomStrin
         return nullptr;
     if (!m_elementsById)
         return nullptr;
-    return m_elementsById->getAllElementsById(*elementId.impl(), *this);
+    return m_elementsById->getAllElementsById(elementId, *this);
 }
 
-void TreeScope::addElementById(const AtomStringImpl& elementId, Element& element, bool notifyObservers)
+void TreeScope::addElementById(const AtomString& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         m_elementsById = makeUnique<TreeScopeOrderedMap>();
@@ -156,7 +156,7 @@ void TreeScope::addElementById(const AtomStringImpl& elementId, Element& element
         m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
-void TreeScope::removeElementById(const AtomStringImpl& elementId, Element& element, bool notifyObservers)
+void TreeScope::removeElementById(const AtomString& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         return;
@@ -171,17 +171,17 @@ RefPtr<Element> TreeScope::getElementByName(const AtomString& name) const
         return nullptr;
     if (!m_elementsByName)
         return nullptr;
-    return m_elementsByName->getElementByName(*name.impl(), *this);
+    return m_elementsByName->getElementByName(name, *this);
 }
 
-void TreeScope::addElementByName(const AtomStringImpl& name, Element& element)
+void TreeScope::addElementByName(const AtomString& name, Element& element)
 {
     if (!m_elementsByName)
         m_elementsByName = makeUnique<TreeScopeOrderedMap>();
     m_elementsByName->add(name, element, *this);
 }
 
-void TreeScope::removeElementByName(const AtomStringImpl& name, Element& element)
+void TreeScope::removeElementByName(const AtomString& name, Element& element)
 {
     if (!m_elementsByName)
         return;
@@ -244,59 +244,59 @@ Element* TreeScope::ancestorElementInThisScope(Element* element) const
 
 void TreeScope::addImageMap(HTMLMapElement& imageMap)
 {
-    AtomStringImpl* name = imageMap.getName().impl();
-    if (!name)
+    auto name = imageMap.getName();
+    if (name.isNull())
         return;
     if (!m_imageMapsByName)
         m_imageMapsByName = makeUnique<TreeScopeOrderedMap>();
-    m_imageMapsByName->add(*name, imageMap, *this);
+    m_imageMapsByName->add(name, imageMap, *this);
 }
 
 void TreeScope::removeImageMap(HTMLMapElement& imageMap)
 {
     if (!m_imageMapsByName)
         return;
-    AtomStringImpl* name = imageMap.getName().impl();
-    if (!name)
+    auto name = imageMap.getName();
+    if (name.isNull())
         return;
-    m_imageMapsByName->remove(*name, imageMap);
+    m_imageMapsByName->remove(name, imageMap);
 }
 
 RefPtr<HTMLMapElement> TreeScope::getImageMap(const AtomString& name) const
 {
-    if (!m_imageMapsByName || !name.impl())
+    if (!m_imageMapsByName || name.isNull())
         return nullptr;
-    return m_imageMapsByName->getElementByMapName(*name.impl(), *this);
+    return m_imageMapsByName->getElementByMapName(name, *this);
 }
 
-void TreeScope::addImageElementByUsemap(const AtomStringImpl& name, HTMLImageElement& element)
+void TreeScope::addImageElementByUsemap(const AtomString& name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
         m_imagesByUsemap = makeUnique<TreeScopeOrderedMap>();
     return m_imagesByUsemap->add(name, element, *this);
 }
 
-void TreeScope::removeImageElementByUsemap(const AtomStringImpl& name, HTMLImageElement& element)
+void TreeScope::removeImageElementByUsemap(const AtomString& name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
         return;
     m_imagesByUsemap->remove(name, element);
 }
 
-RefPtr<HTMLImageElement> TreeScope::imageElementByUsemap(const AtomStringImpl& name) const
+RefPtr<HTMLImageElement> TreeScope::imageElementByUsemap(const AtomString& name) const
 {
     if (!m_imagesByUsemap)
         return nullptr;
     return m_imagesByUsemap->getElementByUsemap(name, *this);
 }
 
-void TreeScope::addLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement& element)
+void TreeScope::addLabel(const AtomString& forAttributeValue, HTMLLabelElement& element)
 {
     ASSERT(m_labelsByForAttribute);
     m_labelsByForAttribute->add(forAttributeValue, element, *this);
 }
 
-void TreeScope::removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement& element)
+void TreeScope::removeLabel(const AtomString& forAttributeValue, HTMLLabelElement& element)
 {
     ASSERT(m_labelsByForAttribute);
     m_labelsByForAttribute->remove(forAttributeValue, element);
@@ -314,11 +314,11 @@ const Vector<CheckedRef<Element>>* TreeScope::labelElementsForId(const AtomStrin
         for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
             const AtomString& forValue = label.attributeWithoutSynchronization(forAttr);
             if (!forValue.isEmpty())
-                addLabel(*forValue.impl(), label);
+                addLabel(forValue, label);
         }
     }
 
-    return m_labelsByForAttribute->getElementsByLabelForAttribute(*forAttributeValue.impl(), *this);
+    return m_labelsByForAttribute->getElementsByLabelForAttribute(forAttributeValue, *this);
 }
 
 static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)

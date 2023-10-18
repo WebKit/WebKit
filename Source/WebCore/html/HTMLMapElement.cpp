@@ -81,7 +81,7 @@ RefPtr<HTMLImageElement> HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
         return nullptr;
-    return treeScope().imageElementByUsemap(*m_name.impl());
+    return treeScope().imageElementByUsemap(m_name);
 }
 
 void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

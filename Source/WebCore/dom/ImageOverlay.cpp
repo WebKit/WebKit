@@ -112,7 +112,7 @@ bool hasOverlay(const HTMLElement& element)
     if (LIKELY(!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent))
         return false;
 
-    return shadowRoot->hasElementWithId(*imageOverlayElementIdentifier().impl());
+    return shadowRoot->hasElementWithId(imageOverlayElementIdentifier());
 }
 
 static RefPtr<HTMLElement> imageOverlayHost(const Node& node)

@@ -2684,14 +2684,14 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
         if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
             if (newScope)
-                newScope->addElementById(*idValue.impl(), *this);
+                newScope->addElementById(idValue, *this);
             if (newDocument)
                 updateIdForDocument(*newDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
         }
 
         if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
             if (newScope)
-                newScope->addElementByName(*nameValue.impl(), *this);
+                newScope->addElementByName(nameValue, *this);
             if (newDocument)
                 updateNameForDocument(*newDocument, nullAtom(), nameValue);
         }
@@ -2771,14 +2771,14 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
         if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
             if (oldScope)
-                oldScope->removeElementById(*idValue.impl(), *this);
+                oldScope->removeElementById(idValue, *this);
             if (oldHTMLDocument)
                 updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
         }
 
         if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
             if (oldScope)
-                oldScope->removeElementByName(*nameValue.impl(), *this);
+                oldScope->removeElementByName(nameValue, *this);
             if (oldHTMLDocument)
                 updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
         }
@@ -4748,9 +4748,9 @@ void Element::updateNameForTreeScope(TreeScope& scope, const AtomString& oldName
     ASSERT(oldName != newName);
 
     if (!oldName.isEmpty())
-        scope.removeElementByName(*oldName.impl(), *this);
+        scope.removeElementByName(oldName, *this);
     if (!newName.isEmpty())
-        scope.addElementByName(*newName.impl(), *this);
+        scope.addElementByName(newName, *this);
 }
 
 void Element::updateNameForDocument(HTMLDocument& document, const AtomString& oldName, const AtomString& newName)
@@ -4763,17 +4763,17 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomString& ol
     if (WindowNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
         const AtomString& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
         if (!oldName.isEmpty() && oldName != id)
-            document.removeWindowNamedItem(*oldName.impl(), *this);
+            document.removeWindowNamedItem(oldName, *this);
         if (!newName.isEmpty() && newName != id)
-            document.addWindowNamedItem(*newName.impl(), *this);
+            document.addWindowNamedItem(newName, *this);
     }
 
     if (DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
         const AtomString& id = DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
         if (!oldName.isEmpty() && oldName != id)
-            document.removeDocumentNamedItem(*oldName.impl(), *this);
+            document.removeDocumentNamedItem(oldName, *this);
         if (!newName.isEmpty() && newName != id)
-            document.addDocumentNamedItem(*newName.impl(), *this);
+            document.addDocumentNamedItem(newName, *this);
     }
 }
 
@@ -4800,9 +4800,9 @@ void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, co
     ASSERT(oldId != newId);
 
     if (!oldId.isEmpty())
-        scope.removeElementById(*oldId.impl(), *this, notifyObservers == NotifyObservers::Yes);
+        scope.removeElementById(oldId, *this, notifyObservers == NotifyObservers::Yes);
     if (!newId.isEmpty())
-        scope.addElementById(*newId.impl(), *this, notifyObservers == NotifyObservers::Yes);
+        scope.addElementById(newId, *this, notifyObservers == NotifyObservers::Yes);
 }
 
 void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
@@ -4816,17 +4816,17 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldI
     if (WindowNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
         const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
-            document.removeWindowNamedItem(*oldId.impl(), *this);
+            document.removeWindowNamedItem(oldId, *this);
         if (!newId.isEmpty() && newId != name)
-            document.addWindowNamedItem(*newId.impl(), *this);
+            document.addWindowNamedItem(newId, *this);
     }
 
     if (DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
         const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
-            document.removeDocumentNamedItem(*oldId.impl(), *this);
+            document.removeDocumentNamedItem(oldId, *this);
         if (!newId.isEmpty() && newId != name)
-            document.addDocumentNamedItem(*newId.impl(), *this);
+            document.addDocumentNamedItem(newId, *this);
     }
 }
 
@@ -4841,9 +4841,9 @@ void Element::updateLabel(TreeScope& scope, const AtomString& oldForAttributeVal
         return;
 
     if (!oldForAttributeValue.isEmpty())
-        scope.removeLabel(*oldForAttributeValue.impl(), downcast<HTMLLabelElement>(*this));
+        scope.removeLabel(oldForAttributeValue, downcast<HTMLLabelElement>(*this));
     if (!newForAttributeValue.isEmpty())
-        scope.addLabel(*newForAttributeValue.impl(), downcast<HTMLLabelElement>(*this));
+        scope.addLabel(newForAttributeValue, downcast<HTMLLabelElement>(*this));
 }
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)

@@ -405,17 +405,17 @@ void HTMLObjectElement::updateExposedState()
         auto& id = getIdAttribute();
         if (!id.isEmpty()) {
             if (m_isExposed)
-                document.addDocumentNamedItem(*id.impl(), *this);
+                document.addDocumentNamedItem(id, *this);
             else
-                document.removeDocumentNamedItem(*id.impl(), *this);
+                document.removeDocumentNamedItem(id, *this);
         }
 
         auto& name = getNameAttribute();
         if (!name.isEmpty() && id != name) {
             if (m_isExposed)
-                document.addDocumentNamedItem(*name.impl(), *this);
+                document.addDocumentNamedItem(name, *this);
             else
-                document.removeDocumentNamedItem(*name.impl(), *this);
+                document.removeDocumentNamedItem(name, *this);
         }
     }
 }
