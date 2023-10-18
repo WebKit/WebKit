@@ -59,14 +59,10 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
     : DrawingArea(DrawingAreaType::CoordinatedGraphics, parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
     , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
-    , m_discardPreviousLayerTreeHostTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost)
     , m_displayTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::displayTimerFired)
 {
-#if USE(GLIB_EVENT_LOOP)
-    m_discardPreviousLayerTreeHostTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
-#if !PLATFORM(WPE)
+#if USE(GLIB_EVENT_LOOP) && !PLATFORM(WPE)
     m_displayTimer.setPriority(RunLoopSourcePriority::NonAcceleratedDrawingTimer);
-#endif
 #endif
 
     updatePreferences(parameters.store);
@@ -115,9 +111,6 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
 
     if (scrollRect.isEmpty())
         return;
-
-    if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->scrollNonCompositedContents(scrollRect);
 
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
@@ -264,8 +257,6 @@ void DrawingAreaCoordinatedGraphics::mainFrameContentSizeChanged(WebCore::FrameI
 {
     if (m_layerTreeHost)
         m_layerTreeHost->contentsSizeChanged(size);
-    else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->contentsSizeChanged(size);
 }
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -273,16 +264,12 @@ void DrawingAreaCoordinatedGraphics::deviceOrPageScaleFactorChanged()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->deviceOrPageScaleFactorChanged();
-    else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->deviceOrPageScaleFactorChanged();
 }
 
 void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttributes&& attrs)
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
-    else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
 }
 
 bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
@@ -409,8 +396,6 @@ void DrawingAreaCoordinatedGraphics::attachViewOverlayGraphicsLayer(WebCore::Fra
 {
     if (m_layerTreeHost)
         m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
-    else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, CompletionHandler<void()>&& completionHandler)
@@ -427,8 +412,7 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
     if (m_layerTreeHost) {
         previousLayerTreeContext = m_layerTreeHost->layerTreeContext();
         m_layerTreeHost->sizeDidChange(webPage->size());
-    } else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->sizeDidChange(m_webPage->size());
+    }
 
     if (m_layerTreeHost) {
         auto layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -522,12 +506,6 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingModeSoon()
     m_exitCompositingTimer.startOneShot(0_s);
 }
 
-void DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost()
-{
-    m_discardPreviousLayerTreeHostTimer.stop();
-    m_previousLayerTreeHost = nullptr;
-}
-
 void DrawingAreaCoordinatedGraphics::suspendPainting()
 {
     ASSERT(!m_isPaintingSuspended);
@@ -569,7 +547,6 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
         m_alwaysUseCompositing = true;
     }
 #endif
-    m_discardPreviousLayerTreeHostTimer.stop();
 
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
@@ -583,33 +560,22 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
 #endif
 
     ASSERT(!m_layerTreeHost);
-    if (m_previousLayerTreeHost) {
-        m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
-#if !HAVE(DISPLAY_LINK)
-        changeWindowScreen();
-#endif
-        m_layerTreeHost->setIsDiscardable(false);
-        m_layerTreeHost->resumeRendering();
-        if (!m_layerTreeStateIsFrozen)
-            m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
-    } else {
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || HAVE(DISPLAY_LINK)
-        m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage);
+    m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage);
 #elif USE(COORDINATED_GRAPHICS)
-        m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage, std::numeric_limits<uint32_t>::max() - m_identifier.toUInt64());
+    m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage, std::numeric_limits<uint32_t>::max() - m_identifier.toUInt64());
 #else
-        m_layerTreeHost = nullptr;
-        return;
+    m_layerTreeHost = nullptr;
+    return;
 #endif
-#if !HAVE(DISPLAY_LINK)
-        changeWindowScreen();
-#endif
-        if (m_layerTreeStateIsFrozen)
-            m_layerTreeHost->setLayerFlushSchedulingEnabled(false);
-        if (m_isPaintingSuspended)
-            m_layerTreeHost->pauseRendering();
-    }
 
+#if !HAVE(DISPLAY_LINK)
+    changeWindowScreen();
+#endif
+    if (m_layerTreeStateIsFrozen)
+        m_layerTreeHost->setLayerFlushSchedulingEnabled(false);
+    if (m_isPaintingSuspended)
+        m_layerTreeHost->pauseRendering();
     if (!m_inUpdateGeometry)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
@@ -651,11 +617,7 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     m_wantsToExitAcceleratedCompositingMode = false;
 
     ASSERT(m_layerTreeHost);
-    m_previousLayerTreeHost = WTFMove(m_layerTreeHost);
-    m_previousLayerTreeHost->setIsDiscardable(true);
-    m_previousLayerTreeHost->pauseRendering();
-    m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
-    m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
+    m_layerTreeHost = nullptr;
 
     Ref webPage = m_webPage.get();
 #if !HAVE(DISPLAY_LINK)
