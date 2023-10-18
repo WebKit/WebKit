@@ -135,7 +135,7 @@ static bool isNonBidiTextOrForcedLineBreak(const Box& layoutBox)
 {
     if (is<InlineTextBox>(layoutBox))
         return TextUtil::containsStrongDirectionalityText(downcast<InlineTextBox>(layoutBox).content());
-    return layoutBox.isLineBreakBox();
+    return layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity();
 }
 
 bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& subtreeRoot, const Box& firstDamagedLayoutBox)
