@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="full-screen-test.js"></script>    
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+(() => {
+    const iframe = document.body.appendChild(document.createElement('iframe'));
+    const div = iframe.contentDocument.body.appendChild(document.createElement('div'));
+    runWithKeyDown(() => {
+        div.requestFullscreen().catch((error) => {
+            endTest();
+        });
+        const contentDocument = iframe.contentDocument;
+        document.body.removeChild(iframe);
+        setTimeout(() => {
+            contentDocument.webkitCancelFullScreen();
+            GCController.collect();
+        }, 0);
+    });
+})();
+</script>
+</body>
+</html>
