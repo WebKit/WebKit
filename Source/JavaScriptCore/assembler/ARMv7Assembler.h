@@ -571,6 +571,7 @@ private:
         OP_BKPT             = 0xBE00,
         OP_IT               = 0xBF00,
         OP_NOP_T1           = 0xBF00,
+        OP_UDF              = 0xDE00
     } OpcodeID;
 
     typedef enum {
@@ -1006,6 +1007,11 @@ public:
     void bkpt(uint8_t imm = 0)
     {
         m_formatter.oneWordOp8Imm8(OP_BKPT, imm);
+    }
+
+    void udf(uint8_t imm = 0)
+    {
+        m_formatter.oneWordOp8Imm8(OP_UDF, imm);
     }
 
     static bool isBkpt(void* address)
