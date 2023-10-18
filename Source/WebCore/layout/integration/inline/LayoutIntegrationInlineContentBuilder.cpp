@@ -68,6 +68,11 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
             ASSERT_NOT_REACHED();
             return { };
         }
+        if (layoutResult.displayContent.boxes.size() && canidateLineIndex > layoutResult.displayContent.boxes[0].lineIndex()) {
+            // We should never generate lines _before_ the damaged line.
+            ASSERT_NOT_REACHED();
+            return { };
+        }
         return { canidateLineIndex };
     }();
 
