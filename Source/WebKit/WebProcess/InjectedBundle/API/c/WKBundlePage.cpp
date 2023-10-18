@@ -28,6 +28,7 @@
 #include "WKBundlePagePrivate.h"
 
 #include "APIArray.h"
+#include "APICaptionUserPreferencesTestingModeToken.h"
 #include "APIDictionary.h"
 #include "APIFrameHandle.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
@@ -849,7 +850,7 @@ void WKBundlePageClearApplicationCache(WKBundlePageRef page)
     WebKit::toImpl(page)->corePage()->applicationCacheStorage().deleteAllEntries();
 }
 
-void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
+void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 {
 #if ENABLE(VIDEO)
     auto& captionPreferences = WebKit::toImpl(page)->corePage()->group().ensureCaptionPreferences();
@@ -858,7 +859,17 @@ void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
         captionPreferences.setCaptionDisplayMode(displayMode.value());
 #else
     UNUSED_PARAM(page);
-    UNUSED_PARAM(modeString);
+    UNUSED_PARAM(mode);
+#endif
+}
+
+WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef page)
+{
+#if ENABLE(VIDEO)
+    auto& captionPreferences = WebKit::toImpl(page)->corePage()->group().ensureCaptionPreferences();
+    return WebKit::toAPI(&API::CaptionUserPreferencesTestingModeToken::create(captionPreferences).leakRef());
+#else
+    UNUSED_PARAM(page);
 #endif
 }
 

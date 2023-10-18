@@ -84,6 +84,7 @@ typedef const struct OpaqueWKAuthenticationDecisionListener* WKAuthenticationDec
 typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
 typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef const struct OpaqueWKResourceCacheManager* WKResourceCacheManagerRef;
+typedef const struct OpaqueWKCaptionUserPreferencesTestingModeToken* WKCaptionUserPreferencesTestingModeTokenRef;
 typedef const struct OpaqueWKColorPickerResultListener* WKColorPickerResultListenerRef;
 typedef const struct OpaqueWKContext* WKContextRef;
 typedef const struct OpaqueWKContextConfiguration* WKContextConfigurationRef;
