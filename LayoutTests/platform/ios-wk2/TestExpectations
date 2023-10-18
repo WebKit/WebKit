@@ -1460,8 +1460,6 @@ webkit.org/b/228087 [ Debug ] media/video-seek-with-negative-playback.html [ Pas
 
 webkit.org/b/230708 [ Debug ] media/video-ended-seek-crash.html [ Pass Timeout ]
 
-webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
-
 webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
 
 webkit.org/b/208601 fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ Pass ImageOnlyFailure ]

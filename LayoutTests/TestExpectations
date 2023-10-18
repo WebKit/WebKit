@@ -2574,6 +2574,8 @@ storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 storage/indexeddb/modern/exceed-open-file-limit.html [ Skip ]
 webkit.org/b/155028 storage/indexeddb/modern/256-open-databases.html [ Skip ]
 
+webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
+
 ### END OF IndexedDB failures
 ########################################
 
