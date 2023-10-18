@@ -227,9 +227,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         else
             baseProperties.offset = nullptr;
         baseProperties.easing = baseKeyframe.easing;
-
-        if (document.settings().webAnimationsCompositeOperationsEnabled())
-            baseProperties.composite = baseKeyframe.composite;
+        baseProperties.composite = baseKeyframe.composite;
     }
     RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
@@ -352,10 +350,8 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only composite
         // alternatives we should expect is CompositeOperationAuto.
-        if (document.settings().webAnimationsCompositeOperationsEnabled()) {
-            ASSERT(std::holds_alternative<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite));
-            keyframeOutput.composite = std::get<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite);
-        }
+        ASSERT(std::holds_alternative<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite));
+        keyframeOutput.composite = std::get<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite);
 
         for (auto& propertyAndValue : keyframeLikeObject.propertiesAndValues) {
             auto cssPropertyId = propertyAndValue.property;
@@ -504,28 +500,26 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         parsedKeyframes[i].easing = easings[i];
 
     // 12. If the “composite” member of the property-indexed keyframe is not an empty sequence:
-    if (document.settings().webAnimationsCompositeOperationsEnabled()) {
-        Vector<CompositeOperationOrAuto> compositeModes;
-        if (std::holds_alternative<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite))
-            compositeModes = std::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
-        else if (std::holds_alternative<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite))
-            compositeModes.append(std::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
-        if (!compositeModes.isEmpty()) {
-            // 1. Let composite modes be a sequence of CompositeOperationOrAuto values assigned from the “composite” member of property-indexed keyframe. If that member is a single
-            //    CompositeOperationOrAuto value operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
-            // 2. As with easings, if composite modes has fewer items than processed keyframes, repeat the elements in composite modes successively starting from the beginning of
-            //    the list until composite modes has as many items as processed keyframes.
-            if (compositeModes.size() < parsedKeyframes.size()) {
-                size_t initialNumberOfCompositeModes = compositeModes.size();
-                for (i = initialNumberOfCompositeModes; i < parsedKeyframes.size(); ++i)
-                    compositeModes.append(compositeModes[i % initialNumberOfCompositeModes]);
-            }
-            // 3. Assign each value in composite modes that is not auto to the keyframe-specific composite operation on the keyframe with the corresponding position in processed
-            //    keyframes until the end of processed keyframes is reached.
-            for (size_t i = 0; i < compositeModes.size() && i < parsedKeyframes.size(); ++i) {
-                if (compositeModes[i] != CompositeOperationOrAuto::Auto)
-                    parsedKeyframes[i].composite = compositeModes[i];
-            }
+    Vector<CompositeOperationOrAuto> compositeModes;
+    if (std::holds_alternative<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes = std::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
+    else if (std::holds_alternative<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes.append(std::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
+    if (!compositeModes.isEmpty()) {
+        // 1. Let composite modes be a sequence of CompositeOperationOrAuto values assigned from the “composite” member of property-indexed keyframe. If that member is a single
+        //    CompositeOperationOrAuto value operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
+        // 2. As with easings, if composite modes has fewer items than processed keyframes, repeat the elements in composite modes successively starting from the beginning of
+        //    the list until composite modes has as many items as processed keyframes.
+        if (compositeModes.size() < parsedKeyframes.size()) {
+            size_t initialNumberOfCompositeModes = compositeModes.size();
+            for (i = initialNumberOfCompositeModes; i < parsedKeyframes.size(); ++i)
+                compositeModes.append(compositeModes[i % initialNumberOfCompositeModes]);
+        }
+        // 3. Assign each value in composite modes that is not auto to the keyframe-specific composite operation on the keyframe with the corresponding position in processed
+        //    keyframes until the end of processed keyframes is reached.
+        for (size_t i = 0; i < compositeModes.size() && i < parsedKeyframes.size(); ++i) {
+            if (compositeModes[i] != CompositeOperationOrAuto::Auto)
+                parsedKeyframes[i].composite = compositeModes[i];
         }
     }
 
@@ -561,8 +555,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
                 keyframeEffectOptions.direction
             };
 
-            if (document.settings().webAnimationsCompositeOperationsEnabled())
-                keyframeEffect->setComposite(keyframeEffectOptions.composite);
+            keyframeEffect->setComposite(keyframeEffectOptions.composite);
 
             if (document.settings().webAnimationsIterationCompositeEnabled())
                 keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
@@ -638,7 +631,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
-auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe>
+auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
 
@@ -719,10 +712,8 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
         // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
         computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear"_s : timingFunctionForBlendingKeyframe(keyframe)->cssText();
 
-        if (document.settings().webAnimationsCompositeOperationsEnabled()) {
-            if (auto compositeOperation = keyframe.compositeOperation())
-                computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
-        }
+        if (auto compositeOperation = keyframe.compositeOperation())
+            computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
 
         auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId) {
             String styleString = emptyString();

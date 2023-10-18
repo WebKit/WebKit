@@ -1389,7 +1389,6 @@
             "animatable": true,
             "codegen-properties": {
                 "name-for-methods": "CompositeOperation",
-                "settings-flag": "webAnimationsCompositeOperationsEnabled",
                 "parser-grammar": "<single-animation-composition>#"
             },
             "specification": {

@@ -112,7 +112,7 @@ public:
 
     const std::optional<const Styleable> targetStyleable() const;
 
-    Vector<ComputedKeyframe> getKeyframes(Document&);
+    Vector<ComputedKeyframe> getKeyframes();
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
     ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
 
