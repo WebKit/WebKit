@@ -42,13 +42,10 @@
 
 // FIXME: Try to re-enable on the simulator after rdar://110076935 is resolved
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-
 #if HAVE(NW_PROXY_CONFIG)
-#if USE(APPLE_INTERNAL_SDK) // FIXME: <rdar://116703485> investigate why this times out on non-internal builds.
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
-#endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(NW_PROXY_CONFIG)
 #endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
 
@@ -170,9 +167,7 @@ TEST(WebKit, SOCKS5)
 
 // FIXME: Try to re-enable on the simulator after rdar://110076935 is resolved
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-
 #if HAVE(NW_PROXY_CONFIG)
-#if USE(APPLE_INTERNAL_SDK) // FIXME: <rdar://116703485> investigate why this times out on non-internal builds.
 TEST(WebKit, HTTPSProxyAPI)
 {
     auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
@@ -298,7 +293,6 @@ TEST(WebKit, SOCKS5API)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
-#endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(NW_PROXY_CONFIG)
 #endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
 

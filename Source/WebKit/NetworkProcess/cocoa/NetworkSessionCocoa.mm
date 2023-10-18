@@ -2215,14 +2215,12 @@ void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, W
         uuid_t identifier;
         memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
 
-#if __has_include(<Network/proxy_config_private.h>)
         auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier));
 
         if (requiresHTTPProtocols(nwProxyConfig.get()))
             recreateSessions = true;
 
         m_nwProxyConfigs.append(WTFMove(nwProxyConfig));
-#endif
     }
 
     if (recreateSessions) {
