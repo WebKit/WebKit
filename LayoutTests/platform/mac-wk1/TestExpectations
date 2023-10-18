@@ -2592,7 +2592,7 @@ fast/html/transient-activation.html [ Skip ]
 
 webkit.org/b/259485 [ Ventura+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 
-webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
+webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Skip ]
 
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
