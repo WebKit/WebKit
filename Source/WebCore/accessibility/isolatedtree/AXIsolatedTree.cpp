@@ -251,15 +251,8 @@ std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Re
         return std::nullopt;
 
     auto object = AXIsolatedObject::create(axObject, this);
-    NodeChange nodeChange { object, nullptr };
-
     ASSERT(axObject->wrapper());
-    if (attachWrapper == AttachWrapper::OnMainThread)
-        object->attachPlatformWrapper(axObject->wrapper());
-    else {
-        // Set the wrapper in the NodeChange so that it is set on the AX thread.
-        nodeChange.wrapper = axObject->wrapper();
-    }
+    NodeChange nodeChange { object, axObject->wrapper(), attachWrapper };
 
     m_nodeMap.set(axObject->objectID(), ParentChildrenIDs { nodeChange.isolatedObject->parent(), axObject->childrenIDs() });
 
@@ -370,13 +363,18 @@ void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vecto
     ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
-    for (const auto& append : appends)
+    for (const auto& append : appends) {
+        if (append.attachWrapper == AttachWrapper::OnMainThread)
+            append.isolatedObject->attachPlatformWrapper(append.wrapper.get());
         queueChange(append);
+    }
+
     auto parentUpdateIDs = std::exchange(m_needsParentUpdate, { });
     for (const auto& axID : parentUpdateIDs) {
         ASSERT_WITH_MESSAGE(m_nodeMap.contains(axID), "An object marked as needing a parent update should've had an entry in the node map by now. ID was %s", axID.loggingString().utf8().data());
         m_pendingParentUpdates.set(axID, m_nodeMap.get(axID).parentID);
     }
+
     queueRemovalsLocked(WTFMove(subtreeRemovals));
 }
 
@@ -1081,7 +1079,7 @@ void AXIsolatedTree::applyPendingChanges()
         if (!axID.isValid())
             continue;
 
-        auto& wrapper = item.wrapper ? item.wrapper : item.isolatedObject->wrapper();
+        auto& wrapper = item.attachWrapper == AttachWrapper::OnAXThread ? item.wrapper : item.isolatedObject->wrapper();
         if (!wrapper)
             continue;
 
