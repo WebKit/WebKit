@@ -186,12 +186,6 @@ string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_EXE_LINKER_FLAGS
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${replace_CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO")
 
 if (COMPILER_IS_CLANG_CL)
-    # FIXME: The clang-cl visual studio integration seemed to set
-    # this to 1900 explicitly even when building in VS2017 with the
-    # newest toolset option, but we want to be versioned to match
-    # VS2017.
-    add_compile_options(-fmsc-version=1911)
-
     # FIXME: Building with clang-cl seemed to fail with 128 bit int support
     set(HAVE_INT128_T OFF)
     list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES HAVE_INT128_T)
