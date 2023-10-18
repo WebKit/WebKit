@@ -107,6 +107,12 @@ class BufferLogHeaderObserver(logobserver.BufferLogObserver):
 
 class GitHub(object):
     _cache = {}
+    MERGE_QUEUE_LABEL = 'merge-queue'
+    UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    SAFE_MERGE_QUEUE_LABEL = 'safe-merge-queue'
+    REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
+    BLOCKED_LABEL = 'merging-blocked'
+    SKIP_EWS_LABEL = 'skip-ews'
 
     @classmethod
     def repository_urls(cls):
@@ -115,7 +121,7 @@ class GitHub(object):
     @classmethod
     def user_for_queue(cls, queue):
         if queue.lower() in QUEUES_WITH_PUSH_ACCESS:
-            return 'merge-queue'
+            return GitHub.MERGE_QUEUE_LABEL
         return None
 
     @classmethod
@@ -186,12 +192,6 @@ class GitHubMixin(object):
     addURLs = False
     pr_open_states = ['open']
     pr_closed_states = ['closed']
-    SKIP_EWS_LABEL = 'skip-ews'
-    BLOCKED_LABEL = 'merging-blocked'
-    MERGE_QUEUE_LABEL = 'merge-queue'
-    UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
-    SAFE_MERGE_QUEUE_LABEL = 'safe-merge-queue'
-    REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     PER_PAGE_LIMIT = 100
     NUM_PAGE_LIMIT = 10
 
@@ -341,19 +341,19 @@ class GitHubMixin(object):
 
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
-            if label.get('name', '') == self.BLOCKED_LABEL:
+            if label.get('name', '') == GitHub.BLOCKED_LABEL:
                 return 1
         return 0
 
     def _does_pr_has_skip_label(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
-            if label.get('name', '') == self.SKIP_EWS_LABEL:
+            if label.get('name', '') == GitHub.SKIP_EWS_LABEL:
                 return 1
         return 0
 
     def _is_pr_in_merge_queue(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
-            if label.get('name', '') in (self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL):
+            if label.get('name', '') in (GitHub.MERGE_QUEUE_LABEL, GitHub.UNSAFE_MERGE_QUEUE_LABEL):
                 return 1
         return 0
 
@@ -1797,7 +1797,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         if self.verifyMergeQueue and pr_number:
             yield self._addToLog('stdio', 'Change is in merge queue.\n')
         if self.enableSkipEWSLabel and pr_number:
-            yield self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
+            yield self._addToLog('stdio', f'PR does not have {GitHub.SKIP_EWS_LABEL} label.\n')
         defer.returnValue(SUCCESS)
 
     @defer.inlineCallbacks
@@ -1864,12 +1864,12 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         blocked = self._is_pr_blocked(pr_json) if self.verifyMergeQueue else 0
         if blocked == 1:
-            rc = yield self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
+            rc = yield self.skip_build(f"PR {pr_number} has been marked as '{GitHub.BLOCKED_LABEL}'")
             return defer.returnValue(rc)
 
         skip_ews = self._does_pr_has_skip_label(pr_json) if self.enableSkipEWSLabel else 0
         if skip_ews == 1:
-            rc = yield self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
+            rc = yield self.skip_build(f'Skipping as PR {pr_number} has {GitHub.SKIP_EWS_LABEL} label')
             return defer.returnValue(rc)
 
         if self.verifyMergeQueue:
@@ -2201,8 +2201,8 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             else:
                 repository_url = self.getProperty('repository', '')
                 rc = SUCCESS
-                did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
-                did_add_label = yield self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url)
+                did_remove_labels = yield self.remove_labels(pr_number, [GitHub.MERGE_QUEUE_LABEL, GitHub.UNSAFE_MERGE_QUEUE_LABEL, GitHub.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
+                did_add_label = yield self.add_label(pr_number, GitHub.BLOCKED_LABEL, repository_url=repository_url)
                 if any((
                     not did_remove_labels,
                     not did_add_label,
@@ -2214,10 +2214,10 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {'step': f"Added '{self.BLOCKED_LABEL}' label to pull request"}
+            return {'step': f"Added '{GitHub.BLOCKED_LABEL}' label to pull request"}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {'step': f"Failed to add '{self.BLOCKED_LABEL}' label to pull request"}
+        return {'step': f"Failed to add '{GitHub.BLOCKED_LABEL}' label to pull request"}
 
     def doStepIf(self, step):
         return self.getProperty('github.number')
@@ -2262,10 +2262,10 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
     flunkOnFailure = False
     haltOnFailure = False
     LABELS_TO_REMOVE = [
-        GitHubMixin.MERGE_QUEUE_LABEL,
-        GitHubMixin.UNSAFE_MERGE_QUEUE_LABEL,
-        GitHubMixin.BLOCKED_LABEL,
-        GitHubMixin.REQUEST_MERGE_QUEUE_LABEL,
+        GitHub.MERGE_QUEUE_LABEL,
+        GitHub.UNSAFE_MERGE_QUEUE_LABEL,
+        GitHub.BLOCKED_LABEL,
+        GitHub.REQUEST_MERGE_QUEUE_LABEL,
     ]
 
     @defer.inlineCallbacks
@@ -2297,14 +2297,14 @@ class RemoveAndAddLabels(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
     def __init__(self, label_to_add='', labels_to_remove=None, **kwargs):
         self.label_to_add = label_to_add
-        self.labels_to_remove = [GitHubMixin.SAFE_MERGE_QUEUE_LABEL] if labels_to_remove is None else labels_to_remove
+        self.labels_to_remove = [GitHub.SAFE_MERGE_QUEUE_LABEL] if labels_to_remove is None else labels_to_remove
         super().__init__(**kwargs)
 
     @defer.inlineCallbacks
     def run(self):
-        if self.label_to_add == GitHubMixin.MERGE_QUEUE_LABEL:
+        if self.label_to_add == GitHub.MERGE_QUEUE_LABEL:
             pr_status = 'passed_status_check'
-        elif self.label_to_add == GitHubMixin.BLOCKED_LABEL:
+        elif self.label_to_add == GitHub.BLOCKED_LABEL:
             pr_status = 'failed_status_check'
         else:
             yield self._addToLog('stdio', f'{self.label_to_add} not supported.\n')
@@ -2546,9 +2546,9 @@ class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         yield self._addToLog('stdio', f'PRs with checks pending: {pending_prs}. No action taken.\n')
 
         if len(label_as_safe):
-            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHubMixin.MERGE_QUEUE_LABEL, labels_to_remove=[GitHubMixin.SAFE_MERGE_QUEUE_LABEL]))
+            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHub.MERGE_QUEUE_LABEL, labels_to_remove=[GitHub.SAFE_MERGE_QUEUE_LABEL]))
         if len(label_as_blocked):
-            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHubMixin.BLOCKED_LABEL, labels_to_remove=[GitHubMixin.SAFE_MERGE_QUEUE_LABEL]))
+            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHub.BLOCKED_LABEL, labels_to_remove=[GitHub.SAFE_MERGE_QUEUE_LABEL]))
         self.build.addStepsAfterCurrentStep(steps_to_add)
         defer.returnValue(SUCCESS)
 

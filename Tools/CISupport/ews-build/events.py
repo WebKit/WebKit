@@ -348,8 +348,6 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
     PUBLIC_REPOS = ('WebKit/WebKit',)
     SENSATIVE_FIELDS = ('github.title',)
-    UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
-    MERGE_QUEUE_LABEL = 'merge-queue'
     LABEL_PROCESS_DELAY = 10
     ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
     TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
@@ -515,13 +513,13 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             return defer.returnValue(([], 'git'))
 
         log.msg(f'Handling PR #{pr_number} with hash: {head_sha}')
-        if action == 'labeled' and self.UNSAFE_MERGE_QUEUE_LABEL in labels:
+        if action == 'labeled' and GitHub.UNSAFE_MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for unsafe-merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
             event = 'unsafe_merge_queue'
-        elif action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
+        elif action == 'labeled' and GitHub.MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
