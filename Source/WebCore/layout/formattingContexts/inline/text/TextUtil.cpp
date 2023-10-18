@@ -553,10 +553,11 @@ float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem
 }
 
 template<typename CharacterType>
-static bool canUseSimplifiedTextMeasuringForCharacters(const CharacterType* characters, unsigned length, const FontCascade& fontCascade, const Font& primaryFont, bool whitespaceIsCollapsed)
+static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const CharacterType> characters, const FontCascade& fontCascade, const Font& primaryFont, bool whitespaceIsCollapsed)
 {
-    for (unsigned i = 0; i < length; ++i) {
-        auto character = characters[i];
+    auto* rawCharacters = characters.data();
+    for (unsigned i = 0; i < characters.size(); ++i) {
+        auto character = rawCharacters[i]; // Not using characters[i] to bypass the bounds check.
         if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
             return false;
         auto glyphData = fontCascade.glyphDataForCharacter(character, false);
@@ -589,8 +590,8 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
 
     auto whitespaceIsCollapsed = style.collapseWhiteSpace();
     if (textContent.is8Bit())
-        return canUseSimplifiedTextMeasuringForCharacters(textContent.characters8(), textContent.length(), fontCascade, primaryFont, whitespaceIsCollapsed);
-    return canUseSimplifiedTextMeasuringForCharacters(textContent.characters16(), textContent.length(), fontCascade, primaryFont, whitespaceIsCollapsed);
+        return canUseSimplifiedTextMeasuringForCharacters(textContent.span8(), fontCascade, primaryFont, whitespaceIsCollapsed);
+    return canUseSimplifiedTextMeasuringForCharacters(textContent.span16(), fontCascade, primaryFont, whitespaceIsCollapsed);
 }
 
 void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
