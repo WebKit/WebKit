@@ -117,7 +117,7 @@ const SymbolTable::LocalToEntryVec& SymbolTable::localToEntry(const ConcurrentJS
             if (offset.isScope())
                 size = std::max(size, offset.scopeOffset().offset() + 1);
         }
-    
+
         m_localToEntry = makeUnique<LocalToEntryVec>(size, nullptr);
         for (auto& entry : m_map) {
             VarOffset offset = entry.value.varOffset();
@@ -125,7 +125,7 @@ const SymbolTable::LocalToEntryVec& SymbolTable::localToEntry(const ConcurrentJS
                 m_localToEntry->at(offset.scopeOffset().offset()) = &entry.value;
         }
     }
-    
+
     return *m_localToEntry;
 }
 
@@ -140,7 +140,7 @@ SymbolTableEntry* SymbolTable::entryFor(const ConcurrentJSLocker& locker, ScopeO
 SymbolTable* SymbolTable::cloneScopePart(VM& vm)
 {
     SymbolTable* result = SymbolTable::create(vm);
-    
+
     result->m_usesSloppyEval = m_usesSloppyEval;
     result->m_nestedLexicalScope = m_nestedLexicalScope;
     result->m_scopeType = m_scopeType;
@@ -152,9 +152,8 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
             iter->key,
             SymbolTableEntry(iter->value.varOffset(), iter->value.getAttributes()));
     }
-    
     result->m_maxScopeOffset = m_maxScopeOffset;
-    
+
     if (ScopedArgumentsTable* arguments = this->arguments())
         result->m_arguments.set(vm, result, arguments);
     
