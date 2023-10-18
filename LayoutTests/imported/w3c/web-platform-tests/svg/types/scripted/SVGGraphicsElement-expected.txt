@@ -1,5 +1,5 @@
 
-FAIL getBBox() returns instance of DOMRect assert_true: expected true got false
-FAIL getCTM() returns instance of DOMMatrix assert_true: expected true got false
-FAIL getScreenCTM() returns instance of DOMMatrix assert_true: expected true got false
+PASS getBBox() returns instance of SVGRect
+PASS getCTM() returns instance of SVGMatrix
+PASS getScreenCTM() returns instance of SVGMatrix
 

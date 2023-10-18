@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-10"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute height="-20"
+CONSOLE MESSAGE: Error: Invalid negative value for <circle> attribute r="-10"
+CONSOLE MESSAGE: Error: Invalid negative value for <ellipse> attribute rx="-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <ellipse> attribute ry="-10"
+CONSOLE MESSAGE: Error: Invalid negative value for <image> attribute width="-10"
+CONSOLE MESSAGE: Error: Invalid negative value for <image> attribute height="-20"
+CONSOLE MESSAGE: Error: Invalid negative value for <image> attribute width="-10"
+CONSOLE MESSAGE: Error: Invalid negative value for <image> attribute height="-20"
+
+FAIL rect1 assert_equals: rect1: x expected 1 but got 0
+FAIL rect2 assert_equals: rect2: x expected 1 but got 0
+FAIL circle assert_equals: circle: x expected 1 but got 0
+FAIL ellipse1 assert_equals: ellipse1: x expected 1 but got -9
+FAIL ellipse2 assert_equals: ellipse2: y expected 2 but got -3
+PASS image3
+PASS image4
+FAIL foreign1 assert_equals: foreign1: x expected 1 but got 0
+FAIL foreign2 assert_equals: foreign2: x expected 1 but got 0
+PASS SVGGraphicsElement.prototype.getBBox for elements with negative sizes
+

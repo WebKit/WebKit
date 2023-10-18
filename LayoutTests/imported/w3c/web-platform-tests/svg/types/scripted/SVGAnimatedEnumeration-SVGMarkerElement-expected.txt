@@ -1,3 +1,7 @@
 
-PASS Use of SVGAnimatedEnumeration within SVGMarkerElement
+PASS Test SVGAnimatedEnumeration
+PASS Test SVGOrient
+PASS Test grad units
+FAIL Test turn units assert_equals: expected 360 but got 0
+FAIL Test auto-start-reverse Type error
 
