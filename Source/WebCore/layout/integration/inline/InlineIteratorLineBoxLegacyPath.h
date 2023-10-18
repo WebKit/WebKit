@@ -114,7 +114,7 @@ public:
     }
 
 private:
-    const LegacyRootInlineBox* m_rootInlineBox;
+    WeakPtr<const LegacyRootInlineBox> m_rootInlineBox;
 };
 
 }
