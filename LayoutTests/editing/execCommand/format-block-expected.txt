@@ -9,6 +9,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of ADDRESS > DIV > BODY > HTML > #document to 0 of ADDRESS > DIV > BODY > HTML > #document toDOMRange:range from 0 of ADDRESS > DIV > BODY > HTML > #document to 0 of ADDRESS > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification

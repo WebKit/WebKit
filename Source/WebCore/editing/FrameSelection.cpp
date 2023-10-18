@@ -237,6 +237,15 @@ void FrameSelection::moveTo(const Position& position, Affinity affinity, UserTri
     setSelection(VisibleSelection(position, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
+void FrameSelection::moveWithoutValidationTo(const Position& position, Affinity affinity)
+{
+    ASSERT_UNUSED(affinity, affinity == Affinity::Downstream); // Only support a downstream position for now.
+    VisibleSelection newSelection;
+    newSelection.setWithoutValidation(position, position);
+    newSelection.setIsDirectional(m_selection.isDirectional());
+    setSelection(newSelection, defaultSetSelectionOptions());
+}
+
 void FrameSelection::moveTo(const Position& base, const Position& extent, Affinity affinity, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;

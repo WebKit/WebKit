@@ -178,7 +178,7 @@ static bool executeInsertNode(LocalFrame& frame, Ref<Node>&& content)
 
 static bool expandSelectionToGranularity(LocalFrame& frame, TextGranularity granularity)
 {
-    VisibleSelection selection = frame.selection().selection();
+    VisibleSelection selection = frame.selection().selection().validated();
     auto oldRange = selection.toNormalizedRange();
     selection.expandUsingGranularity(granularity);
     auto newRange = selection.toNormalizedRange();
@@ -209,7 +209,7 @@ static String valueStyle(LocalFrame& frame, CSSPropertyID propertyID)
 static TriState stateTextWritingDirection(LocalFrame& frame, WritingDirection direction)
 {
     bool hasNestedOrMultipleEmbeddings;
-    WritingDirection selectionDirection = EditingStyle::textDirectionForSelection(frame.selection().selection(),
+    WritingDirection selectionDirection = EditingStyle::textDirectionForSelection(frame.selection().selection().validated(),
         frame.selection().typingStyle(), hasNestedOrMultipleEmbeddings);
     // FXIME: We should be returning TriState::Indeterminate when selectionDirection == direction && hasNestedOrMultipleEmbeddings
     return (selectionDirection == direction && !hasNestedOrMultipleEmbeddings) ? TriState::True : TriState::False;
@@ -1097,7 +1097,7 @@ static bool executeSelectWord(LocalFrame& frame, Event*, EditorCommandSource, co
 
 static bool executeSetMark(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.editor().setMark(frame.selection().selection());
+    frame.editor().setMark(frame.selection().selection().validated());
     return true;
 }
 
@@ -1140,7 +1140,7 @@ static bool executeSwapWithMark(LocalFrame& frame, Event*, EditorCommandSource, 
     RefPtr protectedDocument { frame.document() };
     Ref protectedFrame { frame };
     const VisibleSelection& mark = frame.editor().mark();
-    const VisibleSelection& selection = frame.selection().selection();
+    const VisibleSelection& selection = frame.selection().selection().validated();
     if (mark.isNone() || selection.isNone()) {
         SystemSoundManager::singleton().systemBeep();
         return false;
@@ -1416,7 +1416,7 @@ static bool enabledInEditableTextOrCaretBrowsing(LocalFrame& frame, Event* event
 
 static bool enabledInRichlyEditableText(LocalFrame& frame, Event*, EditorCommandSource)
 {
-    const VisibleSelection& selection = frame.selection().selection();
+    const VisibleSelection& selection = frame.selection().selection().validated();
     return selection.isCaretOrRange() && selection.isContentRichlyEditable() && selection.rootEditableElement();
 }
 
@@ -1444,12 +1444,12 @@ static bool enabledPaste(LocalFrame& frame, Event*, EditorCommandSource source)
 
 static bool enabledRangeInEditableText(LocalFrame& frame, Event*, EditorCommandSource)
 {
-    return frame.selection().isRange() && frame.selection().selection().isContentEditable();
+    return frame.selection().isRange() && frame.selection().selection().validated().isContentEditable();
 }
 
 static bool enabledRangeInRichlyEditableText(LocalFrame& frame, Event*, EditorCommandSource)
 {
-    return frame.selection().isRange() && frame.selection().selection().isContentRichlyEditable();
+    return frame.selection().isRange() && frame.selection().selection().validated().isContentRichlyEditable();
 }
 
 static bool enabledRedo(LocalFrame& frame, Event*, EditorCommandSource)
@@ -1613,7 +1613,7 @@ static String valueForeColor(LocalFrame& frame, Event*)
 
 static String valueFormatBlock(LocalFrame& frame, Event*)
 {
-    const VisibleSelection& selection = frame.selection().selection();
+    const VisibleSelection& selection = frame.selection().selection().validated();
     if (selection.isNoneOrOrphaned() || !selection.isContentEditable())
         return emptyString();
     RefPtr formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(selection.firstRange());

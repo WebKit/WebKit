@@ -78,9 +78,10 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 
 String Editor::selectionInHTMLFormat()
 {
-    if (ImageOverlay::isInsideOverlay(document().selection().selection()))
+    auto validatedSelection = document().selection().selection().validated();
+    if (ImageOverlay::isInsideOverlay(validatedSelection))
         return { };
-    return serializePreservingVisualAppearance(document().selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
+    return serializePreservingVisualAppearance(validatedSelection, ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -147,7 +148,7 @@ static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(c
 
 static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document)
 {
-    auto selection = document.selection().selection();
+    auto selection = document.selection().selection().validated();
     if (ImageOverlay::isInsideOverlay(selection))
         return selectionInImageOverlayAsAttributedString(selection);
     auto range = selection.firstRange();

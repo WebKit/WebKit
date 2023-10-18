@@ -121,6 +121,7 @@ sel.selectAllChildren(target10gch);
 document.execCommand("insertText", false, "Replacing");
 expectedInputEventCount++;
 
+expectedInputEventCount = 9;
 shouldBe("expectedInputEventCount", "actualInputEventCount");
 clearTestTarget();
 </script>

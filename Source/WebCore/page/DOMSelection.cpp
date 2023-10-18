@@ -235,13 +235,14 @@ ExceptionOr<void> DOMSelection::collapse(Node* node, unsigned offset)
         if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node->isConnected() && frame->document() == &node->document())
             && &node->rootNode() != frame->document())
             return { };
+        auto& selection = frame->selection();
+        selection.disassociateLiveRange();
+        selection.moveWithoutValidationTo(makeContainerOffsetPosition(node, offset), Affinity::Downstream);
     } else {
         if (!isValidForPosition(node))
             return { };
+        frame->selection().moveTo(makeContainerOffsetPosition(node, offset), Affinity::Downstream);
     }
-    auto& selection = frame->selection();
-    selection.disassociateLiveRange();
-    selection.moveTo(makeContainerOffsetPosition(node, offset), Affinity::Downstream);
     return { };
 }
 
@@ -255,7 +256,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return Exception { InvalidStateError };
     if (frame->settings().liveRangeSelectionEnabled()) {
         selection.disassociateLiveRange();
-        selection.moveTo(selection.selection().uncanonicalizedEnd(), Affinity::Downstream);
+        selection.moveWithoutValidationTo(selection.selection().uncanonicalizedEnd(), Affinity::Downstream);
     } else
         selection.moveTo(selection.selection().end(), Affinity::Downstream);
     return { };
@@ -271,7 +272,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return Exception { InvalidStateError };
     if (frame->settings().liveRangeSelectionEnabled()) {
         selection.disassociateLiveRange();
-        selection.moveTo(selection.selection().uncanonicalizedStart(), Affinity::Downstream);
+        selection.moveWithoutValidationTo(selection.selection().uncanonicalizedStart(), Affinity::Downstream);
     } else
         selection.moveTo(selection.selection().start(), Affinity::Downstream);
     return { };

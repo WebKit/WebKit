@@ -143,6 +143,7 @@ public:
     WEBCORE_EXPORT void moveTo(const VisiblePosition&, UserTriggered = UserTriggered::No, CursorAlignOnScroll = CursorAlignOnScroll::IfNeeded);
     WEBCORE_EXPORT void moveTo(const VisiblePosition&, const VisiblePosition&, UserTriggered = UserTriggered::No);
     void moveTo(const Position&, Affinity, UserTriggered = UserTriggered::No);
+    void moveWithoutValidationTo(const Position&, Affinity);
     void moveTo(const Position&, const Position&, Affinity, UserTriggered = UserTriggered::No);
     void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, bool shouldSetFocus, SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 

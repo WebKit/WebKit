@@ -137,7 +137,7 @@ bool isInputMethodComposingForEditingAction(EditAction action)
 
 EditCommand::EditCommand(Ref<Document>&& document, EditAction editingAction)
     : m_document { WTFMove(document) }
-    , m_startingSelection { m_document->selection().selection() }
+    , m_startingSelection { m_document->selection().selection().validated() }
     , m_endingSelection { m_startingSelection }
     , m_editingAction { editingAction }
 {

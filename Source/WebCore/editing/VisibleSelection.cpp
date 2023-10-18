@@ -80,6 +80,13 @@ VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, 
 {
 }
 
+VisibleSelection VisibleSelection::validated() const
+{
+    VisibleSelection clone = *this;
+    clone.validate();
+    return clone;
+}
+
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
     ASSERT(!editingIgnoresContent(*node));

@@ -298,7 +298,7 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
 // we should use the target control's selection for this editing operation.
 VisibleSelection Editor::selectionForCommand(Event* event)
 {
-    auto selection = document().selection().selection();
+    auto selection = document().selection().selection().validated();
     if (!event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
@@ -524,7 +524,7 @@ bool Editor::canCopy() const
 {
     if (imageElementFromImageDocument(document()))
         return true;
-    const VisibleSelection& selection = document().selection().selection();
+    const VisibleSelection& selection = document().selection().selection().validated();
     return selection.isRange() && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
 }
 
@@ -542,7 +542,7 @@ bool Editor::canPaste() const
 
 bool Editor::canDelete() const
 {
-    const VisibleSelection& selection = document().selection().selection();
+    const VisibleSelection& selection = document().selection().selection().validated();
     return selection.isRange() && selection.rootEditableElement();
 }
 
@@ -712,7 +712,7 @@ bool Editor::shouldInsertFragment(DocumentFragment& fragment, const std::optiona
 void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectReplacement selectReplacement, SmartReplace smartReplace, MatchStyle matchStyle, EditAction editingAction, MailBlockquoteHandling mailBlockquoteHandling)
 {
     Ref document = protectedDocument();
-    VisibleSelection selection = document->selection().selection();
+    VisibleSelection selection = document->selection().selection().validated();
     if (selection.isNone() || !selection.isContentEditable())
         return;
 
@@ -740,7 +740,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
     if (m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
         revealSelectionAfterEditingOperation();
 
-    selection = document->selection().selection();
+    selection = document->selection().selection().validated();
     if (selection.isInPasswordField())
         return;
 

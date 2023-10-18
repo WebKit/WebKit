@@ -40,14 +40,16 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
+    auto validatedSelection = m_selection.validated();
+
+    if (validatedSelection.start().isNotNull() && validatedSelection.end().isNotNull()) {
         if (AXObjectCache* cache = m_document->existingAXObjectCache())
             cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
     }
 
 #if !PLATFORM(IOS_FAMILY)
     // if zoom feature is enabled, insertion point changes should update the zoom
-    if (!m_selection.isCaret())
+    if (!validatedSelection.isCaret())
         return;
 
     auto* renderView = m_document->renderView();

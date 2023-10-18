@@ -9,4 +9,4 @@ layer at (0,0) size 800x600
           text run at (0,18) width 257: "document's body element *is* editable. "
           text run at (256,18) width 530: "The expected behavior is to create a selection at [body, 0]. There should be a caret "
           text run at (0,36) width 184: "at the start of this paragraph."
-caret: position 0 of child 0 {#text} of child 1 {P} of body
+caret: position 0 of document

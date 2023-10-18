@@ -43,7 +43,8 @@
             count++;
             if (userInfo)
                 results.push(userInfo);
-            if (count == gran.length * 4) {
+            if (count == gran.length * 4 + 2) {
+                resultIndex++;
                 resultIndex++;
                 shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
                 shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
@@ -134,7 +135,7 @@
                 shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityDocument");
                 shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionBeginning");
 
-                resultIndex++;
+                resultIndex += 2;
                 shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
                 shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
                 shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
@@ -237,7 +238,7 @@
                 requestAnimationFrame(function() {
                     setTimeout(function() {
                         s = window.getSelection();
-                        s.setPosition(textbox, 0);
+                        s.setBaseAndExtent(textbox, 0, textbox, 0);
                         resolve();
                     }, 0);
                 })
@@ -283,6 +284,7 @@
             await extendSelection(gran[7]);
             await resetPosition();
             await extendSelection(gran[8]);
+            await resetPosition();
           })();
     }
 

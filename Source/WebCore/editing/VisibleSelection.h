@@ -45,6 +45,8 @@ public:
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition& anchor, const VisiblePosition& focus, bool isDirectional = false);
 
+    VisibleSelection validated() const;
+
     WEBCORE_EXPORT static VisibleSelection selectionFromContentsOfNode(Node*);
 
     void setAffinity(Affinity affinity) { m_affinity = affinity; }
