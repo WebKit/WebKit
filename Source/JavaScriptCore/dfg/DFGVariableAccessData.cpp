@@ -131,7 +131,7 @@ bool VariableAccessData::tallyVotesForShouldUseDoubleFormat()
     if (!newValueOfShouldUseDoubleFormat) {
         // We monotonically convert to double. Hence, if the fixpoint leads us to conclude that we should
         // switch back to int, we instead ignore this and stick with double.
-        return false;
+        return DFG::mergeDoubleFormatState(m_doubleFormatState, NotUsingDoubleFormat);
     }
         
     if (m_doubleFormatState == UsingDoubleFormat)
