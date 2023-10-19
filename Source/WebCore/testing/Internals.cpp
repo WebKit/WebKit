@@ -3794,6 +3794,16 @@ void Internals::setMockVideoPresentationModeEnabled(bool enabled)
 }
 #endif
 
+void Internals::setCanvasNoiseInjectionSalt(HTMLCanvasElement& element, unsigned long long salt)
+{
+    return element.setNoiseInjectionSalt(salt);
+}
+
+bool Internals::doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement& element) const
+{
+    return element.havePendingCanvasNoiseInjection();
+}
+
 void Internals::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     Document* document = contextDocument();

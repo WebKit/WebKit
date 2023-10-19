@@ -1,0 +1,37 @@
+Test that noise injection is controlled by the salt, and that noise is not applied for bitmaps.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Initial canvas should not have pending dirty rects
+PASS drawImage should not require noise injection
+PASS Initial canvas should not have pending dirty rects
+PASS putImageData should not require noise injection
+PASS fillText should not require noise injection when noise injection is not enabled
+PASS getImageData should not apply noise when noise injection is not enabled
+PASS putImageData should not require noise injection
+PASS fillRect should not require noise injection when noise injection is not enabled
+PASS fillText should not require noise injection when noise injection is not enabled
+PASS getImageData should not apply noise when noise injection is not enabled
+PASS putImageData should not require noise injection
+PASS fillRect should not require noise injection when noise injection is not enabled
+Enabling canvas noise injection
+PASS Initial canvas should not have pending dirty rects
+FAIL drawImage should not require noise injection
+PASS Initial canvas should not have pending dirty rects
+PASS putImageData should not require noise injection
+FAIL data: url after putImageData should be equal
+PASS fillText should require noise injection
+PASS getImageData should apply all required noise
+PASS putImageData should not require noise injection
+PASS fillRect should require noise injection
+PASS data: url after fillRect should not be equal
+PASS fillText should require noise injection
+PASS getImageData should apply all required noise
+PASS putImageData should not require noise injection
+PASS fillRect should require noise injection
+PASS data: url after fillRect should not be equal
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
