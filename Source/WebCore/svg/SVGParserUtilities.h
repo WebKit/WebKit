@@ -95,15 +95,21 @@ template<typename CharacterType> constexpr bool skipOptionalSVGSpacesOrDelimiter
 
 template<typename CharacterType> constexpr bool skipOptionalSVGSpacesOrDelimiter(StringParsingBuffer<CharacterType>& characters, char delimiter = ',')
 {
-    if (characters.hasCharactersRemaining() && !isSVGSpace(*characters) && *characters != delimiter)
+    if (!characters.hasCharactersRemaining())
         return false;
-    if (skipOptionalSVGSpaces(characters)) {
-        if (*characters == delimiter) {
-            characters++;
-            skipOptionalSVGSpaces(characters);
-        }
-    }
-    return characters.hasCharactersRemaining();
+
+    if (!isSVGSpace(*characters) && *characters != delimiter)
+        return false;
+
+    // There are only spaces in the remaining characters.
+    if (!skipOptionalSVGSpaces(characters))
+        return false;
+
+    if (*characters != delimiter)
+        return true;
+
+    // A delimiter is hit. Skip the following spaces also e.g. " , ".
+    return skipOptionalSVGSpaces(++characters);
 }
 
 } // namespace WebCore
