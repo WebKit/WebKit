@@ -146,4 +146,41 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
     return ts;
 }
 
+void EditorState::clipOwnedRectExtentsToNumericLimits()
+{
+    auto sanitizePostLayoutData = [](auto& postLayoutData) {
+#if PLATFORM(MAC)
+        postLayoutData.selectionBoundingRect = postLayoutData.selectionBoundingRect.toRectWithExtentsClippedToNumericLimits();
+#else
+        UNUSED_PARAM(postLayoutData);
+#endif
+    };
+    if (hasPostLayoutData())
+        sanitizePostLayoutData(*postLayoutData);
+
+    auto sanitizeVisualData = [](auto& visualData) {
+#if PLATFORM(IOS_FAMILY)
+        visualData.selectionClipRect = visualData.selectionClipRect.toRectWithExtentsClippedToNumericLimits();
+        visualData.caretRectAtEnd = visualData.caretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
+        visualData.markedTextCaretRectAtStart = visualData.markedTextCaretRectAtStart.toRectWithExtentsClippedToNumericLimits();
+        visualData.markedTextCaretRectAtEnd = visualData.markedTextCaretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
+
+        auto sanitizeSelectionGeometryVector = [](auto& selectionGeometries) {
+            forEach(selectionGeometries, [](auto& selectionGeometry) {
+                selectionGeometry.setRect(selectionGeometry.rect().toRectWithExtentsClippedToNumericLimits());
+            });
+        };
+        sanitizeSelectionGeometryVector(visualData.selectionGeometries);
+        sanitizeSelectionGeometryVector(visualData.markedTextRects);
+#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+        visualData.caretRectAtStart = visualData.caretRectAtStart.toRectWithExtentsClippedToNumericLimits();
+#else
+        UNUSED_PARAM(visualData);
+#endif
+    };
+    if (hasVisualData())
+        sanitizeVisualData(*visualData);
+}
+
 } // namespace WebKit
