@@ -1311,6 +1311,13 @@ void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable& axTable)
 #endif
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::handleRowspanChanged(AccessibilityTableCell& axCell)
+{
+    updateIsolatedTree(axCell, AXRowSpanChanged);
+}
+#endif
+
 void AXObjectCache::handleMenuOpened(Node* node)
 {
     if (!node || !node->renderer() || !nodeHasRole(node, "menu"_s))
@@ -2456,7 +2463,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         deferModalChange(element);
         recomputeIsIgnored(element->parentNode());
     } else if (attrName == rowspanAttr) {
-        postNotification(element, AXRowSpanChanged);
+        deferRowspanChange(get(element));
         recomputeParentTableProperties(element, TableProperty::CellSlots);
     } else if (attrName == colspanAttr) {
         postNotification(element, AXColumnSpanChanged);
@@ -2582,7 +2589,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_rowcountAttr)
         handleRowCountChanged(get(element), element ? &element->document() : nullptr);
     else if (attrName == aria_rowspanAttr) {
-        postNotification(element, AXRowSpanChanged);
+        deferRowspanChange(get(element));
         recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     } else if (attrName == aria_sortAttr)
         postNotification(element, AXObjectCache::AXSortDirectionChanged);
@@ -3939,6 +3946,14 @@ void AXObjectCache::performDeferredCacheUpdate()
     });
     m_deferredRecomputeTableCellSlotsList.clear();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    AXLOGDeferredCollection("RowspanChangesList"_s, m_deferredRowspanChanges);
+    m_deferredRowspanChanges.forEach([this] (auto& axCell) {
+        handleRowspanChanged(axCell);
+    });
+    m_deferredRowspanChanges.clear();
+#endif
+
     AXLOGDeferredCollection("TextChangedList"_s, m_deferredTextChangedList);
     for (auto& node : m_deferredTextChangedList)
         handleTextChanged(getOrCreate(&node));
@@ -4133,6 +4148,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXColumnIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXColumnIndex);
             break;
+        case AXColumnSpanChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnIndexRange);
+            break;
         case AXDisabledStateChanged:
             tree->updatePropertiesForSelfAndDescendants(*notification.first, { AXPropertyName::CanSetFocusAttribute, AXPropertyName::IsEnabled });
             break;
@@ -4188,6 +4206,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
+        case AXRowSpanChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::RowIndexRange);
+            break;
         case AXCellScopeChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::CellScope, AXPropertyName::IsColumnHeader, AXPropertyName::IsRowHeader });
             break;
@@ -4214,7 +4235,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXActiveDescendantChanged:
         case AXRoleChanged:
-        case AXColumnSpanChanged:
         case AXControlledObjectsChanged:
         case AXDescribedByChanged:
         case AXDropEffectChanged:
@@ -4231,7 +4251,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXMenuListValueChanged:
         case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:
-        case AXRowSpanChanged:
         case AXSelectedChildrenChanged:
         case AXTextSecurityChanged:
         case AXValueChanged:
@@ -4326,6 +4345,21 @@ void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityTable& axTable)
     m_deferredRecomputeTableCellSlotsList.add(axTable);
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::deferRowspanChange(AccessibilityObject* axObject)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    auto* axTableCell = dynamicDowncast<AccessibilityTableCell>(axObject);
+    if (!axTableCell)
+        return;
+
+    m_deferredRowspanChanges.add(*axTableCell);
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+#else
+    UNUSED_PARAM(axObject);
+#endif
 }
 
 void AXObjectCache::deferTextChangedIfNeeded(Node* node)

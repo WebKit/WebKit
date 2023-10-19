@@ -1069,7 +1069,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (roleValue() == AccessibilityRole::Ignored)
         return true;
 
-    if (roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole())
+    if (ignoredFromPresentationalRole())
         return true;
 
     // WebAreas should be ignored if their iframe container is marked as presentational.

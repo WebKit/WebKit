@@ -3873,6 +3873,11 @@ void AccessibilityObject::setLastKnownIsIgnoredValue(bool isIgnored)
     m_lastKnownIsIgnoredValue = isIgnored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject;
 }
 
+bool AccessibilityObject::ignoredFromPresentationalRole() const
+{
+    return roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole();
+}
+
 bool AccessibilityObject::pressedIsPresent() const
 {
     return !getAttribute(aria_pressedAttr).isEmpty();
