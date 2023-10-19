@@ -22,8 +22,6 @@
 
 #if USE(LIBWEBRTC)
 
-header: "RTCNetwork.h"
-
 [CustomHeader] struct WebKit::RTC::Network::IPAddress {
     std::variant<WebKit::RTC::Network::IPAddress::UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
 };
@@ -36,4 +34,17 @@ header: "RTCNetwork.h"
     int ipv6Flags;
 };
 
+struct WebKit::RTCNetwork {
+    Vector<char> name;
+    Vector<char> description;
+    WebKit::RTC::Network::IPAddress prefix;
+    int prefixLength;
+    int type;
+    uint16_t id;
+    int preference;
+    bool active;
+    bool ignored;
+    int scopeID;
+    Vector<WebKit::RTC::Network::InterfaceAddress> ips;
+};
 #endif
