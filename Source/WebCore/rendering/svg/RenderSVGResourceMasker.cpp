@@ -44,7 +44,7 @@ RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
 
 void RenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
-    m_maskContentBoundaries = FloatRect();
+    m_maskContentBoundaries.fill(FloatRect { });
     m_masker.clear();
 
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
@@ -169,7 +169,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     return drawContentIntoContext(context, { { }, destinationRect.size() });
 }
 
-void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
+void RenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     for (Node* childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
@@ -178,11 +178,11 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
              continue;
-        m_maskContentBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+        m_maskContentBoundaries[repaintRectCalculation].unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(repaintRectCalculation)));
     }
 }
 
-FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object)
+FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     FloatRect objectBoundingBox = object.objectBoundingBox();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);
@@ -191,10 +191,10 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& objec
     if (selfNeedsLayout())
         return maskBoundaries;
 
-    if (m_maskContentBoundaries.isEmpty())
-        calculateMaskContentRepaintRect();
+    if (m_maskContentBoundaries[repaintRectCalculation].isEmpty())
+        calculateMaskContentRepaintRect(repaintRectCalculation);
 
-    FloatRect maskRect = m_maskContentBoundaries;
+    FloatRect maskRect = m_maskContentBoundaries[repaintRectCalculation];
     if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());

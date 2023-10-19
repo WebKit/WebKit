@@ -615,7 +615,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
                 writeNameAndQuotedValue(ts, "masker", resourceID);
                 ts << " ";
                 writeStandardPrefix(ts, *masker, behavior, WriteIndentOrNot::No);
-                ts << " " << masker->resourceBoundingBox(renderer) << "\n";
+                ts << " " << masker->resourceBoundingBox(renderer, RepaintRectCalculation::Accurate) << "\n";
             }
         }
     }
@@ -627,7 +627,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             writeNameAndQuotedValue(ts, "clipPath", resourceClipPath->fragment());
             ts << " ";
             writeStandardPrefix(ts, *clipper, behavior, WriteIndentOrNot::No);
-            ts << " " << clipper->resourceBoundingBox(renderer) << "\n";
+            ts << " " << clipper->resourceBoundingBox(renderer, RepaintRectCalculation::Accurate) << "\n";
         }
     }
     if (style.hasFilter()) {
@@ -642,7 +642,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
                     writeNameAndQuotedValue(ts, "filter", id);
                     ts << " ";
                     writeStandardPrefix(ts, *filter, behavior, WriteIndentOrNot::No);
-                    ts << " " << filter->resourceBoundingBox(renderer) << "\n";
+                    ts << " " << filter->resourceBoundingBox(renderer, RepaintRectCalculation::Accurate) << "\n";
                 }
             }
         }

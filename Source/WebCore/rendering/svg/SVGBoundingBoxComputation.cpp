@@ -260,19 +260,20 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
 
     if (includeFilter || includeClipper || includeMasker) {
         if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(m_renderer)) {
+            auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
             if (includeFilter) {
                 if (auto* filter = resources->filter())
-                    box = filter->resourceBoundingBox(m_renderer);
+                    box = filter->resourceBoundingBox(m_renderer, repaintRectCalculation);
             }
 
             if (includeClipper) {
                 if (auto* clipper = resources->clipper())
-                    box.intersect(clipper->resourceBoundingBox(m_renderer));
+                    box.intersect(clipper->resourceBoundingBox(m_renderer, repaintRectCalculation));
             }
 
             if (includeMasker) {
                 if (auto* masker = resources->masker())
-                    box.intersect(masker->resourceBoundingBox(m_renderer));
+                    box.intersect(masker->resourceBoundingBox(m_renderer, repaintRectCalculation));
             }
         }
     }

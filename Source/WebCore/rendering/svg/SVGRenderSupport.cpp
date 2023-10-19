@@ -185,7 +185,7 @@ FloatRect SVGRenderSupport::computeContainerStrokeBoundingBox(const RenderElemen
 
         FloatRect childStrokeBoundingBox = current.strokeBoundingBox();
         if (is<RenderElement>(current))
-            SVGRenderSupport::intersectRepaintRectWithResources(downcast<RenderElement>(current), childStrokeBoundingBox);
+            SVGRenderSupport::intersectRepaintRectWithResources(downcast<RenderElement>(current), childStrokeBoundingBox, RepaintRectCalculation::Accurate);
         const AffineTransform& transform = current.localToParentTransform();
         if (transform.isIdentity())
             strokeBoundingBox.unite(childStrokeBoundingBox);
@@ -328,20 +328,20 @@ bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
     return isNonVisibleOverflow(renderer.style().overflowX());
 }
 
-void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect)
+void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect, RepaintRectCalculation repaintRectCalculation)
 {
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources)
         return;
 
     if (RenderSVGResourceFilter* filter = resources->filter())
-        repaintRect = filter->resourceBoundingBox(renderer);
+        repaintRect = filter->resourceBoundingBox(renderer, repaintRectCalculation);
 
     if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())
-        repaintRect.intersect(clipper->resourceBoundingBox(renderer));
+        repaintRect.intersect(clipper->resourceBoundingBox(renderer, repaintRectCalculation));
 
     if (RenderSVGResourceMasker* masker = resources->masker())
-        repaintRect.intersect(masker->resourceBoundingBox(renderer));
+        repaintRect.intersect(masker->resourceBoundingBox(renderer, repaintRectCalculation));
 }
 
 bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer)

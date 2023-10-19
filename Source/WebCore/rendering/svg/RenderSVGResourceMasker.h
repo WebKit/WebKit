@@ -24,6 +24,7 @@
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
+#include <wtf/EnumeratedArray.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ public:
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     bool drawContentIntoContext(GraphicsContext&, const FloatRect& objectBoundingBox);
     bool drawContentIntoContext(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
-    FloatRect resourceBoundingBox(const RenderObject&) override;
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     inline SVGUnitTypes::SVGUnitType maskUnits() const;
     inline SVGUnitTypes::SVGUnitType maskContentUnits() const;
@@ -62,9 +63,9 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGResourceMasker"_s; }
 
     bool drawContentIntoMaskImage(MaskerData*, const DestinationColorSpace&, RenderObject*);
-    void calculateMaskContentRepaintRect();
+    void calculateMaskContentRepaintRect(RepaintRectCalculation);
 
-    FloatRect m_maskContentBoundaries;
+    EnumeratedArray<RepaintRectCalculation, FloatRect> m_maskContentBoundaries;
     HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_masker;
 };
 

@@ -1436,3 +1436,15 @@ void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);
 void showRenderTree(const WebCore::RenderObject*);
 #endif
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::RepaintRectCalculation> {
+    using values = EnumValues<
+        WebCore::RepaintRectCalculation,
+        WebCore::RepaintRectCalculation::Fast,
+        WebCore::RepaintRectCalculation::Accurate
+    >;
+};
+
+} // namespace WTF
