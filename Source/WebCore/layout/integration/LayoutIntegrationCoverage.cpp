@@ -34,6 +34,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFrameSet.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -70,6 +71,7 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
+        || is<RenderFrameSet>(renderer)
         || is<RenderFlexibleBox>(renderer)
         || is<RenderDeprecatedFlexibleBox>(renderer)
         || is<RenderReplaced>(renderer)

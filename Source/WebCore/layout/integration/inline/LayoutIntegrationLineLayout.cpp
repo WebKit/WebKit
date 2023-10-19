@@ -55,6 +55,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFrameSet.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -489,6 +490,10 @@ void LineLayout::updateInlineContentDimensions()
         }
         if (is<RenderInline>(renderer)) {
             updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            continue;
+        }
+        if (is<RenderFrameSet>(renderer)) {
+            updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
         }
     }
