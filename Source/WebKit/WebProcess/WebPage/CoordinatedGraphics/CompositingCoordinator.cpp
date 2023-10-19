@@ -115,7 +115,6 @@ void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLaye
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 {
     m_rootLayer->setSize(newSize);
-    notifyFlushRequired(m_rootLayer.get());
 }
 
 bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -225,22 +224,6 @@ void CompositingCoordinator::syncLayerState()
     m_shouldSyncFrame = true;
 }
 
-void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
-{
-    if (m_rootLayer && !isFlushingLayerChanges())
-        m_client.notifyFlushRequired();
-}
-
-float CompositingCoordinator::deviceScaleFactor() const
-{
-    return m_page.corePage()->deviceScaleFactor();
-}
-
-float CompositingCoordinator::pageScaleFactor() const
-{
-    return m_page.corePage()->pageScaleFactor();
-}
-
 Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
     auto layer = adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
@@ -272,11 +255,6 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
     }
 }
 
-void CompositingCoordinator::deviceOrPageScaleFactorChanged()
-{
-    m_rootLayer->deviceOrPageScaleFactorChanged();
-}
-
 void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 {
     if (m_isPurging)
@@ -301,10 +279,6 @@ void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
     m_registeredLayers.add(layer->id(), layer);
     layer->setNeedsVisibleRectAdjustment();
     notifyFlushRequired(layer);
-}
-
-void CompositingCoordinator::renderNextFrame()
-{
 }
 
 void CompositingCoordinator::purgeBackingStores()

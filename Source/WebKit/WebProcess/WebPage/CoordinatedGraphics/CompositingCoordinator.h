@@ -62,7 +62,6 @@ public:
     class Client {
     public:
         virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
-        virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const RefPtr<Nicosia::Scene>&) = 0;
         virtual void updateScene() = 0;
     };
@@ -75,10 +74,8 @@ public:
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
     void sizeDidChange(const WebCore::IntSize&);
-    void deviceOrPageScaleFactorChanged();
 
     void setVisibleContentsRect(const WebCore::FloatRect&);
-    void renderNextFrame();
 
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
     WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
@@ -91,11 +88,6 @@ public:
     double nextAnimationServiceTime() const;
 
 private:
-    // GraphicsLayerClient
-    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    float deviceScaleFactor() const override;
-    float pageScaleFactor() const override;
-
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
     WebCore::FloatRect visibleContentsRect() const override;
