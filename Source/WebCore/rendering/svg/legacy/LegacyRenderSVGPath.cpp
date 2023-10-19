@@ -33,6 +33,8 @@
 #include "RenderStyleInlines.h"
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
+#include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>
 

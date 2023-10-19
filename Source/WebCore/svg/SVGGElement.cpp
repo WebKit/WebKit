@@ -57,7 +57,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
     // FIXME: [LBSE] Support hidden containers
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (style.display() == DisplayType::None)
-            return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
+            return createRenderer<RenderSVGHiddenContainer>(RenderObject::Type::SVGHiddenContainer, *this, WTFMove(style));
         return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
     }
 #endif

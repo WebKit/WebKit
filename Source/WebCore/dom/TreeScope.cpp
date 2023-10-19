@@ -585,7 +585,8 @@ struct SVGResourcesMap {
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
-    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> resources;
+    MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> legacyResources;
 };
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
@@ -595,7 +596,7 @@ SVGResourcesMap& TreeScope::svgResourcesMap() const
     return *m_svgResourcesMap;
 }
 
-void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
+void TreeScope::addSVGResource(const AtomString& id, RenderSVGResourceContainer& resource)
 {
     if (id.isEmpty())
         return;
@@ -604,12 +605,21 @@ void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceCont
     svgResourcesMap().resources.set(id, &resource);
 }
 
+void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
+{
+    if (id.isEmpty())
+        return;
+
+    // Replaces resource if already present, to handle potential id changes
+    svgResourcesMap().legacyResources.set(id, &resource);
+}
+
 void TreeScope::removeSVGResource(const AtomString& id)
 {
     if (id.isEmpty())
         return;
 
-    svgResourcesMap().resources.remove(id);
+    svgResourcesMap().legacyResources.remove(id);
 }
 
 LegacyRenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
@@ -617,7 +627,7 @@ LegacyRenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& i
     if (id.isEmpty())
         return nullptr;
 
-    return svgResourcesMap().resources.get(id);
+    return svgResourcesMap().legacyResources.get(id);
 }
 
 void TreeScope::addPendingSVGResource(const AtomString& id, SVGElement& element)

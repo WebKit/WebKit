@@ -29,13 +29,15 @@ class SVGElement;
 
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
-class RenderSVGHiddenContainer final : public RenderSVGContainer {
+class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
 public:
-    RenderSVGHiddenContainer(SVGElement&, RenderStyle&&);
+    RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&);
 
 protected:
     void layout() override;
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
@@ -53,7 +55,6 @@ private:
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const final { }
     void updateFromStyle() final { }
     bool needsHasSVGTransformFlags() const final { return false; }
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
 } // namespace WebCore
