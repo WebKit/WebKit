@@ -1679,16 +1679,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module XPCEndpoint {
-    header "XPCEndpoint.h"
-    export *
-  }
-
-  explicit module XPCEndpointClient {
-    header "XPCEndpointClient.h"
-    export *
-  }
-
   explicit module _WKAppHighlight {
     header "_WKAppHighlight.h"
     export *

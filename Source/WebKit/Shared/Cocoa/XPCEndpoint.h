@@ -27,7 +27,7 @@
 
 #ifdef __cplusplus
 
-#include "WKDeclarationSpecifiers.h"
+#include <WebKit/WKBase.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
@@ -36,7 +36,7 @@ namespace WebKit {
 class XPCEndpoint {
 public:
     WK_EXPORT XPCEndpoint();
-    WK_EXPORT virtual ~XPCEndpoint() = default;
+    virtual ~XPCEndpoint() = default;
 
     WK_EXPORT void sendEndpointToConnection(xpc_connection_t);
 

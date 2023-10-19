@@ -69,7 +69,7 @@ struct AccessibilityText {
 
 bool nodeHasPresentationRole(Node*);
 
-class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
+class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject>, public CanMakeCheckedPtr {
 public:
     virtual ~AccessibilityObject();
 
@@ -787,6 +787,7 @@ protected:
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
 
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData& data) { m_isIgnoredFromParentData = data; }
+    bool ignoredFromPresentationalRole() const;
 
     bool isAccessibilityObject() const override { return true; }
 

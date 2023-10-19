@@ -27,6 +27,7 @@
 #import "XPCEndpointClient.h"
 
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {

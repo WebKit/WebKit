@@ -49,9 +49,23 @@
 <div id="grid3" role="grid">
   <div role="row">
     <span role="gridcell">Cell</span>
-    <span id="cell6" role="gridcell" aria-rowspan="2">Span Cell</span>
+    <!-- This rowspan should not span into #grid3-rowgroup. -->
+    <span id="cell6" role="gridcell" aria-rowspan="100">Span Cell</span>
   </div>
   <div role="row">
+    <span role="gridcell">Cell</span>
+  </div>
+  <div id="grid3-rowgroup" role="rowgroup">
+    <div role="row">
+      <span role="gridcell">Cell</span>
+      <!-- This rowspan should not span out into the #grid3-last-row. -->
+      <span id="cell8" role="gridcell" aria-rowspan="100">Cell</span>
+    </div>
+    <div role="row">
+      <span role="gridcell">Cell</span>
+    </div>
+  </div>
+  <div id="grid3-last-row" role="row">
     <span role="gridcell">Cell</span>
   </div>
 </div>
@@ -78,6 +92,7 @@
         var cell5 = accessibilityController.accessibleElementById("cell5");
         var cell6 = accessibilityController.accessibleElementById("cell6");
         var cell7 = accessibilityController.accessibleElementById("cell7");
+        var cell8 = accessibilityController.accessibleElementById("cell8");
 
         // aria-colcount and aria-rowcount
         testOutput += expect("grid.numberAttributeValue('AXARIAColumnCount')", "16");
@@ -96,11 +111,13 @@
         // aria-colspan and aria-rowspan
         testOutput += expect("cell2.rowIndexRange()", "'{1, 2}'");
         testOutput += expect("cell5.columnIndexRange()", "'{2, 3}'");
-        testOutput += expect("cell3.rowIndexRange()", "'{1, 3}'");
+        testOutput += expect("cell3.rowIndexRange()", "'{1, 2}'");
+        testOutput += expect("cell8.rowIndexRange()", "'{2, 2}'");
 
         testOutput += expect("cell6.rowIndexRange()", "'{0, 2}'");
         // use rowspan for native table
         testOutput += expect("cell7.rowIndexRange()", "'{0, 2}'");
+
 
         document.getElementById("grid").setAttribute("aria-rowcount", "60");
         setTimeout(async function() {

@@ -49,6 +49,7 @@ class TextStream;
 namespace WebCore {
 
 class AccessibilityTable;
+class AccessibilityTableCell;
 class Document;
 class HTMLAreaElement;
 class HTMLTableElement;
@@ -234,6 +235,7 @@ public:
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
         , WeakHashSet<AccessibilityTable>
+        , WeakHashSet<AccessibilityTableCell>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
         , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
@@ -573,6 +575,7 @@ private:
     bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
     void passwordNotificationPostTimerFired();
 
+    void deferRowspanChange(AccessibilityObject*);
     void handleChildrenChanged(AccessibilityObject&);
     void handleAllDeferredChildrenChanged();
     void handleRoleChanged(Element*, const AtomString&, const AtomString&);
@@ -595,6 +598,9 @@ private:
     void handleMenuListValueChanged(Element&);
     void handleTextChanged(AccessibilityObject*);
     void handleRecomputeCellSlots(AccessibilityTable&);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void handleRowspanChanged(AccessibilityTableCell&);
+#endif
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
@@ -674,6 +680,7 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;
+    WeakHashSet<AccessibilityTableCell> m_deferredRowspanChanges;
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
@@ -774,6 +781,7 @@ inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }
 inline void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element&) { }
 inline void AXObjectCache::deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String&) { }
 inline void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityTable&) { }
+inline void AXObjectCache::deferRowspanChange(AccessibilityObject*) { }
 #if !PLATFORM(COCOA) && !USE(ATSPI)
 inline void AXObjectCache::detachWrapper(AXCoreObject*, AccessibilityDetachmentType) { }
 #endif
