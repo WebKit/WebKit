@@ -174,6 +174,12 @@ static bool handleOptionLockdownMode(Options& options, const char*, const char*)
     return true;
 }
 
+static bool handleOptionLocalDNSResolver(Options& options, const char*, const char*)
+{
+    options.useLocalDNSResolver = true;
+    return true;
+}
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -210,6 +216,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--webcore-logging", "Enable WebCore log channels", handleOptionWebCoreLogging, true));
     optionList.append(Option("--webkit-logging", "Enable WebKit log channels", handleOptionWebKitLogging, true));
     optionList.append(Option("--lockdown-mode", "Enable Lockdown Mode", handleOptionLockdownMode));
+    optionList.append(Option("--local-dns-resolver", "Enable using a local DNS resolver, if the port supports it", handleOptionLocalDNSResolver));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }

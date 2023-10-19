@@ -27,6 +27,7 @@ import sys
 import time
 
 from webkitpy.layout_tests.servers import http_server_base
+from webkitpy.layout_tests.servers.basic_dns_server import DNSServer, Resolver
 
 _log = logging.getLogger(__name__)
 
@@ -127,6 +128,10 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._output_log_path = None
         self._wsout = None
         self._process = None
+        self._dns_server = None
+        if port_obj.supports_localhost_aliases and port_obj.get_option('local_dns_resolver') and not port_obj.get_option('disable_wpt_hostname_aliases'):
+            self._dns_server = DNSServer(Resolver(allowed_hosts=port_obj.localhost_aliases()), port=8053, address="127.0.0.1")
+
         self._pid_file = pidfile
         if not self._pid_file:
             self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
@@ -180,6 +185,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._filesystem.write_text_file(self._pid_file, str(self._process.pid))
 
+        if self._dns_server:
+            self._dns_server.start_thread()
+
         # Wait a second for the server to actually start so that tests do not start until server is running.
         time.sleep(1)
 
@@ -203,6 +211,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         if self._wsout:
             self._wsout.close()
             self._wsout = None
+
+        if self._dns_server and hasattr(self._dns_server, "thread") and self._dns_server.isAlive():
+            self._dns_server.stop()
 
         if self._process is not None:
             self._process.poll()
