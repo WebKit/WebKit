@@ -88,18 +88,16 @@ void RenderBundleEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindG
     std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets)
 {
     auto backingOffsets = valueOrDefault(dynamicOffsets);
-    wgpuRenderBundleEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), backingOffsets.size(), backingOffsets.data());
+    wgpuRenderBundleEncoderSetBindGroupWithDynamicOffsets(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), WTFMove(dynamicOffsets));
 }
 
-void RenderBundleEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
-    const uint32_t* dynamicOffsetsArrayBuffer,
-    size_t dynamicOffsetsArrayBufferLength,
-    Size64 dynamicOffsetsDataStart,
-    Size32 dynamicOffsetsDataLength)
+void RenderBundleEncoderImpl::setBindGroup(Index32, const BindGroup&,
+    const uint32_t*,
+    size_t,
+    Size64,
+    Size32)
 {
-    UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
-    // FIXME: Use checked algebra.
-    wgpuRenderBundleEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void RenderBundleEncoderImpl::pushDebugGroup(String&& groupLabel)
