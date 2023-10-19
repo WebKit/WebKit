@@ -799,8 +799,6 @@ webkit.org/b/162081 editing/inserting/typing-space-to-trigger-smart-link.html [ 
 webkit.org/b/162081 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 webkit.org/b/162081 fast/events/input-event-insert-link.html [ Failure ]
 
-webkit.org/b/160017 js/regress-139548.html [ Pass Timeout ]
-
 webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
 
 
@@ -1065,8 +1063,6 @@ webkit.org/b/208014 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 webkit.org/b/208062 http/wpt/fetch/disable-speculative-for-reload.html [ Pass Failure ]
 
 webkit.org/b/208390 [ Debug ] fast/css-custom-paint/delay-repaint.html [ Pass Failure ]
-
-webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 
 webkit.org/b/208577 [ Release ] fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ImageOnlyFailure ]
 
@@ -1993,8 +1989,6 @@ webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-bor
 
 webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
 
-webkit.org/b/262978 [ Sonoma+ ] fast/attachment/attachment-icon-from-file-extension.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/262987 REGRESSION ( Sonoma): [ Sonoma ] 3 tests in fast/attachment/mac/ are consistently failing
 [ Sonoma+ ] fast/attachment/mac/attachment-keynote.html [ Pass ImageOnlyFailure ]
 [ Sonoma+ ] fast/attachment/mac/attachment-numbers.html [ Pass ImageOnlyFailure ]
@@ -2024,3 +2018,4 @@ webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
 
 webkit.org/b/263296 [ Sonoma+ arm64 ] compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html [ ImageOnlyFailure ]
 
+webkit.org/b/263347 [ Sonoma+ Release ] compositing/reflections/repaint-with-reflection.html [ Pass ImageOnlyFailure ]

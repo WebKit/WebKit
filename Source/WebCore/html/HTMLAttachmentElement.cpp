@@ -705,11 +705,14 @@ void HTMLAttachmentElement::updateThumbnailForWideLayout(Vector<uint8_t>&& thumb
 void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
 {
     ASSERT(!isWideLayout());
-    if (!icon)
+    if (!icon) {
+        dispatchEvent(Event::create(eventNames().loadingerrorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
+    }
     m_icon = icon;
     m_iconSize = iconSize;
     invalidateRendering();
+    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcData)
@@ -745,12 +748,13 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }
 
-void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
+void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size)
 {
     ASSERT(!isWideLayout());
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
 
+    queueTaskToDispatchEvent(TaskSource::InternalAsyncTask, Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);
 }
 

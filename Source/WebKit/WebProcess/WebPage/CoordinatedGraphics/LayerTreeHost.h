@@ -122,7 +122,6 @@ private:
 
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
-    void notifyFlushRequired() override { scheduleLayerFlush(); };
     void commitSceneState(const RefPtr<Nicosia::Scene>&) override;
     void updateScene() override;
 

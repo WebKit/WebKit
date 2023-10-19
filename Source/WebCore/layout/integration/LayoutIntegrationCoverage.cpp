@@ -34,6 +34,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFrameSet.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -70,6 +71,7 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
+        || is<RenderFrameSet>(renderer)
         || is<RenderFlexibleBox>(renderer)
         || is<RenderDeprecatedFlexibleBox>(renderer)
         || is<RenderReplaced>(renderer)
@@ -175,6 +177,17 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
         return true;
     }
+    auto hasFirstLetter = [&] {
+        // FIXME: RenderTreeUpdater::updateTextRenderer produces odd values for offset/length when first-letter is present webkit.org/b/263343
+        if (rootBlockContainer.style().hasPseudoStyle(PseudoId::FirstLetter))
+            return true;
+        if (rootBlockContainer.isAnonymous())
+            return rootBlockContainer.containingBlock() && rootBlockContainer.containingBlock()->style().hasPseudoStyle(PseudoId::FirstLetter);
+        return false;
+    };
+    if (hasFirstLetter())
+        return true;
+
     if (lineLayout.isDamaged()) {
         auto previousDamages = lineLayout.damageReasons();
         if (previousDamages && previousDamages != Layout::InlineDamage::Reason::Append) {

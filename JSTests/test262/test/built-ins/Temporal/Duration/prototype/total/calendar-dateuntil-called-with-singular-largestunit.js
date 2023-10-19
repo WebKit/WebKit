@@ -44,10 +44,9 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-// Check the paths that go through NanosecondsToDays: one call to dateUntil() in
-// BalanceDuration and one in RoundDuration with largestUnit: "day" when the
-// unit is "year", "month", "week", or "day", and one extra call with
-// largestUnit: "year" in RoundDuration when the unit is "year".
+// Check the paths that go through NanosecondsToDays: only one call with
+// largestUnit: "year" in RoundDuration when the unit is "year". The others all
+// have largestUnit: "day" so the difference is taken in ISO calendar space.
 
 const duration = new Temporal.Duration(0, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
@@ -57,10 +56,10 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     duration.total({ unit, relativeTo });
   },
   {
-    years: ["day", "day", "year"],
-    months: ["day", "day"],
-    weeks: ["day", "day"],
-    days: ["day", "day"],
+    years: ["year"],
+    months: [],
+    weeks: [],
+    days: [],
     hours: [],
     minutes: [],
     seconds: [],
@@ -74,7 +73,7 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
 
 TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
   (calendar, unit) => {
-    const duration = new Temporal.Duration(5);
+    const duration = new Temporal.Duration(5, 1);
     const relativeTo = new Temporal.PlainDateTime(2000, 5, 2, 0, 0, 0, 0, 0, 0, calendar);
     duration.total({ unit, relativeTo });
   },

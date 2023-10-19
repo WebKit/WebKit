@@ -815,12 +815,6 @@
 #endif
 #endif
 
-#if PLATFORM(COCOA)
-#if !defined(HAVE_CG_CONTEXT_DRAW_PATH_DIRECT)
-#define HAVE_CG_CONTEXT_DRAW_PATH_DIRECT 1
-#endif
-#endif
-
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define HAVE_CONTACTSUI 1
 #endif

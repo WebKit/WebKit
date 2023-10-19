@@ -1848,6 +1848,9 @@ imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ I
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Skip ]
 
+# "reftest-wait" blocks attachment rendering.
+webkit.org/b/263367 fast/attachment/attachment-icon-from-file-extension.html [ Skip ]
+
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 fast/images/animated-heics-draw.html [ Skip ]
 fast/images/animated-heics-verify.html [ Skip ]

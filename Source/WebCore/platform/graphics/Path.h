@@ -86,16 +86,19 @@ public:
     static constexpr float circleControlPoint() { return PathImpl::circleControlPoint(); }
 
     WEBCORE_EXPORT std::optional<PathSegment> singleSegment() const;
-    std::optional<PathDataLine> singleDataLine() const;
-    std::optional<PathArc> singleArc() const;
-    std::optional<PathDataQuadCurve> singleQuadCurve() const;
-    std::optional<PathDataBezierCurve> singleBezierCurve() const;
-
     WEBCORE_EXPORT bool isEmpty() const;
-    bool definitelySingleLine() const;
     WEBCORE_EXPORT PlatformPathPtr platformPath() const;
 
-    const PathSegment* singleSegmentIfExists() const { return asSingle(); }
+    template <typename DataType>
+    std::optional<DataType> getSingle() const
+    {
+        if (auto segment = singleSegment())
+            return segment->get<DataType>();
+        return std::nullopt;
+    }
+
+    bool isSingleLine() const { return !!getSingle<PathDataLine>(); }
+
     WEBCORE_EXPORT const Vector<PathSegment>* segmentsIfExists() const;
     WEBCORE_EXPORT Vector<PathSegment> segments() const;
 

@@ -40,6 +40,7 @@
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
 #include "WasmConstExprGenerator.h"
+#include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyFunction.h"
 
@@ -463,28 +464,6 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         RELEASE_ASSERT(calleeGroup->isSafeToRun(m_instance->instance().memory()->mode()));
     }
 
-    for (unsigned i = 0; i < moduleInformation.tableCount(); ++i) {
-        if (moduleInformation.tables[i].isImport()) {
-            // We should either have a Table import or we should have thrown an exception.
-            RELEASE_ASSERT(m_instance->table(i));
-        }
-
-        if (!m_instance->table(i)) {
-            RELEASE_ASSERT(!moduleInformation.tables[i].isImport());
-            // We create a Table when it's a Table definition.
-            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type(), moduleInformation.tables[i].wasmType());
-            if (!wasmTable)
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"_s));
-            JSWebAssemblyTable* table = JSWebAssemblyTable::tryCreate(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
-            // We should always be able to allocate a JSWebAssemblyTable we've defined.
-            // If it's defined to be too large, we should have thrown a validation error.
-            scope.assertNoException();
-            ASSERT(table);
-            m_instance->setTable(vm, i, table);
-            RETURN_IF_EXCEPTION(scope, void());
-        }
-    }
-
     // This needs to be looked up after the memory is initialized, as the codeBlock depends on the memory mode.
     Wasm::CalleeGroup* calleeGroup = m_instance->instance().calleeGroup();
 
@@ -533,6 +512,58 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
     for (auto functionIndexSpace : moduleInformation.referencedFunctions())
         makeFunctionWrapper(functionIndexSpace);
+
+    // Tables
+    for (unsigned i = 0; i < moduleInformation.tableCount(); ++i) {
+        if (moduleInformation.tables[i].isImport()) {
+            // We should either have a Table import or we should have thrown an exception.
+            RELEASE_ASSERT(m_instance->table(i));
+        }
+
+        if (!m_instance->table(i)) {
+            RELEASE_ASSERT(!moduleInformation.tables[i].isImport());
+            // We create a Table when it's a Table definition.
+            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type(), moduleInformation.tables[i].wasmType());
+            if (!wasmTable)
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"_s));
+
+            Wasm::TableInformation::InitializationType initType = moduleInformation.tables[i].initType();
+            uint64_t initialBitsOrImportNumber = moduleInformation.tables[i].initialBitsOrImportNumber();
+            switch (initType) {
+            case Wasm::TableInformation::Default:
+                break;
+            case Wasm::TableInformation::FromGlobalImport:
+                ASSERT(initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                initialBitsOrImportNumber = m_instance->instance().loadI64Global(initialBitsOrImportNumber);
+                break;
+            case Wasm::TableInformation::FromRefFunc:
+                ASSERT(initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
+                ASSERT(makeFunctionWrapper(initialBitsOrImportNumber).isCallable());
+                initialBitsOrImportNumber = JSValue::encode(makeFunctionWrapper(initialBitsOrImportNumber));
+                break;
+            case Wasm::TableInformation::FromExtendedExpression:
+                ASSERT(initialBitsOrImportNumber < moduleInformation.constantExpressions.size());
+                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[initialBitsOrImportNumber], moduleInformation, moduleInformation.tables[i].wasmType(), initialBitsOrImportNumber);
+                RETURN_IF_EXCEPTION(scope, void());
+                break;
+            default:
+                ASSERT(initType == Wasm::TableInformation::FromRefNull);
+            }
+
+            JSWebAssemblyTable* table = JSWebAssemblyTable::tryCreate(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
+            // We should always be able to allocate a JSWebAssemblyTable we've defined.
+            // If it's defined to be too large, we should have thrown a validation error.
+            scope.assertNoException();
+            ASSERT(table);
+            m_instance->setTable(vm, i, table);
+            RETURN_IF_EXCEPTION(scope, void());
+
+            if (initType != Wasm::TableInformation::Default) {
+                if (!tableFill(&m_instance->instance(), i, 0, initialBitsOrImportNumber, m_instance->table(i)->length()))
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, "failed to initialize Table"_s));
+            }
+        }
+    }
 
     // Globals
     {

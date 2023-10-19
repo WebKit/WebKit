@@ -12,5 +12,5 @@ features: [Temporal]
 
 const calendar = TemporalHelpers.calendarFromFieldsUndefinedOptions();
 const instance = new Temporal.PlainYearMonth(2000, 5, calendar);
-instance.until({ year: 2000, month: 5, day: 3, calendar });
+instance.until({ year: 2000, month: 6, day: 3, calendar });
 assert.sameValue(calendar.dateFromFieldsCallCount, 2);

@@ -279,14 +279,25 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     WASM_PARSER_FAIL_IF(m_info->tableCount() >= maxTables, "Table count of ", m_info->tableCount(), " is too big, maximum ", maxTables);
 
     Type type;
+    bool hasInitExpr = false;
+    TableInformation::InitializationType tableInitType = TableInformation::Default;
+    uint64_t initialBitsOrImportNumber = 0;
+
+    int8_t firstByte = 0;
+    WASM_PARSER_FAIL_IF(!peekInt7(firstByte), "can't parse Table information");
+    if (!isImport && Options::useWebAssemblyTypedFunctionReferences() && static_cast<TypeKind>(firstByte) == TypeKind::Void) {
+        hasInitExpr = true;
+        m_offset++;
+        uint8_t reservedByte;
+        WASM_PARSER_FAIL_IF(!parseUInt8(reservedByte) || reservedByte, "can't parse explicitly initialized Table's reserved byte");
+    }
+
     WASM_PARSER_FAIL_IF(!parseValueType(m_info, type), "can't parse Table type");
     WASM_PARSER_FAIL_IF(!isRefType(type), "Table type should be a ref type, got ", type);
     if (!Options::useWebAssemblyTypedFunctionReferences())
         WASM_PARSER_FAIL_IF(type.kind != TypeKind::Funcref && type.kind != TypeKind::Externref, "Table type should be funcref or anyref, got ", type);
-
-    // FIXME: This restriction can be adjusted once initializer expressions are implemented.
-    // https://bugs.webkit.org/show_bug.cgi?id=251123
-    WASM_PARSER_FAIL_IF(!isDefaultableType(type), "Table's type must be defaultable");
+    if (!hasInitExpr)
+        WASM_PARSER_FAIL_IF(!isDefaultableType(type), "Table's type must be defaultable");
 
     uint32_t initial;
     std::optional<uint32_t> maximum;
@@ -298,8 +309,28 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     ASSERT(!maximum || *maximum >= initial);
 
+    if (hasInitExpr) {
+        uint8_t initOpcode;
+        Type typeForInitOpcode;
+        bool isExtendedConstantExpression;
+        v128_t unusedVector { };
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, isExtendedConstantExpression, initialBitsOrImportNumber, unusedVector, type, typeForInitOpcode));
+        WASM_PARSER_FAIL_IF(!isSubtype(typeForInitOpcode, type), "Table init_expr opcode of type ", typeForInitOpcode.kind, " doesn't match table's type ", type.kind);
+
+        if (isExtendedConstantExpression)
+            tableInitType = TableInformation::FromExtendedExpression;
+        else if (initOpcode == GetGlobal)
+            tableInitType = TableInformation::FromGlobalImport;
+        else if (initOpcode == RefFunc)
+            tableInitType = TableInformation::FromRefFunc;
+        else if (initOpcode == RefFunc)
+            tableInitType = TableInformation::FromRefNull;
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
+
     TableElementType tableType = isSubtype(type, funcrefType()) ? TableElementType::Funcref : TableElementType::Externref;
-    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType, type));
+    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType, type, tableInitType, initialBitsOrImportNumber));
 
     return { };
 }

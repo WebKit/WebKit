@@ -93,6 +93,13 @@ Ref<PathImpl> PathCairo::copy() const
     return PathCairo::create(WTFMove(platformPathCopy), downcast<PathStream>(WTFMove(elementsStream)));
 }
 
+PlatformPathPtr PathCairo::createPlatformPath(const PathSegment& segment)
+{
+    auto pathCairo = PathCairo::create();
+    pathCairo->appendSegment(segment);
+    return pathCairo->m_platformPath.leakRef();
+}
+
 PlatformPathPtr PathCairo::platformPath() const
 {
     return m_platformPath.get();

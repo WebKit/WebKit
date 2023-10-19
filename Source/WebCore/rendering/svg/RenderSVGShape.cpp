@@ -357,8 +357,11 @@ FloatRect RenderSVGShape::strokeBoundingBox() const
 {
     if (m_shapeType == ShapeType::Empty)
         return { };
-    if (!m_strokeBoundingBox)
+    if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling calculateStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
         m_strokeBoundingBox = calculateStrokeBoundingBox();
+    }
     return *m_strokeBoundingBox;
 }
 
@@ -385,7 +388,24 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
         }
     }
 
-    return adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
+    return adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
+}
+
+FloatRect RenderSVGShape::approximateStrokeBoundingBox() const
+{
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+    if (!m_approximateStrokeBoundingBox)
+        m_approximateStrokeBoundingBox = calculateApproximateStrokeBoundingBox();
+    return *m_approximateStrokeBoundingBox;
+}
+
+FloatRect RenderSVGShape::calculateApproximateStrokeBoundingBox() const
+{
+    if (m_strokeBoundingBox)
+        return *m_strokeBoundingBox;
+
+    return SVGRenderSupport::calculateApproximateStrokeBoundingBox(*this);
 }
 
 float RenderSVGShape::strokeWidth() const

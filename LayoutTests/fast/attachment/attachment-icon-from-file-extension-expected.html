@@ -1,5 +1,5 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
-<html>
+<html class="reftest-wait">
 <body>
 <attachment></attachment>
 <script>
@@ -9,6 +9,10 @@ if (window.internals)
 var attachments = document.getElementsByTagName("attachment");
 for (var i = 0; i < attachments.length; i++)
     attachments[i].file = file;
+</script>
+<script src="resources/attachment-test-utils.js"></script>
+<script>
+takeExpectedScreenshotWhenAttachmentsSettled();
 </script>
 </body>
 </html>

@@ -1833,7 +1833,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/t
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
-webkit.org/b/260103 imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_document_cookie.https.window.html [ Pass Failure ]
 
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ Skip ]
@@ -2705,8 +2704,6 @@ webkit.org/b/159755 fast/text/emoji-gender-5.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-6.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
-
-webkit.org/b/160017 js/regress-139548.html [ Slow ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Failure ]
 
@@ -4338,6 +4335,8 @@ webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional.html [ ImageOnlyFailure ]
+
+webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 
 # Untriaged writing-mode failures.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001.html [ ImageOnlyFailure ]

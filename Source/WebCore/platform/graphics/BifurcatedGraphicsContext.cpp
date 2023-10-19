@@ -148,6 +148,24 @@ void BifurcatedGraphicsContext::strokePath(const Path& path)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+#if ENABLE(INLINE_PATH_DATA)
+void BifurcatedGraphicsContext::fillPathSegment(const PathSegment& segment)
+{
+    m_primaryContext.fillPathSegment(segment);
+    m_secondaryContext.fillPathSegment(segment);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::strokePathSegment(const PathSegment& segment)
+{
+    m_primaryContext.strokePathSegment(segment);
+    m_secondaryContext.strokePathSegment(segment);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+#endif
+
 void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);

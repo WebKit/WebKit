@@ -2480,6 +2480,20 @@ EditableLinkBehavior:
     WebCore:
       default: EditableLinkBehavior::Default
 
+ElementCheckVisibilityEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "element.checkVisibility() API"
+  humanReadableDescription: "Enable element.checkVisibility() API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 EmbedElementEnabled:
   type: bool
   status: mature
@@ -7385,20 +7399,6 @@ WebAnimationsIterationCompositeEnabled:
   category: animation
   humanReadableName: "Web Animations iteration composite"
   humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-WebAnimationsMutableTimelinesEnabled:
-  type: bool
-  status: stable
-  category: animation
-  humanReadableName: "Web Animations mutable timelines"
-  humanReadableDescription: "Support for setting the timeline property of an Animation object"
   defaultValue:
     WebKitLegacy:
       default: true

@@ -270,20 +270,19 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
 
-    unsigned hour = 0;
     ASSERT(buffer.lengthRemaining() >= 2);
     auto firstHourCharacter = *buffer;
-    if (firstHourCharacter >= '0' && firstHourCharacter <= '2') {
-        buffer.advance();
-        auto secondHourCharacter = *buffer;
-        if (!isASCIIDigit(secondHourCharacter))
-            return std::nullopt;
-        hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
-        if (hour >= 24)
-            return std::nullopt;
-        buffer.advance();
-    } else
+    if (!(firstHourCharacter >= '0' && firstHourCharacter <= '2'))
         return std::nullopt;
+
+    buffer.advance();
+    auto secondHourCharacter = *buffer;
+    if (!isASCIIDigit(secondHourCharacter))
+        return std::nullopt;
+    unsigned hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
+    if (hour >= 24)
+        return std::nullopt;
+    buffer.advance();
 
     if (buffer.atEnd())
         return PlainTime(hour, 0, 0, 0, 0, 0);
@@ -295,20 +294,19 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     } else if (!(*buffer >= '0' && *buffer <= '5'))
         return PlainTime(hour, 0, 0, 0, 0, 0);
 
-    unsigned minute = 0;
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
     auto firstMinuteCharacter = *buffer;
-    if (firstMinuteCharacter >= '0' && firstMinuteCharacter <= '5') {
-        buffer.advance();
-        auto secondMinuteCharacter = *buffer;
-        if (!isASCIIDigit(secondMinuteCharacter))
-            return std::nullopt;
-        minute = (secondMinuteCharacter - '0') + 10 * (firstMinuteCharacter - '0');
-        ASSERT(minute < 60);
-        buffer.advance();
-    } else
+    if (!(firstMinuteCharacter >= '0' && firstMinuteCharacter <= '5'))
         return std::nullopt;
+
+    buffer.advance();
+    auto secondMinuteCharacter = *buffer;
+    if (!isASCIIDigit(secondMinuteCharacter))
+        return std::nullopt;
+    unsigned minute = (secondMinuteCharacter - '0') + 10 * (firstMinuteCharacter - '0');
+    ASSERT(minute < 60);
+    buffer.advance();
 
     if (buffer.atEnd())
         return PlainTime(hour, minute, 0, 0, 0, 0);
@@ -417,6 +415,106 @@ std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<int64_t> {
         auto result = parseTimeZoneNumericUTCOffset(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
+template<typename CharacterType>
+static std::optional<int64_t> parseUTCOffsetInMinutes(StringParsingBuffer<CharacterType>& buffer)
+{
+    // UTCOffset :::
+    //     TemporalSign Hour
+    //     TemporalSign Hour HourSubcomponents[+Extended]
+    //     TemporalSign Hour HourSubcomponents[~Extended]
+    //
+    // TemporalSign :::
+    //     ASCIISign
+    //     <MINUS>
+    //
+    // ASCIISign ::: one of
+    //     + -
+    //
+    // Hour :::
+    //     0 DecimalDigit
+    //     1 DecimalDigit
+    //     20
+    //     21
+    //     22
+    //     23
+    //
+    // HourSubcomponents[Extended] :::
+    //     TimeSeparator[?Extended] MinuteSecond
+    //
+    // TimeSeparator[Extended] :::
+    //     [+Extended] :
+    //     [~Extended] [empty]
+    //
+    // MinuteSecond :::
+    //     0 DecimalDigit
+    //     1 DecimalDigit
+    //     2 DecimalDigit
+    //     3 DecimalDigit
+    //     4 DecimalDigit
+    //     5 DecimalDigit
+
+    // sign and hour.
+    if (buffer.lengthRemaining() < 3)
+        return std::nullopt;
+
+    int64_t factor = 1;
+    if (*buffer == '+')
+        buffer.advance();
+    else if (*buffer == '-' || *buffer == minusSign) {
+        factor = -1;
+        buffer.advance();
+    } else
+        return std::nullopt;
+
+    ASSERT(buffer.lengthRemaining() >= 2);
+    auto firstHourCharacter = *buffer;
+    if (!(firstHourCharacter >= '0' && firstHourCharacter <= '2'))
+        return std::nullopt;
+
+    buffer.advance();
+    auto secondHourCharacter = *buffer;
+    if (!isASCIIDigit(secondHourCharacter))
+        return std::nullopt;
+    unsigned hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
+    if (hour >= 24)
+        return std::nullopt;
+    buffer.advance();
+
+    if (buffer.atEnd())
+        return (hour * 60) * factor;
+
+    if (*buffer == ':')
+        buffer.advance();
+    else if (!(*buffer >= '0' && *buffer <= '5'))
+        return (hour * 60) * factor;
+
+    if (buffer.lengthRemaining() < 2)
+        return std::nullopt;
+    auto firstMinuteCharacter = *buffer;
+    if (!(firstMinuteCharacter >= '0' && firstMinuteCharacter <= '5'))
+        return std::nullopt;
+
+    buffer.advance();
+    auto secondMinuteCharacter = *buffer;
+    if (!isASCIIDigit(secondMinuteCharacter))
+        return std::nullopt;
+    unsigned minute = (secondMinuteCharacter - '0') + 10 * (firstMinuteCharacter - '0');
+    ASSERT(minute < 60);
+    buffer.advance();
+
+    return (hour * 60 + minute) * factor;
+}
+
+std::optional<int64_t> parseUTCOffsetInMinutes(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<int64_t> {
+        auto result = parseUTCOffsetInMinutes(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;

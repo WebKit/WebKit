@@ -87,13 +87,15 @@ static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuatio
 }
 
 template<typename CharacterType>
-static bool canUseSimplifiedTextMeasuringForCharacters(const CharacterType* characters, unsigned length, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
+static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const CharacterType> characters, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
     auto& primaryFont = fontCascade.primaryFont();
-    for (unsigned i = 0; i < length; ++i) {
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(characters[i], whitespaceIsCollapsed))
+    auto* rawCharacters = characters.data();
+    for (unsigned i = 0; i < characters.size(); ++i) {
+        auto character = rawCharacters[i]; // Not using characters[i] to bypass the bounds check.
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
             return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(characters[i], false);
+        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
         if (!glyphData.isValid() || glyphData.font != &primaryFont)
             return false;
     }
@@ -109,8 +111,8 @@ static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade&
         return false;
 
     if (content.is8Bit())
-        return canUseSimplifiedTextMeasuringForCharacters(content.characters8(), content.length(), fontCascade, whitespaceIsCollapsed);
-    return canUseSimplifiedTextMeasuringForCharacters(content.characters16(), content.length(), fontCascade, whitespaceIsCollapsed);
+        return canUseSimplifiedTextMeasuringForCharacters(content.span8(), fontCascade, whitespaceIsCollapsed);
+    return canUseSimplifiedTextMeasuringForCharacters(content.span16(), fontCascade, whitespaceIsCollapsed);
 }
 
 std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderView& renderView)

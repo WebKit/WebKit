@@ -340,7 +340,6 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
     if (m_surface->hostResize(m_webPage.size()))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
-    m_coordinator.deviceOrPageScaleFactorChanged();
     m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
     IntSize scaledSize(m_webPage.size());
     scaledSize.scale(m_webPage.deviceScaleFactor());
@@ -461,7 +460,6 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 {
     m_isWaitingForRenderer = false;
     bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
-    m_coordinator.renderNextFrame();
 
     if (m_forceRepaintAsync.callback) {
         // If the asynchronous force-repaint needs a separate fresh flush, it was due to

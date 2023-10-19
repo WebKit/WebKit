@@ -60,6 +60,7 @@ class TestDownloader(object):
         self._test_suites = []
 
         self.repository_directory = repository_directory
+        self.upstream_revision = None
 
         self.test_repositories = self.load_test_repositories(self._filesystem)
 
@@ -93,6 +94,7 @@ class TestDownloader(object):
             git = self.git(directory)
         _log.info('Checking out revision ' + revision)
         git.checkout(revision, not self._options.verbose)
+        self.upstream_revision = git.rev_parse('HEAD')
 
     def _init_paths_from_expectations(self):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))

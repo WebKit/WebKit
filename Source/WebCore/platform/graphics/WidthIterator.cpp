@@ -424,8 +424,9 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (rtl())
             characterToWrite = u_charMirror(characterToWrite);
 
-        Glyph glyph;
-        glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);
+        Glyph glyph = glyphData.glyph;
+        if (glyphData.font != advanceInternalState.nextRangeFont || character != characterToWrite)
+            glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);
 
         if (!glyph && !characterMustDrawSomething) {
             commitCurrentFontRange(advanceInternalState);

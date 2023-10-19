@@ -545,6 +545,10 @@ valid("while (false) async: {}");
 invalid("label: async function foo() {}");
 invalid("if (false) async function* foo() {}");
 invalid("if (false) label: async function foo() {}");
+valid("if (false) l\\u0065t: {}");
+valid("if (false) aw\\u0061it: undefined");
+valid("while (false) yi\\u0065ld: {}");
+valid("while (false) l\\u0065t: aw\\u0061it: yi\\u0065ld: undefined");
 
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")

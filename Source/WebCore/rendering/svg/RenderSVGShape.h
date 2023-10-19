@@ -47,6 +47,8 @@ class SVGGraphicsElement;
 class RenderSVGShape : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
 public:
+    friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);
+
     enum class ShapeType : uint8_t {
         Empty,
         Path,
@@ -90,6 +92,7 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
     FloatRect strokeBoundingBox() const final;
+    FloatRect approximateStrokeBoundingBox() const;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
     bool needsHasSVGTransformFlags() const final;
@@ -112,7 +115,7 @@ protected:
     AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
-    virtual FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
+    virtual FloatRect adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -143,9 +146,12 @@ private:
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
+    FloatRect calculateApproximateStrokeBoundingBox() const;
+
 protected:
     FloatRect m_fillBoundingBox;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_approximateStrokeBoundingBox;
 private:
     bool m_needsShapeUpdate { true };
 protected:

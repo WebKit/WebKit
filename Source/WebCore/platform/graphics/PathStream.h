@@ -86,10 +86,6 @@ private:
     std::optional<DataType> singleDataType() const;
 
     std::optional<PathSegment> singleSegment() const final;
-    std::optional<PathDataLine> singleDataLine() const final;
-    std::optional<PathArc> singleArc() const final;
-    std::optional<PathDataQuadCurve> singleQuadCurve() const final;
-    std::optional<PathDataBezierCurve> singleBezierCurve() const final;
 
     bool isEmpty() const final { return m_segments.isEmpty(); }
 

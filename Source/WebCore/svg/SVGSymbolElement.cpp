@@ -59,7 +59,7 @@ RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(RenderStyle&& s
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
+        return createRenderer<RenderSVGHiddenContainer>(RenderObject::Type::SVGHiddenContainer, *this, WTFMove(style));
 #endif
     return createRenderer<LegacyRenderSVGHiddenContainer>(RenderObject::Type::LegacySVGHiddenContainer, *this, WTFMove(style));
 }

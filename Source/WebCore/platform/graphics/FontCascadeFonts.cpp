@@ -163,7 +163,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
                 return FontRanges(WTFMove(font));
             return FontRanges();
         }, [&](const FontFamilyPlatformSpecification& fontFamilySpecification) -> FontRanges {
-            return fontFamilySpecification.fontRanges(description);
+            return { fontFamilySpecification.fontRanges(description), true };
         });
         const auto& currentFamily = description.effectiveFamilyAt(index++);
         auto ranges = std::visit(visitor, currentFamily);
@@ -461,6 +461,11 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
 
     if (loadingResult.font)
         return loadingResult;
+    // https://drafts.csswg.org/css-fonts-4/#char-handling-issues
+    // "If a given character is a Private-Use Area Unicode codepoint, user agents must only match font families named in the font-family list that are not generic families. If none of the families named in the font-family list contain a glyph for that codepoint, user agents must display some form of missing glyph symbol for that character rather than attempting installed font fallback for that codepoint."
+    if (isPrivateUseAreaCharacter(character))
+        return GlyphData(0, FontCache::forCurrentThread().lastResortFallbackFont(description).ptr()); // 0 is the font's reserved .notdef glyph
+
     return glyphDataForSystemFallback(character, description, variant, resolvedEmojiPolicy, fallbackVisibility == FallbackVisibility::Invisible);
 }
 
@@ -518,7 +523,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
     }).iterator->value;
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
-    if (!glyphData.glyph) {
+    if (!glyphData.font) {
         // No glyph, resolve per-character.
         ASSERT(variant == NormalVariant);
         glyphData = glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);

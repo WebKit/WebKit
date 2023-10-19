@@ -27,6 +27,7 @@
 #include "config.h"
 #include "IntlDateTimeFormat.h"
 
+#include "ISO8601.h"
 #include "IntlCache.h"
 #include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
@@ -734,17 +735,29 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         RETURN_IF_EXCEPTION(scope, void());
     }
     String tz;
+    String timeZoneForICU;
     if (!tzValue.isUndefined()) {
         String originalTz = tzValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
-        tz = canonicalizeTimeZoneName(originalTz);
-        if (tz.isNull()) {
-            throwRangeError(globalObject, scope, "invalid time zone: "_s + originalTz);
-            return;
+        if (auto minutesValue = ISO8601::parseUTCOffsetInMinutes(originalTz)) {
+            int64_t minutes = minutesValue.value();
+            int64_t absMinutes = std::abs(minutes);
+            tz = makeString(minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), ':', pad('0', 2, absMinutes % 60));
+            timeZoneForICU = makeString("GMT", minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), pad('0', 2, absMinutes % 60));
+        } else {
+            tz = canonicalizeTimeZoneName(originalTz);
+            if (tz.isNull()) {
+                throwRangeError(globalObject, scope, "invalid time zone: "_s + originalTz);
+                return;
+            }
         }
     } else
         tz = vm.dateCache.defaultTimeZone();
     m_timeZone = tz;
+    if (!timeZoneForICU.isNull())
+        m_timeZoneForICU = WTFMove(timeZoneForICU);
+    else
+        m_timeZoneForICU = tz;
 
     Weekday weekday = intlOption<Weekday>(globalObject, options, vm.propertyNames->weekday, { { "narrow"_s, Weekday::Narrow }, { "short"_s, Weekday::Short }, { "long"_s, Weekday::Long } }, "weekday must be \"narrow\", \"short\", or \"long\""_s, Weekday::None);
     RETURN_IF_EXCEPTION(scope, void());
@@ -830,7 +843,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         // First, we create UDateFormat via dateStyle and timeStyle. And then convert it to pattern string.
         // After updating this pattern string with hourCycle, we create a final UDateFormat with the updated pattern string.
         UErrorCode status = U_ZERO_ERROR;
-        StringView timeZoneView(m_timeZone);
+        StringView timeZoneView(m_timeZoneForICU);
         auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(m_timeStyle), parseUDateFormatStyle(m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
@@ -930,7 +943,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     dataLogLnIf(IntlDateTimeFormatInternal::verbose, "locale:(", m_locale, "),dataLocale:(", dataLocaleWithExtensions, "),pattern:(", pattern, ")");
 
     UErrorCode status = U_ZERO_ERROR;
-    StringView timeZoneView(m_timeZone);
+    StringView timeZoneView(m_timeZoneForICU);
     m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
@@ -1419,7 +1432,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
 
     UErrorCode status = U_ZERO_ERROR;
-    StringView timeZoneView(m_timeZone);
+    StringView timeZoneView(m_timeZoneForICU);
     m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.data(), skeleton.data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);

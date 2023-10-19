@@ -14,4 +14,4 @@ const calendar = TemporalHelpers.calendarCheckOptionsPrototypePollution();
 const instance = new Temporal.ZonedDateTime(0n, "UTC", calendar);
 const argument = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", calendar);
 instance.since(argument, { largestUnit: "year" });
-assert.sameValue(calendar.dateUntilCallCount, 2, "dateUntil should have been called on the calendar");
+assert.sameValue(calendar.dateUntilCallCount, 1, "dateUntil should have been called on the calendar");

@@ -1,0 +1,64 @@
+<body>
+    <p>Passes if it does not time out.</p>
+    <svg id="svg" width="600px" height="400px">
+        <ellipse cx="300" cy="200" rx="250" ry="150" fill="url(#z)" stroke="black" stroke-width="2" />
+    </svg>
+    <script>
+        function createPattern(parent, id, fillURL, colors) {
+            var pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+            parent.appendChild(pattern);
+
+            pattern.setAttribute("id", id);
+            pattern.setAttribute("x", "10");
+            pattern.setAttribute("y", "10");
+            pattern.setAttribute("width", "100");
+            pattern.setAttribute("height", "100");
+            pattern.setAttribute("patternUnits", "userSpaceOnUse");
+
+            for (i in colors) {
+                var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                pattern.appendChild(rect);
+
+                rect.setAttribute("x", i);
+                rect.setAttribute("y", i);
+                rect.setAttribute("width", "100");
+                rect.setAttribute("height", "100");
+                rect.setAttribute("fill", fillURL);
+                rect.setAttribute("stroke", colors[i]);
+            }
+        }
+
+        function setupPatterns() {
+            var svg = document.getElementById("svg");
+
+            const colors = [
+                "green",
+                "brown",
+                "pink",
+                "grey",
+                "cyan",
+                "green",
+                "brown",
+                "pink",
+                "grey",
+                "cyan"
+            ];
+
+            createPattern(svg, "z", "url(#i)", colors);
+            createPattern(svg, "i", "url(#h)", colors);
+            createPattern(svg, "h", "url(#g)", colors);
+            createPattern(svg, "g", "url(#f)", colors);
+            createPattern(svg, "f", "url(#e)", colors);
+            createPattern(svg, "e", "url(#d)", colors);
+            createPattern(svg, "d", "url(#c)", colors);
+            createPattern(svg, "c", "url(#b)", colors);
+            createPattern(svg, "b", "url(#a)", colors);
+            createPattern(svg, "a", "none", colors);
+        }
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        setupPatterns();
+    </script>
+</body>

@@ -100,9 +100,10 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
     //
     // Note: The values of the stroke-opacity, stroke-dasharray and stroke-dashoffset do not affect the calculation of the stroke shape.
     if (options.contains(DecorationOption::IncludeStrokeShape)) {
-        // FIXME: We need to use approximate stroke-bounding-box computation when it gets implemented and CalculateFastRepaintRect is specified.
-        // https://bugs.webkit.org/show_bug.cgi?id=263077
-        box.unite(m_renderer.strokeBoundingBox());
+        if (options.contains(DecorationOption::CalculateFastRepaintRect) && is<RenderSVGShape>(m_renderer))
+            box.unite(downcast<RenderSVGShape>(m_renderer).approximateStrokeBoundingBox());
+        else
+            box.unite(m_renderer.strokeBoundingBox());
     }
 
     // 5. If markers is true, then for each marker marker rendered on the element:

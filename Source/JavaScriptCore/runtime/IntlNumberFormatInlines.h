@@ -62,9 +62,6 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
 
     intlInstance->m_minimumIntegerDigits = minimumIntegerDigits;
 
-    IntlRoundingPriority roundingPriority = intlOption<IntlRoundingPriority>(globalObject, options, vm.propertyNames->roundingPriority, { { "auto"_s, IntlRoundingPriority::Auto }, { "morePrecision"_s, IntlRoundingPriority::MorePrecision }, { "lessPrecision"_s, IntlRoundingPriority::LessPrecision } }, "roundingPriority must be either \"auto\", \"morePrecision\", or \"lessPrecision\""_s, IntlRoundingPriority::Auto);
-    RETURN_IF_EXCEPTION(scope, void());
-
     unsigned roundingIncrement = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, 5000, 1);
     RETURN_IF_EXCEPTION(scope, void());
     static constexpr const unsigned roundingIncrementCandidates[] = {
@@ -89,6 +86,9 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
             { "halfTrunc"_s, RoundingMode::HalfTrunc },
             { "halfEven"_s, RoundingMode::HalfEven }
         }, "roundingMode must be either \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, RoundingMode::HalfExpand);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    IntlRoundingPriority roundingPriority = intlOption<IntlRoundingPriority>(globalObject, options, vm.propertyNames->roundingPriority, { { "auto"_s, IntlRoundingPriority::Auto }, { "morePrecision"_s, IntlRoundingPriority::MorePrecision }, { "lessPrecision"_s, IntlRoundingPriority::LessPrecision } }, "roundingPriority must be either \"auto\", \"morePrecision\", or \"lessPrecision\""_s, IntlRoundingPriority::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
     IntlTrailingZeroDisplay trailingZeroDisplay = intlOption<IntlTrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, IntlTrailingZeroDisplay::Auto }, { "stripIfInteger"_s, IntlTrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, IntlTrailingZeroDisplay::Auto);

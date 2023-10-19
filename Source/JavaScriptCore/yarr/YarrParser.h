@@ -781,14 +781,15 @@ private:
     }
 
     // The handling of IdentityEscapes is different depending on which unicode flag if any is active.
-    // For Unicode patterns, IdentityEscapes only include SyntaxCharacters or '/'.
-    // For UnicodeSet patterns, adds to the UnicodePatterns IdentityEscapes
-    // ClassSetReservedPunctionation which includes &-!#%,:;<=>@`~
+    // For both Unicode and UnicodeSet patterns, IdentityEscapes only include SyntaxCharacters or '/'.
+    // For UnicodeSet patterns when parsing ClassSet expressions and ClassStringDisjunctions, escapes include SyntaxCharacters, '/'
+    // and ClassSetReservedPunctionation, which is any of &-!#%,:;<=>@`~
     // For non-unicode patterns, most any character can be escaped.
+    template<ParseEscapeMode parseEscapeMode>
     bool isIdentityEscapeAnError(int ch)
     {
         if (isEitherUnicodeCompilation()
-            && ((isASCII(ch) && !strchr(isUnicodeCompilation() ? "^$\\.*+?()[]{}|/" : "^$\\.*+?()[]{}|/&-!#%,:;<=>@`~" , ch)) || !ch)) {
+            && ((isASCII(ch) && !strchr((parseEscapeMode == ParseEscapeMode::ClassSet || parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) ? "^$\\.*+?()[]{}|/&-!#%,:;<=>@`~" : "^$\\.*+?()[]{}|/", ch)) || !ch)) {
             m_errorCode = ErrorCode::InvalidIdentityEscape;
             return true;
         }
@@ -850,7 +851,7 @@ private:
         case 'B':
             consume();
             if (parseEscapeMode != ParseEscapeMode::Normal) {
-                if (isIdentityEscapeAnError('B'))
+                if (isIdentityEscapeAnError<parseEscapeMode>('B'))
                     break;
 
                 delegate.atomPatternCharacter('B');
@@ -1026,7 +1027,7 @@ private:
             consume();
             int x = tryConsumeHex(2);
             if (x == -1) {
-                if (isIdentityEscapeAnError('x'))
+                if (isIdentityEscapeAnError<parseEscapeMode>('x'))
                     break;
 
                 delegate.atomPatternCharacter('x');
@@ -1059,7 +1060,7 @@ private:
             }
 
             restoreState(state);
-            if (!isIdentityEscapeAnError('k')) {
+            if (!isIdentityEscapeAnError<parseEscapeMode>('k')) {
                 delegate.atomPatternCharacter('k');
                 m_kIdentityEscapeSeen = true; 
             }
@@ -1072,7 +1073,7 @@ private:
             int escapeChar = consume();
 
             if (isLegacyCompilation() || parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
-                if (isIdentityEscapeAnError(escapeChar))
+                if (isIdentityEscapeAnError<parseEscapeMode>(escapeChar))
                     break;
                 delegate.atomPatternCharacter(escapeChar);
                 break;
@@ -1112,7 +1113,7 @@ private:
                 m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
             }
 
-            if (isIdentityEscapeAnError(escapeChar))
+            if (isIdentityEscapeAnError<parseEscapeMode>(escapeChar))
                 break;
 
             delegate.atomPatternCharacter(escapeChar);
@@ -1139,7 +1140,7 @@ private:
                 break;
             }
 
-            if (isIdentityEscapeAnError(ch))
+            if (isIdentityEscapeAnError<parseEscapeMode>(ch))
                 break;
 
             delegate.atomPatternCharacter(consume());

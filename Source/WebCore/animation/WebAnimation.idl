@@ -51,7 +51,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
-    [EnabledConditionallyReadWriteBySetting=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
+    attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute CSSNumberish? startTime;
     [ImplementedAs=bindingsCurrentTime] attribute CSSNumberish? currentTime;
     attribute double playbackRate;
