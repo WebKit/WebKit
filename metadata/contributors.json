@@ -2275,6 +2275,13 @@
    },
    {
       "emails" : [
+         "dfourny@apple.com"
+      ],
+      "github" : "dfourny-apple",
+      "name" : "Dimitri Fourny"
+   },
+   {
+      "emails" : [
          "dglazkov@chromium.org"
       ],
       "expertise" : "The Chromium Port, Shadow DOM, DOM, HTML Forms, Shadow DOM, Web Components, V8 Bindings, InspectorController, garden-o-matic",
