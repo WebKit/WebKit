@@ -2019,3 +2019,5 @@ webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
 webkit.org/b/263296 [ Sonoma+ arm64 ] compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/263347 [ Sonoma+ Release ] compositing/reflections/repaint-with-reflection.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/263407 [ Sonoma+ ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
