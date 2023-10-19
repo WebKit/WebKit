@@ -72,7 +72,8 @@ static bool shouldExposeTypeInItemList(const String& type)
 
 ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& document, const String& data, const String& type)
 {
-    if (!m_dataTransfer.canWriteData())
+    Ref dataTransfer = m_dataTransfer.get();
+    if (!dataTransfer->canWriteData())
         return nullptr;
 
     for (auto& item : ensureItems()) {
@@ -85,7 +86,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& docume
     if (!shouldExposeTypeInItemList(lowercasedType))
         return nullptr;
 
-    m_dataTransfer.setDataFromItemList(document, lowercasedType, data);
+    dataTransfer->setDataFromItemList(document, lowercasedType, data);
     ASSERT(m_items);
     m_items->append(DataTransferItem::create(*this, lowercasedType));
     return m_items->last().ptr();
@@ -93,17 +94,19 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& docume
 
 RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&& file)
 {
-    if (!m_dataTransfer.canWriteData())
+    Ref dataTransfer = m_dataTransfer.get();
+    if (!dataTransfer->canWriteData())
         return nullptr;
 
     ensureItems().append(DataTransferItem::create(*this, file->type(), file.copyRef()));
-    m_dataTransfer.didAddFileToItemList();
+    dataTransfer->didAddFileToItemList();
     return m_items->last().ptr();
 }
 
 ExceptionOr<void> DataTransferItemList::remove(unsigned index)
 {
-    if (!m_dataTransfer.canWriteData())
+    Ref dataTransfer = m_dataTransfer.get();
+    if (!dataTransfer->canWriteData())
         return Exception { InvalidStateError };
 
     auto& items = ensureItems();
@@ -111,20 +114,21 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
         return { };
 
     // FIXME: Remove the file from the pasteboard object once we add support for it.
-    Ref<DataTransferItem> removedItem = items[index].copyRef();
+    Ref removedItem = items[index].copyRef();
     if (!removedItem->isFile())
-        m_dataTransfer.pasteboard().clear(removedItem->type());
+        dataTransfer->pasteboard().clear(removedItem->type());
     removedItem->clearListAndPutIntoDisabledMode();
     items.remove(index);
     if (removedItem->isFile())
-        m_dataTransfer.updateFileList(scriptExecutionContext());
+        dataTransfer->updateFileList(protectedScriptExecutionContext().get());
 
     return { };
 }
 
 void DataTransferItemList::clear()
 {
-    m_dataTransfer.pasteboard().clear();
+    Ref dataTransfer = m_dataTransfer.get();
+    dataTransfer->pasteboard().clear();
     bool removedItemContainingFile = false;
     if (m_items) {
         for (auto& item : *m_items) {
@@ -135,7 +139,7 @@ void DataTransferItemList::clear()
     }
 
     if (removedItemContainingFile)
-        m_dataTransfer.updateFileList(scriptExecutionContext());
+        dataTransfer->updateFileList(protectedScriptExecutionContext().get());
 }
 
 Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
@@ -143,15 +147,16 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     if (m_items)
         return *m_items;
 
+    Ref dataTransfer = m_dataTransfer.get();
     Vector<Ref<DataTransferItem>> items;
-    for (auto& type : m_dataTransfer.typesForItemList()) {
+    for (auto& type : dataTransfer->typesForItemList()) {
         auto lowercasedType = type.convertToASCIILowercase();
         if (shouldExposeTypeInItemList(lowercasedType))
             items.append(DataTransferItem::create(*this, lowercasedType));
     }
 
     RefPtr document { this->document() };
-    for (auto& file : m_dataTransfer.files(*document).files())
+    for (auto& file : dataTransfer->files(*document).files())
         items.append(DataTransferItem::create(*this, file->type(), file.copyRef()));
 
     m_items = WTFMove(items);

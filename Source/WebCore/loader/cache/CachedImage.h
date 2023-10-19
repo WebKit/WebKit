@@ -56,6 +56,7 @@ public:
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image() const; // Returns the nullImage() if the image is not available yet.
+    WEBCORE_EXPORT RefPtr<Image> protectedImage() const;
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
     bool hasSVGImage() const;
