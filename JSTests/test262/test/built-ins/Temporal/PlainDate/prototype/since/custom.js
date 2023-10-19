@@ -9,7 +9,7 @@ features: [Temporal]
 ---*/
 
 const result = new Temporal.Duration(1, 3, 5, 7, 9);
-const options = {};
+const options = { largestUnit: "years" };
 let calls = 0;
 class CustomCalendar extends Temporal.Calendar {
   constructor() {
@@ -20,7 +20,7 @@ class CustomCalendar extends Temporal.Calendar {
     assert.sameValue(args.length, 3, "Three arguments");
     assert.sameValue(args[0], plainDate, "First argument");
     assert.sameValue(args[1], other, "Second argument");
-    assert.sameValue(args[2].largestUnit, "day", "Third argument: largestUnit");
+    assert.sameValue(args[2].largestUnit, "year", "Third argument: largestUnit");
     return result;
   }
 }

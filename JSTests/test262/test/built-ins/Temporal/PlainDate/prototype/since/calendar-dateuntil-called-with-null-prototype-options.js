@@ -13,5 +13,5 @@ features: [Temporal]
 const calendar = TemporalHelpers.calendarCheckOptionsPrototypePollution();
 const instance = new Temporal.PlainDate(2000, 5, 2, calendar);
 const argument = new Temporal.PlainDate(2022, 6, 14, calendar);
-instance.since(argument);
+instance.since(argument, { largestUnit: "months" });
 assert.sameValue(calendar.dateUntilCallCount, 1, "dateUntil should have been called on the calendar");

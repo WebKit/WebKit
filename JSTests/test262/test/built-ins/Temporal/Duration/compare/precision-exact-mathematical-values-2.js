@@ -40,11 +40,12 @@ features: [Temporal]
 var one = Temporal.Duration.from({
   days: Number.MAX_SAFE_INTEGER,
   weeks: 3,
+  years: 1,
 });
 
 var two = Temporal.Duration.from({
   days: Number.MAX_SAFE_INTEGER + 3,
-  weeks: 0,
+  years: 1,
 });
 
 var cal = new class extends Temporal.Calendar {

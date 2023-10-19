@@ -76,13 +76,13 @@ features: [Temporal]
 ---*/
 
 // Check with smallestUnit nanoseconds but roundingIncrement > 1; each call
-// should result in two calls to dateUntil() originating from
-// AdjustRoundedDurationDays, one with largestUnit equal to the largest unit in
-// the duration higher than "day", and one with largestUnit: "day".
+// should result in one call to dateUntil() originating from
+// AdjustRoundedDurationDays, with largestUnit equal to the largest unit in
+// the duration higher than "day".
 // Additionally one call with largestUnit: "month" in BalanceDurationRelative
-// when the largestUnit given to round() is "year", and one call with
-// largestUnit: "day" when the largestUnit given to round() is "year", "month",
-// "week", or "day".
+// when the largestUnit given to round() is "year".
+// Other calls have largestUnit: "day" so the difference is taken in ISO
+// calendar space.
 
 const durations = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 86399_999_999_999],
@@ -104,16 +104,16 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     duration.round({ largestUnit, roundingIncrement: 2, roundingMode: 'ceil', relativeTo });
   },
   {
-    years: ["year", "day", "day", "month"],
-    months: ["month", "day", "day"],
-    weeks: ["week", "day", "day"],
-    days: ["day", "day", "day"],
-    hours: ["day", "day"],
-    minutes: ["day", "day"],
-    seconds: ["day", "day"],
-    milliseconds: ["day", "day"],
-    microseconds: ["day", "day"],
-    nanoseconds: ["day", "day"]
+    years: ["year", "month"],
+    months: ["month"],
+    weeks: ["week"],
+    days: [],
+    hours: [],
+    minutes: [],
+    seconds: [],
+    milliseconds: [],
+    microseconds: [],
+    nanoseconds: []
   }
 );
 
@@ -142,18 +142,18 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
 
 // Check the paths that call dateUntil() in RoundDuration. These paths do not
 // call dateUntil() in AdjustRoundedDurationDays. Note that there is no
-// largestUnit: "month" call in BalanceDurationRelative and no largestUnit:
-// "day" call in BalanceDuration, because the durations have rounded down to 0.
+// largestUnit: "month" call in BalanceDurationRelative, because the durations
+// have rounded down to 0.
 
 TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
   (calendar, largestUnit) => {
-    const duration = new Temporal.Duration(0, 0, 0, 0, 1, 1, 1, 1, 1, 1);
+    const duration = new Temporal.Duration(0, 1, 0, 0, 1, 1, 1, 1, 1, 1);
     const relativeTo = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", calendar);
     duration.round({ largestUnit, smallestUnit: largestUnit, relativeTo });
   }, {
-    years: ["day", "year"],
-    months: ["day"],
-    weeks: ["day"],
-    days: ["day"]
+    years: ["year"],
+    months: [],
+    weeks: [],
+    days: []
   }
 );

@@ -32,5 +32,8 @@ const tests = [
 ];
 for (const [test, description = typeof test] of tests) {
   const plainDate = new Temporal.PlainDate(2000, 5, 2, new CustomCalendar(test));
-  assert.throws(TypeError, () => plainDate.until("2022-06-20"), `Expected error with ${description}`);
+  assert.throws(
+    TypeError, () => plainDate.until("2022-06-20", { largestUnit: "years" }),
+    `Expected error with ${description}`
+  );
 }
