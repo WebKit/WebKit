@@ -108,9 +108,6 @@
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
-#endif
-
-#if ENABLE(DRAG_SUPPORT)
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragInteraction_Private.h>
 #import <UIKit/UIDragItem_Private.h>
@@ -1117,7 +1114,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @interface UIScrollView (IPI)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
-- (BOOL)_isScrollingToTop;
 @end
 
 @interface UIPeripheralHost (IPI)

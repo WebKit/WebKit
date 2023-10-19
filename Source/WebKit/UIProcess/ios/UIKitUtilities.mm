@@ -30,6 +30,16 @@
 
 #import "UIKitSPI.h"
 
+#if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+
+@interface UIScrollView (Staging_112474145)
+@property (nonatomic, readonly, getter=isScrollAnimating) BOOL scrollAnimating;
+@property (nonatomic, readonly, getter=isZoomAnimating) BOOL zoomAnimating;
+- (void)stopScrollingAndZooming;
+@end
+
+#endif // HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+
 @implementation UIScrollView (WebKitInternal)
 
 - (BOOL)_wk_isInterruptingDeceleration
@@ -63,6 +73,37 @@
         contentSize.height + inset.bottom - std::min<CGFloat>(boundsSize.height, self._wk_contentHeightIncludingInsets)
     );
     return contentOffset.x > maxScrollExtent.x || contentOffset.y > maxScrollExtent.y;
+}
+
+- (BOOL)_wk_isScrollAnimating
+{
+#if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+    static BOOL hasScrollAnimating = [UIScrollView instancesRespondToSelector:@selector(isScrollAnimating)];
+    return hasScrollAnimating && self.scrollAnimating;
+#else
+    return self.isAnimatingScroll;
+#endif
+}
+
+- (BOOL)_wk_isZoomAnimating
+{
+#if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+    static BOOL hasZoomAnimating = [UIScrollView instancesRespondToSelector:@selector(isZoomAnimating)];
+    return hasZoomAnimating && self.zoomAnimating;
+#else
+    return self.isAnimatingZoom;
+#endif
+}
+
+- (void)_wk_stopScrollingAndZooming
+{
+#if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+    static BOOL hasStopScrollingAndZooming = [UIScrollView instancesRespondToSelector:@selector(stopScrollingAndZooming)];
+    if (hasStopScrollingAndZooming)
+        [self stopScrollingAndZooming];
+#else
+    [self _stopScrollingAndZoomingAnimations];
+#endif
 }
 
 - (CGPoint)_wk_clampToScrollExtents:(CGPoint)contentOffset

@@ -33,6 +33,7 @@
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "RemoteScrollingTree.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKScrollView.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
@@ -326,9 +327,7 @@ bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatP
 void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [scrollView() _stopScrollingAndZoomingAnimations];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    [scrollView() _wk_stopScrollingAndZooming];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -345,7 +344,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([scrollView() _isAnimatingScroll])
+    if (scrollView()._wk_isScrollAnimating)
 ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
