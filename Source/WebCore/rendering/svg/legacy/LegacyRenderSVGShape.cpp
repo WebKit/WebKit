@@ -399,7 +399,7 @@ FloatRect LegacyRenderSVGShape::calculateApproximateStrokeBoundingBox() const
 
 void LegacyRenderSVGShape::updateRepaintBoundingBox()
 {
-    m_repaintBoundingBox = strokeBoundingBox();
+    m_repaintBoundingBox = calculateApproximateStrokeBoundingBox();
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
 }
 
