@@ -60,6 +60,21 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
+static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList& inlineItemList, const InlineDamage& lineDamage)
+{
+    auto damageStartPosition = lineDamage.start()->inlineItemPosition;
+    if (damageStartPosition.index >= inlineItemList.size()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    auto& damagedInlineItem = inlineItemList[damageStartPosition.index];
+    if (damageStartPosition.offset && (!is<InlineTextItem>(damagedInlineItem) || damageStartPosition.offset >= downcast<InlineTextItem>(damagedInlineItem).length())) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    return InlineItemRange { damageStartPosition, { inlineItemList.size(), 0 } };
+}
+
 InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
     : m_rootBlockContainer(rootBlockContainer)
     , m_layoutState(layoutState)
@@ -83,26 +98,36 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     }
 
     auto& inlineContentCache = this->inlineContentCache();
-    auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
-    auto needsInlineItemsUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
-    if (needsInlineItemsUpdate) {
+    auto needsInlineItemListUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
+    if (needsInlineItemListUpdate) {
         // FIXME: This should go to invalidation.
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
-        InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
+        auto startPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
+        InlineItemsBuilder { inlineContentCache, root() }.build(startPosition);
     }
 
     auto& inlineItemList = inlineContentCache.inlineItems().content();
-    auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItemList.size(), 0 } };
+    auto needsLayoutRange = InlineItemRange { { }, { inlineItemList.size(), 0 } };
+    if (lineDamage) {
+        if (auto partialRange = partialRangeForDamage(inlineItemList, *lineDamage))
+            needsLayoutRange = *partialRange;
+        else {
+            // Demote this layout to full range.
+            lineDamage = nullptr;
+        }
+    }
     if (needsLayoutRange.isEmpty()) {
         ASSERT_NOT_REACHED();
         return { };
     }
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
-        if (!needsLayoutStartPosition)
+        if (!needsLayoutRange.start)
             return { };
-        if (!lineDamage || !lineDamage->start())
+        if (!lineDamage || !lineDamage->start()) {
+            ASSERT_NOT_REACHED();
             return { };
+        }
         auto lastLineIndex = lineDamage->start()->lineIndex - 1;
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
@@ -133,8 +158,8 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
         return *intrinsicSizes;
 
     auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
-    auto needsInlineItemsUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
-    if (needsInlineItemsUpdate)
+    auto needsInlineItemListUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
+    if (needsInlineItemListUpdate)
         InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
