@@ -567,6 +567,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCharacterData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCharacterData.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCheckVisibilityOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCheckVisibilityOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChildNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChildNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSClipboard.cpp

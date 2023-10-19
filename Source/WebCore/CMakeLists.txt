@@ -1007,6 +1007,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/BroadcastChannel.idl
     dom/CDATASection.idl
     dom/CharacterData.idl
+    dom/CheckVisibilityOptions.idl
     dom/ChildNode.idl
     dom/ClipboardEvent.idl
     dom/Comment.idl

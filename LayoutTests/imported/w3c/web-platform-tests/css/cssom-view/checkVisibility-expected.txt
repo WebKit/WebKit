@@ -1,19 +1,21 @@
 hello
 hello
+hello
+slotted
 spacer
 
-FAIL checkVisibility on visibility:hidden element. visibilityhidden.checkVisibility is not a function. (In 'visibilityhidden.checkVisibility({
-    checkVisibilityCSS: true
-  })', 'visibilityhidden.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:hidden element. cvhidden.checkVisibility is not a function. (In 'cvhidden.checkVisibility()', 'cvhidden.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:auto element. cvauto.checkVisibility is not a function. (In 'cvauto.checkVisibility()', 'cvauto.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:auto element which is outside the viewport. cvautooffscreen.checkVisibility is not a function. (In 'cvautooffscreen.checkVisibility()', 'cvautooffscreen.checkVisibility' is undefined)
-FAIL checkVisibility on display:none element. displaynone.checkVisibility is not a function. (In 'displaynone.checkVisibility()', 'displaynone.checkVisibility' is undefined)
-FAIL checkVisibility on opacity:0 element. opacityzero.checkVisibility is not a function. (In 'opacityzero.checkVisibility({
-    checkOpacity: true
-  })', 'opacityzero.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:auto with visibility:hidden inside. cvautochild.checkVisibility is not a function. (In 'cvautochild.checkVisibility({checkVisibilityCSS: true})', 'cvautochild.checkVisibility' is undefined)
-FAIL checkVisibility on nested content-visibility:auto containers reports that the content is visible. nestedcvautochild.checkVisibility is not a function. (In 'nestedcvautochild.checkVisibility()', 'nestedcvautochild.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:hidden child after forced layout update. cvhiddenchildwithupdate.checkVisibility is not a function. (In 'cvhiddenchildwithupdate.checkVisibility()', 'cvhiddenchildwithupdate.checkVisibility' is undefined)
-FAIL checkVisibility on content-visibility:hidden element after forced layout update. cvhiddenwithupdate.checkVisibility is not a function. (In 'cvhiddenwithupdate.checkVisibility()', 'cvhiddenwithupdate.checkVisibility' is undefined)
+PASS checkVisibility on visibility:hidden element.
+PASS checkVisibility on content-visibility:hidden element.
+PASS checkVisibility on element slotted in content-visibility: hidden shadow host.
+PASS checkVisibility on content-visibility:auto element.
+PASS checkVisibility on content-visibility:auto element which is outside the viewport.
+PASS checkVisibility on display:none element.
+PASS checkVisibility on element slotted in display:none shadow host.
+PASS checkVisibility on display:contents element.
+PASS checkVisibility on opacity:0 element.
+PASS checkVisibility on element slotted in opacity: 0; shadow host.
+PASS checkVisibility on content-visibility:auto with visibility:hidden inside.
+PASS checkVisibility on nested content-visibility:auto containers reports that the content is visible.
+PASS checkVisibility on content-visibility:hidden child after forced layout update.
+PASS checkVisibility on content-visibility:hidden element after forced layout update.
 

@@ -92,6 +92,7 @@ enum class IsSyntheticClick : bool { No, Yes };
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
 
+struct CheckVisibilityOptions;
 struct FullscreenOptions;
 struct GetAnimationsOptions;
 struct IntersectionObserverData;
@@ -197,6 +198,8 @@ public:
     inline const Attribute* findAttributeByName(const QualifiedName&) const;
     inline unsigned findAttributeIndexByName(const QualifiedName&) const;
     inline unsigned findAttributeIndexByName(const AtomString&, bool shouldIgnoreAttributeCase) const;
+
+    bool checkVisibility(const CheckVisibilityOptions&);
 
     WEBCORE_EXPORT void scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg);
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);

@@ -906,6 +906,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/CDATASection.h
     dom/CallbackResult.h
     dom/CharacterData.h
+    dom/CheckVisibilityOptions.h
     dom/CollectionIndexCache.h
     dom/CollectionIndexCacheInlines.h
     dom/Comment.h

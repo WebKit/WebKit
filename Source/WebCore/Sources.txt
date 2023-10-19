@@ -3303,6 +3303,7 @@ JSChannelMergerOptions.cpp
 JSChannelSplitterNode.cpp
 JSChannelSplitterOptions.cpp
 JSCharacterData.cpp
+JSCheckVisibilityOptions.cpp
 JSChildNode.cpp
 JSClipboard.cpp
 JSClipboardEvent.cpp

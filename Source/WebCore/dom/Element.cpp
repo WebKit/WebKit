@@ -30,6 +30,7 @@
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
 #include "CSSParser.h"
+#include "CheckVisibilityOptions.h"
 #include "ChildChangeInvalidation.h"
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
@@ -5450,6 +5451,39 @@ std::optional<OptionSet<ContentRelevancy>> Element::contentRelevancy() const
 void Element::setContentRelevancy(OptionSet<ContentRelevancy> contentRelevancy)
 {
     ensureElementRareData().setContentRelevancy(contentRelevancy);
+}
+
+bool Element::checkVisibility(const CheckVisibilityOptions& options)
+{
+    document().updateStyleIfNeeded();
+
+    auto* style = computedStyle();
+
+    // Disconnected node, not rendered.
+    if (!style)
+        return false;
+
+    // See https://github.com/w3c/csswg-drafts/issues/9478.
+    if (style->display() == DisplayType::Contents)
+        return false;
+
+    if (options.checkVisibilityCSS && style->visibility() != Visibility::Visible)
+        return false;
+
+    for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        auto* ancestorStyle = ancestor->computedStyle();
+        if (ancestorStyle->display() == DisplayType::None)
+            return false;
+
+        if (options.checkOpacity && ancestorStyle->opacity() == 0.0f)
+            return false;
+    }
+
+    // skippedContentReason() includes the skipped content root, so we query the parent to make sure we exclude roots that are visible.
+    auto* parent = parentElementInComposedTree();
+    ASSERT(!parent || parent->computedStyle());
+    return style->skippedContentReason().value_or(ContentVisibility::Visible) != ContentVisibility::Hidden
+        || (parent && parent->computedStyle()->skippedContentReason().value_or(ContentVisibility::Visible) != ContentVisibility::Hidden);
 }
 
 AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)

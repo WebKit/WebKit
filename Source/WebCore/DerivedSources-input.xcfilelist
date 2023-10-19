@@ -1311,6 +1311,7 @@ $(PROJECT_DIR)/dom/BeforeUnloadEvent.idl
 $(PROJECT_DIR)/dom/BroadcastChannel.idl
 $(PROJECT_DIR)/dom/CDATASection.idl
 $(PROJECT_DIR)/dom/CharacterData.idl
+$(PROJECT_DIR)/dom/CheckVisibilityOptions.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
 $(PROJECT_DIR)/dom/ClipboardEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl

@@ -27,6 +27,9 @@
 partial interface Element {
     DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
+
+    [EnabledBySetting=ElementCheckVisibilityEnabled] boolean checkVisibility(optional CheckVisibilityOptions options = {});
+
     undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
     [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
     [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
