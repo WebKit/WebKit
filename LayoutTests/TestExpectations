@@ -1833,7 +1833,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/t
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
-webkit.org/b/260103 imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_document_cookie.https.window.html [ Pass Failure ]
 
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ Skip ]

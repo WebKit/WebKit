@@ -201,6 +201,7 @@ void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, F
             });
         };
 
+        document->invalidateDOMCookieCache();
         cookieJar.setCookieAsync(document, document->url(), cookie, WTFMove(resultHandler));
     };
 

@@ -1805,6 +1805,8 @@ public:
 
     String mediaKeysStorageDirectory();
 
+    void invalidateDOMCookieCache();
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -1904,7 +1906,6 @@ private:
     const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
     void setCachedDOMCookies(const String&);
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
-    void invalidateDOMCookieCache();
     void didLoadResourceSynchronously(const URL&) final;
 
     bool canNavigateInternal(LocalFrame& targetFrame);
