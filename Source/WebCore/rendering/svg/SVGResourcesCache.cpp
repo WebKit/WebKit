@@ -108,6 +108,8 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
 
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
+    ASSERT(!renderer.element() || renderer.element()->isSVGElement());
+
     if (!renderer.parent())
         return;
 
@@ -165,9 +167,6 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     }
 
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
-
-    if (renderer.element() && !renderer.element()->isSVGElement())
-        renderer.element()->invalidateStyle();
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
