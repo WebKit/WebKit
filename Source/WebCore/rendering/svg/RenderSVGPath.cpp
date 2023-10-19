@@ -57,6 +57,7 @@ void RenderSVGPath::updateShapeFromElement()
     m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = ensurePath().boundingRect();
     m_strokeBoundingBox = std::nullopt;
+    m_approximateStrokeBoundingBox = std::nullopt;
     processMarkerPositions();
     updateZeroLengthSubpaths();
 
@@ -69,7 +70,7 @@ void RenderSVGPath::updateShapeFromElement()
         m_shapeType = ShapeType::Path;
 }
 
-FloatRect RenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const
+FloatRect RenderSVGPath::adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const
 {
     if (style().svgStyle().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.

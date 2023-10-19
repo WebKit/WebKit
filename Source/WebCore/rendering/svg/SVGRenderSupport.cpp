@@ -564,4 +564,92 @@ bool SVGHitTestCycleDetectionScope::isVisiting(const RenderElement& element)
     return visitedElements().contains(element);
 }
 
+FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement& renderer)
+{
+    auto calculateApproximateScalingStrokeBoundingBox = [&](const auto& renderer, FloatRect fillBoundingBox) -> FloatRect {
+        // Implementation of
+        // https://drafts.fxtf.org/css-masking/#compute-stroke-bounding-box
+        // except that we ignore whether the stroke is none.
+
+        using Renderer = std::decay_t<decltype(renderer)>;
+
+        ASSERT(renderer.style().svgStyle().hasStroke());
+        ASSERT(!renderer.hasNonScalingStroke());
+
+        auto strokeBoundingBox = fillBoundingBox;
+        const float strokeWidth = renderer.strokeWidth();
+        if (strokeWidth <= 0)
+            return strokeBoundingBox;
+
+        float delta = strokeWidth / 2;
+        switch (renderer.shapeType()) {
+        case Renderer::ShapeType::Empty: {
+            // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
+            return strokeBoundingBox;
+        }
+        case Renderer::ShapeType::Ellipse:
+        case Renderer::ShapeType::Circle:
+            break;
+        case Renderer::ShapeType::Rectangle:
+        case Renderer::ShapeType::RoundedRectangle: {
+#if USE(CG)
+            // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
+            if (renderer.style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
+                delta += 1;
+#endif
+            break;
+        }
+        case Renderer::ShapeType::Path:
+        case Renderer::ShapeType::Line: {
+            auto& style = renderer.style();
+            if (renderer.shapeType() == Renderer::ShapeType::Path && style.joinStyle() == LineJoin::Miter) {
+                const float miter = style.strokeMiterLimit();
+                if (miter < sqrtOfTwoDouble && style.capStyle() == LineCap::Square)
+                    delta *= sqrtOfTwoDouble;
+                else
+                    delta *= std::max(miter, 1.0f);
+            } else if (style.capStyle() == LineCap::Square)
+                delta *= sqrtOfTwoDouble;
+            break;
+        }
+        }
+
+        strokeBoundingBox.inflate(delta);
+        return strokeBoundingBox;
+    };
+
+    auto calculateApproximateNonScalingStrokeBoundingBox = [&](const auto& renderer, FloatRect fillBoundingBox) -> FloatRect {
+        ASSERT(renderer.hasPath());
+        ASSERT(renderer.style().svgStyle().hasStroke());
+        ASSERT(renderer.hasNonScalingStroke());
+
+        auto strokeBoundingBox = fillBoundingBox;
+        auto nonScalingTransform = renderer.nonScalingStrokeTransform();
+        if (auto inverse = nonScalingTransform.inverse()) {
+            auto* usePath = renderer.nonScalingStrokePath(&renderer.path(), nonScalingTransform);
+            auto strokeBoundingRect = calculateApproximateScalingStrokeBoundingBox(renderer, usePath->fastBoundingRect());
+            strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
+            strokeBoundingBox.unite(strokeBoundingRect);
+        }
+        return strokeBoundingBox;
+    };
+
+    auto calculate = [&](const auto& renderer) {
+        if (!renderer.style().svgStyle().hasStroke())
+            return renderer.objectBoundingBox();
+        if (renderer.hasNonScalingStroke())
+            return calculateApproximateNonScalingStrokeBoundingBox(renderer, renderer.objectBoundingBox());
+        return calculateApproximateScalingStrokeBoundingBox(renderer, renderer.objectBoundingBox());
+    };
+
+    if (is<LegacyRenderSVGShape>(renderer)) {
+        const auto& shape = downcast<LegacyRenderSVGShape>(renderer);
+        return shape.adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
+    }
+
+    ASSERT(is<RenderSVGShape>(renderer));
+    const auto& shape = downcast<RenderSVGShape>(renderer);
+    return shape.adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
+}
+
 }

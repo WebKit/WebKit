@@ -99,11 +99,8 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
     //    assumption that the element has no dash pattern.
     //
     // Note: The values of the stroke-opacity, stroke-dasharray and stroke-dashoffset do not affect the calculation of the stroke shape.
-    if (options.contains(DecorationOption::IncludeStrokeShape)) {
-        // FIXME: We need to use approximate stroke-bounding-box computation when it gets implemented and CalculateFastRepaintRect is specified.
-        // https://bugs.webkit.org/show_bug.cgi?id=263077
+    if (options.contains(DecorationOption::IncludeStrokeShape))
         box.unite(m_renderer.strokeBoundingBox());
-    }
 
     // 5. If markers is true, then for each marker marker rendered on the element:
     // - For each descendant graphics element child of the "marker" element that defines marker's content:

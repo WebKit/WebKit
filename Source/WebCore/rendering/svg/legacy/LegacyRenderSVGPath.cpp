@@ -63,6 +63,18 @@ void LegacyRenderSVGPath::updateShapeFromElement()
         m_shapeType = ShapeType::Line;
     else
         m_shapeType = ShapeType::Path;
+
+    // FIXME: This should not exist. However, currently SVG is relying on ordering of calculation of SVG2 strokeBoundingBox via layout() function
+    // for recursive SVGs (markers are pointing to each other recursively). If we move to SVG2 computation, we no longer need this since SVG2 strokeBoundingBox
+    // does not include markers rect (so we do not need to have this in LSBE). Right now, this exists only for RepaintRectCalculation::Accurate, and it should be removed once
+    // 1. We fix checkInsertion / checkEnclosure implementations. Currently they are not aligned to what the spec requires.
+    // 2. We move our RenderTreeAsText to avoid dumping Accurate repaint rect. We should dump strokeBoundingBox or actual repaintBoundingBox instead.
+    // We fall back to path-based eager strokeBoundingBox only when there are markers and it is not SVG2.
+    // There are several cases we use approximate repaintBoundingBox. But only LegacyRenderSVGPath can reference to the other approximate repaintBoundingBox via markers.
+    // The other resources including maskers, clippers etc. are already computing bounding rect via Accurate eagerly. So they do not matter.
+    // https://bugs.webkit.org/show_bug.cgi?id=263348
+    if (!m_markerPositions.isEmpty())
+        strokeBoundingBox();
 }
 
 FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation repaintRectCalculation, FloatRect strokeBoundingBox) const

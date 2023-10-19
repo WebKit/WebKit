@@ -352,8 +352,11 @@ FloatRect LegacyRenderSVGShape::strokeBoundingBox() const
 {
     if (m_shapeType == ShapeType::Empty)
         return { };
-    if (!m_strokeBoundingBox)
+    if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling calculateStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
         m_strokeBoundingBox = calculateStrokeBoundingBox();
+    }
     return *m_strokeBoundingBox;
 }
 
@@ -383,12 +386,31 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
     return adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
 }
 
+FloatRect LegacyRenderSVGShape::calculateApproximateStrokeBoundingBox() const
+{
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+
+    if (m_strokeBoundingBox)
+        return *m_strokeBoundingBox;
+
+    return SVGRenderSupport::calculateApproximateStrokeBoundingBox(*this);
+}
+
 void LegacyRenderSVGShape::updateRepaintBoundingBox()
 {
-    m_repaintBoundingBoxExcludingShadow = strokeBoundingBox();
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
+    m_repaintBoundingBox = strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
+}
 
-    m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
+FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
+{
+    if (repaintRectCalculation == RepaintRectCalculation::Fast)
+        return m_repaintBoundingBox;
+
+    FloatRect strokeBoundingBox = this->strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox);
+    return strokeBoundingBox;
 }
 
 float LegacyRenderSVGShape::strokeWidth() const

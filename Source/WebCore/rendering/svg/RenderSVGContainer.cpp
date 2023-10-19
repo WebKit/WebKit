@@ -112,6 +112,8 @@ void RenderSVGContainer::layoutChildren()
 FloatRect RenderSVGContainer::strokeBoundingBox() const
 {
     if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling computeDecoratedBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
         SVGBoundingBoxComputation boundingBoxComputation(*this);
         m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     }
