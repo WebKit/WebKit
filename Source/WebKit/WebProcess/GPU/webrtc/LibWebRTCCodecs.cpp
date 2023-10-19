@@ -556,6 +556,11 @@ void LibWebRTCCodecs::createEncoderAndWaitUntilInitialized(VideoCodecType type, 
     });
 }
 
+static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connection& connection, const Vector<std::pair<String, String>>& parameters, Function<void(bool)>&& callback)
+{
+    connection.sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder.identifier, encoder.type, encoder.codec, parameters, encoder.isRealtime, encoder.useAnnexB, encoder.scalabilityMode }, WTFMove(callback), 0);
+}
+
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, Function<void(Encoder*)>&& callback)
 {
     auto encoder = makeUnique<Encoder>();
@@ -581,7 +586,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
 
         {
             Locker locker { m_encodersConnectionLock };
-            connection->sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->codec, parameters, encoder->isRealtime, encoder->useAnnexB, encoder->scalabilityMode }, [identifier = encoder->identifier, callback = WTFMove(callback)](bool result) mutable {
+            createRemoteEncoder(*encoder, connection.get(), parameters, [identifier = encoder->identifier, callback = WTFMove(callback)](bool result) mutable {
                 WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
                     if (!result) {
                         callback(nullptr);
@@ -592,7 +597,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
                     assertIsCurrent(codecs.workQueue());
                     callback(codecs.m_encoders.get(identifier));
                 });
-            }, 0);
+            });
             setEncoderConnection(*encoder, connection.ptr());
         }
 
@@ -848,7 +853,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
 
         Locker locker { m_encodersConnectionLock };
         for (auto& encoder : m_encoders.values()) {
-            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->codec, encoder->parameters, encoder->isRealtime, encoder->useAnnexB, encoder->scalabilityMode }, 0);
+            createRemoteEncoder(*encoder, *connection, encoder->parameters, [](bool) { });
             if (encoder->initializationData)
                 connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
             setEncoderConnection(*encoder, connection.get());
