@@ -181,6 +181,7 @@ class TestImporter(object):
         self._potential_test_resource_files = []
 
         self.import_list = []
+        self.upstream_revision = None
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
@@ -203,6 +204,7 @@ class TestImporter(object):
             _log.info('Downloading W3C test repositories')
             self.filesystem.maybe_make_directory(self.tests_download_path)
             self.test_downloader().download_tests(self.options.use_tip_of_tree)
+            self.upstream_revision = self.test_downloader().upstream_revision
             self.source_directory = self.tests_download_path
 
         for test_path in self.test_paths:
@@ -602,7 +604,6 @@ class TestImporter(object):
             self.write_import_log(new_path, copied_files, prefixed_properties, prefixed_property_values)
 
         _log.info('Import complete')
-
         _log.info('IMPORTED %d TOTAL TESTS', total_imported_tests)
         _log.info('Imported %d reftests', total_imported_reftests)
         _log.info('Imported %d JS tests', total_imported_jstests)
@@ -620,6 +621,11 @@ class TestImporter(object):
 
         for prefixed_value in sorted(total_prefixed_property_values, key=lambda p: total_prefixed_property_values[p]):
             _log.info('  %s: %s', prefixed_value, total_prefixed_property_values[prefixed_value])
+
+        if self.upstream_revision:
+            _log.info('\n--------- Please include the following in your commit message: ---------\n')
+            _log.info('Upstream commit: https://github.com/web-platform-tests/wpt/commit/%s', self.upstream_revision)
+            _log.info('-' * 72)
 
         if self._test_resource_files:
             # FIXME: We should check that actual tests are not in the test_resource_files list
