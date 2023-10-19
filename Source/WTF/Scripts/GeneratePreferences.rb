@@ -297,6 +297,16 @@ class Preferences
             end
         end
 
+        # Verify that nothing is enabled by default for experimental preference
+        if %w{ unstable testable preview }.include?(status)
+            options["defaultValue"].each do |component, values|
+              # FIXME: This doesn't check for more dynamic cases (when the value is a String containing runtime condition,...)
+              if (values["default"] == true)
+                reject.call "Preference #{name} is \"#{status}\" but is enabled by default for #{component}"
+              end
+            end
+        end
+
         if options["defaultValue"].include?(@frontend)
           preference = Preference.new(name, options, @frontend)
           @preferences << preference
