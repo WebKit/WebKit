@@ -137,6 +137,12 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     return uriResource;
 }
 
+void RenderSVGResource::removeAllClientsFromCache(bool markForInvalidation)
+{
+    WeakHashSet<RenderObject> visitedRenderers;
+    removeAllClientsFromCacheIfNeeded(markForInvalidation, &visitedRenderers);
+}
+
 RenderSVGResource* RenderSVGResource::fillPaintingResource(RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
 {
     return requestPaintingResource(RenderSVGResourceMode::ApplyToFill, renderer, style, fallbackColor);
@@ -155,7 +161,7 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
-static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout)
+static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
 {
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
         if (RenderSVGResourceFilter* filter = resources->filter())
@@ -182,7 +188,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
                 // Reference cycle: we are in process of invalidating this dependant.
                 continue;
             }
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer, needsLayout);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(*renderer, needsLayout, visitedRenderers);
             invalidatingDependencies.get().remove(element.get());
         }
     }
@@ -196,7 +202,19 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
 
 void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject& object, bool needsLayout)
 {
+    WeakHashSet<RenderObject> visitedRenderers;
+    markForLayoutAndParentResourceInvalidationIfNeeded(object, needsLayout, &visitedRenderers);
+}
+
+void RenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject& object, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
+{
     ASSERT(object.node());
+
+    if (visitedRenderers) {
+        auto addResult = visitedRenderers->add(object);
+        if (!addResult.isNewEntry)
+            return;
+    }
 
     if (needsLayout && !object.renderTreeBeingDestroyed()) {
         // If we are inside the layout of an LegacyRenderSVGRoot, do not cross the SVG boundary to
@@ -226,16 +244,17 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
     }
 
     if (is<RenderElement>(object))
-        removeFromCacheAndInvalidateDependencies(downcast<RenderElement>(object), needsLayout);
+        removeFromCacheAndInvalidateDependencies(downcast<RenderElement>(object), needsLayout, visitedRenderers);
 
     // Invalidate resources in ancestor chain, if needed.
     auto current = object.parent();
     while (current) {
-        removeFromCacheAndInvalidateDependencies(*current, needsLayout);
+        removeFromCacheAndInvalidateDependencies(*current, needsLayout, visitedRenderers);
 
         if (is<LegacyRenderSVGResourceContainer>(*current)) {
             // This will process the rest of the ancestors.
-            downcast<LegacyRenderSVGResourceContainer>(*current).removeAllClientsFromCache();
+            bool markForInvalidation = true;
+            downcast<LegacyRenderSVGResourceContainer>(*current).removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
             break;
         }
 

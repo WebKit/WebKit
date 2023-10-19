@@ -42,12 +42,12 @@ RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, Render
 
 RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
 
-void RenderSVGResourceMasker::removeAllClientsFromCache(bool markForInvalidation)
+void RenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_maskContentBoundaries = FloatRect();
     m_masker.clear();
 
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void RenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)

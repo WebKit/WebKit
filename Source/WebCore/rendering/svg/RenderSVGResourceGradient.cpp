@@ -41,11 +41,11 @@ RenderSVGResourceGradient::RenderSVGResourceGradient(Type type, SVGGradientEleme
 {
 }
 
-void RenderSVGResourceGradient::removeAllClientsFromCache(bool markForInvalidation)
+void RenderSVGResourceGradient::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_gradientMap.clear();
     m_shouldCollectGradientAttributes = true;
-    markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void RenderSVGResourceGradient::removeClientFromCache(RenderElement& client, bool markForInvalidation)

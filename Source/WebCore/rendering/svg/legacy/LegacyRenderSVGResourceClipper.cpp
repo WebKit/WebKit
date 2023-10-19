@@ -57,12 +57,12 @@ LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElemen
 
 LegacyRenderSVGResourceClipper::~LegacyRenderSVGResourceClipper() = default;
 
-void LegacyRenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
+void LegacyRenderSVGResourceClipper::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_clipBoundaries = { };
     m_clipperMap.clear();
 
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void LegacyRenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool markForInvalidation)

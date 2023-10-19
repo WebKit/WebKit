@@ -62,6 +62,7 @@ protected:
     virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
 
     void markAllClientsForInvalidation(InvalidationMode);
+    void markAllClientsForInvalidationIfNeeded(InvalidationMode, WeakHashSet<RenderObject>* visitedRenderers);
     void markClientForInvalidation(RenderObject&, InvalidationMode);
 
 private:
