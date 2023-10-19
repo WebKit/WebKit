@@ -38,11 +38,6 @@ void CanvasNoiseInjection::updateDirtyRect(const IntRect& rect)
     m_postProcessDirtyRect.unite(rect);
 }
 
-void CanvasNoiseInjection::clearDirtyRect()
-{
-    m_postProcessDirtyRect = { };
-}
-
 static inline bool isIndexInBounds(int size, int index)
 {
     ASSERT(index <= size);
