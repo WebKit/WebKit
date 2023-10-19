@@ -2496,11 +2496,17 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             if queue_data:
                 status = queue_data.get('state', None)
                 if status == 0 or status == 3:  # success or N/A
+                    yield self._addToLog('stdio', f'Success\n')
                     continue
                 elif status == 2:  # failure
                     failed_checks.append(queue)
+                    yield self._addToLog('stdio', f'Failure\n')
                 else:  # null
                     missing_checks.append(queue)
+                    yield self._addToLog('stdio', f'Pending\n')
+            else:
+                missing_checks.append(queue)
+                yield self._addToLog('stdio', f'Pending\n')
 
         passed_status_check = self.getProperty('passed_status_check')
         failed_status_check = self.getProperty('failed_status_check')
