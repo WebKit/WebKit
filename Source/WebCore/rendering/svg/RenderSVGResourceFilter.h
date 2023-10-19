@@ -68,7 +68,7 @@ public:
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
 
-    FloatRect resourceBoundingBox(const RenderObject&) override;
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     inline SVGUnitTypes::SVGUnitType filterUnits() const;
     inline SVGUnitTypes::SVGUnitType primitiveUnits() const;

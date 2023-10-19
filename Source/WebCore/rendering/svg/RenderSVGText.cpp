@@ -589,7 +589,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     return strokeBoundaries;
 }
 
-FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation) const
+FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
@@ -597,7 +597,7 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation) c
 #endif
 
     FloatRect repaintRect = strokeBoundingBox();
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintRect);
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintRect, repaintRectCalculation);
 
     if (const ShadowData* textShadow = style().textShadow())
         textShadow->adjustRectForShadow(repaintRect);

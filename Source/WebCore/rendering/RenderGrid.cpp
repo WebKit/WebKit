@@ -1422,7 +1422,7 @@ bool RenderGrid::hasStaticPositionForChild(const RenderBox& child, GridTrackSizi
 
 void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    if (isSkippedContentRoot()) {
+    if (isSkippedContentRootForLayout()) {
         child.clearNeedsLayoutForDescendants();
         child.clearNeedsLayout();
         return;

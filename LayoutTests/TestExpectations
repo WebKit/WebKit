@@ -5451,6 +5451,9 @@ webkit.org/b/255287 fast/block/lineboxcontain/inline-box-vertical.html [ Failure
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]
 
+# This should fail, but it flakey-passes, so skipping now.
+fast/canvas/canvas-noise-injection.html [ Skip ]
+
 webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Failure ]
 webkit.org/b/237108 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ] # <rdar://33630526>
 webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]

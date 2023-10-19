@@ -65,7 +65,7 @@ public:
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) = 0;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement* /* shape */) { }
-    virtual FloatRect resourceBoundingBox(const RenderObject&) = 0;
+    virtual FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) = 0;
 
     virtual RenderSVGResourceType resourceType() const = 0;
 

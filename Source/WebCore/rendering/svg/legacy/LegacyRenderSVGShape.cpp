@@ -409,7 +409,7 @@ FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalcula
         return m_repaintBoundingBox;
 
     FloatRect strokeBoundingBox = this->strokeBoundingBox();
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox);
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox, RepaintRectCalculation::Accurate);
     return strokeBoundingBox;
 }
 

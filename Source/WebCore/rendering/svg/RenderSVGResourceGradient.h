@@ -66,7 +66,7 @@ public:
 
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
-    FloatRect resourceBoundingBox(const RenderObject&) final { return FloatRect(); }
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final { return FloatRect(); }
 
 protected:
     RenderSVGResourceGradient(Type, SVGGradientElement&, RenderStyle&&);

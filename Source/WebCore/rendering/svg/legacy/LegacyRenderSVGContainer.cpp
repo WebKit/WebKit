@@ -185,7 +185,7 @@ FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCal
         FloatRect repaintBoundingBox;
         bool objectBoundingBoxValid = true;
         SVGRenderSupport::computeContainerBoundingBoxes(*this, objectBoundingBox, objectBoundingBoxValid, repaintBoundingBox, RepaintRectCalculation::Accurate);
-        SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox);
+        SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, RepaintRectCalculation::Accurate);
         m_accurateRepaintBoundingBox = repaintBoundingBox;
     }
     return *m_accurateRepaintBoundingBox;

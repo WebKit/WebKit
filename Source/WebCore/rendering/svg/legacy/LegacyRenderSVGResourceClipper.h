@@ -22,6 +22,7 @@
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
+#include <wtf/EnumeratedArray.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -74,7 +75,7 @@ public:
     // objectBoundingBox ia used to compute clip path geometry when clipPathUnits="objectBoundingBox".
     // clippedContentBounds is the bounds of the content to which clipping is being applied.
     bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom = 1);
-    FloatRect resourceBoundingBox(const RenderObject&) override;
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
     
@@ -92,9 +93,9 @@ private:
     ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom);
     bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);
     bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float effectiveZoom);
-    void calculateClipContentRepaintRect();
+    void calculateClipContentRepaintRect(RepaintRectCalculation);
 
-    FloatRect m_clipBoundaries;
+    EnumeratedArray<RepaintRectCalculation, FloatRect> m_clipBoundaries;
     HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipperMap;
 };
 

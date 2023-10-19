@@ -38,7 +38,7 @@ public:
 
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
-    FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override { return FloatRect(); }
 
     RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }
 

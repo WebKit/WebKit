@@ -232,6 +232,8 @@ class GitHubMixin(object):
         if response and response.status_code // 100 != 2:
             yield self._addToLog('stdio', f'Accessed {graphql_url} with unexpected status code {response.status_code}.\n')
             defer.returnValue(False if response.status_code // 100 == 4 else None)
+        elif not response:
+            defer.returnValue(False)
         else:
             data = json.loads(response.text)
             defer.returnValue(data)
@@ -2369,6 +2371,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stdio', f'Ending process as there are no PRs in {self.label}.\n')
             return defer.returnValue(SUCCESS)
         if not num_prs:
+            yield self._addToLog('stdio', f'Failed to retrieve number of PRs in {self.label}.\n')
             return defer.returnValue(FAILURE)
 
         self.setProperty('passed_status_check', [])
@@ -2496,11 +2499,17 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             if queue_data:
                 status = queue_data.get('state', None)
                 if status == 0 or status == 3:  # success or N/A
+                    yield self._addToLog('stdio', f'Success\n')
                     continue
                 elif status == 2:  # failure
                     failed_checks.append(queue)
+                    yield self._addToLog('stdio', f'Failure\n')
                 else:  # null
                     missing_checks.append(queue)
+                    yield self._addToLog('stdio', f'Pending\n')
+            else:
+                missing_checks.append(queue)
+                yield self._addToLog('stdio', f'Pending\n')
 
         passed_status_check = self.getProperty('passed_status_check')
         failed_status_check = self.getProperty('failed_status_check')

@@ -133,6 +133,9 @@ public:
 
     void resetGraphicsContextState() const;
 
+    void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }
+    bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
+
 protected:
     explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
 

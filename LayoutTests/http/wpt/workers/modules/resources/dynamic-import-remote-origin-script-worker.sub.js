@@ -1,6 +1,6 @@
 // Import a remote origin script.
 const importUrl =
-    'https://127.0.0.1:{{ports[https][0]}}/workers/modules/resources/export-on-load-script.js';
+    'https://localhost:{{ports[https][0]}}/workers/modules/resources/export-on-load-script.js';
 if ('DedicatedWorkerGlobalScope' in self &&
     self instanceof DedicatedWorkerGlobalScope) {
   import(importUrl)

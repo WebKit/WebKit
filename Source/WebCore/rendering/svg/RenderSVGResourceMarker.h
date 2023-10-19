@@ -51,7 +51,7 @@ public:
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override { return false; }
-    FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override { return FloatRect(); }
 
     FloatPoint referencePoint() const;
     std::optional<float> angle() const;

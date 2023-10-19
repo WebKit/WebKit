@@ -221,7 +221,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
 }
 
-FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object)
+FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
 {
     return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
 }

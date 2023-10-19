@@ -265,7 +265,7 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
         if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
             // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
             // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-            RepaintRectCalculation repaintRectCalculation = options.contains(SVGBoundingBoxComputation::DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
+            auto repaintRectCalculation = options.contains(SVGBoundingBoxComputation::DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
             boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
         }
     }
