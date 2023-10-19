@@ -799,8 +799,6 @@ webkit.org/b/162081 editing/inserting/typing-space-to-trigger-smart-link.html [ 
 webkit.org/b/162081 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 webkit.org/b/162081 fast/events/input-event-insert-link.html [ Failure ]
 
-webkit.org/b/160017 js/regress-139548.html [ Pass Timeout ]
-
 webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
 
 

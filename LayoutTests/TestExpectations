@@ -2705,8 +2705,6 @@ webkit.org/b/159755 fast/text/emoji-gender-6.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 
-webkit.org/b/160017 js/regress-139548.html [ Slow ]
-
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Failure ]
 
 # CSS Shapes tests
