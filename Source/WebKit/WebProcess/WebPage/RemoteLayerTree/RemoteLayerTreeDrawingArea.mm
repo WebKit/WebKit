@@ -107,6 +107,11 @@ void RemoteLayerTreeDrawingArea::setPreferredFramesPerSecond(FramesPerSecond pre
     send(Messages::RemoteLayerTreeDrawingAreaProxy::SetPreferredFramesPerSecond(preferredFramesPerSecond));
 }
 
+void RemoteLayerTreeDrawingArea::gpuProcessConnectionWasDestroyed()
+{
+    m_remoteLayerTreeContext->gpuProcessConnectionWasDestroyed();
+}
+
 void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
     for (auto& rootLayer : m_rootLayers) {

@@ -39,6 +39,8 @@ public:
     RemoteLayerWithRemoteRenderingBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerWithRemoteRenderingBackingStoreCollection() = default;
 
+    void gpuProcessConnectionWasDestroyed() final;
+
 private:
     RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&) final;
     

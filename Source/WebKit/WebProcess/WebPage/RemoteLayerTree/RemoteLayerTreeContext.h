@@ -92,6 +92,8 @@ public:
     bool useDynamicContentScalingDisplayListsForDOMRendering() const { return m_useDynamicContentScalingDisplayListsForDOMRendering; }
     void setUseDynamicContentScalingDisplayListsForDOMRendering(bool useDynamicContentScalingDisplayLists) { m_useDynamicContentScalingDisplayListsForDOMRendering = useDynamicContentScalingDisplayLists; }
 
+    void gpuProcessConnectionWasDestroyed();
+
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
 #endif
