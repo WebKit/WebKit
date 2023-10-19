@@ -1096,9 +1096,6 @@ test/harness/verifyProperty-desc-is-not-object.js:
 test/harness/verifyProperty-value-error.js:
   default: 'Error: The error thrown did not define the specified message.'
   strict mode: 'Error: The error thrown did not define the specified message.'
-test/intl402/DateTimeFormat/prototype/format/offset-timezone-gmt-same.js:
-  default: 'RangeError: invalid time zone: +0300'
-  strict mode: 'RangeError: invalid time zone: +0300'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1108,21 +1105,12 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-sup
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-test/intl402/DateTimeFormat/prototype/formatToParts/offset-timezone-correct.js:
-  default: 'RangeError: invalid time zone: +0301'
-  strict mode: 'RangeError: invalid time zone: +0301'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/offset-timezone-basic.js:
-  default: 'RangeError: invalid time zone: +03'
-  strict mode: 'RangeError: invalid time zone: +03'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/offset-timezone-change.js:
-  default: 'RangeError: invalid time zone: -00'
-  strict mode: 'RangeError: invalid time zone: -00'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
