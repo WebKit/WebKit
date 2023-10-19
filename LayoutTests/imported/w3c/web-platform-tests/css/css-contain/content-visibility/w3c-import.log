@@ -187,6 +187,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-088.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-089.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-090.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-091.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-and-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-and-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-and-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-becomes-visible-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-becomes-visible-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-becomes-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-in-auto-subtree.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-applied-to-th-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-first-observation-immediate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe-expected.html
@@ -218,6 +226,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-in-svg-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-input-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-g-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-g-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-g.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-root-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-root-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-on-root-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-output-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error-ref.html
