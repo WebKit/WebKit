@@ -59,7 +59,7 @@ void LegacyRenderSVGPath::updateShapeFromElement()
     ASSERT(hasPath());
     if (path().isEmpty())
         return;
-    if (path().definitelySingleLine())
+    if (path().isSingleLine())
         m_shapeType = ShapeType::Line;
     else
         m_shapeType = ShapeType::Path;

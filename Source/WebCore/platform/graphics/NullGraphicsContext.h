@@ -79,6 +79,10 @@ private:
     void drawEllipse(const FloatRect&) final { }
     void fillPath(const Path&) final { }
     void strokePath(const Path&) final { }
+#if ENABLE(INLINE_PATH_DATA)
+    void fillPathSegment(const PathSegment&) final { }
+    void strokePathSegment(const PathSegment&) final { }
+#endif
     void fillRect(const FloatRect&) final { }
     void fillRect(const FloatRect&, const Color&) final { }
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }

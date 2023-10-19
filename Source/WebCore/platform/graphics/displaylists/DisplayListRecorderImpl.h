@@ -103,13 +103,18 @@ private:
 #endif
     void recordStrokeRect(const FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
-    void recordStrokeLine(const PathDataLine&) final;
     void recordStrokeLineWithColorAndThickness(const PathDataLine&, SRGBA<uint8_t>, float thickness) final;
+    void recordStrokeLine(const PathDataLine&) final;
+    void recordStrokeArcWithColorAndThickness(const PathArc&, SRGBA<uint8_t>, float thickness) final;
     void recordStrokeArc(const PathArc&) final;
+    void recordStrokeQuadCurveWithColorAndThickness(const PathDataQuadCurve&, SRGBA<uint8_t>, float thickness) final;
     void recordStrokeQuadCurve(const PathDataQuadCurve&) final;
+    void recordStrokeBezierCurveWithColorAndThickness(const PathDataBezierCurve&, SRGBA<uint8_t>, float thickness) final;
     void recordStrokeBezierCurve(const PathDataBezierCurve&) final;
-#endif
+    void recordStrokePathSegmentWithColorAndThickness(const PathSegment&, SRGBA<uint8_t>, float thickness) final;
     void recordStrokePathSegment(const PathSegment&) final;
+    void recordStrokePathWithColorAndThickness(const Path&, SRGBA<uint8_t>, float thickness) final;
+#endif
     void recordStrokePath(const Path&) final;
     void recordStrokeEllipse(const FloatRect&) final;
     void recordClearRect(const FloatRect&) final;

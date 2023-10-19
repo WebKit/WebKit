@@ -47,6 +47,7 @@ public:
     PathCairo();
     PathCairo(RefPtr<cairo_t>&&, RefPtr<PathStream>&&);
 
+    static PlatformPathPtr createPlatformPath(const PathSegment&);
     PlatformPathPtr platformPath() const;
 
     void addPath(const PathCairo&, const AffineTransform&);

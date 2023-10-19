@@ -61,6 +61,8 @@ public:
     void drawPath(const Path&) final;
     void fillPath(const Path&) final;
     void strokePath(const Path&) final;
+    void fillPathSegment(const PathSegment&) final;
+    void strokePathSegment(const PathSegment&) final;
 
     void beginTransparencyLayer(float opacity) final;
     void endTransparencyLayer() final;
@@ -146,6 +148,12 @@ protected:
 private:
     void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
     void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
+
+    void fillPathWithGradient(CGPathRef);
+    void fillPathWithGradientAndShadow(CGPathRef, const FloatRect& boundingRect);
+
+    void strokePathWithGradient(CGPathRef);
+    void strokePathWithGradientAndShadow(CGPathRef, const FloatRect& boundingRect);
 
     void clearCGShadow();
     // Returns the platform context for purposes of context state change, not draws.

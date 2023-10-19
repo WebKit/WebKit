@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PathSegmentData.h"
+#include "PlatformPath.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -59,11 +60,22 @@ public:
     bool operator==(const PathSegment&) const = default;
 
     const Data& data() const { return m_data; }
+
+    template <typename DataType>
+    std::optional<DataType> get() const
+    {
+        if (auto data = std::get_if<DataType>(&m_data))
+            return *data;
+        return std::nullopt;
+    }
+
     bool isCloseSubPath() const { return std::holds_alternative<PathCloseSubpath>(m_data); }
 
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
     std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
+
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    FloatRect fastBoundingRect() const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
@@ -73,6 +85,8 @@ public:
 
     bool canTransform() const;
     bool transform(const AffineTransform&);
+
+    PlatformPathPtr createPlatformPath() const;
 
 private:
     Data m_data;

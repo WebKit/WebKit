@@ -132,13 +132,18 @@ protected:
 #endif
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
-    virtual void recordStrokeLine(const PathDataLine&) = 0;
     virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SRGBA<uint8_t>, float thickness) = 0;
+    virtual void recordStrokeLine(const PathDataLine&) = 0;
+    virtual void recordStrokeArcWithColorAndThickness(const PathArc&, SRGBA<uint8_t>, float thickness) = 0;
     virtual void recordStrokeArc(const PathArc&) = 0;
+    virtual void recordStrokeQuadCurveWithColorAndThickness(const PathDataQuadCurve&, SRGBA<uint8_t>, float thickness) = 0;
     virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
+    virtual void recordStrokeBezierCurveWithColorAndThickness(const PathDataBezierCurve&, SRGBA<uint8_t>, float thickness) = 0;
     virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
-#endif
+    virtual void recordStrokePathSegmentWithColorAndThickness(const PathSegment&, SRGBA<uint8_t>, float thickness) = 0;
     virtual void recordStrokePathSegment(const PathSegment&) = 0;
+    virtual void recordStrokePathWithColorAndThickness(const Path&, SRGBA<uint8_t>, float thickness) = 0;
+#endif
     virtual void recordStrokePath(const Path&) = 0;
     virtual void recordStrokeEllipse(const FloatRect&) = 0;
     virtual void recordClearRect(const FloatRect&) = 0;
@@ -214,9 +219,15 @@ private:
     WEBCORE_EXPORT void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
     WEBCORE_EXPORT void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;
     WEBCORE_EXPORT void fillPath(const Path&) final;
+#if ENABLE(INLINE_PATH_DATA)
+    WEBCORE_EXPORT void fillPathSegment(const PathSegment&) final;
+#endif
     WEBCORE_EXPORT void fillEllipse(const FloatRect&) final;
     WEBCORE_EXPORT void strokeRect(const FloatRect&, float lineWidth) final;
     WEBCORE_EXPORT void strokePath(const Path&) final;
+#if ENABLE(INLINE_PATH_DATA)
+    WEBCORE_EXPORT void strokePathSegment(const PathSegment&) final;
+#endif
     WEBCORE_EXPORT void strokeEllipse(const FloatRect&) final;
     WEBCORE_EXPORT void clearRect(const FloatRect&) final;
 

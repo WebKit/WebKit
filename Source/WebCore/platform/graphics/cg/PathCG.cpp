@@ -80,6 +80,13 @@ Ref<PathImpl> PathCG::copy() const
     return create({ platformPath() });
 }
 
+PlatformPathPtr PathCG::createPlatformPath(const PathSegment& segment)
+{
+    auto pathCG = PathCG::create();
+    pathCG->appendSegment(segment);
+    return pathCG->m_platformPath.leakRef();
+}
+
 PlatformPathPtr PathCG::platformPath() const
 {
     return m_platformPath.get();

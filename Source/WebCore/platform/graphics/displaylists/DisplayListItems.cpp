@@ -727,13 +727,14 @@ void StrokeEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 void StrokeLine::apply(GraphicsContext& context) const
 {
 #if ENABLE(INLINE_PATH_DATA)
-    auto path = Path({ PathSegment { PathDataLine { { start() }, { end() } } } });
+    auto line = PathDataLine { start(), end() };
+    context.strokePathSegment({ line });
 #else
     Path path;
     path.moveTo(start());
     path.addLineTo(end());
-#endif
     context.strokePath(path);
+#endif
 }
 
 void StrokeLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
