@@ -27,6 +27,6 @@ typedef unsigned long FramesPerSecond;
 
 dictionary KeyframeAnimationOptions : KeyframeEffectOptions {
     DOMString id = "";
-    [EnabledBySetting=WebAnimationsMutableTimelinesEnabled] AnimationTimeline? timeline;
+    AnimationTimeline? timeline;
     [EnabledBySetting=WebAnimationsCustomFrameRateEnabled] (FramesPerSecond or AnimationFrameRatePreset) frameRate = "auto";
 };

@@ -7407,20 +7407,6 @@ WebAnimationsIterationCompositeEnabled:
     WebCore:
       default: true
 
-WebAnimationsMutableTimelinesEnabled:
-  type: bool
-  status: stable
-  category: animation
-  humanReadableName: "Web Animations mutable timelines"
-  humanReadableDescription: "Support for setting the timeline property of an Animation object"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 WebArchiveDebugModeEnabled:
   type: bool
   status: embedder
