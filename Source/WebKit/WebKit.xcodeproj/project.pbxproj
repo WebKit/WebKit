@@ -2038,8 +2038,8 @@
 		C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */; };
 		C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */; };
-		C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; };
+		C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; };
 		C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */; };
 		C1710CF724AA643200D7C112 /* LaunchServicesDatabaseObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */; };
 		C18F3A152563334300797E66 /* WebInspectorPreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */; };
@@ -2208,6 +2208,8 @@
 		E3B9B5D72AB65822008568FE /* GPUProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */; };
 		E3C6727329D4A3AD00AD4452 /* TextTrackRepresentationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */; };
 		E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */; };
+		E3E84BDA2AE0AAE50091B3C2 /* XPCEndpoint.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; };
+		E3E84BDB2AE0AAE50091B3C2 /* XPCEndpointClient.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
 		E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E06111AA75ABD00B11699 /* NetworkCacheData.h */; };
@@ -2708,6 +2710,8 @@
 				0FB94837239F31D100926A8F /* WKWebViewPrivateForTesting.h in Copy Testing Headers */,
 				0FB94838239F323800926A8F /* WKWebViewPrivateForTestingIOS.h in Copy Testing Headers */,
 				0FB94839239F323800926A8F /* WKWebViewPrivateForTestingMac.h in Copy Testing Headers */,
+				E3E84BDA2AE0AAE50091B3C2 /* XPCEndpoint.h in Copy Testing Headers */,
+				E3E84BDB2AE0AAE50091B3C2 /* XPCEndpointClient.h in Copy Testing Headers */,
 			);
 			name = "Copy Testing Headers";
 			runOnlyForDeploymentPostprocessing = 0;
