@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JITExceptions.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
