@@ -7,10 +7,9 @@ from urllib.parse import parse_qs
 
 boundary = 'cutHere'
 def send_part(data):
-    sys.stdout.write('Content-Type: image/png\r\n\r\n')
-    sys.stdout.flush()
+    sys.stdout.buffer.write(b'Content-Type: image/png\r\n\r\n')
     sys.stdout.buffer.write(data)
-    sys.stdout.write('\r\n--{}\r\n'.format(boundary))
+    sys.stdout.buffer.write('\r\n--{}\r\n'.format(boundary).encode())
     sys.stdout.flush()
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
@@ -34,9 +33,9 @@ if interval is not None:
 else:
     interval = 1
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Content-Type: multipart/x-mixed-replace; boundary={boundary}\r\n\r\n'
-    '--{boundary}\r\n'.format(boundary=boundary)
+    '--{boundary}\r\n'.format(boundary=boundary).encode()
 )
 sys.stdout.flush()
 

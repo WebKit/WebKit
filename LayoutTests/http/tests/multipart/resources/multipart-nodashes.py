@@ -7,10 +7,10 @@ import os
 import sys
 
 boundary = 'cutHere'
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Content-Type: multipart/x-mixed-replace; boundary={boundary}\r\n\r\n'
     '{boundary}\r\n'
-    'Content-Type: image/png\r\n\r\n'.format(boundary=boundary)
+    'Content-Type: image/png\r\n\r\n'.format(boundary=boundary).encode()
 )
 
 sys.stdout.flush()
