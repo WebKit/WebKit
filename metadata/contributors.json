@@ -5703,6 +5703,15 @@
    },
    {
       "emails" : [
+         "moe@sigmaos.com",
+         "bazzimoe3@gmail.com"
+      ],
+      "expertise" : "WebKit on macOS",
+      "github" : "MoeBazziGIT",
+      "name" : "Moe Bazzi"
+   },
+   {
+      "emails" : [
          "Ms2ger@igalia.com",
          "Ms2ger@gmail.com"
       ],
