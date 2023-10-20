@@ -170,6 +170,9 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const Bottom&) -> const Type* {
             return type;
         },
+        [&](const Atomic&) -> const Type* {
+            return type;
+        },
         [&](const Function&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
         },
@@ -183,9 +186,6 @@ const Type* concretize(const Type* type, TypeStore& types)
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Atomic&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> const Type* {
