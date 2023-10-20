@@ -71,6 +71,7 @@ static const Seconds defaultBackupExclusionPeriod { 24_h };
 static constexpr double defaultThirdPartyOriginQuotaRatio = 0.1; // third-party_origin_quota / origin_quota
 static constexpr uint64_t defaultVolumeCapacityUnit = 1 * GB;
 static constexpr auto persistedFileName = "persisted"_s;
+static constexpr Seconds originLastModificationTimeUpdateInterval = 30_s;
 
 // FIXME: Remove this if rdar://104754030 is fixed.
 static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
@@ -601,6 +602,21 @@ bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::
 void NetworkStorageManager::updateLastModificationTimeForOrigin(const WebCore::ClientOrigin& origin)
 {
     assertIsCurrent(workQueue());
+
+    auto currentTime = WallTime::now();
+    auto iterator = m_lastModificationTimes.find(origin);
+    if (iterator == m_lastModificationTimes.end())
+        m_lastModificationTimes.set(origin, currentTime);
+    else {
+        if (currentTime - iterator->value <= originLastModificationTimeUpdateInterval)
+            return;
+        iterator->value = currentTime;
+    }
+
+    m_lastModificationTimes.removeIf([&currentTime](auto& iterator) {
+        return currentTime - iterator.value > originLastModificationTimeUpdateInterval;
+    });
+
     // This function must be called when origin is in use, i.e. OriginStorageManager exists.
     auto* manager = m_originStorageManagers.get(origin);
     ASSERT(manager);
