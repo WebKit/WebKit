@@ -1789,9 +1789,6 @@ webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.ht
 
 webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
-webkit.org/b/259497 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
-webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
-
 webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
 
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
