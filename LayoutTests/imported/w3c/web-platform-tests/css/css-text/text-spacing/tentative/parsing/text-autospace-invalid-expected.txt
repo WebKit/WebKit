@@ -1,4 +1,0 @@
-
-PASS e.style['text-autospace'] = "auto no-autospace" should not set the property value
-PASS e.style['text-autospace'] = "no-autospace auto" should not set the property value
-

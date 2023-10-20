@@ -1,9 +1,9 @@
 
-FAIL 2024  ONE DOT LEADER may appear at line start if ja and loose assert_true: expected true got false
-FAIL 2025  TWO DOT LEADER may appear at line start if ja and loose assert_true: expected true got false
-FAIL 2026  HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_true: expected true got false
-FAIL 22EF  MIDLINE HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_true: expected true got false
-FAIL FE19  PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_true: expected true got false
+FAIL 2024  ONE DOT LEADER may appear at line start if ja and loose assert_approx_equals: expected 48.9169921875 +/- 1 but got 78.9169921875
+FAIL 2025  TWO DOT LEADER may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 2026  HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 22EF  MIDLINE HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL FE19  PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
 2024
 文文文文文文․字字
 文文文文文文

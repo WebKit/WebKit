@@ -20,8 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-008-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-center-last-center-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-center-last-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-center-last-default-expected.html
@@ -130,6 +128,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-013.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-center-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-center-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-center.html
@@ -152,6 +153,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-start.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-wins-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-wins-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-02-expected.html
@@ -160,7 +164,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-03.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-04-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-04.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-05-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-05-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-05.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-logical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-logical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr.html

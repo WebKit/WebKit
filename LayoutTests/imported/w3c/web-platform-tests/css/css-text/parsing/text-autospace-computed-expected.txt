@@ -1,0 +1,7 @@
+
+FAIL Property text-autospace value 'normal' assert_true: 'normal' is a supported value for text-autospace. expected true got false
+PASS Property text-autospace value 'no-autospace'
+PASS Property text-autospace value 'auto'
+FAIL Property text-autospace value 'ideograph-alpha' assert_true: 'ideograph-alpha' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'ideograph-numeric' assert_true: 'ideograph-numeric' is a supported value for text-autospace. expected true got false
+

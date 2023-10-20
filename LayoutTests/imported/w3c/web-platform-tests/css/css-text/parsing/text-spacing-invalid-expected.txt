@@ -1,0 +1,17 @@
+
+PASS e.style['text-spacing'] = "normal normal" should not set the property value
+PASS e.style['text-spacing'] = "normal no-autospace" should not set the property value
+PASS e.style['text-spacing'] = "no-autospace normal" should not set the property value
+PASS e.style['text-spacing'] = "normal space-first" should not set the property value
+PASS e.style['text-spacing'] = "space-first normal" should not set the property value
+PASS e.style['text-spacing'] = "none none" should not set the property value
+PASS e.style['text-spacing'] = "none no-autospace" should not set the property value
+PASS e.style['text-spacing'] = "no-autospace none" should not set the property value
+PASS e.style['text-spacing'] = "none space-first" should not set the property value
+PASS e.style['text-spacing'] = "space-first none" should not set the property value
+PASS e.style['text-spacing'] = "auto auto" should not set the property value
+PASS e.style['text-spacing'] = "auto no-autospace" should not set the property value
+PASS e.style['text-spacing'] = "no-autospace auto" should not set the property value
+PASS e.style['text-spacing'] = "auto space-first" should not set the property value
+PASS e.style['text-spacing'] = "space-first auto" should not set the property value
+
