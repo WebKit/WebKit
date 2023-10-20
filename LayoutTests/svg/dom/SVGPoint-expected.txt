@@ -13,11 +13,11 @@ PASS point.x = 100 is 100
 PASS point.y = 200 is 200
 
 Check assigning invalid points
-PASS point.x = point is point
+PASS point.x = point threw exception TypeError: The provided value is non-finite.
 PASS point.y = null is null
 
 Check that the point contains the correct values
-PASS point.x is NaN
+PASS point.x is 100
 PASS point.y is 0
 
 Reset to -50, 100
