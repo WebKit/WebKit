@@ -782,30 +782,32 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
 
 static inline void encodeStringInternal(Encoder& encoder, NSString *string)
 {
-    encoder << bridge_cast(string);
+    encoder << String { string };
 }
 
 static inline std::optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
 {
-    RetainPtr<CFStringRef> string;
-    if (!decoder.decode(string))
+    std::optional<String> string;
+    decoder >> string;
+    if (!string)
         return std::nullopt;
-    return { bridge_cast(WTFMove(string)) };
+    return { (NSString *)(*string) };
 }
 
 #pragma mark - NSURL
 
-static inline void encodeURLInternal(Encoder& encoder, NSURL *URL)
+static inline void encodeURLInternal(Encoder& encoder, NSURL *url)
 {
-    encoder << bridge_cast(URL);
+    encoder << URL { url };
 }
 
 static inline std::optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
 {
-    RetainPtr<CFURLRef> URL;
-    if (!decoder.decode(URL))
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
         return std::nullopt;
-    return { bridge_cast(WTFMove(URL)) };
+    return { (NSURL *)(*url) };
 }
 
 #pragma mark - CF
