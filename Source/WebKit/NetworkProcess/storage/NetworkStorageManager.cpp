@@ -521,6 +521,42 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
     RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins, current usage %" PRIu64 ", total quota %" PRIu64, this, deletedOriginCount, valueOrDefault(m_totalUsage), m_totalQuota);
 }
 
+OriginQuotaManager::Parameters NetworkStorageManager::originQuotaManagerParameters(const WebCore::ClientOrigin& origin)
+{
+    OriginQuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
+        IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
+    };
+    // Use double for multiplication to preserve precision.
+    double quota = m_defaultOriginQuota;
+    double standardReportedQuota = m_standardVolumeCapacity ? *m_standardVolumeCapacity : 0.0;
+    if (m_originQuotaRatio && m_originQuotaRatioEnabled) {
+        std::optional<uint64_t> volumeCapacity;
+        if (m_volumeCapacityOverride)
+            volumeCapacity = m_volumeCapacityOverride;
+        else if (auto capacity = FileSystem::volumeCapacity(m_path))
+            volumeCapacity = WTF::roundUpToMultipleOf(defaultVolumeCapacityUnit, *capacity);
+        if (volumeCapacity) {
+            quota = m_originQuotaRatio.value() * volumeCapacity.value();
+            increaseQuotaFunction = { };
+        }
+        standardReportedQuota *= m_originQuotaRatio.value();
+    }
+    if (origin.topOrigin != origin.clientOrigin) {
+        quota *= defaultThirdPartyOriginQuotaRatio;
+        standardReportedQuota *= defaultThirdPartyOriginQuotaRatio;
+    }
+    OriginQuotaManager::NotifySpaceGrantedFunction notifySpaceGrantedFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t spaceRequested) {
+        if (auto strongThis = weakThis.get()) {
+            strongThis->spaceGrantedForOrigin(origin, spaceRequested);
+            RunLoop::main().dispatch([strongThis = WTFMove(strongThis)] { });
+        }
+    };
+    // Use std::ceil instead of implicit conversion to make result more definitive.
+    uint64_t roundedQuota = std::ceil(quota);
+    uint64_t roundedStandardReportedQuota = std::ceil(standardReportedQuota);
+    return { roundedQuota, roundedStandardReportedQuota, WTFMove(increaseQuotaFunction), WTFMove(notifySpaceGrantedFunction) };
+}
+
 OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
 {
     assertIsCurrent(workQueue());
@@ -534,33 +570,7 @@ OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore:
         OriginQuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
             IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
         };
-        // Use double for multiplication to preserve precision.
-        double quota = m_defaultOriginQuota;
-        double standardReportedQuota = m_standardVolumeCapacity ? *m_standardVolumeCapacity : 0.0;
-        if (m_originQuotaRatio) {
-            std::optional<uint64_t> volumeCapacity;
-            if (m_volumeCapacityOverride)
-                volumeCapacity = m_volumeCapacityOverride;
-            else if (auto capacity = FileSystem::volumeCapacity(m_path))
-                volumeCapacity = WTF::roundUpToMultipleOf(defaultVolumeCapacityUnit, *capacity);
-            if (volumeCapacity) {
-                quota = m_originQuotaRatio.value() * volumeCapacity.value();
-                increaseQuotaFunction = { };
-            }
-            standardReportedQuota *= m_originQuotaRatio.value();
-        }
-        if (origin.topOrigin != origin.clientOrigin) {
-            quota *= defaultThirdPartyOriginQuotaRatio;
-            standardReportedQuota *= defaultThirdPartyOriginQuotaRatio;
-        }
-        OriginQuotaManager::NotifySpaceGrantedFunction notifySpaceGrantedFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t spaceRequested) {
-            if (auto strongThis = weakThis.get()) {
-                strongThis->spaceGrantedForOrigin(origin, spaceRequested);
-                RunLoop::main().dispatch([strongThis = WTFMove(strongThis)] { });
-            }
-        };
-        // Use std::ceil instead of implicit conversion to make result more definitive.
-        return makeUnique<OriginStorageManager>(std::ceil(quota), std::ceil(standardReportedQuota), WTFMove(increaseQuotaFunction), WTFMove(notifySpaceGrantedFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
+        return makeUnique<OriginStorageManager>(originQuotaManagerParameters(origin), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
     }).iterator->value;
 
     if (shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
@@ -1234,6 +1244,22 @@ void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::Cli
 
     if (auto manager = m_originStorageManagers.get(origin))
         manager->quotaManager().resetQuotaUpdatedBasedOnUsageForTesting();
+}
+
+void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, enabled, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+        if (m_originQuotaRatioEnabled != enabled) {
+            m_originQuotaRatioEnabled = enabled;
+            for (auto& [origin, manager] : m_originStorageManagers)
+                manager->quotaManager().updateParametersForTesting(originQuotaManagerParameters(origin));
+        }
+
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
 }
 
 #if PLATFORM(IOS_FAMILY)

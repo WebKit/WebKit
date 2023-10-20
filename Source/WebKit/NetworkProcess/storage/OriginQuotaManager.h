@@ -38,7 +38,13 @@ public:
     using GetUsageFunction = Function<uint64_t()>;
     using IncreaseQuotaFunction = Function<void(QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease)>;
     using NotifySpaceGrantedFunction = Function<void(uint64_t)>;
-    static Ref<OriginQuotaManager> create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&&, IncreaseQuotaFunction&& = { }, NotifySpaceGrantedFunction&& = { });
+    struct Parameters {
+        uint64_t quota { 0 };
+        uint64_t standardReportedQuota { 0 };
+        IncreaseQuotaFunction increaseQuotaFunction;
+        NotifySpaceGrantedFunction notifySpaceGrantedFunction;
+    };
+    static Ref<OriginQuotaManager> create(Parameters&&, GetUsageFunction&&);
     uint64_t reportedQuota();
     uint64_t usage();
     enum class Decision : bool { Deny, Grant };
@@ -48,9 +54,10 @@ public:
 
     void resetQuotaUpdatedBasedOnUsageForTesting();
     void resetQuotaForTesting();
+    void updateParametersForTesting(Parameters&&);
 
 private:
-    OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&&, IncreaseQuotaFunction&&, NotifySpaceGrantedFunction&&);
+    OriginQuotaManager(Parameters&&, GetUsageFunction&&);
     void handleRequests();
     bool grantWithCurrentQuota(uint64_t spaceRequested);
     bool grantFastPath(uint64_t spaceRequested);

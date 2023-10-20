@@ -911,6 +911,14 @@ void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* co
     });
 }
 
+void WKWebsiteDataStoreSetOriginQuotaRatioEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreResetQuotaCallback callback)
+{
+    WebKit::toImpl(dataStoreRef)->setOriginQuotaRatioEnabledForTesting(enabled, [context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
 void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)

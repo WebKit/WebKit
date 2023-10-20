@@ -321,6 +321,7 @@ public:
 
     void setAllowStorageQuotaIncrease(bool);
     void setQuota(uint64_t);
+    void setOriginQuotaRatioEnabled(bool);
 
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }

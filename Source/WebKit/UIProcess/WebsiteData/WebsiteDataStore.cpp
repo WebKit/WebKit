@@ -2515,6 +2515,15 @@ void WebsiteDataStore::setCompletionHandlerForRemovalFromNetworkProcess(Completi
     m_completionHandlerForRemovalFromNetworkProcess = WTFMove(completionHandler);
 }
 
+void WebsiteDataStore::setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr networkProcess = networkProcessIfExists();
+    if (!networkProcess)
+        return completionHandler();
+
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SetOriginQuotaRatioEnabledForTesting(m_sessionID, enabled), WTFMove(completionHandler));
+}
+
 #if ENABLE(SERVICE_WORKER)
 
 void WebsiteDataStore::updateServiceWorkerInspectability()

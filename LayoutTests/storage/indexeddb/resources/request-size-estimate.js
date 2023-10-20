@@ -3,8 +3,10 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 description('This test verifies that estimated size of IDB database task is not smaller than or close to actual space increase (maybe subject to our implementation of backing store.)');
 

@@ -307,6 +307,7 @@ public:
     void storeServiceWorkerRegistrations(PAL::SessionID, CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
+    void setOriginQuotaRatioEnabledForTesting(PAL::SessionID, bool enabled, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
 #endif

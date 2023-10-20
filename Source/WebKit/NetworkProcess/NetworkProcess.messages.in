@@ -191,6 +191,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
 
     ResetQuota(PAL::SessionID sessionID) -> ()
+    SetOriginQuotaRatioEnabledForTesting(PAL::SessionID sessionID, bool enabled) -> ();
 #if PLATFORM(IOS_FAMILY)
     SetBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period) -> ()
 #endif

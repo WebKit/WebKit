@@ -3,8 +3,10 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 var quota = 400 * 1024; // default quota for testing.
 description("This test makes sure that storage of indexedDB does not grow unboundedly.");
