@@ -1,4 +1,0 @@
-
-
-PASS Same-document navigations in an iframe blocked by CSP frame-src dynamically using the <meta> tag
-

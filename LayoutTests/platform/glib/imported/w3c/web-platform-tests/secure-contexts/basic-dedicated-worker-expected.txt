@@ -1,9 +1,0 @@
-
-
-PASS HTTP worker
-PASS HTTPS worker
-PASS HTTP nested worker
-PASS HTTPS nested worker
-PASS HTTP worker from HTTPS subframe
-PASS HTTPS worker from HTTPS subframe
-
