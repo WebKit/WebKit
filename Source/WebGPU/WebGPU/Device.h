@@ -126,6 +126,8 @@ public:
     uint32_t maxBuffersForComputeStage() const;
     uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
 
+    static bool isStencilOnlyFormat(MTLPixelFormat);
+
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
     Device(Adapter&);
