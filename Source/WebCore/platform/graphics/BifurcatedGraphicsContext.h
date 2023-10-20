@@ -59,10 +59,6 @@ public:
     void drawPath(const Path&) final;
     void fillPath(const Path&) final;
     void strokePath(const Path&) final;
-#if ENABLE(INLINE_PATH_DATA)
-    void fillPathSegment(const PathSegment&) final;
-    void strokePathSegment(const PathSegment&) final;
-#endif
 
     void beginTransparencyLayer(float opacity) final;
     void endTransparencyLayer() final;

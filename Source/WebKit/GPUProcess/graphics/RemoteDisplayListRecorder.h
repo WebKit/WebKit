@@ -116,18 +116,13 @@ public:
 #endif
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
 #if ENABLE(INLINE_PATH_DATA)
-    void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
     void strokeLine(const WebCore::PathDataLine&);
-    void strokeArcWithColorAndThickness(const WebCore::PathArc&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
+    void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
     void strokeArc(const WebCore::PathArc&);
-    void strokeQuadCurveWithColorAndThickness(const WebCore::PathDataQuadCurve&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
     void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
-    void strokeBezierCurveWithColorAndThickness(const WebCore::PathDataBezierCurve&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
     void strokeBezierCurve(const WebCore::PathDataBezierCurve&);
-    void strokePathSegmentWithColorAndThickness(const WebCore::PathSegment&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
-    void strokePathSegment(const WebCore::PathSegment&);
-    void strokePathWithColorAndThickness(const WebCore::Path&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
 #endif
+    void strokePathSegment(const WebCore::PathSegment&);
     void strokePath(const WebCore::Path&);
     void strokeEllipse(const WebCore::FloatRect&);
     void clearRect(const WebCore::FloatRect&);

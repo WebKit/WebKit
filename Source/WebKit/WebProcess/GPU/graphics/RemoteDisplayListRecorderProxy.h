@@ -120,18 +120,13 @@ private:
 #endif
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
-    void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::SRGBA<uint8_t>, float thickness) final;
     void recordStrokeLine(const WebCore::PathDataLine&) final;
-    void recordStrokeArcWithColorAndThickness(const WebCore::PathArc&, WebCore::SRGBA<uint8_t>, float thickness) final;
+    void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::SRGBA<uint8_t>, float thickness) final;
     void recordStrokeArc(const WebCore::PathArc&) final;
-    void recordStrokeQuadCurveWithColorAndThickness(const WebCore::PathDataQuadCurve&, WebCore::SRGBA<uint8_t>, float thickness) final;
     void recordStrokeQuadCurve(const WebCore::PathDataQuadCurve&) final;
-    void recordStrokeBezierCurveWithColorAndThickness(const WebCore::PathDataBezierCurve&, WebCore::SRGBA<uint8_t>, float thickness) final;
     void recordStrokeBezierCurve(const WebCore::PathDataBezierCurve&) final;
-    void recordStrokePathSegmentWithColorAndThickness(const WebCore::PathSegment&, WebCore::SRGBA<uint8_t>, float thickness) final;
-    void recordStrokePathSegment(const WebCore::PathSegment&) final;
-    void recordStrokePathWithColorAndThickness(const WebCore::Path&, WebCore::SRGBA<uint8_t>, float thickness) final;
 #endif
+    void recordStrokePathSegment(const WebCore::PathSegment&) final;
     void recordStrokePath(const WebCore::Path&) final;
     void recordStrokeEllipse(const WebCore::FloatRect&) final;
     void recordClearRect(const WebCore::FloatRect&) final;
