@@ -75,6 +75,9 @@
             },
             "/webkit/WebKitWebView/external-audio-rendering": {
                 "expected": {"wpe": {"status": ["TIMEOUT"], "bug": "webkit.org/b/262625"}}
+            },
+            "/webkit/WebKitWebView/cut-copy-paste/editable": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
             }
         }
     },
