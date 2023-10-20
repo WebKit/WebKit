@@ -208,7 +208,7 @@ public:
     bool isInteractiveContent() const;
     bool isLabelable() const;
     bool isEnumeratable() const;
-    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
+    virtual bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
     // Form value functions.

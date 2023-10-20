@@ -231,6 +231,7 @@
 		DD20DE3627BC90D80093D175 /* NSSharingServicePickerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE3727BC90D80093D175 /* NSSharingServiceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE3827BC90D80093D175 /* NSSpellCheckerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD20DE3827BC90D80093D176 /* NSSwitchSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785811F45130F00F4EBB7 /* NSSwitchSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE3927BC90D80093D175 /* NSTextFinderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE3A27BC90D80093D175 /* NSTextInputContextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE3B27BC90D80093D175 /* NSUndoManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -469,6 +470,7 @@
 		0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSharingServicePickerSPI.h; sourceTree = "<group>"; };
 		0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSharingServiceSPI.h; sourceTree = "<group>"; };
 		0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSpellCheckerSPI.h; sourceTree = "<group>"; };
+		0C7785811F45130F00F4EBB7 /* NSSwitchSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSwitchSPI.h; sourceTree = "<group>"; };
 		0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextFinderSPI.h; sourceTree = "<group>"; };
 		0C7785831F45130F00F4EBB6 /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
 		0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowSPI.h; sourceTree = "<group>"; };
@@ -886,6 +888,7 @@
 				0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */,
 				0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */,
 				0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */,
+				0C7785811F45130F00F4EBB7 /* NSSwitchSPI.h */,
 				72BA2A872951462500678507 /* NSTextFieldCellSPI.h */,
 				0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */,
 				93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */,
@@ -1384,6 +1387,7 @@
 				DD20DE3727BC90D80093D175 /* NSSharingServiceSPI.h in Headers */,
 				DD20DE3827BC90D80093D175 /* NSSpellCheckerSPI.h in Headers */,
 				DD20DDFB27BC90D70093D175 /* NSStringSPI.h in Headers */,
+				DD20DE3827BC90D80093D176 /* NSSwitchSPI.h in Headers */,
 				DD20DE3927BC90D80093D175 /* NSTextFinderSPI.h in Headers */,
 				DD20DE3A27BC90D80093D175 /* NSTextInputContextSPI.h in Headers */,
 				DD20DDFC27BC90D70093D175 /* NSTouchBarSPI.h in Headers */,

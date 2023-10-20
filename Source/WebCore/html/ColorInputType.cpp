@@ -139,8 +139,8 @@ Color ColorInputType::valueAsColor() const
 
 void ColorInputType::createShadowSubtree()
 {
-    ASSERT(needsShadowSubtree());
     ASSERT(element());
+    ASSERT(needsShadowSubtree());
     ASSERT(element()->shadowRoot());
 
     Document& document = element()->document();

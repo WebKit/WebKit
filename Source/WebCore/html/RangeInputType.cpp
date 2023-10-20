@@ -247,8 +247,8 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
 void RangeInputType::createShadowSubtree()
 {
-    ASSERT(needsShadowSubtree());
     ASSERT(element());
+    ASSERT(needsShadowSubtree());
     ASSERT(element()->userAgentShadowRoot());
 
     Document& document = element()->document();

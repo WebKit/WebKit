@@ -44,6 +44,8 @@
 #import "SearchFieldResultsPart.h"
 #import "SliderThumbMac.h"
 #import "SliderTrackMac.h"
+#import "SwitchThumbMac.h"
+#import "SwitchTrackMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import "ToggleButtonMac.h"
@@ -209,6 +211,17 @@ NSSliderCell *ControlFactoryMac::sliderCell() const
     return m_sliderCell.get();
 }
 
+NSSwitch *ControlFactoryMac::switchControl() const
+{
+    if (!m_switchControl) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_switchControl = adoptNS([[NSSwitch alloc] init]);
+        [m_switchControl setWantsLayer:YES];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+    return m_switchControl.get();
+}
+
 NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 {
     if (!m_textFieldCell) {
@@ -293,6 +306,16 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderThumb(Sl
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderTrack(SliderTrackPart& part)
 {
     return makeUnique<SliderTrackMac>(part, *this);
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchThumb(SwitchThumbPart& part)
+{
+    return makeUnique<SwitchThumbMac>(part, *this, switchControl());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchTrack(SwitchTrackPart& part)
+{
+    return makeUnique<SwitchTrackMac>(part, *this, switchControl());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)

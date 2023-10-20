@@ -111,6 +111,18 @@ std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSliderTrack(Sl
     return nullptr;
 }
 
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchThumb(SwitchThumbPart&)
+{
+    notImplemented();
+    return nullptr;
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchTrack(SwitchTrackPart&)
+{
+    notImplemented();
+    return nullptr;
+}
+
 std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformTextArea(TextAreaPart&)
 {
     notImplemented();

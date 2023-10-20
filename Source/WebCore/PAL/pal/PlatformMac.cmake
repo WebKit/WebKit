@@ -139,6 +139,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSSharingServicePickerSPI.h
     spi/mac/NSSharingServiceSPI.h
     spi/mac/NSSpellCheckerSPI.h
+    spi/mac/NSSwitchSPI.h
     spi/mac/NSTextFinderSPI.h
     spi/mac/NSTextInputContextSPI.h
     spi/mac/NSUndoManagerSPI.h

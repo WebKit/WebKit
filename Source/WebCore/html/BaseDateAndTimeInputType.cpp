@@ -327,8 +327,8 @@ void BaseDateAndTimeInputType::showPicker()
 
 void BaseDateAndTimeInputType::createShadowSubtree()
 {
-    ASSERT(needsShadowSubtree());
     ASSERT(element());
+    ASSERT(needsShadowSubtree());
 
     auto& element = *this->element();
     auto& document = element.document();

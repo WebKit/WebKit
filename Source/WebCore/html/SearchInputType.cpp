@@ -107,6 +107,7 @@ bool SearchInputType::needsContainer() const
 
 void SearchInputType::createShadowSubtree()
 {
+    ASSERT(element());
     ASSERT(needsShadowSubtree());
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
@@ -118,7 +119,6 @@ void SearchInputType::createShadowSubtree()
     ASSERT(container);
     ASSERT(textWrapper);
 
-    ASSERT(element());
     m_resultsButton = SearchFieldResultsButtonElement::create(element()->document());
     container->insertBefore(*m_resultsButton, textWrapper.copyRef());
     updateResultButtonPseudoType(*m_resultsButton, element()->maxResults());

@@ -69,5 +69,10 @@ extern const CFStringRef kCUIWidgetButtonLittleArrows;
 extern const CFStringRef kCUIWidgetProgressIndeterminateBar;
 extern const CFStringRef kCUIWidgetProgressBar;
 extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
+extern const CFStringRef kCUIWidgetSwitchKnob;
+extern const CFStringRef kCUIWidgetSwitchBorder;
+extern const CFStringRef kCUIWidgetSwitchFill;
+extern const CFStringRef kCUIWidgetSwitchFillMask;
+extern const CFStringRef kCUIWidgetSwitchOnOffLabel;
 
 #endif

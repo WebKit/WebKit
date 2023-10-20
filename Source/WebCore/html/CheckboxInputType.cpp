@@ -36,6 +36,11 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
+#include "ShadowRoot.h"
+#include "SwitchThumbElement.h"
+#include "SwitchTrackElement.h"
 
 namespace WebCore {
 
@@ -58,10 +63,31 @@ String CheckboxInputType::valueMissingText() const
     return validationMessageValueMissingForCheckboxText();
 }
 
+bool CheckboxInputType::needsShadowSubtree() const
+{
+    ASSERT(element());
+    return element()->isSwitch();
+}
+
+void CheckboxInputType::createShadowSubtree()
+{
+    ASSERT(element());
+    ASSERT(needsShadowSubtree());
+    ASSERT(element()->userAgentShadowRoot());
+
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+
+    Ref document = element()->document();
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, SwitchTrackElement::create(document));
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, SwitchThumbElement::create(document));
+}
+
 void CheckboxInputType::attributeChanged(const QualifiedName& name)
 {
     ASSERT(element());
     if (element()->document().settings().switchControlEnabled() && name == HTMLNames::switchAttr) {
+        destroyShadowSubtree();
+        createShadowSubtreeIfNeeded();
         if (element()->renderer())
             element()->invalidateStyleAndRenderersForSubtree();
     }

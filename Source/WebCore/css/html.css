@@ -844,6 +844,10 @@ input:is([type="radio"], [type="checkbox"]) {
 #endif
 }
 
+input[type="checkbox"][switch] {
+    margin: initial;
+}
+
 input:is([type="button"], [type="submit"], [type="reset"]) {
     white-space: pre;
 }

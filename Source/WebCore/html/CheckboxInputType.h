@@ -42,6 +42,7 @@ public:
     }
 
     bool valueMissing(const String&) const final;
+    bool needsShadowSubtree() const final;
 
 private:
     explicit CheckboxInputType(HTMLInputElement& element)
@@ -51,6 +52,7 @@ private:
 
     const AtomString& formControlType() const final;
     String valueMissingText() const final;
+    void createShadowSubtree() final;
     void attributeChanged(const QualifiedName&) final;
     void handleKeyupEvent(KeyboardEvent&) final;
     void willDispatchClick(InputElementClickState&) final;

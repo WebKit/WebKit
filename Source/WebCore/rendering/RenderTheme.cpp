@@ -68,6 +68,8 @@
 #include "SliderTrackPart.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
+#include "SwitchThumbPart.h"
+#include "SwitchTrackPart.h"
 #include "TextAreaPart.h"
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
@@ -394,7 +396,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
             return StyleAppearance::Button;
 
         if (input.isSwitch())
-            return StyleAppearance::Switch;
+            return StyleAppearance::Auto;
 
         if (input.isCheckbox())
             return StyleAppearance::Checkbox;
@@ -675,8 +677,10 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::SliderThumbVertical:
         return SliderThumbPart::create(appearance);
 
-    case StyleAppearance::Switch:
-        break;
+    case StyleAppearance::SwitchThumb:
+        return SwitchThumbPart::create();
+    case StyleAppearance::SwitchTrack:
+        return SwitchTrackPart::create();
     }
 
     ASSERT_NOT_REACHED();
@@ -1284,7 +1288,9 @@ bool RenderTheme::isWindowActive(const RenderObject& renderer) const
 
 bool RenderTheme::isChecked(const RenderObject& o) const
 {
-    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).shouldAppearChecked();
+    if (is<HTMLInputElement>(o.node()))
+        return downcast<HTMLInputElement>(*o.node()).shouldAppearChecked();
+    return o.node()->shadowHost() && is<HTMLInputElement>(o.node()->shadowHost()) && downcast<HTMLInputElement>(*o.node()->shadowHost()).shouldAppearChecked();
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject& o) const
@@ -1295,7 +1301,8 @@ bool RenderTheme::isIndeterminate(const RenderObject& o) const
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
     if (auto* element = dynamicDowncast<Element>(renderer.node()))
-        return !element->isDisabledFormControl();
+        return !(element->isDisabledFormControl()
+            || (element->shadowHost() && element->shadowHost()->isDisabledFormControl()));
     return true;
 }
 
@@ -1317,7 +1324,8 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
 bool RenderTheme::isPressed(const RenderObject& renderer) const
 {
     if (auto* element = dynamicDowncast<Element>(renderer.node()))
-        return element->active();
+        return element->active()
+            || (element->shadowHost() && element->shadowHost()->active());
     return false;
 }
 

@@ -326,8 +326,8 @@ bool TextFieldInputType::shouldHaveCapsLockIndicator() const
 
 void TextFieldInputType::createShadowSubtree()
 {
-    ASSERT(needsShadowSubtree());
     ASSERT(element());
+    ASSERT(needsShadowSubtree());
     ASSERT(element()->shadowRoot());
     ASSERT(!element()->shadowRoot()->hasChildNodes());
 

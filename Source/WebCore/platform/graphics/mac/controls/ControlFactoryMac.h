@@ -67,6 +67,8 @@ private:
     std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSwitchThumb(SwitchThumbPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSwitchTrack(SwitchTrackPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
@@ -80,6 +82,7 @@ private:
     NSSearchFieldCell *searchFieldCell() const;
     NSMenu *searchMenuTemplate() const;
     NSSliderCell *sliderCell() const;
+    NSSwitch *switchControl() const;
     NSTextFieldCell *textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
@@ -96,6 +99,7 @@ private:
     mutable RetainPtr<NSSearchFieldCell> m_searchFieldCell;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderCell;
+    mutable RetainPtr<NSSwitch> m_switchControl;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 

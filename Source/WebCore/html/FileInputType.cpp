@@ -268,8 +268,8 @@ void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBeh
 
 void FileInputType::createShadowSubtree()
 {
-    ASSERT(needsShadowSubtree());
     ASSERT(element());
+    ASSERT(needsShadowSubtree());
     ASSERT(element()->shadowRoot());
 
     auto button = element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()) : UploadButtonElement::create(element()->document());
