@@ -711,7 +711,7 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    const auto& accessImpl = [&](const Type* baseType) -> const Type* {
+    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr) -> const Type* {
         if (isBottom(baseType))
             return m_types.bottomType();
 
@@ -727,7 +727,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
         if (std::holds_alternative<Types::Vector>(*baseType)) {
             auto& vector = std::get<Types::Vector>(*baseType);
-            return vectorFieldAccess(vector, access);
+            auto* result = vectorFieldAccess(vector, access);
+            if (canBeReference)
+                *canBeReference = !std::holds_alternative<Types::Vector>(*result);
+            return result;
         }
 
         typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
@@ -736,8 +739,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
     auto* baseType = infer(access.base());
     if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
-        if (const Type* result = accessImpl(reference->element)) {
-            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+        bool canBeReference = true;
+        if (const Type* result = accessImpl(reference->element, &canBeReference)) {
+            if (canBeReference)
+                result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
             inferred(result);
         }
         return;

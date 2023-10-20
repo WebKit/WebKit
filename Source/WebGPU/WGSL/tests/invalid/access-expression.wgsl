@@ -53,3 +53,10 @@ fn testConcretizationIfIndexIsNotConstant()
     // CHECK-L: cannot initialize var of type 'u32' with value of type 'i32'
     { let x: u32 = array(0)[i]; }
 }
+
+fn testCannotWriteToMultipleVectorLocations()
+{
+    var v = vec2(0);
+    // CHECK-L: cannot assign to a value of type 'vec2<i32>'
+    v.xy = vec2(1);
+}
