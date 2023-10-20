@@ -1908,7 +1908,7 @@ void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 {
     LayoutRect repaintRect;
     Vector<LayoutRect> focusRingRects;
-    addFocusRingRects(focusRingRects, LayoutPoint(), containerForRepaint().renderer);
+    addFocusRingRects(focusRingRects, LayoutPoint(), containerForRepaint().renderer.get());
     for (auto rect : focusRingRects) {
         rect.inflate(outlineSize);
         repaintRect.unite(rect);

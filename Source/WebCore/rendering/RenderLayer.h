@@ -55,6 +55,7 @@
 #include "RenderSVGModelObject.h"
 #include "ScrollBehavior.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/Markable.h>
 #include <wtf/WeakPtr.h>
 
@@ -149,7 +150,7 @@ struct ScrollRectToVisibleOptions {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer : public CanMakeWeakPtr<RenderLayer> {
+class RenderLayer : public CanMakeWeakPtr<RenderLayer>, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(RenderLayer);
 public:
     friend class RenderReplica;

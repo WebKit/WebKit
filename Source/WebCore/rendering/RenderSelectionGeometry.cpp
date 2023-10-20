@@ -32,7 +32,7 @@ namespace WebCore {
 
 RenderSelectionGeometryBase::RenderSelectionGeometryBase(RenderObject& renderer)
     : m_renderer(renderer)
-    , m_repaintContainer(renderer.containerForRepaint().renderer)
+    , m_repaintContainer(renderer.containerForRepaint().renderer.get())
     , m_state(renderer.selectionState())
 {
 }

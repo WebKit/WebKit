@@ -2107,11 +2107,11 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer& layer)
     if (&layer.renderer() != &m_renderView && !layer.renderer().parent())
         return;
 
-    auto* repaintContainer = layer.renderer().containerForRepaint().renderer;
+    CheckedPtr repaintContainer = layer.renderer().containerForRepaint().renderer;
     if (!repaintContainer)
         repaintContainer = &m_renderView;
 
-    layer.repaintIncludingNonCompositingDescendants(repaintContainer);
+    layer.repaintIncludingNonCompositingDescendants(repaintContainer.get());
     if (repaintContainer == &m_renderView) {
         // The contents of this layer may be moving between the window
         // and a GraphicsLayer, so we need to make sure the window system

@@ -76,7 +76,7 @@ public:
     { }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr(CheckedPtr<OtherType, OtherPtrTraits>&& other)
-        : m_ptr { PtrTraits::exchange(other.m_ptr, nullptr) }
+        : m_ptr { OtherPtrTraits::exchange(other.m_ptr, nullptr) }
     { }
 
     CheckedPtr(CheckedRef<T, PtrTraits>& other)

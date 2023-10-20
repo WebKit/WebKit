@@ -233,10 +233,11 @@ public:
 
     virtual ASCIILiteral renderName() const = 0;
 
-    RenderElement* parent() const { return m_parent; }
+    inline RenderElement* parent() const; // Defined in RenderElement.h.
+    inline CheckedPtr<RenderElement> checkedParent() const; // Defined in RenderElement.h.
     bool isDescendantOf(const RenderObject*) const;
 
-    RenderObject* previousSibling() const { return m_previous; }
+    RenderObject* previousSibling() const { return m_previous.get(); }
     RenderObject* nextSibling() const { return m_next.get(); }
     RenderObject* previousInFlowSibling() const;
     RenderObject* nextInFlowSibling() const;
@@ -602,7 +603,9 @@ public:
 
     inline bool preservesNewline() const;
 
-    RenderView& view() const { return *document().renderView(); };
+    RenderView& view() const { return *document().renderView(); }
+    CheckedRef<RenderView> checkedView() const;
+
     HostWindow* hostWindow() const;
 
     // Returns true if this renderer is rooted.
@@ -694,6 +697,7 @@ public:
 
     // Returns the containing block level element for this element.
     WEBCORE_EXPORT RenderBlock* containingBlock() const;
+    CheckedPtr<RenderBlock> checkedContainingBlock() const;
     static RenderBlock* containingBlockForPositionType(PositionType, const RenderObject&);
 
     // Convert the given local point to absolute coordinates. If OptionSet<MapCoordinatesMode> includes UseTransforms, take transforms into account.
@@ -762,8 +766,8 @@ public:
     // Return the RenderLayerModelObject in the container chain which is responsible for painting this object, or nullptr
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint' functions.
     struct RepaintContainerStatus {
-        bool fullRepaintIsScheduled { false }; // Either the repaint container or a layer in-between has aleady been scheduled for full repaint.
-        const RenderLayerModelObject* renderer { nullptr };
+        bool fullRepaintIsScheduled { false }; // Either the repaint container or a layer in-between has already been scheduled for full repaint.
+        CheckedPtr<const RenderLayerModelObject> renderer { nullptr };
     };
     RepaintContainerStatus containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
@@ -1109,9 +1113,9 @@ private:
 
     CheckedRef<Node> m_node;
 
-    RenderElement* m_parent;
-    RenderObject* m_previous;
-    PackedPtr<RenderObject> m_next;
+    CheckedPtr<RenderElement> m_parent;
+    CheckedPtr<RenderObject> m_previous;
+    PackedPtr<RenderObject> m_next; // FIXME: This should use a CheckedPtr.
     Type m_type;
 
     CheckedPtr<Layout::Box> m_layoutBox;
@@ -1157,7 +1161,7 @@ public:
 #if ASSERT_ENABLED
     ~SetLayoutNeededForbiddenScope();
 private:
-    const RenderObject& m_renderObject;
+    CheckedRef<const RenderObject> m_renderObject;
     bool m_preexistingForbidden;
 #endif
 };

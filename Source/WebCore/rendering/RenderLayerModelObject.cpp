@@ -176,7 +176,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
 
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
         if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && layer()->repaintRects())
-            repaintUsingContainer(containerForRepaint().renderer, layer()->repaintRects()->clippedOverflowRect);
+            repaintUsingContainer(containerForRepaint().renderer.get(), layer()->repaintRects()->clippedOverflowRect);
 
         layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
@@ -460,6 +460,11 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
     bool hasSVGTransform = needsHasSVGTransformFlags();
     setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
+}
+
+CheckedPtr<RenderLayer> RenderLayerModelObject::checkedLayer() const
+{
+    return m_layer.get();
 }
 
 void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()

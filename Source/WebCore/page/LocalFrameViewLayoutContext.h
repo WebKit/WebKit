@@ -28,6 +28,7 @@
 #include "LayoutUnit.h"
 #include "RenderLayerModelObject.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,7 @@ struct UpdateScrollInfoAfterLayoutTransaction {
     WeakHashSet<RenderBlock> blocks;
 };
 
-class LocalFrameViewLayoutContext {
+class LocalFrameViewLayoutContext : public CanMakeCheckedPtr {
 public:
     LocalFrameViewLayoutContext(LocalFrameView&);
     ~LocalFrameViewLayoutContext();

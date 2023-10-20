@@ -1338,7 +1338,7 @@ void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool ha
             // that the block really needed a full layout, we missed our chance to repaint the layer
             // before layout started. Luckily the layer has cached the repaint rect for its original
             // position and size, and so we can use that to make a repaint happen now.
-            m_flow.repaintUsingContainer(m_flow.containerForRepaint().renderer, m_flow.layerRepaintRects()->clippedOverflowRect);
+            m_flow.repaintUsingContainer(m_flow.containerForRepaint().renderer.get(), m_flow.layerRepaintRects()->clippedOverflowRect);
         }
     }
 

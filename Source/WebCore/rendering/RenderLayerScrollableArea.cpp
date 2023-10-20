@@ -384,11 +384,11 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     }
 
     LocalFrame& frame = renderer.frame();
-    auto* repaintContainer = renderer.containerForRepaint().renderer;
+    CheckedPtr repaintContainer = renderer.containerForRepaint().renderer;
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
 
-    LayoutRect rectForRepaint = layer().repaintRects() ? layer().repaintRects()->clippedOverflowRect : renderer.clippedOverflowRectForRepaint(repaintContainer);
+    LayoutRect rectForRepaint = layer().repaintRects() ? layer().repaintRects()->clippedOverflowRect : renderer.clippedOverflowRectForRepaint(repaintContainer.get());
 
     FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
     if (repaintContainer)
@@ -409,7 +409,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
 
     // Just schedule a full repaint of our object.
     if (requiresRepaint) {
-        renderer.repaintUsingContainer(repaintContainer, rectForRepaint);
+        renderer.repaintUsingContainer(repaintContainer.get(), rectForRepaint);
 
         // We also have to repaint any descendant composited layers that have fixed backgrounds.
         if (auto slowRepaintObjects = view.frameView().slowRepaintObjects()) {
