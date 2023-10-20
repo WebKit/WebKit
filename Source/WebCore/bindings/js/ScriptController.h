@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/ScriptFetchParameters.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -77,7 +78,7 @@ enum class ReasonForCallingCanExecuteScripts : uint8_t {
 
 using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
 
-class ScriptController : public CanMakeWeakPtr<ScriptController> {
+class ScriptController : public CanMakeWeakPtr<ScriptController>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 
     using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;

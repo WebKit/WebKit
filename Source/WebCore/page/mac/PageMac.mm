@@ -81,9 +81,9 @@ void Page::platformInitialize()
             });
 
             WTFLogAlways("%u live documents:", Document::allDocuments().size());
-            for (const auto* document : Document::allDocuments()) {
-                const char* documentType = is<SVGDocument>(document) ? "SVGDocument" : "Document";
-                WTFLogAlways("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().processIdentifier().toUInt64(), document->identifier().toString().utf8().data(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
+            for (auto& document : Document::allDocuments()) {
+                const char* documentType = is<SVGDocument>(document.get()) ? "SVGDocument" : "Document";
+                WTFLogAlways("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document.ptr(), document->identifier().processIdentifier().toUInt64(), document->identifier().toString().utf8().data(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
             }
         });
     });

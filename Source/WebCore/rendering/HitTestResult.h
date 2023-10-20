@@ -64,7 +64,7 @@ public:
     void setURLElement(Element*);
     Element* URLElement() const { return m_innerURLElement.get(); }
 
-    void setScrollbar(Scrollbar*);
+    void setScrollbar(RefPtr<Scrollbar>&&);
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     bool isOverWidget() const { return m_isOverWidget; }

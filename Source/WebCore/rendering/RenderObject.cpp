@@ -2707,7 +2707,7 @@ TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 
 void printPaintOrderTreeForLiveDocuments()
 {
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
@@ -2719,7 +2719,7 @@ void printPaintOrderTreeForLiveDocuments()
 
 void printRenderTreeForLiveDocuments()
 {
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
@@ -2731,7 +2731,7 @@ void printRenderTreeForLiveDocuments()
 
 void printLayerTreeForLiveDocuments()
 {
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
@@ -2743,11 +2743,11 @@ void printLayerTreeForLiveDocuments()
 
 void printGraphicsLayerTreeForLiveDocuments()
 {
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame()) {
-            WTFLogAlways("Graphics layer tree for root document %p %s", document, document->url().string().utf8().data());
+            WTFLogAlways("Graphics layer tree for root document %p %s", document.ptr(), document->url().string().utf8().data());
             showGraphicsLayerTreeForCompositor(document->renderView()->compositor());
         }
     }

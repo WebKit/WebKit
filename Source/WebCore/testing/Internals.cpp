@@ -800,7 +800,7 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
 Vector<Ref<SVGSVGElement>> Internals::allSVGSVGElements() const
 {
     Vector<Ref<SVGSVGElement>> elements;
-    for (auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->svgExtensions())
             continue;
         elements.appendVector(document->accessSVGExtensions().allSVGSVGElements());
@@ -2912,7 +2912,7 @@ unsigned Internals::numberOfIDBTransactions() const
 unsigned Internals::numberOfLiveNodes() const
 {
     unsigned nodeCount = 0;
-    for (auto* document : Document::allDocuments())
+    for (auto& document : Document::allDocuments())
         nodeCount += document->referencingNodeCount();
     return nodeCount;
 }

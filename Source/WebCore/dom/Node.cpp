@@ -436,7 +436,7 @@ Node::~Node()
     document().decrementReferencingNodeCount();
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS))
-    for (auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventListenersContain(*this));
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventHandlersContain(*this));
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventTargetsContain(*this));

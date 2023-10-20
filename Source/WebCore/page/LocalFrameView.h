@@ -110,6 +110,7 @@ public:
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 
     WEBCORE_EXPORT LocalFrame& frame() const final;
+    Ref<LocalFrame> protectedFrame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
 

@@ -6007,6 +6007,11 @@ LocalFrame& LocalFrameView::frame() const
     return m_frame;
 }
 
+Ref<LocalFrame> LocalFrameView::protectedFrame() const
+{
+    return m_frame;
+}
+
 RenderView* LocalFrameView::renderView() const
 {
     return m_frame->contentRenderer();

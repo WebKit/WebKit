@@ -429,7 +429,7 @@ public:
 
     void removedLastRef();
 
-    using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, Document*>;
+    using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, CheckedRef<Document>>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 
@@ -462,6 +462,7 @@ public:
     WEBCORE_EXPORT DOMImplementation& implementation();
     
     Element* documentElement() const { return m_documentElement.get(); }
+    RefPtr<Element> protectedDocumentElement() const;
     static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     WEBCORE_EXPORT Element* activeElement();
@@ -615,6 +616,7 @@ public:
 
     CSSFontSelector& fontSelector() { return m_fontSelector; }
     const CSSFontSelector& fontSelector() const { return m_fontSelector; }
+    Ref<CSSFontSelector> protectedFontSelector() const;
 
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
     bool isIgnoringPendingStylesheets() const { return m_ignorePendingStylesheets; }
@@ -641,6 +643,7 @@ public:
     void setStateForNewFormElements(const Vector<AtomString>&);
 
     inline LocalFrameView* view() const; // Defined in LocalFrame.h.
+    RefPtr<LocalFrameView> protectedView() const;
     inline Page* page() const; // Defined in Page.h.
     inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     const Settings& settings() const { return m_settings.get(); }
@@ -694,6 +697,7 @@ public:
     WEBCORE_EXPORT void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
+    Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
@@ -809,6 +813,7 @@ public:
     
     virtual Ref<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
+    RefPtr<DocumentParser> protectedParser() const;
     ScriptableDocumentParser* scriptableDocumentParser() const;
     
     bool printing() const { return m_printing; }
@@ -861,6 +866,7 @@ public:
     WEBCORE_EXPORT bool setFocusedElement(Element*);
     WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions&);
     Element* focusedElement() const { return m_focusedElement.get(); }
+    RefPtr<Element> protectedFocusedElement() const;
     inline bool wasLastFocusByClick() const;
     void setLatestFocusTrigger(FocusTrigger trigger) { m_latestFocusTrigger = trigger; }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
@@ -936,14 +942,18 @@ public:
     void createDOMWindow();
     void takeDOMWindowFrom(Document&);
 
+    // FIXME: Consider renaming to window().
     LocalDOMWindow* domWindow() const { return m_domWindow.get(); }
+    RefPtr<LocalDOMWindow> protectedWindow() const;
+
     // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
 
     inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
 
     Document& contextDocument() const;
-    void setContextDocument(Document& document) { m_contextDocument = document; }
+    Ref<Document> protectedContextDocument() const;
+    void setContextDocument(Ref<Document>&& document) { m_contextDocument = WTFMove(document); }
     
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
     void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }
@@ -1124,6 +1134,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<String> queryCommandValue(const String& command);
 
     UndoManager& undoManager() const { return m_undoManager.get(); }
+    Ref<UndoManager> protectedUndoManager() const;
 
     // designMode support
     enum class DesignMode : bool { Off, On };
@@ -1132,7 +1143,9 @@ public:
     WEBCORE_EXPORT void setDesignMode(const String&);
 
     Document* parentDocument() const;
+    RefPtr<Document> protectedParentDocument() const { return parentDocument(); }
     WEBCORE_EXPORT Document& topDocument() const;
+    Ref<Document> protectedTopDocument() const { return topDocument(); }
     bool isTopDocument() const { return &topDocument() == this; }
     
     ScriptRunner& scriptRunner() { return *m_scriptRunner; }
@@ -1238,6 +1251,7 @@ public:
 
     void setDecoder(RefPtr<TextResourceDecoder>&&);
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
+    RefPtr<TextResourceDecoder> protectedDecoder() const;
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
@@ -1667,7 +1681,7 @@ public:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void setServiceWorkerConnection(SWClientConnection*);
+    void setServiceWorkerConnection(RefPtr<SWClientConnection>&&);
     void updateServiceWorkerClientData() final;
     WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(bool)>&&);
 #endif
@@ -1783,6 +1797,7 @@ public:
     std::optional<PAL::SessionID> sessionID() const final;
 
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
+    Ref<ReportingScope> protectedReportingScope() const;
     WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
 
     bool hasSleepDisabler() const { return !!m_sleepDisabler; }
@@ -1826,6 +1841,7 @@ private:
     friend class IgnoreDestructiveWriteCountIncrementer;
 
     void updateTitleElement(Element& changingTitleElement);
+    RefPtr<Element> protectedTitleElement() const;
     void willDetachPage() final;
     void frameDestroyed() final;
 

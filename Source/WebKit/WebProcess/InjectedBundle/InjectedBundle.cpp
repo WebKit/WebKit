@@ -336,7 +336,7 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
 {
     DocumentIDToURLMap result;
 
-    for (const auto* document : Document::allDocuments())
+    for (auto& document : Document::allDocuments())
         result.add(document->identifier().object(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {
