@@ -18,7 +18,7 @@ from util import text_content
 
 # There are some buggy commit messages:
 # Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
-REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@[\w\.\-]+)\n', flags=re.MULTILINE)
+REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@(?P<branch_name>[\w\.\-]+))\n', flags=re.MULTILINE)
 REVISION_IN_MSG_RE = re.compile(r'^git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n', flags=re.MULTILINE)
 HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
@@ -52,7 +52,7 @@ def load_repository(repository):
         return GitRepository(
             name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'],
             git_branch=repository.get('branch'), report_revision_identifier_in_commit_msg=repository.get('reportRevisionIdentifier'),
-            report_svn_revison=repository.get('reportSVNRevision'),
+            report_svn_revision=repository.get('reportSVNRevision'),
             max_revision=repository.get('maxRevision'))
     return SVNRepository(name=repository['name'], svn_url=repository['url'], should_trust_certificate=repository.get('trustCertificate', False),
         use_server_auth=repository.get('useServerAuth', False), account_name_script_path=repository.get('accountNameFinderScript'))
@@ -203,7 +203,7 @@ class SVNRepository(Repository):
 
 class GitRepository(Repository):
 
-    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revison=False, max_revision=None):
+    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revision=False, max_revision=None):
         assert(os.path.isdir(git_checkout))
         super(GitRepository, self).__init__(name)
         self._git_checkout = git_checkout
@@ -211,7 +211,7 @@ class GitRepository(Repository):
         self._git_branch = git_branch
         self._tokenized_hashes = []
         self._report_revision_identifier_in_commit_msg = report_revision_identifier_in_commit_msg
-        self._report_svn_revision = report_svn_revison
+        self._report_svn_revision = report_svn_revision
         self._max_revision = max_revision
 
     def fetch_next_commit(self, server_config, last_fetched):
@@ -266,10 +266,13 @@ class GitRepository(Repository):
 
         revision_identifier = None
         if self._report_revision_identifier_in_commit_msg:
-            revision_identifier_match = REVISION_IDENTIFIER_IN_MSG_RE.search(message)
-            if not revision_identifier_match:
+            for revision_identifier_match in REVISION_IDENTIFIER_IN_MSG_RE.finditer(message):
+                if self._git_branch and revision_identifier_match.group('branch_name') != self._git_branch:
+                    continue
+                revision_identifier = revision_identifier_match.group('revision_identifier')
+
+            if not revision_identifier:
                 raise ValueError('Expected commit message to include revision identifier, but cannot find it, will need a history rewrite to fix it')
-            revision_identifier = revision_identifier_match.group('revision_identifier')
 
         current_revision = current_hash
         previous_revision = previous_hash
