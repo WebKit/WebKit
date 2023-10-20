@@ -462,8 +462,21 @@ void Visitor::visit(AST::StaticAssertStatement& staticAssertStatement)
     checkErrorAndVisit(staticAssertStatement.expression());
 }
 
-void Visitor::visit(AST::SwitchStatement&)
+void Visitor::visit(AST::SwitchStatement& statement)
 {
+    checkErrorAndVisit(statement.value());
+    for (auto& attribute : statement.valueAttributes())
+        checkErrorAndVisit(attribute);
+    for (auto& clause : statement.clauses())
+        checkErrorAndVisit(clause);
+    checkErrorAndVisit(statement.defaultClause());
+}
+
+void Visitor::visit(AST::SwitchClause& clause)
+{
+    for (auto& selector : clause.selectors)
+        checkErrorAndVisit(selector);
+    checkErrorAndVisit(clause.body);
 }
 
 void Visitor::visit(AST::VariableStatement& varStatement)

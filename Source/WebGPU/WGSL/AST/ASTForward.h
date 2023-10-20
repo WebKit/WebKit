@@ -96,6 +96,8 @@ class ReferenceTypeExpression;
 class Variable;
 class VariableQualifier;
 
+struct SwitchClause;
+
 enum class BinaryOperation : uint8_t;
 enum class ParameterRole : uint8_t;
 enum class StructureRole : uint8_t;

@@ -86,6 +86,7 @@ public:
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
     void visit(AST::WhileStatement&) override;
+    void visit(AST::SwitchStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -663,6 +664,41 @@ void TypeChecker::visit(AST::WhileStatement& statement)
         typeError(InferBottom::No, statement.test().span(), "while condition must be bool, got ", *testType);
 
     visit(statement.body());
+}
+
+void TypeChecker::visit(AST::SwitchStatement& statement)
+{
+    auto* valueType = infer(statement.value());
+    if (!satisfies(valueType, Constraints::ConcreteInteger)) {
+        typeError(InferBottom::No, statement.value().span(), "switch selector must be of type i32 or u32");
+        valueType = m_types.bottomType();
+    }
+
+    const auto& visitClause = [&](AST::SwitchClause& clause) {
+        for (auto& selector : clause.selectors) {
+            auto* selectorType = infer(selector);
+            if (unify(valueType, selectorType)) {
+                // If the selectorType can satisfy the value type, we're good to go.
+                // e.g. valueType is i32 or u32 and the selector is a literal of type AbstractInt
+                continue;
+            }
+            if (unify(selectorType, valueType)) {
+                // If the opposite is true, we have to promote valueType
+                // e.g. valueType is a constant of type AbstractInt and the selector has type i32 or u32
+                valueType = selectorType;
+                continue;
+            }
+            // Otherwise, the types are incompatible, and we have an error
+            // e.g. valueType has type u32 the selector has type i32
+            typeError(InferBottom::No, selector.span(), "the case selector values must have the same type as the selector expression: the selector expression has type '", *valueType, "' and case selector has type '", *selectorType, "'");
+        }
+        visit(clause.body);
+    };
+
+    visitAttributes(statement.valueAttributes());
+    visitClause(statement.defaultClause());
+    for (auto& clause : statement.clauses())
+        visitClause(clause);
 }
 
 // Expressions

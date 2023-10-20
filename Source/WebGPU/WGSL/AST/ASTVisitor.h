@@ -114,6 +114,7 @@ public:
     virtual void visit(AST::VariableQualifier&);
 
     virtual void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) { }
+    virtual void visit(AST::SwitchClause&);
 
     bool hasError() const;
     Result<void> result();

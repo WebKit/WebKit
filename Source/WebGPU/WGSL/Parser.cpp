@@ -978,6 +978,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
     }
+    case TokenType::KeywordSwitch: {
+        // FIXME: Handle attributes attached to statement.
+        return parseSwitchStatement();
+    }
     case TokenType::KeywordWhile: {
         // FIXME: Handle attributes attached to statement.
         return parseWhileStatement();
@@ -1119,6 +1123,64 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement()
     PARSE(body, CompoundStatement);
 
     RETURN_ARENA_NODE(ForStatement, maybeInitializer, maybeTest, maybeUpdate, WTFMove(body));
+}
+
+template<typename Lexer>
+Result<AST::Statement::Ref> Parser<Lexer>::parseSwitchStatement()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordSwitch);
+
+    PARSE(value, Expression);
+    PARSE(valueAttributes, Attributes);
+
+    CONSUME_TYPE(BraceLeft);
+
+    Vector<AST::SwitchClause> clauses;
+    std::optional<AST::SwitchClause> defaultClause;
+    while (current().type != TokenType::BraceRight) {
+        AST::Expression::List selectors;
+        bool hasDefault = false;
+        if (current().type == TokenType::KeywordCase) {
+            consume();
+            do {
+                if (current().type == TokenType::KeywordDefault) {
+                    consume();
+                    hasDefault = true;
+                } else {
+                    PARSE(selector, Expression);
+                    selectors.append(WTFMove(selector));
+                }
+
+                if (current().type != TokenType::Comma)
+                    break;
+                CONSUME_TYPE(Comma);
+            } while (current().type != TokenType::BraceLeft && current().type != TokenType::Colon);
+        } else if (current().type == TokenType::KeywordDefault) {
+            consume();
+            hasDefault = true;
+        } else
+            FAIL("Expected either a `case` or `default` switch clause"_s);
+
+        if (hasDefault && defaultClause.has_value())
+            FAIL("Switch statement contains more than one default clause"_s);
+
+        if (current().type == TokenType::Colon)
+            consume();
+        PARSE(body, CompoundStatement);
+        ASSERT(hasDefault || !selectors.isEmpty());
+        if (hasDefault)
+            defaultClause = { WTFMove(selectors), body };
+        else
+            clauses.append({ WTFMove(selectors), body });
+    }
+    CONSUME_TYPE(BraceRight);
+
+    if (!defaultClause.has_value())
+        FAIL("Switch statement must have exactly one default clause, but it has none"_s);
+
+    RETURN_ARENA_NODE(SwitchStatement, WTFMove(value), WTFMove(valueAttributes), WTFMove(clauses), WTFMove(*defaultClause));
 }
 
 template<typename Lexer>

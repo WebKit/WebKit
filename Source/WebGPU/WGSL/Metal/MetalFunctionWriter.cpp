@@ -100,6 +100,7 @@ public:
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
     void visit(AST::WhileStatement&) override;
+    void visit(AST::SwitchStatement&) override;
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
@@ -1700,6 +1701,35 @@ void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
     visit(statement.test());
     m_stringBuilder.append(") ");
     visit(statement.body());
+}
+
+void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
+{
+    const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
+        bool first = true;
+        for (auto& selector : clause.selectors) {
+            if (!first)
+                m_stringBuilder.append("\n");
+            first = false;
+            m_stringBuilder.append(m_indent, "case ");
+            visit(selector);
+            m_stringBuilder.append(":");
+        }
+        if (isDefault) {
+            if (!first)
+                m_stringBuilder.append("\n");
+            m_stringBuilder.append(m_indent, "default:");
+        }
+        visit(clause.body);
+    };
+
+    m_stringBuilder.append("switch (");
+    visit(statement.value());
+    m_stringBuilder.append(") {\n");
+    for (auto& clause : statement.clauses())
+        visitClause(clause);
+    visitClause(statement.defaultClause(), true);
+    m_stringBuilder.append("\n", m_indent, "}");
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
