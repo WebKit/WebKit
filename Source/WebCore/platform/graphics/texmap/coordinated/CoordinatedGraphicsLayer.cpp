@@ -1064,17 +1064,15 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     }
 }
 
-void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()
+bool CoordinatedGraphicsLayer::checkPendingStateChangesIncludingSubLayers()
 {
-    if (m_nicosia.performLayerSync)
-        m_coordinator->syncLayerState();
-    m_nicosia.performLayerSync = false;
-
+    bool performLayerSync = std::exchange(m_nicosia.performLayerSync, false);
     if (maskLayer())
-        downcast<CoordinatedGraphicsLayer>(*maskLayer()).syncPendingStateChangesIncludingSubLayers();
+        performLayerSync |= downcast<CoordinatedGraphicsLayer>(*maskLayer()).checkPendingStateChangesIncludingSubLayers();
 
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).syncPendingStateChangesIncludingSubLayers();
+        performLayerSync |= downcast<CoordinatedGraphicsLayer>(child.get()).checkPendingStateChangesIncludingSubLayers();
+    return performLayerSync;
 }
 
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()

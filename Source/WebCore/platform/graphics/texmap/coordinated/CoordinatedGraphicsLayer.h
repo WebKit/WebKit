@@ -53,7 +53,6 @@ public:
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
     virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
-    virtual void syncLayerState() = 0;
 };
 
 class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer {
@@ -127,7 +126,7 @@ public:
     PlatformLayer* platformLayer() const override;
 #endif
 
-    void syncPendingStateChangesIncludingSubLayers();
+    bool checkPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
 
     FloatPoint computePositionRelativeToBase();
