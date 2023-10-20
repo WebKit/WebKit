@@ -152,6 +152,7 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SystemFree.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -195,10 +196,42 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIAsyncDragInteraction)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIContextMenuAsyncConfiguration)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
+
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+
+@interface WKUITextSelectionRect : UITextSelectionRect
++ (instancetype)selectionRectWithCGRect:(CGRect)rect;
+@end
+
+@implementation WKUITextSelectionRect {
+    CGRect _selectionRect;
+}
+
++ (instancetype)selectionRectWithCGRect:(CGRect)rect
+{
+    return [[[WKUITextSelectionRect alloc] initWithCGRect:rect] autorelease];
+}
+
+- (instancetype)initWithCGRect:(CGRect)rect
+{
+    if (self = [super init])
+        _selectionRect = rect;
+    return self;
+}
+
+- (CGRect)rect
+{
+    return _selectionRect;
+}
+
+@end
+
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -925,9 +958,19 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     static std::once_flag onceFlag;
     std::call_once(onceFlag, ^{
 #if HAVE(UI_ASYNC_TEXT_INPUT)
-        if (_page->preferences().useAsyncUIKitInteractions())
+        if (_page->preferences().useAsyncUIKitInteractions()) {
             class_addProtocol(self.class, @protocol(UIAsyncTextInput));
-#endif
+            unsigned methodCount = 0;
+            using MethodDescriptionList = objc_method_description[];
+            auto methods = std::unique_ptr<MethodDescriptionList, WTF::SystemFree<MethodDescriptionList>> {
+                protocol_copyMethodDescriptionList(@protocol(UIAsyncTextInput), NO, YES, &methodCount)
+            };
+            for (unsigned i = 0; i < methodCount; i++) {
+                if (![self.class instancesRespondToSelector:methods[i].name])
+                    RELEASE_LOG_ERROR(TextInteraction, "Warning: -[UIAsyncTextInput %s] is unimplemented", sel_getName(methods[i].name));
+            }
+        }
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)
 #if USE(UICONTEXTMENU)
         if (!self._shouldUseUIContextMenuAsyncConfiguration) {
             // Only fall back to the legacy asynchronous delegate method when UI_CONTEXT_MENU_ASYNC_CONFIGURATION
@@ -4822,12 +4865,17 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if (!input || ![input length]) {
-        completionHandler(nil);
-        return;
-    }
+    [self _internalRequestTextRectsForString:input completion:[view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](auto& rects) {
+        completionHandler(!rects.isEmpty() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:rects.first() lastCGRect:rects.last()] : nil);
+    }];
+}
 
-    _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto data) {
+- (void)_internalRequestTextRectsForString:(NSString *)input completion:(Function<void(const Vector<WebCore::FloatRect>&)>&&)completion
+{
+    if (!input.length)
+        return completion({ });
+
+    _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = WTFMove(completion)](const WebKit::WebAutocorrectionData& data) mutable {
         CGRect firstRect;
         CGRect lastRect;
         auto& rects = data.textRects;
@@ -4843,7 +4891,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         view->_autocorrectionData.textFirstRect = firstRect;
         view->_autocorrectionData.textLastRect = lastRect;
 
-        completion(!rects.isEmpty() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:firstRect lastCGRect:lastRect] : nil);
+        completion(rects);
     });
 }
 
@@ -5231,9 +5279,16 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
+    [self _internalReplaceText:input withText:correction isCandidate:isCandidate completion:[completionHandler = makeBlockPtr(completionHandler), view = retainPtr(self)](bool wasApplied) {
+        completionHandler(wasApplied ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:view->_autocorrectionData.textFirstRect lastCGRect:view->_autocorrectionData.textLastRect] : nil);
+    }];
+}
+
+- (void)_internalReplaceText:(NSString *)input withText:(NSString *)correction isCandidate:(BOOL)isCandidate completion:(Function<void(bool)>&&)completionHandler
+{
     if ([self _disableAutomaticKeyboardUI]) {
         if (completionHandler)
-            completionHandler(nil);
+            completionHandler(false);
         return;
     }
 
@@ -5242,13 +5297,13 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
     if (useSyncRequest) {
         if (completionHandler)
-            completionHandler(_page->applyAutocorrection(correction, input, isCandidate) ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:_autocorrectionData.textFirstRect lastCGRect:_autocorrectionData.textLastRect] : nil);
+            completionHandler(_page->applyAutocorrection(correction, input, isCandidate));
         return;
     }
 
-    _page->applyAutocorrection(correction, input, isCandidate, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& string) {
-        if (completion)
-            completion(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:view->_autocorrectionData.textFirstRect lastCGRect:view->_autocorrectionData.textLastRect] : nil);
+    _page->applyAutocorrection(correction, input, isCandidate, [view = retainPtr(self), completionHandler = WTFMove(completionHandler)](auto& string) {
+        if (completionHandler)
+            completionHandler(!string.isNull());
     });
 }
 
@@ -6690,13 +6745,17 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
+    if ([_keyboardScrollingAnimator beginWithEvent:event] || [_keyboardScrollingAnimator scrollTriggeringKeyIsPressed])
+        return YES;
+
 #if HAVE(UI_ASYNC_TEXT_INPUT)
     if (auto systemDelegate = retainPtr(_asyncSystemInputDelegate)) {
-        auto originalKeyEvent = retainPtr(event.originalUIKeyEvent);
-        ASSERT(originalKeyEvent);
-        return [systemDelegate deferHandlingToSystemForKeyEvent:originalKeyEvent.get()];
+        auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
+        [context setDocumentIsEditable:_page->editorState().isContentEditable];
+        [context setShouldInsertChar:isCharEvent];
+        return [systemDelegate deferEventHandlingToSystemWithContext:context.get()];
     }
-#endif
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)
 
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
         return NO;
@@ -6705,9 +6764,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     if (!contentEditable && event.isTabKey)
         return NO;
-
-    if ([_keyboardScrollingAnimator beginWithEvent:event] || [_keyboardScrollingAnimator scrollTriggeringKeyIsPressed])
-        return YES;
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
 
@@ -11930,6 +11986,31 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     [self handleKeyWebEvent:webEvent.get() withCompletionHandler:[originalEvent = retainPtr(event), completionHandler = makeBlockPtr(completionHandler)](::WebEvent *webEvent, BOOL handled) {
         ASSERT(webEvent.originalUIKeyEvent == originalEvent);
         completionHandler(originalEvent.get(), handled);
+    }];
+}
+
+- (void)replaceText:(NSString *)originalText withText:(NSString *)replacementText options:(UITextReplacementOptions)options withCompletionHandler:(void (^)(NSArray<UITextSelectionRect *> *rects))completionHandler
+{
+    [self _internalReplaceText:originalText withText:replacementText isCandidate:options & UITextReplacementOptionsAddUnderline completion:[view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](bool wasReplaced) {
+        if (!wasReplaced)
+            return completionHandler(@[ ]);
+
+        auto& data = view->_autocorrectionData;
+        RetainPtr firstSelectionRect = [WKUITextSelectionRect selectionRectWithCGRect:data.textFirstRect];
+        if (CGRectEqualToRect(data.textFirstRect, data.textLastRect))
+            return completionHandler(@[ firstSelectionRect.get() ]);
+
+        completionHandler(@[ firstSelectionRect.get(), [WKUITextSelectionRect selectionRectWithCGRect:data.textLastRect] ]);
+    }];
+}
+
+- (void)requestTextRectsForString:(NSString *)input withCompletionHandler:(void (^)(NSArray<UITextSelectionRect *> *rects))completionHandler
+{
+    [self _internalRequestTextRectsForString:input completion:[view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](auto& rects) mutable {
+        auto selectionRects = createNSArray(rects, [](auto& rect) {
+            return [WKUITextSelectionRect selectionRectWithCGRect:rect];
+        });
+        completionHandler(selectionRects.get());
     }];
 }
 
