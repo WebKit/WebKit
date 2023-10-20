@@ -1636,8 +1636,7 @@ void WebProcess::accessibilityRelayProcessSuspended(bool suspended)
         return;
 
     // Take the first webpage. We only need to have the process on the other side relay this for the WebProcess.
-    auto* webPage = m_pageMap.values().begin().get()->get();
-    AXRelayProcessSuspendedNotification(*webPage, AXRelayProcessSuspendedNotification::AutomaticallySend::No).sendProcessSuspendMessage(suspended);
+    AXRelayProcessSuspendedNotification(*m_pageMap.begin()->value, AXRelayProcessSuspendedNotification::AutomaticallySend::No).sendProcessSuspendMessage(suspended);
 }
 
 void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHandler)
