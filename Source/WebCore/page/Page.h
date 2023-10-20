@@ -1068,6 +1068,8 @@ public:
 #endif
     WEBCORE_EXPORT String sceneIdentifier() const;
 
+    bool isInRenderingUpdate() const { return !m_renderingUpdateRemainingSteps.isEmpty(); }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
