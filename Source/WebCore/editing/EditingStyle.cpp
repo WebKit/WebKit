@@ -1575,7 +1575,7 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     if (selection.isRange() && is<Text>(positionNode) && static_cast<unsigned>(position.computeOffsetInContainerNode()) == downcast<Text>(*positionNode).length())
         position = nextVisuallyDistinctCandidate(position);
 
-    RefPtr element = position.element();
+    RefPtr element = position.anchorElementAncestor();
     if (!element)
         return nullptr;
 

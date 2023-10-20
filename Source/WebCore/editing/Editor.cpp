@@ -979,7 +979,7 @@ void Editor::clearLastEditCommand()
 
 RefPtr<Element> Editor::findEventTargetFrom(const VisibleSelection& selection) const
 {
-    RefPtr target { selection.start().element() };
+    RefPtr target { selection.start().anchorElementAncestor() };
     if (!target)
         target = document().bodyOrFrameset();
     if (!target)

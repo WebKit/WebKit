@@ -2515,7 +2515,7 @@ RefPtr<HTMLFormElement> FrameSelection::currentForm() const
     // Start looking either at the active (first responder) node, or where the selection is.
     RefPtr start = m_document->focusedElement();
     if (!start)
-        start = m_selection.start().element();
+        start = m_selection.start().anchorElementAncestor();
     if (!start)
         return nullptr;
 
