@@ -358,6 +358,7 @@ inline ListHashSet<T, U>::ListHashSet(std::initializer_list<T> initializerList)
 
 template<typename T, typename U>
 inline ListHashSet<T, U>::ListHashSet(const ListHashSet& other)
+    : ListHashSet<T, U>()
 {
     for (auto it = other.begin(), end = other.end(); it != end; ++it)
         add(*it);
