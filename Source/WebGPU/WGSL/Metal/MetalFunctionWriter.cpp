@@ -1273,8 +1273,25 @@ static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpress
     writer->stringBuilder().append("]))");
 }
 
+static void emitBitcast(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<");
+    writer->visit(call.target().inferredType());
+    writer->stringBuilder().append(">(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(")");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
+    if (is<AST::ElaboratedTypeExpression>(call.target())) {
+        auto& base = downcast<AST::ElaboratedTypeExpression>(call.target()).base();
+        if (base == "bitcast"_s) {
+            emitBitcast(this, call);
+            return;
+        }
+    }
+
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {

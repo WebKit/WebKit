@@ -119,6 +119,7 @@ private:
     void visitVariable(AST::Variable&, VariableKind);
     const Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
     void visitAttributes(AST::Attribute::List&);
+    void bitcast(AST::CallExpression&, const Vector<const Type*>&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -926,6 +927,12 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
+        // FIXME: similarly to above: this shouldn't be a string check
+        if (targetName == "bitcast"_s) {
+            bitcast(call, typeArguments);
+            return;
+        }
+
         if (targetBinding)
             typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
         else
@@ -1013,6 +1020,47 @@ void TypeChecker::visit(AST::CallExpression& call)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& typeArguments)
+{
+    if (call.arguments().size() != 1) {
+        typeError(call.span(), "bitcast expects a single argument, found ", String::number(call.arguments().size()));
+        return;
+    }
+
+    if (typeArguments.size() != 1) {
+        typeError(call.span(), "bitcast expects a single template argument, found ", String::number(typeArguments.size()));
+        return;
+    }
+
+    auto* sourceType = infer(call.arguments()[0]);
+    auto* destinationType = typeArguments[0];
+    if (auto* reference = std::get_if<Types::Reference>(sourceType))
+        sourceType = reference->element;
+    sourceType = concretize(sourceType, m_types);
+
+    bool allowed = false;
+    if (auto* dstPrimitive = std::get_if<Types::Primitive>(destinationType)) {
+        if (auto* srcPrimitive = std::get_if<Types::Primitive>(sourceType)) {
+            allowed = satisfies(sourceType, Constraints::Concrete32BitNumber)
+                && satisfies(destinationType, Constraints::Concrete32BitNumber);
+        }
+    } else if (auto* dstVector = std::get_if<Types::Vector>(destinationType)) {
+        if (auto* srcVector = std::get_if<Types::Vector>(sourceType)) {
+            allowed = dstVector->size == srcVector->size
+                && satisfies(dstVector->element, Constraints::Concrete32BitNumber)
+                && satisfies(srcVector->element, Constraints::Concrete32BitNumber);
+        }
+    }
+
+    if (allowed) {
+        call.target().m_inferredType = destinationType;
+        inferred(destinationType);
+        return;
+    }
+
+    typeError(call.span(), "cannot bitcast from '", *sourceType, "' to '", *destinationType, "'");
 }
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
