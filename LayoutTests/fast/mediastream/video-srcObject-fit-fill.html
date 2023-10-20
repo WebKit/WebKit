@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div>
+<video muted style="object-fit: fill" id="video" width=300 height=100 autoplay playsinline></video>
+<br>
+<canvas id="canvas" width=100 height=100></canvas>
+<br>
+<image id='image'></image>
+<script>
+function getPixel(x, y, canvas, data)
+{
+    const position = 4 * (x * canvas.width + y);
+    return {r: data[position], g: data[position+1], b: data[position+2]};
+}
+
+function isPixelGreen(x, y, canvas, data)
+{
+   const pixel = getPixel(x, y, canvas, data);
+   return pixel.r === 0 && pixel.g === 128 && pixel.b === 0;
+}
+
+function isPixelWhite(x, y, canvas, data)
+{
+   const pixel = getPixel(x, y, canvas, data);
+   return pixel.r === 255 && pixel.g === 255 && pixel.b === 255;
+}
+
+async function validateSnapshot()
+{
+    if (!window.testRunner)
+        return 300;
+    const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+
+    const loadPromise = new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        setTimeout(() => reject("image load timed out"), 2000);
+    });
+    image.src = dataURL;
+    await loadPromise;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    canvas.getContext('2d').drawImage(image, 0, 0);
+    const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+
+    // We inspect the horizontal line at pixel 50. We should get white, then green, then white.
+    // Green block width should be 300.
+
+    const horizontalLine = 50;
+    let j = 0;
+
+    if (!isPixelWhite(horizontalLine, j, canvas, data))
+        return -1;
+    while (isPixelWhite(horizontalLine, ++j, canvas, data)) { };
+
+    if (!isPixelGreen(horizontalLine, j, canvas, data))
+        return -2;
+
+    const startGreen = j;
+    while (isPixelGreen(horizontalLine, ++j, canvas, data)) { };
+    const endGreen = j;
+
+    if (!isPixelWhite(horizontalLine, j, canvas, data))
+        return -3;
+
+    return endGreen - startGreen;
+}
+
+promise_test(async () => {
+     const context = canvas.getContext('2d');
+     setInterval(() => {
+        context.fillStyle = "green";
+        context.fillRect(0, 0, 100, 100);
+    }, 100);
+    video.srcObject = canvas.captureStream();
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    let counter = 0;
+    let result =  0;
+    while (counter++ < 150 && result !== 300) {
+        await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+        try {
+            result = await validateSnapshot();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    assert_equals(result, 300);
+    image.parentNode.removeChild(image);
+}, "Validate video element is filled")
+</script>
+</body>
+</html>
