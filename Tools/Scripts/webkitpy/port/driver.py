@@ -582,6 +582,8 @@ class Driver(object):
             cmd.append('--show-window')
         if self._port.get_option('accessibility_isolated_tree'):
             cmd.append('--accessibility-isolated-tree')
+        if self._port.get_option('local_dns_resolver'):
+            cmd.append('--local-dns-resolver')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

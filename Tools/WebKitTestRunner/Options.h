@@ -54,6 +54,7 @@ struct Options {
 #if PLATFORM(WPE)
     bool useWPEPlatformAPI { false };
 #endif
+    bool useLocalDNSResolver { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;

@@ -23,11 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #import <Network/Network.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <nw/private.h>
+
+#if PLATFORM(MAC) && defined(__OBJC__)
+// Only needed for running tests.
+#import <NetworkExtension/NEPolicySession.h>
+#endif
 
 #else
 
@@ -59,5 +66,53 @@ nw_interface_t nw_path_copy_interface(nw_path_t);
 bool nw_settings_get_unified_http_enabled(void);
 
 WTF_EXTERN_C_END
+
+// ------------------------------------------------------------
+// The following declarations are only needed for running tests.
+
+WTF_EXTERN_C_BEGIN
+
+typedef enum {
+    nw_resolver_protocol_dns53 = 0,
+} nw_resolver_protocol_t;
+
+typedef enum {
+    nw_resolver_class_designated_direct = 2,
+} nw_resolver_class_t;
+
+nw_resolver_config_t nw_resolver_config_create(void);
+void nw_resolver_config_set_protocol(nw_resolver_config_t, nw_resolver_protocol_t);
+void nw_resolver_config_set_class(nw_resolver_config_t, nw_resolver_class_t);
+void nw_resolver_config_add_match_domain(nw_resolver_config_t, const char *);
+void nw_resolver_config_add_name_server(nw_resolver_config_t, const char *name_server);
+void nw_resolver_config_set_identifier(nw_resolver_config_t, const uuid_t identifier);
+bool nw_resolver_config_publish(nw_resolver_config_t);
+
+WTF_EXTERN_C_END
+
+#if defined(__OBJC__)
+typedef NS_ENUM(NSInteger, NEPolicySessionPriority) {
+    NEPolicySessionPriorityHigh = 300,
+};
+
+@interface NEPolicyCondition : NSObject
++ (NEPolicyCondition *)domain:(NSString *)domain;
+@end
+
+@interface NEPolicyResult : NSObject
++ (NEPolicyResult *)netAgentUUID:(NSUUID *)agentUUID;
+@end
+
+@interface NEPolicy : NSObject
+- (instancetype)initWithOrder:(uint32_t)order result:(NEPolicyResult *)result conditions:(NSArray<NEPolicyCondition *> *)conditions;
+@end
+
+@interface NEPolicySession : NSObject
+@property NEPolicySessionPriority priority;
+- (NSUInteger)addPolicy:(NEPolicy *)policy;
+- (BOOL)apply;
+@end
+#endif // defined(__OBJC__)
+// ------------------------------------------------------------
 
 #endif // USE(APPLE_INTERNAL_SDK)

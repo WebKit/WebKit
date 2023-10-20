@@ -187,6 +187,12 @@ static bool handleOptionWPEPlatformAPI(Options& options, const char*, const char
 }
 #endif
 
+static bool handleOptionLocalDNSResolver(Options& options, const char*, const char*)
+{
+    options.useLocalDNSResolver = true;
+    return true;
+}
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -227,6 +233,7 @@ OptionsHandler::OptionsHandler(Options& o)
 #if PLATFORM(WPE)
     optionList.append(Option("--wpe-platform-api", "Use the WPE platform API", handleOptionWPEPlatformAPI));
 #endif
+    optionList.append(Option("--local-dns-resolver", "Enable using a local DNS resolver, if the port supports it", handleOptionLocalDNSResolver));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
