@@ -1283,9 +1283,11 @@ static HTMLElement* topmostPopoverAncestor(HTMLElement& newPopover)
 
         // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
         auto nearestInclusiveOpenPopover = [](Element& candidate) -> HTMLElement* {
-            for (auto& element : lineageOfType<HTMLElement>(candidate)) {
-                if (element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing)
-                    return &element;
+            for (RefPtr element = &candidate; element; element = element->parentElementInComposedTree()) {
+                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+                    if (htmlElement->popoverState() == PopoverState::Auto && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+                        return htmlElement;
+                }
             }
             return nullptr;
         };
