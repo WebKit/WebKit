@@ -122,35 +122,38 @@ void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
     context.strokeEllipse(m_fillBoundingBox);
 }
 
-bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
+bool RenderSVGEllipse::canUseStrokeHitTestFastPath() const
 {
-    // The optimized code below does not support non-smooth strokes so we need to
-    // fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke())
-        ensurePath();
-
-    if (hasPath())
-        return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
-
-    float halfStrokeWidth = strokeWidth() / 2;
-    FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
-
-    // This works by checking if the point satisfies the ellipse equation,
-    // (x/rX)^2 + (y/rY)^2 <= 1, for the outer but not the inner stroke.
-    float xrXOuter = center.x() / (m_radii.width() + halfStrokeWidth);
-    float yrYOuter = center.y() / (m_radii.height() + halfStrokeWidth);
-    if (xrXOuter * xrXOuter + yrYOuter * yrYOuter > 1.0)
+    // Non-scaling-stroke needs special handling.
+    if (hasNonScalingStroke())
         return false;
 
-    float xrXInner = center.x() / (m_radii.width() - halfStrokeWidth);
-    float yrYInner = center.y() / (m_radii.height() - halfStrokeWidth);
-    return xrXInner * xrXInner + yrYInner * yrYInner >= 1.0;
+    // We can compute intersections with continuous strokes on circles
+    // without using a Path.
+    return m_shapeType == ShapeType::Circle && style().svgStyle().strokeDashArray().isEmpty();
 }
 
-bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
+bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    if (hasPath())
-        return RenderSVGShape::shapeDependentFillContains(point, fillRule);
+    if (m_radii.isEmpty())
+        return false;
+
+    // The optimized code below does not support dash strokes and non-circle shape.
+    // Thus we fallback to path-based approach in that case.
+    if (!canUseStrokeHitTestFastPath()) {
+        ensurePath();
+        return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
+    }
+
+    float halfStrokeWidth = strokeWidth() / 2;
+    FloatPoint centerOffset = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
+    return std::abs(centerOffset.length() - m_radii.width()) <= halfStrokeWidth;
+}
+
+bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule) const
+{
+    if (m_radii.isEmpty())
+        return false;
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
 

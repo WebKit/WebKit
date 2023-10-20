@@ -413,6 +413,7 @@
     "web-platform-tests/subresource-integrity": "import",
     "web-platform-tests/svg": "import",
     "web-platform-tests/svg-aam": "skip",
+    "web-platform-tests/svg/interact/scripted": "import",
     "web-platform-tests/test/html/infrastructure": "import",
     "web-platform-tests/testharness_runner.html": "skip",
     "web-platform-tests/tools": "import",
