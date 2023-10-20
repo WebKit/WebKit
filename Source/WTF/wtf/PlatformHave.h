@@ -1661,6 +1661,10 @@
 #define HAVE_UI_ASYNC_DRAG_INTERACTION 1
 #endif
 
+#if __has_include(<UIKit/UIAsyncTextInput.h>) && __has_include(<UIKit/UIKeyEventContext.h>)
+#define HAVE_UI_ASYNC_TEXT_INPUT 1
+#endif
+
 #if !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIContextMenuAsyncConfiguration.h>)
 #define HAVE_UI_CONTEXT_MENU_ASYNC_CONFIGURATION 1
 #endif

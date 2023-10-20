@@ -118,6 +118,11 @@
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+#import <UIKit/UIAsyncTextInput.h>
+#import <UIKit/UIKeyEventContext.h>
+#endif
+
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
 #import <UIKit/UIDragInteraction_AsyncSupport.h>
 #import <UIKit/_UIAsyncDragInteraction.h>

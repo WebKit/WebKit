@@ -818,7 +818,10 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // Ensure access time of first.com is later than second.com.
+    // Close network process to ditch its cache for access times, otherwise access time will not be updated until 30 seconds have passed.
+    kill([websiteDataStore _networkProcessIdentifier], SIGKILL);
+
+    // Ensure new access time of first.com is later than second.com.
     Util::runFor(1_s);
     // Update recently used origin list.
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://first.com"]];

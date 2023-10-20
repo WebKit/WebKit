@@ -124,24 +124,31 @@ bool WebExtensionAPIRuntime::isPropertyAllowed(ASCIILiteral name, WebPage*)
     return false;
 }
 
-NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **errorString)
+NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **outExceptionString)
 {
-    URL baseURL = extensionContext().baseURL();
-    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getURL
+
+    return URL { extensionContext().baseURL(), resourcePath };
 }
 
 NSDictionary *WebExtensionAPIRuntime::getManifest()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getManifest
+
     return extensionContext().manifest();
 }
 
 NSString *WebExtensionAPIRuntime::runtimeIdentifier()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/id
+
     return extensionContext().uniqueIdentifier();
 }
 
 void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& callback)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getPlatformInfo
+
 #if PLATFORM(MAC)
     static NSString * const osValue = @"mac";
 #elif PLATFORM(IOS_FAMILY)
@@ -168,6 +175,8 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
 
 JSValue *WebExtensionAPIRuntime::lastError()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/lastError
+
     m_lastErrorAccessed = true;
 
     return m_lastError.get();

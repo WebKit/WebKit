@@ -221,6 +221,32 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPITabs, CreateWithRelativeURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({",
+        @"  url: 'test.html'",
+        @"})",
+
+        @"browser.test.assertEq(newTab.url, browser.runtime.getURL('test.html'), 'The new tab should have the correct URL')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript, @"test.html": @"Hello world!" }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredURL, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        originalOpenNewTab(options, context, completionHandler);
+    };
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPITabs, Duplicate)
 {
     auto *backgroundScript = Util::constructScript(@[

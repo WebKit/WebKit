@@ -1000,7 +1000,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
     computedNeedsForcedLayout();
     computeStackingContextImpact();
     computeAcceleratedPropertiesState();
-    computeSomeKeyframesUseStepsTimingFunction();
+    computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoints();
     computeHasImplicitKeyframeForAcceleratedProperty();
     computeHasKeyframeComposingAcceleratedProperty();
     computeHasExplicitlyInheritedKeyframeProperty();
@@ -1392,31 +1392,50 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
         m_acceleratedPropertiesState = AcceleratedProperties::All;
 }
 
-void KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction()
+static bool isLinearTimingFunctionWithPoints(const TimingFunction* timingFunction)
+{
+    return is<LinearTimingFunction>(timingFunction) && !downcast<LinearTimingFunction>(*timingFunction).points().isEmpty();
+}
+
+void KeyframeEffect::computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoints()
 {
     m_someKeyframesUseStepsTimingFunction = false;
+    m_someKeyframesUseLinearTimingFunctionWithPoints = false;
 
-    // If we're dealing with a CSS Animation and it specifies a default steps() timing function,
+    // If we're dealing with a CSS Animation and it specifies a default steps() or linear() timing function,
     // we need to check that any of the specified keyframes either does not have an explicit timing
-    // function or specifies an explicit steps() timing function.
-    if (is<CSSAnimation>(animation()) && is<StepsTimingFunction>(downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction())) {
-        for (auto& keyframe : m_blendingKeyframes) {
-            auto* timingFunction = keyframe.timingFunction();
-            if (!timingFunction || is<StepsTimingFunction>(timingFunction)) {
-                m_someKeyframesUseStepsTimingFunction = true;
-                return;
+    // function or specifies an explicit steps() or linear() timing function.
+    if (is<CSSAnimation>(animation())) {
+        auto* defaultTimingFunction = downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction();
+        auto defaultTimingFunctionIsSteps = is<StepsTimingFunction>(defaultTimingFunction);
+        auto defaultTimingFunctionIsLinearWithPoints = isLinearTimingFunctionWithPoints(defaultTimingFunction);
+        if (defaultTimingFunctionIsSteps || defaultTimingFunctionIsLinearWithPoints) {
+            for (auto& keyframe : m_blendingKeyframes) {
+                auto* timingFunction = keyframe.timingFunction();
+                if (!m_someKeyframesUseStepsTimingFunction) {
+                    if ((!timingFunction && defaultTimingFunctionIsSteps) || is<StepsTimingFunction>(timingFunction))
+                        m_someKeyframesUseStepsTimingFunction = true;
+                } else if (!m_someKeyframesUseLinearTimingFunctionWithPoints) {
+                    if ((!timingFunction && defaultTimingFunctionIsLinearWithPoints) || isLinearTimingFunctionWithPoints(timingFunction))
+                        m_someKeyframesUseStepsTimingFunction = true;
+                }
+                if (m_someKeyframesUseStepsTimingFunction && m_someKeyframesUseLinearTimingFunctionWithPoints)
+                    return;
             }
+            return;
         }
-        return;
     }
 
     // For any other type of animation, we just need to check whether any of the keyframes specify
-    // an explicit steps() timing function.
+    // an explicit steps() or linear() timing function.
     for (auto& keyframe : m_blendingKeyframes) {
-        if (is<StepsTimingFunction>(keyframe.timingFunction())) {
+        auto* timingFunction = keyframe.timingFunction();
+        if (!m_someKeyframesUseStepsTimingFunction && is<StepsTimingFunction>(timingFunction))
             m_someKeyframesUseStepsTimingFunction = true;
+        if (!m_someKeyframesUseLinearTimingFunctionWithPoints && isLinearTimingFunctionWithPoints(timingFunction))
+            m_someKeyframesUseLinearTimingFunctionWithPoints = true;
+        if (m_someKeyframesUseStepsTimingFunction && m_someKeyframesUseLinearTimingFunctionWithPoints)
             return;
-        }
     }
 }
 
@@ -1712,6 +1731,9 @@ bool KeyframeEffect::canBeAccelerated() const
     if (m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
         return false;
 
+    if (m_someKeyframesUseLinearTimingFunctionWithPoints || isLinearTimingFunctionWithPoints(timingFunction()))
+        return false;
+
     if (m_compositeOperation != CompositeOperation::Replace)
         return false;
 
@@ -1825,7 +1847,7 @@ void KeyframeEffect::animationDidTick()
 
 void KeyframeEffect::animationDidChangeTimingProperties()
 {
-    computeSomeKeyframesUseStepsTimingFunction();
+    computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoints();
     updateAcceleratedAnimationIfNecessary();
     invalidate();
 }

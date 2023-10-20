@@ -251,7 +251,7 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
         return false;
 
     if (NSString *url = objectForKey<NSString>(options, urlKey)) {
-        parameters.url = URL { url };
+        parameters.url = URL { extensionContext().baseURL(), url };
 
         if (!parameters.url.value().isValid()) {
             *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
