@@ -4647,3 +4647,5 @@ imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failure
  webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputmode-none.html [ Pass Failure ]
 
 webkit.org/b/263479 platform/ios/mediastream/getUserMedia-override-audio-session-interruption.html [ Pass Failure ]
+
+webkit.org/b/263396 css3/color/text.html [ Skip ]

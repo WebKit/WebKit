@@ -2020,3 +2020,5 @@ webkit.org/b/263347 [ Sonoma+ Release ] compositing/reflections/repaint-with-ref
 webkit.org/b/263407 [ Sonoma+ ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
+
+webkit.org/b/263396 css3/color/text.html [ Skip ]
