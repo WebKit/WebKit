@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/arrows.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/categories.json
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/comment-in-cue-text.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/header-garbage.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/header-regions.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/header-space.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/header-tab.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/header-timings.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/ids.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/newlines.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/nulls.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-edge-case.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-id.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-lines.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-old.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-regionanchor.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/regions-viewportanchor.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-align.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-line.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-position.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-region.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-size.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/settings-vertical.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-no-newline.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-space-no-newline.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-space.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-tab-no-newline.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-tab.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/signature-timings.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/stylesheets.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-60.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-eof.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-garbage.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-negative.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-omitted-hours.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-too-long.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/timings-too-short.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/whitespace-chars.html
