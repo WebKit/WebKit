@@ -57,6 +57,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     if (mode == UASheetMode) {
         colorMixEnabled = true;
         focusVisibleEnabled = true;
+        popoverAttributeEnabled = true;
         propertySettings.cssContainmentEnabled = true;
         propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
@@ -104,6 +105,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , cssTextWrapNewValuesEnabled { document.settings().cssTextWrapNewValuesEnabled() }
     , cssWordBreakAutoEnabled { document.settings().cssWordBreakAutoEnabled() }
+    , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
@@ -138,8 +140,9 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssTextUnderlinePositionLeftRightEnabled  << 22
         | context.cssTextWrapNewValuesEnabled               << 23
         | context.cssWordBreakAutoEnabled                   << 24
-        | context.sidewaysWritingModesEnabled               << 25
-        | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
+        | context.popoverAttributeEnabled                   << 25
+        | context.sidewaysWritingModesEnabled               << 26
+        | (uint64_t)context.mode                            << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

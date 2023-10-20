@@ -96,6 +96,7 @@ struct CSSParserContext {
     bool cssTextUnderlinePositionLeftRightEnabled { false };
     bool cssTextWrapNewValuesEnabled { false };
     bool cssWordBreakAutoEnabled { false };
+    bool popoverAttributeEnabled { false };
     bool sidewaysWritingModesEnabled { false };
 
     // Settings, those affecting properties.
