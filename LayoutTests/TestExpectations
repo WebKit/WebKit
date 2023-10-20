@@ -1210,19 +1210,6 @@ webkit.org/b/247283 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
 
-# These fetch tests time out on ports without web-platform.test domain working (not glib).
-imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/object.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/embed.https.sub.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
-
 # These tests have unreliable ordering and are flakey
 
 # This is a resources folder.
@@ -6511,10 +6498,6 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
-# These tests are trying to use a WPT domain that are infrastructure doesn't support.
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame-crossorigin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-popup-crossorigin.sub.html [ Skip ]
-
 webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
 
 # These tests are crashing in debug since its import.
@@ -6545,6 +6528,10 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
+
+# These tests work totally fine but have unreliable ordering for test output making them flakey.
+webkit.org/b/252268 imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Pass Failure ]
+webkit.org/b/252268 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Pass Failure ]
 
 # Flaky test that sometimes passes and sometimes fails.
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
