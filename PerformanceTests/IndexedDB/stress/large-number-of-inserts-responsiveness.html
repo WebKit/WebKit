@@ -23,19 +23,21 @@ var currentIteration = 0;
 PerfTestRunner.prepareToMeasureValuesAsync({
     customIterationCount: iterationCount,
     unit: 'ms',
-    done: function () {
-        db = null;
-        largestDelay = 0;
-        testGenerator = null;
-        PerfTestRunner.gc();
-        ++currentIteration;
-    }
 });
 
 function startIteration()
 {
     testGenerator = runIteration();
     nextStep();
+}
+
+function iterationCleanup()
+{
+    if (db)
+        db.close();
+    db = null;
+    testGenerator = null;
+    ++currentIteration;
 }
 
 function nextStep()
@@ -71,6 +73,8 @@ function *runIteration()
     yield;
 
     PerfTestRunner.stopCheckingResponsiveness();
+
+    iterationCleanup();
     
     if (!PerfTestRunner.measureValueAsync(PerfTestRunner.longestResponsivenessDelay()))
         return;
