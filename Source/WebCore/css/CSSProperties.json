@@ -6220,8 +6220,8 @@
                 "keep-all",
                 "break-word",
                 {
-                    "settings-flag": "cssWordBreakAutoEnabled",
-                    "value": "auto"
+                    "settings-flag": "cssWordBreakAutoPhraseEnabled",
+                    "value": "auto-phrase"
                 }
             ],
             "codegen-properties": {

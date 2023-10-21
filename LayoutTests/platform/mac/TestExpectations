@@ -97,6 +97,10 @@ media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
+# macOS 14 and above support word-break: auto-phrase.
+# Individually failing tests should be marked in separate expectations.
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
+
 # Variable size packet is only supported on Sonoma and later.
 [ Monterey Ventura ] media/media-webm-opus-variable-length.html [ Failure ]
 

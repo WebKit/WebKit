@@ -68,6 +68,10 @@ media/wireless-route-monitoring.html [ Pass ]
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
 
+# iOS 17 and above support word-break: auto-phrase.
+# Individually failing tests should be marked in separate expectations.
+imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

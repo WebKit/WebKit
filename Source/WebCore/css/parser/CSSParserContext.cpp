@@ -101,7 +101,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
 #endif
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
-    , cssWordBreakAutoEnabled { document.settings().cssWordBreakAutoEnabled() }
+    , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
@@ -135,7 +135,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssNestingEnabled                         << 20
         | context.cssPaintingAPIEnabled                     << 21
         | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | context.cssWordBreakAutoEnabled                   << 23
+        | context.cssWordBreakAutoPhraseEnabled             << 23
         | context.popoverAttributeEnabled                   << 24
         | context.sidewaysWritingModesEnabled               << 25
         | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.

@@ -1513,13 +1513,13 @@ CSSUnprefixedBackdropFilterEnabled:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
       default: false
 
-CSSWordBreakAutoEnabled:
+CSSWordBreakAutoPhraseEnabled:
   type: bool
   status: testable
   category: css
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  humanReadableName: "word-break: auto enabled"
-  humanReadableDescription: "Enables the auto value of the word-break CSS property"
+  humanReadableName: "word-break: auto-phrase enabled"
+  humanReadableDescription: "Enables the auto-phrase value of the word-break CSS property"
   defaultValue:
     WebKitLegacy:
       default: false

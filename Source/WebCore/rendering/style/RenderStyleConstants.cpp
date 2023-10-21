@@ -1338,7 +1338,7 @@ TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
     case WordBreak::BreakAll: ts << "break-all"; break;
     case WordBreak::KeepAll: ts << "keep-all"; break;
     case WordBreak::BreakWord: ts << "break-word"; break;
-    case WordBreak::Auto: ts << "auto"; break;
+    case WordBreak::AutoPhrase: ts << "auto-phrase"; break;
     }
     return ts;
 }

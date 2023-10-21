@@ -3,5 +3,5 @@ PASS Property word-break value 'normal'
 PASS Property word-break value 'keep-all'
 PASS Property word-break value 'break-all'
 PASS Property word-break value 'break-word'
-FAIL Property word-break value 'auto-phrase' assert_true: 'auto-phrase' is a supported value for word-break. expected true got false
+PASS Property word-break value 'auto-phrase'
 

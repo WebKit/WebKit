@@ -1043,7 +1043,7 @@ TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak wordB
     case WordBreak::KeepAll:
     case WordBreak::BreakWord:
         return TextBreakIterator::ContentAnalysis::Mechanical;
-    case WordBreak::Auto:
+    case WordBreak::AutoPhrase:
         return TextBreakIterator::ContentAnalysis::Linguistic;
     }
     return TextBreakIterator::ContentAnalysis::Mechanical;

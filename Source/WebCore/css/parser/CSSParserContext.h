@@ -94,7 +94,7 @@ struct CSSParserContext {
     bool cssNestingEnabled { false };
     bool cssPaintingAPIEnabled { false };
     bool cssTextUnderlinePositionLeftRightEnabled { false };
-    bool cssWordBreakAutoEnabled { false };
+    bool cssWordBreakAutoPhraseEnabled { false };
     bool popoverAttributeEnabled { false };
     bool sidewaysWritingModesEnabled { false };
 

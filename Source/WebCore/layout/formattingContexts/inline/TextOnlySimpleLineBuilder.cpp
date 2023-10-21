@@ -460,7 +460,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (!rootStyle.isLeftToRightDirection())
         return false;
-    if (rootStyle.wordBreak() == WordBreak::Auto)
+    if (rootStyle.wordBreak() == WordBreak::AutoPhrase)
         return false;
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
