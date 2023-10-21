@@ -2088,6 +2088,70 @@ fn testTrunc()
     }
 }
 
+// 16.6. Derivative Built-in Functions (https://www.w3.org/TR/WGSL/#derivative-builtin-functions)
+// RUN: %metal-compile testDerivativeFunctions
+@fragment
+fn testDerivativeFunctions()
+{
+    // All have the same signatures:
+    //   [].(f32) => f32,
+    //   [N].(vec[N][f32]) => vec[N][f32],
+
+    // 16.6.1 dpdx
+    _ = dpdx(2.0);
+    _ = dpdx(vec2(2.0));
+    _ = dpdx(vec3(2.0));
+    _ = dpdx(vec4(2.0));
+
+    // 16.6.2 dpdxCoarse
+    _ = dpdxCoarse(2.0);
+    _ = dpdxCoarse(vec2(2.0));
+    _ = dpdxCoarse(vec3(2.0));
+    _ = dpdxCoarse(vec4(2.0));
+
+    // 16.6.3 dpdxFine
+    _ = dpdxFine(2.0);
+    _ = dpdxFine(vec2(2.0));
+    _ = dpdxFine(vec3(2.0));
+    _ = dpdxFine(vec4(2.0));
+
+    // 16.6.4 dpdy
+    _ = dpdy(2.0);
+    _ = dpdy(vec2(2.0));
+    _ = dpdy(vec3(2.0));
+    _ = dpdy(vec4(2.0));
+
+    // 16.6.5 dpdyCoarse
+    _ = dpdyCoarse(2.0);
+    _ = dpdyCoarse(vec2(2.0));
+    _ = dpdyCoarse(vec3(2.0));
+    _ = dpdyCoarse(vec4(2.0));
+
+    // 16.6.6 dpdyFine
+    _ = dpdyFine(2.0);
+    _ = dpdyFine(vec2(2.0));
+    _ = dpdyFine(vec3(2.0));
+    _ = dpdyFine(vec4(2.0));
+
+    // 16.6.7 fwidth
+    _ = fwidth(2.0);
+    _ = fwidth(vec2(2.0));
+    _ = fwidth(vec3(2.0));
+    _ = fwidth(vec4(2.0));
+
+    // 16.6.8 fwidthCoarse
+    _ = fwidthCoarse(2.0);
+    _ = fwidthCoarse(vec2(2.0));
+    _ = fwidthCoarse(vec3(2.0));
+    _ = fwidthCoarse(vec4(2.0));
+
+    // 16.6.9 fwidthFine
+    _ = fwidthFine(2.0);
+    _ = fwidthFine(vec2(2.0));
+    _ = fwidthFine(vec3(2.0));
+    _ = fwidthFine(vec4(2.0));
+}
+
 // 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 
 @group(0) @binding( 0) var s: sampler;

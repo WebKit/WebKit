@@ -1352,7 +1352,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
+            { "dpdx", "dfdx"_s },
+            { "dpdxCoarse", "dfdx"_s },
+            { "dpdxFine", "dfdx"_s },
+            { "dpdy", "dfdy"_s },
+            { "dpdyCoarse", "dfdy"_s },
+            { "dpdyFine", "dfdy"_s },
             { "f32", "float"_s },
+            { "fwidthCoarse", "fwidth"_s },
+            { "fwidthFine", "fwidth"_s },
             { "i32", "int"_s },
             { "mat2x2f", "float2x2"_s },
             { "mat2x3f", "float2x3"_s },

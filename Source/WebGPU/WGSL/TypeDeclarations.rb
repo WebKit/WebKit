@@ -582,6 +582,33 @@ operator :trunc, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
+# 16.6. Derivative Built-in Functions (https://www.w3.org/TR/WGSL/#derivative-builtin-functions)
+[
+    # 16.6.1
+    :dpdx,
+    # 16.6.2
+    :dpdxCoarse,
+    # 16.6.3
+    :dpdxFine,
+    # 16.6.4
+    :dpdy,
+    # 16.6.5
+    :dpdyCoarse,
+    # 16.6.6
+    :dpdyFine,
+    # 16.6.7
+    :fwidth,
+    # 16.6.8
+    :fwidthCoarse,
+    # 16.6.9
+    :fwidthFine,
+]. each do |op|
+    operator op, {
+        [].(f32) => f32,
+        [N].(vec[N][f32]) => vec[N][f32],
+    }
+end
+
 # 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 
 # 16.7.1
