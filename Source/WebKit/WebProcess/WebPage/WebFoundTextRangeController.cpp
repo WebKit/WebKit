@@ -29,6 +29,7 @@
 #include "WebPage.h"
 #include <WebCore/CharacterRange.h>
 #include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>

@@ -462,7 +462,7 @@ public:
     WEBCORE_EXPORT DOMImplementation& implementation();
     
     Element* documentElement() const { return m_documentElement.get(); }
-    RefPtr<Element> protectedDocumentElement() const;
+    inline RefPtr<Element> protectedDocumentElement() const; // Defined in DocumentInlines.h.
     static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     WEBCORE_EXPORT Element* activeElement();
@@ -697,7 +697,7 @@ public:
     WEBCORE_EXPORT void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
-    Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
+    inline Ref<CachedResourceLoader> protectedCachedResourceLoader() const; // Defined in DocumentInlines.h.
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
@@ -813,7 +813,7 @@ public:
     
     virtual Ref<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
-    RefPtr<DocumentParser> protectedParser() const;
+    inline RefPtr<DocumentParser> protectedParser() const; // Defined in DocumentInlines.h.
     ScriptableDocumentParser* scriptableDocumentParser() const;
     
     bool printing() const { return m_printing; }
@@ -866,7 +866,7 @@ public:
     WEBCORE_EXPORT bool setFocusedElement(Element*);
     WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions&);
     Element* focusedElement() const { return m_focusedElement.get(); }
-    RefPtr<Element> protectedFocusedElement() const;
+    inline RefPtr<Element> protectedFocusedElement() const; // Defined in DocumentInlines.h.
     inline bool wasLastFocusByClick() const;
     void setLatestFocusTrigger(FocusTrigger trigger) { m_latestFocusTrigger = trigger; }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
@@ -944,7 +944,7 @@ public:
 
     // FIXME: Consider renaming to window().
     LocalDOMWindow* domWindow() const { return m_domWindow.get(); }
-    RefPtr<LocalDOMWindow> protectedWindow() const;
+    inline RefPtr<LocalDOMWindow> protectedWindow() const; // Defined in DocumentInlines.h.
 
     // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
@@ -952,7 +952,7 @@ public:
     inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
 
     Document& contextDocument() const;
-    Ref<Document> protectedContextDocument() const;
+    Ref<Document> protectedContextDocument() const { return contextDocument(); }
     void setContextDocument(Ref<Document>&& document) { m_contextDocument = WTFMove(document); }
     
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
@@ -1124,7 +1124,10 @@ public:
 
     WEBCORE_EXPORT HTMLHeadElement* head();
 
-    DocumentMarkerController& markers() const { return *m_markers; }
+    inline DocumentMarkerController& markers(); // Defined in DocumentInlines.h.
+    inline const DocumentMarkerController& markers() const; // Defined in DocumentInlines.h.
+    inline CheckedRef<DocumentMarkerController> checkedMarkers(); // Defined in DocumentInlines.h.
+    inline CheckedRef<const DocumentMarkerController> checkedMarkers() const; // Defined in DocumentInlines.h.
 
     WEBCORE_EXPORT ExceptionOr<bool> execCommand(const String& command, bool userInterface = false, const String& value = String());
     WEBCORE_EXPORT ExceptionOr<bool> queryCommandEnabled(const String& command);
@@ -1134,7 +1137,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<String> queryCommandValue(const String& command);
 
     UndoManager& undoManager() const { return m_undoManager.get(); }
-    Ref<UndoManager> protectedUndoManager() const;
+    inline Ref<UndoManager> protectedUndoManager() const; // Defined in DocumentInlines.h.
 
     // designMode support
     enum class DesignMode : bool { Off, On };
@@ -1251,7 +1254,7 @@ public:
 
     void setDecoder(RefPtr<TextResourceDecoder>&&);
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
-    RefPtr<TextResourceDecoder> protectedDecoder() const;
+    inline RefPtr<TextResourceDecoder> protectedDecoder() const; // Defined in DocumentInlines.h.
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
@@ -1305,6 +1308,8 @@ public:
 #if ENABLE(FULLSCREEN_API)
     FullscreenManager& fullscreenManager() { return m_fullscreenManager; }
     const FullscreenManager& fullscreenManager() const { return m_fullscreenManager; }
+    inline CheckedRef<FullscreenManager> checkedFullscreenManager(); // Defined in DocumentInlines.h.
+    inline CheckedRef<const FullscreenManager> checkedFullscreenManager() const; // Defined in DocumentInlines.h.
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -1797,7 +1802,7 @@ public:
     std::optional<PAL::SessionID> sessionID() const final;
 
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
-    Ref<ReportingScope> protectedReportingScope() const;
+    inline Ref<ReportingScope> protectedReportingScope() const; // Defined in DocumentInlines.h.
     WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
 
     bool hasSleepDisabler() const { return !!m_sleepDisabler; }
@@ -2032,7 +2037,7 @@ private:
     RefPtr<Element> m_titleElement;
 
     std::unique_ptr<AXObjectCache> m_axObjectCache;
-    const std::unique_ptr<DocumentMarkerController> m_markers;
+    UniqueRef<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
 

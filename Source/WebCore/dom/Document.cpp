@@ -601,7 +601,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_extensionStyleSheets(makeUnique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(makeUnique<VisitedLinkState>(*this))
-    , m_markers(makeUnique<DocumentMarkerController>(*this))
+    , m_markers(makeUniqueRef<DocumentMarkerController>(*this))
     , m_styleRecalcTimer([this] { updateStyleIfNeeded(); })
 #if !LOG_DISABLED
     , m_documentCreationTime(MonotonicTime::now())
@@ -1644,11 +1644,6 @@ void Document::setDocumentURI(const String& uri)
     updateBaseURL();
 }
 
-RefPtr<DocumentParser> Document::protectedParser() const
-{
-    return m_parser;
-}
-
 void Document::setContent(const String& content)
 {
     open();
@@ -1918,7 +1913,7 @@ template<typename TitleElement> Element* selectNewTitleElement(Document& documen
     return newTitleElement;
 }
 
-RefPtr<Element> Document::protectedTitleElement() const
+inline RefPtr<Element> Document::protectedTitleElement() const
 {
     return m_titleElement;
 }
@@ -2719,11 +2714,6 @@ void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
     detachFromFrame();
 }
 
-RefPtr<Element> Document::protectedDocumentElement() const
-{
-    return m_documentElement;
-}
-
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
@@ -2772,11 +2762,6 @@ void Document::destroyRenderTree()
 
     if (RefPtr view = this->view())
         view->didDestroyRenderTree();
-}
-
-Ref<UndoManager> Document::protectedUndoManager() const
-{
-    return m_undoManager;
 }
 
 void Document::willBeRemovedFromFrame()
@@ -2884,11 +2869,6 @@ void Document::willBeRemovedFromFrame()
     // was removed in an onpagehide event handler fired when the top-level frame is
     // about to enter the back/forward cache.
     RELEASE_ASSERT(m_backForwardCacheState != Document::InBackForwardCache);
-}
-
-Ref<ReportingScope> Document::protectedReportingScope() const
-{
-    return m_reportingScope;
 }
 
 void Document::removeAllEventListeners()
@@ -4577,11 +4557,6 @@ void Document::cloneDataFromDocument(const Document& other)
     setDecoder(other.protectedDecoder());
 }
 
-RefPtr<TextResourceDecoder> Document::protectedDecoder() const
-{
-    return m_decoder;
-}
-
 StyleSheetList& Document::styleSheets()
 {
     if (!m_styleSheetList)
@@ -5030,11 +5005,6 @@ void Document::invalidateRenderingDependentRegions()
 bool Document::setFocusedElement(Element* element)
 {
     return setFocusedElement(element, { });
-}
-
-RefPtr<Element> Document::protectedFocusedElement() const
-{
-    return m_focusedElement;
 }
 
 bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions& options)
@@ -5518,11 +5488,6 @@ Document& Document::contextDocument() const
     if (m_contextDocument)
         return *m_contextDocument.get();
     return const_cast<Document&>(*this);
-}
-
-Ref<Document> Document::protectedContextDocument() const
-{
-    return contextDocument();
 }
 
 void Document::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue, DOMWrapperWorld& isolatedWorld)
@@ -9779,16 +9744,6 @@ String Document::mediaKeysStorageDirectory()
 {
     CheckedPtr currentPage = page();
     return currentPage ? currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data()) : emptyString();
-}
-
-RefPtr<LocalDOMWindow> Document::protectedWindow() const
-{
-    return m_domWindow;
-}
-
-Ref<CachedResourceLoader> Document::protectedCachedResourceLoader() const
-{
-    return m_cachedResourceLoader;
 }
 
 Ref<CSSFontSelector> Document::protectedFontSelector() const
