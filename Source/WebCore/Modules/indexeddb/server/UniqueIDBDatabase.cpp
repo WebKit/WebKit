@@ -490,7 +490,8 @@ void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChange
 {
     LOG(IndexedDB, "UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent - %" PRIu64, connectionIdentifier);
 
-    ASSERT(m_currentOpenDBRequest);
+    if (!m_currentOpenDBRequest)
+        return;
 
     m_currentOpenDBRequest->connectionClosedOrFiredVersionChangeEvent(connectionIdentifier);
 
