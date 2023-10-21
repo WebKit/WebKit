@@ -5,8 +5,10 @@
 </head>
 <body>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 description("This test makes sure that storage of indexedDB and Cache API do not grow unboundedly.");
 
@@ -41,6 +43,9 @@ async function onOpenSuccess(event)
                 break;
             } catch (e) { }
         }
+        // Enable fixed quota in the new network process.
+        if (window.testRunner)
+            testRunner.setOriginQuotaRatioEnabled(false);
         cacheTest();
     }
 }

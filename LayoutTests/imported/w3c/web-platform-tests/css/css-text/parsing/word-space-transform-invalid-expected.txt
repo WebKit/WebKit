@@ -1,0 +1,8 @@
+
+PASS e.style['word-space-transform'] = "auto" should not set the property value
+PASS e.style['word-space-transform'] = "normal" should not set the property value
+PASS e.style['word-space-transform'] = "spaces" should not set the property value
+PASS e.style['word-space-transform'] = "space ideographic-space" should not set the property value
+PASS e.style['word-space-transform'] = "auto-phrase" should not set the property value
+PASS e.style['word-space-transform'] = "none auto-phrase" should not set the property value
+

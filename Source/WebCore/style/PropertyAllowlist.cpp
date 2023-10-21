@@ -83,7 +83,8 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyTextEmphasisStyle:
     case CSSPropertyTextShadow:
     case CSSPropertyTextTransform:
-    case CSSPropertyTextWrap:
+    case CSSPropertyTextWrapMode:
+    case CSSPropertyTextWrapStyle:
     case CSSPropertyUnicodeBidi:
     case CSSPropertyWordBreak:
     case CSSPropertyWordSpacing:
@@ -144,7 +145,8 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyWhiteSpaceCollapse:
     case CSSPropertyTextDecorationLine:
     case CSSPropertyTextShadow:
-    case CSSPropertyTextWrap:
+    case CSSPropertyTextWrapMode:
+    case CSSPropertyTextWrapStyle:
     case CSSPropertyBorderStyle:
     case CSSPropertyPaintOrder:
     case CSSPropertyStrokeLinejoin:

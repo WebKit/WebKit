@@ -1460,6 +1460,11 @@ inline Page* Frame::page() const
     return m_page.get();
 }
 
+inline CheckedPtr<Page> Frame::checkedPage() const
+{
+    return m_page.get();
+}
+
 inline Page* Document::page() const
 {
     return m_frame ? m_frame->page() : nullptr;

@@ -150,7 +150,9 @@
 #if PLATFORM(IOS_FAMILY)
     return NO;
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[wv window] showsResizeIndicator];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -159,7 +161,9 @@
 #if PLATFORM(MAC)
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[wv window] setShowsResizeIndicator:resizable];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 

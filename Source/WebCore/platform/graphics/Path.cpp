@@ -358,6 +358,58 @@ std::optional<PathSegment> Path::singleSegment() const
     return std::nullopt;
 }
 
+std::optional<PathDataLine> Path::singleDataLine() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataLine>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleDataLine();
+
+    return std::nullopt;
+}
+
+std::optional<PathArc> Path::singleArc() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathArc>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleArc();
+
+    return std::nullopt;
+}
+
+std::optional<PathDataQuadCurve> Path::singleQuadCurve() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataQuadCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleQuadCurve();
+
+    return std::nullopt;
+}
+
+std::optional<PathDataBezierCurve> Path::singleBezierCurve() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataBezierCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleBezierCurve();
+
+    return std::nullopt;
+}
+
 bool Path::isEmpty() const
 {
     if (std::holds_alternative<std::monostate>(m_data))
@@ -367,6 +419,11 @@ bool Path::isEmpty() const
         return impl->isEmpty();
 
     return false;
+}
+
+bool Path::definitelySingleLine() const
+{
+    return !!singleDataLine();
 }
 
 PlatformPathPtr Path::platformPath() const

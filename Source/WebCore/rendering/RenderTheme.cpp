@@ -277,7 +277,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         // Whitespace
         if (Theme::singleton().controlRequiresPreWhiteSpace(appearance)) {
             style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-            style.setTextWrap(TextWrap::NoWrap);
+            style.setTextWrapMode(TextWrapMode::NoWrap);
         }
 
         // Width / Height

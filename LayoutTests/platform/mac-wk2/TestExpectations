@@ -1789,9 +1789,6 @@ webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.ht
 
 webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
-webkit.org/b/259497 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
-webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
-
 webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
 
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
@@ -2019,3 +2016,9 @@ webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
 webkit.org/b/263296 [ Sonoma+ arm64 ] compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/263347 [ Sonoma+ Release ] compositing/reflections/repaint-with-reflection.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/263407 [ Sonoma+ ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
+
+webkit.org/b/263396 css3/color/text.html [ Skip ]

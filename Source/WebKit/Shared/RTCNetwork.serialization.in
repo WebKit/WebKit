@@ -34,6 +34,13 @@
     int ipv6Flags;
 };
 
+[CustomHeader] struct WebKit::RTC::Network::SocketAddress {
+    uint16_t port;
+    int scopeID;
+    Vector<char> hostname;
+    std::optional<WebKit::RTC::Network::IPAddress> ipAddress;
+};
+
 struct WebKit::RTCNetwork {
     Vector<char> name;
     Vector<char> description;

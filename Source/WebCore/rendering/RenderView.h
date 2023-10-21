@@ -74,6 +74,7 @@ public:
     float zoomFactor() const;
 
     LocalFrameView& frameView() const { return m_frameView; }
+    Ref<LocalFrameView> protectedFrameView() const { return m_frameView; }
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }

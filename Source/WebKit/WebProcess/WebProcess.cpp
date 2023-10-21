@@ -1337,6 +1337,11 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 
     m_gpuProcessConnection = nullptr;
 
+    for (auto& page : m_pageMap.values()) {
+        if (page)
+            page->gpuProcessConnectionWasDestroyed();
+    }
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     if (m_audioMediaStreamTrackRendererInternalUnitManager)
         m_audioMediaStreamTrackRendererInternalUnitManager->restartAllUnits();
@@ -1631,8 +1636,7 @@ void WebProcess::accessibilityRelayProcessSuspended(bool suspended)
         return;
 
     // Take the first webpage. We only need to have the process on the other side relay this for the WebProcess.
-    auto* webPage = m_pageMap.values().begin().get()->get();
-    AXRelayProcessSuspendedNotification(*webPage, AXRelayProcessSuspendedNotification::AutomaticallySend::No).sendProcessSuspendMessage(suspended);
+    AXRelayProcessSuspendedNotification(*m_pageMap.begin()->value, AXRelayProcessSuspendedNotification::AutomaticallySend::No).sendProcessSuspendMessage(suspended);
 }
 
 void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHandler)
@@ -2078,10 +2082,10 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
 static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
 {
 #if ASSERT_ENABLED
-    bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
+    bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto& document) {
         return document->mediaState() & MediaProducer::MicrophoneCaptureMask;
     });
-    bool isCapturingVideo = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
+    bool isCapturingVideo = WTF::anyOf(Document::allDocumentsMap().values(), [](auto& document) {
         return document->mediaState() & MediaProducer::VideoCaptureMask;
     });
 

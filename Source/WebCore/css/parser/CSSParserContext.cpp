@@ -57,6 +57,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     if (mode == UASheetMode) {
         colorMixEnabled = true;
         focusVisibleEnabled = true;
+        popoverAttributeEnabled = true;
         propertySettings.cssContainmentEnabled = true;
         propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
@@ -65,8 +66,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         transformStyleOptimized3DEnabled = true;
 #endif
     }
-
-    propertySettings.cssWhiteSpaceLonghandsEnabled = true;
 
     StaticCSSValuePool::init();
 }
@@ -102,8 +101,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
 #endif
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
-    , cssTextWrapNewValuesEnabled { document.settings().cssTextWrapNewValuesEnabled() }
-    , cssWordBreakAutoEnabled { document.settings().cssWordBreakAutoEnabled() }
+    , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
+    , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
@@ -136,8 +135,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssNestingEnabled                         << 20
         | context.cssPaintingAPIEnabled                     << 21
         | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | context.cssTextWrapNewValuesEnabled               << 23
-        | context.cssWordBreakAutoEnabled                   << 24
+        | context.cssWordBreakAutoPhraseEnabled             << 23
+        | context.popoverAttributeEnabled                   << 24
         | context.sidewaysWritingModesEnabled               << 25
         | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);

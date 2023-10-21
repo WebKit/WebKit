@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -39,7 +40,7 @@ class DocumentParser : public RefCounted<DocumentParser> {
 public:
     virtual ~DocumentParser();
 
-    virtual ScriptableDocumentParser* asScriptableDocumentParser() { return 0; }
+    virtual ScriptableDocumentParser* asScriptableDocumentParser() { return nullptr; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
     virtual bool hasInsertionPoint() { return true; }
@@ -113,8 +114,8 @@ private:
     bool m_documentWasLoadedAsPartOfNavigation;
 
     // Every DocumentParser needs a pointer back to the document.
-    // m_document will be 0 after the parser is stopped.
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    // m_document will be nullptr after the parser is stopped.
+    CheckedPtr<Document> m_document;
 };
 
 } // namespace WebCore

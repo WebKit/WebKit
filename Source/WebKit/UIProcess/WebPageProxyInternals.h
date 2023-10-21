@@ -214,7 +214,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
     HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> domainToRemotePageProxyMap;
     RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
-    HashSet<Ref<RemotePageProxy>> openedRemotePageProxies;
+    HashMap<WebPageProxyIdentifier, Ref<RemotePageProxy>> openedRemotePageProxies;
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
     WeakHashSet<WebPageProxy> m_openedPages;

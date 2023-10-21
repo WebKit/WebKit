@@ -82,13 +82,12 @@ private:
     void fontLoaded(CachedFont& font) final
     {
         ASSERT_UNUSED(font, &font == m_font.get());
-        if (m_fontLoadRequestClient)
-            m_fontLoadRequestClient->fontLoaded(*this);
-
         if (m_font->didRefuseToLoadCustomFont() && m_context) {
             auto message = makeString("[Lockdown Mode] This font has been blocked: ", m_font->url().string());
             m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
         }
+        if (m_fontLoadRequestClient)
+            m_fontLoadRequestClient->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
     }
 
     CachedResourceHandle<CachedFont> m_font;

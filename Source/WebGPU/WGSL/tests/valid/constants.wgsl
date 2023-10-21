@@ -48,6 +48,17 @@ fn testConstantMultiplication()
   const x6 = vec2(2.0) * 2.0;
 }
 
+fn testConstantAddition()
+{
+  const x1 = 2 + 2;
+  const x2 = 2 + 2.0;
+  const x3 = 2.0 + 2.0;
+  const x4 = 2.0 + vec2(2.0);
+  const x5 = vec2(2.0) + vec2(2.0);
+  const x6 = vec2(2.0) + 2.0;
+}
+
+
 @compute @workgroup_size(1)
 fn testVectorConstants() -> i32
 {

@@ -592,6 +592,16 @@ inline bool RenderObject::isSkippedContentRoot() const
     return downcast<RenderElement>(*this).isSkippedContentRoot();
 }
 
+inline RenderElement* RenderObject::parent() const
+{
+    return m_parent.get();
+}
+
+inline CheckedPtr<RenderElement> RenderObject::checkedParent() const
+{
+    return m_parent;
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())

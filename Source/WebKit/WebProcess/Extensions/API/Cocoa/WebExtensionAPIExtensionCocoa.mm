@@ -49,12 +49,11 @@ bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
     return false;
 }
 
-NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
+NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
 
-    URL baseURL = extensionContext().baseURL();
-    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
+    return URL { extensionContext().baseURL(), resourcePath };
 }
 
 bool WebExtensionAPIExtension::isInIncognitoContext(WebPage* page)

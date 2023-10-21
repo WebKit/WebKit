@@ -199,6 +199,38 @@ std::optional<PathSegment> PathStream::singleSegment() const
     return m_segments.first();
 }
 
+template<class DataType>
+std::optional<DataType> PathStream::singleDataType() const
+{
+    const auto segment = singleSegment();
+    if (!segment)
+        return std::nullopt;
+    const auto data = std::get_if<DataType>(&segment->data());
+    if (!data)
+        return std::nullopt;
+    return *data;
+}
+
+std::optional<PathDataLine> PathStream::singleDataLine() const
+{
+    return singleDataType<PathDataLine>();
+}
+
+std::optional<PathArc> PathStream::singleArc() const
+{
+    return singleDataType<PathArc>();
+}
+
+std::optional<PathDataQuadCurve> PathStream::singleQuadCurve() const
+{
+    return singleDataType<PathDataQuadCurve>();
+}
+
+std::optional<PathDataBezierCurve> PathStream::singleBezierCurve() const
+{
+    return singleDataType<PathDataBezierCurve>();
+}
+
 bool PathStream::isClosed() const
 {
     if (isEmpty())

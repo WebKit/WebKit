@@ -100,6 +100,7 @@ public:
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
     void visit(AST::WhileStatement&) override;
+    void visit(AST::SwitchStatement&) override;
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
@@ -1272,8 +1273,25 @@ static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpress
     writer->stringBuilder().append("]))");
 }
 
+static void emitBitcast(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<");
+    writer->visit(call.target().inferredType());
+    writer->stringBuilder().append(">(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(")");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
+    if (is<AST::ElaboratedTypeExpression>(call.target())) {
+        auto& base = downcast<AST::ElaboratedTypeExpression>(call.target()).base();
+        if (base == "bitcast"_s) {
+            emitBitcast(this, call);
+            return;
+        }
+    }
+
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
@@ -1334,7 +1352,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
+            { "dpdx", "dfdx"_s },
+            { "dpdxCoarse", "dfdx"_s },
+            { "dpdxFine", "dfdx"_s },
+            { "dpdy", "dfdy"_s },
+            { "dpdyCoarse", "dfdy"_s },
+            { "dpdyFine", "dfdy"_s },
             { "f32", "float"_s },
+            { "fwidthCoarse", "fwidth"_s },
+            { "fwidthFine", "fwidth"_s },
             { "i32", "int"_s },
             { "mat2x2f", "float2x2"_s },
             { "mat2x3f", "float2x3"_s },
@@ -1402,6 +1428,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
+    m_stringBuilder.append("(");
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
         m_stringBuilder.append("~");
@@ -1420,6 +1447,7 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
         break;
     }
     visit(unary.expression());
+    m_stringBuilder.append(")");
 }
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
@@ -1700,6 +1728,35 @@ void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
     visit(statement.test());
     m_stringBuilder.append(") ");
     visit(statement.body());
+}
+
+void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
+{
+    const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
+        bool first = true;
+        for (auto& selector : clause.selectors) {
+            if (!first)
+                m_stringBuilder.append("\n");
+            first = false;
+            m_stringBuilder.append(m_indent, "case ");
+            visit(selector);
+            m_stringBuilder.append(":");
+        }
+        if (isDefault) {
+            if (!first)
+                m_stringBuilder.append("\n");
+            m_stringBuilder.append(m_indent, "default:");
+        }
+        visit(clause.body);
+    };
+
+    m_stringBuilder.append("switch (");
+    visit(statement.value());
+    m_stringBuilder.append(") {\n");
+    for (auto& clause : statement.clauses())
+        visitClause(clause);
+    visitClause(statement.defaultClause(), true);
+    m_stringBuilder.append("\n", m_indent, "}");
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)

@@ -14,8 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/hyphen-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/letter-spacing-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/letter-spacing-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/line-break-no-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/tab-size-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/text-indent-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/text-indent-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/word-spacing-composition.html

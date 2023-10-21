@@ -180,6 +180,7 @@ public:
     uint64_t domCacheSize(JSStringRef origin);
     void setAllowStorageQuotaIncrease(bool);
     void setQuota(uint64_t);
+    void setOriginQuotaRatioEnabled(bool);
 
     // Failed load condition testing
     void forceImmediateCompletion();

@@ -267,13 +267,13 @@ fn testBinaryOperations() -> i32
 
 fn testUnaryOperations() -> i32
 {
-    // CHECK: global\d+\.v2f\.x = -global\d+\.v2f\.x;
-    // CHECK-NEXT: global\d+\.v3f\.x = -global\d+\.v3f\.x;
-    // CHECK-NEXT: global\d+\.v4f\.x = -global\d+\.v4f\.x;
-    // CHECK-NEXT: global\d+\.v2f = -global\d+\.v2f;
-    // CHECK-NEXT: global\d+\.v3f = -float3\(global\d+\.v3f\);
-    // CHECK-NEXT: global\d+\.v4f = -global\d+\.v4f;
-    // CHECK-NEXT: global\d+\.f = -global\d+\.f;
+    // CHECK: global\d+\.v2f\.x = \(-global\d+\.v2f\.x\);
+    // CHECK-NEXT: global\d+\.v3f\.x = \(-global\d+\.v3f\.x\);
+    // CHECK-NEXT: global\d+\.v4f\.x = \(-global\d+\.v4f\.x\);
+    // CHECK-NEXT: global\d+\.v2f = \(-global\d+\.v2f\);
+    // CHECK-NEXT: global\d+\.v3f = \(-float3\(global\d+\.v3f\)\);
+    // CHECK-NEXT: global\d+\.v4f = \(-global\d+\.v4f\);
+    // CHECK-NEXT: global\d+\.f = \(-global\d+\.f\);
     t.v2f.x = -t1.v2f.x;
     t.v3f.x = -t1.v3f.x;
     t.v4f.x = -t1.v4f.x;
@@ -282,13 +282,13 @@ fn testUnaryOperations() -> i32
     t.v4f   = -t1.v4f;
     t.f     = -t1.f;
 
-    // CHECK-NEXT: global\d+\.v2f\.x = -global\d+\.v2f\.x;
-    // CHECK-NEXT: global\d+\.v3f\.x = -global\d+\.v3f\.x;
-    // CHECK-NEXT: global\d+\.v4f\.x = -global\d+\.v4f\.x;
-    // CHECK-NEXT: global\d+\.v2f = -global\d+\.v2f;
-    // CHECK-NEXT: global\d+\.v3f = packed_float3\(-float3\(global\d+\.v3f\)\);
-    // CHECK-NEXT: global\d+\.v4f = -global\d+\.v4f;
-    // CHECK-NEXT: global\d+\.f = -global\d+\.f;
+    // CHECK-NEXT: global\d+\.v2f\.x = \(-global\d+\.v2f\.x\);
+    // CHECK-NEXT: global\d+\.v3f\.x = \(-global\d+\.v3f\.x\);
+    // CHECK-NEXT: global\d+\.v4f\.x = \(-global\d+\.v4f\.x\);
+    // CHECK-NEXT: global\d+\.v2f = \(-global\d+\.v2f\);
+    // CHECK-NEXT: global\d+\.v3f = packed_float3\(\(-float3\(global\d+\.v3f\)\)\);
+    // CHECK-NEXT: global\d+\.v4f = \(-global\d+\.v4f\);
+    // CHECK-NEXT: global\d+\.f = \(-global\d+\.f\);
     t1.v2f.x = -t2.v2f.x;
     t1.v3f.x = -t2.v3f.x;
     t1.v4f.x = -t2.v4f.x;
@@ -297,13 +297,13 @@ fn testUnaryOperations() -> i32
     t1.v4f   = -t2.v4f;
     t1.f     = -t2.f;
 
-    // CHECK-NEXT: global\d+\.v2f\.x = -global\d+\.v2f\.x;
-    // CHECK-NEXT: global\d+\.v3f\.x = -global\d+\.v3f\.x;
-    // CHECK-NEXT: global\d+\.v4f\.x = -global\d+\.v4f\.x;
-    // CHECK-NEXT: global\d+\.v2f = -global\d+\.v2f;
-    // CHECK-NEXT: global\d+\.v3f = packed_float3\(-global\d+\.v3f\);
-    // CHECK-NEXT: global\d+\.v4f = -global\d+\.v4f;
-    // CHECK-NEXT: global\d+\.f = -global\d+\.f;
+    // CHECK-NEXT: global\d+\.v2f\.x = \(-global\d+\.v2f\.x\);
+    // CHECK-NEXT: global\d+\.v3f\.x = \(-global\d+\.v3f\.x\);
+    // CHECK-NEXT: global\d+\.v4f\.x = \(-global\d+\.v4f\.x\);
+    // CHECK-NEXT: global\d+\.v2f = \(-global\d+\.v2f\);
+    // CHECK-NEXT: global\d+\.v3f = packed_float3\(\(-global\d+\.v3f\)\);
+    // CHECK-NEXT: global\d+\.v4f = \(-global\d+\.v4f\);
+    // CHECK-NEXT: global\d+\.f = \(-global\d+\.f\);
     t2.v2f.x = -t.v2f.x;
     t2.v3f.x = -t.v3f.x;
     t2.v4f.x = -t.v4f.x;

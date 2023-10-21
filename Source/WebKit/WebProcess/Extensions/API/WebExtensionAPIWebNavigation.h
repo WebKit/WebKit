@@ -46,8 +46,8 @@ public:
     WebExtensionAPIWebNavigationEvent& onCompleted();
     WebExtensionAPIWebNavigationEvent& onErrorOccurred();
 
-    void getAllFrames(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
-    void getFrame(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void getAllFrames(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getFrame(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
     RefPtr<WebExtensionAPIWebNavigationEvent> m_onBeforeNavigateEvent;

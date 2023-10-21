@@ -44,7 +44,6 @@ public:
     static Ref<PathCG> create(const PathStream&);
     static Ref<PathCG> create(RetainPtr<CGMutablePathRef>&&);
 
-    static PlatformPathPtr createPlatformPath(const PathSegment&);
     PlatformPathPtr platformPath() const;
 
     void addPath(const PathCG&, const AffineTransform&);

@@ -123,13 +123,17 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         return nullptr;
 
     if (!renderer.isInline()) {
-
+        // IFC may contain block level boxes (floats and out-of-flow boxes).
         if (renderer.isRenderSVGBlock()) {
             // SVG content inside svg root shows up as block (see RenderSVGBlock). We only support inline root svg as "atomic content".
             return nullptr;
         }
-
-        // IFC may contain block level boxes (floats and out-of-flow boxes).
+        if (renderer.isFrameSet()) {
+            // Since RenderFrameSet is not a RenderBlock, finding container for nested framesets can't use containingBlock ancestor walk.
+            if (auto* parent = renderer.parent(); is<RenderBlockFlow>(parent))
+                return downcast<RenderBlockFlow>(*parent).modernLineLayout();
+            return nullptr;
+        }
         auto adjustedContainingBlock = [&] {
             RenderElement* containingBlock = nullptr;
             if (renderer.isOutOfFlowPositioned()) {

@@ -5,7 +5,7 @@ import time
 
 padding = ' ' * 5000
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Connection: keep-alive\r\n'
     'Content-type: multipart/x-mixed-replace; boundary=boundary\r\n\r\n'
     '--boundary\r\n'
@@ -15,17 +15,17 @@ sys.stdout.write(
     '<script>\n'
     'if (window.testRunner)\n'
     '    testRunner.dumpAsText();\n'
-    '</script>\n\n'
+    '</script>\n\n'.encode()
 )
 
 for i in range(0, 11):
-    sys.stdout.write(
+    sys.stdout.buffer.write(
         '\r\n--boundary\r\n'
         'Content-Type: text/plain\r\n\r\n'
         'This text should only appear once {}'
-        '{}'.format(i, padding)
+        '{}'.format(i, padding).encode()
     )
     sys.stdout.flush()
     time.sleep(0.1)
 
-sys.stdout.write('\r\n\r\n\r\n--boundary--\r\n')
+sys.stdout.buffer.write(b'\r\n\r\n\r\n--boundary--\r\n')

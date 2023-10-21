@@ -153,7 +153,7 @@ private:
     bool isAccessibilityRenderObject() const final { return true; }
     bool isAllowedChildOfTree() const;
     CharacterRange documentBasedSelectedTextRange() const;
-    Element* rootEditableElementForPosition(const Position&) const;
+    RefPtr<Element> rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     

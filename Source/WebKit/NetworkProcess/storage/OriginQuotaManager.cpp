@@ -32,18 +32,18 @@ namespace WebKit {
 
 static constexpr double defaultReportedQuotaIncreaseFactor = 2.0;
 
-Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifySpaceGrantedFunction&& notifySpaceGrantedFunction)
+Ref<OriginQuotaManager> OriginQuotaManager::create(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
 {
-    return adoptRef(*new OriginQuotaManager(quota, standardReportedQuota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifySpaceGrantedFunction)));
+    return adoptRef(*new OriginQuotaManager(WTFMove(parameters), WTFMove(getUsageFunction)));
 }
 
-OriginQuotaManager::OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifySpaceGrantedFunction&& notifySpaceGrantedFunction)
-    : m_quota(quota)
-    , m_standardReportedQuota(standardReportedQuota)
-    , m_initialQuota(quota)
+OriginQuotaManager::OriginQuotaManager(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
+    : m_quota(parameters.quota)
+    , m_standardReportedQuota(parameters.standardReportedQuota)
+    , m_initialQuota(parameters.quota)
     , m_getUsageFunction(WTFMove(getUsageFunction))
-    , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
-    , m_notifySpaceGrantedFunction(WTFMove(notifySpaceGrantedFunction))
+    , m_increaseQuotaFunction(WTFMove(parameters.increaseQuotaFunction))
+    , m_notifySpaceGrantedFunction(WTFMove(parameters.notifySpaceGrantedFunction))
 {
     ASSERT(m_quota);
 }
@@ -156,6 +156,17 @@ void OriginQuotaManager::resetQuotaForTesting()
 {
     m_quota = m_initialQuota;
     m_quotaCountdown = 0;
+}
+
+void OriginQuotaManager::updateParametersForTesting(Parameters&& parameters)
+{
+    m_quota = parameters.quota;
+    m_standardReportedQuota = parameters.standardReportedQuota;
+    m_increaseQuotaFunction = WTFMove(parameters.increaseQuotaFunction);
+    m_notifySpaceGrantedFunction = WTFMove(parameters.notifySpaceGrantedFunction);
+    m_initialQuota = m_quota;
+    m_quotaCountdown = 0;
+    m_usage = std::nullopt;
 }
 
 uint64_t OriginQuotaManager::reportedQuota()

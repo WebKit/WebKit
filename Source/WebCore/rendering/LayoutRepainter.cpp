@@ -38,7 +38,7 @@ LayoutRepainter::LayoutRepainter(RenderElement& renderer, bool checkForRepaint, 
     if (!m_checkForRepaint)
         return;
 
-    m_repaintContainer = m_renderer.containerForRepaint().renderer;
+    m_repaintContainer = m_renderer.containerForRepaint().renderer.get();
     m_oldBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
 
     if (m_repaintOutlineBounds)

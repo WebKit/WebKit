@@ -110,7 +110,7 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
     switch (name.nodeName()) {
     case AttributeNames::nowrapAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValueCollapse);
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrapMode, CSSValueNowrap);
         break;
     case AttributeNames::widthAttr:
         // width="0" is not allowed for compatibility with WinIE.

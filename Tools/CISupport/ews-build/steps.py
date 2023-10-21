@@ -71,6 +71,7 @@ LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECT
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
+MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -3137,9 +3138,10 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n\n')
         self.cancelled_due_to_huge_logs = True
-        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
@@ -5040,7 +5042,7 @@ class ExtractBuiltProduct(shell.ShellCommandNewStyle):
         super().__init__(logEnviron=False, **kwargs)
 
 
-class RunAPITests(TestWithFailureCount, AddToLogMixin):
+class RunAPITests(shell.TestNewStyle, AddToLogMixin):
     name = 'run-api-tests'
     description = ['api tests running']
     descriptionDone = ['api-tests']
@@ -5052,6 +5054,9 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
     command = ['python3', 'Tools/Scripts/run-api-tests', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
     failedTestsFormatString = '%d api test%s failed or timed out'
+    failedTestCount = 0
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
@@ -5063,6 +5068,9 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
 
+        self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+        self.addLogObserver('stdio', self.log_observer)
+
         platform = self.getProperty('platform')
         if platform in ['gtk', 'wpe']:
             self.command = ['python3', f'Tools/Scripts/run-{platform}-tests',
@@ -5072,6 +5080,9 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
             self.command = self.command + customBuildFlag(platform, self.getProperty('fullPlatform'))
 
         rc = yield super().run()
+
+        if self.failedTestCount:
+            rc = FAILURE
 
         yield self.analyze_failures_using_results_db()
 
@@ -5092,6 +5103,37 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
 
         defer.returnValue(rc)
 
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
+        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', line)
+        if match:
+            self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+
+    def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+
+        status = self.name
+        if self.results != SUCCESS:
+            if self.failedTestCount:
+                self.failedTestPluralSuffix = '' if self.failedTestCount == 1 else 's'
+                status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
+            else:
+                status += ' ({})'.format(Results[self.results])
+
+        return {'step': status}
+
     @defer.inlineCallbacks
     def analyze_failures_using_results_db(self):
         logTextJson = self.log_observer_json.getStdout()
@@ -5103,14 +5145,6 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
             yield self.filter_api_test_failures_using_results_db(failures)
             self.setProperty(f'{self.suffix}_failures_filtered', sorted(self.failing_tests_filtered))
             self.setProperty(f'results-db_{self.suffix}_pre_existing', sorted(self.preexisting_failures_in_results_db))
-
-    def countFailures(self, returncode):
-        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-
-        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
-        if not match:
-            return 0
-        return int(match.group('ran')) - int(match.group('passed'))
 
     def doOnFailure(self):
         self.build.addStepsAfterCurrentStep([

@@ -63,6 +63,9 @@ fn testMultiply() {
   _ = 1 * vec2(1, 1);
   _ = vec2(1, 1) * vec2(1, 1);
 
+  _ = m * 2;
+  _ = 2 * m;
+
   _ = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
   _ = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
   _ = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
@@ -516,6 +519,71 @@ fn testVec4() {
   _ = vec4(vec2(0, 0), vec2(0, 0));
   _ = vec4(vec3(0, 0, 0), 0);
   _ = vec4(0, vec3(0, 0, 0));
+}
+
+// 16.2. Bit Reinterpretation Built-in Functions (https://www.w3.org/TR/WGSL/#bitcast-builtin)
+// RUN: %metal-compile testBitcast
+@compute @workgroup_size(1)
+fn testBitcast()
+{
+    let u = 0u;
+    let i = 0i;
+    let f = 0f;
+
+    // [T < Concrete32BitNumber, S < Concrete32BitNumber].(S) => T
+    { let x: u32 = bitcast<u32>(u); }
+    { let x: u32 = bitcast<u32>(i); }
+    { let x: u32 = bitcast<u32>(f); }
+
+    { let x: i32 = bitcast<i32>(u); }
+    { let x: i32 = bitcast<i32>(i); }
+    { let x: i32 = bitcast<i32>(f); }
+
+    { let x: f32 = bitcast<f32>(u); }
+    { let x: f32 = bitcast<f32>(i); }
+    { let x: f32 = bitcast<f32>(f); }
+
+    // [T < Concrete32BitNumber, S < Concrete32BitNumber, N].(vec[N][S]) => vec[N][T]
+    // vec2
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(u)); }
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(i)); }
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(f)); }
+
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(u)); }
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(i)); }
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(f)); }
+
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(u)); }
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(i)); }
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(f)); }
+
+    // vec3
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(u)); }
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(i)); }
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(f)); }
+
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(u)); }
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(i)); }
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(f)); }
+
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(u)); }
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(i)); }
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(f)); }
+
+    // vec4
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(u)); }
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(i)); }
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(f)); }
+
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(u)); }
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(i)); }
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(f)); }
+
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(u)); }
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(i)); }
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(f)); }
+
+    // FIXME: add f16 overloads
 }
 
 // 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
@@ -2018,6 +2086,70 @@ fn testTrunc()
         _ = trunc(vec4(-1.0));
         _ = trunc(vec4(-1f));
     }
+}
+
+// 16.6. Derivative Built-in Functions (https://www.w3.org/TR/WGSL/#derivative-builtin-functions)
+// RUN: %metal-compile testDerivativeFunctions
+@fragment
+fn testDerivativeFunctions()
+{
+    // All have the same signatures:
+    //   [].(f32) => f32,
+    //   [N].(vec[N][f32]) => vec[N][f32],
+
+    // 16.6.1 dpdx
+    _ = dpdx(2.0);
+    _ = dpdx(vec2(2.0));
+    _ = dpdx(vec3(2.0));
+    _ = dpdx(vec4(2.0));
+
+    // 16.6.2 dpdxCoarse
+    _ = dpdxCoarse(2.0);
+    _ = dpdxCoarse(vec2(2.0));
+    _ = dpdxCoarse(vec3(2.0));
+    _ = dpdxCoarse(vec4(2.0));
+
+    // 16.6.3 dpdxFine
+    _ = dpdxFine(2.0);
+    _ = dpdxFine(vec2(2.0));
+    _ = dpdxFine(vec3(2.0));
+    _ = dpdxFine(vec4(2.0));
+
+    // 16.6.4 dpdy
+    _ = dpdy(2.0);
+    _ = dpdy(vec2(2.0));
+    _ = dpdy(vec3(2.0));
+    _ = dpdy(vec4(2.0));
+
+    // 16.6.5 dpdyCoarse
+    _ = dpdyCoarse(2.0);
+    _ = dpdyCoarse(vec2(2.0));
+    _ = dpdyCoarse(vec3(2.0));
+    _ = dpdyCoarse(vec4(2.0));
+
+    // 16.6.6 dpdyFine
+    _ = dpdyFine(2.0);
+    _ = dpdyFine(vec2(2.0));
+    _ = dpdyFine(vec3(2.0));
+    _ = dpdyFine(vec4(2.0));
+
+    // 16.6.7 fwidth
+    _ = fwidth(2.0);
+    _ = fwidth(vec2(2.0));
+    _ = fwidth(vec3(2.0));
+    _ = fwidth(vec4(2.0));
+
+    // 16.6.8 fwidthCoarse
+    _ = fwidthCoarse(2.0);
+    _ = fwidthCoarse(vec2(2.0));
+    _ = fwidthCoarse(vec3(2.0));
+    _ = fwidthCoarse(vec4(2.0));
+
+    // 16.6.9 fwidthFine
+    _ = fwidthFine(2.0);
+    _ = fwidthFine(vec2(2.0));
+    _ = fwidthFine(vec3(2.0));
+    _ = fwidthFine(vec4(2.0));
 }
 
 // 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)

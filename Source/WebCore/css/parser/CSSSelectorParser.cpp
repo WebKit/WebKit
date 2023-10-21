@@ -52,6 +52,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , cssNestingEnabled(context.cssNestingEnabled)
     , focusVisibleEnabled(context.focusVisibleEnabled)
     , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
+    , popoverAttributeEnabled(context.popoverAttributeEnabled)
 {
 }
 
@@ -60,6 +61,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , cssNestingEnabled(document.settings().cssNestingEnabled())
     , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
+    , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
 {
 }
 
@@ -798,6 +800,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (!m_context.focusVisibleEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::FocusVisible)
                 return nullptr;
             if (!m_context.hasPseudoClassEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::Has)
+                return nullptr;
+            if (!m_context.popoverAttributeEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::PopoverOpen)
                 return nullptr;
             if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassType::HtmlDocument)
                 return nullptr;

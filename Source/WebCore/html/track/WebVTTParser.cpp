@@ -250,7 +250,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     // and any number of characters that are not line terminators ...
     if (!line.startsWith(fileIdentifier))
         return false;
-    if (line.length() > fileIdentifierLength && !isASCIIWhitespace(line[fileIdentifierLength]))
+    if (line.length() > fileIdentifierLength && !isTabOrSpace(line[fileIdentifierLength]))
         return false;
     return true;
 }

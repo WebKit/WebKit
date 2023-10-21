@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-hyphens
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -329,6 +329,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/lone-cr-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/lone-cr-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/nowrap-wbr-and-space-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/object-replacement-1-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/object-replacement-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/object-replacement-2-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/object-replacement-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-float-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-float-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-line-051-expected.xht
@@ -498,12 +502,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-006.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-discard-001-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-discard-001.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-preserve-breaks-001-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-preserve-breaks-001.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-trim-trim-inner-001-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-space-trim-trim-inner-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-002-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-002.html
@@ -511,6 +509,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-align-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-narrow-crash.html
@@ -684,6 +692,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-discard-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-discard-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-preserve-breaks-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-preserve-breaks-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-empty-text-sibling-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-empty-text-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001-expected.html
@@ -776,6 +788,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-022.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-023-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-discard-inner-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-trim-discard-inner-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-vs-joiners-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-vs-joiners-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-vs-joiners-002-expected.html

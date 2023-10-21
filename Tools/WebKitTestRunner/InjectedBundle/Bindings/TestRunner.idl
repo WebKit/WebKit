@@ -78,6 +78,7 @@ interface TestRunner {
     unsigned long domCacheSize(DOMString origin);
     undefined setAllowStorageQuotaIncrease(boolean value);
     undefined setQuota(unsigned long long quota);
+    undefined setOriginQuotaRatioEnabled(boolean value);
 
     // Special options.
     undefined keepWebHistory();

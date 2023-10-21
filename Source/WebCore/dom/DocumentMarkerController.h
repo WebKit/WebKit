@@ -29,6 +29,7 @@
 #include "DocumentMarker.h"
 #include "Timer.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +46,7 @@ struct SimpleRange;
 enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
 enum class FilterMarkerResult : bool { Keep, Remove };
 
-class DocumentMarkerController {
+class DocumentMarkerController : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
     DocumentMarkerController(Document&);
@@ -86,7 +87,7 @@ public:
     void invalidateRectsForAllMarkers();
     void invalidateRectsForMarkersInNode(Node&);
 
-    DocumentMarker* markerContainingPoint(const LayoutPoint&, DocumentMarker::MarkerType);
+    WeakPtr<DocumentMarker> markerContainingPoint(const LayoutPoint&, DocumentMarker::MarkerType);
     WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
 
 #if ENABLE(TREE_DEBUGGING)
@@ -105,7 +106,7 @@ private:
     void forEach(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>, const Function<bool(Node&, RenderedDocumentMarker&)>);
     void forEachOfTypes(OptionSet<DocumentMarker::MarkerType>, const Function<bool(Node&, RenderedDocumentMarker&)>);
 
-    using MarkerMap = HashMap<RefPtr<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
+    using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
     bool possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType>);
     void removeMarkers(OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
@@ -113,10 +114,12 @@ private:
 
     void fadeAnimationTimerFired();
 
+    Ref<Document> protectedDocument() const;
+
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
     OptionSet<DocumentMarker::MarkerType> m_possiblyExistingMarkerTypes;
-    Document& m_document;
+    CheckedRef<Document> m_document;
 
     Timer m_fadeAnimationTimer;
 };

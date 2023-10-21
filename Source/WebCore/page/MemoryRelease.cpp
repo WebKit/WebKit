@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "PerformanceLogging.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "SVGPathElement.h"
 #include "ScrollingThread.h"
 #include "SelectorQuery.h"
@@ -79,8 +80,8 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     GlyphDisplayListCache::singleton().clear();
     SelectorQueryCache::singleton().clear();
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* renderView = document->renderView())
+    for (auto& document : Document::allDocuments()) {
+        if (CheckedPtr renderView = document->renderView())
             LayoutIntegration::LineLayout::releaseCaches(*renderView);
     }
 
@@ -115,7 +116,11 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         page.cookieJar().clearCache();
     });
 
-    for (auto& document : copyToVectorOf<RefPtr<Document>>(Document::allDocuments())) {
+    auto allDocuments = Document::allDocuments();
+    auto protectedDocuments = WTF::map(allDocuments, [](auto& document) -> Ref<Document> {
+        return document.get();
+    });
+    for (auto& document : protectedDocuments) {
         document->styleScope().releaseMemory();
         document->fontSelector().emptyCaches();
         document->cachedResourceLoader().garbageCollectDocumentResources();

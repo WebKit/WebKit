@@ -58,22 +58,6 @@ void PathSegment::extendFastBoundingRect(const FloatPoint& currentPoint, const F
     });
 }
 
-FloatRect PathSegment::fastBoundingRect() const
-{
-    FloatPoint lastMoveToPoint;
-    FloatPoint currentPoint;
-    FloatRect boundingRect = FloatRect::smallestRect();
-
-    extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-
-    if (boundingRect.isSmallest()) {
-        currentPoint = calculateEndPoint(currentPoint, lastMoveToPoint);
-        boundingRect.extend(currentPoint);
-    }
-
-    return boundingRect;
-}
-
 void PathSegment::extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
 {
     WTF::switchOn(m_data, [&](auto& data) {
@@ -122,11 +106,6 @@ bool PathSegment::transform(const AffineTransform& transform)
         }
         return false;
     });
-}
-
-PlatformPathPtr PathSegment::createPlatformPath() const
-{
-    return PlatformPathImpl::createPlatformPath(*this);
 }
 
 TextStream& operator<<(TextStream& ts, const PathSegment& segment)

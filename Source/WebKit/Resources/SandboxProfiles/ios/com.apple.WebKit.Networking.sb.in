@@ -789,6 +789,7 @@
         SYS_gettid
         SYS_gettimeofday
         SYS_getuid
+        SYS_getxattr
         SYS_guarded_close_np
         SYS_guarded_open_dprotected_np
         SYS_guarded_open_np

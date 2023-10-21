@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,46 +135,6 @@ struct LazyOperandValueProfile : public MinimalValueProfile {
 
     VirtualRegister m_operand;
     LazyOperandValueProfileKey m_key;
-
-    struct Vector {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        ConcurrentVector<LazyOperandValueProfile, 8> m_data;
-        unsigned m_size { 0 };
-    };
-
-};
-
-class LazyOperandValueProfileParser;
-
-class CompressedLazyOperandValueProfileHolder {
-    WTF_MAKE_NONCOPYABLE(CompressedLazyOperandValueProfileHolder);
-public:
-    CompressedLazyOperandValueProfileHolder();
-    ~CompressedLazyOperandValueProfileHolder();
-
-    void computeUpdatedPredictions(const ConcurrentJSLocker&);
-
-    LazyOperandValueProfile* add(const LazyOperandValueProfileKey&);
-
-private:
-    friend class LazyOperandValueProfileParser;
-    std::unique_ptr<LazyOperandValueProfile::Vector> m_data;
-};
-
-class LazyOperandValueProfileParser {
-    WTF_MAKE_NONCOPYABLE(LazyOperandValueProfileParser);
-public:
-    explicit LazyOperandValueProfileParser();
-    ~LazyOperandValueProfileParser();
-    
-    void initialize(CompressedLazyOperandValueProfileHolder&);
-    
-    LazyOperandValueProfile* getIfPresent(
-        const LazyOperandValueProfileKey& key) const;
-    
-    SpeculatedType prediction(const ConcurrentJSLocker&, const LazyOperandValueProfileKey&) const;
-private:
-    HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };
 
 } // namespace JSC

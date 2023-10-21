@@ -783,6 +783,26 @@ void LocalFrame::clearTimers()
     clearTimers(m_view.get(), document());
 }
 
+CheckedRef<const FrameLoader> LocalFrame::checkedLoader() const
+{
+    return m_loader.get();
+}
+
+CheckedRef<FrameLoader> LocalFrame::checkedLoader()
+{
+    return m_loader.get();
+}
+
+CheckedRef<ScriptController> LocalFrame::checkedScript()
+{
+    return m_script.get();
+}
+
+CheckedRef<const ScriptController> LocalFrame::checkedScript() const
+{
+    return m_script.get();
+}
+
 void LocalFrame::willDetachPage()
 {
     if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()))
@@ -1180,6 +1200,11 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
         return nullptr;
     return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
+}
+
+RefPtr<LocalFrameView> Document::protectedView() const
+{
+    return view();
 }
 
 #if ENABLE(DATA_DETECTION)

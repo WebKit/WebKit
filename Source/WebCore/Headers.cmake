@@ -934,6 +934,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DocumentInlines.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
+    dom/DocumentParser.h
     dom/DocumentStorageAccess.h
     dom/DocumentType.h
     dom/Element.h
@@ -1558,6 +1559,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
     page/TranslationContextMenuInfo.h
+    page/UndoManager.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h

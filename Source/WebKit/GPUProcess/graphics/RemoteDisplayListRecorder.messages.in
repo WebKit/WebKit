@@ -84,18 +84,13 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #endif
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
-    StrokeArcWithColorAndThickness(struct WebCore::PathArc arc, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
+    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
-    StrokeQuadCurveWithColorAndThickness(struct WebCore::PathDataQuadCurve curve, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
-    StrokeBezierCurveWithColorAndThickness(struct WebCore::PathDataBezierCurve curve, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
     StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
-    StrokePathSegmentWithColorAndThickness(WebCore::PathSegment segment, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
-    StrokePathSegment(WebCore::PathSegment segment) StreamBatched
-    StrokePathWithColorAndThickness(WebCore::Path path, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
 #endif
+    StrokePathSegment(WebCore::PathSegment segment) StreamBatched
     StrokePath(WebCore::Path path) StreamBatched
     StrokeEllipse(WebCore::FloatRect rect) StreamBatched
     ClearRect(WebCore::FloatRect rect)

@@ -133,7 +133,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
 
-    if (root().style().textWrap() == TextWrap::Balance) {
+    if (root().style().textWrapMode() == TextWrapMode::Wrap && root().style().textWrapStyle() == TextWrapStyle::Balance) {
         auto balancer = InlineContentBalancer { *this, inlineItemList, constraints.horizontal() };
         auto balancedLineWidths = balancer.computeBalanceConstraints();
         if (balancedLineWidths)

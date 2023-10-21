@@ -48,7 +48,7 @@ public:
     void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);
     void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
 
-    NSURL *getURL(NSString *resourcePath, NSString **errorString);
+    NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
 #endif
 };
 

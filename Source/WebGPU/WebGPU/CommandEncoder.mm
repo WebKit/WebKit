@@ -236,7 +236,7 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
     return true;
 }
 
-static bool isStencilOnlyFormat(MTLPixelFormat format)
+bool Device::isStencilOnlyFormat(MTLPixelFormat format)
 {
     switch (format) {
     case MTLPixelFormatStencil8:
@@ -288,11 +288,12 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     bool depthReadOnly = false, stencilReadOnly = false;
-    bool isStencilOnly = false;
+    bool hasStencilComponent = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
-        id<MTLTexture> metalDepthStencilTexture = fromAPI(attachment->view).texture();
-        isStencilOnly = isStencilOnlyFormat(metalDepthStencilTexture.pixelFormat);
-        if (!isStencilOnly) {
+        auto& textureView = fromAPI(attachment->view);
+        id<MTLTexture> metalDepthStencilTexture = textureView.texture();
+        hasStencilComponent = Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format).has_value();
+        if (!Device::isStencilOnlyFormat(metalDepthStencilTexture.pixelFormat)) {
             const auto& mtlAttachment = mtlDescriptor.depthAttachment;
             depthReadOnly = attachment->depthReadOnly;
             mtlAttachment.clearDepth = attachment->depthClearValue;
@@ -305,7 +306,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
         stencilReadOnly = attachment->stencilReadOnly;
-        if (isStencilOnly)
+        if (hasStencilComponent)
             mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.clearStencil = attachment->stencilClearValue;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);

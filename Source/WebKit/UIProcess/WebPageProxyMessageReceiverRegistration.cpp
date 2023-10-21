@@ -51,6 +51,7 @@ void WebPageProxyMessageReceiverRegistration::stopReceivingMessages()
 
 void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration& oldRegistration, IPC::MessageReceiver& newReceiver)
 {
+    ASSERT(!m_data);
     if (auto data = std::exchange(oldRegistration.m_data, std::nullopt)) {
         data->process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
         startReceivingMessages(data->process, data->webPageID, newReceiver);

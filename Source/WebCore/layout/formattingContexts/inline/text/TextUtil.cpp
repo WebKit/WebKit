@@ -383,13 +383,13 @@ bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
 bool TextUtil::isWrappingAllowed(const RenderStyle& style)
 {
     // https://www.w3.org/TR/css-text-4/#text-wrap
-    return style.textWrap() != TextWrap::NoWrap;
+    return style.textWrapMode() != TextWrapMode::NoWrap;
 }
 
 bool TextUtil::shouldTrailingWhitespaceHang(const RenderStyle& style)
 {
     // https://www.w3.org/TR/css-text-4/#white-space-phase-2
-    return style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrap() != TextWrap::NoWrap;
+    return style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrapMode() != TextWrapMode::NoWrap;
 }
 
 TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
@@ -418,7 +418,7 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
     case WordBreak::KeepAll:
     case WordBreak::BreakWord:
         return TextBreakIterator::ContentAnalysis::Mechanical;
-    case WordBreak::Auto:
+    case WordBreak::AutoPhrase:
         return TextBreakIterator::ContentAnalysis::Linguistic;
     }
     return TextBreakIterator::ContentAnalysis::Mechanical;

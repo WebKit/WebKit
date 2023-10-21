@@ -534,6 +534,11 @@ void RemoteDisplayListRecorder::strokeRect(const FloatRect& rect, float lineWidt
 
 #if ENABLE(INLINE_PATH_DATA)
 
+void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
+{
+    handleItem(DisplayList::StrokeLine(line));
+}
+
 void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStrokeColor&& color, float thickness)
 {
     handleItem(WTFMove(color));
@@ -541,28 +546,9 @@ void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLi
     handleItem(DisplayList::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
-{
-    handleItem(DisplayList::StrokeLine(line));
-}
-
-void RemoteDisplayListRecorder::strokeArcWithColorAndThickness(const PathArc& arc, DisplayList::SetInlineStrokeColor&& color, float thickness)
-{
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokeArc(arc));
-}
-
 void RemoteDisplayListRecorder::strokeArc(const PathArc& arc)
 {
     handleItem(DisplayList::StrokeArc(arc));
-}
-
-void RemoteDisplayListRecorder::strokeQuadCurveWithColorAndThickness(const PathDataQuadCurve& curve, DisplayList::SetInlineStrokeColor&& color, float thickness)
-{
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokeQuadCurve(curve));
 }
 
 void RemoteDisplayListRecorder::strokeQuadCurve(const PathDataQuadCurve& curve)
@@ -570,38 +556,17 @@ void RemoteDisplayListRecorder::strokeQuadCurve(const PathDataQuadCurve& curve)
     handleItem(DisplayList::StrokeQuadCurve(curve));
 }
 
-void RemoteDisplayListRecorder::strokeBezierCurveWithColorAndThickness(const PathDataBezierCurve& curve, DisplayList::SetInlineStrokeColor&& color, float thickness)
-{
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokeBezierCurve(curve));
-}
-
 void RemoteDisplayListRecorder::strokeBezierCurve(const PathDataBezierCurve& curve)
 {
     handleItem(DisplayList::StrokeBezierCurve(curve));
 }
 
-void RemoteDisplayListRecorder::strokePathSegmentWithColorAndThickness(const PathSegment& segment, DisplayList::SetInlineStrokeColor&& color, float thickness)
-{
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokePathSegment(segment));
-}
+#endif // ENABLE(INLINE_PATH_DATA)
 
 void RemoteDisplayListRecorder::strokePathSegment(const PathSegment& segment)
 {
     handleItem(DisplayList::StrokePathSegment(segment));
 }
-
-void RemoteDisplayListRecorder::strokePathWithColorAndThickness(const Path& path, DisplayList::SetInlineStrokeColor&& color, float thickness)
-{
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokePath(path));
-}
-
-#endif // ENABLE(INLINE_PATH_DATA)
 
 void RemoteDisplayListRecorder::strokePath(const Path& path)
 {

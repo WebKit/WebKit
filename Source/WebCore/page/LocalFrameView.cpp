@@ -3815,6 +3815,16 @@ void LocalFrameView::flushAnyPendingPostLayoutTasks()
         updateEmbeddedObjectsTimerFired();
 }
 
+CheckedRef<const LocalFrameViewLayoutContext> LocalFrameView::checkedLayoutContext() const
+{
+    return m_layoutContext;
+}
+
+CheckedRef<LocalFrameViewLayoutContext> LocalFrameView::checkedLayoutContext()
+{
+    return m_layoutContext;
+}
+
 void LocalFrameView::performPostLayoutTasks()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -6003,6 +6013,11 @@ ScrollBehaviorForFixedElements LocalFrameView::scrollBehaviorForFixedElements() 
 }
 
 LocalFrame& LocalFrameView::frame() const
+{
+    return m_frame;
+}
+
+Ref<LocalFrame> LocalFrameView::protectedFrame() const
 {
     return m_frame;
 }

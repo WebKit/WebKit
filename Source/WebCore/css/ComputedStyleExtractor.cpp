@@ -577,28 +577,41 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     return CSSPrimitiveValue::create(CSSValueAuto);
 }
 
+RefPtr<CSSValue> ComputedStyleExtractor::textWrapShorthandValue(const RenderStyle& style) const
+{
+    auto textWrapMode = style.textWrapMode();
+    auto textWrapStyle = style.textWrapStyle();
+
+    if (textWrapStyle == TextWrapStyle::Auto)
+        return createConvertingToCSSValueID(textWrapMode);
+    if (textWrapMode == TextWrapMode::Wrap)
+        return createConvertingToCSSValueID(textWrapStyle);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(textWrapMode), createConvertingToCSSValueID(textWrapStyle));
+}
+
 RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderStyle& style) const
 {
     auto whiteSpaceCollapse = style.whiteSpaceCollapse();
-    auto textWrap = style.textWrap();
+    auto textWrapMode = style.textWrapMode();
 
     // Convert to backwards-compatible keywords if possible.
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrapMode == TextWrapMode::Wrap)
         return CSSPrimitiveValue::create(CSSValueNormal);
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::NoWrap)
         return CSSPrimitiveValue::create(CSSValuePre);
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::Wrap)
         return CSSPrimitiveValue::create(CSSValuePreWrap);
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrapMode == TextWrapMode::Wrap)
         return CSSPrimitiveValue::create(CSSValuePreLine);
 
     // Omit default longhand values.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse)
-        return createConvertingToCSSValueID(textWrap);
-    if (textWrap == TextWrap::Wrap)
+        return createConvertingToCSSValueID(textWrapMode);
+    if (textWrapMode == TextWrapMode::Wrap)
         return createConvertingToCSSValueID(whiteSpaceCollapse);
 
-    return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrap));
+    return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrapMode));
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
@@ -2887,10 +2900,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    // FIXME: For now, we always allow access to white-space longhands.
-    // We should remove this hack once white-space longhands are no longer under a feature flag.
-    bool isWhiteSpaceLonghand = (propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap);
-    if (!isWhiteSpaceLonghand && !isExposed(propertyID, m_element->document().settings())) {
+    if (!isExposed(propertyID, m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2956,9 +2966,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    // FIXME: For now, we always allow access to white-space longhands.
-    // We should remove this hack once white-space longhands are no longer under a feature flag.
-    ASSERT((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap) || isExposed(propertyID, m_element->document().settings()));
+    ASSERT(isExposed(propertyID, m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -3720,7 +3728,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextTransform:
         return renderTextTransformFlagsToCSSValue(style.textTransform());
     case CSSPropertyTextWrap:
-        return createConvertingToCSSValueID(style.textWrap());
+        return textWrapShorthandValue(style);
+    case CSSPropertyTextWrapMode:
+        return createConvertingToCSSValueID(style.textWrapMode());
+    case CSSPropertyTextWrapStyle:
+        return createConvertingToCSSValueID(style.textWrapStyle());
     case CSSPropertyTop:
         return positionOffsetValue(style, CSSPropertyTop, renderer);
     case CSSPropertyUnicodeBidi:

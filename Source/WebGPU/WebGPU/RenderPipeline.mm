@@ -623,7 +623,11 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
     if (auto depthStencil = descriptor.depthStencil) {
-        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = Texture::pixelFormat(depthStencil->format);
+        MTLPixelFormat depthStencilFormat = Texture::pixelFormat(depthStencil->format);
+        bool isStencilOnlyFormat = Device::isStencilOnlyFormat(depthStencilFormat);
+        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = isStencilOnlyFormat ? MTLPixelFormatInvalid : depthStencilFormat;
+        if (Texture::stencilOnlyAspectMetalFormat(depthStencil->format))
+            mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = depthStencilFormat;
 
         depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         depthStencilDescriptor.depthCompareFunction = convertToMTLCompare(depthStencil->depthCompare);

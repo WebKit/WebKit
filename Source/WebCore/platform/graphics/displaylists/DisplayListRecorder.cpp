@@ -463,33 +463,26 @@ void Recorder::fillRectWithRoundedHole(const FloatRect& rect, const FloatRounded
 
 void Recorder::fillPath(const Path& path)
 {
-#if ENABLE(INLINE_PATH_DATA)
+    appendStateChangeItemIfNecessary();
+
     if (auto segment = path.singleSegment()) {
-        fillPathSegment(*segment);
+#if ENABLE(INLINE_PATH_DATA)
+        if (auto line = path.singleDataLine())
+            recordFillLine(*line);
+        else if (auto arc = path.singleArc())
+            recordFillArc(*arc);
+        else if (auto curve = path.singleQuadCurve())
+            recordFillQuadCurve(*curve);
+        else if (auto curve = path.singleBezierCurve())
+            recordFillBezierCurve(*curve);
+        else
+#endif
+            recordFillPathSegment(*segment);
         return;
     }
-#endif
-    appendStateChangeItemIfNecessary();
+
     recordFillPath(path);
 }
-
-#if ENABLE(INLINE_PATH_DATA)
-void Recorder::fillPathSegment(const PathSegment& segment)
-{
-    appendStateChangeItemIfNecessary();
-
-    if (auto line = segment.get<PathDataLine>())
-        recordFillLine(*line);
-    else if (auto arc = segment.get<PathArc>())
-        recordFillArc(*arc);
-    else if (auto curve = segment.get<PathDataQuadCurve>())
-        recordFillQuadCurve(*curve);
-    else if (auto curve = segment.get<PathDataBezierCurve>())
-        recordFillBezierCurve(*curve);
-    else
-        recordFillPathSegment(segment);
-}
-#endif
 
 void Recorder::fillEllipse(const FloatRect& rect)
 {
@@ -506,57 +499,37 @@ void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 void Recorder::strokePath(const Path& path)
 {
 #if ENABLE(INLINE_PATH_DATA)
+    auto& state = currentState().state;
+    if (state.containsOnlyInlineStrokeChanges()) {
+        if (auto line = path.singleDataLine()) {
+            recordStrokeLineWithColorAndThickness(*line, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
+            state.didApplyChanges();
+            currentState().lastDrawingState = state;
+            return;
+        }
+    }
+#endif
+
+    appendStateChangeItemIfNecessary();
+
     if (auto segment = path.singleSegment()) {
-        strokePathSegment(*segment);
+#if ENABLE(INLINE_PATH_DATA)
+        if (auto line = path.singleDataLine())
+            recordStrokeLine(*line);
+        else if (auto arc = path.singleArc())
+            recordStrokeArc(*arc);
+        else if (auto curve = path.singleQuadCurve())
+            recordStrokeQuadCurve(*curve);
+        else if (auto curve = path.singleBezierCurve())
+            recordStrokeBezierCurve(*curve);
+        else
+#endif
+            recordStrokePathSegment(*segment);
         return;
     }
 
-    auto& state = currentState().state;
-    if (state.containsOnlyInlineStrokeChanges()) {
-        recordStrokePathWithColorAndThickness(path, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        state.didApplyChanges();
-        currentState().lastDrawingState = state;
-        return;
-    }
-#endif
-    appendStateChangeItemIfNecessary();
     recordStrokePath(path);
 }
-
-#if ENABLE(INLINE_PATH_DATA)
-void Recorder::strokePathSegment(const PathSegment& segment)
-{
-    auto& state = currentState().state;
-    if (state.containsOnlyInlineStrokeChanges()) {
-        if (auto line = segment.get<PathDataLine>())
-            recordStrokeLineWithColorAndThickness(*line, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        else if (auto arc = segment.get<PathArc>())
-            recordStrokeArcWithColorAndThickness(*arc, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        else if (auto curve = segment.get<PathDataQuadCurve>())
-            recordStrokeQuadCurveWithColorAndThickness(*curve, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        else if (auto curve = segment.get<PathDataBezierCurve>())
-            recordStrokeBezierCurveWithColorAndThickness(*curve, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        else
-            recordStrokePathSegmentWithColorAndThickness(segment, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
-        state.didApplyChanges();
-        currentState().lastDrawingState = state;
-        return;
-    }
-
-    appendStateChangeItemIfNecessary();
-
-    if (auto line = segment.get<PathDataLine>())
-        recordStrokeLine(*line);
-    else if (auto arc = segment.get<PathArc>())
-        recordStrokeArc(*arc);
-    else if (auto curve = segment.get<PathDataQuadCurve>())
-        recordStrokeQuadCurve(*curve);
-    else if (auto curve = segment.get<PathDataBezierCurve>())
-        recordStrokeBezierCurve(*curve);
-    else
-        recordStrokePathSegment(segment);
-}
-#endif
 
 void Recorder::strokeEllipse(const FloatRect& rect)
 {

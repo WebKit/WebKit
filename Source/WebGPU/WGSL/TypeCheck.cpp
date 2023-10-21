@@ -86,6 +86,7 @@ public:
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
     void visit(AST::WhileStatement&) override;
+    void visit(AST::SwitchStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -118,6 +119,7 @@ private:
     void visitVariable(AST::Variable&, VariableKind);
     const Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
     void visitAttributes(AST::Attribute::List&);
+    void bitcast(AST::CallExpression&, const Vector<const Type*>&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -310,6 +312,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
     m_constantFunctions.add("pow"_s, constantPow);
     m_constantFunctions.add("-"_s, constantMinus);
+    m_constantFunctions.add("+"_s, constantAdd);
     m_constantFunctions.add("*"_s, constantMultiply);
     m_constantFunctions.add("/"_s, constantDivide);
     m_constantFunctions.add("vec2"_s, constantVector2);
@@ -664,6 +667,41 @@ void TypeChecker::visit(AST::WhileStatement& statement)
     visit(statement.body());
 }
 
+void TypeChecker::visit(AST::SwitchStatement& statement)
+{
+    auto* valueType = infer(statement.value());
+    if (!satisfies(valueType, Constraints::ConcreteInteger)) {
+        typeError(InferBottom::No, statement.value().span(), "switch selector must be of type i32 or u32");
+        valueType = m_types.bottomType();
+    }
+
+    const auto& visitClause = [&](AST::SwitchClause& clause) {
+        for (auto& selector : clause.selectors) {
+            auto* selectorType = infer(selector);
+            if (unify(valueType, selectorType)) {
+                // If the selectorType can satisfy the value type, we're good to go.
+                // e.g. valueType is i32 or u32 and the selector is a literal of type AbstractInt
+                continue;
+            }
+            if (unify(selectorType, valueType)) {
+                // If the opposite is true, we have to promote valueType
+                // e.g. valueType is a constant of type AbstractInt and the selector has type i32 or u32
+                valueType = selectorType;
+                continue;
+            }
+            // Otherwise, the types are incompatible, and we have an error
+            // e.g. valueType has type u32 the selector has type i32
+            typeError(InferBottom::No, selector.span(), "the case selector values must have the same type as the selector expression: the selector expression has type '", *valueType, "' and case selector has type '", *selectorType, "'");
+        }
+        visit(clause.body);
+    };
+
+    visitAttributes(statement.valueAttributes());
+    visitClause(statement.defaultClause());
+    for (auto& clause : statement.clauses())
+        visitClause(clause);
+}
+
 // Expressions
 void TypeChecker::visit(AST::Expression&)
 {
@@ -674,7 +712,7 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    const auto& accessImpl = [&](const Type* baseType) -> const Type* {
+    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr) -> const Type* {
         if (isBottom(baseType))
             return m_types.bottomType();
 
@@ -690,7 +728,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
         if (std::holds_alternative<Types::Vector>(*baseType)) {
             auto& vector = std::get<Types::Vector>(*baseType);
-            return vectorFieldAccess(vector, access);
+            auto* result = vectorFieldAccess(vector, access);
+            if (canBeReference)
+                *canBeReference = !std::holds_alternative<Types::Vector>(*result);
+            return result;
         }
 
         typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
@@ -699,8 +740,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
     auto* baseType = infer(access.base());
     if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
-        if (const Type* result = accessImpl(reference->element)) {
-            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+        bool canBeReference = true;
+        if (const Type* result = accessImpl(reference->element, &canBeReference)) {
+            if (canBeReference)
+                result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
             inferred(result);
         }
         return;
@@ -884,6 +927,12 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
+        // FIXME: similarly to above: this shouldn't be a string check
+        if (targetName == "bitcast"_s) {
+            bitcast(call, typeArguments);
+            return;
+        }
+
         if (targetBinding)
             typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
         else
@@ -971,6 +1020,47 @@ void TypeChecker::visit(AST::CallExpression& call)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& typeArguments)
+{
+    if (call.arguments().size() != 1) {
+        typeError(call.span(), "bitcast expects a single argument, found ", String::number(call.arguments().size()));
+        return;
+    }
+
+    if (typeArguments.size() != 1) {
+        typeError(call.span(), "bitcast expects a single template argument, found ", String::number(typeArguments.size()));
+        return;
+    }
+
+    auto* sourceType = infer(call.arguments()[0]);
+    auto* destinationType = typeArguments[0];
+    if (auto* reference = std::get_if<Types::Reference>(sourceType))
+        sourceType = reference->element;
+    sourceType = concretize(sourceType, m_types);
+
+    bool allowed = false;
+    if (auto* dstPrimitive = std::get_if<Types::Primitive>(destinationType)) {
+        if (auto* srcPrimitive = std::get_if<Types::Primitive>(sourceType)) {
+            allowed = satisfies(sourceType, Constraints::Concrete32BitNumber)
+                && satisfies(destinationType, Constraints::Concrete32BitNumber);
+        }
+    } else if (auto* dstVector = std::get_if<Types::Vector>(destinationType)) {
+        if (auto* srcVector = std::get_if<Types::Vector>(sourceType)) {
+            allowed = dstVector->size == srcVector->size
+                && satisfies(dstVector->element, Constraints::Concrete32BitNumber)
+                && satisfies(srcVector->element, Constraints::Concrete32BitNumber);
+        }
+    }
+
+    if (allowed) {
+        call.target().m_inferredType = destinationType;
+        inferred(destinationType);
+        return;
+    }
+
+    typeError(call.span(), "cannot bitcast from '", *sourceType, "' to '", *destinationType, "'");
 }
 
 void TypeChecker::visit(AST::UnaryExpression& unary)

@@ -97,6 +97,10 @@ media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
+# macOS 14 and above support word-break: auto-phrase.
+# Individually failing tests should be marked in separate expectations.
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
+
 # Variable size packet is only supported on Sonoma and later.
 [ Monterey Ventura ] media/media-webm-opus-variable-length.html [ Failure ]
 
@@ -810,12 +814,7 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
@@ -2791,15 +2790,6 @@ imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-over
 
 # rdar://106116937 ([UI-side compositing] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html times out)
 fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ ImageOnlyFailure Timeout ]
-
-imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-000.html [ Pass ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-001.html [ Pass ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-002.html [ Pass ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-003.html [ Pass ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-004.html [ Pass ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-005.html [ Pass ImageOnlyFailure Failure ]
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 fast/css/caret-color-auto.html [ Pass ImageOnlyFailure ]

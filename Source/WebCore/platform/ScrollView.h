@@ -277,8 +277,12 @@ public:
 
     IntSize overhangAmount() const final;
 
-    void cacheCurrentScrollPosition() { m_cachedScrollPosition = scrollPosition(); }
+    void cacheCurrentScrollState();
     ScrollPosition cachedScrollPosition() const { return m_cachedScrollPosition; }
+#if PLATFORM(IOS_FAMILY)
+    IntRect cachedUnobscuredContentRect() const { return m_cachedUnobscuredContentRect; }
+    FloatRect cachedExposedContentRect() const { return m_cachedExposedContentRect; }
+#endif
 
     // Functions for scrolling the view.
     virtual void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
@@ -537,6 +541,10 @@ private:
 #endif
     ScrollPosition m_scrollPosition;
     IntPoint m_cachedScrollPosition;
+#if PLATFORM(IOS_FAMILY)
+    IntRect m_cachedUnobscuredContentRect;
+    FloatRect m_cachedExposedContentRect;
+#endif
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
 

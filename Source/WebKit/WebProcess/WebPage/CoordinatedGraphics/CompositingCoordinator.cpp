@@ -121,7 +121,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 {
     SetForScope protector(m_isFlushingLayerChanges, true);
 
-    initializeRootCompositingLayerIfNeeded();
+    bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();
 
     m_page.updateRendering();
     m_page.flushPendingEditorStateUpdate();
@@ -136,9 +136,13 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     coordinatedLayer.updateContentBuffersIncludingSubLayers();
-    coordinatedLayer.syncPendingStateChangesIncludingSubLayers();
+    shouldSyncFrame |= coordinatedLayer.checkPendingStateChangesIncludingSubLayers();
 
-    if (m_shouldSyncFrame) {
+#if !HAVE(DISPLAY_LINK)
+    shouldSyncFrame |= m_forceFrameSync;
+#endif
+
+    if (shouldSyncFrame) {
         m_nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
@@ -172,7 +176,9 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
             });
 
         m_client.commitSceneState(m_nicosia.scene);
-        m_shouldSyncFrame = false;
+#if !HAVE(DISPLAY_LINK)
+        m_forceFrameSync = false;
+#endif
     }
 
     m_page.didUpdateRendering();
@@ -208,20 +214,15 @@ double CompositingCoordinator::nextAnimationServiceTime() const
     return std::max<double>(0., MinimalTimeoutForAnimations - timestamp() + m_lastAnimationServiceTime);
 }
 
-void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
+bool CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
 {
     if (m_didInitializeRootCompositingLayer)
-        return;
+        return false;
 
     auto& rootLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     m_nicosia.state.rootLayer = rootLayer.compositionLayer();
     m_didInitializeRootCompositingLayer = true;
-    m_shouldSyncFrame = true;
-}
-
-void CompositingCoordinator::syncLayerState()
-{
-    m_shouldSyncFrame = true;
+    return true;
 }
 
 Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)

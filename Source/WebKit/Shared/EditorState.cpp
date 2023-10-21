@@ -164,14 +164,6 @@ void EditorState::clipOwnedRectExtentsToNumericLimits()
         visualData.caretRectAtEnd = visualData.caretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtStart = visualData.markedTextCaretRectAtStart.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtEnd = visualData.markedTextCaretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
-
-        auto sanitizeSelectionGeometryVector = [](auto& selectionGeometries) {
-            forEach(selectionGeometries, [](auto& selectionGeometry) {
-                selectionGeometry.setRect(selectionGeometry.rect().toRectWithExtentsClippedToNumericLimits());
-            });
-        };
-        sanitizeSelectionGeometryVector(visualData.selectionGeometries);
-        sanitizeSelectionGeometryVector(visualData.markedTextRects);
 #endif
 #if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
         visualData.caretRectAtStart = visualData.caretRectAtStart.toRectWithExtentsClippedToNumericLimits();

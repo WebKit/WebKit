@@ -54,6 +54,10 @@ operator :*, {
     [T < Number, N].(T, vec[N][T]) => vec[N][T],
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
 
+    # matrix scaling
+    [T < Number, C, R].(mat[C, R][T], T) => mat[C, R][T],
+    [T < Number, C, R].(T, mat[C, R][T]) => mat[C, R][T],
+
     # matrix-vector multiplication
     [T < Float, C, R].(mat[C,R][T], vec[C][T]) => vec[R][T],
     [T < Float, C, R].(vec[R][T], mat[C,R][T]) => vec[C][T],
@@ -247,6 +251,13 @@ operator :vec4, {
     [T < Scalar].(T, vec3[T]) => vec4[T],
     [].() => vec4[abstract_int],
 }
+
+# 16.2. Bit Reinterpretation Built-in Functions (https://www.w3.org/TR/WGSL/#bitcast-builtin)
+
+# NOTE: Our overload resolution/constraints aren't expressive enough to support
+# some of the bitcast overloads. They require a constraint on the type variable
+# to constrain it to a vector type, which we cannot express here, so it's implemented
+# inline in the type checker
 
 # 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
@@ -570,6 +581,33 @@ operator :trunc, {
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
+
+# 16.6. Derivative Built-in Functions (https://www.w3.org/TR/WGSL/#derivative-builtin-functions)
+[
+    # 16.6.1
+    :dpdx,
+    # 16.6.2
+    :dpdxCoarse,
+    # 16.6.3
+    :dpdxFine,
+    # 16.6.4
+    :dpdy,
+    # 16.6.5
+    :dpdyCoarse,
+    # 16.6.6
+    :dpdyFine,
+    # 16.6.7
+    :fwidth,
+    # 16.6.8
+    :fwidthCoarse,
+    # 16.6.9
+    :fwidthFine,
+]. each do |op|
+    operator op, {
+        [].(f32) => f32,
+        [N].(vec[N][f32]) => vec[N][f32],
+    }
+end
 
 # 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 

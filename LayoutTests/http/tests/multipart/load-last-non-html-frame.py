@@ -2,7 +2,7 @@
 
 import sys
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Content-type: multipart/x-mixed-replace;boundary=asdf\r\n\r\n'
     '--asdf\n'
     'Content-type: text/plain\n'
@@ -17,5 +17,5 @@ sys.stdout.write(
     'This test passes if the last multipart frame is displayed.\n'
     'PASS\n'
     '{padding}\r\n'
-    '--asdf--\n'.format(padding=' ' * 5000)
+    '--asdf--\n'.format(padding=' ' * 5000).encode()
 )

@@ -21,7 +21,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/percentage-value-intrinsic-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-hanging-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-hanging.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-min-max-content-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-min-max-content-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-002-expected.html
@@ -32,5 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-text-align-end-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-text-align-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-with-absolute-pos-child-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-with-absolute-pos-child.html

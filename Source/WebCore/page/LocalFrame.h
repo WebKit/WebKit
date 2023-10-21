@@ -149,10 +149,14 @@ public:
     const EventHandler& eventHandler() const { return m_eventHandler; }
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
+    CheckedRef<const FrameLoader> checkedLoader() const;
+    CheckedRef<FrameLoader> checkedLoader();
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
+    CheckedRef<ScriptController> checkedScript();
+    CheckedRef<const ScriptController> checkedScript() const;
     void resetScript();
 
     WEBCORE_EXPORT bool isRootFrame() const;

@@ -272,7 +272,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
     if (NSString *url = objectForKey<NSString>(options, urlKey, true)) {
         WebExtensionTabParameters tabParameters;
-        tabParameters.url = URL { url };
+        tabParameters.url = URL { extensionContext().baseURL(), url };
 
         if (!tabParameters.url.value().isValid()) {
             *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
@@ -286,7 +286,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
         for (NSString *url in urls) {
             WebExtensionTabParameters tabParameters;
-            tabParameters.url = URL { url };
+            tabParameters.url = URL { extensionContext().baseURL(), url };
 
             if (!tabParameters.url.value().isValid()) {
                 *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);

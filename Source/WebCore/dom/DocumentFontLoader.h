@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "Document.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ public:
 private:
     void fontLoadingTimerFired();
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     Timer m_fontLoadingTimer;
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     bool m_isFontLoadingSuspended { false };

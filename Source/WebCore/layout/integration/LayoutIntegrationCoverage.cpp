@@ -195,7 +195,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         }
     }
-    if (rootBlockContainer.style().direction() == TextDirection::RTL || rootBlockContainer.style().textWrap() == TextWrap::Balance)
+
+    bool shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
+    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance)
         return true;
 
     auto rootHasNonSupportedRenderer = [&] {

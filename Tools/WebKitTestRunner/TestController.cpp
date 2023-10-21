@@ -674,9 +674,6 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies", pathSeparator, randomNumber, pathSeparator, "cookiejar.db")).get());
 #endif
         WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
-        // Clear quota ratio so WebKit does not calculate quota based on disk space.
-        WKWebsiteDataStoreConfigurationClearOriginQuotaRatio(configuration);
-        WKWebsiteDataStoreConfigurationClearTotalQuotaRatio(configuration);
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration, true);
@@ -1219,6 +1216,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setHidden(false);
     setAllowStorageQuotaIncrease(true);
     setQuota(40 * KB);
+    setOriginQuotaRatioEnabled(true);
 
     if (!platformResetStateToConsistentValues(options))
         return false;
@@ -3431,6 +3429,13 @@ void TestController::clearStorage()
 {
     StorageVoidCallbackContext context(*this);
     WKWebsiteDataStoreClearStorage(TestController::websiteDataStore(), &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::setOriginQuotaRatioEnabled(bool enabled)
+{
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreSetOriginQuotaRatioEnabled(websiteDataStore(), enabled, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

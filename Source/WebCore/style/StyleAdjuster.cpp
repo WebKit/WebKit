@@ -539,7 +539,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             // Make horizontal marquees not wrap.
             if (!isVertical) {
                 style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
-                style.setTextWrap(TextWrap::NoWrap);
+                style.setTextWrapMode(TextWrapMode::NoWrap);
                 style.setTextAlign(TextAlignMode::Start);
             }
             // Apparently this is the expected legacy behavior.

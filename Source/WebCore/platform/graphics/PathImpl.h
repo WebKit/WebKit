@@ -74,6 +74,11 @@ public:
     virtual bool transform(const AffineTransform&) = 0;
 
     virtual std::optional<PathSegment> singleSegment() const { return std::nullopt; }
+    virtual std::optional<PathDataLine> singleDataLine() const { return std::nullopt; }
+    virtual std::optional<PathArc> singleArc() const { return std::nullopt; }
+    virtual std::optional<PathDataQuadCurve> singleQuadCurve() const { return std::nullopt; }
+    virtual std::optional<PathDataBezierCurve> singleBezierCurve() const { return std::nullopt; }
+
     virtual bool isEmpty() const = 0;
 
     virtual bool isClosed() const;

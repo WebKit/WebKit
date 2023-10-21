@@ -359,7 +359,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(get_tests_run(['--skip-failing-tests', '--skipped=always'] + list_of_tests_failing), [])
 
     def test_ews_corner_case_failing_directory(self):
-        # When a whole directory is is marked as failing (or flaky), then the tests inside should not run if we specify the name of the directory and we pass '--skip-failing-tests'
+        # When a whole directory is is marked as failing (or flaky), then the tests inside should not run if we specify the name of the directory and we pass '--skip-failing-tests' or '--skip-flaky-tests'
         self.assertEqual(get_tests_run(['--skip-failing-tests', 'corner-cases/ews/directory-flaky']), [])
         # But if we specify on the command-line the name of individual tests inside that directory the tests should run (even with '--skip-failing-tests')
         list_of_tests_failing = ['corner-cases/ews/directory-skipped/failure.html', 'corner-cases/ews/directory-skipped/timeout.html']

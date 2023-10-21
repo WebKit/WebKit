@@ -437,10 +437,10 @@ void RenderFrameSet::layout()
 
     bool doFullRepaint = selfNeedsLayout() && checkForRepaintDuringLayout();
     LayoutRect oldBounds;
-    const RenderLayerModelObject* repaintContainer = nullptr;
+    CheckedPtr<const RenderLayerModelObject> repaintContainer;
     if (doFullRepaint) {
         repaintContainer = containerForRepaint().renderer;
-        oldBounds = clippedOverflowRectForRepaint(repaintContainer);
+        oldBounds = clippedOverflowRectForRepaint(repaintContainer.get());
     }
 
     if (!parent()->isFrameSet() && !document().printing()) {
@@ -469,10 +469,10 @@ void RenderFrameSet::layout()
     updateLayerTransform();
 
     if (doFullRepaint) {
-        repaintUsingContainer(repaintContainer, snappedIntRect(oldBounds));
-        LayoutRect newBounds = clippedOverflowRectForRepaint(repaintContainer);
+        repaintUsingContainer(repaintContainer.get(), snappedIntRect(oldBounds));
+        LayoutRect newBounds = clippedOverflowRectForRepaint(repaintContainer.get());
         if (newBounds != oldBounds)
-            repaintUsingContainer(repaintContainer, snappedIntRect(newBounds));
+            repaintUsingContainer(repaintContainer.get(), snappedIntRect(newBounds));
     }
 
     clearNeedsLayout();

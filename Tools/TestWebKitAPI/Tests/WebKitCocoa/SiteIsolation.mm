@@ -333,6 +333,55 @@ TEST(SiteIsolation, BasicPostMessageWindowOpen)
     EXPECT_WK_STREQ(alert.get(), "opened page received pong");
 }
 
+TEST(SiteIsolation, NavigationAfterWindowOpen)
+{
+    HTTPServer server({
+        { "/example_opener"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/example_opened_after_navigation"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    enableWindowOpenPSON(configuration);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    openerWebView.get().navigationDelegate = navigationDelegate.get();
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<WKWebView> openedWebView;
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        enableSiteIsolation(configuration);
+        enableWindowOpenPSON(configuration);
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        openedWebView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedWebView.get();
+    };
+    [openerWebView setUIDelegate:uiDelegate.get()];
+    openerWebView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example_opener"]]];
+    while (!openedWebView)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(openerWebView.get(), { { "https://example.com"_s }, { RemoteFrame } });
+    checkFrameTreesInProcesses(openedWebView.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
+    pid_t webKitPid = findFramePID(frameTrees(openerWebView.get()).get(), FrameType::Remote);
+
+    [openedWebView evaluateJavaScript:@"window.location = 'https://example.com/example_opened_after_navigation'" completionHandler:nil];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(openerWebView.get(), { { "https://example.com"_s } });
+    checkFrameTreesInProcesses(openedWebView.get(), { { "https://example.com"_s } });
+
+    while (processStillRunning(webKitPid))
+        Util::spinRunLoop();
+}
+
 TEST(SiteIsolation, PostMessageWithMessagePorts)
 {
     auto exampleHTML = "<script>"

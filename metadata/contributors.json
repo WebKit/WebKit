@@ -5240,7 +5240,8 @@
          "darbinyan@apple.com"
       ],
       "github" : "martadarbinyan",
-      "name" : "Marta Darbinyan"
+      "name" : "Marta Darbinyan",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -5699,6 +5700,15 @@
          "qinmin@chromium.org"
       ],
       "name" : "Min Qin"
+   },
+   {
+      "emails" : [
+         "moe@sigmaos.com",
+         "bazzimoe3@gmail.com"
+      ],
+      "expertise" : "WebKit on macOS",
+      "github" : "MoeBazziGIT",
+      "name" : "Moe Bazzi"
    },
    {
       "emails" : [

@@ -14,7 +14,6 @@
 			);
 			dependencies = (
 				44E7514C2AC72C7700828AC4 /* PBXTargetDependency */,
-				44E7514E2AC72C7700828AC4 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -28,6 +27,7 @@
 		440034682AD8C1C50081CD73 /* gmock-generated-actions.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750F02AC7298A00828AC4 /* gmock-generated-actions.h */; };
 		440034692AD8C1C80081CD73 /* gmock-matchers.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750EF2AC7298A00828AC4 /* gmock-matchers.h */; };
 		4400346A2AD8C1CA0081CD73 /* gmock-port.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750EE2AC7298A00828AC4 /* gmock-port.h */; };
+		444CE6852AE2DCA90075179E /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 44E751542AC72B2200828AC4 /* libgtest.a */; };
 		44E751152AC7298A00828AC4 /* gmock-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750E72AC7298A00828AC4 /* gmock-matchers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E751162AC7298A00828AC4 /* gmock-more-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750E82AC7298A00828AC4 /* gmock-more-actions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E7511D2AC7298A00828AC4 /* gmock-function-mocker.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750F22AC7298A00828AC4 /* gmock-function-mocker.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,7 +38,6 @@
 		44E751222AC7298A00828AC4 /* gmock.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750F72AC7298A00828AC4 /* gmock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E751232AC7298A00828AC4 /* gmock-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750F82AC7298A00828AC4 /* gmock-actions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E751282AC7298B00828AC4 /* gmock-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E750FE2AC7298A00828AC4 /* gmock-all.cc */; };
-		44E751452AC72B2D00828AC4 /* gmock_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E750FC2AC7298A00828AC4 /* gmock_main.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,13 +47,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 44E750C12AC7291000828AC4;
 			remoteInfo = gmock;
-		};
-		44E7514D2AC72C7700828AC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 44E750BA2AC7291000828AC4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 44E7512C2AC72B2200828AC4;
-			remoteInfo = gmock_main;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -83,6 +75,17 @@
 				4400346A2AD8C1CA0081CD73 /* gmock-port.h in Copy Headers Internal Custom */,
 			);
 			name = "Copy Headers Internal Custom";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		448631492AE2D94C00F9BC42 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				444CE6852AE2DCA90075179E /* libgtest.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -138,11 +141,10 @@
 		44E750FF2AC7298A00828AC4 /* gmock-spec-builders.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-spec-builders.cc"; sourceTree = "<group>"; };
 		44E751002AC7298A00828AC4 /* gmock.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock.cc; sourceTree = "<group>"; };
 		44E7512B2AC729C600828AC4 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		44E751442AC72B2200828AC4 /* libgmock_main.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgmock_main.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E751502AC734DA00828AC4 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		44E751512AC734DA00828AC4 /* gmock.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gmock.xcconfig; sourceTree = "<group>"; };
 		44E751522AC734DB00828AC4 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		44E751532AC734DB00828AC4 /* gmock_main.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gmock_main.xcconfig; sourceTree = "<group>"; };
+		44E751542AC72B2200828AC4 /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,20 +155,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		44E751402AC72B2200828AC4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		444CE6842AE2DBB00075179E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				44E751542AC72B2200828AC4 /* libgtest.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		44E750B92AC7291000828AC4 = {
 			isa = PBXGroup;
 			children = (
 				44E750C92AC7294F00828AC4 /* Configurations */,
+				444CE6842AE2DBB00075179E /* Frameworks */,
 				44E750CA2AC7296800828AC4 /* Source */,
 				44E750C32AC7291000828AC4 /* Products */,
 			);
@@ -176,7 +180,6 @@
 			isa = PBXGroup;
 			children = (
 				44E750C22AC7291000828AC4 /* libgmock.a */,
-				44E751442AC72B2200828AC4 /* libgmock_main.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,7 +190,6 @@
 				44E751502AC734DA00828AC4 /* Base.xcconfig */,
 				44E751522AC734DB00828AC4 /* DebugRelease.xcconfig */,
 				44E751512AC734DA00828AC4 /* gmock.xcconfig */,
-				44E751532AC734DB00828AC4 /* gmock_main.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -322,6 +324,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44E750C62AC7291000828AC4 /* Build configuration list for PBXNativeTarget "gmock" */;
 			buildPhases = (
+				448631492AE2D94C00F9BC42 /* Product Dependencies */,
 				44E750BE2AC7291000828AC4 /* Headers */,
 				440034632AD8C08D0081CD73 /* Copy Headers Internal */,
 				440034642AD8C0AE0081CD73 /* Copy Headers Internal Custom */,
@@ -335,22 +338,6 @@
 			name = gmock;
 			productName = gmock;
 			productReference = 44E750C22AC7291000828AC4 /* libgmock.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		44E7512C2AC72B2200828AC4 /* gmock_main */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 44E751412AC72B2200828AC4 /* Build configuration list for PBXNativeTarget "gmock_main" */;
-			buildPhases = (
-				44E7513E2AC72B2200828AC4 /* Sources */,
-				44E751402AC72B2200828AC4 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = gmock_main;
-			productName = gmock;
-			productReference = 44E751442AC72B2200828AC4 /* libgmock_main.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -385,7 +372,6 @@
 			targets = (
 				44E751472AC72C6300828AC4 /* All */,
 				44E750C12AC7291000828AC4 /* gmock */,
-				44E7512C2AC72B2200828AC4 /* gmock_main */,
 			);
 		};
 /* End PBXProject section */
@@ -399,14 +385,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		44E7513E2AC72B2200828AC4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				44E751452AC72B2D00828AC4 /* gmock_main.cc in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -414,11 +392,6 @@
 			isa = PBXTargetDependency;
 			target = 44E750C12AC7291000828AC4 /* gmock */;
 			targetProxy = 44E7514B2AC72C7700828AC4 /* PBXContainerItemProxy */;
-		};
-		44E7514E2AC72C7700828AC4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 44E7512C2AC72B2200828AC4 /* gmock_main */;
-			targetProxy = 44E7514D2AC72C7700828AC4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -441,17 +414,6 @@
 		44CF291E2ACC6D3600B092B5 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44E751512AC734DA00828AC4 /* gmock.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				EXECUTABLE_PREFIX = lib;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Production;
-		};
-		44CF291F2ACC6D3600B092B5 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44E751532AC734DB00828AC4 /* gmock_main.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				EXECUTABLE_PREFIX = lib;
@@ -496,28 +458,6 @@
 			};
 			name = Release;
 		};
-		44E751422AC72B2200828AC4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44E751532AC734DB00828AC4 /* gmock_main.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				EXECUTABLE_PREFIX = lib;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		44E751432AC72B2200828AC4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44E751532AC734DB00828AC4 /* gmock_main.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				EXECUTABLE_PREFIX = lib;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
 		44E751492AC72C6300828AC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -553,16 +493,6 @@
 				44E750C72AC7291000828AC4 /* Debug */,
 				44E750C82AC7291000828AC4 /* Release */,
 				44CF291E2ACC6D3600B092B5 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		44E751412AC72B2200828AC4 /* Build configuration list for PBXNativeTarget "gmock_main" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				44E751422AC72B2200828AC4 /* Debug */,
-				44E751432AC72B2200828AC4 /* Release */,
-				44CF291F2ACC6D3600B092B5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

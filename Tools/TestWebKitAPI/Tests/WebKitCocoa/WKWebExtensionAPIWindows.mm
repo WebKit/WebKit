@@ -71,8 +71,6 @@ TEST(WKWebExtensionAPIWindows, Errors)
         @"await browser.test.assertRejects(browser.windows.update(99, { focused: true }), /window not found/i)",
 
         @"browser.test.assertThrows(() => browser.windows.create({ url: 42 }), /'url' is expected to be a string or an array of strings, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.windows.create({ url: 'bad' }), /'url' value is invalid, because 'bad' is not a valid URL/i)",
-        @"browser.test.assertThrows(() => browser.windows.create({ url: ['bad'] }), /'url' value is invalid, because 'bad' is not a valid URL/i)",
         @"browser.test.assertThrows(() => browser.windows.create({ left: 'bad' }), /'left' is expected to be a number/i)",
         @"browser.test.assertThrows(() => browser.windows.create({ top: 'bad' }), /'top' is expected to be a number/i)",
         @"browser.test.assertThrows(() => browser.windows.create({ width: 'bad' }), /'width' is expected to be a number/i)",
@@ -371,6 +369,7 @@ TEST(WKWebExtensionAPIWindows, Create)
         @"  incognito: false,",
         @"  state: 'normal',",
         @"  type: 'popup',",
+        @"  url: 'http://example.com/',",
         @"};",
 
         @"const window = await browser.windows.create(windowOptions);",
@@ -390,7 +389,92 @@ TEST(WKWebExtensionAPIWindows, Create)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
+    auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
+
+    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(options.desiredFrame.origin.x, 300);
+        EXPECT_EQ(options.desiredFrame.size.height, 400);
+        EXPECT_TRUE(std::isnan(options.desiredFrame.origin.y));
+        EXPECT_TRUE(std::isnan(options.desiredFrame.size.width));
+
+        EXPECT_TRUE(options.shouldFocus);
+        EXPECT_FALSE(options.shouldUsePrivateBrowsing);
+
+        EXPECT_EQ(options.desiredWindowType, _WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(options.desiredWindowState, _WKWebExtensionWindowStateNormal);
+
+        EXPECT_EQ(options.desiredTabs.count, 0lu);
+
+        EXPECT_EQ(options.desiredURLs.count, 1lu);
+        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
+
+        originalOpenNewWindow(options, context, completionHandler);
+    };
+
     EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(manager.get().windows.count, 2lu);
+}
+
+TEST(WKWebExtensionAPIWindows, CreateWithRelativeURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const windowOptions = {",
+        @"  url: 'test.html'",
+        @"}",
+
+        @"const window = await browser.windows.create(windowOptions)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"test.html": @"Hello world!" }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
+
+    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(options.desiredURLs.count, 1lu);
+        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        originalOpenNewWindow(options, context, completionHandler);
+    };
+
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(manager.get().windows.count, 2lu);
+}
+
+TEST(WKWebExtensionAPIWindows, CreateWithRelativeURLs)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const windowOptions = {",
+        @"  url: [ 'one.html', 'two.html' ]",
+        @"}",
+
+        @"const window = await browser.windows.create(windowOptions)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript, @"one.html": @"Hello one!", @"two.html": @"Hello two!" }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
+
+    manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(options.desiredURLs.count, 2lu);
+        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_NS_EQUAL(options.desiredURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        originalOpenNewWindow(options, context, completionHandler);
+    };
+
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
     [manager loadAndRun];

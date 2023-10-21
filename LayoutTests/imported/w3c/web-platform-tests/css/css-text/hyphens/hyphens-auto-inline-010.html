@@ -19,7 +19,6 @@
   The H-ref.html reference file means the Hyphen character U+2010.
   -->
 
-  <meta content="" name="flags">
   <meta content="When 'hyphens' is set to 'auto' and applied to an inline element and when 'lang' attribute is also set to a valid value, then words may be broken at hyphenation opportunities determined automatically by an hyphenation resource appropriate to the language of the text involved.">
 
   <style>
@@ -33,20 +32,20 @@
 
   span
     {
-      -webkit-hyphens: auto;
+      hyphens: auto;
     }
   </style>
 
  <body lang="en">
 
-  <div>There are <span>new guidelines now</span>.</div>
+  <div>There are <span>new engines now</span>.</div>
 
   <!--
         Expected result:
         There
         are
         new
-        guide-
-        lines
+        en-
+        gines
         now.
   -->

@@ -50,6 +50,7 @@ struct CSSSelectorParserContext {
     bool cssNestingEnabled { false };
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };
+    bool popoverAttributeEnabled { false };
 
     bool isHashTableDeletedValue { false };
 

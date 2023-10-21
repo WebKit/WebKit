@@ -855,6 +855,7 @@ skip-white-space
 //
 // CSS_PROP_WORD_BREAK
 //
+auto-phrase
 break-all
 keep-all
 

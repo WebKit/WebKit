@@ -1835,18 +1835,12 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
     auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
-    RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
-    if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
-        if (!registrableDomain.isEmpty()) {
-            if (registrableDomain == mainFrameDomain) {
-                completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s);
-                return;
-            }
-            if (auto* process = page.processForRegistrableDomain(registrableDomain)) {
-                completionHandler(Ref { *process }, nullptr, "Found process for the same registration domain"_s);
-                return;
-            }
-        }
+    if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
+        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
+        if (!frame.isMainFrame() && registrableDomain == mainFrameDomain)
+            return completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+        if (auto* process = page.processForRegistrableDomain(registrableDomain))
+            return completionHandler(Ref { *process }, nullptr, "Found process for the same registration domain"_s);
     }
 
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());

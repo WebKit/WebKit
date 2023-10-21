@@ -12,6 +12,10 @@ fn f2(x: ptr<private, i32>) -> i32
 
 fn f3(x: vec3<f32>) { }
 
+fn f4(p: ptr<function, vec2<i32>>) -> i32 {
+    return (*p).x;
+}
+
 var<private> global: i32;
 
 struct S { x: vec3<f32> }
@@ -53,6 +57,13 @@ fn testShadowedLocalRewriting()
     }
 }
 
+fn testVectorAccessPrecedence()
+{
+    var v = vec2(0);
+    let p = &v;
+    let x = f4(p);
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -71,4 +82,5 @@ fn main()
     testPhonyPointerElimination();
     testShadowedGlobalRewriting();
     testShadowedLocalRewriting();
+    testVectorAccessPrecedence();
 }

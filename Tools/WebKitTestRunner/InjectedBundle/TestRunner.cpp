@@ -2138,6 +2138,11 @@ void TestRunner::setQuota(uint64_t quota)
     postSynchronousMessage("SetQuota", quota);
 }
 
+void TestRunner::setOriginQuotaRatioEnabled(bool enabled)
+{
+    postSynchronousPageMessage("SetOriginQuotaRatioEnabled", enabled);
+}
+
 void TestRunner::getApplicationManifestThen(JSValueRef callback)
 {
     cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);

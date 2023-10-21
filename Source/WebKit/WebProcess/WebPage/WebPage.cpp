@@ -190,6 +190,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentFragment.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -327,6 +328,7 @@
 #include "DefaultWebBrowserChecks.h"
 #include "InsertTextOptions.h"
 #include "PlaybackSessionManager.h"
+#include "RemoteLayerTreeDrawingArea.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
@@ -348,7 +350,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "InteractionInformationAtPosition.h"
 #include "InteractionInformationRequest.h"
-#include "RemoteLayerTreeDrawingArea.h"
 #include "WebAutocorrectionContext.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
@@ -1118,6 +1119,15 @@ void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuPr
     UNUSED_PARAM(gpuProcessConnection);
 #endif
 }
+
+void WebPage::gpuProcessConnectionWasDestroyed()
+{
+#if PLATFORM(COCOA)
+    if (auto* remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(m_drawingArea.get()))
+        remoteLayerTreeDrawingArea->gpuProcessConnectionWasDestroyed();
+#endif
+}
+
 #endif
 
 void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
@@ -4751,10 +4761,8 @@ bool WebPage::hasRootFrames()
 {
     bool result = m_page && !m_page->rootFrames().isEmpty();
 #if ASSERT_ENABLED
-    if (!result) {
+    if (!result)
         ASSERT(m_page->settings().processSwapOnCrossSiteWindowOpenEnabled());
-        ASSERT(!m_page->settings().siteIsolationEnabled());
-    }
 #endif
     return result;
 }

@@ -1210,8 +1210,10 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueMixed;
     case CSSPropertyTextOverflow:
         return CSSValueClip;
-    case CSSPropertyTextWrap:
+    case CSSPropertyTextWrapMode:
         return CSSValueWrap;
+    case CSSPropertyTextWrapStyle:
+        return CSSValueAuto;
     case CSSPropertyTransformBox:
         return CSSValueViewBox;
     case CSSPropertyTransformStyle:
@@ -2534,10 +2536,39 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
     return m_range.atEnd();
 }
 
+bool CSSPropertyParser::consumeTextWrapShorthand(bool important)
+{
+    RefPtr<CSSValue> mode;
+    RefPtr<CSSValue> style;
+
+    for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !m_range.atEnd(); ++propertiesParsed) {
+        if (!mode && (mode = CSSPropertyParsing::consumeTextWrapMode(m_range)))
+            continue;
+        if (!style && (style = CSSPropertyParsing::consumeTextWrapStyle(m_range)))
+            continue;
+        // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
+        return false;
+    }
+
+    if (!m_range.atEnd())
+        return false;
+
+    // Fill in default values if one was missing from the multi-value syntax.
+    if (!mode)
+        mode = CSSPrimitiveValue::create(CSSValueWrap);
+    if (!style)
+        style = CSSPrimitiveValue::create(CSSValueAuto);
+
+    addProperty(CSSPropertyTextWrapMode, CSSPropertyTextWrap, WTFMove(mode), important);
+    addProperty(CSSPropertyTextWrapStyle, CSSPropertyTextWrap, WTFMove(style), important);
+    return true;
+}
+
+
 bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
 {
     RefPtr<CSSValue> whiteSpaceCollapse;
-    RefPtr<CSSValue> textWrap;
+    RefPtr<CSSValue> textWrapMode;
 
     // Single value syntax.
     auto singleValueKeyword = consumeIdentRaw<
@@ -2547,47 +2578,34 @@ bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
         CSSValuePreWrap
     >(m_range);
 
-    if (!m_context.propertySettings.cssWhiteSpaceLonghandsEnabled && !singleValueKeyword)
-        singleValueKeyword = consumeIdentRaw<CSSValueNowrap, CSSValueBreakSpaces>(m_range);
-
     if (singleValueKeyword) {
         switch (*singleValueKeyword) {
         case CSSValueNormal:
             whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValueCollapse);
-            textWrap = CSSPrimitiveValue::create(CSSValueWrap);
+            textWrapMode = CSSPrimitiveValue::create(CSSValueWrap);
             break;
         case CSSValuePre:
             whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValuePreserve);
-            textWrap = CSSPrimitiveValue::create(CSSValueNowrap);
+            textWrapMode = CSSPrimitiveValue::create(CSSValueNowrap);
             break;
         case CSSValuePreLine:
             whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValuePreserveBreaks);
-            textWrap = CSSPrimitiveValue::create(CSSValueWrap);
+            textWrapMode = CSSPrimitiveValue::create(CSSValueWrap);
             break;
         case CSSValuePreWrap:
             whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValuePreserve);
-            textWrap = CSSPrimitiveValue::create(CSSValueWrap);
-            break;
-        case CSSValueNowrap:
-            ASSERT(!m_context.propertySettings.cssWhiteSpaceLonghandsEnabled);
-            whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValueCollapse);
-            textWrap = CSSPrimitiveValue::create(CSSValueNowrap);
-            break;
-        case CSSValueBreakSpaces:
-            ASSERT(!m_context.propertySettings.cssWhiteSpaceLonghandsEnabled);
-            whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValueBreakSpaces);
-            textWrap = CSSPrimitiveValue::create(CSSValueWrap);
+            textWrapMode = CSSPrimitiveValue::create(CSSValueWrap);
             break;
         default:
             ASSERT_NOT_REACHED();
             return false;
         }
-    } else if (m_context.propertySettings.cssWhiteSpaceLonghandsEnabled) {
+    } else {
         // Multi-value syntax.
         for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !m_range.atEnd(); ++propertiesParsed) {
             if (!whiteSpaceCollapse && (whiteSpaceCollapse = CSSPropertyParsing::consumeWhiteSpaceCollapse(m_range)))
                 continue;
-            if (!textWrap && (textWrap = CSSPropertyParsing::consumeTextWrap(m_range, m_context)))
+            if (!textWrapMode && (textWrapMode = CSSPropertyParsing::consumeTextWrapMode(m_range)))
                 continue;
             // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
             return false;
@@ -2600,11 +2618,11 @@ bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
     // Fill in default values if one was missing from the multi-value syntax.
     if (!whiteSpaceCollapse)
         whiteSpaceCollapse = CSSPrimitiveValue::create(CSSValueCollapse);
-    if (!textWrap)
-        textWrap = CSSPrimitiveValue::create(CSSValueWrap);
+    if (!textWrapMode)
+        textWrapMode = CSSPrimitiveValue::create(CSSValueWrap);
 
     addProperty(CSSPropertyWhiteSpaceCollapse, CSSPropertyWhiteSpace, WTFMove(whiteSpaceCollapse), important);
-    addProperty(CSSPropertyTextWrap, CSSPropertyWhiteSpace, WTFMove(textWrap), important);
+    addProperty(CSSPropertyTextWrapMode, CSSPropertyWhiteSpace, WTFMove(textWrapMode), important);
     return true;
 }
 
@@ -2835,6 +2853,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeContainerShorthand(important);
     case CSSPropertyContainIntrinsicSize:
         return consumeContainIntrinsicSizeShorthand(important);
+    case CSSPropertyTextWrap:
+        return consumeTextWrapShorthand(important);
     case CSSPropertyWhiteSpace:
         return consumeWhiteSpaceShorthand(important);
     default:

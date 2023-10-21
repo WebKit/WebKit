@@ -575,7 +575,6 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
         using Renderer = std::decay_t<decltype(renderer)>;
 
         ASSERT(renderer.style().svgStyle().hasStroke());
-        ASSERT(!renderer.hasNonScalingStroke());
 
         auto strokeBoundingBox = fillBoundingBox;
         const float strokeWidth = renderer.strokeWidth();

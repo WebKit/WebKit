@@ -163,10 +163,12 @@ void LayerTreeHost::layerFlushTimerFired()
     if (!m_coordinator.rootCompositingLayer())
         return;
 
+#if !HAVE(DISPLAY_LINK)
     // If a force-repaint callback was registered, we should force a 'frame sync' that
     // will guarantee us a call to renderNextFrame() once the update is complete.
     if (m_forceRepaintAsync.callback)
         m_coordinator.forceFrameSync();
+#endif
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
 #if PLATFORM(GTK)
@@ -477,8 +479,10 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive() || forceRepaint) {
         m_layerFlushTimer.stop();
+#if !HAVE(DISPLAY_LINK)
         if (forceRepaint)
             m_coordinator.forceFrameSync();
+#endif
         layerFlushTimerFired();
     }
 }

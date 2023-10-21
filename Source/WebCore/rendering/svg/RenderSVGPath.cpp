@@ -64,7 +64,7 @@ void RenderSVGPath::updateShapeFromElement()
     ASSERT(hasPath());
     if (path().isEmpty())
         return;
-    if (path().isSingleLine())
+    if (path().definitelySingleLine())
         m_shapeType = ShapeType::Line;
     else
         m_shapeType = ShapeType::Path;

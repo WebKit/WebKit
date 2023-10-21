@@ -688,117 +688,63 @@ void GraphicsContextCG::drawPath(const Path& path)
     }
 }
 
-void GraphicsContextCG::fillPathWithGradient(CGPathRef pathRef)
-{
-    auto context = platformContext();
-
-    CGContextBeginPath(context);
-    CGContextAddPath(context, pathRef);
-    CGContextStateSaver stateSaver(context);
-    CGContextConcatCTM(context, fillGradientSpaceTransform());
-
-    if (fillRule() == WindRule::EvenOdd)
-        CGContextEOClip(context);
-    else
-        CGContextClip(context);
-
-    fillGradient()->paint(*this);
-}
-
-void GraphicsContextCG::fillPathWithGradientAndShadow(CGPathRef pathRef, const FloatRect& boundingRect)
-{
-    auto context = platformContext();
-
-    auto layerSize = getCTM().mapSize(boundingRect.size());
-
-    auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-    CGContextRef layerContext = CGLayerGetContext(layer.get());
-
-    CGContextScaleCTM(layerContext, layerSize.width() / boundingRect.width(), layerSize.height() / boundingRect.height());
-    CGContextTranslateCTM(layerContext, -boundingRect.x(), -boundingRect.y());
-    CGContextBeginPath(layerContext);
-    CGContextAddPath(layerContext, pathRef);
-    CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
-
-    if (fillRule() == WindRule::EvenOdd)
-        CGContextEOClip(layerContext);
-    else
-        CGContextClip(layerContext);
-
-    fillGradient()->paint(layerContext);
-    CGContextDrawLayerInRect(context, boundingRect, layer.get());
-}
-
 void GraphicsContextCG::fillPath(const Path& path)
 {
     if (path.isEmpty())
         return;
 
-    if (auto segment = path.singleSegment()) {
-        fillPathSegment(*segment);
+    CGContextRef context = platformContext();
+
+    if (auto fillGradient = this->fillGradient()) {
+        if (hasShadow()) {
+            FloatRect rect = path.fastBoundingRect();
+            FloatSize layerSize = getCTM().mapSize(rect.size());
+
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
+
+            CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
+            CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
+            CGContextBeginPath(layerContext);
+            CGContextAddPath(layerContext, path.platformPath());
+            CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
+
+            if (fillRule() == WindRule::EvenOdd)
+                CGContextEOClip(layerContext);
+            else
+                CGContextClip(layerContext);
+
+            fillGradient->paint(layerContext);
+            CGContextDrawLayerInRect(context, rect, layer.get());
+        } else {
+            CGContextBeginPath(context);
+            CGContextAddPath(context, path.platformPath());
+            CGContextStateSaver stateSaver(context);
+            CGContextConcatCTM(context, fillGradientSpaceTransform());
+
+            if (fillRule() == WindRule::EvenOdd)
+                CGContextEOClip(context);
+            else
+                CGContextClip(context);
+
+            fillGradient->paint(*this);
+        }
+
         return;
     }
 
-    if (!fillGradient()) {
-        if (fillPattern())
-            applyFillPattern();
-        CGContextDrawPathDirect(platformContext(), fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
-        return;
-    }
-
-    if (!hasShadow()) {
-        fillPathWithGradient(path.platformPath());
-        return;
-    }
-
-    fillPathWithGradientAndShadow(path.platformPath(), path.fastBoundingRect());
-}
-
-void GraphicsContextCG::strokePathWithGradient(CGPathRef pathRef)
-{
-    auto context = platformContext();
-
-    CGContextStateSaver stateSaver(context);
+    if (fillPattern())
+        applyFillPattern();
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
+    CGContextDrawPathDirect(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
+#else
     CGContextBeginPath(context);
-    CGContextAddPath(context, pathRef);
-    CGContextReplacePathWithStrokedPath(context);
-    CGContextClip(context);
-    CGContextConcatCTM(context, strokeGradientSpaceTransform());
-    strokeGradient()->paint(*this);
-}
-
-void GraphicsContextCG::strokePathWithGradientAndShadow(CGPathRef pathRef, const FloatRect& boundingRect)
-{
-    auto context = platformContext();
-
-    float lineWidth = strokeThickness();
-    float doubleLineWidth = lineWidth * 2;
-    float adjustedWidth = ceilf(boundingRect.width() + doubleLineWidth);
-    float adjustedHeight = ceilf(boundingRect.height() + doubleLineWidth);
-
-    auto layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
-
-    auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-    CGContextRef layerContext = CGLayerGetContext(layer.get());
-    CGContextSetLineWidth(layerContext, lineWidth);
-
-    // Compensate for the line width, otherwise the layer's top-left corner would be
-    // aligned with the boundingRect's top-left corner. This would result in leaving
-    // pixels out of the layer on the left and top sides.
-    float translationX = lineWidth - boundingRect.x();
-    float translationY = lineWidth - boundingRect.y();
-    CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
-    CGContextTranslateCTM(layerContext, translationX, translationY);
-
-    CGContextAddPath(layerContext, pathRef);
-    CGContextReplacePathWithStrokedPath(layerContext);
-    CGContextClip(layerContext);
-    CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
-    strokeGradient()->paint(layerContext);
-
-    float destinationX = roundf(boundingRect.x() - lineWidth);
-    float destinationY = roundf(boundingRect.y() - lineWidth);
-    CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
+    CGContextAddPath(context, path.platformPath());
+    if (fillRule() == WindRule::EvenOdd)
+        CGContextEOFillPath(context);
+    else
+        CGContextFillPath(context);
+#endif
 }
 
 void GraphicsContextCG::strokePath(const Path& path)
@@ -806,69 +752,69 @@ void GraphicsContextCG::strokePath(const Path& path)
     if (path.isEmpty())
         return;
 
-    if (auto segment = path.singleSegment()) {
-        strokePathSegment(*segment);
-        return;
-    }
+    CGContextRef context = platformContext();
 
-    if (!strokeGradient()) {
-        if (strokePattern())
-            applyStrokePattern();
-        CGContextDrawPathDirect(platformContext(), kCGPathStroke, path.platformPath(), nullptr);
-        return;
-    }
+    if (auto strokeGradient = this->strokeGradient()) {
+        if (hasShadow()) {
+            FloatRect rect = path.fastBoundingRect();
+            float lineWidth = strokeThickness();
+            float doubleLineWidth = lineWidth * 2;
+            float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
+            float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
 
-    if (!hasShadow()) {
-        strokePathWithGradient(path.platformPath());
-        return;
-    }
+            FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
 
-    strokePathWithGradientAndShadow(path.platformPath(), path.fastBoundingRect());
-}
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
+            CGContextSetLineWidth(layerContext, lineWidth);
 
-void GraphicsContextCG::fillPathSegment(const PathSegment& segment)
-{
-    auto platformPath = adoptCF(segment.createPlatformPath());
+            // Compensate for the line width, otherwise the layer's top-left corner would be
+            // aligned with the rect's top-left corner. This would result in leaving pixels out of
+            // the layer on the left and top sides.
+            float translationX = lineWidth - rect.x();
+            float translationY = lineWidth - rect.y();
+            CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
+            CGContextTranslateCTM(layerContext, translationX, translationY);
 
-    if (!fillGradient()) {
-        if (fillPattern())
-            applyFillPattern();
-        CGContextDrawPathDirect(platformContext(), fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, platformPath.get(), nullptr);
-        return;
-    }
+            CGContextAddPath(layerContext, path.platformPath());
+            CGContextReplacePathWithStrokedPath(layerContext);
+            CGContextClip(layerContext);
+            CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
+            strokeGradient->paint(layerContext);
 
-    if (!hasShadow()) {
-        fillPathWithGradient(platformPath.get());
-        return;
-    }
-
-    fillPathWithGradientAndShadow(platformPath.get(), segment.fastBoundingRect());
-}
-
-void GraphicsContextCG::strokePathSegment(const PathSegment& segment)
-{
-    auto platformPath = adoptCF(segment.createPlatformPath());
-
-    if (!strokeGradient()) {
-        if (strokePattern())
-            applyStrokePattern();
-
-        if (auto line = segment.get<PathDataLine>()) {
-            CGPoint cgPoints[2] { line->start, line->end };
-            CGContextStrokeLineSegments(platformContext(), cgPoints, 2);
-            return;
+            float destinationX = roundf(rect.x() - lineWidth);
+            float destinationY = roundf(rect.y() - lineWidth);
+            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
+        } else {
+            CGContextStateSaver stateSaver(context);
+            CGContextBeginPath(context);
+            CGContextAddPath(context, path.platformPath());
+            CGContextReplacePathWithStrokedPath(context);
+            CGContextClip(context);
+            CGContextConcatCTM(context, strokeGradientSpaceTransform());
+            strokeGradient->paint(*this);
         }
-
-        CGContextDrawPathDirect(platformContext(), kCGPathStroke, platformPath.get(), nullptr);
         return;
     }
 
-    if (!hasShadow()) {
-        strokePathWithGradient(platformPath.get());
+    if (strokePattern())
+        applyStrokePattern();
+
+#if USE(CG_CONTEXT_STROKE_LINE_SEGMENTS_WHEN_STROKING_PATH)
+    if (auto line = path.singleDataLine()) {
+        CGPoint cgPoints[2] { line->start, line->end };
+        CGContextStrokeLineSegments(context, cgPoints, 2);
         return;
     }
+#endif
 
-    strokePathWithGradientAndShadow(platformPath.get(), segment.fastBoundingRect());
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
+    CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
+#else
+    CGContextBeginPath(context);
+    CGContextAddPath(context, path.platformPath());
+    CGContextStrokePath(context);
+#endif
 }
 
 void GraphicsContextCG::fillRect(const FloatRect& rect)

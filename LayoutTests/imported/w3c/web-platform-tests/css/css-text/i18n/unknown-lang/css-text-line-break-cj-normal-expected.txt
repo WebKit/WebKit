@@ -1,55 +1,55 @@
 
-FAIL 3041  HIRAGANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
-FAIL 3043  HIRAGANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
-FAIL 3045  HIRAGANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
-FAIL 3047  HIRAGANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
-FAIL 3049  HIRAGANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
-FAIL 3063  HIRAGANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
-FAIL 3083  HIRAGANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
-FAIL 3085  HIRAGANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
-FAIL 3087  HIRAGANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
-FAIL 308E  HIRAGANA LETTER SMALL WA may appear at line start if normal assert_true: expected true got false
-FAIL 3095  HIRAGANA LETTER SMALL KA may appear at line start if normal assert_true: expected true got false
-FAIL 3096  HIRAGANA LETTER SMALL KE may appear at line start if normal assert_true: expected true got false
-FAIL 30A1  KATAKANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
-FAIL 30A3  KATAKANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
-FAIL 30A5  KATAKANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
-FAIL 30A7  KATAKANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
-FAIL 30A9  KATAKANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
-FAIL 30C3  KATAKANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
-FAIL 30E3  KATAKANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
-FAIL 30E5  KATAKANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
-FAIL 30E7  KATAKANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
-FAIL 30EE  KATAKANA LETTER SMALL WA may appear at line start if normal assert_true: expected true got false
-FAIL 30F5  KATAKANA LETTER SMALL KA may appear at line start if normal assert_true: expected true got false
-FAIL 30F6  KATAKANA LETTER SMALL KE may appear at line start if normal assert_true: expected true got false
-FAIL 30FC  KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_true: expected true got false
-FAIL 31F0  KATAKANA LETTER SMALL KU may appear at line start if normal assert_true: expected true got false
-FAIL 31F1  KATAKANA LETTER SMALL SI may appear at line start if normal assert_true: expected true got false
-FAIL 31F2  KATAKANA LETTER SMALL SU may appear at line start if normal assert_true: expected true got false
-FAIL 31F3  KATAKANA LETTER SMALL TO may appear at line start if normal assert_true: expected true got false
-FAIL 31F4  KATAKANA LETTER SMALL NU may appear at line start if normal assert_true: expected true got false
-FAIL 31F5  KATAKANA LETTER SMALL HA may appear at line start if normal assert_true: expected true got false
-FAIL 31F6  KATAKANA LETTER SMALL HI may appear at line start if normal assert_true: expected true got false
-FAIL 31F7  KATAKANA LETTER SMALL HU may appear at line start if normal assert_true: expected true got false
-FAIL 31F8  KATAKANA LETTER SMALL HE may appear at line start if normal assert_true: expected true got false
-FAIL 31F9  KATAKANA LETTER SMALL HO may appear at line start if normal assert_true: expected true got false
-FAIL 31FA  KATAKANA LETTER SMALL MU may appear at line start if normal assert_true: expected true got false
-FAIL 31FB  KATAKANA LETTER SMALL RA may appear at line start if normal assert_true: expected true got false
-FAIL 31FC  KATAKANA LETTER SMALL RI may appear at line start if normal assert_true: expected true got false
-FAIL 31FD  KATAKANA LETTER SMALL RU may appear at line start if normal assert_true: expected true got false
-FAIL 31FE  KATAKANA LETTER SMALL RE may appear at line start if normal assert_true: expected true got false
-FAIL 31FF  KATAKANA LETTER SMALL RO may appear at line start if normal assert_true: expected true got false
-FAIL FF67  HALFWIDTH KATAKANA LETTER SMALL A may appear at line start if normal assert_true: expected true got false
-FAIL FF68  HALFWIDTH KATAKANA LETTER SMALL I may appear at line start if normal assert_true: expected true got false
-FAIL FF69  HALFWIDTH KATAKANA LETTER SMALL U may appear at line start if normal assert_true: expected true got false
-FAIL FF6A  HALFWIDTH KATAKANA LETTER SMALL E may appear at line start if normal assert_true: expected true got false
-FAIL FF6B  HALFWIDTH KATAKANA LETTER SMALL O may appear at line start if normal assert_true: expected true got false
-FAIL FF6C  HALFWIDTH KATAKANA LETTER SMALL YA may appear at line start if normal assert_true: expected true got false
-FAIL FF6D  HALFWIDTH KATAKANA LETTER SMALL YU may appear at line start if normal assert_true: expected true got false
-FAIL FF6E  HALFWIDTH KATAKANA LETTER SMALL YO may appear at line start if normal assert_true: expected true got false
-FAIL FF6F  HALFWIDTH KATAKANA LETTER SMALL TU may appear at line start if normal assert_true: expected true got false
-FAIL FF70  HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_true: expected true got false
+FAIL 3041  HIRAGANA LETTER SMALL A may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3043  HIRAGANA LETTER SMALL I may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3045  HIRAGANA LETTER SMALL U may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3047  HIRAGANA LETTER SMALL E may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3049  HIRAGANA LETTER SMALL O may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3063  HIRAGANA LETTER SMALL TU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3083  HIRAGANA LETTER SMALL YA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3085  HIRAGANA LETTER SMALL YU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3087  HIRAGANA LETTER SMALL YO may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 308E  HIRAGANA LETTER SMALL WA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3095  HIRAGANA LETTER SMALL KA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 3096  HIRAGANA LETTER SMALL KE may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30A1  KATAKANA LETTER SMALL A may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30A3  KATAKANA LETTER SMALL I may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30A5  KATAKANA LETTER SMALL U may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30A7  KATAKANA LETTER SMALL E may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30A9  KATAKANA LETTER SMALL O may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30C3  KATAKANA LETTER SMALL TU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30E3  KATAKANA LETTER SMALL YA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30E5  KATAKANA LETTER SMALL YU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30E7  KATAKANA LETTER SMALL YO may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30EE  KATAKANA LETTER SMALL WA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30F5  KATAKANA LETTER SMALL KA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30F6  KATAKANA LETTER SMALL KE may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 30FC  KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F0  KATAKANA LETTER SMALL KU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F1  KATAKANA LETTER SMALL SI may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F2  KATAKANA LETTER SMALL SU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F3  KATAKANA LETTER SMALL TO may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F4  KATAKANA LETTER SMALL NU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F5  KATAKANA LETTER SMALL HA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F6  KATAKANA LETTER SMALL HI may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F7  KATAKANA LETTER SMALL HU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F8  KATAKANA LETTER SMALL HE may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31F9  KATAKANA LETTER SMALL HO may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FA  KATAKANA LETTER SMALL MU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FB  KATAKANA LETTER SMALL RA may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FC  KATAKANA LETTER SMALL RI may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FD  KATAKANA LETTER SMALL RU may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FE  KATAKANA LETTER SMALL RE may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL 31FF  KATAKANA LETTER SMALL RO may appear at line start if normal assert_approx_equals: expected 69 +/- 1 but got 99
+FAIL FF67  HALFWIDTH KATAKANA LETTER SMALL A may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF68  HALFWIDTH KATAKANA LETTER SMALL I may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF69  HALFWIDTH KATAKANA LETTER SMALL U may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6A  HALFWIDTH KATAKANA LETTER SMALL E may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6B  HALFWIDTH KATAKANA LETTER SMALL O may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6C  HALFWIDTH KATAKANA LETTER SMALL YA may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6D  HALFWIDTH KATAKANA LETTER SMALL YU may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6E  HALFWIDTH KATAKANA LETTER SMALL YO may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF6F  HALFWIDTH KATAKANA LETTER SMALL TU may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
+FAIL FF70  HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK may appear at line start if normal assert_approx_equals: expected 54 +/- 1 but got 84
 3041
 文文文文文文ぁ字字
 文文文文文文

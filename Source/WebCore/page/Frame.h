@@ -58,6 +58,7 @@ public:
     FrameTree& tree() const { return m_treeNode; }
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.
+    inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() const { return m_mainFrame; }

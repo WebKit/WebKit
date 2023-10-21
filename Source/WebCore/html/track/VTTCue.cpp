@@ -260,7 +260,7 @@ void VTTCueBox::applyCSSProperties()
 
     if (!cue->snapToLines()) {
         setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
-        setInlineStyleProperty(CSSPropertyTextWrap, CSSValueNowrap);
+        setInlineStyleProperty(CSSPropertyTextWrapMode, CSSValueNowrap);
     }
 
     // Make sure shadow or stroke is not clipped.

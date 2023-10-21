@@ -110,7 +110,8 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
     return {
         description,
         config.codedWidth.value_or(0),
-        config.codedHeight.value_or(0)
+        config.codedHeight.value_or(0),
+        config.hardwareAcceleration == HardwareAcceleration::PreferSoftware
     };
 }
 

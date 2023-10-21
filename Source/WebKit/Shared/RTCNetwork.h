@@ -39,11 +39,6 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_COMMA_END
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 namespace RTC::Network {
@@ -51,7 +46,7 @@ namespace RTC::Network {
 struct IPAddress {
     struct UnspecifiedFamily { };
 
-    IPAddress() = default;
+    explicit IPAddress() = default;
     explicit IPAddress(const rtc::IPAddress&);
     explicit IPAddress(std::variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value)
         : value(value) { }
@@ -73,14 +68,20 @@ struct InterfaceAddress {
 };
 
 struct SocketAddress {
-    SocketAddress() = default;
-    explicit SocketAddress(const rtc::SocketAddress& address)
-        : value(address) { }
+    explicit SocketAddress(const rtc::SocketAddress&);
+    explicit SocketAddress(uint16_t port, int scopeID, Vector<char>&& hostname, std::optional<IPAddress> ipAddress)
+        : port(port)
+        , scopeID(scopeID)
+        , hostname(WTFMove(hostname))
+        , ipAddress(ipAddress) { }
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<SocketAddress> decode(IPC::Decoder&);
+    rtc::SocketAddress rtcAddress() const;
+    static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
 
-    rtc::SocketAddress value;
+    uint16_t port;
+    int scopeID;
+    Vector<char> hostname;
+    std::optional<IPAddress> ipAddress;
 };
 
 }
@@ -94,7 +95,6 @@ struct RTCNetwork {
     explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
 
     rtc::Network value() const;
-    static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
 
     Vector<char> name;
     Vector<char> description;
