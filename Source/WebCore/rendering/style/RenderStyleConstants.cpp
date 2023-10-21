@@ -1171,14 +1171,22 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextWrap wrap)
+TextStream& operator<<(TextStream& ts, TextWrapMode wrap)
 {
     switch (wrap) {
-    case TextWrap::Wrap: ts << "wrap"; break;
-    case TextWrap::NoWrap: ts << "nowrap"; break;
-    case TextWrap::Balance: ts << "balance"; break;
-    case TextWrap::Stable: ts << "stable"; break;
-    case TextWrap::Pretty: ts << "pretty"; break;
+    case TextWrapMode::Wrap: ts << "wrap"; break;
+    case TextWrapMode::NoWrap: ts << "nowrap"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextWrapStyle style)
+{
+    switch (style) {
+    case TextWrapStyle::Auto: ts << "auto"; break;
+    case TextWrapStyle::Balance: ts << "balance"; break;
+    case TextWrapStyle::Pretty: ts << "pretty"; break;
+    case TextWrapStyle::Stable: ts << "stable"; break;
     }
     return ts;
 }

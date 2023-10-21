@@ -80,7 +80,7 @@ static constexpr CSSPropertyID editingProperties[] = {
     CSSPropertyTextAlign,
     CSSPropertyTextIndent,
     CSSPropertyTextTransform,
-    CSSPropertyTextWrap,
+    CSSPropertyTextWrapMode,
     CSSPropertyWhiteSpaceCollapse,
     CSSPropertyWidows,
     CSSPropertyWordSpacing,
@@ -955,7 +955,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         auto propertyID = property.id();
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
-        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap) && isTabSpanNode(&element))
+        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode) && isTabSpanNode(&element))
             continue;
 
         if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
@@ -1434,12 +1434,12 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
         auto whiteSpaceCollapse = m_mutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceCollapse);
         auto contextWhiteSpaceCollapse = computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceCollapse);
 
-        auto textWrap = m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrap);
-        auto contextTextWrap = computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrap);
+        auto textWrapMode = m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrapMode);
+        auto contextTextWrapMode = computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrapMode);
 
-        if (whiteSpaceCollapse != contextWhiteSpaceCollapse || textWrap != contextTextWrap) {
+        if (whiteSpaceCollapse != contextWhiteSpaceCollapse || textWrapMode != contextTextWrapMode) {
             computedStyle->m_mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
-            computedStyle->m_mutableStyle->removeProperty(CSSPropertyTextWrap);
+            computedStyle->m_mutableStyle->removeProperty(CSSPropertyTextWrapMode);
         }
 
         RefPtr<EditingStyle> computedStyleOfElement;
@@ -1786,7 +1786,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     // Changing the whitespace style in a tab span would collapse the tab into a space.
     if (isTabSpanTextNode(position.deprecatedNode()) || isTabSpanNode((position.deprecatedNode()))) {
         mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
-        mutableStyle->removeProperty(CSSPropertyTextWrap);
+        mutableStyle->removeProperty(CSSPropertyTextWrapMode);
     }
 
     // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.

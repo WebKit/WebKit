@@ -44,7 +44,7 @@ bool InlineQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWid
     if (isInIntrinsicWidthMode || !lineHasOverflow)
         return false;
     auto& rootStyle = formattingContext().root().style();
-    return rootStyle.nbspMode() == NBSPMode::Space && rootStyle.textWrap() != TextWrap::NoWrap && rootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
+    return rootStyle.nbspMode() == NBSPMode::Space && rootStyle.textWrapMode() != TextWrapMode::NoWrap && rootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
 }
 
 InlineLayoutUnit InlineQuirks::initialLineHeight() const

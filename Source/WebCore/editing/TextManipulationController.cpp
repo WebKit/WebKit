@@ -336,8 +336,8 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
                 return true;
         }
 
-        // Treat a or li with text-wrap: nowrap as its own paragraph so that wrapping whitespace between them will be preserved.
-        if (renderer->style().textWrap() == TextWrap::NoWrap)
+        // Treat a or li with text-wrap-mode: nowrap as its own paragraph so that wrapping whitespace between them will be preserved.
+        if (renderer->style().textWrapMode() == TextWrapMode::NoWrap)
             return true;
     }
 

@@ -123,6 +123,7 @@ private:
     String serializeGridTemplate() const;
     String serializeOffset() const;
     String serializePageBreak() const;
+    String serializeTextWrap() const;
     String serializeWhiteSpace() const;
 
     StylePropertyShorthand m_shorthand;
@@ -396,6 +397,8 @@ String ShorthandSerializer::serialize()
         return serializeLonghandValue(0);
     case CSSPropertyTransformOrigin:
         return serializeLonghandsOmittingTrailingInitialValue();
+    case CSSPropertyTextWrap:
+        return serializeTextWrap();
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
         return serializeColumnBreak();
@@ -1206,28 +1209,41 @@ String ShorthandSerializer::serializePageBreak() const
     }
 }
 
+String ShorthandSerializer::serializeTextWrap() const
+{
+    auto mode = longhandValueID(0);
+    auto style = longhandValueID(1);
+
+    if (style == CSSValueAuto)
+        return nameString(mode);
+    if (mode == CSSValueWrap)
+        return nameString(style);
+
+    return makeString(nameLiteral(mode), ' ', nameLiteral(style));
+}
+
 String ShorthandSerializer::serializeWhiteSpace() const
 {
     auto whiteSpaceCollapse = longhandValueID(0);
-    auto textWrap = longhandValueID(1);
+    auto textWrapMode = longhandValueID(1);
 
     // Convert to backwards-compatible keywords if possible.
-    if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValueCollapse && textWrapMode == CSSValueWrap)
         return nameString(CSSValueNormal);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueNowrap)
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueNowrap)
         return nameString(CSSValuePre);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueWrap)
         return nameString(CSSValuePreWrap);
-    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrapMode == CSSValueWrap)
         return nameString(CSSValuePreLine);
 
     // Omit default longhand values.
     if (whiteSpaceCollapse == CSSValueCollapse)
-        return nameString(textWrap);
-    if (textWrap == CSSValueWrap)
+        return nameString(textWrapMode);
+    if (textWrapMode == CSSValueWrap)
         return nameString(whiteSpaceCollapse);
 
-    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrap));
+    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrapMode));
 }
 
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)

@@ -334,7 +334,8 @@ PASS text-spacing-trim
 PASS text-transform
 PASS text-underline-offset
 PASS text-underline-position
-PASS text-wrap
+PASS text-wrap-mode
+PASS text-wrap-style
 PASS top
 PASS touch-action
 PASS transform

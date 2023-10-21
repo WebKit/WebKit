@@ -135,11 +135,11 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
     if (name == wrapAttr) {
         if (m_wrap != NoWrap) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueWrap);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrapMode, CSSValueWrap);
             addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueBreakWord);
         } else {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrapMode, CSSValueNowrap);
             addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueNormal);
         }
     } else

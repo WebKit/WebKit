@@ -1336,7 +1336,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, WeakHashSet<cons
     if (!style.autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrap() == TextWrap::NoWrap) {
+    if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrapMode() == TextWrapMode::NoWrap) {
         if (firstLine)
             m_beginMinWidth = *m_maxWidth;
         m_endMinWidth = currMaxWidth;

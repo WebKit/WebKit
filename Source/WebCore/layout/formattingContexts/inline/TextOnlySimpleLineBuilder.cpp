@@ -472,7 +472,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
         return false;
-    if (rootStyle.textWrap() == TextWrap::Balance)
+    if (rootStyle.textWrapMode() == TextWrapMode::Wrap && rootStyle.textWrapStyle() == TextWrapStyle::Balance)
         return false;
     if (rootStyle.lineAlign() != LineAlign::None || rootStyle.lineSnap() != LineSnap::None)
         return false;

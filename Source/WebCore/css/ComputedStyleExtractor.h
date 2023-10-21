@@ -103,6 +103,7 @@ private:
     Ref<CSSValue> getMaskShorthandValue() const;
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
     Ref<CSSValue> fontVariantShorthandValue() const;
+    RefPtr<CSSValue> textWrapShorthandValue(const RenderStyle&) const;
     RefPtr<CSSValue> whiteSpaceShorthandValue(const RenderStyle&) const;
 
     RefPtr<Element> m_element;

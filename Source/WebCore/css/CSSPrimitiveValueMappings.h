@@ -1541,43 +1541,37 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(TextWrap wrap)
+constexpr CSSValueID toCSSValueID(TextWrapMode wrap)
 {
     switch (wrap) {
-    case TextWrap::Wrap:
+    case TextWrapMode::Wrap:
         return CSSValueWrap;
-    case TextWrap::NoWrap:
+    case TextWrapMode::NoWrap:
         return CSSValueNowrap;
-    case TextWrap::Balance:
-        return CSSValueBalance;
-    case TextWrap::Stable:
-        return CSSValueStable;
-    case TextWrap::Pretty:
-        return CSSValuePretty;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr TextWrap fromCSSValueID(CSSValueID valueID)
+template<> constexpr TextWrapMode fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueWrap:
-        return TextWrap::Wrap;
+        return TextWrapMode::Wrap;
     case CSSValueNowrap:
-        return TextWrap::NoWrap;
-    case CSSValueBalance:
-        return TextWrap::Balance;
-    case CSSValueStable:
-        return TextWrap::Stable;
-    case CSSValuePretty:
-        return TextWrap::Pretty;
+        return TextWrapMode::NoWrap;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return TextWrap::Wrap;
+    return TextWrapMode::Wrap;
 }
+
+#define TYPE TextWrapStyle
+#define FOR_EACH(CASE) CASE(Auto) CASE(Balance) CASE(Pretty) CASE(Stable)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 #define TYPE TextEmphasisFill
 #define FOR_EACH(CASE) CASE(Filled) CASE(Open)

@@ -5920,30 +5920,48 @@
         },
         "text-wrap": {
             "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "text-wrap-mode",
+                    "text-wrap-style"
+                ]
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text-4/#text-wrap-shorthand"
+            }
+        },
+        "text-wrap-mode": {
+            "inherited": true,
             "values": [
                 "wrap",
-                "nowrap",
-                {
-                    "value": "balance",
-                    "settings-flag": "cssTextWrapNewValuesEnabled"
-                },
-                {
-                    "value": "stable",
-                    "settings-flag": "cssTextWrapNewValuesEnabled"
-                },
-                {
-                    "value": "pretty",
-                    "settings-flag": "cssTextWrapNewValuesEnabled"
-                }
+                "nowrap"
             ],
             "codegen-properties": {
-                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
             },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-4/#text-wrap"
+                "url": "https://drafts.csswg.org/css-text-4/#text-wrap-mode"
+            }
+        },
+        "text-wrap-style": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "balance",
+                "pretty",
+                "stable"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextWrapStyleEnabled",
+                "parser-grammar": "<<values>>",
+                "parser-exported": true
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text-4/#text-wrap-style"
             },
             "status": "in development"
         },
@@ -6130,12 +6148,12 @@
             "codegen-properties": {
                 "longhands": [
                     "white-space-collapse",
-                    "text-wrap"
+                    "text-wrap-mode"
                 ]
             },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-4/#white-space-property"
+                "url": "https://drafts.csswg.org/css-text-4/#white-space-property"
             }
         },
         "white-space-collapse": {
@@ -6147,15 +6165,13 @@
                 "break-spaces"
             ],
             "codegen-properties": {
-                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
             },
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-4/#white-space-collapsing"
-            },
-            "status": "in development"
+            }
         },
         "widows": {
             "inherited": true,

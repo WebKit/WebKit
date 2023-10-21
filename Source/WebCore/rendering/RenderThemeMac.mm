@@ -1090,7 +1090,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 
     // White-space is locked to pre
     style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    style.setTextWrap(TextWrap::NoWrap);
+    style.setTextWrapMode(TextWrapMode::NoWrap);
 
     // Set the button's vertical size.
     setSizeFromFont(style, menuListButtonSizes());

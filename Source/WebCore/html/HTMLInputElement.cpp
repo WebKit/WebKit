@@ -2237,7 +2237,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     adjustInnerTextStyle(style, textBlockStyle);
 
     textBlockStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    textBlockStyle.setTextWrap(TextWrap::NoWrap);
+    textBlockStyle.setTextWrapMode(TextWrapMode::NoWrap);
     textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
     textBlockStyle.setOverflowX(Overflow::Hidden);
     textBlockStyle.setOverflowY(Overflow::Hidden);

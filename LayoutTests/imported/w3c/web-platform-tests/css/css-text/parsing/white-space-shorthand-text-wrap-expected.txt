@@ -1,7 +1,8 @@
 
 PASS `text-wrap: balance` should be set
 PASS `text-wrap` should not be affected by previous `white-space`
-PASS `white-space` should overwrite previous `text-wrap`
+PASS `white-space` should not overwrite previous `text-wrap-style: balance`
+PASS `white-space` should overwrite previous `text-wrap-mode: nowrap`
 PASS `text-wrap` should not be affected by `white-space` on the parent
-PASS `white-space` should overwrite `text-wrap` on the parent
+PASS `white-space` should overwrite `text-wrap-mode` on the parent
 
