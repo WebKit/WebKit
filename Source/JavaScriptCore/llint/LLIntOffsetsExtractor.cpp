@@ -88,7 +88,7 @@ class LLIntOffsetsExtractor {
     // These types are useful since we can't use '<...>' syntax in LLInt offsets extraction. e.g. Vector<int>::m_data
     using Vector = WTF::Vector<int>;
     using JSInternalFieldObjectImpl = JSC::JSInternalFieldObjectImpl<>;
-    using ValueProfileFixedVector = WTF::FixedVector<ValueProfile>;
+    using ArgumentValueProfileFixedVector = WTF::FixedVector<ArgumentValueProfile>;
     using BinaryArithProfileFixedVector = FixedVector<BinaryArithProfile>;
     using UnaryArithProfileFixedVector = FixedVector<UnaryArithProfile>;
     using UnlinkedSimpleJumpTableFixedVector = FixedVector<UnlinkedSimpleJumpTable>;
