@@ -62,6 +62,13 @@
             }
         }
     },
+    "TestWebKitFaviconDatabase": {
+        "subtests": {
+            "/webkit/WebKitFaviconDatabase/get-favicon": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205381"}}
+            }
+        }
+    },
     "TestWebKitWebView": {
         "subtests": {
             "/webkit/WebKitWebView/is-web-process-responsive": {
