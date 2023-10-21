@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ CSSTextWrapStyleEnabled=false ]-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test text-wrap parsing when text-wrap-style is disabled</title>
+<meta charset="utf-8">
+</head>
+<body>
+<p>When text-wrap-style is disabled, the following should not parse:</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+test_invalid_value("text-wrap-style", "auto");
+test_invalid_value("text-wrap-style", "balance");
+test_invalid_value("text-wrap-style", "stable");
+test_invalid_value("text-wrap-style", "pretty");
+
+test_invalid_value("text-wrap", "auto");
+test_invalid_value("text-wrap", "balance");
+test_invalid_value("text-wrap", "stable");
+test_invalid_value("text-wrap", "pretty");
+
+test_invalid_value("text-wrap", "wrap auto");
+test_invalid_value("text-wrap", "wrap balance");
+test_invalid_value("text-wrap", "wrap pretty");
+test_invalid_value("text-wrap", "wrap stable");
+test_invalid_value("text-wrap", "auto wrap");
+test_invalid_value("text-wrap", "balance wrap");
+test_invalid_value("text-wrap", "pretty wrap");
+test_invalid_value("text-wrap", "stable wrap");
+
+test_invalid_value("text-wrap", "nowrap auto");
+test_invalid_value("text-wrap", "nowrap balance");
+test_invalid_value("text-wrap", "nowrap pretty");
+test_invalid_value("text-wrap", "nowrap stable");
+test_invalid_value("text-wrap", "auto nowrap");
+test_invalid_value("text-wrap", "balance nowrap");
+test_invalid_value("text-wrap", "pretty nowrap");
+test_invalid_value("text-wrap", "stable nowrap");
+</script>
+</body>
+</html>
