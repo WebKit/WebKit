@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<style>
+</style>
+<body>
+
+<input type="text" disabled />
+<input type="checkbox" disabled />
+<input type="radio" checked disabled />
+
+<textarea disabled>text</textarea>
+<select disabled>
+   <option>Choose</option>
+   <option>From</option>
+   <option>The List</option>
+</select>
+<button disabled>off</button>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>

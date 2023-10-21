@@ -32,22 +32,8 @@
 
 // NSAttributedStrings support.
 
-static NSString * const UIAccessibilityTokenBlockquoteLevel = @"UIAccessibilityTokenBlockquoteLevel";
-static NSString * const UIAccessibilityTokenHeadingLevel = @"UIAccessibilityTokenHeadingLevel";
-static NSString * const UIAccessibilityTokenFontName = @"UIAccessibilityTokenFontName";
-static NSString * const UIAccessibilityTokenFontFamily = @"UIAccessibilityTokenFontFamily";
-static NSString * const UIAccessibilityTokenFontSize = @"UIAccessibilityTokenFontSize";
-static NSString * const UIAccessibilityTokenBold = @"UIAccessibilityTokenBold";
-static NSString * const UIAccessibilityTokenItalic = @"UIAccessibilityTokenItalic";
-static NSString * const UIAccessibilityTokenUnderline = @"UIAccessibilityTokenUnderline";
-static NSString * const UIAccessibilityTokenLanguage = @"UIAccessibilityTokenLanguage";
-static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenAttachment";
-
 static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
 static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibilityTextualContextSourceCode";
-
-static NSString * const UIAccessibilityInlineTextCompletion = @"UIAccessibilityInlineTextCompletion";
-static NSString * const UIAccessibilityAcceptedInlineTextCompletion = @"UIAccessibilityAcceptedInlineTextCompletion";
 
 @interface WAKView (iOSAccessibility)
 - (BOOL)accessibilityIsIgnored;
