@@ -113,7 +113,7 @@ void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier ide
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalAddressReady(address.value);
+        socket->signalAddressReady(address.rtcAddress());
 }
 
 void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, const IPC::DataReference& data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp)

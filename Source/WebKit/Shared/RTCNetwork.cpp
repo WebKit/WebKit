@@ -28,9 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
-#include "WebCoreArgumentCoders.h"
-
 namespace WebKit {
 
 RTCNetwork::RTCNetwork(const rtc::Network& network)
@@ -79,7 +76,9 @@ rtc::Network RTCNetwork::value() const
     return network;
 }
 
-rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
+namespace RTC::Network {
+
+rtc::SocketAddress SocketAddress::isolatedCopy(const rtc::SocketAddress& value)
 {
     rtc::SocketAddress copy;
     copy.SetPort(value.port());
@@ -90,54 +89,22 @@ rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
     return rtc::SocketAddress(copy);
 }
 
-auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> std::optional<SocketAddress>
+rtc::SocketAddress SocketAddress::rtcAddress() const
 {
-    SocketAddress result;
-    uint16_t port;
-    if (!decoder.decode(port))
-        return std::nullopt;
-    int scopeId;
-    if (!decoder.decode(scopeId))
-        return std::nullopt;
-    result.value.SetPort(port);
-    result.value.SetScopeID(scopeId);
-
-    IPC::DataReference hostname;
-    if (!decoder.decode(hostname))
-        return std::nullopt;
-    result.value.SetIP(std::string(reinterpret_cast<const char*>(hostname.data()), hostname.size()));
-
-    bool isUnresolved;
-    if (!decoder.decode(isUnresolved))
-        return std::nullopt;
-    if (isUnresolved)
-        return result;
-
-    std::optional<IPAddress> ipAddress;
-    decoder >> ipAddress;
-    if (!ipAddress)
-        return std::nullopt;
-    result.value.SetResolvedIP(ipAddress->rtcAddress());
+    rtc::SocketAddress result;
+    result.SetPort(port);
+    result.SetScopeID(scopeID);
+    result.SetIP({ hostname.data(), hostname.size() });
+    if (ipAddress)
+        result.SetResolvedIP(ipAddress->rtcAddress());
     return result;
 }
 
-void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
-{
-    encoder << value.port();
-    encoder << value.scope_id();
-
-    auto hostname = value.hostname();
-    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(hostname.data()), hostname.length());
-
-    if (value.IsUnresolvedIP()) {
-        encoder << true;
-        return;
-    }
-    encoder << false;
-    encoder << RTCNetwork::IPAddress(value.ipaddr());
-}
-
-namespace RTC::Network {
+SocketAddress::SocketAddress(const rtc::SocketAddress& value)
+    : port(value.port())
+    , scopeID(value.scope_id())
+    , hostname(value.hostname().data(), value.hostname().size())
+    , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr()))) { }
 
 IPAddress::IPAddress(const rtc::IPAddress& input)
 {
