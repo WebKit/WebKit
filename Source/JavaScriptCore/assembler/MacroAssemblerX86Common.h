@@ -470,6 +470,8 @@ public:
 
     void lshift32(TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return;
         m_assembler.shll_i8r(imm.m_value, dest);
     }
     
@@ -765,6 +767,8 @@ public:
 
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return;
         m_assembler.sarl_i8r(imm.m_value, dest);
     }
     
@@ -800,6 +804,8 @@ public:
 
     void urshift32(TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return;
         m_assembler.shrl_i8r(imm.m_value, dest);
     }
     
@@ -811,6 +817,8 @@ public:
 
     void rotateRight32(TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return;
         m_assembler.rorl_i8r(imm.m_value, dest);
     }
 
@@ -844,6 +852,8 @@ public:
 
     void rotateLeft32(TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return;
         m_assembler.roll_i8r(imm.m_value, dest);
     }
 
