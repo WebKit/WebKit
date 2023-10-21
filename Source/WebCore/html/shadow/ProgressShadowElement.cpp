@@ -51,7 +51,7 @@ ProgressShadowElement::ProgressShadowElement(Document& document)
 
 HTMLProgressElement* ProgressShadowElement::progressElement() const
 {
-    return downcast<HTMLProgressElement>(shadowHost());
+    return checkedDowncast<HTMLProgressElement>(shadowHost());
 }
 
 bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)

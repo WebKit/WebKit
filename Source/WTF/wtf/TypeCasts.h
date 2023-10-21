@@ -72,6 +72,23 @@ using match_constness_t =
 
 // Safe downcasting functions.
 template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& checkedDowncast(Source& source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    RELEASE_ASSERT(is<Target>(source));
+    return static_cast<match_constness_t<Source, Target>&>(source);
+}
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* checkedDowncast(Source* source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    RELEASE_ASSERT(!source || is<Target>(*source));
+    return static_cast<match_constness_t<Source, Target>*>(source);
+}
+
+template<typename Target, typename Source>
 inline match_constness_t<Source, Target>& downcast(Source& source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
@@ -134,5 +151,6 @@ inline bool is(const std::unique_ptr<ArgType, Deleter>& source)
 
 using WTF::TypeCastTraits;
 using WTF::is;
+using WTF::checkedDowncast;
 using WTF::downcast;
 using WTF::dynamicDowncast;
