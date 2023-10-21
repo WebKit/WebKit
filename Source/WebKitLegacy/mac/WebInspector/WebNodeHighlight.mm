@@ -226,7 +226,9 @@ using namespace WebCore;
 {
     ASSERT(_targetView);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[_targetView window] disableScreenUpdatesUntilFlush];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Mark the whole highlight view as needing display since we don't know what areas
     // need updated, since the highlight can be larger than the element to show margins.
@@ -285,7 +287,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     // Disable screen updates so the highlight moves in sync with the view.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[_targetView window] disableScreenUpdatesUntilFlush];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_highlightWindow setFrame:[self _computeHighlightWindowFrame] display:YES];
 }

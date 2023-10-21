@@ -3960,11 +3960,11 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // we risk disabling screen updates when no flush is pending.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([NSGraphicsContext currentContext] == [[self window] graphicsContext] && [webView _needsOneShotDrawingSynchronization]) {
-ALLOW_DEPRECATED_DECLARATIONS_END
         // Disable screen updates to minimize the chances of the race between the CA
         // display link and AppKit drawing causing flashes.
         [[self window] disableScreenUpdatesUntilFlush];
-        
+ALLOW_DEPRECATED_DECLARATIONS_END
+
         // Make sure any layer changes that happened as a result of layout
         // via -viewWillDraw are committed.
         [CATransaction flush];
