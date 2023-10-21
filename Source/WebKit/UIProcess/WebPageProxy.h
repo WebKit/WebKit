@@ -2180,7 +2180,9 @@ public:
     void addRemotePageProxy(const WebCore::RegistrableDomain&, RemotePageProxy&);
     void removeRemotePageProxy(const WebCore::RegistrableDomain&);
     void setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&&);
-    void addOpenedRemotePageProxy(Ref<RemotePageProxy>&&);
+    RefPtr<RemotePageProxy> takeRemotePageProxyInOpenerProcessIfDomainEquals(const WebCore::RegistrableDomain&);
+    void addOpenedRemotePageProxy(WebPageProxyIdentifier, Ref<RemotePageProxy>&&);
+    void removeOpenedRemotePageProxy(WebPageProxyIdentifier);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
     void broadcastFrameRemovalToOtherProcesses(IPC::Connection&, WebCore::FrameIdentifier);

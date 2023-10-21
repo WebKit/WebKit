@@ -12879,10 +12879,26 @@ void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page
     internals().remotePageProxyInOpenerProcess = WTFMove(page);
 }
 
-// FIXME: Add a corresponding remove call if the opened page is closed or destroyed. <rdar://111064432>
-void WebPageProxy::addOpenedRemotePageProxy(Ref<RemotePageProxy>&& page)
+RefPtr<RemotePageProxy> WebPageProxy::takeRemotePageProxyInOpenerProcessIfDomainEquals(const WebCore::RegistrableDomain& domain)
 {
-    internals().openedRemotePageProxies.add(WTFMove(page));
+    if (!internals().remotePageProxyInOpenerProcess)
+        return nullptr;
+    if (internals().remotePageProxyInOpenerProcess->domain() != domain)
+        return nullptr;
+    return std::exchange(internals().remotePageProxyInOpenerProcess, nullptr);
+}
+
+// FIXME: Add a remove call if the opened page is closed or destroyed. <rdar://111064432>
+void WebPageProxy::removeOpenedRemotePageProxy(WebPageProxyIdentifier pageID)
+{
+    bool contained = internals().openedRemotePageProxies.remove(pageID);
+    ASSERT_UNUSED(contained, contained);
+}
+
+void WebPageProxy::addOpenedRemotePageProxy(WebPageProxyIdentifier pageID, Ref<RemotePageProxy>&& page)
+{
+    auto addResult = internals().openedRemotePageProxies.add(pageID, WTFMove(page));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

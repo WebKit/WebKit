@@ -75,6 +75,8 @@ public:
 
     void injectPageIntoNewProcess();
 
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+
     WebProcessProxy& process() { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; }
     const WebCore::RegistrableDomain& domain() const { return m_domain; }

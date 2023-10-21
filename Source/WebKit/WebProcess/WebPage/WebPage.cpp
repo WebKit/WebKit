@@ -4761,10 +4761,8 @@ bool WebPage::hasRootFrames()
 {
     bool result = m_page && !m_page->rootFrames().isEmpty();
 #if ASSERT_ENABLED
-    if (!result) {
+    if (!result)
         ASSERT(m_page->settings().processSwapOnCrossSiteWindowOpenEnabled());
-        ASSERT(!m_page->settings().siteIsolationEnabled());
-    }
 #endif
     return result;
 }

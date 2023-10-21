@@ -7179,8 +7179,7 @@ window.onload = function() {
 
 static const char* openedPage = "Hello World";
 
-// FIXME: Get this working.
-TEST(ProcessSwap, DISABLED_SameSiteWindowWithOpenerNavigateToFile)
+TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);

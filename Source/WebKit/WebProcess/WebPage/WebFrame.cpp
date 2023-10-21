@@ -428,14 +428,14 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
     auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
     m_coreFrame = localFrame.ptr();
+    if (localFrame->isMainFrame())
+        corePage->setMainFrame(localFrame);
     localFrame->init();
 
     if (layerHostingContextIdentifier)
         setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
     if (localFrame->isRootFrame())
         corePage->addRootFrame(localFrame.get());
-    if (localFrame->isMainFrame())
-        corePage->setMainFrame(WTFMove(localFrame));
 
     if (auto* webPage = page(); webPage && m_coreFrame->isRootFrame()) {
         if (auto* drawingArea = webPage->drawingArea())
