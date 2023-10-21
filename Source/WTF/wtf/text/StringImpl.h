@@ -305,6 +305,8 @@ public:
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit() || isEmpty()); return m_data16; }
+    ALWAYS_INLINE std::span<const LChar> span8() const { return { characters8(), length() }; }
+    ALWAYS_INLINE std::span<const UChar> span16() const { return { characters16(), length() }; }
 
     template<typename CharacterType> const CharacterType* characters() const;
 
