@@ -527,6 +527,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
             scrollPosition = FloatPoint(historyItem.scrollPosition());
         }
 
+        RELEASE_LOG(Scrolling, "WebPage::restorePageState with matching minimumLayoutSize; historyItem.shouldRestoreScrollPosition %d, scrollPosition.y %d", historyItem.shouldRestoreScrollPosition(), historyItem.scrollPosition().y());
         send(Messages::WebPageProxy::RestorePageState(scrollPosition, frameView.scrollOrigin(), historyItem.obscuredInsets(), boundedScale));
     } else {
         IntSize oldContentSize = historyItem.contentSize();
@@ -543,6 +544,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
                 newCenter = FloatRect(historyItem.unobscuredContentRect()).center();
         }
 
+        RELEASE_LOG(Scrolling, "WebPage::restorePageState with mismatched minimumLayoutSize; historyItem.shouldRestoreScrollPosition %d, unobscured rect top %d, scale %.2f", historyItem.shouldRestoreScrollPosition(), historyItem.unobscuredContentRect().y(), newScale);
         scalePage(newScale, IntPoint());
         send(Messages::WebPageProxy::RestorePageCenterAndScale(newCenter, newScale));
     }

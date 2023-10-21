@@ -429,6 +429,15 @@ ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition&
     return scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
 }
 
+void ScrollView::cacheCurrentScrollState()
+{
+    m_cachedScrollPosition = scrollPosition();
+#if PLATFORM(IOS_FAMILY)
+    m_cachedUnobscuredContentRect = unobscuredContentRect();
+    m_cachedExposedContentRect = exposedContentRect();
+#endif
+}
+
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
     return scrollPosition() - IntSize(
