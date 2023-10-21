@@ -283,6 +283,15 @@ inline Target& downcast(Ref<Source, PtrTraits>& source)
 }
 
 template<typename Target, typename Source, typename PtrTraits>
+inline Ref<Target> checkedDowncast(Ref<Source, PtrTraits> source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    RELEASE_ASSERT(is<Target>(source));
+    return static_reference_cast<Target>(WTFMove(source));
+}
+
+template<typename Target, typename Source, typename PtrTraits>
 inline Target& downcast(const Ref<Source, PtrTraits>& source)
 {
     return downcast<Target>(source.get());
