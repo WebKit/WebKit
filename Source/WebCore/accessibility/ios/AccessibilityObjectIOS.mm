@@ -36,7 +36,19 @@
 #import "RenderObject.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
+#import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBlockquoteLevel, NSString *);
+#define AccessibilityTokenBlockquoteLevel getUIAccessibilityTokenBlockquoteLevel()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenUnderline, NSString *);
+#define AccessibilityTokenUnderline getUIAccessibilityTokenUnderline()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenLanguage, NSString *);
+#define AccessibilityTokenLanguage getUIAccessibilityTokenLanguage()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityInlineTextCompletion, NSString *);
+#define AccessibilityInlineTextCompletion getUIAccessibilityInlineTextCompletion()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityAcceptedInlineTextCompletion, NSString *);
+#define AccessibilityAcceptedInlineTextCompletion getUIAccessibilityAcceptedInlineTextCompletion()
 
 namespace WebCore {
     
@@ -176,9 +188,9 @@ static void attributeStringSetLanguage(NSMutableAttributedString *attrString, Re
     RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
     NSString *language = object->language();
     if (language.length)
-        [attrString addAttribute:UIAccessibilityTokenLanguage value:language range:range];
+        [attrString addAttribute:AccessibilityTokenLanguage value:language range:range];
     else
-        [attrString removeAttribute:UIAccessibilityTokenLanguage range:range];
+        [attrString removeAttribute:AccessibilityTokenLanguage range:range];
 }
 
 static unsigned blockquoteLevel(RenderObject* renderer)
@@ -200,25 +212,9 @@ static void attributeStringSetBlockquoteLevel(NSMutableAttributedString *attrStr
     unsigned quoteLevel = blockquoteLevel(renderer);
 
     if (quoteLevel)
-        [attrString addAttribute:UIAccessibilityTokenBlockquoteLevel value:@(quoteLevel) range:range];
+        [attrString addAttribute:AccessibilityTokenBlockquoteLevel value:@(quoteLevel) range:range];
     else
-        [attrString removeAttribute:UIAccessibilityTokenBlockquoteLevel range:range];
-}
-
-static void attributeStringSetHeadingLevel(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
-{
-    if (!renderer)
-        return;
-
-    RefPtr parent = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
-    if (!parent)
-        return;
-
-    unsigned parentHeadingLevel = parent->headingLevel();
-    if (parentHeadingLevel)
-        [attrString addAttribute:UIAccessibilityTokenHeadingLevel value:@(parentHeadingLevel) range:range];
-    else
-        [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
+        [attrString removeAttribute:AccessibilityTokenBlockquoteLevel range:range];
 }
 
 static void attributeStringSetStyle(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
@@ -233,7 +229,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
 
     auto decor = style.textDecorationsInEffect();
     if (decor & TextDecorationLine::Underline)
-        attributedStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
+        attributedStringSetNumber(attrString, AccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.
     RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
@@ -263,7 +259,7 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
     if (!lastPresentedCompleteWord.text.isEmpty() && lastPresentedCompleteWordPosition + lastPresentedCompleteWordLength <= [attributedString length]) {
         NSRange completeWordRange = NSMakeRange(lastPresentedCompleteWordPosition, lastPresentedCompleteWordLength);
         if ([[attributedString.string substringWithRange:completeWordRange] isEqualToString:lastPresentedCompleteWord.text])
-            [attributedString addAttribute:UIAccessibilityAcceptedInlineTextCompletion value:lastPresentedCompleteWord.text range:completeWordRange];
+            [attributedString addAttribute:AccessibilityAcceptedInlineTextCompletion value:lastPresentedCompleteWord.text range:completeWordRange];
     }
 
     auto& lastPresentedTextPrediction = object->lastPresentedTextPrediction();
@@ -275,7 +271,7 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
         if (![[attributedString.string substringWithRange:presentedRange] isEqualToString:lastPresentedTextPrediction.text])
             return;
 
-        [attributedString addAttribute:UIAccessibilityInlineTextCompletion value:[attributedString.string substringWithRange:presentedRange] range:presentedRange];
+        [attributedString addAttribute:AccessibilityInlineTextCompletion value:[attributedString.string substringWithRange:presentedRange] range:presentedRange];
     }
 #else
     UNUSED_PARAM(attributedString);
@@ -295,7 +291,6 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
 
     // Set attributes.
     attributeStringSetStyle(result.get(), renderer, range);
-    attributeStringSetHeadingLevel(result.get(), renderer, range);
     attributeStringSetBlockquoteLevel(result.get(), renderer, range);
     attributeStringSetLanguage(result.get(), renderer, range);
     attributedStringSetCompositionAttributes(result.get(), renderer);

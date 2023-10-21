@@ -33,6 +33,26 @@
 #import "WebAccessibilityObjectWrapperBase.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(AXRuntime);
+
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontName, NSString *);
+#define AccessibilityTokenFontName getUIAccessibilityTokenFontName()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontFamily, NSString *);
+#define AccessibilityTokenFontFamily getUIAccessibilityTokenFontFamily()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontSize, NSString *);
+#define AccessibilityTokenFontSize getUIAccessibilityTokenFontSize()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBold, NSString *);
+#define AccessibilityTokenBold getUIAccessibilityTokenBold()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenItalic, NSString *);
+#define AccessibilityTokenItalic getUIAccessibilityTokenItalic()
+SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenAttachment, NSString *);
+#define AccessibilityTokenAttachment getUIAccessibilityTokenAttachment()
+
+#endif // PLATFORM(IOS_FAMILY)
+
 namespace WebCore {
 
 String AccessibilityObject::speechHintAttributeValue() const
@@ -278,16 +298,16 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
 #if PLATFORM(IOS_FAMILY)
     auto fullName = adoptCF(CTFontCopyFullName(font));
     if (fullName)
-        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:UIAccessibilityTokenFontName];
+        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:AccessibilityTokenFontName];
     if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:UIAccessibilityTokenFontFamily];
+        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:AccessibilityTokenFontFamily];
     if ([size boolValue])
-        [fontAttributes setValue:size forKey:UIAccessibilityTokenFontSize];
+        [fontAttributes setValue:size forKey:AccessibilityTokenFontSize];
     auto traits = CTFontGetSymbolicTraits(font);
     if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenBold];
+        [fontAttributes setValue:@YES forKey:AccessibilityTokenBold];
     if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
+        [fontAttributes setValue:@YES forKey:AccessibilityTokenItalic];
 
     [attributedString addAttributes:fontAttributes.get() range:range];
 #endif // PLATFORM(IOS_FAMILY)
@@ -317,7 +337,7 @@ static void attributedStringAppendWrapper(NSMutableAttributedString *attrString,
 #if PLATFORM(MAC)
         attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }
 #else
-        attributes:@{ UIAccessibilityTokenAttachment : wrapper }
+        attributes:@{ AccessibilityTokenAttachment : wrapper }
 #endif
     ]).get()];
 }
