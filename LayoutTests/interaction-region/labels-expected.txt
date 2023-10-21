@@ -1,5 +1,7 @@
 Inactive label Do you like coffee?
 And checkboxes?
+Disabled checkbox
+Disabled input
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
