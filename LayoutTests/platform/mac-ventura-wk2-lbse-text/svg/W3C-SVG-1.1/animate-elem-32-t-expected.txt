@@ -64,6 +64,8 @@ layer at (394,155) size 35x60
   RenderSVGRect {rect} at (344,105) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=155.00] [width=35.00] [height=60.00]
 layer at (210,260) size 60x10
   RenderSVGRect {rect} at (160,210) size 60x10 [stroke={[type=SOLID] [color=#000000]}] [x=210.00] [y=260.00] [width=60.00] [height=10.00]
+layer at (240,265) size 0x0
+  RenderSVGPath {line} at (235,215) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=240.00] [y1=265.00] [x2=240.00] [y2=265.00]
 layer at (10,304) size 283x46
   RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 284x46

@@ -132,10 +132,15 @@ public:
     std::span<const RefPtr<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     void addSVGResource(const AtomString& id, RenderSVGResourceContainer&);
+#endif
     void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
     void removeSVGResource(const AtomString& id);
-    LegacyRenderSVGResourceContainer* svgResourceById(const AtomString& id) const;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    RenderSVGResourceContainer* lookupSVGResourceById(const AtomString& id) const;
+#endif
+    LegacyRenderSVGResourceContainer* lookupLegacySVGResoureById(const AtomString& id) const;
 
     void addPendingSVGResource(const AtomString& id, SVGElement&);
     bool isIdOfPendingSVGResource(const AtomString& id) const;

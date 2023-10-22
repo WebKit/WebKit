@@ -117,6 +117,7 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
@@ -1026,7 +1027,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         updatePagination();
     else
         m_enclosingPaginationLayer = nullptr;
-    
+
     if (m_hasVisibleContent) {
         // FIXME: Paint offset cache does not work with RenderLayers as there is not a 1-to-1
         // mapping between them and the RenderObjects. It would be neat to enable
@@ -1592,6 +1593,25 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 
 void RenderLayer::updateAncestorDependentState()
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    m_enclosingSVGResourceContainer = nullptr;
+    m_enclosingSVGHiddenContainer = nullptr;
+    auto determineSVGAncestors = [&] (const RenderElement& renderer) {
+        for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (auto* container = dynamicDowncast<RenderSVGResourceContainer>(ancestor)) {
+                m_enclosingSVGResourceContainer = container;
+                return;
+            }
+            if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
+                m_enclosingSVGHiddenContainer = container;
+                return;
+            }
+        }
+    };
+    if (renderer().document().settings().layerBasedSVGEngineEnabled())
+        determineSVGAncestors(renderer());
+#endif
+
     bool insideSVGForeignObject = false;
     if (renderer().document().mayHaveRenderedSVGForeignObjects()) {
         if (ancestorsOfType<LegacyRenderSVGForeignObject>(renderer()).first())
@@ -1666,9 +1686,6 @@ void RenderLayer::updateDescendantDependentFlags()
 bool RenderLayer::computeHasVisibleContent() const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // FIXME: [LBSE] Eventually cache if we're part of a RenderSVGHiddenContainer subtree to avoid tree walks.
-    if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
-        return false;
     if (renderer().isAnonymous() && is<RenderSVGViewportContainer>(renderer()))
         return false;
 #endif
@@ -2342,7 +2359,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         ancestor->beginTransparencyLayers(context, paintingInfo, dirtyRect);
     
     if (paintsWithTransparency(paintingInfo.paintBehavior)) {
-        ASSERT(isCSSStackingContext());
+        ASSERT(isStackingContext());
         m_usedTransparency = true;
         if (canPaintTransparencyWithSetOpacity()) {
             m_savedAlphaForTransparency = context.alpha();
@@ -2912,6 +2929,30 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
+void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, const AffineTransform& layerContentTransform)
+{
+    bool wasPaintingSVGResourceLayer = m_isPaintingSVGResourceLayer;
+    m_isPaintingSVGResourceLayer = true;
+    stateSaver.save();
+    context.concatCTM(layerContentTransform);
+
+    auto localPaintDirtyRect = LayoutRect::infiniteRect();
+
+    auto* rootPaintingLayer = enclosingSVGRootLayer();
+    ASSERT(rootPaintingLayer);
+
+    LayerPaintingInfo paintingInfo(rootPaintingLayer, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize(), 0);
+    paintingInfo.clipToDirtyRect = false;
+
+    OptionSet<PaintLayerFlag> flags { PaintLayerFlag::TemporaryClipRects };
+    if (!renderer().hasNonVisibleOverflow())
+        flags.add(PaintLayerFlag::PaintingOverflowContents);
+
+    paintLayer(context, paintingInfo, flags);
+
+    m_isPaintingSVGResourceLayer = wasPaintingSVGResourceLayer;
+}
+
 static inline bool paintForFixedRootBackground(const RenderLayer* layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags)
 {
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
@@ -3096,7 +3137,7 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
     return { Path(), WindRule::NonZero };
 }
 
-void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, RegionContextStateSaver& regionContextStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
+void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, RegionContextStateSaver& regionContextStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag>& paintFlags, const LayoutSize& offsetFromRoot)
 {
     bool isCollectingRegions = paintFlags.contains(PaintLayerFlag::CollectingEventRegion) || is<AccessibilityRegionContext>(paintingInfo.regionContext);
     if (!renderer().hasClipPath() || (context.paintingDisabled() && !isCollectingRegions) || paintingInfo.paintDirtyRect.isEmpty())
@@ -3105,6 +3146,17 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     // SVG elements get clipped in SVG code.
     if (is<LegacyRenderSVGRoot>(renderer()))
         return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Applying clip-path on <clipPath> enforces us to use mask based clipping, so return false here to disable path based clipping.
+    // Furthermore if we're the child of a resource container (<clipPath> / <mask> / ...) disabled path based clipping.
+    if (m_enclosingSVGResourceContainer && m_enclosingSVGResourceContainer->resourceType() == ClipperResourceType) {
+        // If m_isPaintingSVGResourceLayer is true, this function was invoked via paintSVGResourceLayer() -- clipping on <clipPath> is already
+        // handled in RenderSVGResourceClipper::applyMaskClipping(), so do not set paintSVGClippingMask to true here.
+        paintFlags.set(PaintLayerFlag::PaintingSVGClippingMask, !m_isPaintingSVGResourceLayer);
+        return;
+    }
+#endif
 
     auto clippedContentBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible });
 
@@ -3127,6 +3179,36 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 
     if (is<ReferencePathOperation>(style.clipPath())) {
         auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
+        if (auto* svgClipper = svgClipperFromStyle()) {
+            auto* graphicsElement = svgClipper->shouldApplyPathClipping();
+            if (!graphicsElement) {
+                paintFlags.add(PaintLayerFlag::PaintingSVGClippingMask);
+                return;
+            }
+
+            stateSaver.save();
+            FloatRect svgReferenceBox;
+            FloatSize coordinateSystemOriginTranslation;
+            if (renderer().isSVGLayerAwareRenderer()) {
+                ASSERT(paintingInfo.subpixelOffset.isZero());
+                auto boundingBoxTopLeftCorner = renderer().nominalSVGLayoutLocation();
+                svgReferenceBox = renderer().objectBoundingBox();
+                coordinateSystemOriginTranslation = toLayoutPoint(offsetFromRoot) - boundingBoxTopLeftCorner;
+            } else {
+                auto clipPathObjectBoundingBox = referenceBoxRectForClipPath(CSSBoxType::BorderBox, offsetFromRoot, clippedContentBounds);
+                svgReferenceBox = snapRectToDevicePixels(LayoutRect(clipPathObjectBoundingBox), renderer().document().deviceScaleFactor());
+            }
+
+            if (!coordinateSystemOriginTranslation.isZero())
+                context.translate(coordinateSystemOriginTranslation);
+
+            svgClipper->applyPathClipping(context, svgReferenceBox, *graphicsElement);
+
+            if (!coordinateSystemOriginTranslation.isZero())
+                context.translate(-coordinateSystemOriginTranslation);
+            return;
+        }
+
         if (auto* clipperRenderer = ReferencedSVGResources::referencedClipperRenderer(renderer().treeScopeForSVGReferences(), referenceClipPathOperation)) {
             // Use the border box as the reference box, even though this is not clearly specified: https://github.com/w3c/csswg-drafts/issues/5786.
             // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
@@ -3144,8 +3226,6 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
             
             // FIXME: Support event regions.
         }
-        
-        return;
     }
 }
 
@@ -3240,7 +3320,26 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         && (renderer().view().printing() || renderer().view().hasRenderersWithOutline())
         && ((isPaintingScrollingContent && isPaintingCompositedBackground)
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
-    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
+
+    auto hasVisibleContent = [&]() -> bool {
+        if (!m_hasVisibleContent)
+            return false;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
+        if (m_enclosingSVGResourceContainer) {
+            ASSERT(m_enclosingSVGResourceContainer->hasLayer());
+            return m_enclosingSVGResourceContainer->layer()->isPaintingSVGResourceLayer();
+        }
+
+        // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
+        return !m_enclosingSVGHiddenContainer;
+#else
+        return true;
+#endif
+    };
+
+    bool shouldPaintContent = hasVisibleContent() && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
 
     if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly) && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
         // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.
@@ -3413,11 +3512,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
 
-        if (!(paintFlags & PaintLayerFlag::PaintingCompositingMaskPhase) && (paintFlags & PaintLayerFlag::PaintingCompositingClipPathPhase)) {
+        if ((paintFlags & PaintLayerFlag::PaintingSVGClippingMask) || (!(paintFlags & PaintLayerFlag::PaintingCompositingMaskPhase) && (paintFlags & PaintLayerFlag::PaintingCompositingClipPathPhase))) {
             // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
             paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
-        
+
         if (localPaintFlags & PaintLayerFlag::PaintingChildClippingMaskPhase) {
             // Paint the border radius mask for the fragments.
             paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
@@ -4019,6 +4118,14 @@ RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
             return nullptr;
         }
     }
+    return curr;
+}
+
+RenderLayer* RenderLayer::enclosingSVGRootLayer() const
+{
+    auto* curr = parent();
+    while (curr && !curr->renderer().isSVGRoot())
+        curr = curr->parent();
     return curr;
 }
 
@@ -5428,6 +5535,29 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
     return hasNonEmptyChildRenderers(*request);
 }
 
+// FIXME: this probably belongs in RenderLayerModelObject or SVGResourcesCache.
+RenderSVGResourceClipper* RenderLayer::svgClipperFromStyle() const
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (!renderer().document().settings().layerBasedSVGEngineEnabled())
+        return nullptr;
+
+    if (!renderer().style().clipPath() || !is<ReferencePathOperation>(renderer().style().clipPath()))
+        return nullptr;
+
+    const auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*renderer().style().clipPath());
+    if (auto* renderResource = dynamicDowncast<RenderSVGResourceClipper>(renderer().document().lookupSVGResourceById(referenceClipPathOperation.fragment())))
+        return renderResource;
+
+    if (auto* element = enclosingElement()) {
+        ASSERT(is<SVGElement>(element));
+        renderer().document().addPendingSVGResource(referenceClipPathOperation.fragment(), downcast<SVGElement>(*element));
+    }
+#endif
+
+    return nullptr;
+}
+
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
@@ -5841,7 +5971,7 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::SkipSelectionHighlight: ts << "SkipSelectionHighlight"; break;
     case PaintBehavior::ForceBlackText: ts << "ForceBlackText"; break;
     case PaintBehavior::ForceWhiteText: ts << "ForceWhiteText"; break;
-    case PaintBehavior::RenderingSVGMask: ts << "RenderingSVGMask"; break;
+    case PaintBehavior::RenderingSVGClipOrMask: ts << "RenderingSVGClipOrMask"; break;
     case PaintBehavior::SkipRootBackground: ts << "SkipRootBackground"; break;
     case PaintBehavior::RootBackgroundOnly: ts << "RootBackgroundOnly"; break;
     case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;

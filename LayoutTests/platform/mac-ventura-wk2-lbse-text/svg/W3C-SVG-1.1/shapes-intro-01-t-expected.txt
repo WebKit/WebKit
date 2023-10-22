@@ -64,6 +64,8 @@ layer at (235,282.75) size 55x9
   RenderSVGText {text} at (230,200) size 56x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 56x9
       chunk 1 text run 1 at (235.00,290.00) startOffset 0 endOffset 16 width 55.14: "Zero length line"
+layer at (240,265) size 0x0
+  RenderSVGPath {line} at (235,215) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=240.00] [y1=265.00] [x2=240.00] [y2=265.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

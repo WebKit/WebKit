@@ -60,7 +60,7 @@ enum class PaintBehavior : uint32_t {
     SkipSelectionHighlight              = 1 << 1,
     ForceBlackText                      = 1 << 2,
     ForceWhiteText                      = 1 << 3,
-    RenderingSVGMask                    = 1 << 4,
+    RenderingSVGClipOrMask              = 1 << 4,
     SkipRootBackground                  = 1 << 5,
     RootBackgroundOnly                  = 1 << 6,
     SelectionAndBackgroundsOnly         = 1 << 7,

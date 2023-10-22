@@ -10,6 +10,10 @@ layer at (-10,-15) size 20x22 backgroundClip at (0,0) size 225x425 clip at (0,0)
   RenderSVGHiddenContainer {symbol} at (-10,-15) size 20x22
 layer at (0,-15) size 0x30
   RenderSVGPath {path} at (10,0) size 0x30 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 L 0 15"]
+layer at (0,-9) size 8x6 backgroundClip at (0,0) size 225x425 clip at (0,0) size 225x425
+  RenderSVGPath {path} at (10,6) size 8x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 2.66667 -3 8 -3"]
+layer at (-8,-9) size 8x6 backgroundClip at (0,0) size 225x425 clip at (0,0) size 225x425
+  RenderSVGPath {path} at (2,6) size 8x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 -2.66667 -3 -8 -3"]
 layer at (0,0) size 10x7
   RenderSVGPath {path} at (10,15) size 10x7 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0 C 0 4.66667 3.33333 7 10 7"]
 layer at (-10,0) size 10x7 backgroundClip at (0,0) size 225x425 clip at (0,0) size 225x425

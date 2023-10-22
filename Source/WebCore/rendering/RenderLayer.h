@@ -82,6 +82,8 @@ class RenderLayerScrollableArea;
 class RenderMarquee;
 class RenderReplica;
 class RenderScrollbarPart;
+class RenderSVGHiddenContainer;
+class RenderSVGResourceClipper;
 class RenderStyle;
 class RenderView;
 class Scrollbar;
@@ -426,6 +428,10 @@ public:
         ;
     }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool isPaintingSVGResourceLayer() const { return m_isPaintingSVGResourceLayer; }
+#endif
+
     void repaintIncludingDescendants();
 
     // Indicate that the layer contents need to be repainted. Only has an effect
@@ -628,7 +634,8 @@ public:
         PaintingRootBackgroundOnly            = 1 << 11,
         PaintingSkipRootBackground            = 1 << 12,
         PaintingChildClippingMaskPhase        = 1 << 13,
-        CollectingEventRegion                 = 1 << 14,
+        PaintingSVGClippingMask               = 1 << 14,
+        CollectingEventRegion                 = 1 << 15,
     };
     static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
@@ -850,6 +857,9 @@ public:
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
 
+    RenderSVGResourceClipper* svgClipperFromStyle() const;
+    RenderLayer* enclosingSVGRootLayer() const;
+
     bool isBitmapOnly() const;
 
     enum ViewportConstrainedNotCompositedReason {
@@ -889,6 +899,8 @@ public:
     bool setIsOpportunisticStackingContext(bool);
 
     void setIsHiddenByOverflowTruncation(bool);
+
+    void paintSVGResourceLayer(GraphicsContext&, GraphicsContextStateSaver&, const AffineTransform& contentTransform);
 
 private:
 
@@ -1086,7 +1098,7 @@ private:
 
     std::pair<Path, WindRule> computeClipPath(const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes) const;
 
-    void setupClipPath(GraphicsContext&, GraphicsContextStateSaver&, RegionContextStateSaver&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot);
+    void setupClipPath(GraphicsContext&, GraphicsContextStateSaver&, RegionContextStateSaver&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>&, const LayoutSize& offsetFromRoot);
 
     void ensureLayerFilters();
     void clearLayerFilters();
@@ -1262,6 +1274,9 @@ private:
 
     bool m_insideSVGForeignObject : 1;
     bool m_isHiddenByOverflowTruncation : 1 { false };
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool m_isPaintingSVGResourceLayer : 1 { false };
+#endif
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason
@@ -1322,6 +1337,14 @@ private:
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     WeakPtr<RenderLayer> m_enclosingPaginationLayer;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Pointer to the enclosing RenderSVGResourceContainer, if present.
+    WeakPtr<RenderSVGResourceContainer> m_enclosingSVGResourceContainer;
+
+    // Pointer to the enclosing RenderSVGHiddenContainer, if present.
+    WeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenContainer;
+#endif
 
     IntRect m_blockSelectionGapsBounds;
 

@@ -10,6 +10,8 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGHiddenContainer {defs} at (56,27.41) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#000000]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (0,15.59) size 44x259
@@ -64,6 +66,8 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (0,20.83) size 60x12
@@ -74,24 +78,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (10,50.83) size 45x12
@@ -105,12 +117,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (10,80.83) size 95x12
@@ -124,24 +140,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (0,-19.17) size 60x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -157,24 +181,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (10,-19.17) size 45x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -190,24 +222,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (10,-19.17) size 55x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -223,12 +263,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (0,-19.17) size 60x27 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -242,24 +286,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-19.17) size 109x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -268,12 +320,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {use} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-36.44,-31.41) size 120x124 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -292,6 +348,8 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-30,20.83) size 60x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -302,24 +360,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (2.50,50.83) size 45x12
@@ -333,12 +399,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (2.50,80.83) size 80x12
@@ -352,24 +422,32 @@ layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-7.50,-19.17) size 60x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -385,24 +463,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (2.50,-19.17) size 45x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -418,24 +504,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (2.50,-19.17) size 55x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -451,12 +545,16 @@ layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (3.50,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-7.50,-19.17) size 45x27 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -470,24 +568,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-19.17) size 87x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -496,12 +602,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-60,-31.41) size 120x124 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -520,30 +630,40 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-5,50.83) size 45x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -557,12 +677,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (56,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-5,80.83) size 65x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -576,24 +700,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (11,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (11,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (11,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (11,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-15,-19.17) size 60x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -609,24 +741,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-5,-19.17) size 45x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -642,24 +782,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-5,-19.17) size 55x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -675,12 +823,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (26,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-30,-19.17) size 45x27 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -694,24 +846,32 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-5,-19.17) size 65x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -720,12 +880,16 @@ layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (1,15.17) size 8x8
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (0,-15) size 0x15
+  RenderSVGPath {line} at (4,-11) size 0x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
 layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (10,314) size 263x46

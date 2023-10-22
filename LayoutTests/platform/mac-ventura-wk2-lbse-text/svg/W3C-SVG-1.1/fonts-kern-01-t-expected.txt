@@ -10,6 +10,8 @@ layer at (-2,-2) size 203x52 backgroundClip at (0,0) size 480x360 clip at (0,0) 
   RenderSVGHiddenContainer {defs} at (18.67,12) size 202x52
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -58,6 +60,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -66,6 +70,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -104,6 +110,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -112,6 +120,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -150,6 +160,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -158,6 +170,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -166,6 +180,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -174,6 +190,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -212,6 +230,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -220,6 +240,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -228,6 +250,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -236,6 +260,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -274,6 +300,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -282,6 +310,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -290,6 +320,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -298,6 +330,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -336,6 +370,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -344,6 +380,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -352,6 +390,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -360,6 +400,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -398,6 +440,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -406,6 +450,8 @@ layer at (-2,-2) size 4x5 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {use} at (0,7.17) size 4x4
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,-12) size 0x12
+  RenderSVGPath {line} at (2,-10) size 0x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-12.00]
 layer at (0,0) size 12x0
   RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#8888FF]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
 layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

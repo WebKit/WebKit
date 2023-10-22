@@ -36,6 +36,8 @@ public:
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGAnimatedEnumeration& clipPathUnitsAnimated() { return m_clipPathUnits; }
 
+    SVGGraphicsElement* shouldApplyPathClipping() const;
+
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
 

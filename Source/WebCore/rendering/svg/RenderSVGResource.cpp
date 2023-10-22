@@ -59,7 +59,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     bool applyToFill = mode == RenderSVGResourceMode::ApplyToFill;
 
     // When rendering the mask for a LegacyRenderSVGResourceClipper, always use the initial fill paint server.
-    if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask)) {
+    if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
         // Ignore stroke.
         if (!applyToFill)
             return nullptr;

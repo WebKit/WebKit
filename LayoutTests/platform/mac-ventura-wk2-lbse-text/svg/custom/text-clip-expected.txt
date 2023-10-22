@@ -4,6 +4,12 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
+layer at (200,200) size 100x200
+  RenderSVGHiddenContainer {defs} at (200,200) size 100x200
+layer at (200,200) size 100x200
+  RenderSVGResourceClipper {clipPath} at (0,0) size 100x200
+layer at (200,200) size 100x200
+  RenderSVGPath {path} at (0,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M 200 200 L 300 200 L 300 400 L 200 400 Z"]
 layer at (0,75.75) size 645x64
   RenderSVGTransformableContainer {g} at (0,75.75) size 644.63x63
 layer at (0,75.75) size 131x63

@@ -77,6 +77,7 @@
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1534,6 +1535,18 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
 
     auto offsetFromHitTestRoot = toLayoutSize(accumulatedOffset + location());
     auto hitTestLocationInLocalCoordinates = hitTestLocation.point() - offsetFromHitTestRoot;
+
+    auto hitsClipContent = [&](Element& element) -> bool {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (is<RenderSVGResourceClipper>(element.renderer())) {
+            CheckedRef clipper = downcast<RenderSVGResourceClipper>(*element.renderer());
+            return clipper->hitTestClipContent( { borderBoxRect() }, hitTestLocationInLocalCoordinates);
+        }
+#endif
+        CheckedRef clipper = downcast<LegacyRenderSVGResourceClipper>(*element.renderer());
+        return clipper->hitTestClipContent( { borderBoxRect() }, FloatPoint { hitTestLocationInLocalCoordinates });
+    };
+
     switch (style().clipPath()->type()) {
     case PathOperation::Shape: {
         auto& clipPath = downcast<ShapePathOperation>(*style().clipPath());
@@ -1549,8 +1562,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
             break;
         if (!is<SVGClipPathElement>(*element))
             break;
-        CheckedRef clipper = downcast<LegacyRenderSVGResourceClipper>(*element->renderer());
-        if (!clipper->hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
+        if (!hitsClipContent(*element))
             return false;
         break;
     }

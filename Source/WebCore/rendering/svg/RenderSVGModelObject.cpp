@@ -36,6 +36,7 @@
 
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
@@ -269,6 +270,14 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(LayoutRect& rect, co
         intersects = !rect.isEmpty();
     }
     return intersects;
+}
+
+Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
+{
+    if (layer()->isTransformed())
+        transform.multiply(layer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
+
+    return pathFromGraphicsElement(&downcast<SVGGraphicsElement>(element()));
 }
 
 } // namespace WebCore
