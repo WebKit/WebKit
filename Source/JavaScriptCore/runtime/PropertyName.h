@@ -116,22 +116,16 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
     return parseIndex(*uid);
 }
 
-// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-canonicalnumericindexstring
-ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName)
+template<typename CharacterType>
+ALWAYS_INLINE std::optional<bool> fastIsCanonicalNumericIndexString(std::span<const CharacterType> characters)
 {
-    if (!propertyName)
-        return false;
-    if (propertyName->isSymbol())
-        return false;
-
-    StringView view(propertyName);
-    unsigned length = view.length();
-    if (!length)
-        return false;
-    UChar first = view[0];
+    auto* rawCharacters = characters.data();
+    auto length = characters.size();
+    ASSERT(length >= 1);
+    auto first = rawCharacters[0];
     if (length == 1)
         return isASCIIDigit(first);
-    UChar second = view[1];
+    auto second = rawCharacters[1];
     if (first == '-') {
         // -Infinity case should go to the slow path. -NaN cannot exist since it becomes NaN.
         if (!isASCIIDigit(second) && (length != strlen("-Infinity") || second != 'I'))
@@ -143,13 +137,29 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
         if (!(length == strlen("Infinity") && first == 'I') && !(length == strlen("NaN") && first == 'N'))
             return false;
     }
+    return std::nullopt;
+}
+
+// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-canonicalnumericindexstring
+ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName)
+{
+    if (!propertyName)
+        return false;
+    if (propertyName->isSymbol())
+        return false;
+    if (!propertyName->length())
+        return false;
+
+    auto fastResult = propertyName->is8Bit()
+        ? fastIsCanonicalNumericIndexString(propertyName->span8())
+        : fastIsCanonicalNumericIndexString(propertyName->span16());
+    if (fastResult)
+        return *fastResult;
 
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
     const char* indexString = WTF::numberToString(index, buffer);
-    if (!equal(propertyName, indexString))
-        return false;
-    return true;
+    return equal(propertyName, indexString);
 }
 
 } // namespace JSC

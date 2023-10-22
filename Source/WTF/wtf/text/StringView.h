@@ -200,9 +200,12 @@ private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
     explicit StringView(const char*);
 
+    UChar unsafeCharacterAt(unsigned index) const;
+
     friend bool equal(StringView, StringView);
     friend bool equal(StringView, StringView, unsigned length);
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
+    friend size_t findCommon(StringView haystack, StringView needle, unsigned start);
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
@@ -557,6 +560,14 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
 }
 
 inline UChar StringView::characterAt(unsigned index) const
+{
+    RELEASE_ASSERT(index < length());
+    if (is8Bit())
+        return characters8()[index];
+    return characters16()[index];
+}
+
+inline UChar StringView::unsafeCharacterAt(unsigned index) const
 {
     ASSERT(index < length());
     if (is8Bit())
@@ -1033,7 +1044,7 @@ inline auto StringView::CodeUnits::Iterator::operator++() -> Iterator&
 
 inline UChar StringView::CodeUnits::Iterator::operator*() const
 {
-    return m_stringView[m_index];
+    return m_stringView.unsafeCharacterAt(m_index);
 }
 
 inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) const
@@ -1176,9 +1187,10 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     unsigned needleLength = needle.length();
 
     if (needleLength == 1) {
+        UChar firstCharacter = needle.unsafeCharacterAt(0);
         if (haystack.is8Bit())
-            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
-        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
+            return WTF::find(haystack.characters8(), haystack.length(), firstCharacter, start);
+        return WTF::find(haystack.characters16(), haystack.length(), firstCharacter, start);
     }
 
     if (start > haystack.length())

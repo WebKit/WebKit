@@ -17,7 +17,7 @@ PASS Clicking on anchor element (that isn't an invoking element) shouldn't preve
 FAIL Dragging from an open popover outside an open popover should leave the popover open assert_true: expected true got false
 PASS A popover inside an invoking element doesn't participate in that invoker's ancestor chain
 PASS An invoking element that was not used to invoke the popover is not part of the ancestor chain
-FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
+PASS Scrolling within a popover should not close the popover
 PASS Clicking inside a shadow DOM popover does not close that popover
 PASS Clicking outside a shadow DOM popover should close that popover
 PASS Moving focus back to the anchor element should not dismiss the popover

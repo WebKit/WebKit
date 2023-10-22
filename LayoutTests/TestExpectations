@@ -245,9 +245,6 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-e
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]
 
-# Only iOS has an implementation of UIScriptController::sendEventStream().
-imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
-
 # Only Mac and iOS WK2 have an implementation right now.
 imported/w3c/web-platform-tests/video-rvfc [ Skip ]
 fast/mediastream/getUserMedia-rvfc.html [ Skip ]
@@ -6166,7 +6163,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/corb/preload-image-png-mislabeled-as-html-nosniff.tentative.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/corb/script-html-correctly-labeled.tentative.sub.html [ Skip ]
@@ -6819,3 +6815,15 @@ webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element
 webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
 
 webkit.org/b/262734 http/tests/security/service-worker-network-load.html [ Pass Timeout ]
+
+webkit.org/b/263434 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html [ Skip ]
+
+webkit.org/b/261810 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
+
+webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
+
+# webkit.org/b/263438 Three dom/events/scrolling WPTs are constantly timing out
+imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html [ Skip ]

@@ -361,52 +361,53 @@ static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
     return PNaN;
 }
 
-template <typename CharType>
-static double toDouble(const CharType* characters, unsigned size)
+template <typename CharacterType>
+static double toDouble(std::span<const CharacterType> characters)
 {
-    const CharType* endCharacters = characters + size;
+    const auto* rawCharacters = characters.data();
+    const auto* endRawCharacters = rawCharacters + characters.size();
 
     // Skip leading white space.
-    for (; characters < endCharacters; ++characters) {
-        if (!isStrWhiteSpace(*characters))
+    for (; rawCharacters < endRawCharacters; ++rawCharacters) {
+        if (!isStrWhiteSpace(*rawCharacters))
             break;
     }
 
     // Empty string.
-    if (characters == endCharacters)
+    if (rawCharacters == endRawCharacters)
         return 0.0;
 
     double number;
-    if (characters[0] == '0' && characters + 2 < endCharacters) {
-        if ((characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
-            number = jsHexIntegerLiteral(characters, endCharacters);
-        else if ((characters[1] | 0x20) == 'o' && isASCIIOctalDigit(characters[2]))
-            number = jsOctalIntegerLiteral(characters, endCharacters);
-        else if ((characters[1] | 0x20) == 'b' && isASCIIBinaryDigit(characters[2]))
-            number = jsBinaryIntegerLiteral(characters, endCharacters);
+    if (rawCharacters[0] == '0' && rawCharacters + 2 < endRawCharacters) {
+        if ((rawCharacters[1] | 0x20) == 'x' && isASCIIHexDigit(rawCharacters[2]))
+            number = jsHexIntegerLiteral(rawCharacters, endRawCharacters);
+        else if ((rawCharacters[1] | 0x20) == 'o' && isASCIIOctalDigit(rawCharacters[2]))
+            number = jsOctalIntegerLiteral(rawCharacters, endRawCharacters);
+        else if ((rawCharacters[1] | 0x20) == 'b' && isASCIIBinaryDigit(rawCharacters[2]))
+            number = jsBinaryIntegerLiteral(rawCharacters, endRawCharacters);
         else
-            number = jsStrDecimalLiteral(characters, endCharacters);
+            number = jsStrDecimalLiteral(rawCharacters, endRawCharacters);
     } else
-        number = jsStrDecimalLiteral(characters, endCharacters);
+        number = jsStrDecimalLiteral(rawCharacters, endRawCharacters);
 
     // Allow trailing white space.
-    for (; characters < endCharacters; ++characters) {
-        if (!isStrWhiteSpace(*characters))
+    for (; rawCharacters < endRawCharacters; ++rawCharacters) {
+        if (!isStrWhiteSpace(*rawCharacters))
             break;
     }
-    if (characters != endCharacters)
+    if (rawCharacters != endRawCharacters)
         return PNaN;
 
     return number;
 }
 
 // See ecma-262 6th 11.8.3
-double jsToNumber(StringView s)
+template<typename CharacterType>
+static ALWAYS_INLINE double jsToNumber(std::span<const CharacterType> characters)
 {
-    unsigned size = s.length();
-
-    if (size == 1) {
-        UChar c = s[0];
+    auto* rawCharacters = characters.data();
+    if (characters.size() == 1) {
+        auto c = rawCharacters[0];
         if (isASCIIDigit(c))
             return c - '0';
         if (isStrWhiteSpace(c))
@@ -414,8 +415,8 @@ double jsToNumber(StringView s)
         return PNaN;
     }
 
-    if (size == 2 && s[0] == '-') {
-        UChar c = s[1];
+    if (characters.size() == 2 && rawCharacters[0] == '-') {
+        auto c = rawCharacters[1];
         if (c == '0')
             return -0.0;
         if (isASCIIDigit(c))
@@ -423,9 +424,14 @@ double jsToNumber(StringView s)
         return PNaN;
     }
 
+    return toDouble(characters);
+}
+
+double jsToNumber(StringView s)
+{
     if (s.is8Bit())
-        return toDouble(s.characters8(), size);
-    return toDouble(s.characters16(), size);
+        return jsToNumber(s.span8());
+    return jsToNumber(s.span16());
 }
 
 static double parseFloat(StringView s)

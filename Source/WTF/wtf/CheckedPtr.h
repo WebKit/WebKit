@@ -228,7 +228,11 @@ template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<Ch
 
 template<typename P> struct DefaultHash<CheckedPtr<P>> : PtrHash<CheckedPtr<P>> { };
 
+template<typename> struct PackedPtrTraits;
+template<typename T> using PackedCheckedPtr = CheckedPtr<T, PackedPtrTraits<T>>;
+
 } // namespace WTF
 
 using WTF::CheckedPtr;
+using WTF::PackedCheckedPtr;
 

@@ -1,10 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 
-Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
-
-TIMEOUT Wheel-scroll over pointer-events: auto descendant scrolls pointer-events: none scroller. Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
-
-TIMEOUT Wheel-scroll over pointer-events: auto descendant scrolls pointer-events: none scroller. Test timed out
+FAIL Wheel-scroll over pointer-events: auto descendant scrolls pointer-events: none scroller. assert_equals: Incorrect element scrolled expected "overlay" but got "root"
 

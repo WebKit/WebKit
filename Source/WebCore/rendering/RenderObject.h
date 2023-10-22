@@ -1115,7 +1115,7 @@ private:
 
     CheckedPtr<RenderElement> m_parent;
     CheckedPtr<RenderObject> m_previous;
-    PackedPtr<RenderObject> m_next; // FIXME: This should use a CheckedPtr.
+    PackedCheckedPtr<RenderObject> m_next;
     Type m_type;
 
     CheckedPtr<Layout::Box> m_layoutBox;

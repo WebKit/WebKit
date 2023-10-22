@@ -1,4 +1,4 @@
 
 
-FAIL Wheel scroll in iframe chains to containing element. promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
+PASS Wheel scroll in iframe chains to containing element.
 

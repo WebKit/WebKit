@@ -38,7 +38,6 @@
 #include "LLIntData.h"
 #include "NativeCalleeRegistry.h"
 #include "Options.h"
-#include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
 #include "WasmCapabilities.h"
@@ -92,7 +91,6 @@ void initialize()
                 isARM64E_FPAC(); // Call this to initialize g_jscConfig.canUseFPAC.
 #endif
             }
-            StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
 

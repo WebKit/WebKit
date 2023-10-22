@@ -3665,8 +3665,6 @@ webkit.org/b/240037 css3/background/background-repeat-space-content.html [ Pass 
 
 webkit.org/b/240069 fast/css/continuationCrash.html [ Pass Failure ]
 
-webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
@@ -4544,7 +4542,6 @@ imported/w3c/web-platform-tests/fetch/range/non-matching-range-response.html [ F
 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nesting.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
 media/media-can-play-h265-video.html [ Failure ]
@@ -4644,12 +4641,42 @@ imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.a
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.html [ Crash ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.worker.html  [ Crash ]
 
- webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
+webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 
- webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
+webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
 
- webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputmode-none.html [ Pass Failure ]
+webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputmode-none.html [ Pass Failure ]
 
 webkit.org/b/263479 platform/ios/mediastream/getUserMedia-override-audio-session-interruption.html [ Pass Failure ]
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
+
+# webkit.org/b/263439 [ iOS ] Several WPTs using wheel actions are timing out after b243272
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-body.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-root.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-window.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-body.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-root.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-window.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-body.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-root.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-window.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-body.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-root.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-window.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scrolling.html [ Skip ]
