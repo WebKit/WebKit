@@ -443,7 +443,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     if (!shouldPaintBaseBackground())
         return;
 
-    if (paintInfo.skipRootBackground())
+    if (paintInfo.skipViewBackground())
         return;
 
     bool rootFillsViewport = false;

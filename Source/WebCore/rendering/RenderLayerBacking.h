@@ -335,6 +335,8 @@ private:
     void updatePaintingPhases();
 
     void setBackgroundLayerPaintsFixedRootBackground(bool);
+    void setBackgroundLayerPaintsRootElementBackground(bool);
+    bool isRenderViewAndCanPaintFixedRootBackground();
 
     LayoutSize contentOffsetInCompositingLayer() const;
     LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
@@ -456,6 +458,7 @@ private:
     bool m_canCompositeBackdropFilters { false };
 #endif
     bool m_backgroundLayerPaintsFixedRootBackground { false };
+    bool m_backgroundLayerPaintsRootElementBackground { false };
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };
 #if ENABLE(ASYNC_SCROLLING)

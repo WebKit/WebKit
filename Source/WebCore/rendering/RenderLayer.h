@@ -491,6 +491,7 @@ public:
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
     bool isRenderViewLayer() const { return m_isRenderViewLayer; }
+    bool isRenderViewAndCanPaintFixedRootBackground() const;
     bool isForcedStackingContext() const { return m_forcedStackingContext; }
     bool isOpportunisticStackingContext() const { return m_isOpportunisticStackingContext; }
 
@@ -629,6 +630,7 @@ public:
         PaintingSkipRootBackground            = 1 << 12,
         PaintingChildClippingMaskPhase        = 1 << 13,
         CollectingEventRegion                 = 1 << 14,
+        PaintingSkipViewBackground            = 1 << 15,
     };
     static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
@@ -1239,6 +1241,7 @@ private:
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
     bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
+    bool m_paintingInsideRootElementBackground : 1;
     unsigned m_repaintStatus : 2; // RepaintStatus
 
     bool m_visibleContentStatusDirty : 1;

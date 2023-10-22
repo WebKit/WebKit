@@ -224,7 +224,7 @@ public:
     bool fixedLayerIntersectsViewport(const RenderLayer&) const;
 
     bool supportsFixedRootBackgroundCompositing() const;
-    bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
+    bool needsFixedRootBackgroundLayer() const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
 
     void rootOrBodyStyleChanged(RenderElement&, const RenderStyle* oldStyle);
@@ -384,6 +384,8 @@ public:
     unsigned compositingUpdateCount() const { return m_compositingUpdateCount; }
 
     class BackingSharingState;
+
+    bool requiresCompositingForFixedBackgroundAndEffects(RenderLayerModelObject&) const;
 
 private:
     struct CompositingState;
