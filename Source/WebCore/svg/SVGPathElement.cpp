@@ -51,7 +51,8 @@ private:
 
     HashMap<AtomString, SVGPathByteStream::Data> m_cache;
     uint64_t m_sizeInBytes { 0 };
-    static constexpr uint64_t maxSizeInBytes = 150 * 1024; // 150 Kb.
+    static constexpr uint64_t maxItemSizeInBytes = 5 * 1024; // 5 Kb.
+    static constexpr uint64_t maxCacheSizeInBytes = 150 * 1024; // 150 Kb.
 };
 
 PathSegListCache& PathSegListCache::singleton()
@@ -69,11 +70,11 @@ const SVGPathByteStream::Data* PathSegListCache::get(const AtomString& attribute
 void PathSegListCache::add(const AtomString& attributeValue, const SVGPathByteStream::Data& data)
 {
     size_t newDataSize = data.size();
-    if (UNLIKELY(newDataSize > (maxSizeInBytes / 2)))
+    if (UNLIKELY(newDataSize > maxItemSizeInBytes))
         return;
 
     m_sizeInBytes += newDataSize;
-    while (m_sizeInBytes > maxSizeInBytes) {
+    while (m_sizeInBytes > maxCacheSizeInBytes) {
         ASSERT(!m_cache.isEmpty());
         auto iteratorToRemove = m_cache.random();
         ASSERT(iteratorToRemove != m_cache.end());
