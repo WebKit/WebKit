@@ -1659,6 +1659,10 @@ public:
     const Logger& logger() const;
     const void* logIdentifier() const;
 
+#if PLATFORM(GTK) && USE(GBM)
+    const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2564,6 +2568,9 @@ private:
 
 #if PLATFORM(GTK)
     WebCore::Color m_accentColor;
+#if USE(GBM)
+    Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
+#endif
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)

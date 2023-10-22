@@ -121,6 +121,11 @@ public:
 #endif
 #if USE(GBM)
     struct gbm_device* gbmDevice();
+    struct DMABufFormat {
+        uint32_t fourcc { 0 };
+        Vector<uint64_t, 1> modifiers;
+    };
+    const Vector<DMABufFormat>& dmabufFormats();
 #endif
 
 #if PLATFORM(GTK)
@@ -208,6 +213,9 @@ private:
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     mutable EGLDisplay m_angleEGLDisplay { nullptr };
     EGLContext m_angleSharingGLContext { nullptr };
+#endif
+#if USE(GBM)
+    Vector<DMABufFormat> m_dmabufFormats;
 #endif
 #endif
 

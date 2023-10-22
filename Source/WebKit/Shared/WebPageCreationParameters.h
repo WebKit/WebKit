@@ -69,6 +69,10 @@
 #include "WebExtensionControllerParameters.h"
 #endif
 
+#if PLATFORM(GTK) && USE(GBM)
+#include "DMABufRendererBufferFormat.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -298,6 +302,10 @@ struct WebPageCreationParameters {
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     SandboxExtension::Handle machBootstrapHandle;
+#endif
+
+#if PLATFORM(GTK) && USE(GBM)
+    Vector<DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
 };
 

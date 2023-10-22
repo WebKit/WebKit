@@ -242,4 +242,8 @@ struct WebKit::WebPageCreationParameters {
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     WebKit::SandboxExtension::Handle machBootstrapHandle;
 #endif
+
+#if PLATFORM(GTK) && USE(GBM)
+    Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
 }

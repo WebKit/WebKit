@@ -62,6 +62,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/gtk/GtkSettingsManagerProxy
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
+
 list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
 
 list(APPEND WebKit_DERIVED_SOURCES

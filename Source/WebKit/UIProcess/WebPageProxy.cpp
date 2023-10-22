@@ -276,6 +276,9 @@
 #endif
 
 #if PLATFORM(GTK)
+#if USE(GBM)
+#include "AcceleratedBackingStoreDMABuf.h"
+#endif
 #include "GtkSettingsManager.h"
 #include <WebCore/SelectionData.h>
 #endif
@@ -9723,6 +9726,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
     if (!shouldBlockIOKit(preferences(), drawingArea.type()) || createBootstrapExtension)
         parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
+#endif
+
+#if PLATFORM(GTK) && USE(GBM)
+    parameters.preferredBufferFormats = AcceleratedBackingStoreDMABuf::preferredBufferFormats();
 #endif
     return parameters;
 }

@@ -28,7 +28,7 @@
 #if USE(EGL)
 
 #include "AcceleratedBackingStore.h"
-
+#include "DMABufRendererBufferFormat.h"
 #include "MessageReceiver.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
@@ -64,6 +64,9 @@ class AcceleratedBackingStoreDMABuf final : public AcceleratedBackingStore, publ
 public:
     static OptionSet<DMABufRendererBufferMode> rendererBufferMode();
     static bool checkRequirements();
+#if USE(GBM)
+    static Vector<DMABufRendererBufferFormat> preferredBufferFormats();
+#endif
     static std::unique_ptr<AcceleratedBackingStoreDMABuf> create(WebPageProxy&);
     ~AcceleratedBackingStoreDMABuf();
 private:
@@ -72,7 +75,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didCreateBuffer(uint64_t id, WTF::UnixFileDescriptor&&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+    void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
     void didCreateBufferSHM(uint64_t id, ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
     void frame(uint64_t id);
@@ -114,7 +117,7 @@ private:
 
     class BufferEGLImage final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
         ~BufferEGLImage();
 
         Buffer::Type type() const override { return Buffer::Type::EglImage; }
@@ -122,16 +125,16 @@ private:
         EGLImage image() const { return m_image; }
 
     private:
-        BufferEGLImage(uint64_t id, const WebCore::IntSize&, WTF::UnixFileDescriptor&&, EGLImage);
+        BufferEGLImage(uint64_t id, const WebCore::IntSize&, Vector<WTF::UnixFileDescriptor>&&, EGLImage);
 
-        WTF::UnixFileDescriptor m_fd;
+        Vector<WTF::UnixFileDescriptor> m_fds;
         EGLImage m_image { nullptr };
     };
 
 #if USE(GBM)
     class BufferGBM final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride);
+        static RefPtr<Buffer> create(uint64_t id, const WebCore::IntSize&, uint32_t format, WTF::UnixFileDescriptor&&, uint32_t stride);
         ~BufferGBM();
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
