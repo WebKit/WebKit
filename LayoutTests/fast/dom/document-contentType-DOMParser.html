@@ -6,7 +6,7 @@
 </head>
 <body>
  <script>
-  
+
 var htmlContent =
                 "<html>" +
                     "<head>" +
@@ -79,6 +79,21 @@ shouldThrow('new DOMParser().parseFromString(xslContent, "text/xsl").contentType
 shouldThrow('new DOMParser().parseFromString(xmlContent, "text/dummy+xml").contentType', "'TypeError: Type error'");
 shouldThrow('new DOMParser().parseFromString(xmlContent, "text/XML").contentType', "'TypeError: Type error'");
 shouldThrow('new DOMParser().parseFromString(htmlContent, "TEXT/html").contentType', "'TypeError: Type error'");
+
+var htmlContentWithSpace = "\n        <div class=\"bpx-player-container\"></div>        \n";
+var parsedContent = new DOMParser().parseFromString(htmlContentWithSpace, "text/html");
+shouldBeEqualToString('parsedContent.body.firstChild.nodeName', 'DIV');
+shouldBe('parsedContent.body.childNodes.length', '2');
+shouldBeEqualToString('parsedContent.body.childNodes[1].nodeName', '#text');
+
+var div = document.createElement("div");
+div.innerHTML = htmlContentWithSpace;
+shouldBeEqualToString('div.firstChild.nodeName', '#text');
+shouldBe('div.childNodes.length', '3');
+shouldBeEqualToString('div.childNodes[2].nodeName', '#text');
+
+var htmlContentWithJustSpaces = "\n                \n";
+shouldBe('new DOMParser().parseFromString(htmlContentWithJustSpaces, "text/html").body.childNodes.length', '0');
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

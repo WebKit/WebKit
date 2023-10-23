@@ -60,7 +60,7 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
     bool usedFastPath = false;
     if (contentType == "text/html"_s) {
         auto body = HTMLBodyElement::create(document);
-        usedFastPath = tryFastParsingHTMLFragment(string, document, body, body, parsingOptions);
+        usedFastPath = tryFastParsingHTMLFragment(StringView { string }.substring(string.find(isNotASCIIWhitespace<UChar>)), document, body, body, parsingOptions);
         if (LIKELY(usedFastPath)) {
             auto html = HTMLHtmlElement::create(document);
             document->appendChild(html);
