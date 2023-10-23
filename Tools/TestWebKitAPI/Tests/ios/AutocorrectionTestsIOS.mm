@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "Test.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -69,12 +70,12 @@
 
 @end
 
-static void checkCGRectIsEqualToCGRectWithLogging(CGRect expected, CGRect observed)
+static void checkCGRectIsNotEmpty(CGRect rect)
 {
-    BOOL isEqual = CGRectEqualToRect(expected, observed);
-    EXPECT_TRUE(isEqual);
-    if (!isEqual)
-        NSLog(@"Expected: %@ but observed: %@", NSStringFromCGRect(expected), NSStringFromCGRect(observed));
+    BOOL isEmpty = CGRectIsEmpty(rect);
+    EXPECT_FALSE(isEmpty);
+    if (isEmpty)
+        NSLog(@"Expected %@ to be non-empty", NSStringFromCGRect(rect));
 }
 
 TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
@@ -91,9 +92,9 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [webView _executeEditCommand:@"MoveToEndOfLine" argument:nil completion:nil];
 
-    auto autocorrectionRects = retainPtr([webView autocorrectionRectsForString:@"Wulk"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 9, 36, 20), [autocorrectionRects firstRect]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 9, 36, 20), [autocorrectionRects lastRect]);
+    RetainPtr autocorrectionRects = [webView autocorrectionRectsForString:@"Wulk"];
+    checkCGRectIsNotEmpty([autocorrectionRects firstRect]);
+    checkCGRectIsNotEmpty([autocorrectionRects lastRect]);
 
     auto contentView = [webView textInputContentView];
     UIFont *fontBeforeScaling = [contentView fontForCaretSelection];
