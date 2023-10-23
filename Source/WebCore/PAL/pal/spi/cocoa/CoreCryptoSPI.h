@@ -65,6 +65,11 @@ const struct ccdigest_info *ccsha512_di(void);
 extern const struct ccdigest_info ccsha512_ltc_di;
 
 void cccurve25519(ccec25519key out, const ccec25519secretkey sk, const ccec25519base);
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 140000) \
+    || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED < 170000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED < 170000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED < 100000)
 inline void cccurve25519_make_priv(struct ccrng_state *rng, ccec25519secretkey sk)
 {
     ccrng_generate(rng, 32, sk);
@@ -83,6 +88,7 @@ inline void cccurve25519_make_key_pair(struct ccrng_state *rng, ccec25519pubkey 
     cccurve25519_make_priv(rng, sk);
     cccurve25519_make_pub(pk, sk);
 }
+#endif
 
 int cced25519_make_pub(const struct ccdigest_info *, ccec25519pubkey pk, const ccec25519secretkey sk);
 
