@@ -2113,6 +2113,7 @@
 		FE287D02252FB2E800D723F9 /* VerifierSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = FE287D01252FB2E800D723F9 /* VerifierSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */; };
 		FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2CC92F2756B2B9003F5AB8 /* HeapSubspaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE2D0B382AE242B000A071A7 /* SideDataRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2D0B362AE242AF00A071A7 /* SideDataRepository.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE336B5325DB497D0098F034 /* MarkingConstraintExecutorPair.h in Headers */ = {isa = PBXBuildFile; fileRef = FE336B5225DB497D0098F034 /* MarkingConstraintExecutorPair.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5862,6 +5863,8 @@
 		FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MinimumReservedZoneSize.h; sourceTree = "<group>"; };
 		FE2BD66E25C0DC8200999D3B /* VerifierSlotVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerifierSlotVisitor.cpp; sourceTree = "<group>"; };
 		FE2CC92F2756B2B9003F5AB8 /* HeapSubspaceTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapSubspaceTypes.h; sourceTree = "<group>"; };
+		FE2D0B352AE242AF00A071A7 /* SideDataRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SideDataRepository.cpp; sourceTree = "<group>"; };
+		FE2D0B362AE242AF00A071A7 /* SideDataRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SideDataRepository.h; sourceTree = "<group>"; };
 		FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThrowScope.cpp; sourceTree = "<group>"; };
 		FE3022D41E42856700BAC493 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE3022D51E42856700BAC493 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
@@ -8605,6 +8608,8 @@
 				860295FA26FB552C0078EB62 /* ShadowRealmPrototype.cpp */,
 				860295FF26FB552D0078EB62 /* ShadowRealmPrototype.h */,
 				276B388E2A71D18700252F4E /* ShadowRealmPrototypeInlines.h */,
+				FE2D0B352AE242AF00A071A7 /* SideDataRepository.cpp */,
+				FE2D0B362AE242AF00A071A7 /* SideDataRepository.h */,
 				0F2B66D617B6B5AB00A7AE3F /* SimpleTypedArrayController.cpp */,
 				0F2B66D717B6B5AB00A7AE3F /* SimpleTypedArrayController.h */,
 				FE8C0311264A6910001A44AD /* SlowPathFunction.h */,
@@ -11553,6 +11558,7 @@
 				276B389B2A71D1A900252F4E /* ShadowRealmObjectInlines.h in Headers */,
 				8602960526FB552D0078EB62 /* ShadowRealmPrototype.h in Headers */,
 				276B38922A71D18800252F4E /* ShadowRealmPrototypeInlines.h in Headers */,
+				FE2D0B382AE242B000A071A7 /* SideDataRepository.h in Headers */,
 				4BC18E5628FDE6C800ECD68D /* SIMDInfo.h in Headers */,
 				E379B59029834EC5007C4C0E /* SIMDShuffle.h in Headers */,
 				0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */,

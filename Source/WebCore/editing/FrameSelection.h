@@ -36,6 +36,7 @@
 #include "ScrollAlignment.h"
 #include "ScrollBehavior.h"
 #include "VisibleSelection.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -111,7 +112,7 @@ private:
     VisiblePosition m_position;
 };
 
-class FrameSelection final : private CaretBase, public CaretAnimationClient {
+class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -333,7 +334,7 @@ private:
     void updateAssociatedLiveRange();
     LayoutRect localCaretRect() const final { return localCaretRectWithoutUpdate(); }
 
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    CheckedPtr<Document> m_document;
     RefPtr<Range> m_associatedLiveRange;
     std::optional<LayoutUnit> m_xPosForVerticalArrowNavigation;
     VisibleSelection m_selection;

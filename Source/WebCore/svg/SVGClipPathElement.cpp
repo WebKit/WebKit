@@ -26,6 +26,8 @@
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceClipper.h"
+#include "RenderSVGResourceClipper.h"
+#include "RenderSVGText.h"
 #include "SVGNames.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
@@ -85,7 +87,48 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceClipper>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGResourceClipper>(*this, WTFMove(style));
+}
+
+SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
+{
+    // If the current clip-path gets clipped itself, we have to fall back to masking.
+    if (renderer() && renderer()->style().clipPath())
+        return nullptr;
+
+    SVGGraphicsElement* useGraphicsElement = nullptr;
+
+    // If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible
+    // shapes don't affect the clipping and can be ignored. If clip-path contains more than one
+    // visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
+    // as well as NonZero can cause self-clipping of the elements.
+    // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
+    for (Node* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+        auto* renderer = childNode->renderer();
+        if (!renderer)
+            continue;
+        // Only shapes or paths are supported for direct clipping. We need to fall back to masking for texts.
+        if (is<RenderSVGText>(renderer))
+            return nullptr;
+        if (!is<SVGGraphicsElement>(*childNode))
+            continue;
+        auto& style = renderer->style();
+        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+            continue;
+        // Current shape in clip-path gets clipped too. Fall back to masking.
+        if (style.clipPath())
+            return nullptr;
+        // Fallback to masking, if there is more than one clipping path.
+        if (useGraphicsElement)
+            return nullptr;
+        useGraphicsElement = downcast<SVGGraphicsElement>(childNode);
+    }
+
+    return useGraphicsElement;
 }
 
 }

@@ -75,6 +75,7 @@ private:
     bool isThrottledRelativeToPage() const;
     bool shouldRescheduleRequestAnimationFrame(ReducedResolutionSeconds) const;
     void scheduleAnimation();
+    RefPtr<Document> protectedDocument();
 
     struct CallbackData {
         Ref<RequestAnimationFrameCallback> callback;
@@ -83,7 +84,7 @@ private:
     };
     Vector<CallbackData> m_callbackDataList;
 
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    CheckedPtr<Document> m_document;
     CallbackId m_nextCallbackId { 0 };
     int m_suspendCount { 0 };
 

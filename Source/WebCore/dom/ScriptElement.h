@@ -81,8 +81,8 @@ public:
 
     JSC::SourceTaintedOrigin sourceTaintedOrigin() const { return m_taintedOrigin; }
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
 
     static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true);
 

@@ -34,13 +34,13 @@
 #include "LegacyRenderSVGShapeInlines.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LegacyRenderSVGViewportContainer.h"
-#include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
@@ -52,6 +52,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "TransformOperationData.h"
 #include "TransformState.h"
 
 namespace WebCore {
@@ -655,6 +656,25 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
     const auto& shape = downcast<LegacyRenderSVGShape>(renderer);
     return shape.adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
 #endif
+}
+
+// FIXME: maybe in future RenderLayerModelObject is a better place for this.
+void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& renderer, PaintInfo& paintInfo)
+{
+    ASSERT(paintInfo.phase == PaintPhase::ClippingMask);
+    auto& style = renderer.style();
+    auto& context = paintInfo.context();
+    if (!paintInfo.shouldPaintWithinRoot(renderer) || style.visibility() != Visibility::Visible || context.paintingDisabled())
+        return;
+
+    ASSERT(renderer.isSVGLayerAwareRenderer());
+    const auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*renderer.style().clipPath());
+    auto* renderResource = renderer.document().lookupSVGResourceById(referenceClipPathOperation.fragment());
+    if (!renderResource)
+        return;
+
+    if (auto clipper = dynamicDowncast<RenderSVGResourceClipper>(renderResource))
+        clipper->applyMaskClipping(paintInfo, renderer, renderer.objectBoundingBox());
 }
 
 }

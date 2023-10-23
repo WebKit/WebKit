@@ -47,7 +47,7 @@ public:
     }
 
     Element* element() const { return m_element.get(); }
-    ShadowRoot* shadowRoot() const;
+    RefPtr<ShadowRoot> shadowRoot() const;
 
     ExceptionOr<RefPtr<HTMLFormElement>> form() const;
 

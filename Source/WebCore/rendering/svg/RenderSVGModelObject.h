@@ -80,6 +80,8 @@ public:
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, fragment, relevancy); }
 
+    virtual Path computeClipPath(AffineTransform&) const;
+
 protected:
     RenderSVGModelObject(Type, Document&, RenderStyle&&);
     RenderSVGModelObject(Type, SVGElement&, RenderStyle&&);

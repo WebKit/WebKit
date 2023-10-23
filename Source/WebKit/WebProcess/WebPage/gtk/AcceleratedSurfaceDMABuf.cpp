@@ -39,8 +39,8 @@
 #include <wtf/SafeStrerror.h>
 
 #if USE(GBM)
-#include <WebCore/DMABufFormat.h>
 #include <WebCore/GBMDevice.h>
+#include <drm_fourcc.h>
 #include <gbm.h>
 #endif
 
@@ -62,6 +62,10 @@ AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& cli
     , m_id(generateID())
     , m_swapChain(m_id)
 {
+#if USE(GBM)
+    if (m_swapChain.type() == SwapChain::Type::EGLImage)
+        m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats());
+#endif
 }
 
 AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
@@ -116,63 +120,107 @@ void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::willRenderFrame() const
 }
 
 #if USE(GBM)
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size, const DMABufRendererBufferFormat& dmabufFormat)
 {
+    if (!dmabufFormat.fourcc) {
+        WTFLogAlways("Failed to create GBM buffer of size %dx%d: no valid format found", size.width(), size.height());
+        return nullptr;
+    }
+
     auto* device = WebCore::GBMDevice::singleton().device();
     if (!device) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
         return nullptr;
     }
 
-    auto* bo = gbm_bo_create(device, size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), GBM_BO_USE_RENDERING);
+    struct gbm_bo* bo = nullptr;
+    uint64_t modifier = DRM_FORMAT_MOD_INVALID;
+    uint32_t flags = dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? GBM_BO_USE_SCANOUT : GBM_BO_USE_RENDERING;
+    if (dmabufFormat.modifiers[0] != DRM_FORMAT_MOD_INVALID) {
+#if HAVE(GBM_BO_CREATE_WITH_MODIFIERS2)
+        bo = gbm_bo_create_with_modifiers2(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size(), flags);
+#else
+        bo = gbm_bo_create_with_modifiers(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size());
+#endif
+        if (bo)
+            modifier = gbm_bo_get_modifier(bo);
+    }
+
+    if (!bo) {
+        if (dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Mapping)
+            flags |= GBM_BO_USE_LINEAR;
+        bo = gbm_bo_create(device, size.width(), size.height(), dmabufFormat.fourcc, flags);
+    }
+
     if (!bo) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
         return nullptr;
     }
 
-    UnixFileDescriptor fd { gbm_bo_get_fd(bo), UnixFileDescriptor::Adopt };
+    Vector<UnixFileDescriptor> fds;
+    Vector<uint32_t> offsets;
+    Vector<uint32_t> strides;
     uint32_t format = gbm_bo_get_format(bo);
-    uint32_t offset = gbm_bo_get_offset(bo, 0);
-    uint32_t stride = gbm_bo_get_stride(bo);
-    uint64_t modifier = gbm_bo_get_modifier(bo);
+    int planeCount = gbm_bo_get_plane_count(bo);
 
     Vector<EGLAttrib> attributes = {
         EGL_WIDTH, static_cast<EGLAttrib>(gbm_bo_get_width(bo)),
         EGL_HEIGHT, static_cast<EGLAttrib>(gbm_bo_get_height(bo)),
         EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(format),
-        EGL_DMA_BUF_PLANE0_FD_EXT, fd.value(),
-        EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(offset),
-        EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(stride),
     };
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
-    if (modifier != uint64_t(WebCore::DMABufFormat::Modifier::Invalid) && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
-        std::array<EGLAttrib, 4> modifierAttributes {
-            EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32),
-            EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff),
-        };
-        attributes.append(std::span<const EGLAttrib> { modifierAttributes });
+
+#define ADD_PLANE_ATTRIBUTES(planeIndex) { \
+    fds.append(UnixFileDescriptor { gbm_bo_get_fd_for_plane(bo, planeIndex), UnixFileDescriptor::Adopt }); \
+    offsets.append(gbm_bo_get_offset(bo, planeIndex)); \
+    strides.append(gbm_bo_get_stride_for_plane(bo, planeIndex)); \
+    std::array<EGLAttrib, 6> planeAttributes { \
+        EGL_DMA_BUF_PLANE##planeIndex##_FD_EXT, fds.last().value(), \
+        EGL_DMA_BUF_PLANE##planeIndex##_OFFSET_EXT, static_cast<EGLAttrib>(offsets.last()), \
+        EGL_DMA_BUF_PLANE##planeIndex##_PITCH_EXT, static_cast<EGLAttrib>(strides.last()) \
+    }; \
+    attributes.append(std::span<const EGLAttrib> { planeAttributes }); \
+    if (modifier != DRM_FORMAT_MOD_INVALID) { \
+        std::array<EGLAttrib, 4> modifierAttributes { \
+            EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32), \
+            EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff) \
+        }; \
+        attributes.append(std::span<const EGLAttrib> { modifierAttributes }); \
+    } \
     }
+
+    if (planeCount > 0)
+        ADD_PLANE_ATTRIBUTES(0);
+    if (planeCount > 1)
+        ADD_PLANE_ATTRIBUTES(1);
+    if (planeCount > 2)
+        ADD_PLANE_ATTRIBUTES(2);
+    if (planeCount > 3)
+        ADD_PLANE_ATTRIBUTES(3);
+
+#undef ADD_PLANE_ATTRIBS
+
     attributes.append(EGL_NONE);
 
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
     auto image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
     gbm_bo_destroy(bo);
 
     if (!image) {
-        WTFLogAlways("Failed to create EGL image for DMABufs with file descriptors %d", fd.value());
+        WTFLogAlways("Failed to create EGL image for DMABufs with size %dx%d", size.width(), size.height());
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, WTFMove(fd), format, offset, stride, modifier);
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, UnixFileDescriptor&& fd, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
     : RenderTargetColorBuffer(surfaceID, size)
     , m_image(image)
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_image);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, WTFMove(fd), size, format, offset, stride, modifier), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
@@ -235,17 +283,19 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    int fourcc;
+    int fourcc, planeCount;
     uint64_t modifier;
-    if (!eglExportDMABUFImageQueryMESA(display.eglDisplay(), image, &fourcc, nullptr, &modifier)) {
+    if (!eglExportDMABUFImageQueryMESA(display.eglDisplay(), image, &fourcc, &planeCount, &modifier)) {
         WTFLogAlways("eglExportDMABUFImageQueryMESA failed");
         display.destroyEGLImage(image);
         glDeleteTextures(1, &texture);
         return nullptr;
     }
 
-    int fd, stride, offset;
-    if (!eglExportDMABUFImageMESA(display.eglDisplay(), image, &fd, &stride, &offset)) {
+    Vector<int> fdsOut(planeCount);
+    Vector<int> stridesOut(planeCount);
+    Vector<int> offsetsOut(planeCount);
+    if (!eglExportDMABUFImageMESA(display.eglDisplay(), image, fdsOut.data(), stridesOut.data(), offsetsOut.data())) {
         WTFLogAlways("eglExportDMABUFImageMESA failed");
         display.destroyEGLImage(image);
         glDeleteTextures(1, &texture);
@@ -254,14 +304,24 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     display.destroyEGLImage(image);
 
-    return makeUnique<RenderTargetTexture>(surfaceID, size, UnixFileDescriptor(fd, UnixFileDescriptor::Adopt), texture, fourcc, offset, stride, modifier);
+    Vector<UnixFileDescriptor> fds = fdsOut.map([](int fd) {
+        return UnixFileDescriptor(fd, UnixFileDescriptor::Adopt);
+    });
+    Vector<uint32_t> strides = stridesOut.map([](int stride) {
+        return static_cast<uint32_t>(stride);
+    });
+    Vector<uint32_t> offsets = offsetsOut.map([](int offset) {
+        return static_cast<uint32_t>(offset);
+    });
+
+    return makeUnique<RenderTargetTexture>(surfaceID, size, texture, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID, const WebCore::IntSize& size, UnixFileDescriptor&& fd, unsigned texture, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+AcceleratedSurfaceDMABuf::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID, const WebCore::IntSize& size, unsigned texture, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
     : RenderTarget(surfaceID, size)
     , m_texture(texture)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, WTFMove(fd), size, format, offset, stride, modifier), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidCreateBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetTexture::~RenderTargetTexture()
@@ -300,6 +360,33 @@ AcceleratedSurfaceDMABuf::SwapChain::SwapChain(uint64_t surfaceID)
     }
 }
 
+#if USE(GBM)
+void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufRendererBufferFormat>& preferredFormats)
+{
+    const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplayForCompositing().dmabufFormats();
+    for (const auto& format : preferredFormats) {
+        auto index = supportedFormats.findIf([format](const auto& item) {
+            return item.fourcc == format.fourcc;
+        });
+        if (index == notFound)
+            continue;
+
+        m_dmabufFormat.usage = format.usage;
+        m_dmabufFormat.fourcc = format.fourcc;
+        if (format.modifiers[0] == DRM_FORMAT_MOD_INVALID)
+            m_dmabufFormat.modifiers = format.modifiers;
+        else {
+            m_dmabufFormat.modifiers = WTF::compactMap(format.modifiers, [&supportedFormats, index](uint64_t modifier) -> std::optional<uint64_t> {
+                if (supportedFormats[index].modifiers.contains(modifier))
+                    return modifier;
+                return std::nullopt;
+            });
+        }
+        break;
+    }
+}
+#endif
+
 void AcceleratedSurfaceDMABuf::SwapChain::resize(const WebCore::IntSize& size)
 {
     if (m_size == size)
@@ -314,7 +401,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     switch (m_type) {
 #if USE(GBM)
     case Type::EGLImage:
-        return RenderTargetEGLImage::create(m_surfaceID, m_size);
+        return RenderTargetEGLImage::create(m_surfaceID, m_size, m_dmabufFormat);
 #endif
     case Type::Texture:
         return RenderTargetTexture::create(m_surfaceID, m_size);

@@ -186,7 +186,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
         auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>([] (JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns& thisObject, PropertyName propertyName) -> decltype(auto) {
-            return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+            return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -213,7 +213,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>([] (JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns& thisObject, PropertyName propertyName) -> decltype(auto) {
-        return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+        return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -246,7 +246,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     if (!propertyName.isSymbol()) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -274,7 +274,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     auto propertyName = Identifier::from(vm, index);
     auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, true);
-    invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+    invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
     return true;
 }
 
@@ -296,7 +296,7 @@ static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
                 return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
             RETURN_IF_EXCEPTION(throwScope, true);
-            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }
@@ -309,7 +309,7 @@ static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
 bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -317,7 +317,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
 
-    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (!propertyName.isSymbol() && impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -329,7 +329,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -339,7 +339,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
 
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
-    if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -361,8 +361,8 @@ static inline JSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyO
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->unforgeableAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns_unforgeableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -376,8 +376,8 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithLegacyUnforgeableProperti
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.unforgeableOperation(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->unforgeableOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunction_unforgeableOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

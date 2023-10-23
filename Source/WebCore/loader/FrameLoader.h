@@ -98,12 +98,16 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 
 using ContentPolicyDecisionFunction = Function<void(PolicyAction, PolicyCheckIdentifier)>;
 
-class FrameLoader final : public CanMakeCheckedPtr {
+class FrameLoader final {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
     ~FrameLoader();
+
+    // For use with CheckedPtr / CheckedRef. Forwards the pointer counting to the owning frame.
+    void incrementPtrCount() const;
+    void decrementPtrCount() const;
 
     WEBCORE_EXPORT void init();
     void initForSynthesizedDocument(const URL&);

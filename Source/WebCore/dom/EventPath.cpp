@@ -49,7 +49,7 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 
 class RelatedNodeRetargeter {
 public:
-    RelatedNodeRetargeter(Node& relatedNode, Node& target);
+    RelatedNodeRetargeter(Ref<Node>&& relatedNode, Node& target);
 
     Node* currentNode(Node& currentTreeScope);
     void moveToNewTreeScope(TreeScope* previousTreeScope, TreeScope& newTreeScope);
@@ -71,7 +71,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 {
     buildPath(originalTarget, event);
 
-    if (auto* relatedTarget = event.relatedTarget(); is<Node>(relatedTarget) && !m_path.isEmpty())
+    if (RefPtr relatedTarget = event.relatedTarget(); is<Node>(relatedTarget) && !m_path.isEmpty())
         setRelatedTarget(originalTarget, downcast<Node>(*relatedTarget));
 
 #if ENABLE(TOUCH_EVENTS)
@@ -104,36 +104,36 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
             if (is<ShadowRoot>(*node))
                 break;
 
-            ContainerNode* parent = node->parentNode();
+            RefPtr parent = node->parentNode();
             if (UNLIKELY(!parent)) {
                 // https://dom.spec.whatwg.org/#interface-document
                 if (is<Document>(*node) && event.type() != eventNames().loadEvent) {
                     ASSERT(target);
                     if (target) {
-                        if (auto* window = downcast<Document>(*node).domWindow())
-                            m_path.append(EventContext { EventContext::Type::Window, node.get(), window, target.get(), closedShadowDepth });
+                        if (RefPtr window = downcast<Document>(*node).domWindow())
+                            m_path.append(EventContext { EventContext::Type::Window, node.get(), window.get(), target.get(), closedShadowDepth });
                     }
                 }
                 return;
             }
 
             if (RefPtr shadowRootOfParent = parent->shadowRoot(); UNLIKELY(shadowRootOfParent)) {
-                if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
+                if (RefPtr assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
                     if (shadowRootOfParent->mode() != ShadowRootMode::Open)
                         closedShadowDepth++;
                     // node is assigned to a slot. Continue dispatching the event at this slot.
-                    parent = assignedSlot;
+                    parent = WTFMove(assignedSlot);
                 }
             }
-            node = parent;
+            node = WTFMove(parent);
         }
 
         bool exitingShadowTreeOfTarget = &target->treeScope() == &node->treeScope();
-        ShadowRoot& shadowRoot = downcast<ShadowRoot>(*node);
+        Ref shadowRoot = downcast<ShadowRoot>(*node);
         if (!shouldEventCrossShadowBoundary(event, shadowRoot, originalTarget))
             return;
-        node = shadowRoot.host();
-        if (shadowRoot.mode() != ShadowRootMode::Open)
+        node = shadowRoot->host();
+        if (shadowRoot->mode() != ShadowRootMode::Open)
             closedShadowDepth--;
         if (exitingShadowTreeOfTarget)
             target = eventTargetRespectingTargetRules(*node);
@@ -142,7 +142,7 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
 
 void EventPath::setRelatedTarget(Node& origin, Node& relatedNode)
 {
-    RelatedNodeRetargeter retargeter(relatedNode, *m_path[0].node());
+    RelatedNodeRetargeter retargeter(relatedNode, Ref { *m_path[0].node() });
 
     bool originIsRelatedTarget = &origin == &relatedNode;
     Node& rootNodeInOriginTreeScope = origin.treeScope().rootNode();
@@ -155,18 +155,18 @@ void EventPath::setRelatedTarget(Node& origin, Node& relatedNode)
             continue;
         }
 
-        Node& currentTarget = *context.node();
-        TreeScope& currentTreeScope = currentTarget.treeScope();
+        Ref currentTarget = *context.node();
+        auto& currentTreeScope = currentTarget->treeScope();
         if (UNLIKELY(previousTreeScope && &currentTreeScope != previousTreeScope))
             retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
 
-        Node* currentRelatedNode = retargeter.currentNode(currentTarget);
+        RefPtr currentRelatedNode = retargeter.currentNode(currentTarget);
         if (UNLIKELY(!originIsRelatedTarget && context.target() == currentRelatedNode)) {
             m_path.shrink(contextIndex);
             break;
         }
 
-        context.setRelatedTarget(currentRelatedNode);
+        context.setRelatedTarget(WTFMove(currentRelatedNode));
 
         if (UNLIKELY(originIsRelatedTarget && context.node() == &rootNodeInOriginTreeScope)) {
             m_path.shrink(contextIndex + 1);
@@ -192,21 +192,21 @@ void EventPath::adjustForDisabledFormControl()
 
 void EventPath::retargetTouch(EventContext::TouchListType type, const Touch& touch)
 {
-    auto* eventTarget = touch.target();
+    RefPtr eventTarget = touch.target();
     if (!is<Node>(eventTarget))
         return;
 
-    RelatedNodeRetargeter retargeter(downcast<Node>(*eventTarget), *m_path[0].node());
+    RelatedNodeRetargeter retargeter(downcast<Node>(eventTarget.releaseNonNull()), Ref { *m_path[0].node() });
     TreeScope* previousTreeScope = nullptr;
     for (auto& context : m_path) {
-        Node& currentTarget = *context.node();
-        TreeScope& currentTreeScope = currentTarget.treeScope();
+        Ref currentTarget = *context.node();
+        auto& currentTreeScope = currentTarget->treeScope();
         if (UNLIKELY(previousTreeScope && &currentTreeScope != previousTreeScope))
             retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
 
         if (context.isTouchEventContext()) {
-            Node* currentRelatedNode = retargeter.currentNode(currentTarget);
-            context.touchList(type).append(touch.cloneWithNewTarget(currentRelatedNode));
+            RefPtr currentRelatedNode = retargeter.currentNode(currentTarget);
+            context.touchList(type).append(touch.cloneWithNewTarget(currentRelatedNode.get()));
         } else
             ASSERT(context.isWindowContext());
 
@@ -293,24 +293,24 @@ static Node* moveOutOfAllShadowRoots(Node& startingNode)
     return node;
 }
 
-RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
-    : m_relatedNode(relatedNode)
-    , m_retargetedRelatedNode(&relatedNode)
+RelatedNodeRetargeter::RelatedNodeRetargeter(Ref<Node>&& relatedNode, Node& target)
+    : m_relatedNode(WTFMove(relatedNode))
+    , m_retargetedRelatedNode(m_relatedNode.copyRef())
 {
     auto& targetTreeScope = target.treeScope();
-    TreeScope* currentTreeScope = &m_relatedNode->treeScope();
+    auto* currentTreeScope = &m_relatedNode->treeScope();
     if (LIKELY(currentTreeScope == &targetTreeScope && target.isConnected() && m_relatedNode->isConnected()))
         return;
 
     if (&currentTreeScope->documentScope() != &targetTreeScope.documentScope()
-        || (relatedNode.hasBeenInUserAgentShadowTree() && !relatedNode.isConnected())) {
+        || (m_relatedNode->hasBeenInUserAgentShadowTree() && !m_relatedNode->isConnected())) {
         m_hasDifferentTreeRoot = true;
         m_retargetedRelatedNode = nullptr;
         return;
     }
-    if (relatedNode.isConnected() != target.isConnected()) {
+    if (m_relatedNode->isConnected() != target.isConnected()) {
         m_hasDifferentTreeRoot = true;
-        m_retargetedRelatedNode = moveOutOfAllShadowRoots(relatedNode);
+        m_retargetedRelatedNode = moveOutOfAllShadowRoots(m_relatedNode.copyRef());
         return;
     }
 
@@ -333,12 +333,12 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
     }
 
     bool lowestCommonAncestorIsDocumentScope = i + 1 == m_ancestorTreeScopes.size();
-    if (lowestCommonAncestorIsDocumentScope && !relatedNode.isConnected() && !target.isConnected()) {
-        Node& relatedNodeAncestorInDocumentScope = i ? *downcast<ShadowRoot>(m_ancestorTreeScopes[i - 1]->rootNode()).shadowHost() : relatedNode;
+    if (lowestCommonAncestorIsDocumentScope && !m_relatedNode->isConnected() && !target.isConnected()) {
+        Node& relatedNodeAncestorInDocumentScope = i ? *downcast<ShadowRoot>(m_ancestorTreeScopes[i - 1]->rootNode()).shadowHost() : m_relatedNode.get();
         Node& targetAncestorInDocumentScope = j ? *downcast<ShadowRoot>(targetTreeScopeAncestors[j - 1]->rootNode()).shadowHost() : target;
         if (&targetAncestorInDocumentScope.rootNode() != &relatedNodeAncestorInDocumentScope.rootNode()) {
             m_hasDifferentTreeRoot = true;
-            m_retargetedRelatedNode = moveOutOfAllShadowRoots(relatedNode);
+            m_retargetedRelatedNode = moveOutOfAllShadowRoots(m_relatedNode);
             return;
         }
     }

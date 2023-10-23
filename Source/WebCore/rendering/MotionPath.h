@@ -36,6 +36,8 @@ class PathOperation;
 class RayPathOperation;
 class ShapePathOperation;
 
+struct TransformOperationData;
+
 struct MotionPathData {
     FloatRoundedRect containingBlockBoundingRect;
     FloatPoint offsetFromContainingBlock;
@@ -52,34 +54,6 @@ public:
     static double lengthForRayPath(const RayPathOperation&, const MotionPathData&);
     static double lengthForRayContainPath(const FloatRect& elementRect, double computedPathLength);
     WEBCORE_EXPORT static std::optional<Path> computePathForShape(const ShapePathOperation&, const TransformOperationData&);
-};
-
-class TransformOperationData {
-public:
-    TransformOperationData(FloatRect boundingBox)
-        : m_boundingBox(boundingBox)
-    {
-    }
-
-    TransformOperationData(FloatRect boundingBox, const RenderElement* renderer)
-        : m_boundingBox(boundingBox)
-    {
-        if (renderer)
-            m_motionPathData = MotionPath::motionPathDataForRenderer(*renderer);
-    }
-
-    TransformOperationData(FloatRect boundingBox, std::optional<MotionPathData> data)
-        : m_boundingBox(boundingBox)
-        , m_motionPathData(data)
-    {
-    }
-
-    const FloatRect& boundingBox() const { return m_boundingBox; }
-    const std::optional<MotionPathData> motionPathData() const { return m_motionPathData; }
-
-private :
-    FloatRect m_boundingBox;
-    std::optional<MotionPathData> m_motionPathData;
 };
 
 } // namespace WebCore

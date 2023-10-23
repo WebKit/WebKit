@@ -187,7 +187,7 @@ inline bool hasShadowRootParent(const Node& node)
     return node.parentNode() && node.parentNode()->isShadowRoot();
 }
 
-Vector<ShadowRoot*> assignedShadowRootsIfSlotted(const Node&);
+Vector<Ref<ShadowRoot>> assignedShadowRootsIfSlotted(const Node&);
 
 } // namespace WebCore
 

@@ -6,6 +6,18 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x267
   RenderSVGTransformableContainer {g} at (20,20) size 440x266.36
+layer at (90,10) size 230x240
+  RenderSVGHiddenContainer {defs} at (70,-10) size 230x240
+layer at (200,10) size 60x100
+  RenderSVGResourceClipper {clipPath} at (110,0) size 60x100
+layer at (200,10) size 60x100
+  RenderSVGRect {rect} at (0,0) size 60x100 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=10.00] [width=60.00] [height=100.00]
+layer at (90,150) size 230x100
+  RenderSVGResourceClipper {clipPath} at (0,140) size 230x100
+layer at (90,150) size 175x100
+  RenderSVGRect {rect} at (0,0) size 175x100 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]
+layer at (225,160) size 95x75
+  RenderSVGRect {rect} at (135,10) size 95x75 [fill={[type=SOLID] [color=#000000]}] [x=225.00] [y=160.00] [width=95.00] [height=75.00]
 layer at (20,20) size 440x60
   RenderSVGRect {rect} at (0,0) size 440x60 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=440.00] [height=60.00]
 layer at (20,102.83) size 320x33

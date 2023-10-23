@@ -44,7 +44,7 @@ TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomString& name
 
 TagCollectionNS::~TagCollectionNS()
 {
-    ownerNode().nodeLists()->removeCachedTagCollectionNS(*this, m_namespaceURI, m_localName);
+    protectedOwnerNode()->nodeLists()->removeCachedTagCollectionNS(*this, m_namespaceURI, m_localName);
 }
 
 TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
@@ -56,7 +56,7 @@ TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifie
 
 TagCollection::~TagCollection()
 {
-    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
+    protectedOwnerNode()->nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
@@ -69,7 +69,7 @@ HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& 
 
 HTMLTagCollection::~HTMLTagCollection()
 {
-    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
+    protectedOwnerNode()->nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 } // namespace WebCore

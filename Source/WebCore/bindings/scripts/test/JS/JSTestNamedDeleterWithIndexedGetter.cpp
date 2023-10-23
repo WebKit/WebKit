@@ -159,7 +159,7 @@ bool JSTestNamedDeleterWithIndexedGetter::legacyPlatformObjectGetOwnProperty(JSO
     auto* thisObject = jsCast<JSTestNamedDeleterWithIndexedGetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
-        if (auto item = thisObject->wrapped().item(index.value()); LIKELY(!!item)) {
+        if (auto item = thisObject->protectedWrapped()->item(index.value()); LIKELY(!!item)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
@@ -170,7 +170,7 @@ bool JSTestNamedDeleterWithIndexedGetter::legacyPlatformObjectGetOwnProperty(JSO
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
         auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedDeleterWithIndexedGetter>([] (JSTestNamedDeleterWithIndexedGetter& thisObject, PropertyName propertyName) -> decltype(auto) {
-            return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+            return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -195,7 +195,7 @@ bool JSTestNamedDeleterWithIndexedGetter::getOwnPropertySlotByIndex(JSObject* ob
     auto* thisObject = jsCast<JSTestNamedDeleterWithIndexedGetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
-        if (auto item = thisObject->wrapped().item(index); LIKELY(!!item)) {
+        if (auto item = thisObject->protectedWrapped()->item(index); LIKELY(!!item)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), value);
@@ -206,7 +206,7 @@ bool JSTestNamedDeleterWithIndexedGetter::getOwnPropertySlotByIndex(JSObject* ob
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedDeleterWithIndexedGetter>([] (JSTestNamedDeleterWithIndexedGetter& thisObject, PropertyName propertyName) -> decltype(auto) {
-        return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+        return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -295,7 +295,7 @@ bool JSTestNamedDeleterWithIndexedGetter::defineOwnProperty(JSObject* object, JS
         slot.disallowVMEntry.reset();
         RETURN_IF_EXCEPTION(throwScope, false);
         if (!found) {
-            if (thisObject->wrapped().isSupportedPropertyName(propertyNameToString(propertyName)))
+            if (thisObject->protectedWrapped()->isSupportedPropertyName(propertyNameToString(propertyName)))
                 return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
         }
     }
@@ -308,14 +308,14 @@ bool JSTestNamedDeleterWithIndexedGetter::defineOwnProperty(JSObject* object, JS
 bool JSTestNamedDeleterWithIndexedGetter::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIndexedGetter*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     if (auto index = parseIndex(propertyName))
-        return !impl.isSupportedPropertyIndex(index.value());
-    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+        return !impl->isSupportedPropertyIndex(index.value());
+    if (!propertyName.isSymbol() && impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
-            using ReturnType = decltype(impl.deleteNamedProperty(propertyNameToString(propertyName)));
+            using ReturnType = decltype(impl->deleteNamedProperty(propertyNameToString(propertyName)));
             static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, "The implementation of named deleters without an identifier must return either bool or ExceptionOr<bool>.");
-            return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl.deleteNamedProperty(propertyNameToString(propertyName)); });
+            return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl->deleteNamedProperty(propertyNameToString(propertyName)); });
         }
     }
     return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
@@ -325,8 +325,8 @@ bool JSTestNamedDeleterWithIndexedGetter::deletePropertyByIndex(JSCell* cell, JS
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIndexedGetter*>(cell);
-    auto& impl = thisObject.wrapped();
-    return !impl.isSupportedPropertyIndex(index);
+    Ref impl = thisObject.wrapped();
+    return !impl->isSupportedPropertyIndex(index);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterWithIndexedGetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

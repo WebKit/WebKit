@@ -1224,6 +1224,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
     runtime/ShadowRealmObject.h
+    runtime/SideDataRepository.h
     runtime/SlowPathFunction.h
     runtime/SmallStrings.h
     runtime/SourceOrigin.h

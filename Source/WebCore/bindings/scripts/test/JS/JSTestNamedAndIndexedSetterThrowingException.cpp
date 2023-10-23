@@ -159,7 +159,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::legacyPlatformObjectGetOwnPro
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
-        if (auto item = thisObject->wrapped().item(index.value()); LIKELY(!!item)) {
+        if (auto item = thisObject->protectedWrapped()->item(index.value()); LIKELY(!!item)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
@@ -170,7 +170,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::legacyPlatformObjectGetOwnPro
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
         auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedAndIndexedSetterThrowingException>([] (JSTestNamedAndIndexedSetterThrowingException& thisObject, PropertyName propertyName) -> decltype(auto) {
-            return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+            return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -195,7 +195,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSO
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
-        if (auto item = thisObject->wrapped().item(index); LIKELY(!!item)) {
+        if (auto item = thisObject->protectedWrapped()->item(index); LIKELY(!!item)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
@@ -206,7 +206,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSO
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedAndIndexedSetterThrowingException>([] (JSTestNamedAndIndexedSetterThrowingException& thisObject, PropertyName propertyName) -> decltype(auto) {
-        return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+        return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -241,7 +241,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::put(JSCell* cell, JSGlobalObj
     if (auto index = parseIndex(propertyName)) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)); });
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setItem(index.value(), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -254,7 +254,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::put(JSCell* cell, JSGlobalObj
         if (!found) {
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
             RETURN_IF_EXCEPTION(throwScope, true);
-            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }
@@ -283,7 +283,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::putByIndex(JSCell* cell, JSGl
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index, WTFMove(nativeValue)); });
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setItem(index, WTFMove(nativeValue)); });
         return true;
     }
 
@@ -296,7 +296,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::putByIndex(JSCell* cell, JSGl
     if (!found) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -317,7 +317,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty(JSObject* o
             return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set indexed properties on this object"_s);
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
         RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)); });
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setItem(index.value(), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -331,7 +331,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty(JSObject* o
                 return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
             RETURN_IF_EXCEPTION(throwScope, true);
-            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->protectedWrapped()->setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }
@@ -344,7 +344,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty(JSObject* o
 bool JSTestNamedAndIndexedSetterThrowingException::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedAndIndexedSetterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -353,8 +353,8 @@ bool JSTestNamedAndIndexedSetterThrowingException::deleteProperty(JSCell* cell, 
     }
 
     if (auto index = parseIndex(propertyName))
-        return !impl.isSupportedPropertyIndex(index.value());
-    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+        return !impl->isSupportedPropertyIndex(index.value());
+    if (!propertyName.isSymbol() && impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -366,7 +366,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::deletePropertyByIndex(JSCell*
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedAndIndexedSetterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -374,7 +374,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::deletePropertyByIndex(JSCell*
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    return !impl.isSupportedPropertyIndex(index);
+    return !impl->isSupportedPropertyIndex(index);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedAndIndexedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

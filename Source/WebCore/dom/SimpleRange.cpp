@@ -48,7 +48,7 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
 
 std::optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
-    auto parent = node.parentNode();
+    RefPtr parent = node.parentNode();
     if (!parent)
         return std::nullopt;
     unsigned offset = node.computeNodeIndex();

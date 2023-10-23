@@ -1025,6 +1025,7 @@ runtime/ScriptExecutable.cpp
 runtime/SetConstructor.cpp
 runtime/SetIteratorPrototype.cpp
 runtime/SetPrototype.cpp
+runtime/SideDataRepository.cpp
 runtime/SimpleTypedArrayController.cpp
 runtime/SmallStrings.cpp
 runtime/SparseArrayValueMap.cpp

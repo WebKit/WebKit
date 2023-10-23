@@ -52,7 +52,7 @@ private:
 
     bool isTemplateContent() const override { return true; }
 
-    WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_host;
+    CheckedPtr<const Element> m_host;
 };
 
 } // namespace WebCore

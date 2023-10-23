@@ -39,11 +39,11 @@ public:
     unsigned offset() const;
     Node* childBefore() const;
 
-    void set(Ref<Node>&& container, unsigned offset, Node* childBefore);
+    void set(Ref<Node>&& container, unsigned offset, RefPtr<Node>&& childBefore);
     void setOffset(unsigned);
 
     void setToBeforeNode(Node&);
-    void setToAfterNode(Node&);
+    void setToAfterNode(Ref<Node>&&);
     void setToBeforeContents(Ref<Node>&&);
     void setToAfterContents(Ref<Node>&&);
 
@@ -78,12 +78,12 @@ inline unsigned RangeBoundaryPoint::offset() const
     return m_offset;
 }
 
-inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, Node* childBefore)
+inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, RefPtr<Node>&& childBefore)
 {
     ASSERT(childBefore == (offset ? container->traverseToChildAt(offset - 1) : nullptr));
     m_container = WTFMove(container);
     m_offset = offset;
-    m_childBefore = childBefore;
+    m_childBefore = WTFMove(childBefore);
 }
 
 inline void RangeBoundaryPoint::setOffset(unsigned offset)
@@ -102,12 +102,12 @@ inline void RangeBoundaryPoint::setToBeforeNode(Node& child)
     m_childBefore = child.previousSibling();
 }
 
-inline void RangeBoundaryPoint::setToAfterNode(Node& child)
+inline void RangeBoundaryPoint::setToAfterNode(Ref<Node>&& child)
 {
-    ASSERT(child.parentNode());
-    m_container = *child.parentNode();
-    m_offset = child.computeNodeIndex() + 1;
-    m_childBefore = &child;
+    ASSERT(child->parentNode());
+    m_container = *child->parentNode();
+    m_offset = child->computeNodeIndex() + 1;
+    m_childBefore = WTFMove(child);
 }
 
 inline void RangeBoundaryPoint::setToBeforeContents(Ref<Node>&& container)

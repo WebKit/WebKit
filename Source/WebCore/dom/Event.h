@@ -76,7 +76,8 @@ public:
     void setTarget(RefPtr<EventTarget>&&);
 
     EventTarget* currentTarget() const { return m_currentTarget.get(); }
-    void setCurrentTarget(EventTarget*, std::optional<bool> isInShadowTree = std::nullopt);
+    RefPtr<EventTarget> protectedCurrentTarget() const;
+    void setCurrentTarget(RefPtr<EventTarget>&&, std::optional<bool> isInShadowTree = std::nullopt);
     bool currentTargetIsInShadowTree() const { return m_currentTargetIsInShadowTree; }
 
     unsigned short eventPhase() const { return m_eventPhase; }

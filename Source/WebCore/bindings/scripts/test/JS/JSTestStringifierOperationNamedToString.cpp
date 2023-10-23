@@ -171,8 +171,8 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationNamedToStringPrototy
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.toString())));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl->toString())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierOperationNamedToStringPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

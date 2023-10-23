@@ -1155,7 +1155,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isControl())
         return false;
     
-    if (isFigureElement())
+    if (isFigureElement() || isSummary())
         return false;
 
     switch (roleValue()) {

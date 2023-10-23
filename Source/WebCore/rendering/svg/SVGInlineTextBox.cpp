@@ -264,7 +264,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             selectionStyle = &style;
     }
 
-    if (renderer().view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask)) {
+    if (renderer().view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
         hasFill = true;
         hasVisibleStroke = false;
     }

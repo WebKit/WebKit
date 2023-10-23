@@ -47,7 +47,7 @@ namespace WebCore {
 
 static inline bool isRenderingMaskImage(const RenderObject& object)
 {
-    return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask);
+    return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 }
 
 SVGRenderingContext::~SVGRenderingContext()

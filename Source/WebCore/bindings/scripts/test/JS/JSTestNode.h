@@ -60,6 +60,10 @@ public:
     {
         return static_cast<TestNode&>(Base::wrapped());
     }
+    Ref<TestNode> protectedWrapped() const
+    {
+        return wrapped();
+    }
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNode>&&);
 

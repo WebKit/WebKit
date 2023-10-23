@@ -189,10 +189,15 @@ void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyCo
     if (!contentSecurityPolicy())
         setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { }, nullptr, nullptr));
 
-    contentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
+    checkedContentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
     setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
     setCrossOriginEmbedderPolicy(policyContainer.crossOriginEmbedderPolicy);
     setReferrerPolicy(policyContainer.referrerPolicy);
+}
+
+CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy()
+{
+    return m_contentSecurityPolicy.get();
 }
 
 }

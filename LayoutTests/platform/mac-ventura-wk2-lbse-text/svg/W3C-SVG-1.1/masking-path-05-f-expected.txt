@@ -10,12 +10,20 @@ layer at (150,7.31) size 160x16
   RenderSVGText {text} at (100,0) size 160x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 160x16
       chunk 1 text run 1 at (150.00,20.00) startOffset 0 endOffset 28 width 159.50: "Test for clip-rule property."
+layer at (180,40) size 80x81
+  RenderSVGResourceClipper {clipPath} at (130,32.69) size 80x80
+layer at (180,40) size 80x80
+  RenderSVGPath {path} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [clip rule=EVEN-ODD] [data="M 200 40 L 220 40 L 220 100 L 240 100 L 240 80 L 180 80 L 180 60 L 260 60 L 260 120 L 200 120 L 200 40 Z"]
 layer at (50,30) size 350x101
   RenderSVGRect {rect} at (0,22.69) size 350x100 [fill={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=30.00] [width=350.00] [height=100.00]
 layer at (100,129.13) size 95x13
   RenderSVGText {text} at (50,121) size 96x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 96x14
       chunk 1 text run 1 at (100.00,140.00) startOffset 0 endOffset 17 width 95.06: "clip-rule=evenodd"
+layer at (180,170) size 80x81
+  RenderSVGResourceClipper {clipPath} at (130,162.69) size 80x80
+layer at (180,170) size 80x80
+  RenderSVGPath {path} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [data="M 200 170 L 220 170 L 220 230 L 240 230 L 240 210 L 180 210 L 180 190 L 260 190 L 260 250 L 200 250 L 200 170 Z"]
 layer at (50,160) size 350x101
   RenderSVGRect {rect} at (0,152.69) size 350x100 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=160.00] [width=350.00] [height=100.00]
 layer at (100,259.13) size 88x13

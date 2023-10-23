@@ -193,6 +193,7 @@ public:
         SVGInlineText,
         SVGPath,
         SVGRect,
+        SVGResourceClipper,
         SVGResourceFilter,
         SVGResourceFilterPrimitive,
         SVGResourceLinearGradient,
@@ -465,10 +466,11 @@ public:
     bool isSVGImage() const { return type() == Type::SVGImage; }
     bool isLegacySVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }
     bool isSVGForeignObject() const { return type() == Type::SVGForeignObject; }
-    virtual bool isSVGResourceContainer() const { return false; }
     virtual bool isLegacySVGResourceContainer() const { return false; }
+    virtual bool isSVGResourceContainer() const { return false; }
     bool isSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
-    bool isSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
+    bool isLegacySVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
+    bool isSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
     bool isSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }
     bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
     bool isSVGShapeOrLegacySVGShape() const { return isSVGShape() || isLegacySVGShape(); }

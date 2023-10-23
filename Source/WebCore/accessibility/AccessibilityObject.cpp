@@ -2887,7 +2887,7 @@ bool AccessibilityObject::supportsPressAction() const
 {
     if (isButton())
         return true;
-    if (roleValue() == AccessibilityRole::Details)
+    if (roleValue() == AccessibilityRole::Details || isSummary())
         return true;
     
     RefPtr actionElement = this->actionElement();
@@ -2921,7 +2921,7 @@ bool AccessibilityObject::supportsPressAction() const
         if (!candidate)
             continue;
 
-        if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink()) {
+        if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink() || candidate->isSummary()) {
             matches += 1;
             if (matches >= 2)
                 return false;
@@ -4439,7 +4439,7 @@ static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObjec
     case AccessibilitySearchKey::Checkbox:
         return axObject->isCheckbox();
     case AccessibilitySearchKey::Control:
-        return axObject->isControl();
+        return axObject->isControl() || axObject->isSummary();
     case AccessibilitySearchKey::DifferentType:
         return criteria.startObject
             && axObject->roleValue() != criteria.startObject->roleValue();

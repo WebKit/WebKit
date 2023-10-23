@@ -6,6 +6,16 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 416x273
   RenderSVGTransformableContainer {g} at (0,0) size 415.03x272.13
+layer at (0,0) size 4x4
+  RenderSVGHiddenContainer {defs} at (0,0) size 4x4
+layer at (0,0) size 2x2
+  RenderSVGResourceClipper {clipPath} at (0,0) size 2x2
+layer at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=2.00] [height=2.00]
+layer at (0,0) size 4x4
+  RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
+layer at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=4.00] [height=4.00]
 layer at (125,17.31) size 180x16
   RenderSVGText {text} at (125,17) size 180x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 180x16

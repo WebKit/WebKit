@@ -174,8 +174,8 @@ static inline JSValue jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1G
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.sharedAttribute1(propertyNameToAtomString(propertyName)))));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl->sharedAttribute1(propertyNameToAtomString(propertyName)))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -189,11 +189,11 @@ static inline bool setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1S
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSharedAttribute1(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
+        return impl->setSharedAttribute1(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
     });
     return true;
 }
@@ -207,8 +207,8 @@ static inline JSValue jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2G
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.sharedAttribute2(propertyNameToAtomString(propertyName)))));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl->sharedAttribute2(propertyNameToAtomString(propertyName)))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDelegateToSharedSyntheticAttribute_sharedAttribute2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -222,11 +222,11 @@ static inline bool setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2S
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSharedAttribute2(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
+        return impl->setSharedAttribute2(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
     });
     return true;
 }

@@ -194,8 +194,8 @@ static inline JSValue jsTestSetLikeWithOverriddenOperations_addGetter(JSGlobalOb
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.add())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl->add())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperations_add, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -208,11 +208,11 @@ static inline bool setJSTestSetLikeWithOverriddenOperations_addSetter(JSGlobalOb
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAdd(WTFMove(nativeValue));
+        return impl->setAdd(WTFMove(nativeValue));
     });
     return true;
 }
@@ -240,8 +240,8 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.delete(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->delete(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_delete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

@@ -948,6 +948,7 @@ public:
 
     // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
+    RefPtr<WindowProxy> protectedWindowProxy() const;
 
     inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
 
@@ -1123,6 +1124,7 @@ public:
     Location* location() const;
 
     WEBCORE_EXPORT HTMLHeadElement* head();
+    RefPtr<HTMLHeadElement> protectedHead();
 
     inline DocumentMarkerController& markers(); // Defined in DocumentInlines.h.
     inline const DocumentMarkerController& markers() const; // Defined in DocumentInlines.h.
@@ -1774,6 +1776,8 @@ public:
     const Editor& editor() const { return m_editor; }
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
+    CheckedRef<FrameSelection> checkedSelection();
+    CheckedRef<const FrameSelection> checkedSelection() const;
         
     void setFragmentDirective(const String& fragmentDirective) { m_fragmentDirective = fragmentDirective; }
     const String& fragmentDirective() const { return m_fragmentDirective; }

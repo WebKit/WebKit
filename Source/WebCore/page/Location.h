@@ -73,6 +73,7 @@ public:
     Ref<DOMStringList> ancestorOrigins() const;
 
     DOMWindow* window() { return m_window.get(); }
+    RefPtr<DOMWindow> protectedWindow();
 
 private:
     explicit Location(DOMWindow&);

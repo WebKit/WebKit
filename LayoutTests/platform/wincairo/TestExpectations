@@ -1660,7 +1660,90 @@ imported/w3c/web-platform-tests/console [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
-imported/w3c/web-platform-tests/css [ Skip ]
+
+imported/w3c/web-platform-tests/css/compositing [ Skip ]
+imported/w3c/web-platform-tests/css/css-align [ Skip ]
+imported/w3c/web-platform-tests/css/css-animations [ Skip ]
+imported/w3c/web-platform-tests/css/css-backgrounds [ Skip ]
+imported/w3c/web-platform-tests/css/css-box [ Skip ]
+imported/w3c/web-platform-tests/css/css-break [ Skip ]
+imported/w3c/web-platform-tests/css/css-cascade [ Skip ]
+imported/w3c/web-platform-tests/css/css-color [ Skip ]
+imported/w3c/web-platform-tests/css/css-color-adjust [ Skip ]
+imported/w3c/web-platform-tests/css/css-conditional [ Skip ]
+imported/w3c/web-platform-tests/css/css-contain [ Skip ]
+imported/w3c/web-platform-tests/css/css-content [ Skip ]
+imported/w3c/web-platform-tests/css/css-counter-styles [ Skip ]
+imported/w3c/web-platform-tests/css/css-display [ Skip ]
+imported/w3c/web-platform-tests/css/css-easing [ Skip ]
+imported/w3c/web-platform-tests/css/css-flexbox [ Skip ]
+imported/w3c/web-platform-tests/css/css-font-loading [ Skip ]
+imported/w3c/web-platform-tests/css/css-fonts [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid [ Skip ]
+imported/w3c/web-platform-tests/css/css-highlight-api [ Skip ]
+imported/w3c/web-platform-tests/css/css-images [ Skip ]
+imported/w3c/web-platform-tests/css/css-inline [ Skip ]
+imported/w3c/web-platform-tests/css/css-lists [ Skip ]
+imported/w3c/web-platform-tests/css/css-logical [ Skip ]
+imported/w3c/web-platform-tests/css/css-masking [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol [ Skip ]
+imported/w3c/web-platform-tests/css/css-nesting [ Skip ]
+imported/w3c/web-platform-tests/css/cssom [ Skip ]
+imported/w3c/web-platform-tests/css/cssom-view [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow [ Skip ]
+imported/w3c/web-platform-tests/css/css-overscroll-behavior [ Skip ]
+imported/w3c/web-platform-tests/css/css-position [ Skip ]
+imported/w3c/web-platform-tests/css/css-properties-values-api [ Skip ]
+imported/w3c/web-platform-tests/css/css-pseudo [ Skip ]
+imported/w3c/web-platform-tests/css/css-rhythm [ Skip ]
+imported/w3c/web-platform-tests/css/css-ruby [ Skip ]
+imported/w3c/web-platform-tests/css/css-scoping [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-anchoring [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
+imported/w3c/web-platform-tests/css/css-shadow-parts [ Skip ]
+imported/w3c/web-platform-tests/css/css-shapes [ Skip ]
+imported/w3c/web-platform-tests/css/css-size-adjust [ Skip ]
+imported/w3c/web-platform-tests/css/css-sizing [ Skip ]
+imported/w3c/web-platform-tests/css/css-syntax [ Skip ]
+imported/w3c/web-platform-tests/css/css-tables [ Skip ]
+imported/w3c/web-platform-tests/css/css-text [ Skip ]
+imported/w3c/web-platform-tests/css/css-text-decor [ Skip ]
+imported/w3c/web-platform-tests/css/css-transforms [ Skip ]
+imported/w3c/web-platform-tests/css/css-transitions [ Skip ]
+imported/w3c/web-platform-tests/css/css-typed-om [ Skip ]
+imported/w3c/web-platform-tests/css/css-ui [ Skip ]
+imported/w3c/web-platform-tests/css/css-values [ Skip ]
+imported/w3c/web-platform-tests/css/css-variables [ Skip ]
+imported/w3c/web-platform-tests/css/css-will-change [ Skip ]
+imported/w3c/web-platform-tests/css/css-writing-modes [ Skip ]
+imported/w3c/web-platform-tests/css/filter-effects [ Skip ]
+imported/w3c/web-platform-tests/css/geometry [ Skip ]
+imported/w3c/web-platform-tests/css/mediaqueries [ Skip ]
+imported/w3c/web-platform-tests/css/motion [ Skip ]
+imported/w3c/web-platform-tests/css/reference [ Skip ]
+
+imported/w3c/web-platform-tests/css/selectors/dir-pseudo-on-input-element.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/focus-visible-011.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/focus-visible-022.tentative.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/focus-within-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/lang-pseudo-class-in-has-multiple-document-elements.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/nth-child-of-pseudo.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/nth-last-child-of-no-space-after-of.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/nth-last-child-of-style-sharing-1.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/nth-last-child-of-style-sharing-2.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/nth-last-child-of-tagname.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Skip ] # ImageOnlyFailure
+imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ] # Failure
+
+imported/w3c/web-platform-tests/css/support [ Skip ]
+imported/w3c/web-platform-tests/css/WOFF2 [ Skip ]
+
 imported/w3c/web-platform-tests/custom-elements [ Skip ]
 imported/w3c/web-platform-tests/deprecation-reporting [ Skip ]
 imported/w3c/web-platform-tests/dom [ Skip ]

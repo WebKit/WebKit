@@ -195,8 +195,8 @@ static inline JSValue jsTestSerializedScriptValueInterface_valueGetter(JSGlobalO
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.value())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->value())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -209,11 +209,11 @@ static inline bool setJSTestSerializedScriptValueInterface_valueSetter(JSGlobalO
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setValue(WTFMove(nativeValue));
+        return impl->setValue(WTFMove(nativeValue));
     });
     return true;
 }
@@ -227,8 +227,8 @@ static inline JSValue jsTestSerializedScriptValueInterface_readonlyValueGetter(J
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.readonlyValue())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->readonlyValue())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_readonlyValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -242,8 +242,8 @@ static inline JSValue jsTestSerializedScriptValueInterface_cachedValueGetter(JSG
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (JSValue cachedValue = thisObject.m_cachedValue.get())
         return cachedValue;
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.cachedValue());
+    Ref impl = thisObject.wrapped();
+    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->cachedValue());
     RETURN_IF_EXCEPTION(throwScope, { });
     thisObject.m_cachedValue.set(JSC::getVM(&lexicalGlobalObject), &thisObject, result);
     return result;
@@ -259,11 +259,11 @@ static inline bool setJSTestSerializedScriptValueInterface_cachedValueSetter(JSG
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setCachedValue(WTFMove(nativeValue));
+        return impl->setCachedValue(WTFMove(nativeValue));
     });
     return true;
 }
@@ -277,8 +277,8 @@ static inline JSValue jsTestSerializedScriptValueInterface_portsGetter(JSGlobalO
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<MessagePort>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ports())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<MessagePort>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->ports())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterface_ports, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -292,8 +292,8 @@ static inline JSValue jsTestSerializedScriptValueInterface_cachedReadonlyValueGe
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (JSValue cachedValue = thisObject.m_cachedReadonlyValue.get())
         return cachedValue;
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.cachedReadonlyValue());
+    Ref impl = thisObject.wrapped();
+    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->cachedReadonlyValue());
     RETURN_IF_EXCEPTION(throwScope, { });
     thisObject.m_cachedReadonlyValue.set(JSC::getVM(&lexicalGlobalObject), &thisObject, result);
     return result;
@@ -310,13 +310,13 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    Ref impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto value = convert<IDLSerializedScriptValue<SerializedScriptValue>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.function(WTFMove(value)); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->function(WTFMove(value)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_function, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -330,8 +330,8 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.functionReturning())));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl->functionReturning())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

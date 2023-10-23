@@ -85,7 +85,7 @@ inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeS
     if (id.isEmpty())
         return nullptr;
 
-    if (LegacyRenderSVGResourceContainer* renderResource = treeScope.svgResourceById(id))
+    if (LegacyRenderSVGResourceContainer* renderResource = treeScope.lookupLegacySVGResoureById(id))
         return renderResource;
 
     return nullptr;

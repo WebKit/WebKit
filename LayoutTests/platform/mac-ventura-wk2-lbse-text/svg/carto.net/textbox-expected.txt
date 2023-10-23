@@ -34,7 +34,7 @@ layer at (0,0) size 433x30
   RenderSVGTransformableContainer {g} at (0,0) size 432.69x30
 layer at (0,0) size 230x30
   RenderSVGRect {rect} at (0,0) size 230x30 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=230.00] [height=30.00]
-layer at (0,0) size 223x29 backgroundClip at (3.75,8.41) size 222.50x16.78 clip at (3.75,0.59) size 222.50x28.81
+layer at (0,0) size 223x29 backgroundClip at (3.75,7.75) size 222.50x18 clip at (3.75,0.59) size 222.50x28.81
   RenderSVGViewportContainer {svg} at (0,0) size 222.50x28.81
 layer at (100,36.19) size 840x329 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (100,36.19) size 839.56x328.56

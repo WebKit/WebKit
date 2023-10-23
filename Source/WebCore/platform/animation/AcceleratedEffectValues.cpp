@@ -30,9 +30,9 @@
 
 #include "IntSize.h"
 #include "LengthFunctions.h"
-#include "MotionPath.h"
 #include "Path.h"
 #include "RenderStyleInlines.h"
+#include "TransformOperationData.h"
 
 namespace WebCore {
 

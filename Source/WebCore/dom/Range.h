@@ -48,8 +48,10 @@ public:
     WEBCORE_EXPORT ~Range();
 
     Node& startContainer() const final { return m_start.container(); }
+    Ref<Node> protectedStartContainer() const;
     unsigned startOffset() const final { return m_start.offset(); }
     Node& endContainer() const final { return m_end.container(); }
+    Ref<Node> protectedEndContainer() const;
     unsigned endOffset() const final { return m_end.offset(); }
     bool collapsed() const final { return m_start == m_end; }
     WEBCORE_EXPORT Node* commonAncestorContainer() const;
@@ -121,7 +123,7 @@ public:
     // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
     LocalDOMWindow* window() const;
 
-    static ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset);
+    static ExceptionOr<RefPtr<Node>> checkNodeOffsetPair(Node&, unsigned offset);
 
 #if ENABLE(TREE_DEBUGGING)
     String debugDescription() const;
@@ -140,6 +142,7 @@ private:
     void updateAssociatedSelection();
     void updateAssociatedHighlight();
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
+    Ref<Document> protectedOwnerDocument();
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

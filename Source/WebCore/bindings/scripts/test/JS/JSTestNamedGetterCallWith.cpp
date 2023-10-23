@@ -160,7 +160,7 @@ bool JSTestNamedGetterCallWith::legacyPlatformObjectGetOwnProperty(JSObject* obj
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
         auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedGetterCallWith>([] (JSTestNamedGetterCallWith& thisObject, PropertyName propertyName) -> decltype(auto) {
-            return thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomString(propertyName));
+            return thisObject.protectedWrapped()->namedItem(Ref { worldForDOMObject(thisObject) }, propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -187,7 +187,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, JSGl
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestNamedGetterCallWith>([] (JSTestNamedGetterCallWith& thisObject, PropertyName propertyName) -> decltype(auto) {
-        return thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomString(propertyName));
+        return thisObject.protectedWrapped()->namedItem(Ref { worldForDOMObject(thisObject) }, propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
@@ -271,7 +271,7 @@ bool JSTestNamedGetterCallWith::defineOwnProperty(JSObject* object, JSGlobalObje
         slot.disallowVMEntry.reset();
         RETURN_IF_EXCEPTION(throwScope, false);
         if (!found) {
-            if (thisObject->wrapped().isSupportedPropertyName(propertyNameToString(propertyName)))
+            if (thisObject->protectedWrapped()->isSupportedPropertyName(propertyNameToString(propertyName)))
                 return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
         }
     }
@@ -284,7 +284,7 @@ bool JSTestNamedGetterCallWith::defineOwnProperty(JSObject* object, JSGlobalObje
 bool JSTestNamedGetterCallWith::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -292,7 +292,7 @@ bool JSTestNamedGetterCallWith::deleteProperty(JSCell* cell, JSGlobalObject* lex
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
 
-    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (!propertyName.isSymbol() && impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -304,7 +304,7 @@ bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObje
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -314,7 +314,7 @@ bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObje
 
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
-    if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;

@@ -92,7 +92,6 @@ class TextSizeAdjustment;
 class TextUnderlineOffset;
 class TransformOperations;
 class TransformationMatrix;
-class TransformOperationData;
 class TranslateTransformOperation;
 class WillChangeData;
 
@@ -259,6 +258,7 @@ struct TabSize;
 struct TextAutospace;
 struct TextBoxEdge;
 struct TextSpacingTrim;
+struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;
 template<typename> class RectEdges;

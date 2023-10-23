@@ -6,12 +6,20 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 472x287
   RenderSVGTransformableContainer {g} at (0,0) size 471.14x286.36
+layer at (0.25,0.50) size 1x2
+  RenderSVGResourceClipper {clipPath} at (0.25,0.50) size 0.61x1
+layer at (0.25,0.50) size 1x1
+  RenderSVGRect {rect} at (0,0) size 0.61x1 [fill={[type=SOLID] [color=#000000]}] [x=0.25] [y=0.50] [width=0.60] [height=1.00]
 layer at (10,10) size 430x80
   RenderSVGRect {rect} at (10,10) size 430x80 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
 layer at (20,102.83) size 451x33
   RenderSVGText {text} at (20,102) size 452x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 452x34
       chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 451.13: "clipPathUnits=objectBoundingBox"
+layer at (60,60) size 80x80
+  RenderSVGResourceClipper {clipPath} at (60,60) size 80x80
+layer at (60,60) size 80x80
+  RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=60.00] [width=80.00] [height=80.00]
 layer at (0,0) size 120x120
   RenderSVGRect {rect} at (0,0) size 120x120 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
 layer at (20,252.83) size 429x33

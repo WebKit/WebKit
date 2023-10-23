@@ -124,10 +124,12 @@ void NamedSlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotE
 #endif
 
     // FIXME: We should be able to do a targeted reconstruction.
-    shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
+    ASSERT(shadowRoot.host());
+    Ref shadowRootHost = *shadowRoot.host();
+    shadowRootHost->invalidateStyleAndRenderersForSubtree();
 
     if (!m_slotElementCount)
-        shadowRoot.host()->setHasShadowRootContainingSlots(true);
+        shadowRootHost->setHasShadowRootContainingSlots(true);
     m_slotElementCount++;
 
     auto& slotName = slotNameFromAttributeValue(name);
@@ -296,8 +298,10 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
     if (!slot)
         return;
 
-    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
-    shadowRoot.host()->invalidateStyleForSubtree();
+    ASSERT(shadowRoot.host());
+    Ref shadowRootHost = *shadowRoot.host();
+    RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
+    shadowRootHost->invalidateStyleForSubtree();
 
     slot->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;
@@ -394,7 +398,7 @@ void NamedSlotAssignment::assignSlots(ShadowRoot& shadowRoot)
         entry.value->assignedNodes.shrink(0);
 
     if (auto* host = shadowRoot.host()) {
-        for (auto* child = host->firstChild(); child; child = child->nextSibling()) {
+        for (RefPtr child = host->firstChild(); child; child = child->nextSibling()) {
             if (!is<Text>(*child) && !is<Element>(*child))
                 continue;
             auto slotName = slotNameForHostChild(*child);
@@ -460,7 +464,7 @@ void ManualSlotAssignment::renameSlotElement(HTMLSlotElement&, const AtomString&
 void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotElement& slot, ShadowRoot& shadowRoot)
 {
     if (!m_slotElementCount)
-        shadowRoot.host()->setHasShadowRootContainingSlots(true);
+        shadowRoot.protectedHost()->setHasShadowRootContainingSlots(true);
     ++m_slotElementCount;
     ++m_slottableVersion;
 
@@ -522,8 +526,9 @@ void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, 
         }
     };
 
-    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
-    shadowRoot.host()->invalidateStyleForSubtree();
+    RefPtr shadowRootHost = shadowRoot.host();
+    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRootHost);
+    shadowRootHost->invalidateStyleForSubtree();
 
     if (!shadowRoot.shouldFireSlotchangeEvent())
         return;
@@ -543,10 +548,11 @@ void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, 
 void ManualSlotAssignment::didRemoveManuallyAssignedNode(HTMLSlotElement& slot, const Node& node, ShadowRoot& shadowRoot)
 {
     ASSERT(slot.containingShadowRoot() == &shadowRoot);
-    ASSERT_UNUSED(node, node.parentNode() == shadowRoot.host());
+    RefPtr shadowRootHost = shadowRoot.host();
+    ASSERT_UNUSED(node, node.parentNode() == shadowRootHost);
     ++m_slottableVersion;
-    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
-    shadowRoot.host()->invalidateStyleForSubtree();
+    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRootHost);
+    shadowRootHost->invalidateStyleForSubtree();
     if (shadowRoot.shouldFireSlotchangeEvent())
         slot.enqueueSlotChangeEvent();
 }

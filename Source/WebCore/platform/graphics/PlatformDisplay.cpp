@@ -80,11 +80,16 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(EGL) && USE(LIBDRM)
-#include "GBMDevice.h"
+#if USE(EGL)
+#if USE(LIBDRM)
 #include <xf86drm.h>
 #ifndef EGL_DRM_RENDER_NODE_FILE_EXT
 #define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
+#endif
+#endif
+#if USE(GBM)
+#include "GBMDevice.h"
+#include <drm_fourcc.h>
 #endif
 #endif
 
@@ -527,8 +532,61 @@ struct gbm_device* PlatformDisplay::gbmDevice()
 
     return device.device();
 }
-#endif
 
+const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [this] {
+        const auto& extensions = eglExtensions();
+        if (!extensions.EXT_image_dma_buf_import)
+            return;
+
+        static PFNEGLQUERYDMABUFFORMATSEXTPROC s_eglQueryDmaBufFormatsEXT = reinterpret_cast<PFNEGLQUERYDMABUFFORMATSEXTPROC>(eglGetProcAddress("eglQueryDmaBufFormatsEXT"));
+        if (!s_eglQueryDmaBufFormatsEXT)
+            return;
+
+        EGLint formatsCount;
+        if (!s_eglQueryDmaBufFormatsEXT(m_eglDisplay, 0, nullptr, &formatsCount) || !formatsCount)
+            return;
+
+        Vector<EGLint> formats(formatsCount);
+        if (!s_eglQueryDmaBufFormatsEXT(m_eglDisplay, formatsCount, reinterpret_cast<EGLint*>(formats.data()), &formatsCount))
+            return;
+
+        static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = extensions.EXT_image_dma_buf_import_modifiers ?
+            reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT")) : nullptr;
+
+        // For now we only support formats that can be created with a single GBM buffer for all planes.
+        static const Vector<uint32_t> s_supportedFormats = {
+            DRM_FORMAT_RGB565,
+            DRM_FORMAT_RGBX8888, DRM_FORMAT_RGBA8888, DRM_FORMAT_BGRX8888, DRM_FORMAT_BGRA8888,
+            DRM_FORMAT_XRGB8888, DRM_FORMAT_ARGB8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_ABGR8888,
+            DRM_FORMAT_XRGB2101010, DRM_FORMAT_ARGB2101010, DRM_FORMAT_XBGR2101010, DRM_FORMAT_ABGR2101010,
+            DRM_FORMAT_XRGB16161616F, DRM_FORMAT_ARGB16161616F, DRM_FORMAT_XBGR16161616F, DRM_FORMAT_ABGR16161616F
+        };
+
+        m_dmabufFormats = WTF::compactMap(formats, [this](auto format) -> std::optional<DMABufFormat> {
+            if (!s_supportedFormats.contains(static_cast<uint32_t>(format)))
+                return std::nullopt;
+
+            Vector<uint64_t, 1> dmabufModifiers = { DRM_FORMAT_MOD_INVALID };
+            if (s_eglQueryDmaBufModifiersEXT) {
+                EGLint modifiersCount;
+                if (s_eglQueryDmaBufModifiersEXT(m_eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) && modifiersCount) {
+                    Vector<EGLuint64KHR> modifiers(modifiersCount);
+                    if (s_eglQueryDmaBufModifiersEXT(m_eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount)) {
+                        dmabufModifiers.grow(modifiersCount);
+                        for (int i = 0; i < modifiersCount; ++i)
+                            dmabufModifiers[i] = modifiers[i];
+                    }
+                }
+            }
+            return DMABufFormat { static_cast<uint32_t>(format), WTFMove(dmabufModifiers) };
+        });
+    });
+    return m_dmabufFormats;
+}
+#endif // USE(GBM)
 #endif // USE(EGL)
 
 #if USE(LCMS)

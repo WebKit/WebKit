@@ -44,6 +44,8 @@ layer at (-123.41,-27.17) size 247x34 backgroundClip at (0,0) size 800x600 clip 
       chunk 1 (middle anchor) text run 1 at (-123.39,0.00) startOffset 0 endOffset 18 width 246.78: "text-anchor:middle"
 layer at (-208.47,-27.17) size 212x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 211.47x33.53
+layer at (-50,0) size 51x0
+  RenderSVGPath {line} at (158.47,27.17) size 50x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-50.00] [y1=0.00] [x2=0.00] [y2=0.00]
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGEllipse {circle} at (205.47,24.17) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
 layer at (10,304) size 263x46

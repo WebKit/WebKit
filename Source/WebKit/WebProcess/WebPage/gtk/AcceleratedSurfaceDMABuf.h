@@ -34,6 +34,7 @@
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
+#include "DMABufRendererBufferFormat.h"
 typedef void *EGLImage;
 struct gbm_bo;
 #endif
@@ -108,8 +109,8 @@ private:
 #if USE(GBM)
     class RenderTargetEGLImage final : public RenderTargetColorBuffer {
     public:
-        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
-        RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&, const DMABufRendererBufferFormat&);
+        RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
         ~RenderTargetEGLImage();
 
     private:
@@ -132,7 +133,7 @@ private:
     class RenderTargetTexture final : public RenderTarget {
     public:
         static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
-        RenderTargetTexture(uint64_t, const WebCore::IntSize&, WTF::UnixFileDescriptor&&, unsigned, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        RenderTargetTexture(uint64_t, const WebCore::IntSize&, unsigned texture, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
         ~RenderTargetTexture();
 
     private:
@@ -147,6 +148,9 @@ private:
         explicit SwapChain(uint64_t);
         ~SwapChain() = default;
 
+        enum class Type { Invalid, EGLImage, SharedMemory, Texture };
+
+        Type type() const { return m_type; }
         void resize(const WebCore::IntSize&);
         RenderTarget* nextTarget();
         void releaseTarget(uint64_t);
@@ -154,9 +158,11 @@ private:
 
         unsigned size() const { return m_freeTargets.size() + m_lockedTargets.size(); }
 
-    private:
-        enum class Type { Invalid, EGLImage, SharedMemory, Texture };
+#if USE(GBM)
+        void setupBufferFormat(const Vector<DMABufRendererBufferFormat>&);
+#endif
 
+    private:
         static constexpr unsigned s_maximumBuffers = 3;
 
         std::unique_ptr<RenderTarget> createTarget() const;
@@ -166,6 +172,9 @@ private:
         WebCore::IntSize m_size;
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_freeTargets;
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_lockedTargets;
+#if USE(GBM)
+        DMABufRendererBufferFormat m_dmabufFormat;
+#endif
     };
 
     uint64_t m_id { 0 };

@@ -71,12 +71,14 @@
 #include "ProfilerDatabase.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
+#include "SideDataRepository.h"
 #include "SimpleTypedArrayController.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypedArrayInlines.h"
+#include "VMInlines.h"
 #include "VMInspector.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
@@ -515,10 +517,12 @@ JSC_DEFINE_CUSTOM_GETTER(accessorMakeMasquerader, (JSGlobalObject* globalObject,
     return JSValue::encode(InternalFunction::createFunctionThatMasqueradesAsUndefined(vm, globalObject, 0, "IsHTMLDDA"_s, functionCallMasquerader));
 }
 
+int propertyFilterSideDataKey;
 
 class GlobalObject final : public JSGlobalObject {
 public:
     using Base = JSGlobalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertyNames;
 
     static GlobalObject* create(VM& vm, Structure* structure, const Vector<String>& arguments)
     {
@@ -537,13 +541,66 @@ public:
 
     static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags::createAllEnabled(); }
 
+    static void getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
+    {
+        VM& vm = globalObject->vm();
+        PropertyNameArray ownPropertyNames(vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
+        Base::getOwnPropertyNames(object, globalObject, ownPropertyNames, mode);
+        auto* thisObject = jsCast<GlobalObject*>(object);
+        auto& filter = thisObject->ensurePropertyFilter();
+        for (auto& propertyName : ownPropertyNames) {
+            if (!filter.contains(propertyName.impl()))
+                propertyNames.add(propertyName);
+        }
+    }
+
 private:
     GlobalObject(VM&, Structure*);
 
     static constexpr unsigned DontEnum = 0 | PropertyAttribute::DontEnum;
 
+    class PropertyFilter : public SideDataRepository::SideData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        void add(UniquedStringImpl* uid)
+        {
+            auto result = m_names.add(uid);
+            if (result.isNewEntry)
+                m_strings.append(uid);
+        }
+
+        bool contains(UniquedStringImpl* name) const { return m_names.contains(name); }
+        const HashSet<UniquedStringImpl*>& names() const { return m_names; }
+
+    private:
+        Vector<AtomString> m_strings; // To keep the UniqueStringImpls alive.
+        HashSet<UniquedStringImpl*> m_names;
+    };
+
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
+        auto& filter = ensurePropertyFilter();
+
+        auto addFunction = [&] (VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum)) {
+            addFunctionImpl(filter, vm, name, function, arguments, attributes);
+        };
+
+        auto addFunctionToObject = [&] (VM& vm, JSObject* owner, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum)) {
+            addFunctionToObjectImpl(filter, vm, owner, name, function, arguments, attributes);
+        };
+
+        auto putDirect = [&] (VM& vm, PropertyName propertyName, JSValue value, unsigned attributes = 0) -> bool {
+            return putDirectImpl(filter, vm, propertyName, value, attributes);
+        };
+
+        auto putDirectWithoutTransition = [&] (VM& vm, PropertyName propertyName, JSValue value, unsigned attributes) {
+            putDirectWithoutTransitionImpl(filter, vm, propertyName, value, attributes);
+        };
+
+        auto putDirectNativeFunction = [&] (VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned attributes) -> bool {
+            return putDirectNativeFunctionImpl(filter, vm, globalObject, propertyName, functionLength, nativeFunction, implementationVisibility, intrinsic, attributes);
+        };
+
         Base::finishCreation(vm);
         JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
@@ -671,13 +728,13 @@ private:
         putDirect(vm, Identifier::fromString(vm, "$"_s), dollar, DontEnum);
         putDirect(vm, Identifier::fromString(vm, "$262"_s), dollar, DontEnum);
         
-        addFunction(vm, dollar, "createRealm"_s, functionDollarCreateRealm, 0, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "detachArrayBuffer"_s, functionTransferArrayBuffer, 1, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "evalScript"_s, functionDollarEvalScript, 1, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "gc"_s, functionDollarGC, 0, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "clearKeptObjects"_s, functionDollarClearKeptObjects, 0, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "globalObjectFor"_s, functionDollarGlobalObjectFor, 1, static_cast<unsigned>(PropertyAttribute::None));
-        addFunction(vm, dollar, "isRemoteFunction"_s, functionDollarIsRemoteFunction, 1, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "createRealm"_s, functionDollarCreateRealm, 0, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "detachArrayBuffer"_s, functionTransferArrayBuffer, 1, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "evalScript"_s, functionDollarEvalScript, 1, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "gc"_s, functionDollarGC, 0, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "clearKeptObjects"_s, functionDollarClearKeptObjects, 0, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "globalObjectFor"_s, functionDollarGlobalObjectFor, 1, static_cast<unsigned>(PropertyAttribute::None));
+        addFunctionToObject(vm, dollar, "isRemoteFunction"_s, functionDollarIsRemoteFunction, 1, static_cast<unsigned>(PropertyAttribute::None));
         
         dollar->putDirect(vm, Identifier::fromString(vm, "global"_s), globalThis());
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"_s),
@@ -690,14 +747,14 @@ private:
         
         // The test262 INTERPRETING.md document says that some of these functions are just in the main
         // thread and some are in the other threads. We just put them in all threads.
-        addFunction(vm, agent, "start"_s, functionDollarAgentStart, 1);
-        addFunction(vm, agent, "receiveBroadcast"_s, functionDollarAgentReceiveBroadcast, 1);
-        addFunction(vm, agent, "report"_s, functionDollarAgentReport, 1);
-        addFunction(vm, agent, "sleep"_s, functionDollarAgentSleep, 1);
-        addFunction(vm, agent, "broadcast"_s, functionDollarAgentBroadcast, 1);
-        addFunction(vm, agent, "getReport"_s, functionDollarAgentGetReport, 0);
-        addFunction(vm, agent, "leaving"_s, functionDollarAgentLeaving, 0);
-        addFunction(vm, agent, "monotonicNow"_s, functionDollarAgentMonotonicNow, 0);
+        addFunctionToObject(vm, agent, "start"_s, functionDollarAgentStart, 1);
+        addFunctionToObject(vm, agent, "receiveBroadcast"_s, functionDollarAgentReceiveBroadcast, 1);
+        addFunctionToObject(vm, agent, "report"_s, functionDollarAgentReport, 1);
+        addFunctionToObject(vm, agent, "sleep"_s, functionDollarAgentSleep, 1);
+        addFunctionToObject(vm, agent, "broadcast"_s, functionDollarAgentBroadcast, 1);
+        addFunctionToObject(vm, agent, "getReport"_s, functionDollarAgentGetReport, 0);
+        addFunctionToObject(vm, agent, "leaving"_s, functionDollarAgentLeaving, 0);
+        addFunctionToObject(vm, agent, "monotonicNow"_s, functionDollarAgentMonotonicNow, 0);
 
         addFunction(vm, "waiterListSize"_s, functionWaiterListSize, 2);
 
@@ -717,17 +774,27 @@ private:
         addFunction(vm, "dropAllLocks"_s, functionDropAllLocks, 1);
 
         if (Options::exposeCustomSettersOnGlobalObjectForTesting()) {
+            auto putDirectCustomAccessor = [&] (VM& vm, PropertyName propertyName, JSValue value, unsigned attributes) -> bool {
+                return putDirectCustomAccessorImpl(filter, vm, propertyName, value, attributes);
+            };
+
             {
                 CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomAccessorSetter);
                 Identifier identifier = Identifier::fromString(vm, "testCustomAccessorSetter"_s);
-                this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomAccessor);
+                putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomAccessor);
             }
 
             {
                 CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomValueSetter);
                 Identifier identifier = Identifier::fromString(vm, "testCustomValueSetter"_s);
-                this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomValue);
+                putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomValue);
             }
+        }
+
+        if (Options::useDollarVM()) {
+            // $vm is added in JSGlobalObject but we also want it filtered out. Just add it to the filter here.
+            Identifier dollarVMIdentifier = Identifier::fromString(vm, "$vm"_s);
+            rememberDontEnumProperty(filter, dollarVMIdentifier.impl(), 0 | PropertyAttribute::DontEnum);
         }
     }
 
@@ -742,18 +809,69 @@ public:
         return true;
     }
 
-private:
-    void addFunction(VM& vm, JSObject* object, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum))
+    bool putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes = 0)
     {
-        Identifier identifier = Identifier::fromString(vm, name);
-        object->putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function, ImplementationVisibility::Public), attributes);
+        auto& filter = ensurePropertyFilter();
+        return putDirectImpl(filter, vm, propertyName, value, attributes);
     }
 
-    void addFunction(VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum))
+private:
+    PropertyFilter& ensurePropertyFilter()
     {
-        addFunction(vm, this, name, function, arguments, attributes);
+        return vm().ensureSideData<PropertyFilter>(&propertyFilterSideDataKey, [] () -> std::unique_ptr<PropertyFilter> {
+            return makeUnique<PropertyFilter>();
+        });
     }
-    
+
+    void rememberDontEnumProperty(PropertyFilter& filter, UniquedStringImpl* uid, unsigned attributes)
+    {
+        static constexpr unsigned DontEnum = static_cast<unsigned>(PropertyAttribute::DontEnum);
+        if (attributes & DontEnum)
+            filter.add(uid);
+    }
+
+    void addFunctionToObjectImpl(PropertyFilter& filter, VM& vm, JSObject* owner, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum))
+    {
+        Identifier identifier = Identifier::fromString(vm, name);
+        owner->putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function, ImplementationVisibility::Public), attributes);
+
+        // addFunctionToObjectImpl is also used as a utility function for adding to other objects.
+        // We only need to call rememberDontEnumProperty on GlobalObject properties.
+        if (owner == this)
+            rememberDontEnumProperty(filter, identifier.impl(), attributes);
+    }
+
+    void addFunctionImpl(PropertyFilter& filter, VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments, unsigned attributes = static_cast<unsigned>(PropertyAttribute::DontEnum))
+    {
+        addFunctionToObjectImpl(filter, vm, this, name, function, arguments, attributes);
+    }
+
+    bool putDirectImpl(PropertyFilter& filter, VM& vm, PropertyName propertyName, JSValue value, unsigned attributes = 0)
+    {
+        rememberDontEnumProperty(filter, propertyName.uid(), attributes);
+        return Base::putDirect(vm, propertyName, value, attributes);
+    }
+
+    void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned) = delete;
+    void putDirectWithoutTransitionImpl(PropertyFilter& filter, VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+    {
+        rememberDontEnumProperty(filter, propertyName.uid(), attributes);
+        Base::putDirectWithoutTransition(vm, propertyName, value, attributes);
+    }
+
+    bool putDirectNativeFunction(VM&, JSGlobalObject*, const PropertyName&, unsigned, NativeFunction, ImplementationVisibility, Intrinsic, unsigned) = delete;
+    bool putDirectNativeFunctionImpl(PropertyFilter& filter, VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned attributes)
+    {
+        rememberDontEnumProperty(filter, propertyName.uid(), attributes);
+        return Base::putDirectNativeFunction(vm, globalObject, propertyName, functionLength, nativeFunction, implementationVisibility, intrinsic, attributes);
+    }
+
+    bool putDirectCustomAccessorImpl(PropertyFilter& filter, VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+    {
+        rememberDontEnumProperty(filter, propertyName.uid(), attributes);
+        return Base::putDirectCustomAccessor(vm, propertyName, value, attributes);
+    }
+
     static JSInternalPromise* moduleLoaderImportModule(JSGlobalObject*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);
     static Identifier moduleLoaderResolve(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);

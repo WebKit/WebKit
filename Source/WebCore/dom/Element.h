@@ -371,6 +371,7 @@ public:
     CustomElementReactionQueue* reactionQueue() const;
 
     CustomElementDefaultARIA& customElementDefaultARIA();
+    CheckedRef<CustomElementDefaultARIA> checkedCustomElementDefaultARIA();
     CustomElementDefaultARIA* customElementDefaultARIAIfExists();
 
     // FIXME: This should not be virtual. Please do not add additional overrides of this function.

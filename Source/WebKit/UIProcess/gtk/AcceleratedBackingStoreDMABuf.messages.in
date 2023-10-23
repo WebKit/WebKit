@@ -22,7 +22,7 @@
 
 #if USE(EGL)
 messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
-    DidCreateBuffer(uint64_t id, UnixFileDescriptor fd, WebCore::IntSize size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    DidCreateBuffer(uint64_t id, WebCore::IntSize size, uint32_t format, Vector<UnixFileDescriptor> fds, Vector<uint32_t> offsets, Vector<uint32_t> strides, uint64_t modifier)
     DidCreateBufferSHM(uint64_t id, WebKit::ShareableBitmap::Handle handle)
     DidDestroyBuffer(uint64_t id)
     Frame(uint64_t id)

@@ -726,6 +726,9 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
             if (parent->isSelected())
                 traits |= [self _axSelectedTrait];
             break;
+        case AccessibilityRole::Summary:
+            traits |= [self _axButtonTrait];
+            break;
         default:
             if ([self _accessibilityIsLandmarkRole:parentRole])
                 traits |= [self _axContainedByLandmarkTrait];
@@ -880,6 +883,9 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         break;
     case AccessibilityRole::StaticText:
         traits |= [self _axStaticTextTrait];
+        break;
+    case AccessibilityRole::Summary:
+        traits |= [self _axButtonTrait];
         break;
     case AccessibilityRole::Slider:
     case AccessibilityRole::SpinButton:
@@ -2016,7 +2022,15 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     if (![self _prepareAccessibilityCall])
         return NO;
 
-    return self.axBackingObject->press();
+    if (self.axBackingObject->press())
+        return true;
+
+    // On iOS, only the static text within a <summary> is exposed, not the <summary> itself.
+    // So if this activation was for <summary> text, we should toggle the expanded state of the containing <details>.
+    if (self.axBackingObject->isStaticText())
+        return self.axBackingObject->toggleDetailsAncestor();
+
+    return false;
 }
 
 - (id)attachmentView

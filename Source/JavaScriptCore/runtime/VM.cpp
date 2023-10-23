@@ -104,6 +104,7 @@
 #include "SamplingProfiler.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "SideDataRepository.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StrongInlines.h"
@@ -436,6 +437,9 @@ VM::~VM()
     m_traps.willDestroyVM();
     m_isInService = false;
     WTF::storeStoreFence();
+
+    if (m_hasSideData)
+        sideDataRepository().deleteAll(this);
 
     // Never GC, ever again.
     heap.incrementDeferralDepth();
