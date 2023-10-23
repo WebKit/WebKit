@@ -233,7 +233,6 @@ Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
 Shared/URLSchemeTaskParameters.cpp
 Shared/UserData.cpp
-Shared/UserContentControllerParameters.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebCompiledContentRuleList.cpp
 Shared/WebCompiledContentRuleListData.cpp

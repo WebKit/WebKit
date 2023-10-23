@@ -25,12 +25,6 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include "Decoder.h"
-#include "Encoder.h"
-#include <WebCore/ResourceRequest.h>
-#include <wtf/ArgumentCoder.h>
-
 namespace WebKit {
 
 enum class LastNavigationWasAppInitiated : bool { No, Yes };
@@ -53,33 +47,6 @@ struct AppPrivacyReportTestingData {
     void didLoadAppInitiatedRequest(bool isAppInitiated)
     {
         isAppInitiated ? hasLoadedAppInitiatedRequestTesting = true : hasLoadedNonAppInitiatedRequestTesting = true;
-    }
-
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << hasLoadedAppInitiatedRequestTesting;
-        encoder << hasLoadedNonAppInitiatedRequestTesting;
-        encoder << didPerformSoftUpdate;
-    }
-
-    static std::optional<AppPrivacyReportTestingData> decode(IPC::Decoder& decoder)
-    {
-        std::optional<bool> hasLoadedAppInitiatedRequestTesting;
-        decoder >> hasLoadedAppInitiatedRequestTesting;
-        if (!hasLoadedAppInitiatedRequestTesting)
-            return std::nullopt;
-
-        std::optional<bool> hasLoadedNonAppInitiatedRequestTesting;
-        decoder >> hasLoadedNonAppInitiatedRequestTesting;
-        if (!hasLoadedNonAppInitiatedRequestTesting)
-            return std::nullopt;
-
-        std::optional<bool> didPerformSoftUpdate;
-        decoder >> didPerformSoftUpdate;
-        if (!didPerformSoftUpdate)
-            return std::nullopt;
-
-        return {{ *hasLoadedAppInitiatedRequestTesting, *hasLoadedNonAppInitiatedRequestTesting, *didPerformSoftUpdate }};
     }
 
     bool hasLoadedAppInitiatedRequestTesting { false };
