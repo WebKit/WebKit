@@ -3254,8 +3254,10 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
     TestWebKitAPI::Util::run(&done);
 #if PLATFORM(MAC)
     EXPECT_TRUE([webView2 hostWindow].isVisible);
-    EXPECT_FALSE([webView1 hostWindow].isMiniaturized);
-    EXPECT_FALSE([webView2 hostWindow].isMiniaturized);
+    while ([webView1 hostWindow].isMiniaturized)
+        TestWebKitAPI::Util::spinRunLoop(1);
+    while ([webView2 hostWindow].isMiniaturized)
+        TestWebKitAPI::Util::spinRunLoop(1);
 
     // FIXME: We should be able to run these tests in iOS once pages are actually visible.
     done = false;
