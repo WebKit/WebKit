@@ -61,13 +61,14 @@ void ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired()
 {
     ASSERT(!isDetached());
 
-    Ref<ScriptableDocumentParser> protectedThis(*this);
+    Ref protectedThis { *this };
 
-    if (!document()->styleScope().hasPendingSheets())
+    RefPtr document = this->document();
+    if (!document->styleScope().hasPendingSheets())
         executeScriptsWaitingForStylesheets();
 
     if (!isDetached())
-        document()->checkCompleted();
+        document->checkCompleted();
 }
 
 void ScriptableDocumentParser::detach()

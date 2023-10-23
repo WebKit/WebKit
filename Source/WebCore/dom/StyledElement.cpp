@@ -136,10 +136,10 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
     if (!inlineStyle)
         inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
     else
-        downcast<MutableStyleProperties>(*inlineStyle).parseDeclaration(newStyleString, document());
+        Ref { downcast<MutableStyleProperties>(*inlineStyle) }->parseDeclaration(newStyleString, document());
 
     if (usesStyleBasedEditability(*inlineStyle))
-        document().setHasElementUsingStyleBasedEditability();
+        protectedDocument()->setHasElementUsingStyleBasedEditability();
 }
 
 void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
@@ -163,7 +163,7 @@ void StyledElement::invalidateStyleAttribute()
 {
     if (auto* inlineStyle = this->inlineStyle()) {
         if (usesStyleBasedEditability(*inlineStyle))
-            document().setHasElementUsingStyleBasedEditability();
+            protectedDocument()->setHasElementUsingStyleBasedEditability();
     }
 
     elementData()->setStyleAttributeIsDirty(true);
@@ -267,7 +267,7 @@ void StyledElement::removeAllInlineStyleProperties()
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
-    auto* inlineStyle = this->inlineStyle();
+    RefPtr inlineStyle = this->inlineStyle();
     if (!inlineStyle)
         return;
     inlineStyle->traverseSubresources([&] (auto& resource) {

@@ -5488,6 +5488,11 @@ WindowProxy* Document::windowProxy() const
     return &m_frame->windowProxy();
 }
 
+RefPtr<WindowProxy> Document::protectedWindowProxy() const
+{
+    return windowProxy();
+}
+
 Document& Document::contextDocument() const
 {
     if (m_contextDocument)
@@ -7426,6 +7431,16 @@ void Document::clearScriptedAnimationController()
     // FIXME: consider using ActiveDOMObject.
     if (RefPtr scriptedAnimationController = std::exchange(m_scriptedAnimationController, nullptr))
         scriptedAnimationController->clearDocumentPointer();
+}
+
+CheckedRef<FrameSelection> Document::checkedSelection()
+{
+    return m_selection.get();
+}
+
+CheckedRef<const FrameSelection> Document::checkedSelection() const
+{
+    return m_selection.get();
 }
 
 int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)

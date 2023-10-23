@@ -48,8 +48,7 @@ Ref<StaticRange> StaticRange::create(SimpleRange&& range)
 
 Ref<StaticRange> StaticRange::create(const SimpleRange& range)
 {
-    auto copiedRange = range;
-    return create(WTFMove(copiedRange));
+    return create(SimpleRange { range });
 }
 
 static bool isDocumentTypeOrAttr(Node& node)

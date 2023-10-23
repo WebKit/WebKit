@@ -595,12 +595,12 @@ String ScriptElement::scriptContent() const
     return TextNodeTraversal::childTextContent(protectedElement());
 }
 
-void ScriptElement::ref()
+void ScriptElement::ref() const
 {
     element().ref();
 }
 
-void ScriptElement::deref()
+void ScriptElement::deref() const
 {
     element().deref();
 }

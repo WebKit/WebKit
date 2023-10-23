@@ -80,7 +80,7 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
-class ContentSecurityPolicy {
+class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);

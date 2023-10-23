@@ -73,6 +73,7 @@ public:
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
+    CheckedPtr<ContentSecurityPolicy> checkedContentSecurityPolicy();
 
     bool isSecureTransitionTo(const URL&) const;
 

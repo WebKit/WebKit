@@ -53,6 +53,8 @@ public:
 
     ScriptElement& element() { return m_element.get(); }
     const ScriptElement& element() const { return m_element.get(); }
+    Ref<ScriptElement> protectedElement() { return m_element; }
+    Ref<const ScriptElement> protectedElement() const { return m_element; }
 
     LoadableScript* loadableScript() const;
     bool needsLoading() const { return loadableScript(); }

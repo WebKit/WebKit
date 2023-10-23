@@ -64,6 +64,7 @@ public:
 
     // document() will return 0 after detach() is called.
     Document* document() const { ASSERT(m_document); return m_document.get(); }
+    RefPtr<Document> protectedDocument() const;
 
     bool isParsing() const { return m_state == ParserState::Parsing; }
     bool isStopping() const { return m_state == ParserState::Stopping; }
