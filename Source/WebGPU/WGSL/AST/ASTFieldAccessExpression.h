@@ -37,16 +37,19 @@ public:
 
     Expression& base() { return m_base.get(); }
     Identifier& fieldName() { return m_fieldName; }
+    const Identifier& originalFieldName() const { return m_originalFieldName; }
 
 private:
     FieldAccessExpression(SourceSpan span, Expression::Ref&& base, Identifier&& fieldName)
         : Expression(span)
         , m_base(WTFMove(base))
         , m_fieldName(WTFMove(fieldName))
+        , m_originalFieldName(m_fieldName)
     { }
 
     Expression::Ref m_base;
     Identifier m_fieldName;
+    Identifier m_originalFieldName;
 };
 
 } // namespace WGSL::AST

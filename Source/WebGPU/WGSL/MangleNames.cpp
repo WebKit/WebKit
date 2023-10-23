@@ -141,11 +141,12 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     introduceVariable(structure.name(), MangledName::Type);
 
     NameMap fieldMap;
+    m_indexPerType[WTF::enumToUnderlyingType(MangledName::Field)] = 0;
     for (auto& member : structure.members()) {
         AST::Visitor::visit(member.type());
         auto mangledName = makeMangledName(member.name(), MangledName::Field);
         fieldMap.add(member.name(), mangledName);
-        // FIXME: need to resolve type of expressions in order to be able to replace struct fields
+        m_callGraph.ast().replace(&member.name(), AST::Identifier::makeWithSpan(member.name().span(), mangledName.toString()));
     }
     auto result = m_structFieldMapping.add(&structure, WTFMove(fieldMap));
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -187,8 +188,20 @@ void NameManglerVisitor::visit(AST::IdentifierExpression& identifier)
 
 void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
 {
-    // FIXME: need to resolve type of expressions in order to be able to replace struct fields
-    AST::Visitor::visit(access.base());
+    AST::Visitor::visit(access);
+
+    auto* baseType = access.base().inferredType();
+    if (auto* reference = std::get_if<Types::Reference>(baseType))
+        baseType = reference->element;
+    auto* structType = std::get_if<Types::Struct>(baseType);
+    if (!structType)
+        return;
+    auto structMapIt = m_structFieldMapping.find(&structType->structure);
+    RELEASE_ASSERT(structMapIt != m_structFieldMapping.end());
+
+    auto fieldIt = structMapIt->value.find(access.fieldName());
+    ASSERT(fieldIt != structMapIt->value.end());
+    m_callGraph.ast().replace(&access.fieldName(), AST::Identifier::makeWithSpan(access.fieldName().span(), fieldIt->value.toString()));
 }
 
 void NameManglerVisitor::introduceVariable(AST::Identifier& name, MangledName::Kind kind)

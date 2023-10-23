@@ -394,7 +394,7 @@ auto RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression) 
         return Packing::Unpacked;
     ASSERT(std::holds_alternative<Types::Struct>(*baseType));
     auto& structType = std::get<Types::Struct>(*baseType);
-    auto* fieldType = structType.fields.get(expression.fieldName());
+    auto* fieldType = structType.fields.get(expression.originalFieldName());
     return packingForType(fieldType);
 }
 
