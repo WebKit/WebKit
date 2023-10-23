@@ -481,7 +481,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 //
 
 // We're disabling this for now because of a suspected linker issue.
-#define OFFLINE_ASM_USE_ALT_ENTRY 0
+#define OFFLINE_ASM_USE_ALT_ENTRY 1
 
 #if COMPILER(CLANG)
 

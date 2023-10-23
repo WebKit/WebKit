@@ -95,7 +95,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk();
 #endif
 
 #if CPU(ARM64E)
-MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void*, PtrTag, const char*);
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void*, PtrTag, const char*, bool = true);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void*, PtrTag, const char*);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag, bool);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmTailCallGate(PtrTag);

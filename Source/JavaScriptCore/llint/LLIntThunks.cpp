@@ -485,22 +485,33 @@ MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk()
 
 #if CPU(ARM64E)
 
-MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, PtrTag tag, const char* name)
+static void retToLabel(CCallHelpers& jit, GPRReg temp, void* pointer)
+{
+    jit.move(CCallHelpers::TrustedImmPtr(OperationPtrTag), temp);
+    jit.move(temp,  MacroAssembler::stackPointerRegister);
+    jit.move(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(pointer)), temp);
+    jit.move(temp, MacroAssembler::linkRegister);
+#if ENABLE(JIT_CAGE)
+    jit.m_assembler.retaa();
+#else
+    jit.m_assembler.retab();
+#endif
+}
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, PtrTag tag, const char* name, bool doJump)
 {
     CCallHelpers jit;
 
     assertIsTaggedWith<OperationPtrTag>(pointer);
 
     jit.call(GPRInfo::regT5, tag);
-    jit.move(CCallHelpers::TrustedImmPtr(OperationPtrTag), GPRInfo::regT5);
-    jit.move(GPRInfo::regT5, MacroAssembler::stackPointerRegister);
-    jit.move(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(pointer)), GPRInfo::regT5);
-    jit.move(GPRInfo::regT5, MacroAssembler::linkRegister);
-#if ENABLE(JIT_CAGE)
-    jit.m_assembler.retaa();
-#else
-    jit.m_assembler.retab();
-#endif
+
+    if (doJump) {
+        jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT5);
+        jit.farJump(GPRInfo::regT5, OperationPtrTag);
+    } else
+        retToLabel(jit, GPRInfo::regT5, pointer);
+
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);

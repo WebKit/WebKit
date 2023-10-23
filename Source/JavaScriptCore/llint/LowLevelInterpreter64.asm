@@ -383,29 +383,30 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     elsif ARM64E
         move entry, t5
         leap _g_config, a7
-        move sp, temp1
 
-        move BytecodePtrTag, temp2
-        tagCodePtr temp2, temp1
-
-        storep temp1, ProtoCallFrame::jitCageSavedSP[protoCallFrame]
         call JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
+        # We do not return directly here, we return to the label
+        # Let's not confuse the RAS, these should be the same.
 
-        loadp ProtoCallFrame::jitCageSavedSP[protoCallFrame], temp1
-        move BytecodePtrTag, temp2
-        untagArrayPtr temp2, temp1
+        global _vmEntryToJavaScriptGateAfter
+        _vmEntryToJavaScriptGateAfter:
+
+        # The js gate thunk clobbered sp, but cfr is fine.
+        # We will restore sp above in doVMEntry
+        xorq temp1, temp1
         move temp1, sp
+
+        jmp .vmEntryToJavaScriptGateContinue
 
         global _vmEntryToJavaScriptTrampoline
         _vmEntryToJavaScriptTrampoline:
         call t5, JSEntryPtrTag
+        crash() # todo
     else
         call entry, JSEntryPtrTag
     end
-    if ARM64E
-        global _vmEntryToJavaScriptGateAfter
-        _vmEntryToJavaScriptGateAfter:
-    end
+
+    .vmEntryToJavaScriptGateContinue:
     subp 16, sp
 end
 
@@ -2592,7 +2593,8 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     loadp CodeBlock[cfr], t3
     loadp CodeBlock::m_globalObject[t3], t3
     prepareSlowCall()
-    callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
+    invokeCall(%opcodeName%_slow, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
+    #callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
 end
 
 macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)

@@ -1227,11 +1227,101 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterCall, valu
     end
 end
 
+macro callTargetFunctionJB(opcodeName, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
+    if C_LOOP or C_LOOP_WIN
+        cloopCallJSFunction callee
+        defineReturnabel(opcodeName, size)
+    elsif ARM64E
+        macro callNarrow()
+            leap _g_config, a7
+            call JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
+            defineReturnLabel(opcodeName, size)
+            # The gate thunk clobbered sp, but cfr is fine.
+            # We will restore sp below
+            xorq t2, t2
+            move t2, sp
+            jmp .continue
+
+            _js_trampoline_%opcodeName%:
+            call t5, callPtrTag
+        end
+
+        macro callWide16()
+            leap _g_config, a7
+            call JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide16) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
+            defineReturnLabel(opcodeName, size)
+            # The gate thunk clobbered sp, but cfr is fine.
+            # We will restore sp below
+            xorq t2, t2
+            move t2, sp
+            jmp .continue
+
+            _js_trampoline_%opcodeName%_wide16:
+            call t5, callPtrTag
+        end
+
+        macro callWide32()
+            leap _g_config, a7
+            call JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide32) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
+            defineReturnLabel(opcodeName, size)
+            # The gate thunk clobbered sp, but cfr is fine.
+            # We will restore sp below
+            xorq t2, t2
+            move t2, sp
+            jmp .continue
+
+            _js_trampoline_%opcodeName%_wide32:
+            call t5, callPtrTag
+        end
+
+        move callee, t5
+        size(callNarrow, callWide16, callWide32, macro (gen) gen() end)
+
+        .continue:
+    else
+        call callee, callPtrTag
+        if ARMv7 or MIPS
+            # It is required in ARMv7 and MIPs because global label definitions
+            # for those architectures generates a set of instructions
+            # that can clobber LLInt execution, resulting in unexpected
+            # crashes.
+            restoreStackPointerAfterCall()
+            dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
+        end
+    end
+    restoreStackPointerAfterCall()
+    dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
+
+    if not ARM64E
+        # It is required in ARMv7 and MIPs because global label definitions
+        # for those architectures generates a set of instructions
+        # that can clobber LLInt execution, resulting in unexpected
+        # crashes.
+        macro labelNarrow()
+            _js_trampoline_%opcodeName%:
+        end
+
+        macro labelWide16()
+            _js_trampoline_%opcodeName%_wide16:
+        end
+
+        macro labelWide32()
+            _js_trampoline_%opcodeName%_wide32:
+        end
+        size(labelNarrow, labelWide16, labelWide32, macro (gen) gen() end)
+        crash()
+    end
+end
+
 macro prepareForRegularCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     storeCodeBlock(CodeBlock - CallerFrameAndPCSize[sp])
 end
 
 macro invokeForRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
+    callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterRegularCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
+end
+
+macro invokeForRegularCallJB(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
     callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterRegularCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
 end
 
@@ -1313,6 +1403,22 @@ macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVir
         move callee, a7
         leap _g_config, a1
         jmp JSCConfigGateMapOffset + (constexpr Gate::tailCall%callPtrTag%) * PtrSize[a1], NativeToJITGatePtrTag # %callPtrTag%
+
+        # Satisfy the llint offset extractor
+        macro labelNarrow()
+            _js_trampoline_%opcodeName%:
+        end
+
+        macro labelWide16()
+            _js_trampoline_%opcodeName%_wide16:
+        end
+
+        macro labelWide32()
+            _js_trampoline_%opcodeName%_wide32:
+        end
+        size(labelNarrow, labelWide16, labelWide32, macro (gen) gen() end)
+        defineReturnLabel(opcodeName, size)
+        crash()
     else
         jmp callee, callPtrTag
     end
@@ -2380,7 +2486,7 @@ end)
 
 
 # we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
-commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCallJB, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCall, getu)
 end, dispatchAfterRegularCall)
 

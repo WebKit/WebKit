@@ -45,7 +45,6 @@ public:
     uint32_t paddedArgCount;
     EncodedJSValue* args;
     JSGlobalObject* globalObject;
-    void* jitCageSavedSP;
 
     inline void init(CodeBlock*, JSGlobalObject*, JSObject*, JSValue, int, EncodedJSValue* otherArgs = nullptr);
 

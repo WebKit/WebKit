@@ -72,7 +72,7 @@ $enableInstrAnnotations = false
 # Allows for source level debuging of the original .asm files in a debugger.
 #
 def shouldEnableDebugAnnotations()
-    if ENV['GCC_VERSION'] =~ /\.clang\./ and ENV['DT_TOOLCHAIN_DIR'] =~ /Xcode.app/
+    if ENV['GCC_VERSION'] =~ /\.clang\./ and ENV['DT_TOOLCHAIN_DIR'] =~ /Xcode.*.app/
         clangVersionOut = %x`xcrun clang --version`
         if ($? == 0)
             # Apple clang version 800.0.12 or higher is required for debug annotations.
@@ -95,6 +95,8 @@ def shouldEnableDebugAnnotations()
          ENV["GCC_OFFLINEASM_SOURCE_MAP"] == 'ON'
       # All GCC versions that can build JSC support debug annotations
       return true
+    else
+        error()
     end
 
     false
