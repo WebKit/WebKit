@@ -2120,7 +2120,9 @@ void DocumentLoader::startLoadingMainResource()
 
     Ref<DocumentLoader> protectedThis(*this);
 
-    if (m_request.url().protocolIsAbout() && !(m_request.url().isAboutBlank() || m_request.url().isAboutSrcDoc())) {
+    if (m_request.url().protocolIsAbout()
+        && !(m_request.url().isAboutBlank() || m_request.url().isAboutSrcDoc())
+        && m_request.url().hasOpaquePath()) {
         cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
         return;
     }
