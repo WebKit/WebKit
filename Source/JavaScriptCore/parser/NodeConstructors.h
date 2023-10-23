@@ -958,13 +958,14 @@ namespace JSC {
     {
     }
 
-    inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, VariableEnvironment&& lexicalVariables)
+    inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, VariableEnvironment&& lexicalVariables, bool initializerContainsClosure)
         : StatementNode(location)
         , VariableEnvironmentNode(WTFMove(lexicalVariables))
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
         , m_statement(statement)
+        , m_initializerContainsClosure(initializerContainsClosure)
     {
         ASSERT(statement);
     }
