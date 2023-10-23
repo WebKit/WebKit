@@ -7,7 +7,8 @@ flags:
   Temporal: useTemporal
   array-grouping: useArrayGroupMethod
   ShadowRealm: useShadowRealm
-  resizable-arraybuffer: useArrayBufferTransfer
+  resizable-arraybuffer: useResizableArrayBuffer
+  arraybuffer-transfer: useArrayBufferTransfer
   import-assertions: useImportAttributes
   json-modules: useImportAttributes
   promise-with-resolvers: usePromiseWithResolversMethod

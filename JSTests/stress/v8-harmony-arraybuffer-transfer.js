@@ -38,10 +38,11 @@ function AssertBufferContainsTestData(ab) {
 
 function TestSameLength(len, opts) {
   let ab = new ArrayBuffer(len, opts);
+  let resizable = ab.resizable;
   WriteTestData(ab);
   const xfer = ab.transfer();
   assertEquals(len, xfer.byteLength);
-  assertFalse(xfer.resizable);
+  assertEquals(resizable, xfer.resizable);
   AssertBufferContainsTestData(xfer);
   AssertDetached(ab);
 }
@@ -73,11 +74,12 @@ function TestNonGrow(len, opts) {
   for (let newLen of [len / 2, // shrink
                       0        // 0 special case
                      ]) {
-     let ab = new ArrayBuffer(len, opts);
+    let ab = new ArrayBuffer(len, opts);
+    let resizable = ab.resizable;
     WriteTestData(ab);
     const xfer = ab.transfer(newLen);
     assertEquals(newLen, xfer.byteLength);
-    assertFalse(xfer.resizable);
+    assertEquals(resizable, xfer.resizable);
     if (len > 0) AssertBufferContainsTestData(xfer);
     AssertDetached(ab);
   }
@@ -97,17 +99,19 @@ TestNonGrow(0, { maxByteLength: 2048 });
 
   {
     let ab = new ArrayBuffer(len, { maxByteLength: len * 4 });
+    let resizable = ab.resizable;
     const shrink = { valueOf() { ab.resize(len / 2); return len; } };
     const xfer = ab.transfer(shrink);
-    assertFalse(xfer.resizable);
+    assertEquals(resizable, xfer.resizable);
     assertEquals(len, xfer.byteLength);
   }
 
   {
     let ab = new ArrayBuffer(len, { maxByteLength: len * 4 });
+    let resizable = ab.resizable;
     const grow = { valueOf() { ab.resize(len * 2); return len; } };
     const xfer = ab.transfer(grow);
-    assertFalse(xfer.resizable);
+    assertEquals(resizable, xfer.resizable);
     assertEquals(len, xfer.byteLength);
   }
 })();
