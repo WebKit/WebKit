@@ -85,7 +85,8 @@ namespace LocalAuthenticatorInternal {
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;
-const uint8_t aaguid[] = { 0xF2, 0x4A, 0x8E, 0x70, 0xD0, 0xD3, 0xF8, 0x2C, 0x29, 0x37, 0x32, 0x52, 0x3C, 0xC4, 0xDE, 0x5A }; // Randomly generated.
+// This aaguid is unattested.
+const uint8_t aaguid[] = { 0xFB, 0xFC, 0x30, 0x07, 0x15, 0x4E, 0x4E, 0xCC, 0x8C, 0x0B, 0x6E, 0x02, 0x05, 0x57, 0xD7, 0xBD }; // Randomly generated.
 
 const char kLargeBlobMapKey[] = "largeBlob";
 
@@ -546,29 +547,14 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     }
 
     auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery());
-    // Step 12.
-    // Skip Apple Attestation for none attestation.
-    if (creationOptions.attestation == AttestationConveyancePreference::None) {
-        auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
-        auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-
-        finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
-        return;
-    }
-
-    // Step 13. Apple Attestation
+    // Skip attestation.
     auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
-    auto nsAuthData = toNSData(authData);
 
     LOCAL_AUTHENTICATOR_ADDITIONS
 
-    auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = WeakPtr { *this }] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
-        ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueMakeCredentialAfterAttested(WTFMove(credentialId), WTFMove(authData), certificates, error);
-    };
-    m_connection->getAttestation(privateKey.get(), nsAuthData.get(), toNSData(requestData().hash).get(), WTFMove(callback));
+    auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
+
+    finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *error)
