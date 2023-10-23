@@ -1,0 +1,20 @@
+This tests the ability to search for summary elements.
+
+
+AXRole: AXButton AXTitle: Custom summary text
+Press action supported: true
+
+AXRole: AXButton AXTitle: Details
+Press action supported: true
+
+AXRole: AXButton AXTitle: display:contents custom summary text
+Press action supported: true
+
+AXRole: AXButton AXTitle: Details
+Press action supported: true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Custom summary text
+display:contents custom summary text

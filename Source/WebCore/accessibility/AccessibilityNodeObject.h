@@ -141,6 +141,7 @@ public:
 
     void increment() override;
     void decrement() override;
+    bool toggleDetailsAncestor() final;
 
     LayoutRect elementRect() const override;
 

@@ -500,6 +500,7 @@ public:
     AccessibilityOrientation orientation() const override;
     void increment() override { }
     void decrement() override { }
+    virtual bool toggleDetailsAncestor() { return false; }
 
     virtual void updateRole();
     bool childrenInitialized() const { return m_childrenInitialized; }

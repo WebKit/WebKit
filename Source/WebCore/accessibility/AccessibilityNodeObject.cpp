@@ -76,6 +76,7 @@
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "SVGElement.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "UserGestureIndicator.h"
@@ -1221,6 +1222,17 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::linkedObjects
 
     linkedObjects.appendVector(controlledObjects());
     return linkedObjects;
+}
+
+bool AccessibilityNodeObject::toggleDetailsAncestor()
+{
+    for (auto* node = this->node(); node; node = node->parentOrShadowHostNode()) {
+        if (auto* details = dynamicDowncast<HTMLDetailsElement>(node)) {
+            details->toggleOpen();
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool isNodeActionElement(Node* node)

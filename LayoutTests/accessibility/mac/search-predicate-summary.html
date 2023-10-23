@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+<details id="custom-summary-details">
+    <summary>Custom summary text</summary>
+    <p>Extra details one</p>
+</details>
+
+<details id="default-summary-details">
+    <p>Extra details two</p>
+</details>
+
+<details id="dc-custom-summary-details" style="display:contents">
+    <summary style="display:contents">display:contents custom summary text</summary>
+    <p>Extra details three</p>
+</details>
+
+<details id="dc-default-summary-details" style="display:contents">
+    <p>Extra details four</p>
+</details>
+
+<script>
+var output = "This tests the ability to search for summary elements.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    let searchResult = null;
+    while (true) {
+        searchResult = webArea.uiElementForSearchPredicate(searchResult, true, "AXControlSearchKey", "", false);
+        if (!searchResult)
+            break;
+        output += `\n${searchResult.role} ${searchResult.title}\n`;
+        output += `Press action supported: ${searchResult.isPressActionSupported()}\n`;
+    }
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+
