@@ -974,6 +974,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         CONSUME_TYPE(Semicolon);
         return { variableUpdatingStatement };
     }
+    case TokenType::ParenLeft:
+    case TokenType::And:
+    case TokenType::Star: {
+        return parseVariableUpdatingStatement();
+    }
     case TokenType::KeywordFor: {
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
@@ -1538,7 +1543,13 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseLHSExpression()
 {
     START_PARSE();
 
-    // FIXME: Add the possibility of a prefix
+    if (current().type == TokenType::And || current().type == TokenType::Star) {
+        auto op = toUnaryOperation(current());
+        consume();
+        PARSE(expression, LHSExpression);
+        RETURN_ARENA_NODE(UnaryExpression, WTFMove(expression), op);
+    }
+
     PARSE(base, CoreLHSExpression);
     return parsePostfixExpression(WTFMove(base), _startOfElementPosition);
 }
