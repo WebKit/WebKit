@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://example.invalid/' failed: Error resolving “example.invalid”: Name or service not known
-
-PASS WebSockets: error events
-

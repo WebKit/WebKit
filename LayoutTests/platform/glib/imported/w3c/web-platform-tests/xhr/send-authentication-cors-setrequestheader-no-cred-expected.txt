@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Request header field Authorization is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/xhr/resources/auth8/corsenabled-no-authorize.py due to access control checks.
-
-PASS CORS request with setRequestHeader auth to URL accepting Authorization header
-PASS CORS request with setRequestHeader auth to URL NOT accepting Authorization header
-
