@@ -1154,6 +1154,7 @@ public:
     bool isTopDocument() const { return &topDocument() == this; }
     
     ScriptRunner& scriptRunner() { return *m_scriptRunner; }
+    CheckedRef<ScriptRunner> checkedScriptRunner();
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
     Element* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }

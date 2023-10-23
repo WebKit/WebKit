@@ -6486,6 +6486,11 @@ Document& Document::topDocument() const
     return *document;
 }
 
+CheckedRef<ScriptRunner> Document::checkedScriptRunner()
+{
+    return *m_scriptRunner;
+}
+
 ExceptionOr<Ref<Attr>> Document::createAttribute(const AtomString& localName)
 {
     if (!isValidName(localName))

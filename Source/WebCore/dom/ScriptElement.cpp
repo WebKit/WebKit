@@ -74,7 +74,8 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_creationTime(MonotonicTime::now())
     , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
-    m_taintedOrigin = computeNewSourceTaintedOriginFromStack(commonVM(), commonVM().topCallFrame);
+    Ref vm = commonVM();
+    m_taintedOrigin = computeNewSourceTaintedOriginFromStack(vm, vm->topCallFrame);
     if (parserInserted) {
         Ref document = element.document();
         if (RefPtr parser = document->scriptableDocumentParser(); parser && !document->isInDocumentWrite())
@@ -192,20 +193,20 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 
     auto element = protectedElement();
     // FIXME: If script is parser inserted, verify it's still in the original document.
-    Document& document = element->document();
+    Ref document = element->document();
 
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a
     // viewless document but this'll do for now.
     // See http://bugs.webkit.org/show_bug.cgi?id=5727
-    if (!document.frame())
+    if (!document->frame())
         return false;
 
     if (scriptType == ScriptType::Classic && hasNoModuleAttribute())
         return false;
 
-    m_preparationTimeDocumentIdentifier = document.identifier();
+    m_preparationTimeDocumentIdentifier = document->identifier();
 
-    if (!document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
+    if (!document->frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return false;
 
     if (scriptType == ScriptType::Classic && isScriptPreventedByAttributes())
@@ -217,7 +218,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     if (!charsetAttributeValue().isEmpty())
         m_characterEncoding = charsetAttributeValue();
     else
-        m_characterEncoding = document.charset();
+        m_characterEncoding = document->charset();
 
     switch (scriptType) {
     case ScriptType::Classic: {
@@ -266,22 +267,22 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
-        document.scriptRunner().queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
+        document->checkedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
         ASSERT(hasAsyncAttribute() || m_forceAsync);
-        document.scriptRunner().queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
-    } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document.haveStylesheetsLoaded()) {
+        document->checkedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
+    } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document->haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         m_willBeParserExecuted = true;
         m_readyToBeParserExecuted = true;
     } else {
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
-        TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
+        TextPosition position = document->isInDocumentWrite() ? TextPosition() : scriptStartPosition;
         if (scriptType == ScriptType::Classic)
-            executeClassicScript(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+            executeClassicScript(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document->url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
         else
-            registerImportMap(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document.url()), position, JSC::SourceProviderSourceType::ImportMap));
+            registerImportMap(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document->url()), position, JSC::SourceProviderSourceType::ImportMap));
     }
 
     return true;
@@ -390,7 +391,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
         if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, element->nonce(), String(), m_parserInserted))
             return false;
 
-        frame.script().setPendingImportMaps();
+        frame.checkedScript()->setPendingImportMaps();
         if (script->load(element->document(), scriptURL)) {
             m_loadableScript = WTFMove(script);
             m_isExternalScript = true;
@@ -425,16 +426,16 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
             return;
     }
 
-    auto& document = element->document();
-    auto* frame = document.frame();
+    Ref document = element->document();
+    RefPtr frame = document->frame();
     if (!frame)
         return;
 
-    IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
+    IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? document.ptr() : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
-    frame->script().evaluateIgnoringException(sourceCode);
+    frame->checkedScript()->evaluateIgnoringException(sourceCode);
     WTFEndSignpost(this, "Execute Script Element");
 }
 
@@ -532,8 +533,8 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
 
         // Parse error
         case LoadableScript::ErrorType::Resolve: {
-            if (auto* frame = element().document().frame())
-                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+            if (RefPtr frame = element().document().frame())
+                frame->checkedScript()->reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
             dispatchLoadEventRespectingUserGestureIndicator();
             break;
         }
@@ -544,8 +545,8 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
             // An error value is present when there is a load failure that was
             // not triggered during fetching. In this case, we need to report
             // the exception to the global object.
-            if (auto* frame = element().document().frame())
-                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+            if (RefPtr frame = element().document().frame())
+                frame->checkedScript()->reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
             break;
         }
         }
@@ -580,8 +581,8 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
     }
 
     if (scriptType() == ScriptType::ImportMap && document) {
-        if (auto* frame = document->frame())
-            frame->script().clearPendingImportMaps();
+        if (RefPtr frame = document->frame())
+            frame->checkedScript()->clearPendingImportMaps();
     }
 }
 
