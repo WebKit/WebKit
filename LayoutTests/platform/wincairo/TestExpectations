@@ -173,6 +173,8 @@ fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html [ Skip ]
+imported/w3c/web-platform-tests/css/selectors/media [ Skip ]
 media/audio-data-url.html [ Skip ]
 media/audio-mpeg-supported.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
@@ -875,8 +877,8 @@ http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Failure ]
 
 # Needs curl download support
-http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure Timeout ]
-http/tests/workers/service/service-worker-download.https.html [ Failure Timeout ]
+http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
+http/tests/workers/service/service-worker-download.https.html [ Failure ]
 
 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
 http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
@@ -2050,7 +2052,6 @@ loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
 loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
-webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
@@ -2069,9 +2070,6 @@ webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # T
 workers/bomb.html [ Skip ] # Timeout
 
 webkit.org/b/162830 fast/events/tabindex-focus-blur-all.html [ Pass Timeout ]
-
-# This test is crashing on Buildbot. Skipping this test makes the subsequent test crash. Not sure which preceding test is the root cause.
-webgl/2.0.0/conformance/context/context-creation.html [ Pass Timeout Crash ]
 
 fast/masking/clip-path-selection.html [ Failure ]
 animations/remove-syncing-animation.html [ Pass Failure ]
@@ -2582,8 +2580,6 @@ webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failu
 
 # Doesn't support variable fonts
 fast/text/variations [ Skip ]
-
-webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Skip ] # Crash Timeout only on Buildbot
 
 webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
 
