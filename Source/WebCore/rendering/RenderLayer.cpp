@@ -3908,7 +3908,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
 
     auto insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
     if (!insideLayer.layer) {
-        // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
+        // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down,
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
         if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRenderViewLayer()) {
@@ -4184,12 +4184,15 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     {
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+
         if (request.resultIsElementList())
             result.append(tempResult, request);
+
         if (hitLayer.layer) {
             if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
                 if (!request.resultIsElementList())
                     result = tempResult;
+
                 candidateLayer = hitLayer;
             }
 
@@ -4211,6 +4214,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     auto isHitCandidate = [&]() {
         if (using3DTransformsInterop)
             return !depthSortDescendants || selfZOffset > candidateLayer.zOffset;
+
         return isHitCandidateLegacy(this, false, zOffsetForContentsPtr, unflattenedTransformState.get());
     };
 
@@ -4225,8 +4229,10 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
                 result.append(tempResult, request);
             else
                 result = tempResult;
+
             if (!depthSortDescendants)
                 return { this, selfZOffset };
+
             // Foreground can depth-sort with descendant layers, so keep this as a candidate.
             candidateLayer = { this, selfZOffset };
         } else if (insideFragmentForegroundRect && request.resultIsElementList())
@@ -4237,12 +4243,15 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     {
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+
         if (request.resultIsElementList())
             result.append(tempResult, request);
+
         if (hitLayer.layer) {
             if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
                 if (!request.resultIsElementList())
                     result = tempResult;
+
                 candidateLayer = hitLayer;
             }
 
@@ -4258,15 +4267,18 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (isSelfPaintingLayer()) {
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentBackgroundRect = false;
-            if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)  && isHitCandidate()) {
+        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect) && isHitCandidate()) {
             if (request.resultIsElementList())
                 result.append(tempResult, request);
             else
                 result = tempResult;
+
             if (!depthSortDescendants)
                 return { this, selfZOffset };
+
             candidateLayer = { this, selfZOffset };
         }
+
         if (insideFragmentBackgroundRect && request.resultIsElementList())
             result.append(tempResult, request);
     }
@@ -4281,7 +4293,7 @@ bool RenderLayer::hitTestContentsForFragments(const LayerFragments& layerFragmen
         return false;
 
     for (int i = layerFragments.size() - 1; i >= 0; --i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+        const auto& fragment = layerFragments.at(i);
         if ((hitTestFilter == HitTestSelf && !fragment.backgroundRect.intersects(hitTestLocation))
             || (hitTestFilter == HitTestDescendants && !fragment.foregroundRect.intersects(hitTestLocation)))
             continue;
@@ -4532,8 +4544,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             clipRects = *parentLayer->clipRects(clipRectsContext);
         else {
             ClipRectsContext parentContext(clipRectsContext);
-            parentContext.options.remove(ClipRectsOption::IncludeOverlayScrollbarSize); // FIXME: Why?
-            
+
             if ((parentContext.clipRectsType != TemporaryClipRects && parentContext.clipRectsType != AbsoluteClipRects) && clipCrossesPaintingBoundary())
                 parentContext.clipRectsType = TemporaryClipRects;
 
