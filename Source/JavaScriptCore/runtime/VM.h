@@ -354,6 +354,9 @@ public:
     WeakRandom& heapRandom() { return m_heapRandom; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
+    template<typename Type, typename Functor>
+    Type& ensureSideData(void* key, const Functor&);
+
     bool hasTerminationRequest() const { return m_hasTerminationRequest; }
     void clearHasTerminationRequest()
     {
@@ -1129,6 +1132,7 @@ private:
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };
 
+    bool m_hasSideData { false };
     bool m_hasTerminationRequest { false };
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
