@@ -162,6 +162,14 @@ public:
         setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
     }
 
+    void expandAdvanceToLeft(unsigned index, float width)
+    {
+        ASSERT(index < size());
+        auto& lastAdvance = m_advances[index];
+        setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
+        setX(m_origins[index], x(m_origins[index]) + width);
+    }
+
     void expandLastAdvance(GlyphBufferAdvance expansion)
     {
         ASSERT(!isEmpty());

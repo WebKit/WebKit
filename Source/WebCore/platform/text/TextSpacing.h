@@ -29,10 +29,15 @@
 
 namespace WebCore {
 
+class GlyphBuffer;
+struct TextAutospace;
+class TextRun;
+enum class FontWidthVariant : uint8_t;
+
 struct TextSpacingTrim {
     enum class TrimType : bool {
-        Auto = 0,
-        SpaceAll // equivalent to None in text-spacing shorthand
+        SpaceAll = 0, // equivalent to None in text-spacing shorthand
+        Auto
     };
 
     bool isAuto() const { return m_trim == TrimType::Auto; }
@@ -55,8 +60,8 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& v
 
 struct TextAutospace {
     enum class TextAutospaceType : bool {
-        Auto = 0,
-        NoAutospace // equivalent to None in text-spacing shorthand
+        NoAutospace = 0, // equivalent to None in text-spacing shorthand
+        Auto
     };
 
     bool isAuto() const { return m_autoSpace == TextAutospaceType::Auto; }
@@ -76,4 +81,42 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& val
     }
     return ts;
 }
+
+struct TextSpacingWidth {
+    float leftWidth = 0.0;
+    float rightWidth = 0.0;
+};
+
+enum class TextSpacingSupportedLanguage : uint8_t {
+    NotSupported,
+    Japanese,
+    SimplifiedChinese,
+    TraditionalChinese
+};
+
+struct TextSpacingEngineState {
+    float leftoverWidth = 0.0;
+    UChar32 firstCharacterOfNextRun = 0;
+};
+
+class TextSpacingEngine {
+public:
+    TextSpacingEngine(TextSpacingEngineState *state, GlyphBuffer& glyphBuffer, const TextRun& run)
+        : m_state(state)
+        , m_glyphBuffer(glyphBuffer)
+        , m_run(run)
+    { }
+
+    TextSpacingWidth adjustTextSpacing(unsigned currentCharacterIndex, unsigned glyphIndex);
+
+private:
+    TextSpacingWidth processTextSpacingAndUpdateState(unsigned glyphBufferIndex, const TextSpacingWidth&);
+
+    TextSpacingEngineState* m_state;
+    GlyphBuffer& m_glyphBuffer;
+    const TextRun& m_run;
+};
+
+TextSpacingWidth calculateCJKAdjustingSpacing(TextSpacingSupportedLanguage, UChar32, UChar32);
+
 } // namespace WebCore

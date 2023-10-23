@@ -30,6 +30,8 @@
 #include <unicode/uscript.h>
 #include <wtf/unicode/CharacterNames.h>
 
+namespace WebCore {
+
 static ChineseCompositionRules::ChineseCharacterClass characterToCharacterClass(UTF32Char character)
 {
     if (character == zeroWidthSpace)
@@ -139,11 +141,9 @@ ChineseCompositionRules::ChineseCharacterClass ChineseCompositionRules::characte
     return Other;
 }
 
-CompositionRules::CharacterSpacingType ChineseCompositionRules::characterSpacing(CTCompositionLanguage language, bool isVertical, UTF32Char beforeCharacter, UTF32Char afterCharacter)
+CharacterSpacingType ChineseCompositionRules::characterSpacing(CTCompositionLanguage language, bool isVertical, UTF32Char beforeCharacter, UTF32Char afterCharacter)
 {
-    using namespace CompositionRules;
-
-    static const CompositionRules::CharacterSpacingType chineseSpacingTable[NumClasses][NumClasses] = {
+    static const CharacterSpacingType chineseSpacingTable[NumClasses][NumClasses] = {
                     /* Opening,    Closing,    Whitespace, FullWidth,   HalfWidth,   HalfWidthOpen, HalfWidthClose,   Centered    Other */
 /* Opening */       {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
 /* Closing */       {  _1_2_eq_re, _1_4_af_re, _______,    _1_4_af_re,  _1_4_af_re,  _1_4_af_re,    _1_4_af_re,       _1_2_eq_re, _1_4_af_re }, // NOLINT
@@ -180,3 +180,5 @@ CompositionRules::CharacterSpacingType ChineseCompositionRules::characterSpacing
 
     return chineseSpacingTable[beforeClass][afterClass];
 }
+
+} // namespace WebCore

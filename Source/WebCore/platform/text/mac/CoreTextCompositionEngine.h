@@ -29,7 +29,10 @@
 
 using CharacterClass = uint8_t;
 
-namespace CompositionRules {
+namespace WebCore {
+
+enum class TextSpacingSupportedLanguage : uint8_t;
+struct TextSpacingWidth;
 
 typedef enum : uint8_t {
     _______ = 0,
@@ -47,6 +50,7 @@ typedef enum : uint8_t {
     _1_2_eq_re, // Reduce 1/4 em after previous char and reduce 1/4 em before current char.
 } CharacterSpacingType;
 
-CharacterSpacingType characterSpacing(CTCompositionLanguage, bool, UTF32Char, UTF32Char);
+CharacterSpacingType characterSpacing(TextSpacingSupportedLanguage, bool, UChar32, UChar32);
+TextSpacingWidth calculateCJKAdjustingSpacing(TextSpacingSupportedLanguage, UChar32, UChar32);
 
-} // namespace CompositionRules
+} // namespace WebCore

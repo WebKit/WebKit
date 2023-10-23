@@ -27,13 +27,28 @@
 #include "CoreTextCompositionEngine.h"
 
 #include "CoreTextChineseCompositionEngine.h"
+#include "TextFlags.h"
+#include "TextSpacing.h"
 
-namespace CompositionRules {
+namespace WebCore {
 
-CharacterSpacingType characterSpacing(CTCompositionLanguage language, bool isVertical, UTF32Char beforeCharacter, UTF32Char afterCharacter)
+CharacterSpacingType characterSpacing(TextSpacingSupportedLanguage language, bool isVertical, UChar32 beforeCharacter, UChar32 afterCharacter)
 {
-    // FIXME (rdar://105386292): add support for other languages.
-    return ChineseCompositionRules::characterSpacing(language, isVertical, beforeCharacter, afterCharacter);
+    // FIXME: implement CJK composition engine adjusting spacing so we can calculate the spacing to be added between characters rdar://105189659
+    UNUSED_PARAM(language);
+    UNUSED_PARAM(isVertical);
+    UNUSED_PARAM(beforeCharacter);
+    UNUSED_PARAM(afterCharacter);
+    return CharacterSpacingType::_______;
 }
 
-} // namespace CompositionRules
+TextSpacingWidth calculateCJKAdjustingSpacing(TextSpacingSupportedLanguage language, UChar32 currentCharacter, UChar32 nextCharacter)
+{
+    // FIXME: implement CJK composition engine adjusting spacing so we can calculate the spacing to be added between characters rdar://105189659
+    UNUSED_PARAM(language);
+    UNUSED_PARAM(currentCharacter);
+    UNUSED_PARAM(nextCharacter);
+    return { };
+}
+
+} // namespace WebCore

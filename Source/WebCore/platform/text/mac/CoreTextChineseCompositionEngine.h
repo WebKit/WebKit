@@ -28,6 +28,8 @@
 #include "CoreTextCompositionEngine.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 
+namespace WebCore {
+
 class ChineseCompositionRules {
 public:
     typedef enum : uint8_t {
@@ -45,5 +47,7 @@ public:
     } ChineseCharacterClass;
 
     static ChineseCharacterClass characterClass(UTF32Char, uint32_t, CTCompositionLanguage);
-    static CompositionRules::CharacterSpacingType characterSpacing(CTCompositionLanguage, bool, UTF32Char, UTF32Char);
+    static CharacterSpacingType characterSpacing(CTCompositionLanguage, bool, UTF32Char, UTF32Char);
 };
+
+} // namespace WebCore
