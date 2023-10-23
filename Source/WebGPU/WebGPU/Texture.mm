@@ -145,7 +145,7 @@ static std::optional<WGPUFeatureName> featureRequirementForFormat(WGPUTextureFor
     }
 }
 
-static bool isCompressedFormat(WGPUTextureFormat format)
+bool Texture::isCompressedFormat(WGPUTextureFormat format)
 {
     // https://gpuweb.github.io/gpuweb/#packed-formats
     switch (format) {
@@ -1257,7 +1257,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
         if (descriptor.sampleCount != 1)
             return false;
 
-        if (isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
+        if (Texture::isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
             return false;
         break;
     case WGPUTextureDimension_2D:
@@ -1283,7 +1283,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
         if (descriptor.sampleCount != 1)
             return false;
 
-        if (isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
+        if (Texture::isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
             return false;
         break;
     case WGPUTextureDimension_Force32:
@@ -2465,14 +2465,7 @@ bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyText
     if (imageCopyTexture.origin.y % blockHeight)
         return false;
 
-    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).format())
-        || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
-        auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
-        if (subresourceSize.width != copySize.width
-            || subresourceSize.height != copySize.height
-            || subresourceSize.depthOrArrayLayers != copySize.depthOrArrayLayers)
-            return false;
-    }
+    UNUSED_PARAM(copySize);
 
     return true;
 }
@@ -2763,14 +2756,17 @@ bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyText
 bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uint64_t byteSize, WGPUTextureFormat format, WGPUExtent3D copyExtent)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-linear-texture-data
-
     uint32_t blockWidth = Texture::texelBlockWidth(format);
     uint32_t blockHeight = Texture::texelBlockHeight(format);
     uint32_t blockSize = Texture::texelBlockSize(format);
 
     auto widthInBlocks = copyExtent.width / blockWidth;
+    if (copyExtent.width % blockWidth)
+        return false;
 
     auto heightInBlocks = copyExtent.height / blockHeight;
+    if (copyExtent.height % blockHeight)
+        return false;
 
     auto bytesInLastRow = checkedProduct<uint64_t>(blockSize, widthInBlocks);
     if (bytesInLastRow.hasOverflowed())
