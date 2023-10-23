@@ -37,13 +37,57 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPathElement);
 
-static constexpr uint64_t maxPathSegListCacheSize = 150 * 1024; // 150 Kb.
-static uint64_t pathSegListCacheSize = 0;
+class PathSegListCache {
+public:
+    static PathSegListCache& singleton();
 
-static HashMap<AtomString, SVGPathByteStream::Data>& pathSegListCache()
+    const SVGPathByteStream::Data* get(const AtomString& attributeValue) const;
+    void add(const AtomString& attributeValue, const SVGPathByteStream::Data&);
+    void clear();
+
+private:
+    friend class NeverDestroyed<PathSegListCache, MainThreadAccessTraits>;
+    PathSegListCache() = default;
+
+    HashMap<AtomString, SVGPathByteStream::Data> m_cache;
+    uint64_t m_sizeInBytes { 0 };
+    static constexpr uint64_t maxSizeInBytes = 150 * 1024; // 150 Kb.
+};
+
+PathSegListCache& PathSegListCache::singleton()
 {
-    static MainThreadNeverDestroyed<HashMap<AtomString, SVGPathByteStream::Data>> cache;
+    static MainThreadNeverDestroyed<PathSegListCache> cache;
     return cache;
+}
+
+const SVGPathByteStream::Data* PathSegListCache::get(const AtomString& attributeValue) const
+{
+    auto iterator = m_cache.find(attributeValue);
+    return iterator != m_cache.end() ? &iterator->value : nullptr;
+}
+
+void PathSegListCache::add(const AtomString& attributeValue, const SVGPathByteStream::Data& data)
+{
+    size_t newDataSize = data.size();
+    if (UNLIKELY(newDataSize > (maxSizeInBytes / 2)))
+        return;
+
+    m_sizeInBytes += newDataSize;
+    while (m_sizeInBytes > maxSizeInBytes) {
+        ASSERT(!m_cache.isEmpty());
+        auto iteratorToRemove = m_cache.random();
+        ASSERT(iteratorToRemove != m_cache.end());
+        ASSERT(m_sizeInBytes >= iteratorToRemove->value.size());
+        m_sizeInBytes -= iteratorToRemove->value.size();
+        m_cache.remove(iteratorToRemove);
+    }
+    m_cache.add(attributeValue, data);
+}
+
+void PathSegListCache::clear()
+{
+    m_cache.clear();
+    m_sizeInBytes = 0;
 }
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
@@ -65,27 +109,15 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
 void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::dAttr) {
-        auto& cache = pathSegListCache();
+        auto& cache = PathSegListCache::singleton();
         if (newValue.isEmpty())
             m_pathSegList->baseVal()->updateByteStreamData({ });
-        else if (auto it = cache.find(newValue); it != cache.end())
-            m_pathSegList->baseVal()->updateByteStreamData(it->value);
-        else {
-            if (m_pathSegList->baseVal()->parse(newValue)) {
-                size_t newDataSize = m_pathSegList->baseVal()->existingPathByteStream().data().size();
-                if (LIKELY(newDataSize <= (maxPathSegListCacheSize / 2))) {
-                    pathSegListCacheSize += newDataSize;
-                    while (pathSegListCacheSize > maxPathSegListCacheSize) {
-                        auto iteratorToRemove = cache.random();
-                        ASSERT(pathSegListCacheSize >= iteratorToRemove->value.size());
-                        pathSegListCacheSize -= iteratorToRemove->value.size();
-                        cache.remove(iteratorToRemove);
-                    }
-                    cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
-                }
-            } else
-                document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
-        }
+        else if (auto* data = cache.get(newValue))
+            m_pathSegList->baseVal()->updateByteStreamData(*data);
+        else if (m_pathSegList->baseVal()->parse(newValue))
+            cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
+        else
+            document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
     }
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -93,7 +125,7 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
 
 void SVGPathElement::clearCache()
 {
-    pathSegListCache().clear();
+    PathSegListCache::singleton().clear();
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
