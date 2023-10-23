@@ -637,13 +637,6 @@ NSArray *WebExtension::errors()
     return [m_errors copy] ?: @[ ];
 }
 
-NSString *WebExtension::webProcessDisplayName()
-{
-ALLOW_NONLITERAL_FORMAT_BEGIN
-    return [NSString stringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), displayShortName()];
-ALLOW_NONLITERAL_FORMAT_END
-}
-
 _WKWebExtensionLocalization *WebExtension::localization()
 {
     if (!manifestParsedSuccessfully())

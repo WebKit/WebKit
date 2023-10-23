@@ -170,6 +170,13 @@ public:
         BrowserUpdate,
     };
 
+    enum class WebViewPurpose : uint8_t {
+        Any,
+        Background,
+        Popup,
+        Tab,
+    };
+
     WebExtensionContextIdentifier identifier() const { return m_identifier; }
     WebExtensionContextParameters parameters() const;
 
@@ -308,7 +315,9 @@ public:
     UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
 
     WKWebView *relatedWebView();
-    WKWebViewConfiguration *webViewConfiguration();
+    NSString *processDisplayName(WebViewPurpose = WebViewPurpose::Any);
+    NSArray *corsDisablingPatterns();
+    WKWebViewConfiguration *webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
 
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 

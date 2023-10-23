@@ -81,6 +81,11 @@
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "WKWebViewConfigurationPrivate.h"
+#import "WebExtensionController.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -435,6 +440,23 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
     trySOAuthorization(WTFMove(navigationAction), page, WTFMove(completionHandler));
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigationAction, WebPageProxy& page)
+{
+    auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
+    if (!requiredBaseURL)
+        return false;
+
+    if (RefPtr extensionController = page.webExtensionController()) {
+        auto extensionContext = extensionController->extensionContext(navigationAction.originalURL());
+        if (!extensionContext || !extensionContext->isURLForThisExtension(requiredBaseURL))
+            return true;
+    }
+
+    return false;
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
@@ -451,6 +473,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 listener->ignore(WasNavigationIntercepted::Yes);
                 return;
             }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+            if (isUnsupportedWebExtensionNavigation(navigationAction, webPage)) {
+                listener->ignore();
+                return;
+            }
+#endif
 
             if (!navigationAction->targetFrame()) {
                 listener->use(defaultWebsitePolicies.get());
@@ -474,6 +503,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             if (![[nsURLRequest URL] isFileURL])
                 [[NSWorkspace sharedWorkspace] openURL:[nsURLRequest URL]];
 #endif
+
             listener->ignore();
         };
         tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, WTFMove(completionHandler));
@@ -513,6 +543,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         }
 
         ensureOnMainRunLoop([navigationAction = WTFMove(navigationAction), webPageProxy = WTFMove(webPageProxy), actionPolicy, localListener = WTFMove(localListener), apiWebsitePolicies = WTFMove(apiWebsitePolicies)] () mutable {
+#if ENABLE(WK_WEB_EXTENSIONS)
+            if (actionPolicy != WKNavigationActionPolicyCancel && isUnsupportedWebExtensionNavigation(navigationAction, webPageProxy)) {
+                localListener->ignore();
+                return;
+            }
+#endif
+
             switch (actionPolicy) {
             case WKNavigationActionPolicyAllow:
             case _WKNavigationActionPolicyAllowInNewProcess:
@@ -544,7 +581,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                     localListener->use(websitePolicies.get());
                 });
                 break;
-            }        });
+            }
+        });
     };
 
     if (delegateHasWebpagePreferences) {

@@ -236,7 +236,7 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
     if (m_popupWebView || loadOnFirstAccess == LoadOnFirstAccess::No)
         return m_popupWebView.get();
 
-    auto *webViewConfiguration = extensionContext()->webViewConfiguration();
+    auto *webViewConfiguration = extensionContext()->webViewConfiguration(WebExtensionContext::WebViewPurpose::Popup);
     webViewConfiguration.suppressesIncrementalRendering = YES;
 
     m_popupWebViewDelegate = [[_WKWebExtensionActionWebViewDelegate alloc] initWithWebExtensionAction:*this];

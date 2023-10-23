@@ -67,6 +67,15 @@
 /* Extension's process name that appears in Activity Monitor where the parameter is the name of the extension */
 "%@ Web Extension" = "%@ Web Extension";
 
+/* Extension's process name for background content that appears in Activity Monitor where the parameter is the name of the extension */
+"%@ Web Extension Background Content" = "%@ Web Extension Background Content";
+
+/* Extension's process name for popups that appears in Activity Monitor where the parameter is the name of the extension */
+"%@ Web Extension Popup" = "%@ Web Extension Popup";
+
+/* Extension's process name for tabs that appears in Activity Monitor where the parameter is the name of the extension */
+"%@ Web Extension Tab" = "%@ Web Extension Tab";
+
 /* Visible name of Web Inspector's web process. The argument is the application name. */
 "%@ Web Inspector" = "%@ Web Inspector";
 

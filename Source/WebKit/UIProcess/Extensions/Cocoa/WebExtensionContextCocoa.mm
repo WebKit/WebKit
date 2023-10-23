@@ -41,6 +41,7 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
+#import "WKWebpagePreferencesPrivate.h"
 #import "WKWebsiteDataStorePrivate.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionTab.h"
@@ -1716,45 +1717,96 @@ void WebExtensionContext::setTestingMode(bool testingMode)
 
 WKWebView *WebExtensionContext::relatedWebView()
 {
+    ASSERT(isLoaded());
+
+    // When using manifest v3 the web views don't need to use the same process.
+    if (extension().supportsManifestVersion(3))
+        return nil;
+
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
 
-    for (auto entry : m_actionTabMap) {
-        if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            return webView;
-    }
-
-    if (m_defaultAction) {
-        if (auto *webView = m_defaultAction->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            return webView;
+    for (auto& page : extensionController()->allPages()) {
+        if (auto* mainFrame = page.mainFrame()) {
+            if (isURLForThisExtension(mainFrame->url()))
+                return page.cocoaView().get();
+        }
     }
 
     return nil;
 }
 
-WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
+NSString *WebExtensionContext::processDisplayName(WebViewPurpose purpose)
 {
-    ASSERT(isLoaded());
+ALLOW_NONLITERAL_FORMAT_BEGIN
+    // When not using manifest v3 the web views need to use the same process, so use a generic name.
+    if (!extension().supportsManifestVersion(3) || purpose == WebViewPurpose::Any)
+        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+
+    switch (purpose) {
+    case WebViewPurpose::Any:
+        // Handled above.
+        ASSERT_NOT_REACHED();
+        return nil;
+    case WebViewPurpose::Background:
+        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Background Content", "Extension's process name for background content that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+    case WebViewPurpose::Popup:
+        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Popup", "Extension's process name for popups that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+    case WebViewPurpose::Tab:
+        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Tab", "Extension's process name for tabs that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+    }
+ALLOW_NONLITERAL_FORMAT_END
+}
+
+NSArray *WebExtensionContext::corsDisablingPatterns()
+{
+    NSMutableSet<NSString *> *patterns = [NSMutableSet set];
+
+    auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
+    for (auto& requestedMatchPattern : requestedMatchPatterns)
+        [patterns addObjectsFromArray:requestedMatchPattern->expandedStrings()];
+
+    // Include manifest optional permission origins here, these should be dynamically added when the are granted
+    // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
+    // FIXME: <rdar://problem/61837474> Web Extensions: Need the ability to update corsDisablingPatterns on WKWebView
+    auto optionalPermissionMatchPatterns = m_extension->allRequestedMatchPatterns();
+    for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
+        [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
+
+    return [patterns allObjects];
+}
+
+WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose purpose)
+{
+    if (!isLoaded())
+        return nil;
 
     WKWebViewConfiguration *configuration = [extensionController()->configuration().webViewConfiguration() copy];
+    configuration._corsDisablingPatterns = corsDisablingPatterns();
+    configuration._crossOriginAccessControlCheckEnabled = NO;
+    configuration._processDisplayName = processDisplayName(purpose);
+    configuration._relatedWebView = relatedWebView();
+    configuration._requiredWebExtensionBaseURL = baseURL();
+    configuration._shouldRelaxThirdPartyCookieBlocking = YES;
 
-    // When using manifest v2 the web views need to use the same process.
-    if (extension().supportsManifestVersion(2))
-        configuration._relatedWebView = relatedWebView();
+    configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 
-    // Use the weak property to avoid a reference cycle while an extension web view is being held by the context.
-    configuration._weakWebExtensionController = extensionController()->wrapper();
-    configuration._webExtensionController = nil;
+    if (purpose == WebViewPurpose::Tab) {
+        configuration._webExtensionController = extensionController()->wrapper();
+        configuration._weakWebExtensionController = nil;
+    } else {
+        // Use the weak property to avoid a reference cycle while an extension web view is owned by the context.
+        configuration._weakWebExtensionController = extensionController()->wrapper();
+        configuration._webExtensionController = nil;
+    }
 
-    configuration._processDisplayName = extension().webProcessDisplayName();
-
-    // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
-    auto *preferences = configuration.preferences;
-    preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
-    preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
-    preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
-
-    // FIXME: Configure other extension web view configuration properties.
+    if (purpose == WebViewPurpose::Background) {
+        // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
+        auto *preferences = configuration.preferences;
+        preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
+        preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+        preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
+    }
 
     return configuration;
 }
@@ -1795,7 +1847,7 @@ void WebExtensionContext::loadBackgroundWebView()
         return;
 
     ASSERT(!m_backgroundWebView);
-    m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration()];
+    m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration(WebViewPurpose::Background)];
 
     m_lastBackgroundContentLoadDate = NSDate.now;
 

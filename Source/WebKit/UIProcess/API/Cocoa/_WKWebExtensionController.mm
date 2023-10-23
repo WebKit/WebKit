@@ -99,6 +99,15 @@
     return nil;
 }
 
+- (_WKWebExtensionContext *)extensionContextForURL:(NSURL *)url
+{
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
+
+    if (auto extensionContext = _webExtensionController->extensionContext(url))
+        return extensionContext->wrapper();
+    return nil;
+}
+
 template<typename T>
 static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 {
@@ -257,6 +266,11 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 }
 
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
+{
+    return nil;
+}
+
+- (_WKWebExtensionContext *)extensionContextForURL:(NSURL *)url
 {
     return nil;
 }

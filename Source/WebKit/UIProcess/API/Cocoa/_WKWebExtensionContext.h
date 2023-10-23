@@ -31,6 +31,7 @@
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionTab.h>
 
+@class WKWebViewConfiguration;
 @class _WKWebExtension;
 @class _WKWebExtensionAction;
 @class _WKWebExtensionController;
@@ -164,10 +165,8 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 /*!
  @abstract An unique identifier used to distinguish the extension from other extensions and target it for messages.
  @discussion The default value is a unique value that matches the host in the default base URL. The identifier can be any
- value that is unique. Setting is only allowed when the context is not loaded.
-
- This value is accessible by the extension via `browser.runtime.id` and is used for messaging the extension as the first
- argument of `browser.runtime.sendMessage(extensionId, message, options)`.
+ value that is unique. Setting is only allowed when the context is not loaded. This value is accessible by the extension via
+ `browser.runtime.id` and is used for messaging the extension via `browser.runtime.sendMessage()`.
  */
 @property (nonatomic, copy) NSString *uniqueIdentifier;
 
@@ -179,10 +178,21 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, getter=isInspectable) BOOL inspectable;
 
 /*!
+ @abstract The web view configuration to use for web views that load pages from this extension.
+ @discussion Returns a customized copy of the configuration, originally set in the web extension controller configuration, for this extension.
+ The app must use this configuration when initializing web views intended to navigate to a URL originating from this extension's base URL.
+ The app must also swap web views in tabs when navigating to and from web extension URLs. This property returns `nil` if the context isn't
+ associated with a web extension controller. The returned configuration copy can be customized prior to web view initialization.
+ @note Navigations will fail if a web view using this configuration attempts to navigate to a URL that doesn't originate from this extension's
+ base URL. Similarly, navigations will be canceled if a web view not configured with this configuration attempts to navigate to a URL that does
+ originate from this extension's base URL.
+ */
+@property (nonatomic, readonly, copy, nullable) WKWebViewConfiguration *webViewConfiguration;
+
+/*!
  @abstract The currently granted permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forPermission:
@@ -194,7 +204,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently granted permission match patterns and their expiration dates.
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Match patterns in this dictionary should be explicitly granted by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forMatchPattern:
@@ -206,7 +215,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently denied permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Permissions in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forPermission:
@@ -218,7 +226,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently denied permission match patterns and their expiration dates.
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Match patterns in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forMatchPattern:
