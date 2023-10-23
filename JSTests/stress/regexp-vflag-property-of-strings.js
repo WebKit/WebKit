@@ -514,3 +514,62 @@ testRegExp(/[\q{}]+/v, "", [""]);
 testRegExp(/[\q{}]*/v, "1234", [""]);
 testRegExp(/[\q{|34||12}]*/v, "1234", ["1234"]);
 testRegExp(/[\q{|34||12}]*/v, "3412", ["3412"]);
+testRegExpSyntaxError("\\-", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\!", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\#", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\%", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\,", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\:", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 256
+testRegExpSyntaxError("\\;", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\<", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\=", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\>", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\@", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 261
+testRegExpSyntaxError("\\`", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\~", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\&]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\!]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\#]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 255
+testRegExpSyntaxError("[\\%]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\,]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\:]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\;]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\<]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 271
+testRegExpSyntaxError("[\\=]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\>]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\@]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\`]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("[\\~]", "u", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 276
+testRegExpSyntaxError("\\&", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\-", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\!", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\#", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\%", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 281
+testRegExpSyntaxError("\\,", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\:", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\;", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\<", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\=", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 286
+testRegExpSyntaxError("\\>", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\@", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\`", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\~", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+testRegExpSyntaxError("\\q{a}", "v", "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern");
+
+// Test 291
+testRegExp(/[\&\-\!\#\%\,\:\;\<\=\>\@\`\~]*/v, "&-!#%,:;<=>@`~", ["&-!#%,:;<=>@`~"]);
+testRegExp(/[\q{\&\-\!\#\%\,\:\;\<\=\>\@\`\~}X]*/v, "X&-!#%,:;<=>@`~X", ["X&-!#%,:;<=>@`~X"]);
