@@ -37,15 +37,15 @@ def set_build_types(new_build_types):
     build_types = new_build_types
 
 
-def library_build_path(*args):
-    return build_path('lib', *args)
+def library_build_path(port, *args):
+    return build_path(port, 'lib', *args)
 
 
-def binary_build_path(*args):
-    return build_path('bin', *args)
+def binary_build_path(port, *args):
+    return build_path(port, 'bin', *args)
 
 
-def get_build_path(fatal=True):
+def get_build_path(port, fatal=True):
     global build_dir
     if build_dir:
         return build_dir
@@ -68,6 +68,10 @@ def get_build_path(fatal=True):
 
     global build_types
     for build_type in build_types:
+        build_dir = port._config.build_directory(build_type)
+        if is_valid_build_directory(build_dir):
+            return build_dir
+
         build_dir = top_level_path('WebKitBuild', build_type)
         if is_valid_build_directory(build_dir):
             return build_dir
@@ -90,8 +94,8 @@ def get_build_path(fatal=True):
         sys.exit(1)
 
 
-def build_path(*args):
-    return os.path.join(*(get_build_path(),) + args)
+def build_path(port, *args):
+    return os.path.join(*(get_build_path(port),) + args)
 
 
 def pkg_config_file_variable(package, variable):

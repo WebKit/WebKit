@@ -673,6 +673,7 @@ typedef enum WGPUVertexFormat {
     WGPUVertexFormat_Sint32x2 = 0x0000001C,
     WGPUVertexFormat_Sint32x3 = 0x0000001D,
     WGPUVertexFormat_Sint32x4 = 0x0000001E,
+    WGPUVertexFormat_Unorm10_10_10_2 = 0x0000001F,
     WGPUVertexFormat_Force32 = 0x7FFFFFFF
 } WGPUVertexFormat WGPU_ENUM_ATTRIBUTE;
 

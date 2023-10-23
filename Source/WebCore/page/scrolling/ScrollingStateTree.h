@@ -48,7 +48,8 @@ public:
     WEBCORE_EXPORT ScrollingStateTree(ScrollingStateTree&&);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
-    ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
+    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> rootStateNode() const;
+    WEBCORE_EXPORT bool setRootStateNodeAfterReconstruction(RefPtr<ScrollingStateFrameScrollingNode>&&);
     WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(ScrollingNodeID) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
@@ -72,7 +73,7 @@ public:
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
-    using StateNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>>;
+    using StateNodeMap = HashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }

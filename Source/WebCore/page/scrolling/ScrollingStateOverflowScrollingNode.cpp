@@ -38,6 +38,16 @@ Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::cr
     return adoptRef(*new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
 }
 
+Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStateOverflowScrollingNode(nodeID));
+}
+
+ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingNodeID nodeID)
+    : ScrollingStateScrollingNode(ScrollingNodeType::Overflow, nodeID)
+{
+}
+
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
     : ScrollingStateScrollingNode(stateTree, ScrollingNodeType::Overflow, nodeID)
 {

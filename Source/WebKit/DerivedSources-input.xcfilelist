@@ -176,6 +176,7 @@ $(PROJECT_DIR)/Shared/API/APIURLResponse.serialization.in
 $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 $(PROJECT_DIR)/Shared/AccessibilityPreferences.serialization.in
 $(PROJECT_DIR)/Shared/AlternativeTextClient.serialization.in
+$(PROJECT_DIR)/Shared/AppPrivacyReportTestingData.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
@@ -241,6 +242,7 @@ $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.seri
 $(PROJECT_DIR)/Shared/RemoteWorkerInitializationData.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerType.serialization.in
 $(PROJECT_DIR)/Shared/ResourceLoadInfo.serialization.in
+$(PROJECT_DIR)/Shared/ResourceLoadStatisticsParameters.serialization.in
 $(PROJECT_DIR)/Shared/SameDocumentNavigationType.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
@@ -249,9 +251,11 @@ $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
+$(PROJECT_DIR)/Shared/UserContentControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in
 $(PROJECT_DIR)/Shared/VisibleContentRectUpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in
+$(PROJECT_DIR)/Shared/WebBackForwardListCounts.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebEvent.serialization.in
@@ -336,12 +340,12 @@ $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPushDaemonConnectionConfiguration.serialization.in
 $(PROJECT_DIR)/Shared/WebPushMessage.serialization.in
+$(PROJECT_DIR)/Shared/WebUserContentControllerDataTypes.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteData/WebsiteData.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataType.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebsitePoliciesData.serialization.in
-$(PROJECT_DIR)/Shared/WebUserContentControllerDataTypes.serialization.in
 $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
 $(PROJECT_DIR)/Shared/ios/DynamicViewportSizeUpdate.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in

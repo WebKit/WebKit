@@ -6650,8 +6650,8 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-
 
 webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-row-003-dynamic.html [ Pass Failure ]
 
-# Only some OSes have support for auto word breaking.
-imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Failure ImageOnlyFailure ]
+# Only Sonoma+/iOS 17+ have support for auto word breaking. Skipped globally and re-enabled for each platform.
+imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Skip ]
 
 webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
 

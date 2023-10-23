@@ -1781,7 +1781,7 @@ namespace JSC {
     class ForNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForNode);
     public:
-        ForNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, VariableEnvironment&&);
+        ForNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, VariableEnvironment&&, bool initializerContainsClosure);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1790,6 +1790,7 @@ namespace JSC {
         ExpressionNode* m_expr2;
         ExpressionNode* m_expr3;
         StatementNode* m_statement;
+        bool m_initializerContainsClosure;
     };
     
     class DestructuringPatternNode;

@@ -25,35 +25,11 @@
 
 #pragma once
 
-#include "Decoder.h"
-#include "Encoder.h"
-
 namespace WebKit {
 
 struct WebBackForwardListCounts {
     uint32_t backCount { 0 };
     uint32_t forwardCount { 0 };
-
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << backCount;
-        encoder << forwardCount;
-    }
-
-    static std::optional<WebBackForwardListCounts> decode(IPC::Decoder& decoder)
-    {
-        std::optional<uint32_t> backCount;
-        decoder >> backCount;
-        if (!backCount)
-            return std::nullopt;
-
-        std::optional<uint32_t> forwardCount;
-        decoder >> forwardCount;
-        if (!forwardCount)
-            return std::nullopt;
-
-        return WebBackForwardListCounts { *backCount, *forwardCount };
-    }
 };
 
 } // namespace WebKit

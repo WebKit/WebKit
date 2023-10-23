@@ -525,6 +525,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIURLResponse.serialization.in \
 	Shared/AccessibilityPreferences.serialization.in \
 	Shared/AlternativeTextClient.serialization.in \
+	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
@@ -575,15 +576,18 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/RemoteWorkerInitializationData.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
 	Shared/ResourceLoadInfo.serialization.in \
+	Shared/ResourceLoadStatisticsParameters.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
 	Shared/ShareableResource.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
+	Shared/UserContentControllerParameters.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
 	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
+	Shared/WebBackForwardListCounts.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \

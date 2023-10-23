@@ -34,6 +34,7 @@ namespace WebCore {
 class ScrollingStateOverflowScrollProxyNode : public ScrollingStateNode {
 public:
     static Ref<ScrollingStateOverflowScrollProxyNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static WEBCORE_EXPORT Ref<ScrollingStateOverflowScrollProxyNode> create(ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
@@ -44,6 +45,7 @@ public:
     WEBCORE_EXPORT void setOverflowScrollingNode(ScrollingNodeID);
 
 private:
+    ScrollingStateOverflowScrollProxyNode(ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
 

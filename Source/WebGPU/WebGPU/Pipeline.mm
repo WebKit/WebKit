@@ -64,9 +64,6 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
 {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
-    if (!constantCount)
-        return { };
-
     auto constantValues = [MTLFunctionConstantValues new];
     for (auto& kvp : entryPointInformation.specializationConstants) {
         auto& specializationConstant = kvp.value;

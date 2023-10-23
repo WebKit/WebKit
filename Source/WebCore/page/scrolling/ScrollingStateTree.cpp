@@ -67,8 +67,37 @@ ScrollingStateTree::~ScrollingStateTree() = default;
 
 void ScrollingStateTree::attachDeserializedNodes()
 {
-    if (m_rootStateNode)
+    // This needs to be done after the move constructor has been called because we deserialize
+    // into a ScrollingStateTree then move to a std::unique_ptr<ScrollingStateTree> and if we
+    // did this in setRootStateNodeAfterReconstruction it would be setting nodes' tree pointers to the
+    // wrong ScrollingStateTree.
+    if (m_rootStateNode) {
         m_rootStateNode->attachAfterDeserialization(*this);
+        ASSERT(m_rootStateNode->parentPointersAreCorrect());
+    }
+}
+
+bool ScrollingStateTree::setRootStateNodeAfterReconstruction(RefPtr<ScrollingStateFrameScrollingNode>&& node)
+{
+    ASSERT(!m_rootStateNode);
+    ASSERT(m_stateNodeMap.isEmpty());
+    ASSERT(m_unparentedNodes.isEmpty());
+
+    m_rootStateNode = WTFMove(node);
+    bool allIdentifiersUnique { true };
+    if (m_rootStateNode) {
+        m_rootStateNode->traverse([&] (auto& node) {
+            auto addResult = m_stateNodeMap.add(node.scrollingNodeID(), node);
+            if (!addResult.isNewEntry)
+                allIdentifiersUnique = false;
+        });
+    }
+    return allIdentifiersUnique;
+}
+
+RefPtr<ScrollingStateFrameScrollingNode> ScrollingStateTree::rootStateNode() const
+{
+    return m_rootStateNode;
 }
 
 void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
@@ -176,7 +205,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
         unparentNode(newNodeID);
     }
 
-    ScrollingStateNode* newNode = nullptr;
+    RefPtr<ScrollingStateNode> newNode;
     if (!parentID) {
         RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame);
         ASSERT(!childIndex || childIndex == notFound);
@@ -283,7 +312,7 @@ void ScrollingStateTree::detachAndDestroySubtree(ScrollingNodeID nodeID)
 
 void ScrollingStateTree::clear()
 {
-    if (auto* node = rootStateNode())
+    if (auto node = rootStateNode())
         removeNodeAndAllDescendants(*node);
 
     m_stateNodeMap.clear();
@@ -372,7 +401,7 @@ void ScrollingStateTree::setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&
 
 void ScrollingStateTree::addNode(ScrollingStateNode& node)
 {
-    m_stateNodeMap.add(node.scrollingNodeID(), &node);
+    m_stateNodeMap.add(node.scrollingNodeID(), node);
 }
 
 void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode& node)

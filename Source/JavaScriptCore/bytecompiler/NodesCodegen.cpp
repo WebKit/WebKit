@@ -4207,8 +4207,11 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
-    if (m_expr1)
+    if (m_expr1) {
         generator.emitNode(generator.ignoredResult(), m_expr1);
+        if (m_initializerContainsClosure)
+            generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
+    }
 
     Ref<Label> topOfLoop = generator.newLabel();
     if (m_expr2)

@@ -399,6 +399,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/RemoteWorkerInitializationData.serialization.in
     Shared/RemoteWorkerType.serialization.in
     Shared/ResourceLoadInfo.serialization.in
+    Shared/ResourceLoadStatisticsParameters.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
@@ -406,8 +407,10 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
     Shared/UpdateInfo.serialization.in
+    Shared/UserContentControllerParameters.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
+    Shared/WebBackForwardListCounts.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebFoundTextRange.serialization.in

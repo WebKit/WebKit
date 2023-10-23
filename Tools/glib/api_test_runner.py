@@ -59,7 +59,7 @@ class TestRunner(object):
             self._build_type = self._port.default_configuration()
         common.set_build_types((self._build_type,))
 
-        self._programs_path = common.binary_build_path()
+        self._programs_path = common.binary_build_path(self._port)
         expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
         self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type)
         self._tests = self._get_tests(tests)
@@ -115,7 +115,7 @@ class TestRunner(object):
     def _setup_testing_environment(self):
         self._test_env = self._driver._setup_environ_for_test()
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path(self._port)
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
     def _tear_down_testing_environment(self):
@@ -178,7 +178,7 @@ class TestRunner(object):
     def _run_test_qt(self, test_program):
         env = self._test_env
         env['XDG_SESSION_TYPE'] = 'wayland'
-        env['QML2_IMPORT_PATH'] = common.library_build_path('qt5', 'qml')
+        env['QML2_IMPORT_PATH'] = common.library_build_path(self._port, 'qt5', 'qml')
 
         name = os.path.basename(test_program)
         if not hasattr(subprocess, 'TimeoutExpired'):

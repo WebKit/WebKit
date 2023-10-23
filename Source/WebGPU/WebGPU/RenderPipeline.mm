@@ -156,9 +156,9 @@ static MTLPrimitiveTopologyClass topologyType(WGPUPrimitiveTopology topology)
     case WGPUPrimitiveTopology_PointList:
         return MTLPrimitiveTopologyClassPoint;
     case WGPUPrimitiveTopology_LineStrip:
+    case WGPUPrimitiveTopology_LineList:
         return MTLPrimitiveTopologyClassLine;
     case WGPUPrimitiveTopology_TriangleList:
-    case WGPUPrimitiveTopology_LineList:
     case WGPUPrimitiveTopology_TriangleStrip:
         return MTLPrimitiveTopologyClassTriangle;
     case WGPUPrimitiveTopology_Force32:
@@ -304,6 +304,8 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
         return MTLVertexFormatInt3;
     case WGPUVertexFormat_Sint32x4:
         return MTLVertexFormatInt4;
+    case WGPUVertexFormat_Unorm10_10_10_2:
+        return MTLVertexFormatUInt1010102Normalized;
     case WGPUVertexFormat_Force32:
     case WGPUVertexFormat_Undefined:
         ASSERT_NOT_REACHED();

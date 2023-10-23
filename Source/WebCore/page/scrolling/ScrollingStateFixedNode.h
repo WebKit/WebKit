@@ -39,6 +39,7 @@ class FixedPositionViewportConstraints;
 class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
     static Ref<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static WEBCORE_EXPORT Ref<ScrollingStateFixedNode> create(ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) final;
 
@@ -48,6 +49,7 @@ public:
     const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:
+    ScrollingStateFixedNode(ScrollingNodeID);
     ScrollingStateFixedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&, ScrollingStateTree&);
 

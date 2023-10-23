@@ -40,6 +40,7 @@ namespace WebCore {
 class ScrollingStatePositionedNode final : public ScrollingStateNode {
 public:
     static Ref<ScrollingStatePositionedNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static WEBCORE_EXPORT Ref<ScrollingStatePositionedNode> create(ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
@@ -53,6 +54,7 @@ public:
     const AbsolutePositionConstraints& layoutConstraints() const { return m_constraints; }
 
 private:
+    ScrollingStatePositionedNode(ScrollingNodeID);
     ScrollingStatePositionedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStatePositionedNode(const ScrollingStatePositionedNode&, ScrollingStateTree&);
 

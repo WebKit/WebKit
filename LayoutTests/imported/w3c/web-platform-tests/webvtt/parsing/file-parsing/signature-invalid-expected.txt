@@ -1,5 +1,5 @@
 
-FAIL signature, empty assert_unreached: track should fail to load Reached unreachable code
+PASS signature, empty
 PASS signature, formfeed
 PASS signature, invalid whitespace
 PASS signature, invalid

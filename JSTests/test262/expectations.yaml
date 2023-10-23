@@ -1671,9 +1671,6 @@ test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val-array-prototype.
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
-test/language/statements/for/scope-body-lex-open.js:
-  default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/statements/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/generators/generator-created-after-decl-inst.js:

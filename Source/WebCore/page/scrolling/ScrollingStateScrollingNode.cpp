@@ -34,9 +34,15 @@
 namespace WebCore {
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-    : ScrollingStateNode(nodeType, stateTree, nodeID)
+    : ScrollingStateNode(nodeType, &stateTree, nodeID)
 {
     scrollingStateTree().scrollingNodeAdded();
+}
+
+ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+    : ScrollingStateNode(nodeType, nullptr, nodeID)
+{
+    // scrollingNodeAdded will be called in attachAfterDeserialization.
 }
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)

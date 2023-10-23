@@ -38,8 +38,19 @@ Ref<ScrollingStateFrameHostingNode> ScrollingStateFrameHostingNode::create(Scrol
     return adoptRef(*new ScrollingStateFrameHostingNode(stateTree, nodeID));
 }
 
+Ref<ScrollingStateFrameHostingNode> ScrollingStateFrameHostingNode::create(ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStateFrameHostingNode(nodeID));
+}
+
+ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(ScrollingNodeID nodeID)
+    : ScrollingStateNode(ScrollingNodeType::FrameHosting, nullptr, nodeID)
+{
+    ASSERT(isFrameHostingNode());
+}
+
 ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::FrameHosting, stateTree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::FrameHosting, &stateTree, nodeID)
 {
     ASSERT(isFrameHostingNode());
 }

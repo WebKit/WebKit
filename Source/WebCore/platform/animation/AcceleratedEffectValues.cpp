@@ -164,7 +164,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         if (!offsetAnchor.x().isAuto())
             anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size()) + borderBoxRect.location();
 
-        auto path = offsetPath->getPath(FloatRect(borderBoxRect));
+        auto path = offsetPath->getPath(TransformOperationData(FloatRect(borderBoxRect)));
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
     }
 
