@@ -2198,6 +2198,12 @@
     "imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/cssom-view/idlharness.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-back-to-initial-position.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-default-css.html": [
         "slow"
     ],
@@ -2211,6 +2217,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-navigation.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html": [

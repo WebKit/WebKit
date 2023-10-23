@@ -1,5 +1,6 @@
 
 PASS Page loaded
+PASS Make sure the page content is stable
 PASS Main frame with auto scroll-behavior ; scroll() with default behavior
 PASS Main frame with auto scroll-behavior ; scroll() with auto behavior
 PASS Main frame with auto scroll-behavior ; scroll() with instant behavior
