@@ -1559,7 +1559,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebCore::provideNotification(_private->page, new WebNotificationClient(self));
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
-    WebCore::provideMediaKeySystemTo(*_private->page, *new WebMediaKeySystemClient());
+    WebCore::provideMediaKeySystemTo(*_private->page, WebMediaKeySystemClient::singleton());
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

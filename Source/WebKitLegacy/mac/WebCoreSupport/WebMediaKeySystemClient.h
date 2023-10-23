@@ -27,9 +27,13 @@
 
 #import <WebCore/MediaKeySystemClient.h>
 
-class WebMediaKeySystemClient : public WebCore::MediaKeySystemClient {
+class WebMediaKeySystemClient final : public WebCore::MediaKeySystemClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static WebMediaKeySystemClient& singleton();
+
+private:
+    friend NeverDestroyed<WebMediaKeySystemClient>;
     WebMediaKeySystemClient() = default;
 
     void pageDestroyed() override { }
