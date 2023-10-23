@@ -40,8 +40,18 @@ Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree&
     return adoptRef(*new ScrollingStateFixedNode(stateTree, nodeID));
 }
 
+Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStateFixedNode(nodeID));
+}
+
+ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingNodeID nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Fixed, nullptr, nodeID)
+{
+}
+
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Fixed, tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Fixed, &tree, nodeID)
 {
 }
 

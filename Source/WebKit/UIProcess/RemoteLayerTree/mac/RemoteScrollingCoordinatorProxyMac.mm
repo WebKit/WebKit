@@ -168,7 +168,7 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
         switch (currNode->nodeType()) {
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe: {
-            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
+            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
                 scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
@@ -203,7 +203,7 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
             break;
         }
         case ScrollingNodeType::Overflow: {
-            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
+            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(currNode);
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
                 scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
 

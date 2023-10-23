@@ -39,7 +39,9 @@ class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
 public:
+    static WEBCORE_EXPORT Ref<ScrollingStateFrameScrollingNode> create(bool mainFrame, ScrollingNodeID);
     static Ref<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
+    static WEBCORE_EXPORT Ref<ScrollingStateFrameScrollingNode> create(ScrollingNodeType, ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
@@ -119,10 +121,13 @@ public:
     
     bool overlayScrollbarsEnabled() const { return m_overlayScrollbarsEnabled; }
     WEBCORE_EXPORT void setOverlayScrollbarsEnabled(bool);
+
+    WEBCORE_EXPORT bool isMainFrame() const;
     
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
+    ScrollingStateFrameScrollingNode(bool mainFrame, ScrollingNodeID);
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode&, ScrollingStateTree&);
 

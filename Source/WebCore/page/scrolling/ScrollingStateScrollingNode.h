@@ -137,6 +137,7 @@ public:
     const MouseLocationState& mouseLocationState() const { return m_mouseLocationState; }
 
 protected:
+    ScrollingStateScrollingNode(ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 

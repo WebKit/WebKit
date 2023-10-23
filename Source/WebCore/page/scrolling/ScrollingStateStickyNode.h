@@ -39,6 +39,7 @@ class StickyPositionViewportConstraints;
 class ScrollingStateStickyNode final : public ScrollingStateNode {
 public:
     static Ref<ScrollingStateStickyNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static WEBCORE_EXPORT Ref<ScrollingStateStickyNode> create(ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
@@ -48,6 +49,7 @@ public:
     const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:
+    ScrollingStateStickyNode(ScrollingNodeID);
     ScrollingStateStickyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateStickyNode(const ScrollingStateStickyNode&, ScrollingStateTree&);
 

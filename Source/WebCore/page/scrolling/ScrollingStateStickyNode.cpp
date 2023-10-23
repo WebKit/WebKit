@@ -45,8 +45,18 @@ Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTre
     return adoptRef(*new ScrollingStateStickyNode(stateTree, nodeID));
 }
 
+Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStateStickyNode(nodeID));
+}
+
+ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingNodeID nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Sticky, nullptr, nodeID)
+{
+}
+
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Sticky, tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Sticky, &tree, nodeID)
 {
 }
 

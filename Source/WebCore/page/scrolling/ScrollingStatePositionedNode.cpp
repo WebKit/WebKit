@@ -40,8 +40,18 @@ Ref<ScrollingStatePositionedNode> ScrollingStatePositionedNode::create(Scrolling
     return adoptRef(*new ScrollingStatePositionedNode(stateTree, nodeID));
 }
 
+Ref<ScrollingStatePositionedNode> ScrollingStatePositionedNode::create(ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStatePositionedNode(nodeID));
+}
+
+ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingNodeID nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Positioned, nullptr, nodeID)
+{
+}
+
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Positioned, tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Positioned, &tree, nodeID)
 {
 }
 

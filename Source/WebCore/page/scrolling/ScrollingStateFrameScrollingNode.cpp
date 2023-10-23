@@ -33,9 +33,20 @@
 
 namespace WebCore {
 
+Ref<ScrollingStateFrameScrollingNode> ScrollingStateFrameScrollingNode::create(bool mainFrame, ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingStateFrameScrollingNode(mainFrame, nodeID));
+}
+
 Ref<ScrollingStateFrameScrollingNode> ScrollingStateFrameScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     return adoptRef(*new ScrollingStateFrameScrollingNode(stateTree, nodeType, nodeID));
+}
+
+ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(bool mainFrame, ScrollingNodeID nodeID)
+    : ScrollingStateScrollingNode(mainFrame ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, nodeID)
+{
+    ASSERT(isFrameScrollingNode());
 }
 
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
@@ -317,6 +328,11 @@ void ScrollingStateFrameScrollingNode::setOverlayScrollbarsEnabled(bool enabled)
         return;
     m_overlayScrollbarsEnabled = enabled;
     setPropertyChanged(Property::OverlayScrollbarsEnabled);
+}
+
+bool ScrollingStateFrameScrollingNode::isMainFrame() const
+{
+    return nodeType() == ScrollingNodeType::MainFrame;
 }
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

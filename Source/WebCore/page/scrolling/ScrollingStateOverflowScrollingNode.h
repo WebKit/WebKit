@@ -33,6 +33,7 @@ namespace WebCore {
 
 class ScrollingStateOverflowScrollingNode : public ScrollingStateScrollingNode {
 public:
+    static WEBCORE_EXPORT Ref<ScrollingStateOverflowScrollingNode> create(ScrollingNodeID);
     static Ref<ScrollingStateOverflowScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
@@ -42,6 +43,7 @@ public:
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
+    ScrollingStateOverflowScrollingNode(ScrollingNodeID);
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode&, ScrollingStateTree&);
 };

@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree& scrollingStateTree, ScrollingNodeID nodeID)
+ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
-    , m_scrollingStateTree(&scrollingStateTree)
+    , m_scrollingStateTree(scrollingStateTree)
 {
 }
 
@@ -61,11 +61,33 @@ ScrollingStateNode::~ScrollingStateNode() = default;
 
 void ScrollingStateNode::attachAfterDeserialization(ScrollingStateTree& tree)
 {
-    ASSERT(m_scrollingStateTree); // FIXME: This will switch to ASSERT(!m_scrollingStateTree) once we deserialize nodes without the context of a ScrollingStateTree.
-    ASSERT(m_scrollingStateTree != &tree);
+    ASSERT(!m_scrollingStateTree);
     m_scrollingStateTree = &tree;
+
+    // Non-deserialization ScrollingStateScrollingNode constructors do this during construction,
+    // but since we didn't have a ScrollingStateTree pointer until attaching, do it now.
+    if (is<ScrollingStateScrollingNode>(*this))
+        tree.scrollingNodeAdded();
+
     for (auto& child : m_children)
         child->attachAfterDeserialization(tree);
+}
+
+void ScrollingStateNode::setChildren(Vector<Ref<ScrollingStateNode>>&& children)
+{
+    m_children = WTFMove(children);
+    for (auto& child : m_children) {
+        ASSERT(!child->parent());
+        child->setParent(this);
+    }
+    ASSERT(parentPointersAreCorrect());
+}
+
+void ScrollingStateNode::traverse(const Function<void(ScrollingStateNode&)>& function)
+{
+    function(*this);
+    for (auto& child : m_children)
+        child->traverse(function);
 }
 
 void ScrollingStateNode::setPropertyChanged(Property property)
@@ -160,7 +182,7 @@ void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation
 {
     if (layerRepresentation == m_layer)
         return;
-    
+
     m_layer = layerRepresentation;
 
     setPropertyChanged(Property::Layer);
@@ -207,6 +229,17 @@ String ScrollingStateNode::scrollingStateTreeAsText(OptionSet<ScrollingStateTree
     ts << "\n";
     return ts.release();
 }
+
+#if ASSERT_ENABLED
+bool ScrollingStateNode::parentPointersAreCorrect() const
+{
+    for (auto& child : m_children) {
+        if (child->parent().get() != this || !child->parentPointersAreCorrect())
+            return false;
+    }
+    return true;
+}
+#endif
 
 } // namespace WebCore
 
