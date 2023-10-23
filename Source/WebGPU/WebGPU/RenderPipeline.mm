@@ -156,9 +156,9 @@ static MTLPrimitiveTopologyClass topologyType(WGPUPrimitiveTopology topology)
     case WGPUPrimitiveTopology_PointList:
         return MTLPrimitiveTopologyClassPoint;
     case WGPUPrimitiveTopology_LineStrip:
+    case WGPUPrimitiveTopology_LineList:
         return MTLPrimitiveTopologyClassLine;
     case WGPUPrimitiveTopology_TriangleList:
-    case WGPUPrimitiveTopology_LineList:
     case WGPUPrimitiveTopology_TriangleStrip:
         return MTLPrimitiveTopologyClassTriangle;
     case WGPUPrimitiveTopology_Force32:
