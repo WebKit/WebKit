@@ -1,5 +1,0 @@
-
-
-
-PASS The list of available images gets checked before deciding to make a load lazy
-
