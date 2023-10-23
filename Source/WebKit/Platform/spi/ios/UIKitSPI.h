@@ -132,6 +132,10 @@
 #import <UIKit/_UIContextMenuAsyncConfiguration.h>
 #endif
 
+#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+#import <UIKit/_UITextCursorDragAnimator.h>
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 #import <UIKit/UIFindSession_Private.h>
 #import <UIKit/_UIFindInteraction.h>

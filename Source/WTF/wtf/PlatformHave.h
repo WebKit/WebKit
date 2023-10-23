@@ -1664,3 +1664,7 @@
 #if !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIContextMenuAsyncConfiguration.h>)
 #define HAVE_UI_CONTEXT_MENU_ASYNC_CONFIGURATION 1
 #endif
+
+#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/_UITextCursorDragAnimator.h>)
+#define HAVE_UI_TEXT_CURSOR_DRAG_ANIMATOR 1
+#endif

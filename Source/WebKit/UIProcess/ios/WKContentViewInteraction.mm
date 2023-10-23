@@ -196,6 +196,7 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIAsyncDragInteraction)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIContextMenuAsyncConfiguration)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, _UITextCursorDragAnimator)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
@@ -273,6 +274,13 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 @end
 
 #endif // USE(QUICK_LOOK)
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+@interface WKContentView (UITextSelectionDisplayInteraction) <UITextSelectionDisplayInteractionDelegate>
+@end
+
+#endif
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
@@ -948,6 +956,19 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     static BOOL hasAsyncConfigurationClass = !!get_UIContextMenuAsyncConfigurationClass();
     return hasAsyncConfigurationClass;
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)_shouldUseTextCursorDragAnimator
+{
+#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+    if (!_page->preferences().useAsyncUIKitInteractions())
+        return NO;
+
+    static BOOL hasTextCursorDragAnimatorClass = !!get_UITextCursorDragAnimatorClass();
+    return hasTextCursorDragAnimatorClass;
 #else
     return NO;
 #endif
@@ -9319,12 +9340,37 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
 
     [self _removeContainerForDragPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
-    [_editDropCaretView remove];
-    _editDropCaretView = nil;
+    [self _removeDropCaret];
     _shouldRestoreEditMenuAfterDrop = NO;
 
     _dragDropInteractionState.dragAndDropSessionsDidEnd();
     _dragDropInteractionState = { };
+}
+
+- (void)_insertDropCaret:(CGRect)rect
+{
+#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+    if (self._shouldUseTextCursorDragAnimator) {
+        _editDropTextCursorView = [adoptNS([[UITextSelectionDisplayInteraction alloc] initWithTextInput:self delegate:self]) cursorView];
+        [self addSubview:_editDropTextCursorView.get()];
+        [_editDropTextCursorView setFrame:rect];
+        _editDropCaretAnimator = adoptNS([alloc_UITextCursorDragAnimatorInstance() _initWithTextCursorView:_editDropTextCursorView.get() textInput:self]);
+        [_editDropCaretAnimator _setCursorVisible:YES animated:YES];
+        [_editDropCaretAnimator _updateCursorForPosition:[WKTextPosition textPositionWithRect:rect] animated:NO];
+        return;
+    }
+#endif // HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+    _editDropCaretView = adoptNS([[_UITextDragCaretView alloc] initWithTextInputView:self]);
+    [_editDropCaretView insertAtPosition:[WKTextPosition textPositionWithRect:rect]];
+}
+
+- (void)_removeDropCaret
+{
+    [std::exchange(_editDropCaretView, nil) remove];
+#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+    [std::exchange(_editDropCaretAnimator, nil) _setCursorVisible:NO animated:NO];
+    [std::exchange(_editDropTextCursorView, nil) removeFromSuperview];
+#endif
 }
 
 static NSArray<NSItemProvider *> *extractItemProvidersFromDragItems(NSArray<UIDragItem *> *dragItems)
@@ -9412,18 +9458,20 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return;
 
     if (previousRectIsEmpty) {
-        _editDropCaretView = adoptNS([[_UITextDragCaretView alloc] initWithTextInputView:self]);
-        [_editDropCaretView insertAtPosition:[WKTextPosition textPositionWithRect:rect]];
+        [self _insertDropCaret:rect];
         return;
     }
 
     if (currentRectIsEmpty) {
-        [_editDropCaretView remove];
-        _editDropCaretView = nil;
+        [self _removeDropCaret];
         return;
     }
 
-    [_editDropCaretView updateToPosition:[WKTextPosition textPositionWithRect:rect]];
+    RetainPtr caretPosition = [WKTextPosition textPositionWithRect:rect];
+#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+    [_editDropCaretAnimator _updateCursorForPosition:caretPosition.get() animated:YES];
+#endif
+    [_editDropCaretView updateToPosition:caretPosition.get()];
 }
 
 - (void)_prepareToDragPromisedAttachment:(const WebCore::PromisedAttachmentInfo&)info
