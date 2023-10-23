@@ -142,7 +142,8 @@ public:
 
     Color semanticColor() const;
 
-    // Returns the underlying color if its type is SRGBA<uint8_t>.
+    // Returns the underlying color if its type is inline.
+    std::optional<PackedColor::RGBA> tryGetAsPackedInline() const;
     std::optional<SRGBA<uint8_t>> tryGetAsSRGBABytes() const;
 
 #if PLATFORM(GTK)
@@ -470,6 +471,13 @@ inline PackedColor::RGBA Color::asPackedInline() const
 {
     ASSERT(isInline());
     return decodedPackedInlineColor(m_colorAndFlags);
+}
+
+inline std::optional<PackedColor::RGBA> Color::tryGetAsPackedInline() const
+{
+    if (isInline())
+        return asPackedInline();
+    return std::nullopt;
 }
 
 inline std::optional<SRGBA<uint8_t>> Color::tryGetAsSRGBABytes() const

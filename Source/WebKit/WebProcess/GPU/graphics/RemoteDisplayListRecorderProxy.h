@@ -65,9 +65,8 @@ private:
     void recordScale(const WebCore::FloatSize&) final;
     void recordSetCTM(const WebCore::AffineTransform&) final;
     void recordConcatenateCTM(const WebCore::AffineTransform&) final;
-    void recordSetInlineFillColor(WebCore::SRGBA<uint8_t>) final;
-    void recordSetInlineStrokeColor(WebCore::SRGBA<uint8_t>) final;
-    void recordSetStrokeThickness(float) final;
+    void recordSetInlineFillColor(WebCore::PackedColor::RGBA) final;
+    void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
     void recordSetState(const WebCore::GraphicsContextState&) final;
     void recordSetLineCap(WebCore::LineCap) final;
     void recordSetLineDash(const WebCore::DashArray&, float dashOffset) final;
@@ -121,7 +120,7 @@ private:
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const WebCore::PathDataLine&) final;
-    void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::SRGBA<uint8_t>, float thickness) final;
+    void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&) final;
     void recordStrokeArc(const WebCore::PathArc&) final;
     void recordStrokeQuadCurve(const WebCore::PathDataQuadCurve&) final;
     void recordStrokeBezierCurve(const WebCore::PathDataBezierCurve&) final;

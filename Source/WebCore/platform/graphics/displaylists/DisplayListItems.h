@@ -164,62 +164,57 @@ class SetInlineFillColor {
 public:
     static constexpr char name[] = "set-inline-fill-color";
 
-    SetInlineFillColor() = default;
+    SetInlineFillColor(PackedColor::RGBA colorData)
+        : m_colorData(colorData)
+    {
+    }
+
     SetInlineFillColor(SRGBA<uint8_t> colorData)
-        : m_colorData(colorData)
+        : m_colorData(*Color(colorData).tryGetAsPackedInline())
     {
     }
-    SetInlineFillColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : SetInlineFillColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
-    Color color() const { return { m_colorData }; }
-    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
+    Color color() const { return { asSRGBA(colorData()) }; }
+    const PackedColor::RGBA& colorData() const { return m_colorData; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    SRGBA<uint8_t> m_colorData;
+    PackedColor::RGBA m_colorData;
 };
 
-class SetInlineStrokeColor {
+class SetInlineStroke {
 public:
-    static constexpr char name[] = "set-inline-stroke-color";
+    static constexpr char name[] = "set-inline-stroke";
 
-    SetInlineStrokeColor() = default;
-    SetInlineStrokeColor(SRGBA<uint8_t> colorData)
+    SetInlineStroke(std::optional<PackedColor::RGBA> colorData, std::optional<float> thickness = std::nullopt)
         : m_colorData(colorData)
+        , m_thickness(thickness)
     {
+        ASSERT(m_colorData || m_thickness);
     }
-    SetInlineStrokeColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : SetInlineStrokeColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
-    Color color() const { return { m_colorData }; }
-    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const;
-
-private:
-    SRGBA<uint8_t> m_colorData;
-};
-
-class SetStrokeThickness {
-public:
-    static constexpr char name[] = "set-stroke-thickness";
-
-    SetStrokeThickness(float thickness)
+    SetInlineStroke(float thickness)
         : m_thickness(thickness)
     {
     }
 
-    float thickness() const { return m_thickness; }
+    SetInlineStroke(SRGBA<uint8_t> colorData)
+        : m_colorData(*Color(colorData).tryGetAsPackedInline())
+    {
+    }
+
+    std::optional<Color> color() const { return m_colorData ? std::optional<Color>(asSRGBA(*m_colorData)) : std::nullopt; }
+    std::optional<PackedColor::RGBA> colorData() const { return m_colorData; }
+    std::optional<float> thickness() const { return m_thickness; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    float m_thickness { 0 };
+    std::optional<PackedColor::RGBA> m_colorData;
+    std::optional<float> m_thickness;
 };
 
 class SetState {

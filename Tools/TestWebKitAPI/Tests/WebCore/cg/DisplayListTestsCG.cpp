@@ -60,7 +60,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     list.append(SetInlineFillColor(Color::green));
     list.append(FillRect(contextBounds));
     list.append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
-    list.append(SetInlineStrokeColor(Color::red));
+    list.append(SetInlineStroke(Color::red));
     list.append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
 
     {

@@ -74,14 +74,10 @@ void Recorder::appendStateChangeItem(const GraphicsContextState& state)
     
     if (state.containsOnlyInlineChanges()) {
         if (state.changes().contains(GraphicsContextState::Change::FillBrush))
-            recordSetInlineFillColor(*fillColor().tryGetAsSRGBABytes());
+            recordSetInlineFillColor(*fillColor().tryGetAsPackedInline());
 
-        if (state.changes().contains(GraphicsContextState::Change::StrokeBrush))
-            recordSetInlineStrokeColor(*strokeColor().tryGetAsSRGBABytes());
-
-        if (state.changes().contains(GraphicsContextState::Change::StrokeThickness))
-            recordSetStrokeThickness(strokeThickness());
-
+        if (state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }))
+            recordSetInlineStroke(buildSetInlineStroke(state));
         return;
     }
 
@@ -119,6 +115,21 @@ void Recorder::appendStateChangeItemIfNecessary()
     appendStateChangeItem(state);
     state.didApplyChanges();
     currentState().lastDrawingState = state;
+}
+
+SetInlineStroke Recorder::buildSetInlineStroke(const GraphicsContextState& state)
+{
+    ASSERT(state.containsOnlyInlineChanges());
+    ASSERT(state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }));
+
+    if (!state.changes().contains(GraphicsContextState::Change::StrokeBrush))
+        return SetInlineStroke(strokeThickness());
+
+    ASSERT(strokeColor().tryGetAsPackedInline());
+    if (!state.changes().contains(GraphicsContextState::Change::StrokeThickness))
+        return SetInlineStroke(*strokeColor().tryGetAsPackedInline());
+
+    return SetInlineStroke(*strokeColor().tryGetAsPackedInline(), strokeThickness());
 }
 
 const GraphicsContextState& Recorder::state() const
@@ -502,7 +513,7 @@ void Recorder::strokePath(const Path& path)
     auto& state = currentState().state;
     if (state.containsOnlyInlineStrokeChanges()) {
         if (auto line = path.singleDataLine()) {
-            recordStrokeLineWithColorAndThickness(*line, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
+            recordStrokeLineWithColorAndThickness(*line, buildSetInlineStroke(state));
             state.didApplyChanges();
             currentState().lastDrawingState = state;
             return;

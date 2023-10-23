@@ -245,13 +245,13 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
 {
     switch (vertexFormat) {
     case WGPUVertexFormat_Uint8x2:
-        return MTLVertexFormatUInt2;
+        return MTLVertexFormatUChar2;
     case WGPUVertexFormat_Uint8x4:
-        return MTLVertexFormatUInt4;
+        return MTLVertexFormatUChar4;
     case WGPUVertexFormat_Sint8x2:
-        return MTLVertexFormatInt2;
+        return MTLVertexFormatChar2;
     case WGPUVertexFormat_Sint8x4:
-        return MTLVertexFormatInt4;
+        return MTLVertexFormatChar4;
     case WGPUVertexFormat_Unorm8x2:
         return MTLVertexFormatUChar2Normalized;
     case WGPUVertexFormat_Unorm8x4:
@@ -334,6 +334,9 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
 
     for (size_t bufferIndex = 0; bufferIndex < vertexState.bufferCount; ++bufferIndex) {
         auto& buffer = vertexState.buffers[bufferIndex];
+        if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
+            continue;
+
         vertexDescriptor.layouts[bufferIndex].stride = buffer.arrayStride;
         vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode);
         // FIXME: need to assign stepRate with per-instance data?

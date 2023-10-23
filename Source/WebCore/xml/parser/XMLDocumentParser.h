@@ -126,12 +126,6 @@ public:
     void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
     void endDocument();
 
-    bool isParsingEntityDeclaration() const { return m_isParsingEntityDeclaration; }
-    void setIsParsingEntityDeclaration(bool value) { m_isParsingEntityDeclaration = value; }
-
-    int depthTriggeringEntityExpansion() const { return m_depthTriggeringEntityExpansion; }
-    void setDepthTriggeringEntityExpansion(int depth) { m_depthTriggeringEntityExpansion = depth; }
-
 private:
     void initializeParserContext(const CString& chunk = CString());
 
@@ -156,8 +150,6 @@ private:
     RefPtr<XMLParserContext> m_context;
     std::unique_ptr<PendingCallbacks> m_pendingCallbacks;
     Vector<xmlChar> m_bufferedText;
-    int m_depthTriggeringEntityExpansion { -1 };
-    bool m_isParsingEntityDeclaration { false };
 
     ContainerNode* m_currentNode { nullptr };
     Vector<ContainerNode*> m_currentNodeStack;
