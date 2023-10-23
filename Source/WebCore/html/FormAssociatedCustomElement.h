@@ -97,6 +97,7 @@ private:
 
     WeakPtr<HTMLMaybeFormAssociatedCustomElement, WeakPtrImplWithEventTargetData> m_element;
     ValidityStateFlags m_validityStateFlags;
+    String m_validationMessage;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_validationAnchor { nullptr };
     CustomElementFormValue m_submissionValue { nullptr };
     CustomElementFormValue m_state { nullptr };
