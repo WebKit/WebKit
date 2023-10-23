@@ -5382,11 +5382,6 @@ imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under
 
 imported/w3c/web-platform-tests/content-security-policy/script-src/ [ DumpJSConsoleLogInStdErr ]
 
-# CSS motion path tests failing for unknown reasons, needs investigation.
-webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001.html [ ImageOnlyFailure ]
-webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003.html [ ImageOnlyFailure ]
-
 # CSS motion path URL support.
 imported/w3c/web-platform-tests/css/motion/offset-path-url-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-003.html [ ImageOnlyFailure ]

@@ -55,6 +55,7 @@
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextBoxEdge.h"
 #include "StyleTreeResolver.h"
+#include "TransformOperationData.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 #include <wtf/PointerComparison.h>
@@ -2309,7 +2310,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const Transfor
         return;
     }
 
-    auto originTranslate = computeTransformOrigin(transformData.boundingBox());
+    auto originTranslate = computeTransformOrigin(transformData.boundingBox);
     applyTransformOrigin(transform, originTranslate);
     applyCSSTransform(transform, transformData, options);
     unapplyTransformOrigin(transform, originTranslate);
@@ -2328,7 +2329,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Trans
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     // (implemented in applyTransformOrigin)
-    auto& boundingBox = operationData.boundingBox();
+    auto& boundingBox = operationData.boundingBox;
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
         if (TransformOperation* translate = m_nonInheritedData->rareData->translate.get())

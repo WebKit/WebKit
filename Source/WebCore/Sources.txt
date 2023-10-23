@@ -2660,6 +2660,7 @@ rendering/TextBoxPainter.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp
 rendering/TextPainter.cpp
+rendering/TransformOperationData.cpp
 rendering/line/LineBreaker.cpp
 rendering/line/LineInfo.cpp
 rendering/line/LineWidth.cpp

@@ -2836,9 +2836,11 @@ header: <WebCore/MotionPath.h>
     WebCore::FloatPoint usedStartingPosition;
 };
 
-[CustomHeader] class WebCore::TransformOperationData {
-    WebCore::FloatRect boundingBox();
-    std::optional<WebCore::MotionPathData> motionPathData();
+header: <WebCore/TransformOperationData.h>
+[CustomHeader] struct WebCore::TransformOperationData {
+    WebCore::FloatRect boundingBox;
+    std::optional<WebCore::MotionPathData> motionPathData;
+    bool isSVGRenderer;
 }
 
 header: <WebCore/PathOperation.h>

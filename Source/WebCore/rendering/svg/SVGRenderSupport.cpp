@@ -34,7 +34,6 @@
 #include "LegacyRenderSVGShapeInlines.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LegacyRenderSVGViewportContainer.h"
-#include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -53,6 +52,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "TransformOperationData.h"
 #include "TransformState.h"
 
 namespace WebCore {
