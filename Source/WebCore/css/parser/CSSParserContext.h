@@ -97,6 +97,7 @@ struct CSSParserContext {
     bool cssWordBreakAutoPhraseEnabled { false };
     bool popoverAttributeEnabled { false };
     bool sidewaysWritingModesEnabled { false };
+    bool cssTextWrapPrettyEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;
