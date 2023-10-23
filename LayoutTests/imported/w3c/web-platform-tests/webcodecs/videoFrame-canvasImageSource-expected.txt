@@ -2,6 +2,7 @@
 
 NOTRUN <video> and VideoFrame constructed VideoFrame AV.1 file streaming unsupported
 PASS CSSImageValue constructed VideoFrame
+PASS Wait for onload event to get access to image data
 PASS Image element constructed VideoFrame
 PASS SVGImageElement constructed VideoFrame
 PASS Canvas element constructed VideoFrame
