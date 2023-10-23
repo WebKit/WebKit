@@ -1329,6 +1329,10 @@ macro invokeForRegularCallIgnoreResult(opcodeName, size, opcodeStruct, valueProf
     callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterRegularCallIgnoreResult, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
 end
 
+macro invokeForTailCallSlow(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
+    callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterTailCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
+end
+
 # t5 is metadata
 macro prepareForPolymorphicRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callPtrTag)
 end
@@ -1403,22 +1407,6 @@ macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVir
         move callee, a7
         leap _g_config, a1
         jmp JSCConfigGateMapOffset + (constexpr Gate::tailCall%callPtrTag%) * PtrSize[a1], NativeToJITGatePtrTag # %callPtrTag%
-
-        # Satisfy the llint offset extractor
-        macro labelNarrow()
-            _js_trampoline_%opcodeName%:
-        end
-
-        macro labelWide16()
-            _js_trampoline_%opcodeName%_wide16:
-        end
-
-        macro labelWide32()
-            _js_trampoline_%opcodeName%_wide32:
-        end
-        size(labelNarrow, labelWide16, labelWide32, macro (gen) gen() end)
-        defineReturnLabel(opcodeName, size)
-        crash()
     else
         jmp callee, callPtrTag
     end
@@ -2486,21 +2474,21 @@ end)
 
 
 # we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
-commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCallJB, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCallJB, invokeForRegularCallJB, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCall, getu)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
+commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, invokeForTailCallSlow, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
     # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
     metadata(t5, t0)
 end, dispatchAfterTailCall)
 
-commonCallOp(op_call_ignore_result, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call_ignore_result, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCallIgnoreResult, getu)
 end, dispatchAfterRegularCallIgnoreResult)
 
