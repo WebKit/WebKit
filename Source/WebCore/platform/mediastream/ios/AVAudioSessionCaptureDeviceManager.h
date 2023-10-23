@@ -44,7 +44,7 @@ class CaptureDevice;
 class AVAudioSessionCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVAudioSessionCaptureDeviceManager>;
 public:
-    static AVAudioSessionCaptureDeviceManager& singleton();
+    WEBCORE_EXPORT static AVAudioSessionCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
@@ -61,6 +61,8 @@ public:
     void setPreferredAudioSessionDeviceUID(const String&);
     String preferredAudioSessionDeviceUID() const { return m_preferredAudioDeviceUID; }
     void configurePreferredAudioCaptureDevice();
+
+    bool isActive() const { return m_audioSessionState == AudioSessionState::Active; }
 
 private:
     AVAudioSessionCaptureDeviceManager();

@@ -366,6 +366,7 @@ public:
     void abortModal();
 
     bool isDoingMediaCapture() const;
+    bool isEnumeratingAudioUnitActive() const;
 
     String dumpPrivateClickMeasurement();
     void clearPrivateClickMeasurement();
