@@ -101,7 +101,6 @@ static ConstantValue constantAdd(const Type*, const FixedVector<ConstantValue>& 
     auto& rhs = arguments[1];
 
     // FIXME: handle constant matrices
-
     return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
         if (left.isInt() && right.isInt())
             return left.toInt() + right.toInt();
@@ -242,17 +241,17 @@ static ConstantValue constantVector(const Type* resultType, const FixedVector<Co
     return { result };
 }
 
-static ConstantValue constantVector2(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVec2(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     return constantVector(resultType, arguments, 2);
 }
 
-static ConstantValue constantVector3(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVec3(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     return constantVector(resultType, arguments, 3);
 }
 
-static ConstantValue constantVector4(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVec4(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     return constantVector(resultType, arguments, 4);
 }

@@ -285,7 +285,7 @@ end
 module DSL
     @context = binding()
     @aliases = {}
-    @operators = {}
+    @entries = {}
     @TypeVariable = VariableKind.new(:TypeVariable)
     @ValueVariable = VariableKind.new(:ValueVariable)
 
@@ -297,22 +297,55 @@ module DSL
         @ValueVariable
     end
 
-    def self.operator(name, map)
+    def self.add_entry(kind, name, map)
         overloads = []
-        map.each do |function, return_type|
-            function.return_type = return_type
-            overloads << function
+        properties = {
+            must_use: false,
+            const: false,
+            stage: [:fragment, :compute, :vertex],
+        }
+        map.each do |key, value|
+            if key.kind_of? FunctionType
+                key.return_type = value
+                overloads << key
+            else
+                properties[key] = value
+            end
         end
 
-        if @operators[name]
-            @operators[name] += overloads
-        else
-            @operators[name] = overloads
+        existing_entry = @entries[name]
+        if !existing_entry
+            @entries[name] = {
+                **properties,
+                kind: kind,
+                overloads: overloads
+            }
+            return
         end
+
+
+        properties.each do |key, value|
+            if existing_entry[key] != value then
+                raise "Incompatible overload: key: #{key}, existing value: #{existing_entry[key]}, new value: #{value}"
+            end
+        end
+        existing_entry[:overloads] += overloads
+    end
+
+    def self.operator(name, map)
+        add_entry(:operator, name, map)
+    end
+
+    def self.constructor(name, map)
+        add_entry(:constructor, name, map)
+    end
+
+    def self.function(name, map)
+        add_entry(:function, name, map)
     end
 
     def self.type_alias(name, type)
-      @aliases[name] = type
+        @aliases[name] = type
     end
 
     def self.to_cpp
@@ -324,12 +357,30 @@ module DSL
 
         out << ""
 
-        @operators.each do |name, overloads|
+        @entries.each do |name, entry|
+            constant_function = case entry[:const]
+            when false
+                "nullptr"
+            when true
+                "constant#{name.capitalize}"
+            else
+                entry[:const]
+            end
+
+            stages = entry[:stage].kind_of?(Array) ? entry[:stage] : [entry[:stage]]
+            visibility = stages.map { |s| "ShaderStage::#{s.to_s.capitalize}" }.join ", "
+
             out << "{"
-            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, Vector<OverloadCandidate>());"
+            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, OverloadedDeclaration {"
+            out << "    .kind = OverloadedDeclaration::#{entry[:kind].to_s.capitalize},"
+            out << "    .mustUse = #{entry[:must_use]},"
+            out << "    .constantFunction = #{constant_function},"
+            out << "    .visibility = { #{visibility} },"
+            out << "    .overloads = { }"
+            out << "});"
             out << "ASSERT_UNUSED(result, result.isNewEntry);"
-            overloads.each do |function|
-                out << "result.iterator->value.append(#{function.to_cpp(name)});"
+            entry[:overloads].each do |function|
+                out << "result.iterator->value.overloads.append(#{function.to_cpp(name)});"
             end
             out << "}"
             out << ""

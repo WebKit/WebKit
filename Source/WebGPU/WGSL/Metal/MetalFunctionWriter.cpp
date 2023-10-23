@@ -1351,70 +1351,20 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             return;
         }
 
-        static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
+        static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
             { "dpdx", "dfdx"_s },
             { "dpdxCoarse", "dfdx"_s },
             { "dpdxFine", "dfdx"_s },
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
-            { "f32", "float"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
-            { "i32", "int"_s },
-            { "mat2x2f", "float2x2"_s },
-            { "mat2x3f", "float2x3"_s },
-            { "mat2x4f", "float2x4"_s },
-            { "mat3x2f", "float3x2"_s },
-            { "mat3x3f", "float3x3"_s },
-            { "mat3x4f", "float3x4"_s },
-            { "mat4x2f", "float4x2"_s },
-            { "mat4x3f", "float4x3"_s },
-            { "mat4x4f", "float4x4"_s },
-            { "u32", "uint"_s },
-            { "vec2f", "float2"_s },
-            { "vec2i", "int2"_s },
-            { "vec2u", "uint2"_s },
-            { "vec3f", "float3"_s },
-            { "vec3i", "int3"_s },
-            { "vec3u", "uint3"_s },
-            { "vec4f", "float4"_s },
-            { "vec4i", "int4"_s },
-            { "vec4u", "uint4"_s }
         };
-        static constexpr SortedArrayMap baseTypes { baseTypesMappings };
-
-        // FIXME: in order to remove this hack we need to distinguish in the declarations
-        // file between functions and value constructors
-        static constexpr ComparableASCIILiteral constructorNames[] {
-            "mat2x2",
-            "mat2x3",
-            "mat2x4",
-            "mat3x2",
-            "mat3x3",
-            "mat3x4",
-            "mat4x2",
-            "mat4x3",
-            "mat4x4",
-            "texture_1d",
-            "texture_2d",
-            "texture_2d_array",
-            "texture_3d",
-            "texture_cube",
-            "texture_cube_array",
-            "texture_multisampled_2d",
-            "texturetorage_1d",
-            "texturetorage_2d",
-            "texturetorage_2d_array",
-            "texturetorage_3d",
-            "vec2",
-            "vec3",
-            "vec4",
-        };
-        static constexpr SortedArraySet constructors { constructorNames };
-        if (constructors.contains(targetName)) {
+        static constexpr SortedArrayMap mappedNames { directMappings };
+        if (call.isConstructor()) {
             visit(type);
-        } else if (auto mappedName = baseTypes.get(targetName))
+        } else if (auto mappedName = mappedNames.get(targetName))
             m_stringBuilder.append(mappedName);
         else
             m_stringBuilder.append(targetName);
