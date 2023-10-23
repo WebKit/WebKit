@@ -1,0 +1,5 @@
+Test of Range.createContextualFragment() with in-scope namespace prefixes, where the XML fragment introduces additional namespace prefixes. If the test succeeds you will see the word "PASS" below.
+
+PASS
+
+

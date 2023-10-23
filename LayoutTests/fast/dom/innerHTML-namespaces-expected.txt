@@ -1,0 +1,3 @@
+
+PASS set innerHTML to an XHTML fragment with in-scope namespace prefixes on attributes
+

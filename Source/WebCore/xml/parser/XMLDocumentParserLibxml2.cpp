@@ -8,6 +8,7 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -739,14 +740,30 @@ struct _xmlSAX2Attributes {
 };
 typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 
-static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlAttributes, int numAttributes)
+static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlAttributes, int numAttributes, const HashMap<AtomString, AtomString>& initialPrefixToNamespaceMap)
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < numAttributes; i++) {
         int valueLength = static_cast<int>(attributes[i].end - attributes[i].value);
         AtomString attrValue = toAtomString(attributes[i].value, valueLength);
-        String attrPrefix = toString(attributes[i].prefix);
-        AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attributes[i].uri);
+        AtomString attrPrefix = toAtomString(attributes[i].prefix);
+        AtomString attrURI;
+        if (!attrPrefix.isEmpty()) {
+            // If provided, use the namespace URI from libxml2 because libxml2
+            // updates its namespace table as it parses whereas the
+            // initialPrefixToNamespaceMap is the initial map from namespace
+            // prefixes to namespace URIs created by the XMLDocumentParser
+            // constructor (in the case where we are parsing an XML fragment).
+            if (attributes[i].uri)
+                attrURI = toAtomString(attributes[i].uri);
+            else {
+                const HashMap<AtomString, AtomString>::const_iterator it = initialPrefixToNamespaceMap.find(attrPrefix);
+                if (it != initialPrefixToNamespaceMap.end())
+                    attrURI = it->value;
+                else
+                    attrURI = AtomString();
+            }
+        }
         AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : makeAtomString(attrPrefix, ':', toString(attributes[i].localname));
 
         auto result = Element::parseAttributeName(attrURI, attrQName);
@@ -815,7 +832,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
-    bool success = handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes);
+    bool success = handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes, m_prefixToNamespaceMap);
     setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
     if (!success) {
         stopParsing();

@@ -1,0 +1,3 @@
+
+PASS insert an XHTML fragment with in-scope namespace prefixes on attributes
+
