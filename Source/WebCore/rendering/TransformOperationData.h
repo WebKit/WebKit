@@ -33,8 +33,8 @@ namespace WebCore {
 class RenderElement;
 
 struct TransformOperationData {
-    TransformOperationData(FloatRect boundingBox, const RenderElement* renderer = nullptr);
-    TransformOperationData(FloatRect boundingBox, std::optional<MotionPathData> motionPathData, bool isSVGRenderer)
+    explicit TransformOperationData(FloatRect boundingBox, const RenderElement* renderer = nullptr);
+    explicit TransformOperationData(FloatRect boundingBox, std::optional<MotionPathData> motionPathData, bool isSVGRenderer)
         : boundingBox(boundingBox)
         , motionPathData(motionPathData)
         , isSVGRenderer(isSVGRenderer)
