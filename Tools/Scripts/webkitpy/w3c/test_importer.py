@@ -249,11 +249,6 @@ class TestImporter(object):
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
-            if 'generate_git_submodules_description' in test_repository['import_options']:
-                self.filesystem.maybe_make_directory(self.filesystem.join(self.destination_directory, 'resources'))
-                self._test_downloader.generate_git_submodules_description(test_repository, self.filesystem.join(self.destination_directory, 'resources', test_repository['name'] + '-modules.json'))
-            if 'generate_gitignore' in test_repository['import_options']:
-                self._test_downloader.generate_gitignore(test_repository, self.destination_directory)
             if 'generate_init_py' in test_repository['import_options']:
                 self.write_init_py(self.filesystem.join(self.destination_directory, test_repository['name'], '__init__.py'))
 

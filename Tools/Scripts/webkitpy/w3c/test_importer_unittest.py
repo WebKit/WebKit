@@ -55,7 +55,7 @@ FAKE_REPOSITORY = {
         "revision": "dd553279c3",
         "paths_to_skip": [],
         "paths_to_import": [],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
+        "import_options": ["generate_init_py"]
     }
 ]
 ''',
@@ -84,7 +84,7 @@ FAKE_REPOSITORIES = {
         "revision": "dd553279c3",
         "paths_to_skip": [],
         "paths_to_import": [],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
+        "import_options": ["generate_init_py"]
     }
 ]
 ''',
@@ -195,20 +195,6 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
-
-    def test_submodules_generation(self):
-        FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-        }
-        FAKE_FILES.update(FAKE_REPOSITORIES)
-
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
-
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/csswg-tests-modules.json'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
-        # FIXME: Mock-up of git cannot use submodule command, hence the json file is empty, but still it should be created
-        #self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
 
     def test_skip_test_import_download(self):
         FAKE_FILES = {
@@ -467,22 +453,6 @@ class TestImporterTest(unittest.TestCase):
         tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
         self.assertIn("imported/w3c/web-platform-tests/cssom-view/old-test.html", tests_options)
         self.assertNotIn("imported/w3c/web-platform-tests/cssom/old-test.html", tests_options)
-
-    def test_git_ignore_generation(self):
-        FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-        }
-
-        FAKE_FILES.update(FAKE_REPOSITORIES)
-
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
-
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/.gitignore'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
-        # We should activate these lines but this is not working in mock systems.
-        #self.assertTrue('/tools/.resources.url' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
-        #self.assertTrue('/tools/resources/' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
 
     def test_initpy_generation(self):
         FAKE_FILES = {
