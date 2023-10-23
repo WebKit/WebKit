@@ -144,10 +144,6 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_readyState(MediaPlayer::ReadyState::HaveNothing)
-    , m_rate(1)
-    , m_playing(0)
-    , m_synchronizerSeeking(false)
-    , m_loadingProgressed(false)
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
@@ -1111,7 +1107,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 {
-    m_playing = effectiveRate() != 0;
+    ALWAYS_LOG(LOGIDENTIFIER, effectiveRate());
     if (auto player = m_player.get())
         player->rateChanged();
 }
