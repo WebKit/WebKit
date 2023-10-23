@@ -63,8 +63,7 @@ public:
     void setCTM(const WebCore::AffineTransform&);
     void concatenateCTM(const WebCore::AffineTransform&);
     void setInlineFillColor(WebCore::DisplayList::SetInlineFillColor&&);
-    void setInlineStrokeColor(WebCore::DisplayList::SetInlineStrokeColor&&);
-    void setStrokeThickness(float);
+    void setInlineStroke(WebCore::DisplayList::SetInlineStroke&&);
     void setState(WebCore::DisplayList::SetState&&);
     void setLineCap(WebCore::LineCap);
     void setLineDash(WebCore::DisplayList::SetLineDash&&);
@@ -117,7 +116,7 @@ public:
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
 #if ENABLE(INLINE_PATH_DATA)
     void strokeLine(const WebCore::PathDataLine&);
-    void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
+    void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&);
     void strokeArc(const WebCore::PathArc&);
     void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
     void strokeBezierCurve(const WebCore::PathDataBezierCurve&);
