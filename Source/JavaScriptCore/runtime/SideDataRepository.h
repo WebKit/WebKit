@@ -42,7 +42,7 @@ public:
     template<typename Type, typename Functor>
     Type& ensure(void* owner, void* key, const Functor& functor)
     {
-        static_assert(std::derived_from<Type, SideData>);
+        static_assert(std::is_base_of_v<SideData, Type>);
         Locker lock { m_lock };
         auto result = add(owner, key, nullptr);
         if (result.isNewEntry)
