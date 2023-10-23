@@ -92,7 +92,7 @@ inline const AtomString& Element::attributeWithoutSynchronization(const Qualifie
 
 inline URL Element::getURLAttributeForBindings(const QualifiedName& name) const
 {
-    return document().maskedURLForBindingsIfNeeded(getURLAttribute(name));
+    return protectedDocument()->maskedURLForBindingsIfNeeded(getURLAttribute(name));
 }
 
 inline bool Element::hasAttributesWithoutUpdate() const

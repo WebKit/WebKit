@@ -3083,6 +3083,11 @@ CustomElementDefaultARIA& Element::customElementDefaultARIA()
     return *deafultARIA;
 }
 
+CheckedRef<CustomElementDefaultARIA> Element::checkedCustomElementDefaultARIA()
+{
+    return customElementDefaultARIA();
+}
+
 CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists()
 {
     return isPrecustomizedOrDefinedCustomElement() && hasRareData() ? elementRareData()->customElementDefaultARIA() : nullptr;

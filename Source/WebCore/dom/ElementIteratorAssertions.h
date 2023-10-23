@@ -38,7 +38,7 @@ public:
     void clear();
 
 private:
-    const Document* m_document;
+    CheckedPtr<const Document> m_document;
     uint64_t m_initialDOMTreeVersion;
     std::optional<ScriptDisallowedScope> m_eventDispatchAssertion;
 };

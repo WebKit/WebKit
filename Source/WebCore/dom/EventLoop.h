@@ -233,6 +233,8 @@ public:
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 
+    RefPtr<EventLoop> protectedEventLoop() const;
+
     WeakPtr<EventLoop> m_eventLoop;
     WeakHashSet<EventLoopTimer> m_timers;
     State m_state { State::Running };

@@ -1123,6 +1123,7 @@ public:
     Location* location() const;
 
     WEBCORE_EXPORT HTMLHeadElement* head();
+    RefPtr<HTMLHeadElement> protectedHead();
 
     inline DocumentMarkerController& markers(); // Defined in DocumentInlines.h.
     inline const DocumentMarkerController& markers() const; // Defined in DocumentInlines.h.

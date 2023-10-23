@@ -26,6 +26,7 @@
 #pragma once
 
 #include "QualifiedName.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,7 @@ namespace WebCore {
 class Element;
 class WeakPtrImplWithEventTargetData;
 
-class CustomElementDefaultARIA {
+class CustomElementDefaultARIA : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(CustomElementDefaultARIA);
 public:
     CustomElementDefaultARIA();

@@ -3322,6 +3322,11 @@ HTMLHeadElement* Document::head()
     return nullptr;
 }
 
+RefPtr<HTMLHeadElement> Document::protectedHead()
+{
+    return head();
+}
+
 ExceptionOr<void> Document::closeForBindings()
 {
     // FIXME: We should follow the specification more closely:

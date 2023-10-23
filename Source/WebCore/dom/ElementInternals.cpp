@@ -41,12 +41,12 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ElementInternals);
 
-ShadowRoot* ElementInternals::shadowRoot() const
+RefPtr<ShadowRoot> ElementInternals::shadowRoot() const
 {
     RefPtr element = m_element.get();
     if (!element)
         return nullptr;
-    auto* shadowRoot = element->shadowRoot();
+    RefPtr shadowRoot = element->shadowRoot();
     if (!shadowRoot)
         return nullptr;
     if (!shadowRoot->isAvailableToElementInternals())
@@ -130,7 +130,7 @@ FormAssociatedCustomElement* ElementInternals::elementAsFormAssociatedCustom() c
 static const AtomString& computeValueForAttribute(Element& element, const QualifiedName& name)
 {
     auto& value = element.attributeWithoutSynchronization(name);
-    if (auto* defaultARIA = element.customElementDefaultARIAIfExists(); value.isNull() && defaultARIA)
+    if (CheckedPtr defaultARIA = element.customElementDefaultARIAIfExists(); value.isNull() && defaultARIA)
         return defaultARIA->valueForAttribute(element, name);
     return value;
 }
@@ -140,28 +140,24 @@ void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& n
     RefPtr element = m_element.get();
     auto oldValue = computeValueForAttribute(*element, name);
 
-    element->customElementDefaultARIA().setValueForAttribute(name, value);
+    element->checkedCustomElementDefaultARIA()->setValueForAttribute(name, value);
 
-    if (AXObjectCache* cache = element->document().existingAXObjectCache())
+    if (CheckedPtr cache = element->document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, computeValueForAttribute(*element, name));
 }
 
 const AtomString& ElementInternals::attributeWithoutSynchronization(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
-    auto* defaultARIA = element->customElementDefaultARIAIfExists();
-    if (!defaultARIA)
-        return nullAtom();
-    return defaultARIA->valueForAttribute(*element, name);
+    CheckedPtr defaultARIA = element->customElementDefaultARIAIfExists();
+    return defaultARIA ? defaultARIA->valueForAttribute(*element, name) : nullAtom();
 }
 
 RefPtr<Element> ElementInternals::getElementAttribute(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
-    auto* defaultARIA = m_element->customElementDefaultARIAIfExists();
-    if (!defaultARIA)
-        return nullptr;
-    return defaultARIA->elementForAttribute(*element, name);
+    CheckedPtr defaultARIA = m_element->customElementDefaultARIAIfExists();
+    return defaultARIA ? defaultARIA->elementForAttribute(*element, name) : nullptr;
 }
 
 void ElementInternals::setElementAttribute(const QualifiedName& name, Element* value)
@@ -169,16 +165,16 @@ void ElementInternals::setElementAttribute(const QualifiedName& name, Element* v
     RefPtr element = m_element.get();
     auto oldValue = computeValueForAttribute(*element, name);
 
-    element->customElementDefaultARIA().setElementForAttribute(name, value);
+    element->checkedCustomElementDefaultARIA()->setElementForAttribute(name, value);
 
-    if (AXObjectCache* cache = element->document().existingAXObjectCache())
+    if (CheckedPtr cache = element->document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, computeValueForAttribute(*element, name));
 }
 
 std::optional<Vector<RefPtr<Element>>> ElementInternals::getElementsArrayAttribute(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
-    auto* defaultARIA = m_element->customElementDefaultARIAIfExists();
+    CheckedPtr defaultARIA = m_element->customElementDefaultARIAIfExists();
     if (!defaultARIA)
         return std::nullopt;
     return defaultARIA->elementsForAttribute(*element, name);
@@ -189,9 +185,9 @@ void ElementInternals::setElementsArrayAttribute(const QualifiedName& name, std:
     RefPtr element = m_element.get();
     auto oldValue = computeValueForAttribute(*element, name);
 
-    element->customElementDefaultARIA().setElementsForAttribute(name, WTFMove(value));
+    element->checkedCustomElementDefaultARIA()->setElementsForAttribute(name, WTFMove(value));
 
-    if (AXObjectCache* cache = element->document().existingAXObjectCache())
+    if (CheckedPtr cache = element->document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, computeValueForAttribute(*element, name));
 }
 

@@ -320,7 +320,7 @@ void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
 // https://dom.spec.whatwg.org/#concept-event-listener-inner-invoke
 void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector listeners, EventInvokePhase phase)
 {
-    Ref<EventTarget> protectedThis(*this);
+    Ref protectedThis { *this };
     ASSERT(!listeners.isEmpty());
     ASSERT(scriptExecutionContext());
 
@@ -418,7 +418,7 @@ void EventTarget::invalidateEventListenerRegions()
         return;
     }
 
-    CheckedPtr document = [&]() -> Document* {
+    RefPtr document = [&]() -> Document* {
         if (is<Document>(*this))
             return &downcast<Document>(*this);
         if (is<LocalDOMWindow>(*this))
