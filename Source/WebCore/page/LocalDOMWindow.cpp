@@ -1541,6 +1541,11 @@ Document* LocalDOMWindow::document() const
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
+RefPtr<Document> LocalDOMWindow::protectedDocument() const
+{
+    return document();
+}
+
 void LocalDOMWindow::overrideTransientActivationDurationForTesting(std::optional<Seconds>&& override)
 {
     transientActivationDurationOverrideForTesting() = WTFMove(override);

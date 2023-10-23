@@ -332,8 +332,8 @@ static inline JSValue jsTestEnabledBySetting_enabledBySettingAttributeGetter(JSG
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledBySettingAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->enabledBySettingAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledBySettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -349,11 +349,11 @@ static inline bool setJSTestEnabledBySetting_enabledBySettingAttributeSetter(JSG
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledBySettingAttribute(WTFMove(nativeValue));
+        return impl->setEnabledBySettingAttribute(WTFMove(nativeValue));
     });
     return true;
 }
@@ -370,8 +370,8 @@ static inline JSValue jsTestEnabledBySetting_enabledByTwoSettingsAttributeGetter
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledByTwoSettingsAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->enabledByTwoSettingsAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledByTwoSettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -387,11 +387,11 @@ static inline bool setJSTestEnabledBySetting_enabledByTwoSettingsAttributeSetter
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledByTwoSettingsAttribute(WTFMove(nativeValue));
+        return impl->setEnabledByTwoSettingsAttribute(WTFMove(nativeValue));
     });
     return true;
 }
@@ -407,7 +407,7 @@ static inline JSValue jsTestEnabledBySetting_supplementalAttributeGetter(JSGloba
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestEnabledBySettingSupplemental::supplementalAttribute(impl))));
 }
 
@@ -421,7 +421,7 @@ static inline bool setJSTestEnabledBySetting_supplementalAttributeSetter(JSGloba
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
@@ -442,13 +442,13 @@ static inline JSC::EncodedJSValue jsTestEnabledBySettingPrototypeFunction_enable
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    Ref impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.enabledBySettingOperation(WTFMove(testParam)); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->enabledBySettingOperation(WTFMove(testParam)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

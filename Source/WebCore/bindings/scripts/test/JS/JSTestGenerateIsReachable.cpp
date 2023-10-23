@@ -177,8 +177,8 @@ static inline JSValue jsTestGenerateIsReachable_aSecretAttributeGetter(JSGlobalO
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.aSecretAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->aSecretAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

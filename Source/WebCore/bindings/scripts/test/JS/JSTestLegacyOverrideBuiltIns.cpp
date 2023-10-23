@@ -169,7 +169,7 @@ bool JSTestLegacyOverrideBuiltIns::legacyPlatformObjectGetOwnProperty(JSObject* 
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLInterface<Node>;
         auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestLegacyOverrideBuiltIns>([] (JSTestLegacyOverrideBuiltIns& thisObject, PropertyName propertyName) -> decltype(auto) {
-            return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+            return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
             auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTFMove(namedProperty.value()));
@@ -196,7 +196,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, J
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLInterface<Node>;
     auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<GetterIDLType, JSTestLegacyOverrideBuiltIns>([] (JSTestLegacyOverrideBuiltIns& thisObject, PropertyName propertyName) -> decltype(auto) {
-        return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
+        return thisObject.protectedWrapped()->namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::Yes>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLInterface<Node>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTFMove(namedProperty.value()));
@@ -275,7 +275,7 @@ bool JSTestLegacyOverrideBuiltIns::defineOwnProperty(JSObject* object, JSGlobalO
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
 
     if (!propertyName.isSymbol()) {
-        if (thisObject->wrapped().isSupportedPropertyName(propertyNameToString(propertyName)))
+        if (thisObject->protectedWrapped()->isSupportedPropertyName(propertyNameToString(propertyName)))
             return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
     }
 
@@ -287,7 +287,7 @@ bool JSTestLegacyOverrideBuiltIns::defineOwnProperty(JSObject* object, JSGlobalO
 bool JSTestLegacyOverrideBuiltIns::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -295,7 +295,7 @@ bool JSTestLegacyOverrideBuiltIns::deleteProperty(JSCell* cell, JSGlobalObject* 
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
 
-    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (!propertyName.isSymbol() && impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -307,7 +307,7 @@ bool JSTestLegacyOverrideBuiltIns::deletePropertyByIndex(JSCell* cell, JSGlobalO
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -317,7 +317,7 @@ bool JSTestLegacyOverrideBuiltIns::deletePropertyByIndex(JSCell* cell, JSGlobalO
 
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
-    if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
+    if (impl->isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))
             return false;
@@ -341,13 +341,13 @@ static inline JSC::EncodedJSValue jsTestLegacyOverrideBuiltInsPrototypeFunction_
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    Ref impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto name = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.namedItem(WTFMove(name)))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl->namedItem(WTFMove(name)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItem, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

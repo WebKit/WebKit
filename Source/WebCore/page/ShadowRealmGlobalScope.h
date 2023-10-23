@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSShadowRealmGlobalScopeBase.h"
 #include <JavaScriptCore/Weak.h>
 #include <memory>
 #include <wtf/IsoMalloc.h>
@@ -34,6 +33,7 @@
 namespace WebCore {
 
 class JSDOMGlobalObject;
+class JSShadowRealmGlobalScopeBase;
 class ScriptExecutionContext;
 class ScriptModuleLoader;
 
@@ -62,11 +62,6 @@ private:
 inline ShadowRealmGlobalScope& ShadowRealmGlobalScope::self()
 {
     return *this;
-}
-
-inline JSShadowRealmGlobalScopeBase* ShadowRealmGlobalScope::wrapper()
-{
-    return m_wrapper.get();
 }
 
 } // namespace WebCore

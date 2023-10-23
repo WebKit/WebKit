@@ -233,8 +233,8 @@ static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunction_do
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDictionary<ExposedToWorkerAndWindow::Dict>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.doSomething())));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDictionary<ExposedToWorkerAndWindow::Dict>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl->doSomething())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

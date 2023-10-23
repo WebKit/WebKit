@@ -237,6 +237,7 @@ public:
     // DOM Level 2 AbstractView Interface
 
     WEBCORE_EXPORT Document* document() const;
+    WEBCORE_EXPORT RefPtr<Document> protectedDocument() const;
 
     // CSSOM View Module
 

@@ -177,8 +177,8 @@ static inline JSValue jsTestCEReactionsStringifier_valueGetter(JSGlobalObject& l
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.value())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->value())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -192,11 +192,11 @@ static inline bool setJSTestCEReactionsStringifier_valueSetter(JSGlobalObject& l
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setValue(WTFMove(nativeValue));
+        return impl->setValue(WTFMove(nativeValue));
     });
     return true;
 }
@@ -210,8 +210,8 @@ static inline JSValue jsTestCEReactionsStringifier_valueWithoutReactionsGetter(J
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.valueWithoutReactions())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->valueWithoutReactions())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -225,11 +225,11 @@ static inline bool setJSTestCEReactionsStringifier_valueWithoutReactionsSetter(J
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setValueWithoutReactions(WTFMove(nativeValue));
+        return impl->setValueWithoutReactions(WTFMove(nativeValue));
     });
     return true;
 }
@@ -245,8 +245,8 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunction_
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.value())));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl->value())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

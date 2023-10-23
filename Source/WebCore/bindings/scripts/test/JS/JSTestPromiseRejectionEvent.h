@@ -61,6 +61,10 @@ public:
     {
         return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());
     }
+    Ref<TestPromiseRejectionEvent> protectedWrapped() const
+    {
+        return wrapped();
+    }
 protected:
     JSTestPromiseRejectionEvent(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPromiseRejectionEvent>&&);
 

@@ -497,8 +497,8 @@ static inline JSValue jsTestConditionalIncludes_testAttrGetter(JSGlobalObject& l
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.testAttr())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl->testAttr())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_testAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -511,8 +511,8 @@ static inline JSValue jsTestConditionalIncludes_mixinReadOnlyAttributeGetter(JSG
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinReadOnlyAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->mixinReadOnlyAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinReadOnlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -527,8 +527,8 @@ static inline JSValue jsTestConditionalIncludes_mixinAttributeGetter(JSGlobalObj
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl->mixinAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -544,11 +544,11 @@ static inline bool setJSTestConditionalIncludes_mixinAttributeSetter(JSGlobalObj
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setMixinAttribute(WTFMove(nativeValue));
+        return impl->setMixinAttribute(WTFMove(nativeValue));
     });
     return true;
 }
@@ -595,8 +595,8 @@ static inline JSValue jsTestConditionalIncludes_mixinNodeAttributeGetter(JSGloba
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mixinNodeAttribute())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl->mixinNodeAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -612,11 +612,11 @@ static inline bool setJSTestConditionalIncludes_mixinNodeAttributeSetter(JSGloba
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    Ref impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionalIncludes", "mixinNodeAttribute", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setMixinNodeAttribute(*nativeValue);
+        return impl->setMixinNodeAttribute(*nativeValue);
     });
     return true;
 }
@@ -633,8 +633,8 @@ static inline JSValue jsTestConditionalIncludes_partialMixinAttributeFromPartial
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.partialMixinAttributeFromPartial())));
+    Ref impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl->partialMixinAttributeFromPartial())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_partialMixinAttributeFromPartial, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -651,8 +651,8 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinOperation(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->mixinOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -669,10 +669,10 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    Ref impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    RefPtr context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -681,7 +681,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
     auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestConditionalIncludes", "mixinComplexOperation", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.mixinComplexOperation(*context, WTFMove(strArg), *objArg))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl->mixinComplexOperation(*context, WTFMove(strArg), *objArg))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -715,8 +715,8 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinConditionalOperation(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->mixinConditionalOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -733,8 +733,8 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinSettingsConditionalOperation(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->mixinSettingsConditionalOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -751,8 +751,8 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    auto implResult = impl.mixinResultFieldOperation();
+    Ref impl = castedThis->wrapped();
+    auto implResult = impl->mixinResultFieldOperation();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(implResult.nodes))));
 }
 
@@ -770,8 +770,8 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_par
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.partialMixinOperationFromPartial(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->partialMixinOperationFromPartial(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

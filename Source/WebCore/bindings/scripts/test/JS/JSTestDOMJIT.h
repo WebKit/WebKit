@@ -61,6 +61,10 @@ public:
     {
         return static_cast<TestDOMJIT&>(Base::wrapped());
     }
+    Ref<TestDOMJIT> protectedWrapped() const
+    {
+        return wrapped();
+    }
 protected:
     JSTestDOMJIT(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDOMJIT>&&);
 

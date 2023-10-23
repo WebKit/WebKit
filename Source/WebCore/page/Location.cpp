@@ -310,4 +310,9 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     return { };
 }
 
+RefPtr<DOMWindow> Location::protectedWindow()
+{
+    return m_window.get();
+}
+
 } // namespace WebCore

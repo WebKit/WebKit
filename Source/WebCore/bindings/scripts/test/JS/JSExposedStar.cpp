@@ -187,8 +187,8 @@ static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationForAll
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationForAllContexts(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->operationForAllContexts(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationForAllContexts, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -202,8 +202,8 @@ static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustFo
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationJustForWindowContexts(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->operationJustForWindowContexts(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationJustForWindowContexts, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -217,8 +217,8 @@ static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustFo
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationJustForWorkerContexts(); })));
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl->operationJustForWorkerContexts(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationJustForWorkerContexts, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
