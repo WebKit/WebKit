@@ -2491,7 +2491,3 @@ css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]
 
 webkit.org/b/263048 accessibility/ios-simulator/input-type-time.html [ Failure ]
 webkit.org/b/263052 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Failure ]
-
-# re-baseline candidates, will file new bugs if not approved
-webkit.org/b/263053 fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
-webkit.org/b/263053 svg/custom/svg-fonts-in-html.html [ Failure ]
