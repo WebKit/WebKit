@@ -30,6 +30,7 @@
 #include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
 #include <stdint.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -349,7 +350,7 @@ private:
     const ScrollingNodeID m_nodeID;
     OptionSet<Property> m_changedProperties;
 
-    ScrollingStateTree* m_scrollingStateTree { nullptr }; // Only null between deserialization and attachAfterDeserialization.
+    CheckedPtr<ScrollingStateTree> m_scrollingStateTree; // Only null between deserialization and attachAfterDeserialization.
 
     ThreadSafeWeakPtr<ScrollingStateNode> m_parent;
     Vector<Ref<ScrollingStateNode>> m_children;

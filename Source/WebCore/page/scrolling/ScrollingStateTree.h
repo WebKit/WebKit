@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateNode.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
  
 namespace WebCore {
@@ -40,7 +41,7 @@ class ScrollingStateFrameScrollingNode;
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
 // the scrolling thread, avoiding locking. 
 
-class ScrollingStateTree {
+class ScrollingStateTree : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ScrollingStateNode;
 public:
