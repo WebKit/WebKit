@@ -1401,6 +1401,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/Width.h
     runtime/ClonedArguments.h
     runtime/InternalFieldTuple.h
+
+    runtime/JSModuleEnvironment.h
+    runtime/JSModuleEnvironmentInlines.h
 )
 
 if(USE_INSPECTOR_SOCKET_SERVER)
