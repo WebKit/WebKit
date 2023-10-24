@@ -67,6 +67,19 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
+index 8e52937f55bcd77be026e2d99bead9ac4db2c2b9..f956247eaf93806b62d84d15b65f1ab2f59479bc 100644
+--- a/src/libANGLE/Context.cpp
++++ b/src/libANGLE/Context.cpp
+@@ -828,6 +828,8 @@ egl::Error Context::onDestroy(const egl::Display *display)
+         return egl::NoError();
+     }
+ 
++    mState.ensureNoPendingLink(this);
++
+     // eglDestoryContext() must have been called for this Context and there must not be any Threads
+     // that still have it current.
+     ASSERT(mIsDestroyed == true && mRefCount == 0);
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
 index 68e94d1594a4c2b0d11b9ae2a87a38db88c8fde8..dcfdbf60ae37d2b3f461df8e65e8965909c1c679 100644
 --- a/src/libANGLE/State.cpp

@@ -300,6 +300,27 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
 }
 #endif
 
+TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
+{
+    WebCore::GraphicsContextGLAttributes attributes;
+    attributes.useMetal = true;
+    auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    auto vs = gl->createShader(WebCore::GraphicsContextGL::VERTEX_SHADER);
+    gl->shaderSource(vs, "void main() { }"_s);
+    gl->compileShader(vs);
+    auto fs = gl->createShader(WebCore::GraphicsContextGL::FRAGMENT_SHADER);
+    gl->shaderSource(fs, "void main() { }"_s);
+    gl->compileShader(fs);
+    auto program = gl->createProgram();
+    gl->attachShader(program, vs);
+    gl->attachShader(program, fs);
+    gl->linkProgram(program);
+    gl->useProgram(program);
+    gl->linkProgram(program);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+    gl = nullptr;
+}
+
 TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
 {
     auto context = createTestContext({ 20, 20 });
