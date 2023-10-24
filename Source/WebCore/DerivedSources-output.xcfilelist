@@ -1907,6 +1907,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNVShaderNoperspectiveInterpolatio
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNVShaderNoperspectiveInterpolation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigateEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigateEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationCurrentEntryChangeEvent.cpp
