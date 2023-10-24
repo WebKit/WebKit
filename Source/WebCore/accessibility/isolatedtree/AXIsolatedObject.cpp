@@ -312,14 +312,15 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         m_propertyMap.set(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
         m_propertyMap.set(AXPropertyName::DescriptionAttributeValue, object.descriptionAttributeValue().isolatedCopy());
         m_propertyMap.set(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
-    }
 
-    if (object.isScrollView()) {
-        setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
-        setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
-    } else if (object.isWebArea()) {
-        // We only expose document links in web area objects.
-        setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
+        if (object.isScrollView()) {
+            setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
+            setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
+        } else if (object.isWebArea() && !tree()->isEmptyContentTree()) {
+            // We expose DocumentLinks only for the web area objects when the tree is not an empty content tree. This property is expensive and makes no sense in an empty content tree.
+            // FIXME: compute DocumentLinks on the AX thread instead of caching it.
+            setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
+        }
     }
 
     if (object.isWidget())

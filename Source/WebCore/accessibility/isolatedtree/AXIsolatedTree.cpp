@@ -93,24 +93,38 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 
 void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
 {
-    // Collect the ScrollView and WebArea objects.
-    m_unresolvedPendingAppends.set(axRoot.objectID(), AttachWrapper::OnMainThread);
-    collectNodeChangesForChildrenMatching(axRoot, [] (const auto& object) {
-        return object.roleValue() == AccessibilityRole::WebArea;
+    ASSERT(isMainThread());
+    ASSERT(!axRoot.isDetached());
+    ASSERT(axRoot.isScrollView() && !axRoot.parentObject());
+
+    // An empty content tree consists only of the ScrollView and WebArea objects.
+    m_isEmptyContentTree = true;
+
+    // Create the IsolatedObjects for the root/ScrollView and WebArea.
+    auto root = AXIsolatedObject::create(axRoot, this);
+    root->setProperty(AXPropertyName::ScreenRelativePosition, axRoot.screenRelativePosition());
+    NodeChange rootAppend { root, axRoot.wrapper(), AttachWrapper::OnMainThread };
+
+    RefPtr axWebArea = Accessibility::findChild(axRoot, [] (auto& object) {
+        return object->isWebArea();
     });
-
-    // Resolve the appends to create the corresponding IsolatedObjects.
-    auto appends = resolveAppends();
-
-    // Set the ScreenRelativePosition for the objects so that there is no need to hit the main thread on client's request.
-    for (auto& append : appends) {
-        append.isolatedObject->setProperty(AXPropertyName::ScreenRelativePosition, axRoot.screenRelativePosition());
-        if (append.isolatedObject->isWebArea())
-            setFocusedNodeID(append.isolatedObject->objectID());
+    if (!axWebArea) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+    auto webArea = AXIsolatedObject::create(*axWebArea, this);
+    webArea->setProperty(AXPropertyName::ScreenRelativePosition, axWebArea->screenRelativePosition());
+    NodeChange webAreaAppend { webArea, axWebArea->wrapper(), AttachWrapper::OnMainThread };
 
-    // Queue the appends to be performed on the AX thread.
-    queueAppendsAndRemovals(WTFMove(appends), { });
+    m_nodeMap.set(root->objectID(), ParentChildrenIDs { { }, { webArea->objectID() } });
+    m_nodeMap.set(webArea->objectID(), ParentChildrenIDs { root->objectID(), { } });
+
+    {
+        Locker locker { m_changeLogLock };
+        setRootNode(root.ptr());
+        m_pendingFocusedNodeID = webArea->objectID();
+    }
+    queueAppendsAndRemovals({ rootAppend, webAreaAppend }, { });
 }
 
 Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
@@ -376,28 +390,6 @@ void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vecto
     }
 
     queueRemovalsLocked(WTFMove(subtreeRemovals));
-}
-
-template <typename F>
-void AXIsolatedTree::collectNodeChangesForChildrenMatching(AccessibilityObject& axObject, F&& matches)
-{
-    ASSERT(isMainThread());
-
-    auto axChildrenCopy = axObject.children();
-    Vector<AXID> axChildrenIDs;
-    axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
-    for (const auto& axChild : axChildrenCopy) {
-        if (!matches(*axChild))
-            continue;
-
-        axChildrenIDs.append(axChild->objectID());
-        m_unresolvedPendingAppends.set(axChild->objectID(), AttachWrapper::OnMainThread);
-    }
-    axChildrenIDs.shrinkToFit();
-
-    // Update the m_nodeMap.
-    auto* axParent = axObject.parentObjectUnignored();
-    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { axParent ? axParent->objectID() : AXID(), WTFMove(axChildrenIDs) });
 }
 
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)

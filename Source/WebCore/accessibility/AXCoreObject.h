@@ -1622,6 +1622,18 @@ T* exposedTableAncestor(const T& object, bool includeSelf = false)
     });
 }
 
+template<typename T, typename F>
+T* findChild(T& object, F&& matches)
+{
+    for (auto child : object.children()) {
+        if (matches(child)) {
+            RELEASE_ASSERT(is<T>(child.get()));
+            return downcast<T>(child.get());
+        }
+    }
+    return nullptr;
+}
+
 void findMatchingObjects(const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
 
 template<typename T, typename F>
