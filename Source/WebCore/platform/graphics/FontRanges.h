@@ -70,11 +70,12 @@ public:
         Ref<FontAccessor> m_fontAccessor;
     };
 
-    FontRanges();
+    FontRanges() = default;
     explicit FontRanges(RefPtr<Font>&&);
     ~FontRanges();
 
     FontRanges(const FontRanges&) = default;
+    FontRanges(FontRanges&& other, bool isGeneric);
     FontRanges& operator=(FontRanges&&) = default;
 
     bool isNull() const { return m_ranges.isEmpty(); }
@@ -89,9 +90,11 @@ public:
     WEBCORE_EXPORT const Font* fontForCharacter(UChar32) const;
     WEBCORE_EXPORT const Font& fontForFirstRange() const;
     bool isLoading() const;
+    bool isGeneric() const { return m_isGeneric; }
 
 private:
     Vector<Range, 1> m_ranges;
+    bool m_isGeneric { false };
 };
 
 }
