@@ -468,7 +468,7 @@ void Node::willBeDeletedFrom(Document& document)
     document.removeTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
 
-    if (auto* cache = document.existingAXObjectCache())
+    if (CheckedPtr cache = document.existingAXObjectCache())
         cache->remove(*this);
 }
 
@@ -594,17 +594,18 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
     if (nodeOrStringVector.isEmpty())
         return nullptr;
 
+    Ref document = this->document();
     auto nodes = WTF::map(WTFMove(nodeOrStringVector), [&](auto&& variant) -> Ref<Node> {
         return WTF::switchOn(WTFMove(variant),
             [&](RefPtr<Node>&& node) { return node.releaseNonNull(); },
-            [&](String&& string) -> Ref<Node> { return Text::create(document(), WTFMove(string)); }
+            [&](String&& string) -> Ref<Node> { return Text::create(document, WTFMove(string)); }
         );
     });
 
     if (nodes.size() == 1)
         return RefPtr<Node> { WTFMove(nodes.first()) };
 
-    auto nodeToReturn = DocumentFragment::create(document());
+    auto nodeToReturn = DocumentFragment::create(document);
     for (auto& node : nodes) {
         auto appendResult = nodeToReturn->appendChild(node);
         if (appendResult.hasException())
@@ -615,17 +616,17 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
 
 ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
-    RefPtr<ContainerNode> parent = parentNode();
+    RefPtr parent = parentNode();
     if (!parent)
         return { };
 
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
-    auto viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
+    RefPtr viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
 
     auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
-    auto node = result.releaseReturnValue();
+    RefPtr node = result.releaseReturnValue();
     if (!node)
         return { };
 
@@ -639,17 +640,17 @@ ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
 
 ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
-    RefPtr<ContainerNode> parent = parentNode();
+    RefPtr parent = parentNode();
     if (!parent)
         return { };
 
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
-    auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
+    RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
     auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
-    auto node = result.releaseReturnValue();
+    RefPtr node = result.releaseReturnValue();
     if (!node)
         return { };
 
@@ -658,31 +659,31 @@ ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
 
 ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
-    RefPtr<ContainerNode> parent = parentNode();
+    RefPtr parent = parentNode();
     if (!parent)
         return { };
 
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
-    auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
+    RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
     auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
 
     if (parentNode() == parent) {
-        if (auto node = result.releaseReturnValue())
+        if (RefPtr node = result.releaseReturnValue())
             return parent->replaceChild(*node, *this);
         return parent->removeChild(*this);
     }
 
-    if (auto node = result.releaseReturnValue())
+    if (RefPtr node = result.releaseReturnValue())
         return parent->insertBefore(*node, WTFMove(viableNextSibling));
     return { };
 }
 
 ExceptionOr<void> Node::remove()
 {
-    auto* parent = parentNode();
+    RefPtr parent = parentNode();
     if (!parent)
         return { };
     return parent->removeChild(*this);
@@ -693,9 +694,10 @@ void Node::normalize()
     // Go through the subtree beneath us, normalizing all nodes. This means that
     // any two adjacent text nodes are merged and any empty text nodes are removed.
 
-    RefPtr<Node> node = this;
-    while (Node* firstChild = node->firstChild())
-        node = firstChild;
+    Ref document = this->document();
+    RefPtr node = this;
+    while (RefPtr firstChild = node->firstChild())
+        node = WTFMove(firstChild);
     while (node) {
         NodeType type = node->nodeType();
         if (type == ELEMENT_NODE)
@@ -709,7 +711,7 @@ void Node::normalize()
             continue;
         }
 
-        RefPtr<Text> text = downcast<Text>(node.get());
+        RefPtr text = downcast<Text>(node.get());
 
         // Remove empty text nodes.
         if (!text->length()) {
@@ -720,10 +722,10 @@ void Node::normalize()
         }
 
         // Merge text nodes.
-        while (Node* nextSibling = node->nextSibling()) {
+        while (RefPtr nextSibling = node->nextSibling()) {
             if (nextSibling->nodeType() != TEXT_NODE)
                 break;
-            Ref<Text> nextText = downcast<Text>(*nextSibling);
+            Ref nextText = downcast<Text>(nextSibling.releaseNonNull());
 
             // Remove empty text nodes.
             if (!nextText->length()) {
@@ -735,7 +737,7 @@ void Node::normalize()
             unsigned offset = text->length();
 
             // Update start/end for any affected Ranges before appendData since modifying contents might trigger mutation events that modify ordering.
-            document().textNodesMerged(nextText, offset);
+            document->textNodesMerged(nextText, offset);
 
             // FIXME: DOM spec requires contents to be replaced all at once (see https://dom.spec.whatwg.org/#dom-node-normalize).
             // Appending once per sibling may trigger mutation events too many times.
@@ -790,8 +792,8 @@ bool Node::isContentRichlyEditable() const
 
 void Node::inspect()
 {
-    if (document().page())
-        document().page()->inspectorController().inspect(this);
+    if (CheckedPtr page = document().page())
+        page->inspectorController().inspect(this);
 }
 
 static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
@@ -918,8 +920,10 @@ void Node::updateAncestorsForStyleRecalc()
         return;
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return;
-    document().setChildNeedsStyleRecalc();
-    document().scheduleStyleRecalc();
+
+    Ref document = this->document();
+    document->setChildNeedsStyleRecalc();
+    document->scheduleStyleRecalc();
 }
 
 void Node::markAncestorsForInvalidatedStyle()
@@ -1178,10 +1182,8 @@ Node* Node::pseudoAwareLastChild() const
 
 const RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    auto* composedParent = parentElementInComposedTree();
-    if (!composedParent)
-        return nullptr;
-    return composedParent->computedStyle(pseudoElementSpecifier);
+    RefPtr composedParent = parentElementInComposedTree();
+    return composedParent ? composedParent->computedStyle(pseudoElementSpecifier) : nullptr;
 }
 
 // FIXME: Shouldn't these functions be in the editing code?  Code that asks questions about HTML in the core DOM class
@@ -1682,10 +1684,10 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
         FALLTHROUGH;
     case Node::DOCUMENT_FRAGMENT_NODE:
         isNullString = false;
-        for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
+        for (RefPtr child = node->firstChild(); child; child = child->nextSibling()) {
             if (child->nodeType() == Node::COMMENT_NODE || child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
                 continue;
-            appendTextContent(child, convertBRsToNewlines, isNullString, content);
+            appendTextContent(child.get(), convertBRsToNewlines, isNullString, content);
         }
         break;
 
@@ -1994,22 +1996,21 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         node->showNode();
         indent.append('\t');
         if (!node->isShadowRoot()) {
-            if (ShadowRoot* shadowRoot = node->shadowRoot())
-                traverseTreeAndMark(indent.toString(), shadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
+            if (RefPtr shadowRoot = node->shadowRoot())
+                traverseTreeAndMark(indent.toString(), shadowRoot.get(), markedNode1, markedLabel1, markedNode2, markedLabel2);
         }
     }
 }
 
 void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2) const
 {
-    const Node* rootNode;
     const Node* node = this;
     while (node->parentOrShadowHostNode() && !node->hasTagName(bodyTag))
         node = node->parentOrShadowHostNode();
-    rootNode = node;
+    RefPtr rootNode = node;
 
     String startingIndent;
-    traverseTreeAndMark(startingIndent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
+    traverseTreeAndMark(startingIndent, rootNode.get(), markedNode1, markedLabel1, markedNode2, markedLabel2);
 }
 
 static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
@@ -2029,11 +2030,11 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
     if (!node->isShadowRoot()) {
         if (node->isFrameOwnerElement())
             showSubTreeAcrossFrame(static_cast<const HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
-        if (ShadowRoot* shadowRoot = node->shadowRoot())
-            showSubTreeAcrossFrame(shadowRoot, markedNode, indent + "\t");
+        if (RefPtr shadowRoot = node->shadowRoot())
+            showSubTreeAcrossFrame(shadowRoot.get(), markedNode, indent + "\t");
     }
-    for (Node* child = node->firstChild(); child; child = child->nextSibling())
-        showSubTreeAcrossFrame(child, markedNode, indent + "\t");
+    for (RefPtr child = node->firstChild(); child; child = child->nextSibling())
+        showSubTreeAcrossFrame(child.get(), markedNode, indent + "\t");
 }
 
 void Node::showTreeForThisAcrossFrame() const
@@ -2549,7 +2550,7 @@ void Node::defaultEventHandler(Event& event)
         
         if (startNode && startNode->renderer()) {
             if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
+                frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), downcast<WheelEvent>(event));
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     } else if (is<TouchEvent>(event) && eventNames.isTouchRelatedEventType(eventType, *this)) {
