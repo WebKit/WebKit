@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
 
 PASS Two argument register
 PASS Prevent default capture false
