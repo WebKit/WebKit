@@ -93,6 +93,7 @@ public:
     };
 
     enum ResultCondition {
+        Carry, // <- not implemented
         Overflow,
         Signed,
         PositiveOrZero,

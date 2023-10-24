@@ -79,6 +79,7 @@ public:
     };
 
     enum ResultCondition {
+        Carry = X86Assembler::ConditionC,
         Overflow = X86Assembler::ConditionO,
         Signed = X86Assembler::ConditionS,
         PositiveOrZero = X86Assembler::ConditionNS,
