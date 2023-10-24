@@ -3111,7 +3111,7 @@ HiddenPageDOMTimerThrottlingEnabled:
 
 HighlightAPIEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "Highlight API"
   humanReadableDescription: "Highlight API support"
