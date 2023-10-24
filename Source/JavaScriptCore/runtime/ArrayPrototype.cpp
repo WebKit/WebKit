@@ -1523,4 +1523,59 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* glo
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue constructor = callFrame->uncheckedArgument(0);
+    if (UNLIKELY(constructor != globalObject->arrayConstructor() && constructor.isObject()))
+        return JSValue::encode(jsUndefined());
+
+    auto* array = jsDynamicCast<JSArray*>(callFrame->uncheckedArgument(1));
+    if (!array)
+        return JSValue::encode(jsUndefined());
+
+    if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
+        return JSValue::encode(jsUndefined());
+
+    IndexingType type = array->indexingType();
+    if (UNLIKELY(shouldUseSlowPut(type)))
+        return JSValue::encode(jsUndefined());
+
+    Butterfly* butterfly= array->butterfly();
+    unsigned resultSize = butterfly->publicLength();
+    if (hasAnyArrayStorage(type) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
+        JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        scope.release();
+        moveElements(globalObject, vm, result, 0, array, resultSize);
+        return JSValue::encode(result);
+    }
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
+    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+        return JSValue::encode(jsUndefined());
+
+    ASSERT(!globalObject->isHavingABadTime());
+    ObjectInitializationScope initializationScope(vm);
+    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    if (type == ArrayWithDouble) {
+        double* buffer = result->butterfly()->contiguousDouble().data();
+        copyElements(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
+    } else if (type != ArrayWithUndecided) {
+        WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
+        copyElements(buffer, 0, butterfly->contiguous().data(), resultSize, type);
+    }
+
+    ASSERT(result->butterfly()->publicLength() == resultSize);
+    return JSValue::encode(result);
+}
+
 } // namespace JSC
