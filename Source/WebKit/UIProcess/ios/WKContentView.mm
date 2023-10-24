@@ -419,6 +419,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
     [super didMoveToWindow];
 
+    _cachedHasCustomTintColor = std::nullopt;
+
     if (self.window)
         [self setUpInteraction];
     else

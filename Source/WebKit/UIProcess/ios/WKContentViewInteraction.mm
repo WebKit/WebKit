@@ -918,6 +918,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     if (_hasSetUpInteractions)
         return;
 
+    _cachedHasCustomTintColor = std::nullopt;
+
     if (!_interactionViewsContainerView) {
         _interactionViewsContainerView = adoptNS([[UIView alloc] init]);
         [_interactionViewsContainerView layer].name = @"InteractionViewsContainer";
@@ -1294,6 +1296,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
 
+    _cachedHasCustomTintColor = std::nullopt;
     _cachedSelectedTextRange = nil;
 }
 
@@ -3909,6 +3912,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [self.textInputTraits selectionHighlightColor];
 }
 
+- (BOOL)_hasCustomTintColor
+{
+    if (!_cachedHasCustomTintColor) {
+        auto defaultTintColor = WebCore::colorFromCocoaColor([adoptNS([UIView new]) tintColor]);
+        _cachedHasCustomTintColor = defaultTintColor != WebCore::colorFromCocoaColor(self.tintColor);
+    }
+    return *_cachedHasCustomTintColor;
+}
+
 - (UIColor *)_cascadeInteractionTintColor
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -3919,12 +3931,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->preferences().textInteractionEnabled())
         return [UIColor clearColor];
 
+    RetainPtr<UIColor> caretColorFromStyle;
+    BOOL hasExplicitlySetCaretColorFromStyle = NO;
     if (_page->editorState().hasPostLayoutData()) {
-        if (auto caretColor = _page->editorState().postLayoutData->caretColor; caretColor.isValid())
-            return cocoaColor(caretColor).autorelease();
+        auto& postLayoutData = *_page->editorState().postLayoutData;
+        if (auto caretColor = postLayoutData.caretColor; caretColor.isValid()) {
+            caretColorFromStyle = cocoaColor(caretColor);
+            hasExplicitlySetCaretColorFromStyle = !postLayoutData.hasCaretColorAuto;
+        }
     }
 
-    return [self _inheritedInteractionTintColor];
+    if (hasExplicitlySetCaretColorFromStyle)
+        return caretColorFromStyle.autorelease();
+
+    auto tintColorFromNativeView = self.tintColor;
+    if (self._hasCustomTintColor)
+        return tintColorFromNativeView;
+
+    return caretColorFromStyle.autorelease() ?: tintColorFromNativeView;
 }
 
 - (void)_updateInteractionTintColor:(UITextInputTraits *)traits
@@ -3935,6 +3959,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)tintColorDidChange
 {
     [super tintColorDidChange];
+
+    _cachedHasCustomTintColor = std::nullopt;
 
     BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
     if (shouldUpdateTextSelection)
