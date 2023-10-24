@@ -593,7 +593,7 @@ bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategor
         return false;
 
     auto gestureToken = UserGestureIndicator::currentUserGesture();
-    if (!gestureToken || !gestureToken->processingUserGesture())
+    if (!gestureToken || !gestureToken->processingUserGesture() || !gestureToken->canRequestDOMPaste())
         return false;
 
     switch (gestureToken->domPasteAccessPolicy()) {
