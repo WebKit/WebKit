@@ -164,6 +164,16 @@ private:
 
     static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 
+    template<typename U>
+    friend class RetainPtrGetterRetains;
+
+    template<typename U = T>
+    std::enable_if_t<!std::is_convertible_v<U, id>, __unsafe_unretained PtrType*> internalValuePointer() WARN_UNUSED_RETURN {
+        static_assert(std::is_same_v<T, U>, "explicit specialization not allowed");
+        RELEASE_ASSERT(!m_ptr);
+        return reinterpret_cast<PtrType*>(&m_ptr);
+    }
+
 #ifdef __OBJC__
     template<typename U> constexpr std::enable_if_t<std::is_convertible_v<U, id>, PtrType> fromStorageTypeHelper(CFTypeRef ptr) const
     {
@@ -186,6 +196,25 @@ private:
 
     CFTypeRef m_ptr { nullptr };
 };
+
+template<typename T>
+class RetainPtrGetterRetains {
+public:
+    explicit RetainPtrGetterRetains(RetainPtr<T>& retainPtr)
+        : m_wrappedRetainPtr(retainPtr)
+    { }
+
+    operator T*() { return m_wrappedRetainPtr.internalValuePointer(); }
+
+private:
+    RetainPtr<T>& m_wrappedRetainPtr;
+};
+
+template<typename T>
+inline RetainPtrGetterRetains<T> adoptOutParam(RetainPtr<T>& retainPtr)
+{
+    return RetainPtrGetterRetains<T>(retainPtr);
+}
 
 template<typename T> RetainPtr(T) -> RetainPtr<std::remove_pointer_t<T>>;
 
