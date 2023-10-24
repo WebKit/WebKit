@@ -2685,3 +2685,9 @@ webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/
 
 fast/events/cancel-mousedown-and-drag-from-frame-to-other-frame.html [ Failure ]
 fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
+
+# rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
+
+# rdar://114345450 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] fast/images/animated-webp-as-image.html is a consistent failure)
+[ Sonoma+ ] fast/images/animated-webp-as-image.html [ ImageOnlyFailure ]
