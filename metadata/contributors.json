@@ -5076,7 +5076,8 @@
          "luke@warlow.dev"
       ],
       "github" : "lukewarlow",
-      "name" : "Luke Warlow"
+      "name" : "Luke Warlow",
+      "status" : "committer"
    },
    {
       "emails" : [
