@@ -37,7 +37,7 @@ namespace WebCore {
 
 VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
 {
-    if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
+    if (!m_frame->editor().behavior().shouldSelectBasedOnDictionaryLookup())
         return { };
 
     auto range = DictionaryLookup::rangeAtHitTestResult(result);

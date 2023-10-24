@@ -600,7 +600,8 @@ public:
     inline FillSizeType backgroundSizeType() const;
     inline const LengthSize& backgroundSizeLength() const;
     inline FillLayer& ensureBackgroundLayers();
-    inline const FillLayer& backgroundLayers() const;
+    inline const FillLayer& backgroundLayers() const; // Defined in RenderStyleInlines.h.
+    inline Ref<const FillLayer> protectedBackgroundLayers() const; // Defined in RenderStyleInlines.h.
     inline BlendMode backgroundBlendMode() const;
 
     inline StyleImage* maskImage() const;
@@ -613,7 +614,8 @@ public:
     inline FillSizeType maskSizeType() const;
     inline const LengthSize& maskSizeLength() const;
     inline FillLayer& ensureMaskLayers();
-    inline const FillLayer& maskLayers() const;
+    inline const FillLayer& maskLayers() const; // Defined in RenderStyleInlines.h.
+    inline Ref<const FillLayer> protectedMaskLayers() const; // Defined in RenderStyleInlines.h.
     inline const NinePieceImage& maskBorder() const;
     inline StyleImage* maskBorderSource() const;
 
@@ -1655,7 +1657,8 @@ public:
     inline void setKerning(SVGLengthValue);
 
     inline void setShapeOutside(RefPtr<ShapeValue>&&);
-    inline ShapeValue* shapeOutside() const;
+    inline ShapeValue* shapeOutside() const; // Defined in RenderStyleInlines.h.
+    inline RefPtr<ShapeValue> protectedShapeOutside() const; // Defined in RenderStyleInlines.h.
     static ShapeValue* initialShapeOutside() { return nullptr; }
 
     inline const Length& shapeMargin() const;

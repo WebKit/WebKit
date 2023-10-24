@@ -39,6 +39,7 @@
 #include "Timer.h"
 #include <memory>
 #include <utility>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -130,7 +131,7 @@ enum class ImmediateActionStage : uint8_t {
     ActionCompleted
 };
 
-class EventHandler {
+class EventHandler : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit EventHandler(LocalFrame&);
@@ -607,7 +608,9 @@ private:
         m_isCapturingRootElementForMouseEvents = false;
     }
 
-    LocalFrame& m_frame;
+    Ref<LocalFrame> protectedFrame() const;
+
+    CheckedRef<LocalFrame> m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
 #if ENABLE(IMAGE_ANALYSIS)

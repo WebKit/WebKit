@@ -9786,6 +9786,11 @@ CheckedRef<const Style::Scope> Document::checkedStyleScope() const
     return m_styleScope.get();
 }
 
+RefPtr<LocalFrameView> Document::protectedView() const
+{
+    return view();
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

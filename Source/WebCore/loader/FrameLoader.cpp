@@ -4531,16 +4531,6 @@ void FrameLoader::advanceStatePastInitialEmptyDocument()
         stateMachine().advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
 }
 
-void FrameLoader::incrementPtrCount() const
-{
-    m_frame.incrementPtrCount();
-}
-
-void FrameLoader::decrementPtrCount() const
-{
-    m_frame.decrementPtrCount();
-}
-
 } // namespace WebCore
 
 #undef PAGE_ID

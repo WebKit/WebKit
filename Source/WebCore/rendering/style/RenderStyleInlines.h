@@ -84,6 +84,7 @@ inline BlendMode RenderStyle::backgroundBlendMode() const { return backgroundLay
 inline FillBox RenderStyle::backgroundClip() const { return backgroundLayers().clip(); }
 inline const StyleColor& RenderStyle::backgroundColor() const { return m_nonInheritedData->backgroundData->color; }
 inline const FillLayer& RenderStyle::backgroundLayers() const { return m_nonInheritedData->backgroundData->background; }
+inline Ref<const FillLayer> RenderStyle::protectedBackgroundLayers() const { return backgroundLayers(); }
 inline FillBox RenderStyle::backgroundOrigin() const { return backgroundLayers().origin(); }
 inline FillRepeatXY RenderStyle::backgroundRepeat() const { return backgroundLayers().repeat(); }
 inline const LengthSize& RenderStyle::backgroundSizeLength() const { return backgroundLayers().sizeLength(); }
@@ -572,6 +573,7 @@ inline FillBox RenderStyle::maskClip() const { return maskLayers().clip(); }
 inline CompositeOperator RenderStyle::maskComposite() const { return maskLayers().composite(); }
 inline StyleImage* RenderStyle::maskImage() const { return maskLayers().image(); }
 inline const FillLayer& RenderStyle::maskLayers() const { return m_nonInheritedData->miscData->mask; }
+inline Ref<const FillLayer> RenderStyle::protectedMaskLayers() const { return maskLayers(); }
 inline FillBox RenderStyle::maskOrigin() const { return maskLayers().origin(); }
 inline FillRepeatXY RenderStyle::maskRepeat() const { return maskLayers().repeat(); }
 inline const LengthSize& RenderStyle::maskSizeLength() const { return maskLayers().sizeLength(); }
@@ -642,6 +644,7 @@ inline const StyleColor& RenderStyle::scrollbarTrackColor() const { return m_rar
 inline float RenderStyle::shapeImageThreshold() const { return m_nonInheritedData->rareData->shapeImageThreshold; }
 inline const Length& RenderStyle::shapeMargin() const { return m_nonInheritedData->rareData->shapeMargin; }
 inline ShapeValue* RenderStyle::shapeOutside() const { return m_nonInheritedData->rareData->shapeOutside.get(); }
+inline RefPtr<ShapeValue> RenderStyle::protectedShapeOutside() const { return shapeOutside(); }
 inline std::optional<ContentVisibility> RenderStyle::skippedContentReason() const
 {
     auto reason = static_cast<ContentVisibility>(m_rareInheritedData->effectiveSkippedContent);

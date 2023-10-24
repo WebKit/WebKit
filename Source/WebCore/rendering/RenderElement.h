@@ -396,7 +396,7 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
-    PackedPtr<RenderObject> m_firstChild;
+    PackedCheckedPtr<RenderObject> m_firstChild;
     unsigned m_baseTypeFlags : 8;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
@@ -406,7 +406,7 @@ private:
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
 
-    PackedPtr<RenderObject> m_lastChild;
+    PackedCheckedPtr<RenderObject> m_lastChild;
 
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;
