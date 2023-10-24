@@ -1,0 +1,41 @@
+
+
+FAIL action is a readonly defaulting to 'auto' Can't find variable: InvokeEvent
+FAIL invoker is readonly defaulting to null Can't find variable: InvokeEvent
+FAIL action reflects initialized attribute Can't find variable: InvokeEvent
+FAIL action set to undefined Can't find variable: InvokeEvent
+FAIL action set to null Can't find variable: InvokeEvent
+FAIL action set to false Can't find variable: InvokeEvent
+FAIL action set to true Can't find variable: InvokeEvent
+FAIL action set to a number Can't find variable: InvokeEvent
+FAIL action set to [] Can't find variable: InvokeEvent
+FAIL action set to [1, 2, 3] Can't find variable: InvokeEvent
+FAIL action set to an object Can't find variable: InvokeEvent
+FAIL action set to an object with a valueOf function Can't find variable: InvokeEvent
+FAIL InvokeEventInit properties set value Can't find variable: InvokeEvent
+FAIL InvokeEventInit properties set value 2 Can't find variable: InvokeEvent
+FAIL InvokeEventInit properties set value 3 Can't find variable: InvokeEvent
+FAIL invoker set to undefined Can't find variable: InvokeEvent
+FAIL invoker set to null Can't find variable: InvokeEvent
+FAIL invoker set to false assert_throws_js: invoker is not an object function "function () {
+        new InvokeEvent("test", { invoker: false });
+      }" threw object "ReferenceError: Can't find variable: InvokeEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL invoker set to true assert_throws_js: invoker is not an object function "function () {
+        const event = new InvokeEvent("test", { invoker: true });
+      }" threw object "ReferenceError: Can't find variable: InvokeEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL invoker set to {} assert_throws_js: invoker is not an object function "function () {
+        const event = new InvokeEvent("test", { invoker: {} });
+      }" threw object "ReferenceError: Can't find variable: InvokeEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL invoker set to non-Element EventTarget assert_throws_js: invoker is not an Element function "function () {
+        const eventInit = { action: "closed", invoker: new XMLHttpRequest() };
+        const event = new InvokeEvent("toggle", eventInit);
+      }" threw object "ReferenceError: Can't find variable: InvokeEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

@@ -1,0 +1,5 @@
+
+
+FAIL InvokeEvent propagates across shadow boundaries retargeting invoker Can't find variable: InvokeEvent
+FAIL cross shadow InvokeEvent retargets invoker to host element Can't find variable: InvokeEvent
+
