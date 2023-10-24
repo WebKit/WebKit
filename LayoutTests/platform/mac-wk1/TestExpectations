@@ -2705,3 +2705,5 @@ fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
 
 # SVG gradients are not bit-for-bit equivalent through a scale.
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+
+webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
