@@ -66,6 +66,7 @@ public:
     void visit(AST::WorkgroupSizeAttribute&) override;
     void visit(AST::SizeAttribute&) override;
     void visit(AST::AlignAttribute&) override;
+    void visit(AST::InterpolateAttribute&) override;
 
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
@@ -104,8 +105,6 @@ public:
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
-    void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) override;
-
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
@@ -126,7 +125,7 @@ private:
     CallGraph& m_callGraph;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
-    std::optional<AST::StageAttribute::Stage> m_entryPointStage;
+    std::optional<ShaderStage> m_entryPointStage;
     unsigned m_functionConstantIndex { 0 };
     HashSet<AST::Function*> m_visitedFunctions;
 };
@@ -337,15 +336,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             unsigned offset = 0;
             if (shouldPack) {
                 fieldSize = type->size();
-                fieldAlignment = type->alignment();
-                explicitSize = fieldSize;
-                for (auto &attribute : member.attributes()) {
-                    if (is<AST::SizeAttribute>(attribute))
-                        explicitSize = downcast<AST::SizeAttribute>(attribute).size().constantValue()->toInt();
-                    else if (is<AST::AlignAttribute>(attribute))
-                        fieldAlignment = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->toInt();
-                }
-
+                fieldAlignment = member.alignment().value_or(type->alignment());
+                explicitSize = member.size().value_or(fieldSize);
                 offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
                 if (offset != size)
                     addPadding(offset - size);
@@ -543,42 +535,57 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
         return;
 
     // FIXME: we should replace this with something more efficient, like a trie
-    static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> builtinMappings[] {
-        { "frag_depth", "depth(any)"_s },
-        { "front_facing", "front_facing"_s },
-        { "global_invocation_id", "thread_position_in_grid"_s },
-        { "instance_index", "instance_id"_s },
-        { "local_invocation_id", "thread_position_in_threadgroup"_s },
-        { "local_invocation_index", "thread_index_in_threadgroup"_s },
-        { "num_workgroups", "threadgroups_per_grid"_s },
-        { "position", "position"_s },
-        { "sample_index", "sample_id"_s },
-        { "sample_mask", "sample_mask"_s },
-        { "vertex_index", "vertex_id"_s },
-        { "workgroup_id", "threadgroup_position_in_grid"_s },
-    };
-    static constexpr SortedArrayMap builtins { builtinMappings };
-
-    auto mappedBuiltin = builtins.get(builtin.name().id());
-    if (mappedBuiltin) {
-        m_stringBuilder.append("[[", mappedBuiltin, "]]");
-        return;
+    switch (builtin.builtin()) {
+    case Builtin::FragDepth:
+        m_stringBuilder.append("[[depth(any)]]");
+        break;
+    case Builtin::FrontFacing:
+        m_stringBuilder.append("[[front_facing]]");
+        break;
+    case Builtin::GlobalInvocationId:
+        m_stringBuilder.append("[[thread_position_in_grid]]");
+        break;
+    case Builtin::InstanceIndex:
+        m_stringBuilder.append("[[instance_id]]");
+        break;
+    case Builtin::LocalInvocationId:
+        m_stringBuilder.append("[[thread_position_in_threadgroup]]");
+        break;
+    case Builtin::LocalInvocationIndex:
+        m_stringBuilder.append("[[thread_index_in_threadgroup]]");
+        break;
+    case Builtin::NumWorkgroups:
+        m_stringBuilder.append("[[threadgroups_per_grid]]");
+        break;
+    case Builtin::Position:
+        m_stringBuilder.append("[[position]]");
+        break;
+    case Builtin::SampleIndex:
+        m_stringBuilder.append("[[sample_id]]");
+        break;
+    case Builtin::SampleMask:
+        m_stringBuilder.append("[[sample_mask]]");
+        break;
+    case Builtin::VertexIndex:
+        m_stringBuilder.append("[[vertex_id]]");
+        break;
+    case Builtin::WorkgroupId:
+        m_stringBuilder.append("[[threadgroup_position_in_grid]]");
+        break;
     }
-
-    ASSERT_NOT_REACHED();
 }
 
 void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 {
     m_entryPointStage = { stage.stage() };
     switch (stage.stage()) {
-    case AST::StageAttribute::Stage::Vertex:
+    case ShaderStage::Vertex:
         m_stringBuilder.append("[[vertex]]");
         break;
-    case AST::StageAttribute::Stage::Fragment:
+    case ShaderStage::Fragment:
         m_stringBuilder.append("[[fragment]]");
         break;
-    case AST::StageAttribute::Stage::Compute:
+    case ShaderStage::Compute:
         m_stringBuilder.append("[[kernel]]");
         break;
     }
@@ -587,7 +594,7 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
     unsigned bufferIndex = group.group().constantValue()->toInt();
-    if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
+    if (m_entryPointStage.has_value() && *m_entryPointStage == ShaderStage::Vertex) {
         ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
         auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
@@ -643,28 +650,27 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
     // serializing structs.
 }
 
-static const char* convertToSampleMode(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+static const char* convertToSampleMode(InterpolationType type, InterpolationSampling sampleType)
 {
-    auto sampleType = sampling ? *sampling : AST::InterpolateAttribute::Sampling::Center;
     switch (type) {
-    case AST::InterpolateAttribute::Type::Flat:
+    case InterpolationType::Flat:
         return "flat";
-    case AST::InterpolateAttribute::Type::Linear:
+    case InterpolationType::Linear:
         switch (sampleType) {
-        case AST::InterpolateAttribute::Sampling::Center:
+        case InterpolationSampling::Center:
             return "center_no_perspective";
-        case AST::InterpolateAttribute::Sampling::Centroid:
+        case InterpolationSampling::Centroid:
             return "centroid_no_perspective";
-        case AST::InterpolateAttribute::Sampling::Sample:
+        case InterpolationSampling::Sample:
             return "sample_no_perspective";
         }
-    case AST::InterpolateAttribute::Type::Perspective:
+    case InterpolationType::Perspective:
         switch (sampleType) {
-        case AST::InterpolateAttribute::Sampling::Center:
+        case InterpolationSampling::Center:
             return "center_perspective";
-        case AST::InterpolateAttribute::Sampling::Centroid:
+        case InterpolationSampling::Centroid:
             return "centroid_perspective";
-        case AST::InterpolateAttribute::Sampling::Sample:
+        case InterpolationSampling::Sample:
             return "sample_perspective";
         }
     }
@@ -673,9 +679,9 @@ static const char* convertToSampleMode(AST::InterpolateAttribute::Type type, std
     return "flat";
 }
 
-void FunctionDefinitionWriter::visit(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
 {
-    m_stringBuilder.append("[[", convertToSampleMode(type, sampling), "]]");
+    m_stringBuilder.append("[[", convertToSampleMode(attribute.type(), attribute.sampling()), "]]");
 }
 
 // Types

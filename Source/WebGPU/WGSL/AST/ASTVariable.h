@@ -33,6 +33,7 @@
 #include "ASTVariableQualifier.h"
 
 namespace WGSL {
+class AttributeValidator;
 class RewriteGlobalVariables;
 class TypeChecker;
 struct Type;
@@ -48,6 +49,7 @@ enum class VariableFlavor : uint8_t {
 
 class Variable final : public Declaration {
     WGSL_AST_BUILDER_NODE(Variable);
+    friend AttributeValidator;
     friend RewriteGlobalVariables;
     friend TypeChecker;
 
@@ -71,6 +73,12 @@ public:
             return m_type->inferredType();
         return m_initializer->inferredType();
     }
+
+    std::optional<AddressSpace> addressSpace() const { return m_addressSpace; }
+    std::optional<AccessMode> accessMode() const { return m_accessMode; }
+    std::optional<unsigned> binding() const { return m_binding; }
+    std::optional<unsigned> group() const { return m_group; }
+    std::optional<unsigned> id() const { return m_id; }
 
 private:
     Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, Expression::Ptr type, Expression::Ptr initializer)
@@ -100,6 +108,15 @@ private:
     Expression::Ptr m_initializer;
     VariableFlavor m_flavor;
     Expression::Ptr m_referenceType { nullptr };
+
+    // Computed properties
+    std::optional<AddressSpace> m_addressSpace;
+    std::optional<AccessMode> m_accessMode;
+
+    // Attributes
+    std::optional<unsigned> m_binding;
+    std::optional<unsigned> m_group;
+    std::optional<unsigned> m_id;
 };
 
 } // namespace AST

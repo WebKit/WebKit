@@ -577,8 +577,11 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(name, Identifier);
+        auto* builtin = parseBuiltin(name);
+        if (!builtin)
+            FAIL("Unknown builtin value. Expected 'vertex_index', 'instance_index', 'position', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_s);
         CONSUME_TYPE(ParenRight);
-        RETURN_ARENA_NODE(BuiltinAttribute, WTFMove(name));
+        RETURN_ARENA_NODE(BuiltinAttribute, *builtin);
     }
 
     if (ident.ident == "workgroup_size"_s) {
@@ -618,24 +621,22 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "interpolate"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(interpolate, Identifier);
-        AST::InterpolateAttribute::Type interpolationType { AST::InterpolateAttribute::Type::Flat };
-        if (interpolate == "perspective"_s)
-            interpolationType = AST::InterpolateAttribute::Type::Perspective;
-        else if (interpolate == "linear"_s)
-            interpolationType = AST::InterpolateAttribute::Type::Linear;
-        AST::InterpolateAttribute::Sampling sampleType { AST::InterpolateAttribute::Sampling::Center };
+        auto* interpolationType = parseInterpolationType(interpolate);
+        if (!interpolationType)
+            FAIL("Unknown interpolation type. Expected 'flat', 'linear' or 'perspective'"_s);
+        InterpolationSampling sampleType { InterpolationSampling::Center };
         if (current().type == TokenType::Comma) {
             consume();
             PARSE(sampling, Identifier);
-            UNUSED_PARAM(sampling);
-            if (sampling == "centroid"_s)
-                sampleType = AST::InterpolateAttribute::Sampling::Centroid;
-            else if (sampling == "sample"_s)
-                sampleType = AST::InterpolateAttribute::Sampling::Sample;
+            auto* interpolationSampling = parseInterpolationSampling(sampling);
+            if (!interpolationSampling)
+                FAIL("Unknown interpolation sampling. Expected 'center', 'centroid' or 'sample'"_s);
+            sampleType = *interpolationSampling;
         }
+        if (current().type == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
-        UNUSED_PARAM(interpolate);
-        RETURN_ARENA_NODE(InterpolateAttribute, interpolationType, sampleType);
+        RETURN_ARENA_NODE(InterpolateAttribute, *interpolationType, sampleType);
     }
 
     if (ident.ident == "size"_s) {
@@ -645,15 +646,52 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
         RETURN_ARENA_NODE(SizeAttribute, WTFMove(size));
     }
 
+    if (ident.ident == "id"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(size, Expression);
+        CONSUME_TYPE(ParenRight);
+        RETURN_ARENA_NODE(IdAttribute, WTFMove(size));
+    }
+
+    if (ident.ident == "invariant"_s)
+        RETURN_ARENA_NODE(InvariantAttribute);
+
+    if (ident.ident == "must_use"_s)
+        RETURN_ARENA_NODE(MustUseAttribute);
+
+    if (ident.ident == "const"_s)
+        RETURN_ARENA_NODE(ConstAttribute);
+
+    if (ident.ident == "diagnostic"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(severity, Identifier);
+        auto* severityControl = parseSeverityControl(severity);
+        if (!severityControl)
+            FAIL("Unknown severity control. Expected 'error', 'info', 'off' or 'warning'"_s);
+        CONSUME_TYPE(Comma);
+
+        PARSE(name, Identifier);
+        std::optional<AST::Identifier> suffix;
+        if (current().type == TokenType::Period) {
+            consume();
+            PARSE(suffix, Identifier);
+            suffix = WTFMove(suffix);
+        }
+        if (current().type == TokenType::Comma)
+            consume();
+        CONSUME_TYPE(ParenRight);
+        RETURN_ARENA_NODE(DiagnosticAttribute, *severityControl, AST::TriggeringRule { WTFMove(name), WTFMove(suffix) });
+    }
+
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
     if (ident.ident == "vertex"_s)
-        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Vertex);
+        RETURN_ARENA_NODE(StageAttribute, ShaderStage::Vertex);
     if (ident.ident == "compute"_s)
-        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Compute);
+        RETURN_ARENA_NODE(StageAttribute, ShaderStage::Compute);
     if (ident.ident == "fragment"_s)
-        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Fragment);
+        RETURN_ARENA_NODE(StageAttribute, ShaderStage::Fragment);
 
-    FAIL("Unknown attribute. Supported attributes are 'group', 'binding', 'location', 'builtin', 'vertex', 'compute', 'fragment'."_s);
+    FAIL("Unknown attribute. Supported attributes are 'align', 'binding', 'builtin', 'compute', 'const', 'diagnostic', 'fragment', 'group', 'id', 'interpolate', 'invariant', 'location', 'must_use', 'size', 'vertex', 'workgroup_size'."_s);
 }
 
 template<typename Lexer>

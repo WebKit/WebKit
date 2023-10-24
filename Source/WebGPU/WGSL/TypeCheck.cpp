@@ -398,6 +398,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             addressSpace = AddressSpace::Handle;
             accessMode = AccessMode::Read;
         }
+        variable.m_addressSpace = addressSpace;
+        variable.m_accessMode = accessMode;
         result = m_types.referenceType(addressSpace, result, accessMode);
         if (auto* maybeTypeName = variable.maybeTypeName()) {
             auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
@@ -422,6 +424,8 @@ void TypeChecker::visit(AST::Function& function)
         visitAttributes(parameter.attributes());
         parameters.append(resolve(parameter.typeName()));
     }
+
+    visitAttributes(function.returnAttributes());
     if (function.maybeReturnType())
         result = resolve(*function.maybeReturnType());
     else

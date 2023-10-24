@@ -76,6 +76,9 @@ void Visitor::visit(Attribute& attribute)
     case AST::NodeKind::ConstAttribute:
         checkErrorAndVisit(downcast<AST::ConstAttribute>(attribute));
         break;
+    case AST::NodeKind::DiagnosticAttribute:
+        checkErrorAndVisit(downcast<AST::DiagnosticAttribute>(attribute));
+        break;
     case AST::NodeKind::GroupAttribute:
         checkErrorAndVisit(downcast<AST::GroupAttribute>(attribute));
         break;
@@ -90,6 +93,9 @@ void Visitor::visit(Attribute& attribute)
         break;
     case AST::NodeKind::LocationAttribute:
         checkErrorAndVisit(downcast<AST::LocationAttribute>(attribute));
+        break;
+    case AST::NodeKind::MustUseAttribute:
+        checkErrorAndVisit(downcast<AST::MustUseAttribute>(attribute));
         break;
     case AST::NodeKind::SizeAttribute:
         checkErrorAndVisit(downcast<AST::SizeAttribute>(attribute));
@@ -119,6 +125,10 @@ void Visitor::visit(AST::ConstAttribute&)
 {
 }
 
+void Visitor::visit(AST::DiagnosticAttribute&)
+{
+}
+
 void Visitor::visit(AST::BuiltinAttribute&)
 {
 }
@@ -133,9 +143,8 @@ void Visitor::visit(AST::IdAttribute& attribute)
     visit(attribute.value());
 }
 
-void Visitor::visit(AST::InterpolateAttribute& attribute)
+void Visitor::visit(AST::InterpolateAttribute&)
 {
-    visit(attribute.type(), attribute.sampling());
 }
 
 void Visitor::visit(AST::InvariantAttribute&)
@@ -146,6 +155,11 @@ void Visitor::visit(AST::LocationAttribute& attribute)
 {
     visit(attribute.location());
 }
+
+void Visitor::visit(AST::MustUseAttribute&)
+{
+}
+
 
 void Visitor::visit(AST::SizeAttribute& attribute)
 {

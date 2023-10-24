@@ -31,28 +31,27 @@
 
 namespace WGSL::AST {
 
-struct Interpolation {
-    InterpolationType type;
-    InterpolationSampling sampling;
+struct TriggeringRule {
+    Identifier name;
+    std::optional<Identifier> suffix;
 };
 
-class InterpolateAttribute final : public Attribute {
-    WGSL_AST_BUILDER_NODE(InterpolateAttribute);
+class DiagnosticAttribute final : public Attribute {
+    WGSL_AST_BUILDER_NODE(DiagnosticAttribute);
 public:
     NodeKind kind() const override;
-    const Interpolation& interpolation() const { return m_interpolation; }
-    InterpolationType type() const { return m_interpolation.type; }
-    InterpolationSampling sampling() const { return m_interpolation.sampling; }
 
 private:
-    InterpolateAttribute(SourceSpan span, InterpolationType type, InterpolationSampling sampling)
+    DiagnosticAttribute(SourceSpan span, SeverityControl severity, TriggeringRule&& triggeringRule)
         : Attribute(span)
-        , m_interpolation({ type, sampling })
+        , m_severity(severity)
+        , m_triggeringRule(WTFMove(triggeringRule))
     { }
 
-    Interpolation m_interpolation;
+    SeverityControl m_severity;
+    TriggeringRule m_triggeringRule;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(InterpolateAttribute)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(DiagnosticAttribute)

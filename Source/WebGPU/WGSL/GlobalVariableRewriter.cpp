@@ -508,23 +508,10 @@ void RewriteGlobalVariables::collectGlobals()
     auto& globalVars = m_callGraph.ast().variables();
     Vector<std::tuple<AST::Variable*, unsigned>> bufferLengths;
     for (auto& globalVar : globalVars) {
-        std::optional<unsigned> group;
-        std::optional<unsigned> binding;
-        for (auto& attribute : globalVar.attributes()) {
-            if (is<AST::GroupAttribute>(attribute)) {
-                group = downcast<AST::GroupAttribute>(attribute).group().constantValue()->toInt();
-                continue;
-            }
-            if (is<AST::BindingAttribute>(attribute)) {
-                binding = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->toInt();
-                continue;
-            }
-        }
-
         std::optional<Global::Resource> resource;
-        if (group.has_value()) {
-            RELEASE_ASSERT(binding.has_value());
-            resource = { *group, *binding };
+        if (globalVar.group().has_value()) {
+            RELEASE_ASSERT(globalVar.binding().has_value());
+            resource = { *globalVar.group(), *globalVar.binding() };
         }
 
         dataLogLnIf(shouldLogGlobalVariableRewriting, "> Found global: ", globalVar.name(), ", isResource: ", resource.has_value() ? "yes" : "no");
@@ -543,7 +530,7 @@ void RewriteGlobalVariables::collectGlobals()
             packResource(globalVar);
 
             if (!m_generatedLayout || containsRuntimeArray(globalVar.maybeReferenceType()->inferredType()))
-                bufferLengths.append({ &globalVar, *group });
+                bufferLengths.append({ &globalVar, resource->group });
         }
     }
 
@@ -761,17 +748,7 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
 
     m_entryPointInformation = &entryPoint.information;
 
-    switch (entryPoint.stage) {
-    case AST::StageAttribute::Stage::Compute:
-        m_stage = ShaderStage::Compute;
-        break;
-    case AST::StageAttribute::Stage::Vertex:
-        m_stage = ShaderStage::Vertex;
-        break;
-    case AST::StageAttribute::Stage::Fragment:
-        m_stage = ShaderStage::Fragment;
-        break;
-    }
+    m_stage = entryPoint.stage;
 
     auto it = m_pipelineLayouts.find(m_entryPointInformation->originalName);
     ASSERT(it != m_pipelineLayouts.end());
@@ -1083,15 +1060,10 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    String originalName = variable.originalName();
-    for (auto& attribute : variable.attributes()) {
-        if (is<AST::IdAttribute>(attribute)) {
-            originalName = String::number(downcast<AST::IdAttribute>(attribute).value().constantValue()->toInt());
-            break;
-        }
-    }
-
-    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType, variable.maybeInitializer() });
+    String entryName = variable.originalName();
+    if (variable.id())
+        entryName = String::number(*variable.id());
+    m_entryPointInformation->specializationConstants.add(entryName, Reflection::SpecializationConstant { variable.name(), constantType, variable.maybeInitializer() });
 }
 
 Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)

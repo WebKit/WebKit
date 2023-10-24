@@ -29,9 +29,14 @@
 #include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"
+#include "ASTInterpolateAttribute.h"
 #include <wtf/ReferenceWrapperVector.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class AttributeValidator;
+
+namespace AST {
 
 enum class ParameterRole : uint8_t {
     UserDefined,
@@ -41,6 +46,8 @@ enum class ParameterRole : uint8_t {
 
 class Parameter final : public Node {
     WGSL_AST_BUILDER_NODE(Parameter);
+    friend AttributeValidator;
+
 public:
     using List = ReferenceWrapperVector<Parameter>;
 
@@ -55,6 +62,11 @@ public:
     const Expression& typeName() const { return m_typeName.get(); }
     const Attribute::List& attributes() const { return m_attributes; }
 
+    bool invariant() const { return m_invariant; }
+    std::optional<Builtin> builtin() const { return m_builtin; }
+    std::optional<Interpolation> interpolation() const { return m_interpolation; }
+    std::optional<unsigned> location() const { return m_location; }
+
 private:
     Parameter(SourceSpan span, Identifier&& name, Expression::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
         : Node(span)
@@ -68,8 +80,15 @@ private:
     Identifier m_name;
     Expression::Ref m_typeName;
     Attribute::List m_attributes;
+
+    // Attributes
+    bool m_invariant { false };
+    std::optional<Builtin> m_builtin;
+    std::optional<Interpolation> m_interpolation;
+    std::optional<unsigned> m_location;
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(Parameter)

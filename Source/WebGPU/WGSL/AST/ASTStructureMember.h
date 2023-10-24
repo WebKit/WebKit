@@ -29,12 +29,18 @@
 #include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"
+#include "ASTInterpolateAttribute.h"
 #include <wtf/ReferenceWrapperVector.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class AttributeValidator;
+
+namespace AST {
 
 class StructureMember final : public Node {
     WGSL_AST_BUILDER_NODE(StructureMember);
+    friend AttributeValidator;
 
 public:
     using List = ReferenceWrapperVector<StructureMember>;
@@ -43,6 +49,13 @@ public:
     Identifier& name() { return m_name; }
     Expression& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
+
+    bool invariant() const { return m_invariant; }
+    std::optional<unsigned> alignment() const { return m_alignment; }
+    std::optional<unsigned> size() const { return m_size; }
+    std::optional<Builtin> builtin() const { return m_builtin; }
+    std::optional<unsigned> location() const { return m_location; }
+    std::optional<Interpolation> interpolation() const { return m_interpolation; }
 
 private:
     StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
@@ -55,8 +68,17 @@ private:
     Identifier m_name;
     Attribute::List m_attributes;
     Expression::Ref m_type;
+
+    // Attributes
+    bool m_invariant { false };
+    std::optional<unsigned> m_alignment;
+    std::optional<unsigned> m_size;
+    std::optional<Builtin> m_builtin;
+    std::optional<unsigned> m_location;
+    std::optional<Interpolation> m_interpolation;
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureMember)

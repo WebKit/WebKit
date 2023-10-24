@@ -38,10 +38,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
 
-static void checkBuiltin(WGSL::AST::Attribute& attr, ASCIILiteral attrName)
+static void checkBuiltin(WGSL::AST::Attribute& attr, WGSL::Builtin builtin)
 {
     EXPECT_TRUE(is<WGSL::AST::BuiltinAttribute>(attr));
-    EXPECT_EQ(downcast<WGSL::AST::BuiltinAttribute>(attr).name(), attrName);
+    EXPECT_EQ(downcast<WGSL::AST::BuiltinAttribute>(attr).builtin(), builtin);
 }
 
 static void checkIntLiteral(WGSL::AST::Expression& node, int32_t value)
@@ -280,7 +280,7 @@ TEST(WGSLParserTests, FunctionDecl)
     auto& func = shader->functions()[0];
     EXPECT_EQ(func.attributes().size(), 1u);
     EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-    EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Compute);
+    EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Compute);
     EXPECT_EQ(func.name(), "main"_s);
     EXPECT_TRUE(func.parameters().isEmpty());
     EXPECT_TRUE(func.returnAttributes().isEmpty());
@@ -322,7 +322,7 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
         auto& func = shader->functions()[0];
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Vertex);
         EXPECT_EQ(func.name(), "vertexShader"_s);
         EXPECT_EQ(func.parameters().size(), 1u);
         EXPECT_EQ(func.parameters()[0].name(), "x"_s);
@@ -339,7 +339,7 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
         EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(paramType.arguments()[0]));
         EXPECT_EQ(downcast<WGSL::AST::IdentifierExpression>(paramType.arguments()[0]).identifier(), "f32"_s);
         EXPECT_EQ(func.returnAttributes().size(), 1u);
-        checkBuiltin(func.returnAttributes()[0], "position"_s);
+        checkBuiltin(func.returnAttributes()[0], WGSL::Builtin::Position);
         EXPECT_TRUE(func.maybeReturnType());
         EXPECT_TRUE(is<WGSL::AST::ElaboratedTypeExpression>(func.maybeReturnType()));
         EXPECT_EQ(func.body().statements().size(), 1u);
@@ -353,7 +353,7 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
         auto& func = shader->functions()[1];
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Fragment);
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Fragment);
         EXPECT_EQ(func.name(), "fragmentShader"_s);
         EXPECT_TRUE(func.parameters().isEmpty());
         EXPECT_EQ(func.returnAttributes().size(), 1u);
@@ -426,7 +426,7 @@ TEST(WGSLParserTests, LocalConstant)
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Vertex);
 
         // fn main() -> vec4<f32> {
         EXPECT_EQ(func.name(), "main"_s);
@@ -484,7 +484,7 @@ TEST(WGSLParserTests, LocalLet)
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Vertex);
 
         // fn main() -> vec4<f32> {
         EXPECT_EQ(func.name(), "main"_s);
@@ -566,7 +566,7 @@ TEST(WGSLParserTests, LocalVariable)
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Vertex);
 
         // fn main() -> vec4<f32> {
         EXPECT_EQ(func.name(), "main"_s);
@@ -997,7 +997,7 @@ TEST(WGSLParserTests, TriangleVert)
         EXPECT_TRUE(func.maybeReturnType());
         checkVec4F32Type(*func.maybeReturnType());
         EXPECT_EQ(func.returnAttributes().size(), 1u);
-        checkBuiltin(func.returnAttributes()[0], "position"_s);
+        checkBuiltin(func.returnAttributes()[0], WGSL::Builtin::Position);
     }
 
     // var pos = array<vec2<f32>, 3>(...);
