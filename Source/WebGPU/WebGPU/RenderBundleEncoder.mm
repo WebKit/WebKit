@@ -186,7 +186,7 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
     UNUSED_PARAM(indirectOffset);
 
     auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-    if (!contents)
+    if (!contents || !contents->indexCount)
         return;
 
     executePreDrawCommands();
@@ -209,7 +209,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
     UNUSED_PARAM(indirectOffset);
 
     auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-    if (!contents)
+    if (!contents || !contents->instanceCount || !m_indexBuffer.length)
         return;
 
     executePreDrawCommands();
