@@ -31,6 +31,7 @@
 #include "config.h"
 #include "GridPositionsResolver.h"
 
+#include "AncestorSubgridIterator.h"
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
@@ -233,70 +234,69 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     auto currentSide = side;
     auto direction = directionFromSide(currentSide);
     bool initialFlipped = GridLayoutFunctions::isFlippedDirection(initialGrid, direction);
-    const RenderGrid* grid = &initialGrid;
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
 
     // If we're a subgrid, we want to inherit the line names from any ancestor grids.
-    while (isRowAxis ? grid->isSubgridColumns() : grid->isSubgridRows()) {
-        const auto* parent = downcast<RenderGrid>(grid->parent());
+    if (initialGrid.isSubgrid(direction)) {
+        for (auto& currentAncestorSubgrid : AncestorSubgridIterator(initialGrid, direction)) {
+            const auto* currentAncestorSubgridParent = downcast<RenderGrid>(currentAncestorSubgrid.parent());
 
-        // auto-placed subgrids inside a masonry grid do not inherit any line names
-        if ((parent->areMasonryRows() && (grid->style().gridItemColumnStart().isAuto() || grid->style().gridItemColumnStart().isSpan())) || (parent->areMasonryColumns() && (grid->style().gridItemRowStart().isAuto() || grid->style().gridItemRowStart().isSpan())))
-            return; 
-        // Translate our explicit grid set of lines into the coordinate space of the
-        // parent grid, adjusting direction/side as needed.
-        if (grid->isHorizontalWritingMode() != parent->isHorizontalWritingMode()) {
-            isRowAxis = !isRowAxis;
-            currentSide = transposedSide(currentSide);
-        }
-        direction = directionFromSide(currentSide);
-
-        auto span = parent->gridSpanForChild(*grid, direction);
-        search.translateTo(span, GridLayoutFunctions::isSubgridReversedDirection(*parent, direction, *grid));
-
-        auto convertToInitialSpace = [&](unsigned i) {
-            ASSERT(i >= search.startLine());
-            i -= search.startLine();
-            if (GridLayoutFunctions::isFlippedDirection(*parent, direction) != initialFlipped) {
-                ASSERT(m_lastLine >= i);
-                i = m_lastLine - i;
+            // auto-placed subgrids inside a masonry grid do not inherit any line names
+            if ((currentAncestorSubgridParent->areMasonryRows() && (currentAncestorSubgrid.style().gridItemColumnStart().isAuto() || currentAncestorSubgrid.style().gridItemColumnStart().isSpan())) || (currentAncestorSubgridParent->areMasonryColumns() && (currentAncestorSubgrid.style().gridItemRowStart().isAuto() || currentAncestorSubgrid.style().gridItemRowStart().isSpan())))
+                return;
+            // Translate our explicit grid set of lines into the coordinate space of the
+            // parent grid, adjusting direction/side as needed.
+            if (currentAncestorSubgrid.isHorizontalWritingMode() != currentAncestorSubgridParent->isHorizontalWritingMode()) {
+                isRowAxis = !isRowAxis;
+                currentSide = transposedSide(currentSide);
             }
-            return i;
-        };
+            direction = directionFromSide(currentSide);
 
-        // Create a line collection for the parent grid, and check to see if any of our lines
-        // are present. If we find any, add them to a locally stored line name list (with numbering
-        // relative to our grid).
-        bool appended = false;
-        NamedLineCollectionBase parentCollection(*parent, name, currentSide, nameIsAreaName);
-        if (parentCollection.hasNamedLines()) {
-            for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
-                if (parentCollection.contains(i)) {
-                    ensureInheritedNamedIndices();
-                    appended = true;
-                    m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+            auto span = currentAncestorSubgridParent->gridSpanForChild(currentAncestorSubgrid, direction);
+            search.translateTo(span, GridLayoutFunctions::isSubgridReversedDirection(*currentAncestorSubgridParent, direction, currentAncestorSubgrid));
+
+            auto convertToInitialSpace = [&](unsigned i) {
+                ASSERT(i >= search.startLine());
+                i -= search.startLine();
+                if (GridLayoutFunctions::isFlippedDirection(*currentAncestorSubgridParent, direction) != initialFlipped) {
+                    ASSERT(m_lastLine >= i);
+                    i = m_lastLine - i;
+                }
+                return i;
+            };
+
+            // Create a line collection for the parent grid, and check to see if any of our lines
+            // are present. If we find any, add them to a locally stored line name list (with numbering
+            // relative to our grid).
+            bool appended = false;
+            NamedLineCollectionBase parentCollection(*currentAncestorSubgridParent, name, currentSide, nameIsAreaName);
+            if (parentCollection.hasNamedLines()) {
+                for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
+                    if (parentCollection.contains(i)) {
+                        ensureInheritedNamedIndices();
+                        appended = true;
+                        m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+                    }
                 }
             }
-        }
 
-        if (nameIsAreaName) {
-            // We now need to look at the grid areas for the parent (not the implicit
-            // lines for the parent!), and insert the ones that intersect as implicit
-            // lines (but in our single combined list).
-            auto implicitLine = clampedImplicitLineForArea(parent->style(), name, search.startLine(), search.endLine(), isRowAxis, isStartSide(side));
-            if (implicitLine) {
-                ensureInheritedNamedIndices();
-                appended = true;
-                m_inheritedNamedLinesIndices.append(convertToInitialSpace(*implicitLine));
+            if (nameIsAreaName) {
+                // We now need to look at the grid areas for the parent (not the implicit
+                // lines for the parent!), and insert the ones that intersect as implicit
+                // lines (but in our single combined list).
+                auto implicitLine = clampedImplicitLineForArea(currentAncestorSubgridParent->style(), name, search.startLine(), search.endLine(), isRowAxis, isStartSide(side));
+                if (implicitLine) {
+                    ensureInheritedNamedIndices();
+                    appended = true;
+                    m_inheritedNamedLinesIndices.append(convertToInitialSpace(*implicitLine));
+                }
+            }
+
+            if (appended) {
+                // Re-sort m_inheritedNamedLinesIndices
+                std::sort(m_inheritedNamedLinesIndices.begin(), m_inheritedNamedLinesIndices.end());
             }
         }
-
-        if (appended) {
-            // Re-sort m_inheritedNamedLinesIndices
-            std::sort(m_inheritedNamedLinesIndices.begin(), m_inheritedNamedLinesIndices.end());
-        }
-
-        grid = parent;
     }
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GridLayoutFunctions.h"
 
+#include "AncestorSubgridIterator.h"
 #include "LengthFunctions.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -104,24 +105,11 @@ static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned start
 
 LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
 {
-    const RenderGrid* grid = downcast<RenderGrid>(child.parent());
     LayoutUnit mbp;
-
-    while (grid->isSubgrid(direction)) {
-        GridSpan span = grid->gridSpanForChild(child, direction);
-
-        mbp += extraMarginForSubgrid(*grid, span.startLine(), span.endLine(), direction);
-
-        const RenderElement* parent = grid->parent();
-        if (!parent || !is<RenderGrid>(parent))
-            break;
-
-        const RenderGrid* parentGrid = downcast<RenderGrid>(parent);
-        direction = flowAwareDirectionForParent(*grid, *parentGrid, direction);
-
-        grid = parentGrid;
+    for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(child, direction)) {
+        GridSpan span = currentAncestorSubgrid.gridSpanForChild(child, direction);
+        mbp += extraMarginForSubgrid(currentAncestorSubgrid, span.startLine(), span.endLine(), direction);
     }
-
     return mbp;
 }
 
