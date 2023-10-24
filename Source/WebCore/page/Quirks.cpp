@@ -1580,4 +1580,24 @@ bool Quirks::shouldStarBeFeaturePolicyDefaultValue() const
     return *m_shouldStarBeFeaturePolicyDefaultValueQuirk;
 }
 
+bool Quirks::needsDisableDOMPasteAccessQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsDisableDOMPasteAccessQuirk)
+        return *m_needsDisableDOMPasteAccessQuirk;
+
+    m_needsDisableDOMPasteAccessQuirk = [&] {
+        if (!m_document)
+            return false;
+        auto* globalObject = m_document->globalObject();
+        if (!globalObject)
+            return false;
+        auto tableauPrepProperty = JSC::Identifier::fromString(globalObject->vm(), "tableauPrep"_s);
+        return globalObject->hasProperty(globalObject, tableauPrepProperty);
+    }();
+    return *m_needsDisableDOMPasteAccessQuirk;
+}
+
 }

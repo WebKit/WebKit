@@ -3723,7 +3723,8 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
     UserGestureType gestureType = userGestureTypeForPlatformEvent(initialKeyEvent);
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed);
+    auto canRequestDOMPaste = m_frame.document()->quirks().needsDisableDOMPasteAccessQuirk() ? CanRequestDOMPaste::No : CanRequestDOMPaste::Yes;
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed, std::nullopt, canRequestDOMPaste);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
