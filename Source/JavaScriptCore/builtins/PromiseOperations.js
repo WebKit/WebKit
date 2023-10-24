@@ -187,13 +187,6 @@ function resolvePromise(promise, resolution)
     if (!@isObject(resolution))
         return @fulfillPromise(promise, resolution);
 
-    if (@isPromise(resolution)) {
-        var constructor = resolution.constructor;
-        if (constructor === @Promise || constructor === @InternalPromise) {
-           return @performPromiseThen(resolution, @undefined, @undefined, promise, @undefined);
-        }
-    }
-
     var then;
     try {
         then = resolution.then;
