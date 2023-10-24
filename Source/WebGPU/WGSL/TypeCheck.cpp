@@ -158,8 +158,7 @@ private:
 
     TypeStore& m_types;
     Vector<Error> m_errors;
-    HashMap<String, Vector<OverloadCandidate>> m_overloadedOperations;
-    HashMap<String, ConstantFunction> m_constantFunctions;
+    HashMap<String, OverloadedDeclaration> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -309,24 +308,6 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
-
-    m_constantFunctions.add("pow"_s, constantPow);
-    m_constantFunctions.add("-"_s, constantMinus);
-    m_constantFunctions.add("+"_s, constantAdd);
-    m_constantFunctions.add("*"_s, constantMultiply);
-    m_constantFunctions.add("/"_s, constantDivide);
-    m_constantFunctions.add("vec2"_s, constantVector2);
-    m_constantFunctions.add("vec2f"_s, constantVector2);
-    m_constantFunctions.add("vec2i"_s, constantVector2);
-    m_constantFunctions.add("vec2u"_s, constantVector2);
-    m_constantFunctions.add("vec3i"_s, constantVector3);
-    m_constantFunctions.add("vec3"_s, constantVector3);
-    m_constantFunctions.add("vec3f"_s, constantVector3);
-    m_constantFunctions.add("vec3u"_s, constantVector3);
-    m_constantFunctions.add("vec4u"_s, constantVector4);
-    m_constantFunctions.add("vec4"_s, constantVector4);
-    m_constantFunctions.add("vec4f"_s, constantVector4);
-    m_constantFunctions.add("vec4i"_s, constantVector4);
 }
 
 std::optional<FailedCheck> TypeChecker::check()
@@ -417,6 +398,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             addressSpace = AddressSpace::Handle;
             accessMode = AccessMode::Read;
         }
+        variable.m_addressSpace = addressSpace;
+        variable.m_accessMode = accessMode;
         result = m_types.referenceType(addressSpace, result, accessMode);
         if (auto* maybeTypeName = variable.maybeTypeName()) {
             auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
@@ -441,6 +424,8 @@ void TypeChecker::visit(AST::Function& function)
         visitAttributes(parameter.attributes());
         parameters.append(resolve(parameter.typeName()));
     }
+
+    visitAttributes(function.returnAttributes());
     if (function.maybeReturnType())
         result = resolve(*function.maybeReturnType());
     else
@@ -1272,15 +1257,19 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
         valueArguments.append(type);
     }
 
-    auto overload = resolveOverloads(m_types, it->value, valueArguments, typeArguments);
+    auto overload = resolveOverloads(m_types, it->value.overloads, valueArguments, typeArguments);
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
         for (unsigned i = 0; i < callArguments.size(); ++i)
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        auto it = m_constantFunctions.find(target);
-        if (it != m_constantFunctions.end()) {
+        if (it->value.kind == OverloadedDeclaration::Constructor && is<AST::CallExpression>(expression)) {
+            auto& call = downcast<AST::CallExpression>(expression);
+            call.m_isConstructor = true;
+        }
+
+        if (auto constantFunction = it->value.constantFunction) {
             unsigned argumentCount = callArguments.size();
             FixedVector<ConstantValue> arguments(argumentCount);
             for (unsigned i = 0; i < argumentCount; ++i) {
@@ -1289,7 +1278,7 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
                     return overload->result;
                 arguments[i] = *value;
             }
-            setConstantValue(expression, it->value(overload->result, WTFMove(arguments)));
+            setConstantValue(expression, constantFunction(overload->result, WTFMove(arguments)));
         }
 
         return overload->result;

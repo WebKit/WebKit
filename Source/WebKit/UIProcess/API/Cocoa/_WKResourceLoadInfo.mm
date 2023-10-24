@@ -92,14 +92,14 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
 - (_WKFrameHandle *)frame
 {
     if (auto frameID = _info->frameID())
-        return wrapper(API::FrameHandle::create(*frameID));
+        return wrapper(API::FrameHandle::create(*frameID)).autorelease();
     return nil;
 }
 
 - (_WKFrameHandle *)parentFrame
 {
     if (auto parentFrameID = _info->parentFrameID())
-        return wrapper(API::FrameHandle::create(*parentFrameID));
+        return wrapper(API::FrameHandle::create(*parentFrameID)).autorelease();
     return nil;
 }
 

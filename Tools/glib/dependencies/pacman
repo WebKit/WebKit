@@ -24,6 +24,7 @@ PACKAGES=(
     lcms2
     libevent
     libjpeg-turbo
+    libjxl
     libkate
     libpng
     libseccomp

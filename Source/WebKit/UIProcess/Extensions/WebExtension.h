@@ -147,7 +147,7 @@ public:
     Ref<API::Data> serializeManifest();
 
     double manifestVersion();
-    bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
+    bool supportsManifestVersion(double version) { ASSERT(version > 2); return manifestVersion() >= version; }
 
     Ref<API::Data> serializeLocalization();
 
@@ -164,8 +164,6 @@ public:
 
     NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No);
     NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);
-
-    NSString *webProcessDisplayName();
 
     _WKWebExtensionLocalization *localization();
     NSLocale *defaultLocale();

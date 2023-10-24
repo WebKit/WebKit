@@ -77,19 +77,19 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 + (instancetype)allURLsMatchPattern
 {
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::allURLsMatchPattern());
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::allURLsMatchPattern()).autorelease();
 }
 
 + (instancetype)allHostsAndSchemesMatchPattern
 {
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::allHostsAndSchemesMatchPattern());
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::allHostsAndSchemesMatchPattern()).autorelease();
 }
 
 + (instancetype)matchPatternWithString:(NSString *)patternString
 {
     NSParameterAssert([patternString isKindOfClass:NSString.class]);
 
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(patternString));
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(patternString)).autorelease();
 }
 
 + (instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
@@ -98,7 +98,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
     NSParameterAssert([host isKindOfClass:NSString.class]);
     NSParameterAssert([path isKindOfClass:NSString.class]);
 
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path));
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
 }
 
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
@@ -110,7 +110,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
         API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self);
 
         // Use the pattern cache instead for better performance, since an error isn't needed.
-        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(string));
+        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(string)).autorelease();
     }
 
     API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, error);
@@ -129,7 +129,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
         API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self);
 
         // Use the pattern cache instead for better performance, since an error isn't needed.
-        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path));
+        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
     }
 
     API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, error);

@@ -47,24 +47,9 @@
 namespace IPC {
 using namespace WebCore;
 
-template<> struct ArgumentCoder<ScrollingStateNode> {
-    static void encode(Encoder&, const ScrollingStateNode&);
-    static std::optional<Ref<ScrollingStateNode>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<ScrollingStateScrollingNode> {
-    static void encode(Encoder&, const ScrollingStateScrollingNode&);
-    static std::optional<Ref<ScrollingStateScrollingNode>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<ScrollingStateFrameHostingNode> {
     static void encode(Encoder&, const ScrollingStateFrameHostingNode&);
     static std::optional<Ref<ScrollingStateFrameHostingNode>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<ScrollingStateFrameScrollingNode> {
-    static void encode(Encoder&, const ScrollingStateFrameScrollingNode&);
-    static std::optional<Ref<ScrollingStateFrameScrollingNode>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateOverflowScrollingNode> {
@@ -614,37 +599,6 @@ std::optional<Ref<ScrollingStatePositionedNode>> ArgumentCoder<ScrollingStatePos
     }
 
     return WTFMove(node);
-}
-
-void ArgumentCoder<WebCore::ScrollingStateTree>::encode(Encoder& encoder, const WebCore::ScrollingStateTree& tree)
-{
-    encoder << tree.hasNewRootStateNode();
-    encoder << tree.hasChangedProperties();
-    encoder << tree.rootStateNode();
-}
-
-std::optional<WebCore::ScrollingStateTree> ArgumentCoder<WebCore::ScrollingStateTree>::decode(Decoder& decoder)
-{
-    bool hasNewRootNode;
-    if (!decoder.decode(hasNewRootNode))
-        return std::nullopt;
-
-    bool hasChangedProperties;
-    if (!decoder.decode(hasChangedProperties))
-        return std::nullopt;
-
-    ScrollingStateTree scrollingStateTree;
-    scrollingStateTree.setHasChangedProperties(hasChangedProperties);
-
-    auto rootNode = decoder.decode<RefPtr<ScrollingStateFrameScrollingNode>>();
-    if (!rootNode)
-        return std::nullopt;
-    if (!scrollingStateTree.setRootStateNodeAfterReconstruction(WTFMove(*rootNode)))
-        return std::nullopt;
-
-    scrollingStateTree.setHasNewRootStateNode(hasNewRootNode);
-
-    return { WTFMove(scrollingStateTree) };
 }
 
 namespace WebKit {

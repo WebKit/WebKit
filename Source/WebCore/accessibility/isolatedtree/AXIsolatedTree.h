@@ -262,6 +262,7 @@ public:
     static Ref<AXIsolatedTree> create(AXObjectCache&);
     // Creates a tree consisting of only the Scrollview and the WebArea objects. This tree is used as a temporary placeholder while the whole tree is being built.
     static Ref<AXIsolatedTree> createEmpty(AXObjectCache&);
+    constexpr bool isEmptyContentTree() const { return m_isEmptyContentTree; }
     virtual ~AXIsolatedTree();
 
     static void removeTreeForPageID(PageIdentifier);
@@ -352,8 +353,6 @@ private:
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
-    template <typename F>
-    void collectNodeChangesForChildrenMatching(AccessibilityObject&, F&&);
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
@@ -367,6 +366,7 @@ private:
     OptionSet<ActivityState> m_pageActivityState;
     RefPtr<AccessibilityObject> m_rootOfSubtreeBeingUpdated;
     RefPtr<AXGeometryManager> m_geometryManager;
+    bool m_isEmptyContentTree { false };
 
     // Stores the parent ID and children IDS for a given IsolatedObject.
     struct ParentChildrenIDs {

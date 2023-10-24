@@ -4,7 +4,8 @@
 Destroying a texture more than once is allowed.
 `;
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { kTextureAspects, kTextureFormatInfo } from '../../../capability_info.js';
+import { kTextureAspects } from '../../../capability_info.js';
+import { kTextureFormatInfo } from '../../../format_info.js';
 import { ValidationTest } from '../validation_test.js';
 
 export const g = makeTestGroup(ValidationTest);
@@ -22,6 +23,25 @@ g.test('twice')
     const texture = t.getSampledTexture();
     texture.destroy();
     texture.destroy();
+  });
+
+g.test('invalid_texture')
+  .desc('Test that invalid textures may be destroyed without generating validation errors.')
+  .fn(async t => {
+    t.device.pushErrorScope('validation');
+
+    const invalidTexture = t.device.createTexture({
+      size: [t.device.limits.maxTextureDimension2D + 1, 1, 1],
+      format: 'rgba8unorm',
+      usage: GPUTextureUsage.TEXTURE_BINDING,
+    });
+
+    // Expect error because it's invalid.
+    const error = await t.device.popErrorScope();
+    t.expect(!!error);
+
+    // This line should not generate an error
+    invalidTexture.destroy();
   });
 
 g.test('submit_a_destroyed_texture_as_attachment')

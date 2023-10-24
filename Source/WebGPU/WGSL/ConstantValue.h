@@ -74,8 +74,10 @@ struct ConstantValue : BaseValue {
 
     void dump(PrintStream&) const;
 
+    bool isBool() const { return std::holds_alternative<bool>(*this); }
     bool isInt() const { return std::holds_alternative<int64_t>(*this); }
     bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
+    bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
 
     bool toBool() const { return std::get<bool>(*this); }
     int64_t toInt() const
@@ -91,6 +93,11 @@ struct ConstantValue : BaseValue {
         if (auto* d = std::get_if<double>(this))
             return *d;
         return static_cast<double>(std::get<int64_t>(*this));
+    }
+    const ConstantVector& toVector() const
+    {
+        ASSERT(isNumber());
+        return std::get<ConstantVector>(*this);
     }
 };
 

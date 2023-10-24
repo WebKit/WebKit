@@ -1410,6 +1410,21 @@ void WebProcessProxy::postMessageToRemote(WebCore::FrameIdentifier identifier, s
     destinationFrame->process().send(Messages::WebProcess::RemotePostMessage(identifier, target, message), 0);
 }
 
+void WebProcessProxy::closeRemoteFrame(WebCore::FrameIdentifier frameID)
+{
+    // FIXME: <rdar://117383252> This, postMessageToRemote, renderTreeAsText, etc. should be messages to the WebPageProxy instead of the process.
+    // They are more the page doing things than the process.
+    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
+    if (!destinationFrame)
+        return;
+    if (!destinationFrame->isMainFrame())
+        return;
+    RefPtr page = destinationFrame->page();
+    if (!page)
+        return;
+    page->closePage();
+}
+
 void WebProcessProxy::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
 {
     auto* frame = WebFrameProxy::webFrame(frameIdentifier);

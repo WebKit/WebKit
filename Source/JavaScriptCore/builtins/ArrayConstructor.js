@@ -52,6 +52,12 @@ function from(items /*, mapFn, thisArg */)
 
     var arrayLike = @toObject(items, "Array.from requires an array-like object - not null or undefined");
 
+    if (!mapFn) {
+        var fastResult = @arrayFromFast(this, arrayLike);
+        if (fastResult)
+            return fastResult;
+    }
+
     var iteratorMethod = items.@@iterator;
     if (!@isUndefinedOrNull(iteratorMethod)) {
         if (!@isCallable(iteratorMethod))

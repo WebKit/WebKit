@@ -5951,7 +5951,10 @@
             "values": [
                 "auto",
                 "balance",
-                "pretty",
+                {
+                    "value": "pretty",
+                    "settings-flag": "cssTextWrapPrettyEnabled"
+                },
                 "stable"
             ],
             "codegen-properties": {
@@ -5963,7 +5966,7 @@
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text-4/#text-wrap-style"
             },
-            "status": "in development"
+            "status": "experimental"
         },
         "top": {
             "values": [

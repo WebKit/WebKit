@@ -259,6 +259,15 @@ inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 }
 
 template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
+inline RefPtr<Target> checkedDowncast(RefPtr<Source, PtrTraits, RefDerefTraits> source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    RELEASE_ASSERT(!source || is<Target>(*source));
+    return static_pointer_cast<Target>(WTFMove(source));
+}
+
+template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
 inline RefPtr<Target> downcast(RefPtr<Source, PtrTraits, RefDerefTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");

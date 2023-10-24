@@ -38,7 +38,7 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, const AST::Function&, AST::StageAttribute::Stage, Reflection::EntryPointInformation&);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage, Reflection::EntryPointInformation&);
 
     void rewrite();
 
@@ -61,7 +61,7 @@ private:
     void visit(Vector<String>& path, MemberOrParameter&&);
     void appendBuiltins();
 
-    AST::StageAttribute::Stage m_stage;
+    ShaderStage m_stage;
     ShaderModule& m_shaderModule;
     const AST::Function& m_function;
 
@@ -74,14 +74,14 @@ private:
     Reflection::EntryPointInformation& m_information;
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, AST::StageAttribute::Stage stage, Reflection::EntryPointInformation& information)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage, Reflection::EntryPointInformation& information)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
     , m_information(information)
 {
     switch (m_stage) {
-    case AST::StageAttribute::Stage::Compute: {
+    case ShaderStage::Compute: {
         for (auto& attribute : function.attributes()) {
             if (!is<AST::WorkgroupSizeAttribute>(attribute))
                 continue;
@@ -91,10 +91,10 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Fu
         }
         break;
     }
-    case AST::StageAttribute::Stage::Vertex:
+    case ShaderStage::Vertex:
         m_information.typedEntryPoint = Reflection::Vertex { false };
         break;
-    case AST::StageAttribute::Stage::Fragment:
+    case ShaderStage::Fragment:
         m_information.typedEntryPoint = Reflection::Fragment { };
         break;
     }
@@ -139,7 +139,7 @@ void EntryPointRewriter::collectParameters()
 
 void EntryPointRewriter::checkReturnType()
 {
-    if (m_stage == AST::StageAttribute::Stage::Compute)
+    if (m_stage == ShaderStage::Compute)
         return;
 
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
@@ -167,7 +167,7 @@ void EntryPointRewriter::checkReturnType()
                 m_shaderModule.replace(namedTypeName, returnType);
             };
 
-            if (m_stage == AST::StageAttribute::Stage::Fragment) {
+            if (m_stage == ShaderStage::Fragment) {
                 duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
                 return;
             }
@@ -192,13 +192,13 @@ void EntryPointRewriter::constructInputStruct()
 
     AST::StructureRole role;
     switch (m_stage) {
-    case AST::StageAttribute::Stage::Compute:
+    case ShaderStage::Compute:
         role = AST::StructureRole::ComputeInput;
         break;
-    case AST::StageAttribute::Stage::Vertex:
+    case ShaderStage::Vertex:
         role = AST::StructureRole::VertexInput;
         break;
-    case AST::StageAttribute::Stage::Fragment:
+    case ShaderStage::Fragment:
         role = AST::StructureRole::FragmentInput;
         break;
     }

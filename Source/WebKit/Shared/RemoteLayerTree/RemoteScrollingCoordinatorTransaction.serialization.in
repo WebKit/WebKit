@@ -26,3 +26,9 @@ class WebKit::RemoteScrollingCoordinatorTransaction {
     std::unique_ptr<WebCore::ScrollingStateTree> scrollingStateTree()
     bool clearScrollLatching()
 }
+
+[CreateUsing=createAfterReconstruction] class WebCore::ScrollingStateTree {
+    bool hasNewRootStateNode()
+    bool hasChangedProperties()
+    RefPtr<WebCore::ScrollingStateFrameScrollingNode> rootStateNode()
+}

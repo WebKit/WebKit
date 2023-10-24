@@ -60,6 +60,7 @@ private:
     unsigned height() const final;
     unsigned width() const final;
     String resultForDialogSubmit() const final;
+    bool dirAutoUsesValue() const final;
 
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::submitIfPossible().
 };

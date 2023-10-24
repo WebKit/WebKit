@@ -1,0 +1,10 @@
+When text-wrap: pretty is disabled, the following should not parse:
+
+
+PASS e.style['text-wrap-style'] = "pretty" should not set the property value
+PASS e.style['text-wrap'] = "pretty" should not set the property value
+PASS e.style['text-wrap'] = "pretty wrap" should not set the property value
+PASS e.style['text-wrap'] = "pretty nowrap" should not set the property value
+PASS e.style['text-wrap'] = "wrap pretty" should not set the property value
+PASS e.style['text-wrap'] = "nowrap pretty" should not set the property value
+

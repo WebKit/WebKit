@@ -33,7 +33,7 @@ import {
   kTextureFormatInfo,
   kEncodableTextureFormats,
   kSizedDepthStencilFormats,
-} from '../../../capability_info.js';
+} from '../../../format_info.js';
 import { GPUTest } from '../../../gpu_test.js';
 
 // Test with a zero and non-zero mip.
@@ -145,15 +145,15 @@ g.test('render_pass_store_op,color_attachment_only')
     u
       .combine('colorFormat', kEncodableTextureFormats)
       // Filter out any non-renderable formats
-      .filter(({ colorFormat }) => {
-        const info = kTextureFormatInfo[colorFormat];
-        return info.color && info.renderable;
-      })
+      .filter(({ colorFormat }) => !!kTextureFormatInfo[colorFormat].colorRender)
       .combine('storeOperation', kStoreOps)
       .beginSubcases()
       .combine('mipLevel', kMipLevel)
       .combine('arrayLayer', kArrayLayers)
   )
+  .beforeAllSubcases(t => {
+    t.skipIfTextureFormatNotSupported(t.params.colorFormat);
+  })
   .fn(t => {
     const colorAttachment = t.device.createTexture({
       format: t.params.colorFormat,

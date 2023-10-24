@@ -455,7 +455,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 
     moveValueRegs(returnValueJSR, baseJSR);
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR);
 
@@ -550,7 +550,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
     {
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-        loadConstant(stubInfoIndex, stubInfoGPR);
+        loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
         JITGetByIdGenerator gen(
             nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),
@@ -579,7 +579,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
         emitGetVirtualRegister(bytecode.m_value, baseJSR);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-        loadConstant(stubInfoIndex, stubInfoGPR);
+        loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
         JITGetByIdGenerator gen(
             nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),

@@ -34,7 +34,7 @@ FAIL .wrapper 4 assert_equals:
   </div>
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
 </div>
-offsetLeft expected 0 but got 75
+offsetLeft expected 0 but got 150
 FAIL .wrapper 5 assert_equals:
 <div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
@@ -45,7 +45,7 @@ FAIL .wrapper 5 assert_equals:
   </div>
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
 </div>
-offsetLeft expected 0 but got 75
+offsetLeft expected 0 but got 150
 FAIL .wrapper 6 assert_equals:
 <div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
@@ -56,7 +56,7 @@ FAIL .wrapper 6 assert_equals:
   </div>
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
 </div>
-offsetLeft expected 0 but got 75
+offsetLeft expected 0 but got 150
 FAIL .wrapper 7 assert_equals:
 <div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
@@ -67,7 +67,7 @@ FAIL .wrapper 7 assert_equals:
   </div>
   <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
 </div>
-offsetLeft expected 0 but got 75
+offsetLeft expected 0 but got 150
 PASS .wrapper 8
 PASS .wrapper 9
 PASS .wrapper 10

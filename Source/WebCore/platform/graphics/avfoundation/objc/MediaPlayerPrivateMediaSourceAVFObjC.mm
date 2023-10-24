@@ -811,15 +811,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
         }))
             return true;
         auto player = m_player.get();
-        if (player && !player->renderingCanBeAccelerated())
-            return false;
-        if (m_sampleBufferDisplayLayer)
-            return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
-        if (player && !player->videoLayerSize().isEmpty())
-            return true;
-        if (player && !player->playerContentBoxRect().isEmpty())
-            return true;
-        return false;
+        return player && player->renderingCanBeAccelerated();
     }();
 #else
     return !m_hasBeenAskedToPaintGL && !m_isGatheringVideoFrameMetadata;

@@ -27,6 +27,7 @@
 
 #include "CompilationMessage.h"
 #include "ConstantValue.h"
+#include "WGSLEnums.h"
 #include <cinttypes>
 #include <cstdint>
 #include <memory>
@@ -137,12 +138,6 @@ struct StorageTextureBindingLayout {
 
 struct ExternalTextureBindingLayout {
     // Sentinel
-};
-
-enum class ShaderStage : uint8_t {
-    Vertex = 0x1,
-    Fragment = 0x2,
-    Compute = 0x4
 };
 
 struct BindGroupLayoutEntry {

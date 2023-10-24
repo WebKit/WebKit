@@ -76,6 +76,11 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     RefPtr<CalleeGroup> protectedThis = this;
     if (Options::useWasmLLInt()) {
         m_plan = adoptRef(*new LLIntPlan(vm, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+            if (!m_plan) {
+                m_errorMessage = makeString("Out of memory while creating LLInt CalleeGroup"_s);
+                setCompilationFinished();
+                return;
+            }
             Locker locker { m_lock };
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();

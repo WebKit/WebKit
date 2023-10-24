@@ -37,7 +37,7 @@ namespace WGSL {
 #define CONTINUATION(args...) args RPAREN
 #define EXPAND(x) x
 
-#define ENUM_DEFINE_PRINT_INTERNAL_CASE_(__type, __name, __string) \
+#define ENUM_DEFINE_PRINT_INTERNAL_CASE_(__type, __name, __string, ...) \
     case __type::__name: \
         out.print(#__string); \
         break;
@@ -53,7 +53,7 @@ namespace WGSL {
         } \
     }
 
-#define ENUM_DEFINE_PARSE_ENTRY_(__type, __name, __string) \
+#define ENUM_DEFINE_PARSE_ENTRY_(__type, __name, __string, ...) \
     { #__string, __type::__name },
 
 #define ENUM_DEFINE_PARSE_ENTRY(__name) \
@@ -76,6 +76,11 @@ namespace WGSL {
 ENUM_DEFINE(AddressSpace);
 ENUM_DEFINE(AccessMode);
 ENUM_DEFINE(TexelFormat);
+ENUM_DEFINE(InterpolationType);
+ENUM_DEFINE(InterpolationSampling);
+ENUM_DEFINE(ShaderStage);
+ENUM_DEFINE(SeverityControl);
+ENUM_DEFINE(Builtin);
 
 #undef ENUM_DEFINE
 #undef ENUM_DEFINE_PRINT_INTERNAL

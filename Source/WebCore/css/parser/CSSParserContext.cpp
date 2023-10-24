@@ -104,6 +104,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
+    , cssTextWrapPrettyEnabled { document.settings().cssTextWrapPrettyEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -138,7 +139,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssWordBreakAutoPhraseEnabled             << 23
         | context.popoverAttributeEnabled                   << 24
         | context.sidewaysWritingModesEnabled               << 25
-        | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
+        | context.cssTextWrapPrettyEnabled                  << 26
+        | (uint64_t)context.mode                            << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

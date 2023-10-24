@@ -4,17 +4,16 @@
 copyTextureToTexture tests.
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
+import { kTextureUsages, kTextureDimensions } from '../../../../capability_info.js';
 import {
   kTextureFormatInfo,
   kTextureFormats,
   kCompressedTextureFormats,
   kDepthStencilFormats,
-  kTextureUsages,
-  textureDimensionAndFormatCompatible,
-  kTextureDimensions,
   kFeaturesForFormats,
   filterFormatsByFeature,
-} from '../../../../capability_info.js';
+  textureDimensionAndFormatCompatible,
+} from '../../../../format_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
 import { align, lcm } from '../../../../util/math.js';
 import { ValidationTest } from '../../validation_test.js';
@@ -354,6 +353,10 @@ Test the formats of textures in copyTextureToTexture must be copy-compatible.
   })
   .fn(t => {
     const { srcFormat, dstFormat } = t.params;
+
+    t.skipIfTextureFormatNotSupported(srcFormat, dstFormat);
+    t.skipIfCopyTextureToTextureNotSupportedForFormat(srcFormat, dstFormat);
+
     const srcFormatInfo = kTextureFormatInfo[srcFormat];
     const dstFormatInfo = kTextureFormatInfo[dstFormat];
 
@@ -772,6 +775,7 @@ TODO: Express the offsets in "block size" so as to be able to test non-4x4 compr
   .beforeAllSubcases(t => {
     const { format } = t.params;
     t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+    t.skipIfCopyTextureToTextureNotSupportedForFormat(format);
   })
   .fn(t => {
     const { format, dimension, copyBoxOffsets, srcCopyLevel, dstCopyLevel } = t.params;

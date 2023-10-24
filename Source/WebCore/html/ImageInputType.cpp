@@ -219,4 +219,9 @@ String ImageInputType::resultForDialogSubmit() const
     return makeString(m_clickLocation.x(), ',', m_clickLocation.y());
 }
 
+bool ImageInputType::dirAutoUsesValue() const
+{
+    return false;
+}
+
 } // namespace WebCore

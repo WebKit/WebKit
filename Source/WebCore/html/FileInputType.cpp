@@ -358,6 +358,11 @@ bool FileInputType::allowsDirectories() const
     return element()->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
 
+bool FileInputType::dirAutoUsesValue() const
+{
+    return false;
+}
+
 void FileInputType::setFiles(RefPtr<FileList>&& files, WasSetByJavaScript wasSetByJavaScript)
 {
     setFiles(WTFMove(files), RequestIcon::Yes, wasSetByJavaScript);

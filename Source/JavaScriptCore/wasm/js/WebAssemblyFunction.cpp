@@ -388,8 +388,8 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     // 1. We need to know where to get callee saves.
     // 2. We need to know to restore the previous wasm context.
     ASSERT(!m_jsToWasmICCallee);
-    m_jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
-    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_jsToWasmICCallee.get())), scratchJSR.payloadGPR());
+    RefPtr<Wasm::JSToWasmICCallee> jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
+    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(jsToWasmICCallee.get())), scratchJSR.payloadGPR());
     // We do not need to set up |this| in this IC since the caller of this IC itself already set up arguments and its |this| should be WebAssemblyFunction,
     // which anchors JSWebAssemblyInstance correctly from GC.
 #if USE(JSVALUE32_64)
@@ -433,7 +433,11 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     linkBuffer.link(jumpToHostCallThunk, CodeLocationLabel<JSEntryPtrTag>(executable()->entrypointFor(CodeForCall, MustCheckArity)));
     auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "JS->Wasm IC"), nullptr);
-    m_jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
+    jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
+
+    // Successfully compiled and linked the IC.
+    m_jsToWasmICCallee = jsToWasmICCallee;
+
     return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
 }
 #endif // ENABLE(JIT)

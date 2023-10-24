@@ -52,7 +52,7 @@ public:
 
     struct EntryPoint {
         AST::Function& function;
-        AST::StageAttribute::Stage stage;
+        ShaderStage stage;
         Reflection::EntryPointInformation& information;
     };
 

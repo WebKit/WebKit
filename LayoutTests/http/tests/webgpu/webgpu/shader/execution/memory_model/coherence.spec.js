@@ -464,7 +464,7 @@ g.test('corw2')
   .desc(
     `The first thread reads from some memory location x, and then writes 1 to x. The second thread
      writes 2 to x. If the first thread reads the value 2, but the value in memory after the test
-     completes is 1, then the instructions on the first thread have been re-ordered, leading to a 
+     completes is 1, then the instructions on the first thread have been re-ordered, leading to a
      coherence violation.
     `
   )

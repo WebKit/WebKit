@@ -2,13 +2,13 @@
 
 // CHECK-NOT-L: MyStruct1
 struct MyStruct1 {
-  // FIXME: mangle struct fields
+  // CHECK-NOT-L: myStructField1
   myStructField1: i32,
 };
 
 // CHECK-NOT-L: MyStruct2
 struct MyStruct2 {
-  // FIXME: mangle struct fields
+  // CHECK-NOT-L: myStructField2
   myStructField2: MyStruct1,
 };
 

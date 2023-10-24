@@ -243,8 +243,8 @@ public:
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
     unsigned lineNumberForBytecodeIndex(BytecodeIndex);
     unsigned columnNumberForBytecodeIndex(BytecodeIndex);
-    void expressionRangeForBytecodeIndex(BytecodeIndex, int& divot,
-        int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
+    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot,
+        unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 

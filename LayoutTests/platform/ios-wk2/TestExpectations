@@ -2347,8 +2347,7 @@ webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/pay
 
 webkit.org/b/245967 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 
-webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
-webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Pass Failure ]
+webkit.org/b/263575 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
 
@@ -2398,11 +2397,7 @@ fast/forms/date/date-validity-badinput.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
 fast/forms/time/time-validity-badinput.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-color/system-color-compute.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
-
-webkit.org/b/259085 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-018.html [ ImageOnlyFailure ]
-webkit.org/b/259085 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-019.html [ ImageOnlyFailure ]
 
 # Skipping scrollbar-width tests that don't work with overlay scrollbars
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html [ Skip ]
@@ -2492,7 +2487,3 @@ css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]
 
 webkit.org/b/263048 accessibility/ios-simulator/input-type-time.html [ Failure ]
 webkit.org/b/263052 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Failure ]
-
-# re-baseline candidates, will file new bugs if not approved
-webkit.org/b/263053 fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
-webkit.org/b/263053 svg/custom/svg-fonts-in-html.html [ Failure ]

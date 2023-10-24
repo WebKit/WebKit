@@ -154,8 +154,8 @@ void CommandEncoderImpl::copyBufferToTexture(
         nullptr, {
             nullptr,
             source.offset,
-            source.bytesPerRow.value_or(0),
-            source.rowsPerImage.value_or(1),
+            source.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
+            source.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
         },
         m_convertToBackingContext->convertToBacking(source.buffer),
     };
@@ -190,8 +190,8 @@ void CommandEncoderImpl::copyTextureToBuffer(
         nullptr, {
             nullptr,
             destination.offset,
-            destination.bytesPerRow.value_or(0),
-            destination.rowsPerImage.value_or(1),
+            destination.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
+            destination.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
         },
         m_convertToBackingContext->convertToBacking(destination.buffer),
     };

@@ -80,7 +80,7 @@ public:
         CodeLocationLabel<JITStubRoutinePtrTag> start);
 
 #if ENABLE(DFG_JIT)
-    void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, GPRReg stubInfoGPR);
+    void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, GPRReg stubInfoGPR);
 #endif
 
     UnlinkedStructureStubInfo* m_unlinkedStubInfo { nullptr };
@@ -181,7 +181,7 @@ public:
     void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
-    void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
+    void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
 #endif
 
     template<typename StubInfo>
@@ -207,7 +207,7 @@ public:
     void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
-    void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
+    void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
 #endif
 
     template<typename StubInfo>
@@ -237,7 +237,7 @@ public:
     void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
-    void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
+    void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
 #endif
 
     template<typename StubInfo>
@@ -462,7 +462,7 @@ public:
     void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
-    void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
+    void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
 #endif
 
     template<typename StubInfo>

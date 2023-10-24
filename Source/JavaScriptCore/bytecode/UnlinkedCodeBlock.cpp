@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,9 +155,9 @@ size_t UnlinkedCodeBlock::RareData::sizeInBytes(const AbstractLocker&) const
 int UnlinkedCodeBlock::lineNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
     ASSERT(bytecodeIndex.offset() < instructions().size());
-    int divot { 0 };
-    int startOffset { 0 };
-    int endOffset { 0 };
+    unsigned divot { 0 };
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
     unsigned line { 0 };
     unsigned column { 0 };
     expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
@@ -220,8 +220,7 @@ void UnlinkedCodeBlock::dumpExpressionRangeInfo()
 }
 #endif
 
-void UnlinkedCodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex,
-    int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
+void UnlinkedCodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const
 {
     ASSERT(bytecodeIndex.offset() < instructions().size());
 

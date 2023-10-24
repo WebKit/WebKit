@@ -272,6 +272,7 @@ Tests calling createComputePipeline(Async) validation for overridable constants 
         { constants: {}, _success: true },
         { constants: { c0: 0 }, _success: true },
         { constants: { c0: 0, c1: 1 }, _success: true },
+        { constants: { 'c0\0': 0 }, _success: false },
         { constants: { c9: 0 }, _success: false },
         { constants: { 1: 0 }, _success: true },
         { constants: { c3: 0 }, _success: false }, // pipeline constant id is specified for c3
@@ -279,6 +280,8 @@ Tests calling createComputePipeline(Async) validation for overridable constants 
         { constants: { 1000: 0 }, _success: true },
         { constants: { 9999: 0 }, _success: false },
         { constants: { 1000: 0, c2: 0 }, _success: false },
+        { constants: { 数: 0 }, _success: true },
+        { constants: { séquençage: 0 }, _success: false }, // test unicode is not normalized
       ])
   )
   .fn(t => {
@@ -291,14 +294,16 @@ Tests calling createComputePipeline(Async) validation for overridable constants 
           code: `
             override c0: bool = true;      // type: bool
             override c1: u32 = 0u;          // default override
+            override 数: u32 = 0u;          // non-ASCII
+            override séquençage: u32 = 0u;  // normalizable unicode (WGSL does not normalize)
             @id(1000) override c2: u32 = 10u;  // default
             @id(1) override c3: u32 = 11u;     // default
             @compute @workgroup_size(1) fn main () {
               // make sure the overridable constants are not optimized out
               _ = u32(c0);
               _ = u32(c1);
-              _ = u32(c2);
-              _ = u32(c3);
+              _ = u32(c2 + séquençage);
+              _ = u32(c3 + 数);
             }`,
         }),
         entryPoint: 'main',
@@ -409,7 +414,7 @@ g.test('overrides,value,validation_error')
     `
 Tests calling createComputePipeline(Async) validation for unrepresentable constant values in compute stage.
 
-TODO(#2060): test with last_f64_castable.
+TODO(#2060): test with last_castable_pipeline_override.
 `
   )
   .params(u =>
@@ -425,9 +430,15 @@ TODO(#2060): test with last_f64_castable.
         { constants: { ci: kValue.i32.positive.max }, _success: true },
         { constants: { ci: kValue.i32.positive.max + 1 }, _success: false },
         { constants: { cf: kValue.f32.negative.min }, _success: true },
-        { constants: { cf: kValue.f32.negative.first_f64_not_castable }, _success: false },
+        {
+          constants: { cf: kValue.f32.negative.first_non_castable_pipeline_override },
+          _success: false,
+        },
         { constants: { cf: kValue.f32.positive.max }, _success: true },
-        { constants: { cf: kValue.f32.positive.first_f64_not_castable }, _success: false },
+        {
+          constants: { cf: kValue.f32.positive.first_non_castable_pipeline_override },
+          _success: false,
+        },
         // Conversion to boolean can't fail
         { constants: { cb: Number.MAX_VALUE }, _success: true },
         { constants: { cb: kValue.i32.negative.min - 1 }, _success: true },
@@ -435,7 +446,6 @@ TODO(#2060): test with last_f64_castable.
   )
   .fn(t => {
     const { isAsync, constants, _success } = t.params;
-
     const descriptor = {
       layout: 'auto',
       compute: {
@@ -466,7 +476,7 @@ g.test('overrides,value,validation_error,f16')
 Tests calling createComputePipeline(Async) validation for unrepresentable f16 constant values in compute stage.
 
 TODO(#2060): Tighten the cases around the valid/invalid boundary once we have WGSL spec
-clarity on whether values like f16.positive.last_f64_castable would be valid. See issue.
+clarity on whether values like f16.positive.last_castable_pipeline_override would be valid. See issue.
 `
   )
   .params(u =>
@@ -474,13 +484,25 @@ clarity on whether values like f16.positive.last_f64_castable would be valid. Se
       .combine('isAsync', [true, false])
       .combineWithParams([
         { constants: { cf16: kValue.f16.negative.min }, _success: true },
-        { constants: { cf16: kValue.f16.negative.first_f64_not_castable }, _success: false },
+        {
+          constants: { cf16: kValue.f16.negative.first_non_castable_pipeline_override },
+          _success: false,
+        },
         { constants: { cf16: kValue.f16.positive.max }, _success: true },
-        { constants: { cf16: kValue.f16.positive.first_f64_not_castable }, _success: false },
+        {
+          constants: { cf16: kValue.f16.positive.first_non_castable_pipeline_override },
+          _success: false,
+        },
         { constants: { cf16: kValue.f32.negative.min }, _success: false },
         { constants: { cf16: kValue.f32.positive.max }, _success: false },
-        { constants: { cf16: kValue.f32.negative.first_f64_not_castable }, _success: false },
-        { constants: { cf16: kValue.f32.positive.first_f64_not_castable }, _success: false },
+        {
+          constants: { cf16: kValue.f32.negative.first_non_castable_pipeline_override },
+          _success: false,
+        },
+        {
+          constants: { cf16: kValue.f32.positive.first_non_castable_pipeline_override },
+          _success: false,
+        },
       ])
   )
   .beforeAllSubcases(t => {

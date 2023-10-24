@@ -593,7 +593,7 @@ bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategor
         return false;
 
     auto gestureToken = UserGestureIndicator::currentUserGesture();
-    if (!gestureToken || !gestureToken->processingUserGesture())
+    if (!gestureToken || !gestureToken->processingUserGesture() || !gestureToken->canRequestDOMPaste())
         return false;
 
     switch (gestureToken->domPasteAccessPolicy()) {
@@ -1202,9 +1202,14 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
 }
 
-RefPtr<LocalFrameView> Document::protectedView() const
+CheckedRef<EventHandler> LocalFrame::checkedEventHandler()
 {
-    return view();
+    return m_eventHandler.get();
+}
+
+CheckedRef<const EventHandler> LocalFrame::checkedEventHandler() const
+{
+    return m_eventHandler.get();
 }
 
 #if ENABLE(DATA_DETECTION)

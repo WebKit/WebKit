@@ -98,10 +98,18 @@ bool HiddenInputType::appendFormData(DOMFormData& formData) const
         formData.append(name, String::fromLatin1(formData.encoding().name()));
         return true;
     }
-    return InputType::appendFormData(formData);
+    InputType::appendFormData(formData);
+    if (auto& dirname = element()->attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+        formData.append(dirname, element()->directionForFormData());
+    return true;
 }
 
 bool HiddenInputType::shouldRespectHeightAndWidthAttributes()
+{
+    return true;
+}
+
+bool HiddenInputType::dirAutoUsesValue() const
 {
     return true;
 }

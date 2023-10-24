@@ -51,12 +51,12 @@
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
-    return WebKit::wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef));
+    return WebKit::wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef)).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
 {
-    return WebKit::wrapper(_nodeHandle->htmlIFrameElementContentFrame());
+    return WebKit::wrapper(_nodeHandle->htmlIFrameElementContentFrame()).autorelease();
 }
 
 - (CocoaImage *)renderedImageWithOptions:(WKSnapshotOptions)options
@@ -208,12 +208,12 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
 
 - (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
 {
-    return WebKit::wrapper(_nodeHandle->htmlTableCellElementCellAbove());
+    return WebKit::wrapper(_nodeHandle->htmlTableCellElementCellAbove()).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return WebKit::wrapper(_nodeHandle->document()->documentFrame());
+    return WebKit::wrapper(_nodeHandle->document()->documentFrame()).autorelease();
 }
 
 - (WebKit::InjectedBundleNodeHandle&)_nodeHandle

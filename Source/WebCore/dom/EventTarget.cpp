@@ -418,7 +418,8 @@ void EventTarget::invalidateEventListenerRegions()
         return;
     }
 
-    RefPtr document = [&]() -> Document* {
+    // Unable the protect the document as it may have started destruction.
+    auto* document = [&]() -> Document* {
         if (is<Document>(*this))
             return &downcast<Document>(*this);
         if (is<LocalDOMWindow>(*this))

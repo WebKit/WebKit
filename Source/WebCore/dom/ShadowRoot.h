@@ -65,6 +65,10 @@ public:
 
     virtual ~ShadowRoot();
 
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const DocumentFragment*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const DocumentFragment*>(this)->decrementPtrCount(); }
+
     using TreeScope::getElementById;
     using TreeScope::rootNode;
 

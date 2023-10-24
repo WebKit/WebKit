@@ -140,6 +140,11 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
     _webExtensionContext->setInspectable(inspectable);
 }
 
+- (WKWebViewConfiguration *)webViewConfiguration
+{
+    return _webExtensionContext->webViewConfiguration(WebKit::WebExtensionContext::WebViewPurpose::Tab);
+}
+
 static inline WallTime toImpl(NSDate *date)
 {
     NSCParameterAssert(!date || [date isKindOfClass:NSDate.class]);
@@ -810,6 +815,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 
 - (void)setInspectable:(BOOL)inspectable
 {
+}
+
+- (WKWebViewConfiguration *)webViewConfiguration
+{
+    return nil;
 }
 
 - (NSDictionary<_WKWebExtensionPermission, NSDate *> *)grantedPermissions

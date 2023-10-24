@@ -10,11 +10,11 @@ Returns the floor of e. Component-wise when T is a vector.
 `;
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
-import { TypeF32 } from '../../../../../util/conversion.js';
-import { floorInterval } from '../../../../../util/f32_interval.js';
-import { fullF32Range } from '../../../../../util/math.js';
+import { TypeF32, TypeF16 } from '../../../../../util/conversion.js';
+import { FP } from '../../../../../util/floating_point.js';
+import { fullF32Range, fullF16Range } from '../../../../../util/math.js';
 import { makeCaseCache } from '../../case_cache.js';
-import { allInputSources, generateUnaryToF32IntervalCases, run } from '../../expression.js';
+import { allInputSources, run } from '../../expression.js';
 
 import { builtin } from './builtin.js';
 
@@ -22,7 +22,7 @@ export const g = makeTestGroup(GPUTest);
 
 export const d = makeCaseCache('floor', {
   f32: () => {
-    return generateUnaryToF32IntervalCases(
+    return FP.f32.generateScalarToIntervalCases(
       [
         // Small positive numbers
         0.1,
@@ -36,11 +36,35 @@ export const d = makeCaseCache('floor', {
         -1.0,
         -1.1,
         -1.9,
+        0x80000000, // https://github.com/gpuweb/cts/issues/2766
         ...fullF32Range(),
       ],
 
       'unfiltered',
-      floorInterval
+      FP.f32.floorInterval
+    );
+  },
+  f16: () => {
+    return FP.f16.generateScalarToIntervalCases(
+      [
+        // Small positive numbers
+        0.1,
+        0.9,
+        1.0,
+        1.1,
+        1.9,
+        // Small negative numbers
+        -0.1,
+        -0.9,
+        -1.0,
+        -1.1,
+        -1.9,
+        0x8000, // https://github.com/gpuweb/cts/issues/2766
+        ...fullF16Range(),
+      ],
+
+      'unfiltered',
+      FP.f16.floorInterval
     );
   },
 });
@@ -64,4 +88,10 @@ g.test('f16')
   .specURL('https://www.w3.org/TR/WGSL/#float-builtin-functions')
   .desc(`f16 tests`)
   .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
-  .unimplemented();
+  .beforeAllSubcases(t => {
+    t.selectDeviceOrSkipTestCase('shader-f16');
+  })
+  .fn(async t => {
+    const cases = await d.get('f16');
+    await run(t, builtin('floor'), [TypeF16], TypeF16, t.params, cases);
+  });

@@ -65,34 +65,41 @@ ScrollingStateTree::ScrollingStateTree(ScrollingStateTree&&) = default;
 
 ScrollingStateTree::~ScrollingStateTree() = default;
 
-void ScrollingStateTree::attachDeserializedNodes()
+std::optional<ScrollingStateTree> ScrollingStateTree::createAfterReconstruction(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&& rootStateNode)
 {
-    // This needs to be done after the move constructor has been called because we deserialize
-    // into a ScrollingStateTree then move to a std::unique_ptr<ScrollingStateTree> and if we
-    // did this in setRootStateNodeAfterReconstruction it would be setting nodes' tree pointers to the
-    // wrong ScrollingStateTree.
-    if (m_rootStateNode) {
-        m_rootStateNode->attachAfterDeserialization(*this);
-        ASSERT(m_rootStateNode->parentPointersAreCorrect());
-    }
-}
+    ScrollingStateTree tree(hasNewRootStateNode, hasChangedProperties, WTFMove(rootStateNode));
 
-bool ScrollingStateTree::setRootStateNodeAfterReconstruction(RefPtr<ScrollingStateFrameScrollingNode>&& node)
-{
-    ASSERT(!m_rootStateNode);
-    ASSERT(m_stateNodeMap.isEmpty());
-    ASSERT(m_unparentedNodes.isEmpty());
-
-    m_rootStateNode = WTFMove(node);
     bool allIdentifiersUnique { true };
-    if (m_rootStateNode) {
-        m_rootStateNode->traverse([&] (auto& node) {
-            auto addResult = m_stateNodeMap.add(node.scrollingNodeID(), node);
+    if (tree.m_rootStateNode) {
+        tree.m_rootStateNode->traverse([&] (auto& node) {
+            auto addResult = tree.m_stateNodeMap.add(node.scrollingNodeID(), node);
             if (!addResult.isNewEntry)
                 allIdentifiersUnique = false;
         });
     }
-    return allIdentifiersUnique;
+    if (!allIdentifiersUnique)
+        return std::nullopt;
+
+    return { WTFMove(tree) };
+}
+
+ScrollingStateTree::ScrollingStateTree(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&& rootStateNode)
+    : m_rootStateNode(WTFMove(rootStateNode))
+    , m_hasNewRootStateNode(hasNewRootStateNode)
+{
+    setHasChangedProperties(hasChangedProperties);
+}
+
+void ScrollingStateTree::attachDeserializedNodes()
+{
+    // This needs to be done after the move constructor has been called because we deserialize
+    // into a ScrollingStateTree then move to a std::unique_ptr<ScrollingStateTree> and if we
+    // did this in the constructor, createAfterReconstruction would be setting nodes' tree pointers
+    // to the wrong ScrollingStateTree.
+    if (m_rootStateNode) {
+        m_rootStateNode->attachAfterDeserialization(*this);
+        ASSERT(m_rootStateNode->parentPointersAreCorrect());
+    }
 }
 
 RefPtr<ScrollingStateFrameScrollingNode> ScrollingStateTree::rootStateNode() const

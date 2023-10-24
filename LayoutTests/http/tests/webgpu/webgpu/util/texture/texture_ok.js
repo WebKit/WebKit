@@ -1,10 +1,12 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { assert, ErrorWithExtra, unreachable } from '../../../common/util/util.js';
-import { kTextureFormatInfo } from '../../capability_info.js';
+import { kTextureFormatInfo } from '../../format_info.js';
+import { numbersApproximatelyEqual } from '../conversion.js';
 import { generatePrettyTable } from '../pretty_diff_tables.js';
 import { reifyExtent3D, reifyOrigin3D } from '../unions.js';
 
+import { fullSubrectCoordinates } from './base.js';
 import { getTextureSubCopyLayout } from './layout.js';
 import { kTexelRepresentationInfo } from './texel_data.js';
 import { TexelView } from './texel_view.js';
@@ -120,7 +122,7 @@ function comparePerComponent(actual, expected, maxDiff) {
     const act = actual[k];
     const exp = expected[k];
     if (exp === undefined) return false;
-    return Math.abs(act - exp) <= maxDiff;
+    return numbersApproximatelyEqual(act, exp, maxDiff);
   });
 }
 
@@ -143,12 +145,13 @@ function createTextureCopyForMapRead(t, source, copySize, { format }) {
   return { buffer, bytesPerRow, rowsPerImage };
 }
 
-function findFailedPixels(
+export function findFailedPixels(
   format,
   subrectOrigin,
   subrectSize,
   { actTexelView, expTexelView },
-  texelCompareOptions
+  texelCompareOptions,
+  coords
 ) {
   const comparer = makeTexelViewComparer(
     format,
@@ -159,21 +162,16 @@ function findFailedPixels(
   const lowerCorner = [subrectSize.width, subrectSize.height, subrectSize.depthOrArrayLayers];
   const upperCorner = [0, 0, 0];
   const failedPixels = [];
-  for (let z = subrectOrigin.z; z < subrectOrigin.z + subrectSize.depthOrArrayLayers; ++z) {
-    for (let y = subrectOrigin.y; y < subrectOrigin.y + subrectSize.height; ++y) {
-      for (let x = subrectOrigin.x; x < subrectOrigin.x + subrectSize.width; ++x) {
-        const coords = { x, y, z };
-
-        if (!comparer.predicate(coords)) {
-          failedPixels.push(coords);
-          lowerCorner[0] = Math.min(lowerCorner[0], x);
-          lowerCorner[1] = Math.min(lowerCorner[1], y);
-          lowerCorner[2] = Math.min(lowerCorner[2], z);
-          upperCorner[0] = Math.max(upperCorner[0], x);
-          upperCorner[1] = Math.max(upperCorner[1], y);
-          upperCorner[2] = Math.max(upperCorner[2], z);
-        }
-      }
+  for (const coord of coords ?? fullSubrectCoordinates(subrectOrigin, subrectSize)) {
+    const { x, y, z } = coord;
+    if (!comparer.predicate(coord)) {
+      failedPixels.push(coord);
+      lowerCorner[0] = Math.min(lowerCorner[0], x);
+      lowerCorner[1] = Math.min(lowerCorner[1], y);
+      lowerCorner[2] = Math.min(lowerCorner[2], z);
+      upperCorner[0] = Math.max(upperCorner[0], x);
+      upperCorner[1] = Math.max(upperCorner[1], y);
+      upperCorner[2] = Math.max(upperCorner[2], z);
     }
   }
   if (failedPixels.length === 0) {
@@ -257,7 +255,8 @@ export async function textureContentIsOKByT2B(
   source,
   copySize_,
   { expTexelView },
-  texelCompareOptions
+  texelCompareOptions,
+  coords
 ) {
   const subrectOrigin = reifyOrigin3D(source.origin ?? [0, 0, 0]);
   const subrectSize = reifyExtent3D(copySize_);
@@ -287,7 +286,8 @@ export async function textureContentIsOKByT2B(
     subrectOrigin,
     subrectSize,
     { actTexelView, expTexelView },
-    texelCompareOptions
+    texelCompareOptions,
+    coords
   );
 
   if (failedPixelsMessage === undefined) {

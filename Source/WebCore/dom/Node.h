@@ -762,7 +762,7 @@ private:
     mutable OptionSet<NodeFlag> m_nodeFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;
-    TreeScope* m_treeScope { nullptr };
+    CheckedPtr<TreeScope> m_treeScope;
     CheckedPtr<Node> m_previous;
     CheckedPtr<Node> m_next;
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;

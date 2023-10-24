@@ -302,6 +302,7 @@
     "web-platform-tests/html/semantics/interactive-elements/the-details-element": "import",
     "web-platform-tests/html/semantics/interactive-elements/the-dialog-element": "import",
     "web-platform-tests/html/semantics/interactive-elements/the-summary-element": "skip",
+    "web-platform-tests/html/semantics/invokers": "import",
     "web-platform-tests/html/semantics/links/downloading-resources": "import",
     "web-platform-tests/html/semantics/links/following-hyperlinks": "skip",
     "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements": "import",

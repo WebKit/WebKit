@@ -77,8 +77,14 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
 void AccessGenerationResult::dump(PrintStream& out) const
 {
     out.print(m_kind);
-    if (m_code)
-        out.print(":", m_code);
+    if (m_handler)
+        out.print(":", *m_handler);
+}
+
+void InlineCacheHandler::dump(PrintStream& out) const
+{
+    if (m_callTarget)
+        out.print(m_callTarget);
 }
 
 static TypedArrayType toTypedArrayType(AccessCase::AccessType accessType)
@@ -1137,6 +1143,42 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
 
     RELEASE_ASSERT_NOT_REACHED();
     return { };
+}
+
+InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
+    : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
+    , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
+    , m_stubRoutine(WTFMove(stubRoutine))
+    , m_watchpoints(WTFMove(watchpoints))
+{
+}
+
+Ref<InlineCacheHandler> InlineCacheHandler::createNonHandlerSlowPath(CodePtr<JITStubRoutinePtrTag> slowPath)
+{
+    auto result = adoptRef(*new InlineCacheHandler);
+    result->m_callTarget = slowPath;
+    result->m_jumpTarget = slowPath;
+    return result;
+}
+
+Ref<InlineCacheHandler> InlineCacheHandler::createSlowPath(VM& vm, AccessType accessType)
+{
+    auto result = adoptRef(*new InlineCacheHandler);
+    auto codeRef = InlineCacheCompiler::generateSlowPathCode(vm, accessType);
+    result->m_callTarget = codeRef.code().template retagged<JITStubRoutinePtrTag>();
+    result->m_jumpTarget = CodePtr<NoPtrTag> { codeRef.retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>();
+    return result;
+}
+
+Ref<InlineCacheHandler> InlineCacheCompiler::generateSlowPathHandler(VM& vm, AccessType accessType)
+{
+    ASSERT(!isCompilationThread());
+    ASSERT(Options::useHandlerIC());
+    if (auto handler = vm.m_sharedJITStubs->getSlowPathHandler(accessType))
+        return handler.releaseNonNull();
+    auto handler = InlineCacheHandler::createSlowPath(vm, accessType);
+    vm.m_sharedJITStubs->setSlowPathHandler(accessType, handler);
+    return handler;
 }
 
 void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
@@ -3810,10 +3852,9 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
 
-    auto finishCodeGeneration = [&](RefPtr<PolymorphicAccessJITStubRoutine>&& stub) {
-        poly.m_stubRoutine = WTFMove(stub);
-        poly.m_watchpoints = WTFMove(m_watchpoints);
-        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", poly.m_stubRoutine->code());
+    auto finishCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub) {
+        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(m_watchpoints));
+        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
         poly.m_list = WTFMove(cases);
         poly.m_list.shrinkToFit();
@@ -3826,14 +3867,14 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
 
-        return AccessGenerationResult(resultKind, poly.m_stubRoutine->code().code());
+        return AccessGenerationResult(resultKind, WTFMove(handler));
     };
 
     if (generatedMegamorphicCode && useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
         auto stub = vm().m_sharedJITStubs->getMegamorphic(m_stubInfo->accessType);
         if (stub)
-            return finishCodeGeneration(WTFMove(stub));
+            return finishCodeGeneration(stub.releaseNonNull());
     }
 
     auto allocator = makeDefaultScratchAllocator();
@@ -4173,7 +4214,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         stub = vm().m_sharedJITStubs->find(searcher);
         if (stub) {
             dataLogLnIf(InlineCacheCompilerInternal::verbose, "Found existing code stub ", stub->code());
-            return finishCodeGeneration(WTFMove(stub));
+            return finishCodeGeneration(stub.releaseNonNull());
         }
     }
 
@@ -4212,11 +4253,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             vm().m_sharedJITStubs->add(SharedJITStubSet::Hash::Key(m_stubInfo->m_baseGPR, m_stubInfo->m_valueGPR, m_stubInfo->m_extraGPR, m_stubInfo->m_extra2GPR, m_stubInfo->m_stubInfoGPR, m_stubInfo->m_arrayProfileGPR, m_stubInfo->usedRegisters, stub.get()));
     }
 
-    return finishCodeGeneration(WTFMove(stub));
+    return finishCodeGeneration(stub.releaseNonNull());
 }
 
-PolymorphicAccess::PolymorphicAccess() { }
-PolymorphicAccess::~PolymorphicAccess() { }
+PolymorphicAccess::PolymorphicAccess() = default;
+PolymorphicAccess::~PolymorphicAccess() = default;
 
 AccessGenerationResult PolymorphicAccess::addCases(
     const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
@@ -4325,13 +4366,6 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
         if (!at(i).visitWeak(vm))
             return false;
     }
-    if (m_stubRoutine) {
-        for (StructureID weakReference : m_stubRoutine->weakStructures()) {
-            Structure* structure = weakReference.decode();
-            if (!vm.heap.isMarked(structure))
-                return false;
-        }
-    }
     return true;
 }
 
@@ -4363,10 +4397,24 @@ void PolymorphicAccess::dump(PrintStream& out) const
     out.print("]");
 }
 
-void PolymorphicAccess::aboutToDie()
+void InlineCacheHandler::aboutToDie()
 {
     if (m_stubRoutine)
         m_stubRoutine->aboutToDie();
+}
+
+bool InlineCacheHandler::visitWeak(VM& vm) const
+{
+    if (!m_stubRoutine)
+        return true;
+
+    for (StructureID weakReference : m_stubRoutine->weakStructures()) {
+        Structure* structure = weakReference.decode();
+        if (!vm.heap.isMarked(structure))
+            return false;
+    }
+
+    return true;
 }
 
 } // namespace JSC

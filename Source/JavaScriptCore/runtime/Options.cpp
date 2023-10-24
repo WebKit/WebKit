@@ -1342,6 +1342,23 @@ SUPPRESS_ASAN bool canUseJITCage()
 bool canUseJITCage() { return false; }
 #endif
 
+bool canUseHandlerIC()
+{
+#if CPU(X86_64)
+#if OS(WINDOWS)
+    return false;
+#else
+    return true;
+#endif
+#elif CPU(ARM64)
+    return !isIOS();
+#elif CPU(RISCV64)
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool canUseWebAssemblyFastMemory()
 {
     // Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.

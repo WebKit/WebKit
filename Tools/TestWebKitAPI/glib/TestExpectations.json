@@ -88,6 +88,13 @@
             }
         }
     },
+    "TestWebViewEditor": {
+        "subtests": {
+            "/webkit/WebKitWebView/cut-copy-paste/editable": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
+            }
+        }
+    },
     "TestInspectorServer": {
         "subtests": {
            "/webkit/WebKitWebInspectorServer/test-page-list": {

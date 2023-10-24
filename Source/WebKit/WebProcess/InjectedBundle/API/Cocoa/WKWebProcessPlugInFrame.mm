@@ -56,12 +56,12 @@
 
 + (instancetype)lookUpFrameFromJSContext:(JSContext *)context
 {
-    return wrapper(WebKit::WebFrame::frameForContext(context.JSGlobalContextRef));
+    return wrapper(WebKit::WebFrame::frameForContext(context.JSGlobalContextRef)).autorelease();
 }
 
 + (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value
 {
-    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef));
+    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef)).autorelease();
 }
 
 - (void)dealloc
@@ -86,7 +86,7 @@
 
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point
 {
-    return wrapper(_frame->hitTest(WebCore::IntPoint(point)));
+    return wrapper(_frame->hitTest(WebCore::IntPoint(point))).autorelease();
 }
 
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point options:(WKHitTestOptions)options
@@ -94,7 +94,7 @@
     auto types = WebKit::WebFrame::defaultHitTestRequestTypes();
     if (options & WKHitTestOptionAllowUserAgentShadowRootContent)
         types.remove(WebCore::HitTestRequest::Type::DisallowUserAgentShadowContent);
-    return wrapper(_frame->hitTest(WebCore::IntPoint(point), types));
+    return wrapper(_frame->hitTest(WebCore::IntPoint(point), types)).autorelease();
 }
 
 - (JSValue *)jsCSSStyleDeclarationForCSSStyleDeclarationHandle:(WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
@@ -127,7 +127,7 @@
 
 - (NSArray *)childFrames
 {
-    return WebKit::wrapper(_frame->childFrames());
+    return WebKit::wrapper(_frame->childFrames()).autorelease();
 }
 
 - (BOOL)containsAnyFormElements
@@ -142,7 +142,7 @@
 
 - (_WKFrameHandle *)handle
 {
-    return wrapper(API::FrameHandle::create(_frame->frameID()));
+    return wrapper(API::FrameHandle::create(_frame->frameID())).autorelease();
 }
 
 - (NSString *)_securityOrigin
@@ -177,7 +177,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 
 - (WKWebProcessPlugInFrame *)_parentFrame
 {
-    return wrapper(_frame->parentFrame());
+    return wrapper(_frame->parentFrame()).autorelease();
 }
 
 - (BOOL)_hasCustomContentProvider

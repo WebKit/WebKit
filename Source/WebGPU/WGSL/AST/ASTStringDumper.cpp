@@ -103,7 +103,7 @@ void StringDumper::visit(BindingAttribute& binding)
 
 void StringDumper::visit(BuiltinAttribute& builtin)
 {
-    m_out.print("@builtin(", builtin.name(), ")");
+    m_out.print("@builtin(", builtin.builtin(), ")");
 }
 
 void StringDumper::visit(GroupAttribute& group)
@@ -122,17 +122,7 @@ void StringDumper::visit(LocationAttribute& location)
 
 void StringDumper::visit(StageAttribute& stage)
 {
-    switch (stage.stage()) {
-    case StageAttribute::Stage::Compute:
-        m_out.print("@compute");
-        break;
-    case StageAttribute::Stage::Fragment:
-        m_out.print("@fragment");
-        break;
-    case StageAttribute::Stage::Vertex:
-        m_out.print("@vertex");
-        break;
-    }
+    m_out.print("@", stage.stage());
 }
 
 void StringDumper::visit(WorkgroupSizeAttribute& workgroupSize)

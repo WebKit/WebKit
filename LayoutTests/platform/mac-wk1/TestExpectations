@@ -1850,6 +1850,7 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 
 # "reftest-wait" blocks attachment rendering.
 webkit.org/b/263367 fast/attachment/attachment-icon-from-file-extension.html [ Skip ]
+webkit.org/b/263367 fast/attachment/attachment-uti.html [ Skip ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 fast/images/animated-heics-draw.html [ Skip ]
@@ -2542,7 +2543,7 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Skip ]
 
 # webgpu is being brought up in the GPU process, radar://106507574 tracks fixing WK1
-http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Skip ]
+http/tests/webgpu [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
@@ -2704,3 +2705,7 @@ fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
 
 # SVG gradients are not bit-for-bit equivalent through a scale.
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+
+webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
+
+webkit.org/b/263601 [ Sonoma arm64 ] imported/blink/compositing/layer-creation/incremental-destruction.html [ ImageOnlyFailure ]

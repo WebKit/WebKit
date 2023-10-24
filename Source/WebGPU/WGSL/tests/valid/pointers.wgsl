@@ -12,8 +12,15 @@ fn f2(x: ptr<private, i32>) -> i32
 
 fn f3(x: vec3<f32>) { }
 
-fn f4(p: ptr<function, vec2<i32>>) -> i32 {
+fn f4(p: ptr<function, vec2<i32>>) -> i32
+{
     return (*p).x;
+}
+
+fn f5(p: ptr<function, vec2<i32>>)
+{
+    *p = vec2(0);
+    (*p).x = 42;
 }
 
 var<private> global: i32;
@@ -64,6 +71,14 @@ fn testVectorAccessPrecedence()
     let x = f4(p);
 }
 
+fn testAssignment()
+{
+    var v = vec2(0);
+    let p = &v;
+    f5(p);
+    *&v = vec2(13);
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -83,4 +98,5 @@ fn main()
     testShadowedGlobalRewriting();
     testShadowedLocalRewriting();
     testVectorAccessPrecedence();
+    testAssignment();
 }

@@ -174,6 +174,8 @@ public:
     bool shouldStarBeFeaturePolicyDefaultValue() const;
     bool shouldDisableDataURLPaddingValidation() const;
 
+    bool needsDisableDOMPasteAccessQuirk() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
@@ -236,6 +238,7 @@ private:
     bool m_needsToCopyUserSelectNoneQuirk { false };
     mutable std::optional<bool> m_shouldStarBeFeaturePolicyDefaultValueQuirk;
     mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
+    mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
 };
 
 } // namespace WebCore

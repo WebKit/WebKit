@@ -555,13 +555,13 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 + (NSArray<_WKFeature *> *)_features
 {
     auto features = WebKit::WebPreferences::features();
-    return wrapper(API::Array::create(WTFMove(features)));
+    return wrapper(API::Array::create(WTFMove(features))).autorelease();
 }
 
 + (NSArray<_WKFeature *> *)_internalDebugFeatures
 {
     auto features = WebKit::WebPreferences::internalDebugFeatures();
-    return wrapper(API::Array::create(WTFMove(features)));
+    return wrapper(API::Array::create(WTFMove(features))).autorelease();
 }
 
 - (BOOL)_isEnabledForInternalDebugFeature:(_WKFeature *)feature
@@ -577,7 +577,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
 {
     auto features = WebKit::WebPreferences::experimentalFeatures();
-    return wrapper(API::Array::create(WTFMove(features)));
+    return wrapper(API::Array::create(WTFMove(features))).autorelease();
 }
 
 - (BOOL)_isEnabledForFeature:(_WKFeature *)feature

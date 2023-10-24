@@ -1,12 +1,11 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { assert, memcpy } from '../../common/util/util.js';
-import { GPUTest } from '../gpu_test.js';
+import { GPUTest, TextureTestMixin } from '../gpu_test.js';
 import { reifyExtent3D, reifyOrigin3D } from '../util/unions.js';
 
 import { makeInPlaceColorConversion } from './color_space_conversion.js';
 import { TexelView } from './texture/texel_view.js';
-import { textureContentIsOKByT2B } from './texture/texture_ok.js';
 
 /**
  * Predefined copy sub rect meta infos.
@@ -56,7 +55,7 @@ export const kCopySubrectInfo = [
   },
 ];
 
-export class CopyToTextureUtils extends GPUTest {
+export class CopyToTextureUtils extends TextureTestMixin(GPUTest) {
   doFlipY(sourcePixels, width, height, bytesPerPixel) {
     const dstPixels = new Uint8ClampedArray(width * height * bytesPerPixel);
     for (let i = 0; i < height; ++i) {
@@ -162,15 +161,13 @@ export class CopyToTextureUtils extends GPUTest {
       copySize
     );
 
-    const resultPromise = textureContentIsOKByT2B(
-      this,
+    this.expectTexelViewComparisonIsOkInTexture(
       { texture: dstTextureCopyView.texture, origin: dstTextureCopyView.origin },
+      expTexelView,
       copySize,
-      { expTexelView },
       texelCompareOptions
     );
 
-    this.eventualExpectOK(resultPromise);
     this.trackForCleanup(dstTextureCopyView.texture);
   }
 }

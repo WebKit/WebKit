@@ -27,6 +27,7 @@
 #include "WGSL.h"
 
 #include "ASTIdentifierExpression.h"
+#include "AttributeValidator.h"
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
@@ -72,6 +73,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     CHECK_PASS(parse);
     CHECK_PASS(reorderGlobals);
     CHECK_PASS(typeCheck);
+    CHECK_PASS(validateAttributes);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));

@@ -81,16 +81,13 @@ void CallGraphBuilder::initializeMappings()
         if (!m_pipelineLayouts.contains(name))
             continue;
 
-        for (auto& attribute : function.attributes()) {
-            if (is<AST::StageAttribute>(attribute)) {
-                auto stage = downcast<AST::StageAttribute>(attribute).stage();
-                auto addResult = m_result.entryPoints.add(function.name(), Reflection::EntryPointInformation { });
-                ASSERT(addResult.isNewEntry);
-                m_callGraph.m_entrypoints.append({ function, stage, addResult.iterator->value });
-                m_queue.append(&function);
-                break;
-            }
-        }
+        if (!function.stage())
+            continue;
+
+        auto addResult = m_result.entryPoints.add(function.name(), Reflection::EntryPointInformation { });
+        ASSERT(addResult.isNewEntry);
+        m_callGraph.m_entrypoints.append({ function, *function.stage(), addResult.iterator->value });
+        m_queue.append(&function);
     }
 
     while (!m_queue.isEmpty())

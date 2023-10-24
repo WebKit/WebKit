@@ -64,8 +64,43 @@ namespace WGSL {
     value(RGBA8uint, rgba8uint) \
     value(RGBA8unorm, rgba8unorm) \
 
-#define ENUM_DECLARE_VALUE(__value, _) \
-    __value,
+#define ENUM_InterpolationType(value) \
+    value(Flat, flat) \
+    value(Linear, linear) \
+    value(Perspective, perspective)
+
+#define ENUM_InterpolationSampling(value) \
+    value(Center, center) \
+    value(Centroid, centroid) \
+    value(Sample, sample)
+
+#define ENUM_ShaderStage(value) \
+    value(Compute,  compute,  1 << 2) \
+    value(Fragment, fragment, 1 << 1) \
+    value(Vertex,   vertex,   1 << 0) \
+
+#define ENUM_SeverityControl(value) \
+    value(Error, error) \
+    value(Info, info) \
+    value(Off, off) \
+    value(Warning, warning) \
+
+#define ENUM_Builtin(value) \
+    value(FragDepth, frag_depth) \
+    value(FrontFacing, front_facing) \
+    value(GlobalInvocationId, global_invocation_id) \
+    value(InstanceIndex, instance_index) \
+    value(LocalInvocationId, local_invocation_id) \
+    value(LocalInvocationIndex, local_invocation_index) \
+    value(NumWorkgroups, num_workgroups) \
+    value(Position, position) \
+    value(SampleIndex, sample_index) \
+    value(SampleMask, sample_mask) \
+    value(VertexIndex, vertex_index) \
+    value(WorkgroupId, workgroup_id) \
+
+#define ENUM_DECLARE_VALUE(__value, _, ...) \
+    __value __VA_OPT__(=) __VA_ARGS__,
 
 #define ENUM_DECLARE_PRINT_INTERNAL(__name) \
     void printInternal(WTF::PrintStream& out, __name)
@@ -83,6 +118,11 @@ namespace WGSL {
 ENUM_DECLARE(AddressSpace);
 ENUM_DECLARE(AccessMode);
 ENUM_DECLARE(TexelFormat);
+ENUM_DECLARE(InterpolationType);
+ENUM_DECLARE(InterpolationSampling);
+ENUM_DECLARE(ShaderStage);
+ENUM_DECLARE(SeverityControl);
+ENUM_DECLARE(Builtin);
 
 #undef ENUM_DECLARE
 

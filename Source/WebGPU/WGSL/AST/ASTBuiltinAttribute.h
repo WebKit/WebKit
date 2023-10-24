@@ -28,6 +28,7 @@
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
 #include "ASTIdentifier.h"
+#include "WGSLEnums.h"
 
 namespace WGSL::AST {
 
@@ -35,15 +36,15 @@ class BuiltinAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(BuiltinAttribute);
 public:
     NodeKind kind() const override;
-    Identifier& name() { return m_name; }
+    Builtin builtin() const { return m_builtin; }
 
 private:
-    BuiltinAttribute(SourceSpan span, Identifier&& name)
+    BuiltinAttribute(SourceSpan span, Builtin builtin)
         : Attribute(span)
-        , m_name(WTFMove(name))
+        , m_builtin(builtin)
     { }
 
-    Identifier m_name;
+    Builtin m_builtin;
 };
 
 } // namespace WGSL::AST

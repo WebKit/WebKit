@@ -27,6 +27,7 @@
 
 #include "Constraints.h"
 #include "TypeStore.h"
+#include "WGSL.h"
 
 namespace WGSL {
 
@@ -119,6 +120,21 @@ struct OverloadCandidate {
     Vector<ValueVariable, 2> valueVariables;
     Vector<AbstractType, 2> parameters;
     AbstractType result;
+};
+
+struct OverloadedDeclaration {
+    enum Kind : uint8_t {
+        Operator,
+        Constructor,
+        Function,
+    };
+
+    Kind kind;
+    bool mustUse;
+
+    ConstantValue (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
+    OptionSet<ShaderStage> visibility;
+    Vector<OverloadCandidate> overloads;
 };
 
 struct SelectedOverload {

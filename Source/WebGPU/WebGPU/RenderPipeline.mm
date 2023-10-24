@@ -356,7 +356,7 @@ static void populateStencilOperation(MTLStencilDescriptor *mtlStencil, const WGP
 {
     mtlStencil.stencilCompareFunction =  convertToMTLCompare(stencil.compare);
     mtlStencil.stencilFailureOperation = convertToMTLStencilOperation(stencil.failOp);
-    mtlStencil.depthStencilPassOperation = convertToMTLStencilOperation(stencil.depthFailOp);
+    mtlStencil.depthFailureOperation = convertToMTLStencilOperation(stencil.depthFailOp);
     mtlStencil.depthStencilPassOperation = convertToMTLStencilOperation(stencil.passOp);
     mtlStencil.writeMask = stencilWriteMask;
     mtlStencil.readMask = stencilReadMask;

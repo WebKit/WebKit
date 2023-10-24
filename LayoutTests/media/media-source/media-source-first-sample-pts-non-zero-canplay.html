@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>media-source-first-sample-pts-non-zero-canplay</title>
+<script src="../video-test.js"></script>
+<style type="text/css">
+    video {
+        width: 150px;
+        height: 150px;
+    }
+    .zeroSize {
+        width: 0px;
+        height: 0px;
+    }
+</style>
+</head>
+<body>
+<script type="text/javascript">
+(async () => {
+    consoleWrite('This test verifies that the "canplay" event is dispatched on a video element with a MediaSource that loads a video track whose first sample has a presentation timestamp greater than 0.');
+
+    var video = document.createElement("video");
+    video.classList.add("zeroSize");
+    document.body.appendChild(video);
+
+    var source = new MediaSource();
+    video.srcObject = source;
+    await waitFor(source, "sourceopen");
+
+    var buffer = source.addSourceBuffer("video/mp4");
+    var response = await fetch("resources/first-sample-pts-non-zero/first-sample-pts-non-zero.mp4");
+    buffer.appendBuffer(await response.arrayBuffer());
+    await waitFor(video, "canplay", true);
+
+    endTest();
+})();
+</script>
+</body>
+</html>

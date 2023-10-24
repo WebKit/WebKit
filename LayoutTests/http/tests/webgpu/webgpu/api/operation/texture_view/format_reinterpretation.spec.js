@@ -8,12 +8,11 @@ import {
   kRenderableColorTextureFormats,
   kRegularTextureFormats,
   viewCompatible,
-} from '../../../capability_info.js';
-import { GPUTest } from '../../../gpu_test.js';
+} from '../../../format_info.js';
+import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
-import { textureContentIsOKByT2B } from '../../../util/texture/texture_ok.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(TextureTestMixin(GPUTest));
 
 const kColors = [
   { R: 1.0, G: 0.0, B: 0.0, A: 0.8 },
@@ -100,14 +99,18 @@ g.test('texture_binding')
         ({ format, viewFormat }) => format !== viewFormat && viewCompatible(format, viewFormat)
       )
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { format, viewFormat } = t.params;
+    t.skipIfTextureFormatNotSupported(format, viewFormat);
+  })
+  .fn(t => {
     const { format, viewFormat } = t.params;
 
     // Make an input texel view.
     const inputTexelView = makeInputTexelView(format);
 
     // Create the initial texture with the contents if the input texel view.
-    const texture = t.makeTextureWithContents(inputTexelView, {
+    const texture = t.createTextureFromTexelView(inputTexelView, {
       size: [kTextureSize, kTextureSize],
       usage: GPUTextureUsage.TEXTURE_BINDING,
       viewFormats: [viewFormat],
@@ -172,19 +175,13 @@ g.test('texture_binding')
     pass.end();
     t.device.queue.submit([commandEncoder.finish()]);
 
-    const result = await textureContentIsOKByT2B(
-      t,
+    t.expectTexelViewComparisonIsOkInTexture(
       { texture: outputTexture },
-      [kTextureSize, kTextureSize],
-      {
-        expTexelView: TexelView.fromTexelsAsColors('rgba8unorm', reinterpretedTexelView.color, {
-          clampToFormatRange: true,
-        }),
-      },
-      { maxDiffULPsForNormFormat: 1 }
+      TexelView.fromTexelsAsColors('rgba8unorm', reinterpretedTexelView.color, {
+        clampToFormatRange: true,
+      }),
+      [kTextureSize, kTextureSize]
     );
-
-    t.expectOK(result);
   });
 
 g.test('render_and_resolve_attachment')
@@ -204,7 +201,11 @@ in view format and match in base format.`
       )
       .combine('sampleCount', [1, 4])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { format, viewFormat } = t.params;
+    t.skipIfTextureFormatNotSupported(format, viewFormat);
+  })
+  .fn(t => {
     const { format, viewFormat, sampleCount } = t.params;
 
     // Make an input texel view.
@@ -238,7 +239,7 @@ in view format and match in base format.`
     // Create the sample source with the contents of the input texel view.
     // We will sample this texture into |renderTexture|. It uses the same format to keep the same
     // number of bits of precision.
-    const sampleSource = t.makeTextureWithContents(inputTexelView, {
+    const sampleSource = t.createTextureFromTexelView(inputTexelView, {
       size: [kTextureSize, kTextureSize],
       usage: GPUTextureUsage.TEXTURE_BINDING,
     });
@@ -334,14 +335,11 @@ in view format and match in base format.`
     const renderViewTexels = TexelView.fromTexelsAsColors(viewFormat, inputTexelView.color, {
       clampToFormatRange: true,
     });
-    t.expectOK(
-      await textureContentIsOKByT2B(
-        t,
-        { texture: singleSampleRenderTexture },
-        [kTextureSize, kTextureSize],
-        { expTexelView: renderViewTexels },
-        { maxDiffULPsForNormFormat: 2 }
-      )
+    t.expectTexelViewComparisonIsOkInTexture(
+      { texture: singleSampleRenderTexture },
+      renderViewTexels,
+      [kTextureSize, kTextureSize],
+      { maxDiffULPsForNormFormat: 2 }
     );
 
     // Check the resolved contents.
@@ -349,15 +347,11 @@ in view format and match in base format.`
       const resolveView = TexelView.fromTexelsAsColors(viewFormat, renderViewTexels.color, {
         clampToFormatRange: true,
       });
-
-      const result = await textureContentIsOKByT2B(
-        t,
+      t.expectTexelViewComparisonIsOkInTexture(
         { texture: resolveTexture },
+        resolveView,
         [kTextureSize, kTextureSize],
-        { expTexelView: resolveView },
         { maxDiffULPsForNormFormat: 2 }
       );
-
-      t.expectOK(result);
     }
   });

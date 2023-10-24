@@ -307,15 +307,27 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 
-    const auto& texture = fromAPI(destination.texture);
+    auto dataByteSize = dataSize;
 
-    if (!validateWriteTexture(destination, dataLayout, size, dataSize, texture)) {
+    auto& texture = fromAPI(destination.texture);
+    auto textureFormat = texture.format();
+    if (Texture::isDepthOrStencilFormat(textureFormat))
+        textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
+
+    uint32_t blockSize = Texture::texelBlockSize(textureFormat);
+
+    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture)) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
 
     if (!dataSize)
         return;
+
+    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+    auto widthForMetal = std::min(size.width, logicalSize.width);
+    auto heightForMetal = std::min(size.height, logicalSize.height);
+    auto depthForMetal = std::min(size.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
     if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
@@ -340,53 +352,116 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         return;
     }
 
+    constexpr auto levelInfoRowBlockBytes = 0;
+    id<MTLTexture> mtlTexture = texture.texture();
+    auto textureDimension = texture.dimension();
+    NSUInteger maxRowBytes = textureDimension == WGPUTextureDimension_3D ? (2048 * blockSize) : bytesPerRow;
+    if (bytesPerRow % blockSize || (bytesPerRow > maxRowBytes)) {
+        auto blockHeight = Texture::texelBlockHeight(textureFormat);
+        bool isCompressed = Texture::isCompressedFormat(textureFormat);
+
+        WGPUExtent3D newSize {
+            .width = size.width,
+            .height = isCompressed ? blockSize : blockHeight,
+            .depthOrArrayLayers = 1
+        };
+
+        if (textureDimension != WGPUTextureDimension_1D && (heightForMetal > newSize.height || depthForMetal > newSize.depthOrArrayLayers)) {
+            WGPUTextureDataLayout newDataLayout {
+                .nextInChain = nullptr,
+                .offset = 0,
+                .bytesPerRow = std::min<uint32_t>(maxRowBytes, dataLayout.bytesPerRow),
+                .rowsPerImage = newSize.height
+            };
+
+            if (isCompressed)
+                bytesPerRow = levelInfoRowBlockBytes;
+
+            for (uint32_t z = 0, endZ = std::max<uint32_t>(1, depthForMetal); z < endZ; ++z) {
+                WGPUImageCopyTexture newDestination = destination;
+                newDestination.origin.z = destination.origin.z + z;
+                for (uint32_t y = 0, endY = std::max<uint32_t>(1, heightForMetal); y < endY; y += newSize.height) {
+                    newDestination.origin.y = destination.origin.y + y;
+                    if (newDestination.origin.y + newSize.height > logicalSize.height)
+                        newSize.height = static_cast<uint32_t>(newDestination.origin.y + newSize.height - logicalSize.height);
+
+                    for (uint32_t x = 0; x < widthForMetal; x += maxRowBytes) {
+                        newDestination.origin.x = destination.origin.x + x;
+                        writeTexture(newDestination, static_cast<const uint8_t*>(data) + x + y * bytesPerRow + z * bytesPerImage, bytesPerRow * newSize.height, newDataLayout, newSize);
+                    }
+                }
+            }
+            return;
+        }
+
+        if (heightForMetal == 1) {
+            bytesPerRow = 0;
+            bytesPerImage = 0;
+        } else {
+            bytesPerRow = levelInfoRowBlockBytes;
+            bytesPerImage = 0;
+            if (auto add = widthForMetal % blockSize)
+                widthForMetal = std::min<NSUInteger>(widthForMetal + (blockSize - add), logicalSize.width);
+        }
+    }
+
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
     // we could detect whether this specific resource is idle, if we tracked every resource.
     if (isIdle() && options == MTLBlitOptionNone) {
-        switch (fromAPI(destination.texture).texture().storageMode) {
+        switch (mtlTexture.storageMode) {
         case MTLStorageModeShared:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         case MTLStorageModeManaged:
 #endif
             {
-                switch (texture.dimension()) {
+                switch (textureDimension) {
                 case WGPUTextureDimension_1D: {
-                    auto region = MTLRegionMake1D(destination.origin.x, size.width);
+                    if (!size.width)
+                        return;
+
+                    auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        auto sourceOffset = static_cast<NSUInteger>(layer * bytesPerImage);
+                        auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
-                        [fromAPI(destination.texture).texture()
+                        [mtlTexture
                             replaceRegion:region
                             mipmapLevel:destination.mipLevel
                             slice:destinationSlice
                             withBytes:static_cast<const char*>(data) + sourceOffset
-                            bytesPerRow:bytesPerRow
-                            bytesPerImage:bytesPerImage];
+                            bytesPerRow:0
+                            bytesPerImage:0];
                     }
                     break;
                 }
                 case WGPUTextureDimension_2D: {
-                    auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, size.width, size.height);
+                    if (!size.width || !size.height)
+                        return;
+
+                    auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, widthForMetal, heightForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        auto sourceOffset = static_cast<NSUInteger>(layer * bytesPerImage);
+                        auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
-                        [fromAPI(destination.texture).texture()
+                        [mtlTexture
                             replaceRegion:region
                             mipmapLevel:destination.mipLevel
                             slice:destinationSlice
                             withBytes:static_cast<const char*>(data) + sourceOffset
                             bytesPerRow:bytesPerRow
-                            bytesPerImage:bytesPerImage];
+                            bytesPerImage:0];
                     }
                     break;
                 }
                 case WGPUTextureDimension_3D: {
-                    auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, size.width, size.height, size.depthOrArrayLayers);
-                    [fromAPI(destination.texture).texture()
+                    if (!size.width || !size.height || !size.depthOrArrayLayers)
+                        return;
+
+                    auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, widthForMetal, heightForMetal, depthForMetal);
+                    auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset);
+                    [mtlTexture
                         replaceRegion:region
                         mipmapLevel:destination.mipLevel
                         slice:0
-                        withBytes:static_cast<const char*>(data)
+                        withBytes:static_cast<const char*>(data) + sourceOffset
                         bytesPerRow:bytesPerRow
                         bytesPerImage:bytesPerImage];
                     break;
@@ -406,34 +481,33 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         }
     }
 
+    ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:static_cast<const char*>(data) length:static_cast<NSUInteger>(dataSize) options:MTLResourceStorageModeShared];
+    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:static_cast<const char*>(data) + dataLayout.offset length:static_cast<NSUInteger>(dataByteSize) options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
         return;
-
-    ensureBlitCommandEncoder();
-    auto logicalSize = fromAPI(destination.texture).logicalMiplevelSpecificTextureExtent(destination.mipLevel);
-    auto widthForMetal = std::min(size.width, logicalSize.width);
-    auto heightForMetal = std::min(size.height, logicalSize.height);
-    auto depthForMetal = std::min(size.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
+        if (!widthForMetal)
+            return;
+
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
+
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
-                sourceBytesPerRow:bytesPerRow
-                sourceBytesPerImage:bytesPerImage
+                sourceBytesPerRow:0
+                sourceBytesPerImage:0
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:mtlTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -445,6 +519,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
+        if (!widthForMetal || !heightForMetal)
+            return;
+
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
@@ -453,9 +530,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
                 sourceBytesPerRow:bytesPerRow
-                sourceBytesPerImage:bytesPerImage
+                sourceBytesPerImage:0
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:mtlTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -466,6 +543,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+
         NSUInteger sourceOffset = 0;
         [m_blitCommandEncoder
             copyFromBuffer:temporaryBuffer
@@ -473,7 +553,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
             sourceBytesPerRow:bytesPerRow
             sourceBytesPerImage:bytesPerImage
             sourceSize:sourceSize
-            toTexture:fromAPI(destination.texture).texture()
+            toTexture:mtlTexture
             destinationSlice:0
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin

@@ -53,6 +53,8 @@ bool SubmitInputType::appendFormData(DOMFormData& formData) const
     if (!element()->isActivatedSubmit())
         return false;
     formData.append(element()->name(), element()->valueWithDefault());
+    if (auto& dirname = element()->attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+        formData.append(dirname, element()->directionForFormData());
     return true;
 }
 

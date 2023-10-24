@@ -256,7 +256,6 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
     const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
 
     switch (cssValueID) {
-    case CSSValueActivecaption:
     case CSSValueActivebuttontext:
     case CSSValueButtontext:
         return useDarkAppearance ? buttonTextColorDark : buttonTextColorLight;
@@ -265,32 +264,18 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
         return useDarkAppearance ? buttonTextDisabledColorDark : buttonTextDisabledColorLight;
 
     case CSSValueCanvas:
+        return useDarkAppearance ? SRGBA<uint8_t> { 30, 30, 30 } : Color::white;
+
     case CSSValueField:
 #if HAVE(OS_DARK_MODE_SUPPORT)
     case CSSValueWebkitControlBackground:
 #endif
         return useDarkAppearance ? textFieldBackgroundColorDark : textFieldBackgroundColorLight;
 
-    case CSSValueWindow:
-        return useDarkAppearance ? SRGBA<uint8_t> { 30, 30, 30 } : Color::white;
-
     case CSSValueCanvastext:
-    case CSSValueCaptiontext:
     case CSSValueFieldtext:
-    case CSSValueInactivecaptiontext:
-    case CSSValueInfotext:
     case CSSValueText:
-    case CSSValueWindowtext:
         return useDarkAppearance ? Color::white : Color::black;
-
-    case CSSValueInactiveborder:
-    case CSSValueInactivecaption:
-        return useDarkAppearance ? Color::black : Color::white;
-
-    case CSSValueWebkitFocusRingColor:
-    case CSSValueActiveborder:
-        // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
-        return SRGBA<uint8_t> { 52, 132, 228, static_cast<unsigned char>(255 * focusRingOpacity) };
 
     case CSSValueHighlight:
         // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.

@@ -10,7 +10,7 @@ import { assert } from '../../common/util/util.js';
 export class IDLTest extends Fixture {
   init() {
     // Ensure the GPU provider is initialized
-    getGPU();
+    getGPU(this.rec);
     return Promise.resolve();
   }
 
