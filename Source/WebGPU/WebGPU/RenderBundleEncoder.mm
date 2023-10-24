@@ -381,6 +381,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         m_cullMode = pipeline.cullMode();
         m_frontFace = pipeline.frontFace();
         m_depthClipMode = pipeline.depthClipMode();
+        m_primitiveType = pipeline.primitiveType();
     } else {
         m_recordedCommands.append([&pipeline, protectedThis = Ref { *this }] {
             protectedThis->setPipeline(pipeline);
