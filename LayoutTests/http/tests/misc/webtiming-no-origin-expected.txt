@@ -25,7 +25,7 @@ PASS timing.secureConnectionStart is 0
 PASS timing.toJSON is non-zero.
 PASS timing.unloadEventEnd is 0
 PASS timing.unloadEventStart is 0
-PASS navigation.redirectCount is 0
+PASS performance.navigation.redirectCount is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
