@@ -119,7 +119,7 @@ static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
 
 static bool shouldEnableWebGPU(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "127.0.0.1:8000/webgpu");
+    return pathContains(pathOrURL, "webgpu/");
 }
 
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
