@@ -459,7 +459,7 @@ public:
         return codeOrigins().get(index.bits());
     }
 
-    CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles(const ConcurrentJSLocker&)
+    CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles()
     {
         return m_lazyOperandValueProfiles;
     }
@@ -727,7 +727,7 @@ public:
     bool shouldOptimizeNowFromBaseline();
     void updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
-    void updateAllArrayProfilePredictions(const ConcurrentJSLocker&);
+    void updateAllArrayProfilePredictions();
     void updateAllArrayAllocationProfilePredictions();
     void updateAllPredictions();
 

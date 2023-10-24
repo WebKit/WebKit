@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -38,61 +38,65 @@ void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const Co
     if (!m_data)
         return;
     
-    for (unsigned i = 0; i < m_data->size(); ++i)
-        m_data->at(i).computeUpdatedPrediction(locker);
+    for (unsigned i = 0, size = m_data->m_size; i < size; ++i)
+        m_data->m_data.at(i).computeUpdatedPrediction(locker);
 }
 
-LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(
-    const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key)
+LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(const LazyOperandValueProfileKey& key)
 {
-    if (!m_data)
-        m_data = makeUnique<LazyOperandValueProfile::List>();
-    else {
-        for (unsigned i = 0; i < m_data->size(); ++i) {
-            if (m_data->at(i).key() == key)
-                return &m_data->at(i);
-        }
+    // This addition happens from mutator thread. Thus, we do not need to consider about concurrent additions from multiple threads.
+    ASSERT(!isCompilationThread());
+    if (!m_data) {
+        auto data = makeUnique<LazyOperandValueProfile::Vector>();
+        data->m_data.append(LazyOperandValueProfile(key));
+        ++data->m_size;
+        WTF::storeStoreFence();
+        m_data = WTFMove(data);
+        return &m_data->m_data.last();
+    }
+
+    for (unsigned i = 0, size = m_data->m_size; i < size; ++i) {
+        if (m_data->m_data.at(i).key() == key)
+            return &m_data->m_data.at(i);
     }
     
-    m_data->append(LazyOperandValueProfile(key));
-    return &m_data->last();
+    m_data->m_data.append(LazyOperandValueProfile(key));
+    WTF::storeStoreFence();
+    ++m_data->m_size;
+    return &m_data->m_data.last();
 }
 
 LazyOperandValueProfileParser::LazyOperandValueProfileParser() { }
 LazyOperandValueProfileParser::~LazyOperandValueProfileParser() { }
 
-void LazyOperandValueProfileParser::initialize(
-    const ConcurrentJSLocker&, CompressedLazyOperandValueProfileHolder& holder)
+void LazyOperandValueProfileParser::initialize(CompressedLazyOperandValueProfileHolder& holder)
 {
     ASSERT(m_map.isEmpty());
-    
+
     if (!holder.m_data)
         return;
-    
-    LazyOperandValueProfile::List& data = *holder.m_data;
-    for (unsigned i = 0; i < data.size(); ++i)
-        m_map.add(data[i].key(), &data[i]);
+
+    auto& data = *holder.m_data;
+    for (unsigned i = 0, size = data.m_size; i < size; ++i)
+        m_map.add(data.m_data.at(i).key(), &data.m_data.at(i));
 }
 
-LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(
-    const LazyOperandValueProfileKey& key) const
+LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(const LazyOperandValueProfileKey& key) const
 {
-    HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*>::const_iterator iter =
-        m_map.find(key);
-    
+    auto iter = m_map.find(key);
+
     if (iter == m_map.end())
         return nullptr;
-    
+
     return iter->value;
 }
 
-SpeculatedType LazyOperandValueProfileParser::prediction(
-    const ConcurrentJSLocker& locker, const LazyOperandValueProfileKey& key) const
+SpeculatedType LazyOperandValueProfileParser::prediction(const ConcurrentJSLocker& locker, const LazyOperandValueProfileKey& key) const
 {
     LazyOperandValueProfile* profile = getIfPresent(key);
     if (!profile)
         return SpecNone;
-    
+
     return profile->computeUpdatedPrediction(locker);
 }
 

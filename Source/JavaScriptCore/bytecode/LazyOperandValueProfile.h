@@ -132,11 +132,16 @@ struct LazyOperandValueProfile : public MinimalValueProfile {
     {
         return m_key;
     }
-    
+
     VirtualRegister m_operand;
     LazyOperandValueProfileKey m_key;
-    
-    typedef SegmentedVector<LazyOperandValueProfile, 8> List;
+
+    struct Vector {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        ConcurrentVector<LazyOperandValueProfile, 8> m_data;
+        unsigned m_size { 0 };
+    };
+
 };
 
 class LazyOperandValueProfileParser;
@@ -146,15 +151,14 @@ class CompressedLazyOperandValueProfileHolder {
 public:
     CompressedLazyOperandValueProfileHolder();
     ~CompressedLazyOperandValueProfileHolder();
-    
+
     void computeUpdatedPredictions(const ConcurrentJSLocker&);
-    
-    LazyOperandValueProfile* add(
-        const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key);
-    
+
+    LazyOperandValueProfile* add(const LazyOperandValueProfileKey&);
+
 private:
     friend class LazyOperandValueProfileParser;
-    std::unique_ptr<LazyOperandValueProfile::List> m_data;
+    std::unique_ptr<LazyOperandValueProfile::Vector> m_data;
 };
 
 class LazyOperandValueProfileParser {
@@ -163,14 +167,12 @@ public:
     explicit LazyOperandValueProfileParser();
     ~LazyOperandValueProfileParser();
     
-    void initialize(
-        const ConcurrentJSLocker&, CompressedLazyOperandValueProfileHolder& holder);
+    void initialize(CompressedLazyOperandValueProfileHolder&);
     
     LazyOperandValueProfile* getIfPresent(
         const LazyOperandValueProfileKey& key) const;
     
-    SpeculatedType prediction(
-        const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key) const;
+    SpeculatedType prediction(const ConcurrentJSLocker&, const LazyOperandValueProfileKey&) const;
 private:
     HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };
