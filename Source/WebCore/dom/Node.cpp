@@ -394,7 +394,7 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
 Node::Node(Document& document, ConstructionType type)
     : EventTarget(ConstructNode)
     , m_nodeFlags(type)
-    , m_treeScope(&document)
+    , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
 {
     ASSERT(isMainThread());
 
@@ -432,7 +432,16 @@ Node::~Node()
     ASSERT(!m_previous);
     ASSERT(!m_next);
 
-    document().decrementReferencingNodeCount();
+    {
+        // Not refing document because it may be in the middle of destruction.
+        auto& document = this->document(); // Store document before clearing out m_treeScope.
+
+        // The call to decrementReferencingNodeCount() below may destroy the document so we need to clear our
+        // m_treeScope CheckedPtr beforehand.
+        m_treeScope = nullptr;
+
+        document.decrementReferencingNodeCount(); // This may destroy the document.
+    }
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS))
     for (auto& document : Document::allDocuments()) {

@@ -68,6 +68,10 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
     void setParentTreeScope(TreeScope&);
 
+    // For CheckedPtr / CheckedRef use.
+    void incrementPtrCount() const;
+    void decrementPtrCount() const;
+
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
 
