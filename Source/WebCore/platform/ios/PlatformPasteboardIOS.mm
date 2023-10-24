@@ -424,7 +424,12 @@ static void addRepresentationsForPlainText(WebItemProviderRegistrationInfoList *
     if (plainText.isEmpty())
         return;
 
+#if HAVE(NSURL_ENCODING_INVALID_CHARACTERS)
+    NSURL *platformURL = [NSURL URLWithString:plainText encodingInvalidCharacters:NO];
+#else
     NSURL *platformURL = [NSURL URLWithString:plainText];
+#endif
+
     if (URL(platformURL).isValid())
         [itemsToRegister addRepresentingObject:platformURL];
 
