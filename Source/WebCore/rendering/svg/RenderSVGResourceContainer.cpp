@@ -94,6 +94,12 @@ void RenderSVGResourceContainer::markAllClientsForRepaint()
 
 void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
+    WeakHashSet<RenderObject> visitedRenderers;
+    markAllClientsForInvalidationIfNeeded(mode, &visitedRenderers);
+}
+
+void RenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(InvalidationMode mode, WeakHashSet<RenderObject>* visitedRenderers)
+{
     // FIXME: Style invalidation should either be a pre-layout task or this function
     // should never get called while in layout. See webkit.org/b/208903.
     if ((m_clients.isEmpty() && m_clientLayers.isEmpty()) || m_isInvalidating)
@@ -111,14 +117,14 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
             continue;
 
         if (is<RenderSVGResourceContainer>(*client)) {
-            downcast<RenderSVGResourceContainer>(*client).removeAllClientsFromCache(markForInvalidation);
+            downcast<RenderSVGResourceContainer>(*client).removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
             continue;
         }
 
         if (markForInvalidation)
             markClientForInvalidation(*client, mode);
 
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*client, needsLayout);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(*client, needsLayout, visitedRenderers);
     }
 
     markAllClientLayersForInvalidation();

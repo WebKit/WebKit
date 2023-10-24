@@ -54,9 +54,9 @@ void RenderSVGResourceMarker::layout()
     LegacyRenderSVGContainer::layout();
 }
 
-void RenderSVGResourceMarker::removeAllClientsFromCache(bool markForInvalidation)
+void RenderSVGResourceMarker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void RenderSVGResourceMarker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
