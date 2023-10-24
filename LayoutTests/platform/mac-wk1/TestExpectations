@@ -18,7 +18,7 @@ editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-or
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Pass ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Pass ]
 editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html [ Pass ]
-webkit.org/b/261318 editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass Failure ] # change this back to "Pass" once fixed
+editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass ]
 editing/pasteboard/drag-drop-href-as-url.html [ Pass ]
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html [ Pass ]

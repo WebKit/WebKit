@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body onload="onLoad()">
 <div id="target" contentEditable="true" ondrop="check(event)"></div>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
 description('When dropping a file promise, dataTransfer.types must contain "Files" and not "text/uri-list". This test requires eventSender.beginDragWithFilePromises.');
 
 function runTest() {
-    jsTestIsAsync = true;
     const target = document.getElementById('target');
     eventSender.beginDragWithFilePromises(['../resources/abe.png']);
     eventSender.mouseMoveTo(target.offsetLeft + 5, target.offsetTop + 5);
@@ -22,12 +21,16 @@ function check(event) {
     finishJSTest();
 }
 
-if (window.eventSender)
-    runTest();
-else
-    testFailed('This test requires eventSender.beginDragWithFilePromises');
+function onLoad() {
+    if (window.eventSender)
+        runTest();
+    else
+        testFailed('This test requires eventSender.beginDragWithFilePromises');
+}
 
+jsTestIsAsync = true;
 var successfullyParsed = true;
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
