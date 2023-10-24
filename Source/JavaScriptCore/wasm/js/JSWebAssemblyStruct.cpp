@@ -50,22 +50,11 @@ JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const
 {
 }
 
-JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
+JSWebAssemblyStruct* JSWebAssemblyStruct::create(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Ref<const Wasm::TypeDefinition> type = instance->instance().module().moduleInformation().typeSignatures[typeIndex]->expand();
-
-    if (!globalObject->webAssemblyEnabled()) {
-        throwException(globalObject, throwScope, createEvalError(globalObject, globalObject->webAssemblyDisabledErrorMessage()));
-        return nullptr;
-    }
-
-    if (!Options::useWebAssemblyGC()) {
-        throwException(globalObject, throwScope, createEvalError(globalObject, "WebAssembly GC is not enabled."_s));
-        return nullptr;
-    }
 
     auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, Ref { type }, rtt);
     structValue->finishCreation(vm);
