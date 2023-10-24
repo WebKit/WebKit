@@ -162,7 +162,7 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(proto, protoJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
     emitJumpSlowCaseIfNotJSCell(valueJSR, value);

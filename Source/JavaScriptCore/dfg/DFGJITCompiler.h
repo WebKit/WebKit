@@ -360,7 +360,7 @@ public:
         Address unlinkedAddress()
         {
             ASSERT(isUnlinked());
-            return Address(GPRInfo::jitDataRegister, JITData::offsetOfData() + sizeof(void*) * m_index);
+            return Address(GPRInfo::jitDataRegister, JITData::offsetOfTrailingData() + sizeof(void*) * m_index);
         }
 #endif
 
@@ -373,6 +373,7 @@ public:
     };
 
     void loadConstant(LinkerIR::Constant, GPRReg);
+    void loadStructureStubInfo(StructureStubInfoIndex, GPRReg);
     void loadLinkableConstant(LinkableConstant, GPRReg);
     void storeLinkableConstant(LinkableConstant, Address);
 
@@ -394,7 +395,7 @@ public:
         return CCallHelpers::branchPtr(cond, left, CCallHelpers::TrustedImmPtr(constant.pointer()));
     }
 
-    std::tuple<CompileTimeStructureStubInfo, LinkableConstant> addStructureStubInfo();
+    std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> addStructureStubInfo();
     std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin);
     LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 

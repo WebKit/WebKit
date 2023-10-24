@@ -24,6 +24,7 @@ set(WTF_PUBLIC_HEADERS
     Brigand.h
     BubbleSort.h
     BumpPointerAllocator.h
+    ButterflyArray.h
     ByteOrder.h
     CPUTime.h
     CagedPtr.h

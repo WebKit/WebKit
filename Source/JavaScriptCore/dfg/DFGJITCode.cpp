@@ -35,9 +35,8 @@
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(const JITCode& jitCode, ExitVector&& exits)
-    : Base(jitCode.m_linkerIR.size())
-    , m_stubInfos(jitCode.m_unlinkedStubInfos.size())
+JITData::JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode& jitCode, ExitVector&& exits)
+    : Base(stubInfoSize, poolSize)
     , m_callLinkInfos(jitCode.m_unlinkedCallLinkInfos.size())
     , m_exits(WTFMove(exits))
 {
@@ -60,7 +59,6 @@ JITData::JITData(const JITCode& jitCode, ExitVector&& exits)
             break;
         }
         case LinkerIR::Type::Invalid:
-        case LinkerIR::Type::StructureStubInfo:
         case LinkerIR::Type::CallLinkInfo:
         case LinkerIR::Type::CellPointer:
         case LinkerIR::Type::NonCellPointer:
@@ -93,29 +91,26 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
     m_globalObject = codeBlock->globalObject();
     m_stackOffset = codeBlock->stackPointerOffset() * sizeof(Register);
 
+    for (unsigned index = 0; index < jitCode.m_unlinkedStubInfos.size(); ++index) {
+        const UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode.m_unlinkedStubInfos[index];
+        stubInfo(index).initializeFromDFGUnlinkedStructureStubInfo(unlinkedStubInfo);
+    }
+
     unsigned indexOfWatchpoints = 0;
     bool success = true;
     for (unsigned i = 0; i < jitCode.m_linkerIR.size(); ++i) {
         auto entry = jitCode.m_linkerIR.at(i);
         switch (entry.type()) {
-        case LinkerIR::Type::StructureStubInfo: {
-            unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
-            const UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode.m_unlinkedStubInfos[index];
-            StructureStubInfo& stubInfo = m_stubInfos[index];
-            stubInfo.initializeFromDFGUnlinkedStructureStubInfo(unlinkedStubInfo);
-            at(i) = &stubInfo;
-            break;
-        }
         case LinkerIR::Type::CallLinkInfo: {
             unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
             const UnlinkedCallLinkInfo& unlinkedCallLinkInfo = jitCode.m_unlinkedCallLinkInfos[index];
             OptimizingCallLinkInfo& callLinkInfo = m_callLinkInfos[index];
             callLinkInfo.initializeFromDFGUnlinkedCallLinkInfo(vm, unlinkedCallLinkInfo);
-            at(i) = &callLinkInfo;
+            trailingSpan()[i] = &callLinkInfo;
             break;
         }
         case LinkerIR::Type::GlobalObject: {
-            at(i) = codeBlock->globalObject();
+            trailingSpan()[i] = codeBlock->globalObject();
             break;
         }
         case LinkerIR::Type::HavingABadTimeWatchpointSet: {
@@ -176,7 +171,7 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
         case LinkerIR::Type::Invalid:
         case LinkerIR::Type::CellPointer:
         case LinkerIR::Type::NonCellPointer: {
-            at(i) = entry.pointer();
+            trailingSpan()[i] = entry.pointer();
             break;
         }
         }

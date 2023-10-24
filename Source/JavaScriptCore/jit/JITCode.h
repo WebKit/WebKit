@@ -53,6 +53,14 @@ class Signature;
 class TrackedReferences;
 class VM;
 
+struct StructureStubInfoIndex {
+    explicit StructureStubInfoIndex(unsigned index)
+        : m_index(index)
+    { }
+
+    unsigned m_index { 0 };
+};
+
 enum class JITType : uint8_t {
     None = 0b000,
     HostCallThunk = 0b001,

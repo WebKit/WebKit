@@ -64,7 +64,7 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
     materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITGetByValGenerator gen(
@@ -122,7 +122,7 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
@@ -162,7 +162,7 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(brand, propertyJSR);
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     JITPrivateBrandAccessGenerator gen(
@@ -204,7 +204,7 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(brand, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
@@ -246,7 +246,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(value, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
     materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfArrayProfile(), profileGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
@@ -323,7 +323,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(value, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
@@ -434,7 +434,7 @@ void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
@@ -482,7 +482,7 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitJumpSlowCaseIfNotJSCell(propertyJSR, property);
@@ -531,7 +531,7 @@ void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, baseJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -571,7 +571,7 @@ void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, baseJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -612,7 +612,7 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, baseJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -666,7 +666,7 @@ void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(thisVReg, thisJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
     emitJumpSlowCaseIfNotJSCell(thisJSR, thisVReg);
@@ -716,7 +716,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(valueVReg, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -759,7 +759,7 @@ void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, baseJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -802,7 +802,7 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
     materializePointerIntoMetadata(bytecode, OpInByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
@@ -840,7 +840,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     emitGetVirtualRegister(propertyOrBrand, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
@@ -1621,7 +1621,7 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(thisValue, thisJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
     materializePointerIntoMetadata(bytecode, OpGetByValWithThis::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITGetByValWithThisGenerator gen(
@@ -1830,7 +1830,7 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     store8ToMetadata(scratch2GPR, bytecode, OpEnumeratorGetByVal::Metadata::offsetOfEnumeratorMetadata());
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
     materializePointerIntoMetadata(bytecode, OpEnumeratorGetByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     addSlowCase(branchIfNotCell(baseGPR));
@@ -1926,7 +1926,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     store8ToMetadata(scratch1GPR, bytecode, OpEnumeratorPutByVal::Metadata::offsetOfEnumeratorMetadata());
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     addSlowCase(branchIfNotCell(baseGPR));
     // This is always an int32 encoded value.

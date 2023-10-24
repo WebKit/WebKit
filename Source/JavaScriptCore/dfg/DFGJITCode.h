@@ -96,7 +96,6 @@ public:
 
     enum class Type : uint16_t {
         Invalid,
-        StructureStubInfo,
         CallLinkInfo,
         CellPointer,
         NonCellPointer,
@@ -158,11 +157,10 @@ private:
     FixedVector<Value> m_constants;
 };
 
-class JITData final : public TrailingArray<JITData, void*> {
-    WTF_MAKE_FAST_ALLOCATED;
+class JITData final : public ButterflyArray<JITData, StructureStubInfo, void*> {
     friend class JSC::LLIntOffsetsExtractor;
 public:
-    using Base = TrailingArray<JITData, void*>;
+    using Base = ButterflyArray<JITData, StructureStubInfo, void*>;
     using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
 
     static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
@@ -183,20 +181,30 @@ public:
         m_isInvalidated = 1;
     }
 
-    FixedVector<StructureStubInfo>& stubInfos() { return m_stubInfos; }
+    auto stubInfos() -> decltype(leadingSpan())
+    {
+        return leadingSpan();
+    }
+
+    StructureStubInfo& stubInfo(unsigned index)
+    {
+        auto span = stubInfos();
+        return span[span.size() - index - 1];
+    }
+
     FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
 
     static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
     static ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
 
+    explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
+
 private:
-    explicit JITData(const JITCode&, ExitVector&&);
 
     bool tryInitialize(VM&, CodeBlock*, const JITCode&);
 
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };
-    FixedVector<StructureStubInfo> m_stubInfos;
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     ExitVector m_exits;
@@ -313,7 +321,7 @@ public:
 
 inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
 {
-    auto result = std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(jitCode.m_linkerIR.size()))) JITData(jitCode, WTFMove(exits)) };
+    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedStubInfos.size(), jitCode.m_linkerIR.size(), jitCode, WTFMove(exits)) };
     if (result->tryInitialize(vm, codeBlock, jitCode))
         return result;
     return nullptr;
