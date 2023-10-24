@@ -113,7 +113,7 @@ public:
         Frame() { }
         ~Frame() { }
 
-        void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
+        void retrieveExpressionInfo(unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
         void setToEnd();
 
 #if ENABLE(DFG_JIT)

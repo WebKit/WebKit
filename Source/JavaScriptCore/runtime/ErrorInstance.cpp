@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -83,9 +83,9 @@ static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* ex
     if (!codeBlock->hasExpressionInfo() || message.isNull())
         return message;
     
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
+    unsigned startOffset = 0;
+    unsigned endOffset = 0;
+    unsigned divotPoint = 0;
     unsigned line = 0;
     unsigned column = 0;
 

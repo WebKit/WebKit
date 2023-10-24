@@ -492,9 +492,9 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
         auto populateCodeLocation = [] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
-                int divot;
-                int startOffset;
-                int endOffset;
+                unsigned divot;
+                unsigned startOffset;
+                unsigned endOffset;
                 codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset,
                     location.lineNumber, location.columnNumber);
                 location.bytecodeIndex = bytecodeIndex;
