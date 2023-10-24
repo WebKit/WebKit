@@ -2887,7 +2887,7 @@ bool AccessibilityObject::supportsPressAction() const
 {
     if (isButton())
         return true;
-    if (roleValue() == AccessibilityRole::Details || isSummary())
+    if (roleValue() == AccessibilityRole::Details)
         return true;
     
     RefPtr actionElement = this->actionElement();
@@ -2921,7 +2921,7 @@ bool AccessibilityObject::supportsPressAction() const
         if (!candidate)
             continue;
 
-        if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink() || candidate->isSummary()) {
+        if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink()) {
             matches += 1;
             if (matches >= 2)
                 return false;

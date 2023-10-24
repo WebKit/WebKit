@@ -29,13 +29,14 @@ var output = "This tests the ability to search for summary elements.\n\n";
 
 if (window.accessibilityController) {
     var webArea = accessibilityController.rootElement.childAtIndex(0);
-    let searchResult = null;
+    var searchResult = null;
     while (true) {
         searchResult = webArea.uiElementForSearchPredicate(searchResult, true, "AXControlSearchKey", "", false);
         if (!searchResult)
             break;
         output += `\n${searchResult.role} ${searchResult.title}\n`;
-        output += `Press action supported: ${searchResult.isPressActionSupported()}\n`;
+        // Supporting press action on summary elements breaks VoiceOver's ability to expand / collapse the containing details element.
+        output += expect("searchResult.isPressActionSupported()", "false");
     }
 
     debug(output);
