@@ -31,6 +31,7 @@
 #include <bit>
 #include <numbers>
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 
 namespace WGSL {
 
@@ -80,8 +81,12 @@ static ConstantValue zeroValue(const Type* type)
             // yet have ConstantStruct
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Matrix&) -> ConstantValue {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Types::Matrix& matrix) -> ConstantValue {
+            ConstantMatrix result(matrix.columns, matrix.rows);
+            auto value = zeroValue(matrix.element);
+            for (unsigned i = 0; i < result.elements.size(); ++i)
+                result.elements[i] = value;
+            return result;
         },
         [&](const Types::Reference&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
@@ -259,10 +264,29 @@ static ConstantValue constantMatrix(const Type* resultType, const FixedVector<Co
     if (arguments.isEmpty())
         return zeroValue(resultType);
 
-    // FIXME: we don't support matrices yet
-    UNUSED_PARAM(columns);
-    UNUSED_PARAM(rows);
-    RELEASE_ASSERT_NOT_REACHED();
+
+    if (arguments.size() == 1) {
+        auto& arg = arguments[0];
+        ASSERT(arg.isMatrix());
+        // FIXME: we might need to convert the type of the result when we support f16
+        return arg;
+    }
+
+    if (arguments.size() == columns * rows)
+        return ConstantMatrix { columns, rows, arguments };
+
+    RELEASE_ASSERT(arguments.size() == columns);
+    ConstantMatrix result(columns, rows);
+    unsigned i = 0;
+    for (auto& arg : arguments) {
+        ASSERT(arg.isVector());
+        auto& vector = arg.toVector();
+        ASSERT(vector.elements.size() == rows);
+        for (auto& element : vector.elements)
+            result.elements[i++] = element;
+    }
+    ASSERT(i == columns * rows);
+    return result;
 }
 
 #define UNARY_OPERATION(name, constraint, fn) \
@@ -308,7 +332,15 @@ static ConstantValue constantAdd(const Type*, const FixedVector<ConstantValue>& 
 {
     ASSERT(arguments.size() == 2);
 
-    // FIXME: handle constant matrices
+    if (auto* left = std::get_if<ConstantMatrix>(&arguments[0])) {
+        auto& right = std::get<ConstantMatrix>(arguments[1]);
+        ASSERT(left->columns == right.columns);
+        ASSERT(left->rows == right.rows);
+        ConstantMatrix result(left->columns, left->rows);
+        for (unsigned i = 0; i < result.elements.size(); ++i)
+            result.elements[i] = left->elements[i].toDouble() + right.elements[i].toDouble();
+        return result;
+    }
 
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
         return left + right;
@@ -328,11 +360,68 @@ static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>
 }
 
 
-static ConstantValue constantMultiply(const Type*, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantDot(const Type*, const FixedVector<ConstantValue>&);
+static ConstantValue constantMultiply(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     ASSERT(arguments.size() == 2);
 
-    // FIXME: handle constant matrices
+    auto* leftMatrix = std::get_if<ConstantMatrix>(&arguments[0]);
+    auto* rightMatrix = std::get_if<ConstantMatrix>(&arguments[1]);
+    if (leftMatrix && rightMatrix) {
+        ASSERT(leftMatrix->columns == rightMatrix->rows);
+        ConstantMatrix result(rightMatrix->columns, leftMatrix->rows);
+        for (unsigned i = 0; i < rightMatrix->columns; ++i) {
+            for (unsigned j = 0; j < leftMatrix->rows; ++j) {
+                double value = 0;
+                for (unsigned k = 0; k < leftMatrix->columns; ++k)
+                    value += leftMatrix->elements[k * leftMatrix->rows + j].toDouble() * rightMatrix->elements[i * rightMatrix->rows + k].toDouble();
+                result.elements[i * result.rows + j] = value;
+            }
+        }
+        return result;
+    }
+    if (leftMatrix || rightMatrix) {
+        if (auto* rightVector = std::get_if<ConstantVector>(&arguments[1])) {
+            auto columns = leftMatrix->columns;
+            auto rows = leftMatrix->rows;
+            ConstantVector result(rows);
+            ConstantVector leftVector(columns);
+            for (unsigned i = 0; i < rows; ++i) {
+                for (unsigned j = 0; j < columns; ++j)
+                    leftVector.elements[j] = leftMatrix->elements[j * rows + i];
+                result.elements[i] = constantDot(resultType, { leftVector, *rightVector });
+            }
+            return result;
+        }
+
+        if (auto* leftVector = std::get_if<ConstantVector>(&arguments[0])) {
+            auto columns = rightMatrix->columns;
+            auto rows = rightMatrix->rows;
+            ConstantVector result(columns);
+            ConstantVector rightVector(rows);
+            for (unsigned i = 0; i < columns; ++i) {
+                for (unsigned j = 0; j < rows; ++j)
+                    rightVector.elements[j] = rightMatrix->elements[i * rows + j];
+                result.elements[i] = constantDot(resultType, { *leftVector, rightVector });
+            }
+            return result;
+        }
+
+        const ConstantMatrix* matrix;
+        double scalar;
+        if (leftMatrix) {
+            matrix = leftMatrix;
+            scalar = arguments[1].toDouble();
+        } else {
+            matrix = rightMatrix;
+            scalar = arguments[0].toDouble();
+        }
+
+        ConstantMatrix result(matrix->columns, matrix->rows);
+        for (unsigned i = 0; i < result.elements.size(); ++i)
+            result.elements[i] = matrix->elements[i].toDouble() * scalar;
+        return result;
+    }
 
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
         return left * right;
@@ -532,10 +621,58 @@ static ConstantValue constantCross(const Type*, const FixedVector<ConstantValue>
 
 UNARY_OPERATION(Degrees, Float, [&](float arg) { return arg * (180 / std::numbers::pi); })
 
-static ConstantValue constantDeterminant(const Type*, const FixedVector<ConstantValue>&)
+static ConstantValue constantDeterminant(const Type*, const FixedVector<ConstantValue>& arguments)
 {
-    // FIXME: we don't support matrices yet
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT(arguments.size() == 1);
+    auto& matrix = std::get<ConstantMatrix>(arguments[0]);
+    auto columns = matrix.columns;
+    auto solve2 = [&](
+        auto a, auto b,
+        auto c, auto d
+    ) {
+        return a * d - b * c;
+    };
+
+    auto solve3 = [&](
+        auto a, auto b, auto c,
+        auto d, auto e, auto f,
+        auto g, auto h, auto i
+    ) {
+        return a * e * i + b * f * g + c * d * h - c * e * g - b * d * i - a * f * h;
+    };
+
+    auto solve4 = [&](
+        auto a, auto b, auto c, auto d,
+        auto e, auto f, auto g, auto h,
+        auto i, auto j, auto k, auto l,
+        auto m, auto n, auto o, auto p
+    ) {
+        return a * solve3(f, g, h, j, k, l, n, o, p) - b * solve3(e, g, h, i, k, l, m, o, p) + c * solve3(e, f, h, i, j, l, m, n, p) - d * solve3(e, f, g, i, j, k, m, n, o);
+    };
+
+    switch (columns) {
+    case 2:
+        return solve2(
+            matrix.elements[0].toDouble(), matrix.elements[2].toDouble(),
+            matrix.elements[1].toDouble(), matrix.elements[3].toDouble()
+        );
+
+    case 3:
+        return solve3(
+            matrix.elements[0].toDouble(), matrix.elements[3].toDouble(), matrix.elements[6].toDouble(),
+            matrix.elements[1].toDouble(), matrix.elements[4].toDouble(), matrix.elements[7].toDouble(),
+            matrix.elements[2].toDouble(), matrix.elements[5].toDouble(), matrix.elements[8].toDouble()
+        );
+    case 4:
+        return solve4(
+            matrix.elements[0].toDouble(), matrix.elements[4].toDouble(), matrix.elements[8].toDouble(),  matrix.elements[12].toDouble(),
+            matrix.elements[1].toDouble(), matrix.elements[5].toDouble(), matrix.elements[9].toDouble(),  matrix.elements[13].toDouble(),
+            matrix.elements[2].toDouble(), matrix.elements[6].toDouble(), matrix.elements[10].toDouble(), matrix.elements[14].toDouble(),
+            matrix.elements[3].toDouble(), matrix.elements[7].toDouble(), matrix.elements[11].toDouble(), matrix.elements[15].toDouble()
+        );
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 static ConstantValue constantLength(const Type*, const FixedVector<ConstantValue>&);
@@ -799,10 +936,18 @@ TERNARY_OPERATION(Smoothstep, Float, [&](auto low, auto high, auto x) {
 UNARY_OPERATION(Sqrt, Float, WRAP_STD(sqrt))
 BINARY_OPERATION(Step, Float, [&](auto edge, auto x) { return edge <= x ? 1.0 : 0.0; })
 
-static ConstantValue constantTranspose(const Type*, const FixedVector<ConstantValue>&)
+static ConstantValue constantTranspose(const Type*, const FixedVector<ConstantValue>& arguments)
 {
-    // FIXME: we don't support matrices yet
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT(arguments.size() == 1);
+    auto& matrix = std::get<ConstantMatrix>(arguments[0]);
+    auto columns = matrix.columns;
+    auto rows = matrix.rows;
+    ConstantMatrix result(rows, columns);
+    for (unsigned j = 0; j < rows; ++j) {
+        for (unsigned i = 0; i < columns; ++i)
+            result.elements[j * columns + i] = matrix.elements[i * rows + j];
+    }
+    return result;
 }
 
 UNARY_OPERATION(Trunc, Float, WRAP_STD(trunc))

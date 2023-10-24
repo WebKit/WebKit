@@ -1788,9 +1788,19 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             }
             m_stringBuilder.append("}");
         },
-        [&](const Matrix&) {
-            // Not supported yet
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Matrix& matrixType) {
+            auto& matrix = std::get<ConstantMatrix>(value);
+            m_stringBuilder.append("matrix<");
+            visit(matrixType.element);
+            m_stringBuilder.append(", ", matrixType.columns, ", ", matrixType.rows, ">(");
+            bool first = true;
+            for (auto& element : matrix.elements) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                serializeConstant(matrixType.element, element);
+            }
+            m_stringBuilder.append(")");
         },
         [&](const Struct&) {
             // Not supported yet

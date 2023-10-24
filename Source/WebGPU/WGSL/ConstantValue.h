@@ -66,7 +66,28 @@ struct ConstantVector {
     FixedVector<ConstantValue> elements;
 };
 
-using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVector>;
+struct ConstantMatrix {
+    ConstantMatrix(uint32_t columns, uint32_t rows)
+        : columns(columns)
+        , rows(rows)
+        , elements(columns * rows)
+    {
+    }
+
+    ConstantMatrix(uint32_t columns, uint32_t rows, const FixedVector<ConstantValue>& elements)
+        : columns(columns)
+        , rows(rows)
+        , elements(elements)
+    {
+        RELEASE_ASSERT(elements.size() == columns * rows);
+    }
+
+    uint32_t columns;
+    uint32_t rows;
+    FixedVector<ConstantValue> elements;
+};
+
+using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
@@ -78,6 +99,7 @@ struct ConstantValue : BaseValue {
     bool isInt() const { return std::holds_alternative<int64_t>(*this); }
     bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
     bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
+    bool isMatrix() const { return std::holds_alternative<ConstantMatrix>(*this); }
 
     bool toBool() const { return std::get<bool>(*this); }
     int64_t toInt() const
@@ -96,7 +118,6 @@ struct ConstantValue : BaseValue {
     }
     const ConstantVector& toVector() const
     {
-        ASSERT(isNumber());
         return std::get<ConstantVector>(*this);
     }
 };

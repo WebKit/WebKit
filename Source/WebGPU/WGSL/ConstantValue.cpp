@@ -64,6 +64,17 @@ void ConstantValue::dump(PrintStream& out) const
                 out.print(element);
             }
             out.print(")");
+        },
+        [&](const ConstantMatrix& m) {
+            out.print("mat", m.columns, "x", m.rows, "(");
+            bool first = true;
+            for (const auto& element : m.elements) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(element);
+            }
+            out.print(")");
         });
 }
 
