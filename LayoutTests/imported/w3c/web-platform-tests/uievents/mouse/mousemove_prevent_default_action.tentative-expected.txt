@@ -2,6 +2,6 @@ div a
 div b
 div c
 
-FAIL selectionchange event firing when mousemove event is prevented assert_equals: received events expected "mousemove,mousedown,selectionchange,mousemove,selectionchange" but got "mousemove,mousedown,selectionchange,mousemove"
-FAIL dragstart event firing when mousemove event is prevented assert_equals: received events expected "mousemove,mousedown,mousemove,dragstart" but got "mousemove,mousedown,mousemove"
+PASS selectionchange event firing when mousemove event is prevented
+PASS dragstart event firing when mousemove event is prevented
 
