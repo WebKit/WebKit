@@ -43,7 +43,6 @@
 ] interface RemoteDOMWindow {
     [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;
-    [CallWith=IncumbentDocument] undefined close();
     readonly attribute boolean closed;
     [CallWith=IncumbentWindow] undefined focus();
     undefined blur();

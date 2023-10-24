@@ -27,6 +27,7 @@
 #include "WebRemoteFrameClient.h"
 
 #include "MessageSenderInlines.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/FrameLoadRequest.h>
@@ -95,6 +96,12 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<WebCo
 void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
 {
     WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
+}
+
+void WebRemoteFrameClient::close()
+{
+    // FIXME: <rdar://117381050> Consider if this needs the same logic as WebChromeClient::closeWindow, or refactor to share code.
+    WebProcess::singleton().send(Messages::WebProcessProxy::CloseRemoteFrame(m_frame->frameID()), 0);
 }
 
 }

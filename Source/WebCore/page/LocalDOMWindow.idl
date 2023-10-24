@@ -60,7 +60,6 @@
     [Replaceable] readonly attribute BarProp statusbar;
     [Replaceable] readonly attribute BarProp toolbar;
     attribute DOMString status;
-    [DoNotCheckSecurity, CallWith=IncumbentDocument] undefined close();
     [DoNotCheckSecurity] readonly attribute boolean closed;
     undefined stop();
     [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();

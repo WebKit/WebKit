@@ -49,6 +49,7 @@ private:
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void close() final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 };

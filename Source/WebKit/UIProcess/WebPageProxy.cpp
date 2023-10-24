@@ -1478,6 +1478,9 @@ void WebPageProxy::close()
 
     stopAllURLSchemeTasks();
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
+
+    if (RefPtr openerPage = m_openerFrame ? m_openerFrame->page() : nullptr)
+        openerPage->removeOpenedRemotePageProxy(identifier());
 }
 
 bool WebPageProxy::tryClose()
@@ -12895,11 +12898,9 @@ RefPtr<RemotePageProxy> WebPageProxy::takeRemotePageProxyInOpenerProcessIfDomain
     return std::exchange(internals().remotePageProxyInOpenerProcess, nullptr);
 }
 
-// FIXME: Add a remove call if the opened page is closed or destroyed. <rdar://111064432>
 void WebPageProxy::removeOpenedRemotePageProxy(WebPageProxyIdentifier pageID)
 {
-    bool contained = internals().openedRemotePageProxies.remove(pageID);
-    ASSERT_UNUSED(contained, contained);
+    internals().openedRemotePageProxies.remove(pageID);
 }
 
 void WebPageProxy::addOpenedRemotePageProxy(WebPageProxyIdentifier pageID, Ref<RemotePageProxy>&& page)

@@ -60,7 +60,10 @@ WindowProxy* RemoteDOMWindow::self() const
 
 void RemoteDOMWindow::close(Document&)
 {
-    // FIXME: Implemented this. <rdar://116203970>
+    // FIXME: <rdar://117381050> Add security checks here equivalent to LocalDOMWindow::close (both with and without Document& parameter).
+    // Or refactor to share code.
+    if (m_frame && m_frame->isMainFrame())
+        m_frame->client().close();
 }
 
 bool RemoteDOMWindow::closed() const
