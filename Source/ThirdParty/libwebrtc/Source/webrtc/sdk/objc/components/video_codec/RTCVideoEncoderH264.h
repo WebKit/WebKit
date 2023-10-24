@@ -23,4 +23,5 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderH264")))
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
 - (void)flush;
+- (void)enableL1T2ScalabilityMode;
 @end

@@ -59,8 +59,29 @@ void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessi
 // Convenience function for setting a VT property.
 void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
                           CFStringRef key,
-                          uint32_t value) {
+                          double value) {
   RTC_DCHECK(vtSession || vcpSession);
+  CFNumberRef cfNum =
+      CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &value);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, cfNum);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cfNum);
+#endif
+  CFRelease(cfNum);
+  if (status != noErr) {
+    std::string key_string = CFStringToString(key);
+    RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
+                      << " to " << value << ": " << status;
+  }
+}
+
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
+                          CFStringRef key,
+                          uint32_t value) {
+  RTC_DCHECK(vtSession);
   int64_t value_64 = value;
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);

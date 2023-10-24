@@ -37,6 +37,7 @@
 #include "VideoCodecType.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoDecoder.h>
 #include <atomic>
 #include <wtf/ThreadAssertions.h>
@@ -89,7 +90,7 @@ private:
     void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, const IPC::DataReference&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
-    void createEncoder(VideoEncoderIdentifier, VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, CompletionHandler<void(bool)>&&);
+    void createEncoder(VideoEncoderIdentifier, VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
     void releaseEncoder(VideoEncoderIdentifier);
     void initializeEncoder(VideoEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame);

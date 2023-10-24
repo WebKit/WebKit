@@ -18,6 +18,7 @@ promise_setup(async () => {
   config.height = 200;
   config.bitrate = 1000000;
   config.bitrateMode = "constant";
+  config.latencyMode = "realtime";
   config.framerate = 30;
   ENCODER_CONFIG = config;
 });

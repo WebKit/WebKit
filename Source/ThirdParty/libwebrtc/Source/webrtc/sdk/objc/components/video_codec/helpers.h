@@ -38,6 +38,8 @@ void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSession
                           CFStringRef key,
                           uint32_t value);
 
+void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession, CFStringRef key, double value);
+
 // Convenience function for setting a VT property.
 void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession, CFStringRef key, bool value);
 
