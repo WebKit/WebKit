@@ -2471,9 +2471,6 @@ imported/w3c/web-platform-tests/css/css-tables/tentative/caption.html [ Failure 
 imported/w3c/web-platform-tests/css/css-tables/tentative/colgroup-col.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-tables/tentative/table-quirks.html [ Failure ]
 
-imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-018.html [ Failure ImageOnlyFailure Timeout ]
-imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-019.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-color/system-color-compute.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
 
 # Timeout
