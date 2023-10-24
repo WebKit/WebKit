@@ -60,7 +60,6 @@
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"
 #include "HTMLFrameOwnerElement.h"
-#include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
@@ -80,6 +79,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
+#include "TransformOperationData.h"
 #include "TranslateTransformOperation.h"
 #include "WebAnimationUtilities.h"
 

@@ -51,7 +51,6 @@
 #include "KeyframeEffectStack.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "MotionPath.h"
 #include "MutableStyleProperties.h"
 #include "PropertyAllowlist.h"
 #include "RenderBox.h"
@@ -66,6 +65,7 @@
 #include "StyleScope.h"
 #include "StyledElement.h"
 #include "TimingFunction.h"
+#include "TransformOperationData.h"
 #include "TranslateTransformOperation.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/IsoMallocInlines.h>

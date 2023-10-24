@@ -43,6 +43,7 @@
 #include "SVGTextElement.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
+#include "TransformOperationData.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>

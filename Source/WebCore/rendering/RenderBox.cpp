@@ -55,7 +55,6 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "MotionPath.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockInlines.h"
@@ -89,6 +88,7 @@
 #include "Settings.h"
 #include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
+#include "TransformOperationData.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>

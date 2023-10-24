@@ -23,7 +23,6 @@
 #include "SVGGraphicsElement.h"
 
 #include "LegacyRenderSVGPath.h"
-#include "MotionPath.h"
 #include "RenderAncestorIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
@@ -37,6 +36,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
+#include "TransformOperationData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

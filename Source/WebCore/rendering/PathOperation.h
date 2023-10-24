@@ -35,6 +35,7 @@
 #include "OffsetRotation.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
+#include "TransformOperationData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>

@@ -2324,6 +2324,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderView.h
     rendering/RenderWidget.h
     rendering/TextBoxSelectableRange.h
+    rendering/TransformOperationData.h
 
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
@@ -2386,6 +2387,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/TextUnderlineOffset.h
     rendering/style/WillChangeData.h
 
+    rendering/svg/legacy/LegacyRenderSVGModelObject.h
     rendering/svg/RenderSVGModelObject.h
     rendering/svg/SVGBoundingBoxComputation.h
     rendering/svg/SVGRenderSupport.h
@@ -2409,6 +2411,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/StyleValidity.h
     style/Styleable.h
 
+    svg/SVGElement.h
     svg/SVGLengthContext.h
     svg/SVGLengthValue.h
     svg/SVGParserUtilities.h
