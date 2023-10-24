@@ -808,7 +808,7 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
     if (!m_activeContextMenu)
         return;
 
-    RetainPtr image = m_activeContextMenu->copySubjectResult();
+    auto image = m_activeContextMenu->imageForCopySubject();
     if (!image)
         return;
 
