@@ -23,7 +23,7 @@ g.test('adapter_info')
     - Every member in the structure except description is properly formatted`
   )
   .fn(async t => {
-    const gpu = getGPU();
+    const gpu = getGPU(t.rec);
     const adapter = await gpu.requestAdapter();
     assert(adapter !== null);
 
@@ -31,17 +31,17 @@ g.test('adapter_info')
 
     t.expect(
       normalizedIdentifierRegex.test(adapterInfo.vendor),
-      'adapterInfo.vendor should be a normalized identifier'
+      `adapterInfo.vendor should be a normalized identifier. But it's '${adapterInfo.vendor}'`
     );
 
     t.expect(
       normalizedIdentifierRegex.test(adapterInfo.architecture),
-      'adapterInfo.architecture should be a normalized identifier'
+      `adapterInfo.architecture should be a normalized identifier. But it's '${adapterInfo.architecture}'`
     );
 
     t.expect(
       normalizedIdentifierRegex.test(adapterInfo.device),
-      'adapterInfo.device should be a normalized identifier'
+      `adapterInfo.device should be a normalized identifier. But it's '${adapterInfo.device}'`
     );
   });
 

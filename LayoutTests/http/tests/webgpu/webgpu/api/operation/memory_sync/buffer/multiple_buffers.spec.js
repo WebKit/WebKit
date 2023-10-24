@@ -4,7 +4,7 @@
 Memory Synchronization Tests for multiple buffers: read before write, read after write, and write after write.
 
 - Create multiple src buffers and initialize it to 0, wait on the fence to ensure the data is initialized.
-Write Op: write a value (say 1) into the src buffer via render pass, copmute pass, copy, write buffer, etc.
+Write Op: write a value (say 1) into the src buffer via render pass, compute pass, copy, write buffer, etc.
 Read Op: read the value from the src buffer and write it to dst buffer via render pass (vertex, index, indirect input, uniform, storage), compute pass, copy etc.
 Wait on another fence, then call expectContents to verify the dst buffer value.
   - x= write op: {storage buffer in {compute, render, render-via-bundle}, t2b copy dst, b2b copy dst, writeBuffer}

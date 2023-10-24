@@ -5,13 +5,8 @@ This test dedicatedly tests validation of GPUDepthStencilState of createRenderPi
 `;
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../common/util/util.js';
-import {
-  kTextureFormats,
-  kTextureFormatInfo,
-  kDepthStencilFormats,
-  kCompareFunctions,
-  kStencilOperations,
-} from '../../../capability_info.js';
+import { kCompareFunctions, kStencilOperations } from '../../../capability_info.js';
+import { kTextureFormats, kTextureFormatInfo, kDepthStencilFormats } from '../../../format_info.js';
 import { getFragmentShaderCodeWithOutput } from '../../../util/shader.js';
 
 import { CreateRenderPipelineValidationTest } from './common.js';
@@ -24,15 +19,66 @@ g.test('format')
   .beforeAllSubcases(t => {
     const { format } = t.params;
     const info = kTextureFormatInfo[format];
+    t.skipIfTextureFormatNotSupported(format);
     t.selectDeviceOrSkipTestCase(info.feature);
   })
   .fn(t => {
     const { isAsync, format } = t.params;
     const info = kTextureFormatInfo[format];
 
-    const descriptor = t.getDescriptor({ depthStencil: { format } });
+    const descriptor = t.getDescriptor({
+      depthStencil: { format, depthWriteEnabled: false, depthCompare: 'always' },
+    });
 
-    t.doCreateRenderPipelineTest(isAsync, info.depth || info.stencil, descriptor);
+    t.doCreateRenderPipelineTest(isAsync, !!info.depth || !!info.stencil, descriptor);
+  });
+
+g.test('depthCompare_optional')
+  .desc(
+    `The depthCompare in depthStencilState is optional for stencil-only formats but required for formats with a depth.`
+  )
+  .params(u =>
+    u
+      .combine('isAsync', [false, true])
+      .combine('format', kDepthStencilFormats)
+      .beginSubcases()
+      .combine('depthCompare', ['always', undefined])
+  )
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    const info = kTextureFormatInfo[format];
+    t.skipIfTextureFormatNotSupported(format);
+    t.selectDeviceOrSkipTestCase(info.feature);
+  })
+  .fn(t => {
+    const { isAsync, format, depthCompare } = t.params;
+    const info = kTextureFormatInfo[format];
+    const descriptor = t.getDescriptor({
+      depthStencil: { format, depthCompare, depthWriteEnabled: false },
+    });
+
+    t.doCreateRenderPipelineTest(isAsync, !(info.depth && depthCompare === undefined), descriptor);
+  });
+
+g.test('depthWriteEnabled_optional')
+  .desc(
+    `The depthWriteEnabled in depthStencilState is optional for stencil-only formats but required for formats with a depth.`
+  )
+  .params(u => u.combine('isAsync', [false, true]).combine('format', kDepthStencilFormats))
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    const info = kTextureFormatInfo[format];
+    t.skipIfTextureFormatNotSupported(format);
+    t.selectDeviceOrSkipTestCase(info.feature);
+  })
+  .fn(t => {
+    const { isAsync, format } = t.params;
+    const info = kTextureFormatInfo[format];
+    const descriptor = t.getDescriptor({
+      depthStencil: { format, depthCompare: 'always', depthWriteEnabled: undefined },
+    });
+
+    t.doCreateRenderPipelineTest(isAsync, !info.depth, descriptor);
   });
 
 g.test('depth_test')
@@ -43,7 +89,7 @@ g.test('depth_test')
     u
       .combine('isAsync', [false, true])
       .combine('format', kDepthStencilFormats)
-      .combine('depthCompare', [undefined, ...kCompareFunctions])
+      .combine('depthCompare', kCompareFunctions)
   )
   .beforeAllSubcases(t => {
     const { format } = t.params;
@@ -55,11 +101,11 @@ g.test('depth_test')
     const info = kTextureFormatInfo[format];
 
     const descriptor = t.getDescriptor({
-      depthStencil: { format, depthCompare },
+      depthStencil: { format, depthCompare, depthWriteEnabled: false },
     });
 
     const depthTestEnabled = depthCompare !== undefined && depthCompare !== 'always';
-    t.doCreateRenderPipelineTest(isAsync, !depthTestEnabled || info.depth, descriptor);
+    t.doCreateRenderPipelineTest(isAsync, !depthTestEnabled || !!info.depth, descriptor);
   });
 
 g.test('depth_write')
@@ -82,9 +128,9 @@ g.test('depth_write')
     const info = kTextureFormatInfo[format];
 
     const descriptor = t.getDescriptor({
-      depthStencil: { format, depthWriteEnabled },
+      depthStencil: { format, depthWriteEnabled, depthCompare: 'always' },
     });
-    t.doCreateRenderPipelineTest(isAsync, !depthWriteEnabled || info.depth, descriptor);
+    t.doCreateRenderPipelineTest(isAsync, !depthWriteEnabled || !!info.depth, descriptor);
   });
 
 g.test('depth_write,frag_depth')
@@ -105,14 +151,16 @@ g.test('depth_write,frag_depth')
     const descriptor = t.getDescriptor({
       // Keep one color target so that the pipeline is still valid with no depth stencil target.
       targets: [{ format: 'rgba8unorm' }],
-      depthStencil: format ? { format, depthWriteEnabled: true } : undefined,
+      depthStencil: format
+        ? { format, depthWriteEnabled: true, depthCompare: 'always' }
+        : undefined,
       fragmentShaderCode: getFragmentShaderCodeWithOutput(
         [{ values: [1, 1, 1, 1], plainType: 'f32', componentCount: 4 }],
         { value: 0.5 }
       ),
     });
 
-    const hasDepth = format ? kTextureFormatInfo[format].depth : false;
+    const hasDepth = format ? !!kTextureFormatInfo[format].depth : false;
     t.doCreateRenderPipelineTest(isAsync, hasDepth, descriptor);
   });
 
@@ -138,13 +186,27 @@ g.test('stencil_test')
 
     let descriptor;
     if (face === 'front') {
-      descriptor = t.getDescriptor({ depthStencil: { format, stencilFront: { compare } } });
+      descriptor = t.getDescriptor({
+        depthStencil: {
+          format,
+          depthWriteEnabled: false,
+          depthCompare: 'always',
+          stencilFront: { compare },
+        },
+      });
     } else {
-      descriptor = t.getDescriptor({ depthStencil: { format, stencilBack: { compare } } });
+      descriptor = t.getDescriptor({
+        depthStencil: {
+          format,
+          depthWriteEnabled: false,
+          depthCompare: 'always',
+          stencilBack: { compare },
+        },
+      });
     }
 
     const stencilTestEnabled = compare !== undefined && compare !== 'always';
-    t.doCreateRenderPipelineTest(isAsync, !stencilTestEnabled || info.stencil, descriptor);
+    t.doCreateRenderPipelineTest(isAsync, !stencilTestEnabled || !!info.stencil, descriptor);
   });
 
 g.test('stencil_write')
@@ -174,25 +236,30 @@ g.test('stencil_write')
     const { isAsync, format, faceAndOpType, op } = t.params;
     const info = kTextureFormatInfo[format];
 
+    const common = {
+      format,
+      depthWriteEnabled: false,
+      depthCompare: 'always',
+    };
     let depthStencil;
     switch (faceAndOpType) {
       case 'frontFailOp':
-        depthStencil = { format, stencilFront: { failOp: op } };
+        depthStencil = { ...common, stencilFront: { failOp: op } };
         break;
       case 'frontDepthFailOp':
-        depthStencil = { format, stencilFront: { depthFailOp: op } };
+        depthStencil = { ...common, stencilFront: { depthFailOp: op } };
         break;
       case 'frontPassOp':
-        depthStencil = { format, stencilFront: { passOp: op } };
+        depthStencil = { ...common, stencilFront: { passOp: op } };
         break;
       case 'backFailOp':
-        depthStencil = { format, stencilBack: { failOp: op } };
+        depthStencil = { ...common, stencilBack: { failOp: op } };
         break;
       case 'backDepthFailOp':
-        depthStencil = { format, stencilBack: { depthFailOp: op } };
+        depthStencil = { ...common, stencilBack: { depthFailOp: op } };
         break;
       case 'backPassOp':
-        depthStencil = { format, stencilBack: { passOp: op } };
+        depthStencil = { ...common, stencilBack: { passOp: op } };
         break;
       default:
         unreachable();
@@ -201,5 +268,5 @@ g.test('stencil_write')
     const descriptor = t.getDescriptor({ depthStencil });
 
     const stencilWriteEnabled = op !== undefined && op !== 'keep';
-    t.doCreateRenderPipelineTest(isAsync, !stencilWriteEnabled || info.stencil, descriptor);
+    t.doCreateRenderPipelineTest(isAsync, !stencilWriteEnabled || !!info.stencil, descriptor);
   });

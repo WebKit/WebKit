@@ -6,8 +6,8 @@
 // MAINTENANCE_TODO: Also, audit to make sure we aren't dropping any on the floor. Consider a
 // no-ignored-return lint check if we can find one that we can use.
 import { assert, ErrorWithExtra, iterRange, range } from '../../common/util/util.js';
+import { Float16Array } from '../../external/petamoriken/float16/float16.js';
 
-import { float16BitsToFloat32 } from './conversion.js';
 import { generatePrettyTable } from './pretty_diff_tables.js';
 
 /** Generate an expected value at `index`, to test for equality with the actual value. */
@@ -42,40 +42,6 @@ export function checkElementsBetween(actual, expected) {
 
   // If there was an error, extend it with additional extras.
   return error ? new ErrorWithExtra(error, () => ({ expected })) : undefined;
-}
-
-/**
- * Equivalent to {@link checkElementsBetween} but interpret values as float16 and convert to JS number before comparison.
- */
-export function checkElementsFloat16Between(actual, expected) {
-  assert(actual.BYTES_PER_ELEMENT === 2, 'bytes per element need to be 2 (16bit)');
-  const actualF32 = new Float32Array(actual.length);
-  actual.forEach((v, i) => {
-    actualF32[i] = float16BitsToFloat32(v);
-  });
-  const expectedF32 = [new Float32Array(expected[0].length), new Float32Array(expected[1].length)];
-  expected[0].forEach((v, i) => {
-    expectedF32[0][i] = float16BitsToFloat32(v);
-  });
-  expected[1].forEach((v, i) => {
-    expectedF32[1][i] = float16BitsToFloat32(v);
-  });
-
-  const error = checkElementsPassPredicate(
-    actualF32,
-    (index, value) =>
-      value >= Math.min(expectedF32[0][index], expectedF32[1][index]) &&
-      value <= Math.max(expectedF32[0][index], expectedF32[1][index]),
-    {
-      predicatePrinter: [
-        { leftHeader: 'between', getValueForCell: index => expectedF32[0][index] },
-        { leftHeader: 'and', getValueForCell: index => expectedF32[1][index] },
-      ],
-    }
-  );
-
-  // If there was an error, extend it with additional extras.
-  return error ? new ErrorWithExtra(error, () => ({ expectedF32 })) : undefined;
 }
 
 /**
@@ -133,7 +99,7 @@ export function checkElementsEqualGenerated(actual, generator) {
 export function checkElementsPassPredicate(actual, predicate, { predicatePrinter }) {
   const size = actual.length;
   const ctor = actual.constructor;
-  const printAsFloat = ctor === Float32Array || ctor === Float64Array;
+  const printAsFloat = ctor === Float16Array || ctor === Float32Array || ctor === Float64Array;
 
   let failedElementsFirstMaybe = undefined;
   /** Sparse array with `true` for elements that failed. */

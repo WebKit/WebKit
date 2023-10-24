@@ -5,19 +5,18 @@ Validation for attachment compatibility between render passes, bundles, and pipe
 `;
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { range } from '../../../../common/util/util.js';
+import { kMaxColorAttachmentsToTest, kTextureSampleCounts } from '../../../capability_info.js';
 import {
   kRegularTextureFormats,
   kSizedDepthStencilFormats,
   kUnsizedDepthStencilFormats,
-  kTextureSampleCounts,
-  kMaxColorAttachments,
   kTextureFormatInfo,
-  getFeaturesForFormats,
   filterFormatsByFeature,
-} from '../../../capability_info.js';
+  getFeaturesForFormats,
+} from '../../../format_info.js';
 import { ValidationTest } from '../validation_test.js';
 
-const kColorAttachmentCounts = range(kMaxColorAttachments, i => i + 1);
+const kColorAttachmentCounts = range(kMaxColorAttachmentsToTest, i => i + 1);
 const kColorAttachments = kColorAttachmentCounts
   .map(count => {
     // generate cases with 0..1 null attachments at different location
@@ -154,10 +153,9 @@ class F extends ValidationTest {
 
 export const g = makeTestGroup(F);
 
-const kColorAttachmentFormats = kRegularTextureFormats.filter(format => {
-  const info = kTextureFormatInfo[format];
-  return info.color && info.renderable;
-});
+const kColorAttachmentFormats = kRegularTextureFormats.filter(
+  format => !!kTextureFormatInfo[format].colorRender
+);
 
 g.test('render_pass_and_bundle,color_format')
   .desc('Test that color attachment formats in render passes and bundles must match.')
@@ -168,6 +166,9 @@ g.test('render_pass_and_bundle,color_format')
   )
   .fn(t => {
     const { passFormat, bundleFormat } = t.params;
+
+    t.skipIfTextureFormatNotSupported(passFormat, bundleFormat);
+
     const bundleEncoder = t.device.createRenderBundleEncoder({
       colorFormats: [bundleFormat],
     });
@@ -195,6 +196,18 @@ g.test('render_pass_and_bundle,color_count')
   )
   .fn(t => {
     const { passCount, bundleCount } = t.params;
+
+    const { maxColorAttachments } = t.device.limits;
+    t.skipIf(
+      passCount > maxColorAttachments,
+      `passCount: ${passCount} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
+    t.skipIf(
+      bundleCount > maxColorAttachments,
+      `bundleCount: ${bundleCount} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
     const bundleEncoder = t.device.createRenderBundleEncoder({
       colorFormats: range(bundleCount, () => 'rgba8uint'),
     });
@@ -230,6 +243,18 @@ g.test('render_pass_and_bundle,color_sparse')
   )
   .fn(t => {
     const { passAttachments, bundleAttachments } = t.params;
+
+    const { maxColorAttachments } = t.device.limits;
+    t.skipIf(
+      passAttachments.length > maxColorAttachments,
+      `num passAttachments: ${passAttachments.length} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
+    t.skipIf(
+      bundleAttachments.length > maxColorAttachments,
+      `num bundleAttachments: ${bundleAttachments.length} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
     const colorFormats = bundleAttachments.map(i => (i ? 'rgba8uint' : null));
     const bundleEncoder = t.device.createRenderBundleEncoder({
       colorFormats,
@@ -353,6 +378,9 @@ Test that color attachment formats in render passes or bundles match the pipelin
   )
   .fn(t => {
     const { encoderType, encoderFormat, pipelineFormat } = t.params;
+
+    t.skipIfTextureFormatNotSupported(encoderFormat, pipelineFormat);
+
     const pipeline = t.createRenderPipeline([{ format: pipelineFormat, writeMask: 0 }]);
 
     const { encoder, validateFinishAndSubmit } = t.createEncoder(encoderType, {
@@ -378,6 +406,18 @@ count.
   )
   .fn(t => {
     const { encoderType, encoderCount, pipelineCount } = t.params;
+
+    const { maxColorAttachments } = t.device.limits;
+    t.skipIf(
+      pipelineCount > maxColorAttachments,
+      `pipelineCount: ${pipelineCount} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
+    t.skipIf(
+      encoderCount > maxColorAttachments,
+      `encoderCount: ${encoderCount} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
     const pipeline = t.createRenderPipeline(
       range(pipelineCount, () => ({ format: 'rgba8uint', writeMask: 0 }))
     );
@@ -411,6 +451,16 @@ Test that each of color attachments in render passes or bundles match that of th
   )
   .fn(t => {
     const { encoderType, encoderAttachments, pipelineAttachments } = t.params;
+    const { maxColorAttachments } = t.device.limits;
+    t.skipIf(
+      encoderAttachments.length > maxColorAttachments,
+      `num encoderAttachments: ${encoderAttachments.length} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
+
+    t.skipIf(
+      pipelineAttachments.length > maxColorAttachments,
+      `num pipelineAttachments: ${pipelineAttachments.length} > maxColorAttachments for device: ${maxColorAttachments}`
+    );
 
     const colorTargets = pipelineAttachments.map(i =>
       i ? { format: 'rgba8uint', writeMask: 0 } : null
@@ -457,7 +507,9 @@ Test that the depth attachment format in render passes or bundles match the pipe
 
     const pipeline = t.createRenderPipeline(
       [{ format: 'rgba8unorm', writeMask: 0 }],
-      pipelineFormat !== undefined ? { format: pipelineFormat } : undefined
+      pipelineFormat !== undefined
+        ? { format: pipelineFormat, depthCompare: 'always', depthWriteEnabled: false }
+        : undefined
     );
 
     const { encoder, validateFinishAndSubmit } = t.createEncoder(encoderType, {
@@ -543,6 +595,7 @@ Test that the depth stencil read only state in render passes or bundles is compa
         : {
             format,
             depthWriteEnabled,
+            depthCompare: 'always',
             stencilWriteMask,
             stencilFront,
             stencilBack,
@@ -619,7 +672,9 @@ Test that the sample count in render passes or bundles match the pipeline sample
 
     const pipeline = t.createRenderPipeline(
       colorFormats.map(format => ({ format, writeMask: 0 })),
-      depthStencilFormat ? { format: depthStencilFormat } : undefined,
+      depthStencilFormat
+        ? { format: depthStencilFormat, depthWriteEnabled: false, depthCompare: 'always' }
+        : undefined,
       pipelineSampleCount
     );
 

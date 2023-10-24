@@ -258,12 +258,12 @@ g.test('reuse_builtin_name')
   .params(u =>
     u
       .combineWithParams(kBuiltins)
-      .combine('use', ['type_name', 'struct', 'function', 'module-var', 'function-var'])
+      .combine('use', ['alias', 'struct', 'function', 'module-var', 'function-var'])
   )
   .fn(t => {
     let code = '';
-    if (t.params.use === 'type_name') {
-      code += `type ${t.params.name} = i32;`;
+    if (t.params.use === 'alias') {
+      code += `alias ${t.params.name} = i32;`;
     } else if (t.params.use === `struct`) {
       code += `struct ${t.params.name} { i: f32, }`;
     } else if (t.params.use === `function`) {

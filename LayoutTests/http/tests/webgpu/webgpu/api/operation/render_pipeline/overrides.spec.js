@@ -388,7 +388,7 @@ g.test('multi_entry_points')
       override B: f32 = 3.0;
       override C: f32;
       override D: f32;
-      
+
       @vertex fn vertexMain(
           @builtin(vertex_index) VertexIndex : u32
           ) -> @builtin(position) vec4<f32> {

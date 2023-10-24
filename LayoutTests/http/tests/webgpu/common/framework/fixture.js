@@ -1,6 +1,6 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { assert, unreachable } from '../util/util.js';
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/ import { assert, unreachable } from '../util/util.js';
 
 export class SkipTestCase extends Error {}
 export class UnexpectedPassError extends Error {}
@@ -9,27 +9,14 @@ export { TestCaseRecorder } from '../internal/logging/test_case_recorder.js';
 
 /** The fully-general type for params passed to a test function invocation. */
 
-
-
-
-
-
-
-
-
 export class SubcaseBatchState {
-
-
-  constructor(params) {
-    this._params = params;
-  }
-
-  /**
-   * Returns the case parameters for this test fixture shared state. Subcase params
-   * are not included.
-   */
-  get params() {
-    return this._params;
+  constructor(
+    recorder,
+    /** The case parameters for this test fixture shared state. Subcase params are not included. */
+    params
+  ) {
+    this.recorder = recorder;
+    this.params = params;
   }
 
   /**
@@ -55,8 +42,6 @@ export class SubcaseBatchState {
  * (i.e. every time the test function is run).
  */
 export class Fixture {
-
-
   /**
    * Interface for recording logs and test status.
    *
@@ -67,8 +52,8 @@ export class Fixture {
   numOutstandingAsyncExpectations = 0;
   objectsToCleanUp = [];
 
-  static MakeSharedState(params) {
-    return new SubcaseBatchState(params);
+  static MakeSharedState(recorder, params) {
+    return new SubcaseBatchState(recorder, params);
   }
 
   /** @internal */
@@ -111,9 +96,9 @@ export class Fixture {
    */
   async finalize() {
     assert(
-    this.numOutstandingAsyncExpectations === 0,
-    'there were outstanding immediateAsyncExpectations (e.g. expectUncapturedError) at the end of the test');
-
+      this.numOutstandingAsyncExpectations === 0,
+      'there were outstanding immediateAsyncExpectations (e.g. expectUncapturedError) at the end of the test'
+    );
 
     // Loop to exhaust the eventualExpectations in case they chain off each other.
     while (this.eventualExpectations.length) {
@@ -153,11 +138,11 @@ export class Fixture {
   tryTrackForCleanup(o) {
     if (typeof o === 'object' && o !== null) {
       if (
-      'destroy' in o ||
-      'close' in o ||
-      o instanceof WebGLRenderingContext ||
-      o instanceof WebGL2RenderingContext)
-      {
+        'destroy' in o ||
+        'close' in o ||
+        o instanceof WebGLRenderingContext ||
+        o instanceof WebGL2RenderingContext
+      ) {
         this.objectsToCleanUp.push(o);
       }
     }
@@ -172,6 +157,13 @@ export class Fixture {
   /** Throws an exception marking the subcase as skipped. */
   skip(msg) {
     throw new SkipTestCase(msg);
+  }
+
+  /** Throws an exception marking the subcase as skipped if condition is true */
+  skipIf(cond, msg = '') {
+    if (cond) {
+      this.skip(typeof msg === 'function' ? msg() : msg);
+    }
   }
 
   /** Log a warning and increase the result status to "Warn". */
@@ -222,7 +214,7 @@ export class Fixture {
 
   /** Expect that the provided promise resolves (fulfills). */
   shouldResolve(p, msg) {
-    this.eventualAsyncExpectation(async (niceStack) => {
+    this.eventualAsyncExpectation(async niceStack => {
       const m = msg ? ': ' + msg : '';
       try {
         await p;
@@ -239,7 +231,7 @@ export class Fixture {
 
   /** Expect that the provided promise rejects, with the provided exception name. */
   shouldReject(expectedName, p, msg) {
-    this.eventualAsyncExpectation(async (niceStack) => {
+    this.eventualAsyncExpectation(async niceStack => {
       const m = msg ? ': ' + msg : '';
       try {
         await p;
@@ -253,8 +245,10 @@ export class Fixture {
   }
 
   /**
-   * Expect that the provided function throws.
-   * If an `expectedName` is provided, expect that the throw exception has that name.
+   * Expect that the provided function throws (if `true` or `string`) or not (if `false`).
+   * If a string is provided, expect that the throw exception has that name.
+   *
+   * MAINTENANCE_TODO: Change to `string | false` so the exception name is always checked.
    */
   shouldThrow(expectedError, fn, msg) {
     const m = msg ? ': ' + msg : '';
@@ -289,11 +283,8 @@ export class Fixture {
    * If the argument is an `Error`, fail (or warn). If it's `undefined`, no-op.
    * If the argument is an array, apply the above behavior on each of elements.
    */
-  expectOK(
-  error,
-  { mode = 'fail', niceStack } = {})
-  {
-    const handleError = (error) => {
+  expectOK(error, { mode = 'fail', niceStack } = {}) {
+    const handleError = error => {
       if (error instanceof Error) {
         if (niceStack) {
           error.stack = niceStack.stack;
@@ -317,13 +308,9 @@ export class Fixture {
     }
   }
 
-  eventualExpectOK(
-  error,
-  { mode = 'fail' } = {})
-  {
-    this.eventualAsyncExpectation(async (niceStack) => {
+  eventualExpectOK(error, { mode = 'fail' } = {}) {
+    this.eventualAsyncExpectation(async niceStack => {
       this.expectOK(await error, { mode, niceStack });
     });
   }
 }
-//# sourceMappingURL=fixture.js.map

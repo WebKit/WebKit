@@ -257,6 +257,7 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
         { bgLayer: 1, bgLayerCount: 1 },
         { bgLayer: 1, bgLayerCount: 2 },
       ])
+      .beginSubcases()
       .combine('dsReadOnly', [true, false])
       .combine('bgAspect', ['depth-only', 'stencil-only'])
       .combine('inSamePass', [true, false])
@@ -301,11 +302,11 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
     const depthStencilAttachment = {
       view: attachmentView,
       depthReadOnly: dsReadOnly,
-      depthLoadOp: 'load',
-      depthStoreOp: 'store',
+      depthLoadOp: dsReadOnly ? undefined : 'load',
+      depthStoreOp: dsReadOnly ? undefined : 'store',
       stencilReadOnly: dsReadOnly,
-      stencilLoadOp: 'load',
-      stencilStoreOp: 'store',
+      stencilLoadOp: dsReadOnly ? undefined : 'load',
+      stencilStoreOp: dsReadOnly ? undefined : 'store',
     };
 
     const encoder = t.device.createCommandEncoder();

@@ -1,7 +1,6 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { resolveOnTimeout } from './util.js';
-
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/ import { resolveOnTimeout } from './util.js';
 
 /**
  * Attempts to trigger JavaScript garbage collection, either using explicit methods if exposed
@@ -9,7 +8,6 @@
  * some weird tricks to incur GC pressure. Adopted from the WebGL CTS.
  */
 export async function attemptGarbageCollection() {
-
   const w = globalThis;
   if (w.GCController) {
     w.GCController.collect();
@@ -22,12 +20,11 @@ export async function attemptGarbageCollection() {
   }
 
   try {
-    w.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-    getInterface(Components.interfaces.nsIDOMWindowUtils).
-    garbageCollect();
+    w.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+      .getInterface(Components.interfaces.nsIDOMWindowUtils)
+      .garbageCollect();
     return;
   } catch (e) {
-
     // ignore any failure
   }
   if (w.gc) {
@@ -56,4 +53,3 @@ export async function attemptGarbageCollection() {
 
   return resolveOnTimeout(35); // Let the event loop run a few frames in case it helps.
 }
-//# sourceMappingURL=collect_garbage.js.map

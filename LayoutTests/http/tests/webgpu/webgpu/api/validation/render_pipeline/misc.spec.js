@@ -39,7 +39,11 @@ state (and thus has no color state), and can be created with or without depth st
     if (depthStencilFormat === '') {
       depthStencilState = undefined;
     } else {
-      depthStencilState = { format: depthStencilFormat };
+      depthStencilState = {
+        format: depthStencilFormat,
+        depthWriteEnabled: false,
+        depthCompare: 'always',
+      };
     }
 
     // Having targets or not should have no effect in result, since it will not appear in the

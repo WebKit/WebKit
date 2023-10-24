@@ -14,19 +14,6 @@ export const kAllCanvasTypes = ['onscreen', 'offscreen'];
  */
 export const kValidCanvasContextIds = ['2d', 'bitmaprenderer', 'webgl', 'webgl2', 'webgpu'];
 
-/** Helper(s) to determine if context is copyable. */
-export function canCopyFromCanvasContext(contextName) {
-  switch (contextName) {
-    case '2d':
-    case 'webgl':
-    case 'webgl2':
-    case 'webgpu':
-      return true;
-    default:
-      return false;
-  }
-}
-
 /** Create HTMLCanvas/OffscreenCanvas. */
 export function createCanvas(test, canvasType, width, height) {
   if (canvasType === 'onscreen') {
