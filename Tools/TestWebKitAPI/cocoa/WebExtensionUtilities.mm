@@ -768,6 +768,37 @@ RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL)
     return loadAndRunExtension([[_WKWebExtension alloc] initWithResourceBaseURL:baseURL error:nullptr]);
 }
 
+NSData *makePNGData(CGSize size, SEL colorSelector)
+{
+#if USE(APPKIT)
+    auto image = adoptNS([[NSImage alloc] initWithSize:size]);
+
+    [image lockFocus];
+
+    [[NSColor performSelector:colorSelector] setFill];
+    NSRectFill(NSMakeRect(0, 0, size.width, size.height));
+
+    [image unlockFocus];
+
+    auto cgImageRef = [image CGImageForProposedRect:NULL context:nil hints:nil];
+    auto newImageRep = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:cgImageRef]);
+    newImageRep.get().size = size;
+
+    return [newImageRep representationUsingType:NSBitmapImageFileTypePNG properties:@{ }];
+#else
+    UIGraphicsBeginImageContextWithOptions(size, NO, 1.0);
+
+    [[UIColor performSelector:colorSelector] setFill];
+    UIRectFill(CGRectMake(0, 0, size.width, size.height));
+
+    auto *image = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    return UIImagePNGRepresentation(image);
+#endif
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI
 
