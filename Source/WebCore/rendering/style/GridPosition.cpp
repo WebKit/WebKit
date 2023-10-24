@@ -40,14 +40,14 @@ static const int kGridMaxPosition = 1000000;
 
 void GridPosition::setExplicitPosition(int position, const String& namedGridLine)
 {
-    m_type = ExplicitPosition;
+    m_type = GridPositionType::ExplicitPosition;
     setIntegerPosition(position);
     m_namedGridLine = namedGridLine;
 }
 
 void GridPosition::setAutoPosition()
 {
-    m_type = AutoPosition;
+    m_type = GridPositionType::AutoPosition;
     m_integerPosition = 0;
 }
 
@@ -56,32 +56,32 @@ void GridPosition::setAutoPosition()
 // some precision here. It shouldn't be an issue in practice though.
 void GridPosition::setSpanPosition(int position, const String& namedGridLine)
 {
-    m_type = SpanPosition;
+    m_type = GridPositionType::SpanPosition;
     setIntegerPosition(position);
     m_namedGridLine = namedGridLine;
 }
 
 void GridPosition::setNamedGridArea(const String& namedGridArea)
 {
-    m_type = NamedGridAreaPosition;
+    m_type = GridPositionType::NamedGridAreaPosition;
     m_namedGridLine = namedGridArea;
 }
 
 int GridPosition::integerPosition() const
 {
-    ASSERT(type() == ExplicitPosition);
+    ASSERT(type() == GridPositionType::ExplicitPosition);
     return m_integerPosition;
 }
 
 String GridPosition::namedGridLine() const
 {
-    ASSERT(type() == ExplicitPosition || type() == SpanPosition || type() == NamedGridAreaPosition);
+    ASSERT(type() == GridPositionType::ExplicitPosition || type() == GridPositionType::SpanPosition || type() == GridPositionType::NamedGridAreaPosition);
     return m_namedGridLine;
 }
 
 int GridPosition::spanPosition() const
 {
-    ASSERT(type() == SpanPosition);
+    ASSERT(type() == GridPositionType::SpanPosition);
     return m_integerPosition;
 }
 
@@ -103,13 +103,13 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 TextStream& operator<<(TextStream& ts, const GridPosition& o)
 {
     switch (o.type()) {
-    case AutoPosition:
+    case GridPositionType::AutoPosition:
         return ts << "auto";
-    case ExplicitPosition:
+    case GridPositionType::ExplicitPosition:
         return ts << o.namedGridLine() << " " << o.integerPosition();
-    case SpanPosition:
+    case GridPositionType::SpanPosition:
         return ts << "span" << " " << o.namedGridLine() << " " << o.integerPosition();
-    case NamedGridAreaPosition:
+    case GridPositionType::NamedGridAreaPosition:
         return ts << o.namedGridLine();
     }
     return ts;

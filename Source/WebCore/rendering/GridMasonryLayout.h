@@ -70,7 +70,7 @@ private:
     bool hasDefiniteGridAxisPosition(const RenderBox& child, GridTrackSizingDirection masonryDirection) const;
     static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
     {
-        return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
+        return !(masonryDirection == GridTrackSizingDirection::ForRows ? area.rows.startLine() : area.columns.startLine());
     }
     GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan gridAxisSpanFromArea(const GridArea&) const;

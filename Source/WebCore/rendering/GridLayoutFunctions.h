@@ -35,7 +35,7 @@ class RenderBox;
 class RenderElement;
 class RenderGrid;
 
-enum GridAxis {
+enum class GridAxis : uint8_t {
     GridRowAxis = 1 << 0,
     GridColumnAxis = 1 << 1
 };
