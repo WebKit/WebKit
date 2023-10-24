@@ -993,7 +993,7 @@ void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)
 void CodeBlock::setNumParameters(unsigned newValue, bool allocateArgumentValueProfiles)
 {
     m_numParameters = newValue;
-    m_argumentValueProfiles = FixedVector<ValueProfile>((Options::useJIT() && allocateArgumentValueProfiles) ? newValue : 0);
+    m_argumentValueProfiles = FixedVector<ArgumentValueProfile>((Options::useJIT() && allocateArgumentValueProfiles) ? newValue : 0);
 }
 
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
@@ -2840,21 +2840,23 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
 
     unsigned index = 0;
-    forEachValueProfile([&](ValueProfile& profile, bool isArgument) {
+    UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
+    forEachValueProfile([&](auto& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
-        static_assert(ValueProfile::numberOfBuckets == 1);
-        if (numSamples > ValueProfile::numberOfBuckets)
-            numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
+        using Profile = std::remove_reference_t<decltype(profile)>;
+        static_assert(Profile::numberOfBuckets == 1);
+        if (numSamples > Profile::numberOfBuckets)
+            numSamples = Profile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
         if (isArgument) {
             profile.computeUpdatedPrediction(locker);
-            unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
+            unlinkedCodeBlock->unlinkedValueProfile(index++).update(profile);
             return;
         }
         if (profile.numberOfSamples() || profile.isSampledBefore())
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
-        unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
+        unlinkedCodeBlock->unlinkedValueProfile(index++).update(profile);
     });
 
     if (m_metadata) {
@@ -2881,7 +2883,7 @@ void CodeBlock::updateAllLazyValueProfilePredictions(const ConcurrentJSLocker& l
     ASSERT(m_lock.isLocked());
 #endif
 #if ENABLE(DFG_JIT)
-    lazyOperandValueProfiles().computeUpdatedPredictions(locker);
+    lazyValueProfiles().computeUpdatedPredictions(locker, this);
 #else
     UNUSED_PARAM(locker);
 #endif
@@ -3058,7 +3060,7 @@ void CodeBlock::notifyLexicalBindingUpdate()
 void CodeBlock::dumpValueProfiles()
 {
     dataLog("ValueProfile for ", *this, ":\n");
-    forEachValueProfile([](ValueProfile& profile, bool isArgument) {
+    forEachValueProfile([](auto& profile, bool isArgument) {
         if (isArgument)
             dataLogF("   arg: ");
         else
@@ -3180,10 +3182,13 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
     }
 }
 
-SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex)
+SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex, JSValue* specFailValue)
 {
-    if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeIndex(bytecodeIndex))
+    if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeIndex(bytecodeIndex)) {
+        if (specFailValue)
+            valueProfile->computeUpdatedPredictionForExtraValue(locker, *specFailValue);
         return valueProfile->computeUpdatedPrediction(locker);
+    }
     return SpecNone;
 }
 

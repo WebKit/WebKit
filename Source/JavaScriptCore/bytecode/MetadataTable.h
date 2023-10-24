@@ -82,6 +82,7 @@ public:
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset)
     {
+        ASSERT(profileOffset <= linkingData().unlinkedMetadata->m_numValueProfiles);
         return valueProfilesEnd()[-static_cast<ptrdiff_t>(profileOffset)];
     }
 
