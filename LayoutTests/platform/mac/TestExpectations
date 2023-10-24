@@ -2141,7 +2141,7 @@ webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 webkit.org/b/228176 [ BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
 webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
 
-webkit.org/b/261316 [ Monterey+ Release ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
+webkit.org/b/261316 [ Monterey+ ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
 webkit.org/b/229463 [ BigSur Debug ] http/tests/inspector/network/resource-mime-type.html [ Pass Failure Timeout ]
 
