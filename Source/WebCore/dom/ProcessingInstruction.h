@@ -49,6 +49,7 @@ public:
 
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
+    RefPtr<StyleSheet> protectedSheet() const;
 
     bool isCSS() const { return m_isCSS; }
 #if ENABLE(XSLT)
@@ -84,7 +85,7 @@ private:
     String m_localHref;
     String m_title;
     String m_media;
-    CachedResourceHandle<CachedResource> m_cachedSheet { nullptr };
+    CachedResourceHandle<CachedResource> m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading { false };
     bool m_alternate { false };

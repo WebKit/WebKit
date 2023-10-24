@@ -66,7 +66,7 @@ namespace Style {
 class CustomPropertyRegistry;
 class Resolver;
 
-class Scope : public CanMakeWeakPtr<Scope> {
+class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Scope(Document&);
@@ -200,7 +200,7 @@ private:
     using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
     static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
     RefPtr<Resolver> m_resolver;

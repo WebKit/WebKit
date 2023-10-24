@@ -598,7 +598,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_cachedResourceLoader(createCachedResourceLoader(frame))
     , m_creationURL(url)
     , m_domTreeVersion(++s_globalTreeVersion)
-    , m_styleScope(makeUnique<Style::Scope>(*this))
+    , m_styleScope(makeUniqueRef<Style::Scope>(*this))
     , m_extensionStyleSheets(makeUnique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(makeUnique<VisitedLinkState>(*this))
     , m_markers(makeUniqueRef<DocumentMarkerController>(*this))
@@ -9774,6 +9774,16 @@ String Document::mediaKeysStorageDirectory()
 Ref<CSSFontSelector> Document::protectedFontSelector() const
 {
     return m_fontSelector;
+}
+
+CheckedRef<Style::Scope> Document::checkedStyleScope()
+{
+    return m_styleScope.get();
+}
+
+CheckedRef<const Style::Scope> Document::checkedStyleScope() const
+{
+    return m_styleScope.get();
 }
 
 } // namespace WebCore

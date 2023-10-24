@@ -63,16 +63,16 @@ PseudoElement::~PseudoElement()
 
 Ref<PseudoElement> PseudoElement::create(Element& host, PseudoId pseudoId)
 {
-    auto pseudoElement = adoptRef(*new PseudoElement(host, pseudoId));
+    Ref pseudoElement = adoptRef(*new PseudoElement(host, pseudoId));
 
-    InspectorInstrumentation::pseudoElementCreated(host.document().page(), pseudoElement.get());
+    InspectorInstrumentation::pseudoElementCreated(host.document().checkedPage().get(), pseudoElement.get());
 
     return pseudoElement;
 }
 
 void PseudoElement::clearHostElement()
 {
-    InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
+    InspectorInstrumentation::pseudoElementDestroyed(document().checkedPage().get(), *this);
 
     Styleable::fromElement(*this).elementWasRemoved();
 
