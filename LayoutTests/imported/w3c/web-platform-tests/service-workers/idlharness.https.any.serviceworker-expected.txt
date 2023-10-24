@@ -214,7 +214,7 @@ PASS FetchEvent interface: attribute request
 PASS FetchEvent interface: attribute preloadResponse
 PASS FetchEvent interface: attribute clientId
 PASS FetchEvent interface: attribute resultingClientId
-FAIL FetchEvent interface: attribute replacesClientId assert_true: The prototype object must have a property "replacesClientId" expected true got false
+PASS FetchEvent interface: attribute replacesClientId
 PASS FetchEvent interface: attribute handled
 PASS FetchEvent interface: operation respondWith(Promise<Response>)
 PASS FetchEvent must be primary interface of new FetchEvent("type", { request: new Request("") })
@@ -223,7 +223,7 @@ PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) 
 PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "preloadResponse" with the proper type
 PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "clientId" with the proper type
 PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "resultingClientId" with the proper type
-FAIL FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "replacesClientId" with the proper type assert_inherits: property "replacesClientId" not found in prototype chain
+PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "replacesClientId" with the proper type
 PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "handled" with the proper type
 PASS FetchEvent interface: new FetchEvent("type", { request: new Request("") }) must inherit property "respondWith(Promise<Response>)" with the proper type
 PASS FetchEvent interface: calling respondWith(Promise<Response>) on new FetchEvent("type", { request: new Request("") }) with too few arguments must throw TypeError
