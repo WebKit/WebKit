@@ -288,12 +288,12 @@ private:
 
 + (WKWebsiteDataStore *)defaultDataStore
 {
-    return wrapper(WebKit::WebsiteDataStore::defaultDataStore());
+    return wrapper(WebKit::WebsiteDataStore::defaultDataStore()).autorelease();
 }
 
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
-    return wrapper(WebKit::WebsiteDataStore::createNonPersistent());
+    return wrapper(WebKit::WebsiteDataStore::createNonPersistent()).autorelease();
 }
 
 - (instancetype)init
@@ -415,7 +415,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!uuid || !uuid->isValid())
         [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().data()];
 
-    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(*uuid));
+    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(*uuid)).autorelease();
 }
 
 + (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError *))completionHandler
@@ -552,7 +552,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             return API::WebsiteDataRecord::create(WTFMove(websiteDataRecord));
         });
 
-        completionHandlerCopy(wrapper(API::Array::create(WTFMove(elements))));
+        completionHandlerCopy(wrapper(API::Array::create(WTFMove(elements))).get());
     });
 }
 
@@ -682,7 +682,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         Vector<RefPtr<API::Object>> apiDomains = WTF::map(loadedSubresourceDomains, [](auto& domain) {
             return RefPtr<API::Object>(API::String::create(String(domain.string())));
         });
-        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))).get());
     });
 #else
     completionHandler(nil);
@@ -722,7 +722,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         auto apiDomains = WTF::map(domains, [](auto& domain) -> RefPtr<API::Object> {
             return API::String::create(domain);
         });
-        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))).get());
     });
 #else
     completionHandler({ });
@@ -909,7 +909,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (_WKWebsiteDataStoreConfiguration *)_configuration
 {
-    return wrapper(_websiteDataStore->configuration().copy());
+    return wrapper(_websiteDataStore->configuration().copy()).autorelease();
 }
 
 + (WKNotificationManagerRef)_sharedServiceWorkerNotificationManager
@@ -939,7 +939,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         auto apiDomains = WTF::map(domains, [](auto& domain) -> RefPtr<API::Object> {
             return API::String::create(domain.string());
         });
-        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))).get());
     });
 #else
     completionHandler({ });
@@ -953,7 +953,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         auto apiSchemes = WTF::map(schemes, [](auto& scheme) -> RefPtr<API::Object> {
             return API::String::create(scheme);
         });
-        completionHandler(wrapper(API::Array::create(WTFMove(apiSchemes))));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiSchemes))).get());
     });
 #else
     completionHandler({ });

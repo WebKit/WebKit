@@ -74,7 +74,7 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(c
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID withFrameHandle:wrapper(API::FrameHandle::create(frameID))];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID withFrameHandle:wrapper(API::FrameHandle::create(frameID)).get()];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(const Inspector::ExtensionTabID& extensionTabID)

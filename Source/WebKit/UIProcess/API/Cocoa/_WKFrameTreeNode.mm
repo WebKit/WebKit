@@ -46,7 +46,7 @@
 
 - (WKFrameInfo *)info
 {
-    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData(_node->info()), &_node->page()));
+    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData(_node->info()), &_node->page())).autorelease();
 }
 
 - (NSArray<_WKFrameTreeNode *> *)childFrames

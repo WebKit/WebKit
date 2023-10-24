@@ -43,7 +43,7 @@
 
 + (WKContentWorld *)worldWithName:(NSString *)name
 {
-    return wrapper(API::ContentWorld::sharedWorldWithName(name));
+    return wrapper(API::ContentWorld::sharedWorldWithName(name)).autorelease();
 }
 
 - (void)dealloc

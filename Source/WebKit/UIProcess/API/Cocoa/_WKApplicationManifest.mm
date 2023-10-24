@@ -330,7 +330,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
     auto manifest = WebCore::ApplicationManifestParser::parse(WTF::String(json), URL(manifestURL), URL(documentURL));
-    return wrapper(API::ApplicationManifest::create(manifest));
+    return wrapper(API::ApplicationManifest::create(manifest)).autorelease();
 }
 
 - (API::Object&)_apiObject

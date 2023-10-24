@@ -769,7 +769,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     THROW_IF_SUSPENDED;
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
-    return wrapper(_page->loadRequest(request));
+    return wrapper(_page->loadRequest(request)).autorelease();
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -784,7 +784,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (![readAccessURL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString)).autorelease();
 }
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
@@ -801,7 +801,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
 
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString)).autorelease();
 }
 
 - (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler
@@ -838,7 +838,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->goToBackForwardItem(item._item));
+    return wrapper(_page->goToBackForwardItem(item._item)).autorelease();
 }
 
 - (NSString *)title
@@ -891,13 +891,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     THROW_IF_SUSPENDED;
     if (self._safeBrowsingWarning)
         return [self reload];
-    return wrapper(_page->goBack());
+    return wrapper(_page->goBack()).autorelease();
 }
 
 - (WKNavigation *)goForward
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->goForward());
+    return wrapper(_page->goForward()).autorelease();
 }
 
 - (WKNavigation *)reload
@@ -907,13 +907,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
-    return wrapper(_page->reload(reloadOptions));
+    return wrapper(_page->reload(reloadOptions)).autorelease();
 }
 
 - (WKNavigation *)reloadFromOrigin
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin));
+    return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin)).autorelease();
 }
 
 - (void)stopLoading
@@ -1897,7 +1897,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length })).autorelease();
 }
 
 // FIXME(223658): Remove this once adopters have moved to the final API.
@@ -1939,7 +1939,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     isAppInitiated = request.attribution == NSURLRequestAttributionDeveloper;
 #endif
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated));
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated)).autorelease();
 }
 
 - (WebCore::CocoaColor *)themeColor
@@ -2151,7 +2151,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (_WKFrameHandle *)_mainFrame
 {
     if (auto* frame = _page->mainFrame())
-        return wrapper(API::FrameHandle::create(frame->frameID()));
+        return wrapper(API::FrameHandle::create(frame->frameID())).autorelease();
     return nil;
 }
 
@@ -2168,7 +2168,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (WebKit::FrameTreeNodeData&& data) {
-        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
+        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())).get());
     });
 }
 
@@ -2177,7 +2177,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->getAllFrameTrees([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (Vector<WebKit::FrameTreeNodeData>&& vector) {
         auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
         for (auto& data : vector)
-            [set addObject:wrapper(API::FrameTreeNode::create(WTFMove(data), page.get()))];
+            [set addObject:wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())).get()];
         completionHandler(set.get());
     });
 }
@@ -2726,7 +2726,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr()));
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr())).autorelease();
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
@@ -2751,7 +2751,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         policy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
         break;
     }
-    return wrapper(_page->loadRequest(request, policy));
+    return wrapper(_page->loadRequest(request, policy)).autorelease();
 }
 
 - (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler
@@ -2940,13 +2940,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers));
+    return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers)).autorelease();
 }
 
 - (WKNavigation *)_reloadExpiredOnly
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly));
+    return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly)).autorelease();
 }
 
 - (void)_killWebContentProcessAndResetState
@@ -2984,7 +2984,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.
-    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState()));
+    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState())).autorelease();
 }
 
 - (_WKSessionState *)_sessionState
@@ -3018,7 +3018,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate));
+    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate)).autorelease();
 }
 
 - (void)_close
