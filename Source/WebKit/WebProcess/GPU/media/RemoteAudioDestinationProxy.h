@@ -81,6 +81,9 @@ private:
 
     RemoteAudioDestinationIdentifier m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
 
+    static uint8_t s_realtimeThreadCount;
+    static constexpr uint8_t s_maximumConcurrentRealtimeThreads { 3 };
+
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA)
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
@@ -97,6 +100,7 @@ private:
     RefPtr<SharedMemory> m_frameCount;
     uint32_t m_lastFrameCount { 0 };
     std::atomic<bool> m_shouldStopThread { false };
+    bool m_isRealtimeThread { false };
 };
 
 } // namespace WebKit
