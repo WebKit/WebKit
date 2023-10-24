@@ -130,13 +130,13 @@ Ref<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(c
 {
     auto identifier = WebGPUIdentifier::generate();
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
         // FIXME: Implement error handling.
         return RemoteExternalTextureProxy::create(*this, m_convertToBackingContext, identifier);
     }
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
     if (!convertedDescriptor->mediaIdentifier) {
         auto videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&descriptor.videoBacking);
         RELEASE_ASSERT(videoFrame);
