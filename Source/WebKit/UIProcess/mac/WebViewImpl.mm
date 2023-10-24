@@ -4365,7 +4365,7 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     [pasteMenuItem setTarget:m_domPasteMenuDelegate.get()];
 
     auto window = [m_view window];
-    RetainPtr event = m_page->createSyntheticEventForContextMenu([window convertPointFromScreen:NSEvent.mouseLocation]);
+    auto event = m_page->createSyntheticEventForContextMenu([window convertPointFromScreen:NSEvent.mouseLocation]);
     [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:event.get() forView:window.contentView];
 }
 

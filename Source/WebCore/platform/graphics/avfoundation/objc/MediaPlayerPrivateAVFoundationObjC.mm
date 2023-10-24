@@ -745,7 +745,7 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
         RetainPtr<AVMediaSelectionOption> currentOption = trackPrivate->mediaSelectionOption();
 
         for (auto& track : outOfBandTrackSources) {
-            RetainPtr<CFStringRef> uniqueID = String::number(track->uniqueId()).createCFString();
+            auto uniqueID = String::number(track->uniqueId()).createCFString();
 
             if (![[currentOption outOfBandIdentifier] isEqual:(__bridge NSString *)uniqueID.get()])
                 continue;

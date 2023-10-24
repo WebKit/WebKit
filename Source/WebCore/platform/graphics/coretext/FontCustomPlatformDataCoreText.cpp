@@ -62,7 +62,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
 RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
-    RetainPtr<CFDataRef> bufferData = buffer.createCFData();
+    auto bufferData = buffer.createCFData();
 
     FPFontRef font = nullptr;
     auto array = adoptCF(FPFontCreateFontsFromData(bufferData.get()));

@@ -53,13 +53,13 @@ public:
     {
         // CF hyphenation functions use locale (regional formats) language, which doesn't necessarily match primary UI language,
         // so we can't use default locale here. See <rdar://problem/14897664>.
-        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
+        auto locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 
     static RetainPtr<CFLocaleRef> createValueForKey(const AtomString& localeIdentifier)
     {
-        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
+        auto locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
 
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
@@ -77,7 +77,7 @@ bool canHyphenate(const AtomString& localeIdentifier)
 
 size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomString& localeIdentifier)
 {
-    RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    auto locale = TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 
     CFOptionFlags searchAcrossWordBoundaries = 1;
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), nullptr);

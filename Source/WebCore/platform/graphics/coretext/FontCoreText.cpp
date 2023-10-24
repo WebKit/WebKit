@@ -542,7 +542,7 @@ RefPtr<Font> Font::createFontWithoutSynthesizableFeatures() const
 {
     float size = m_platformData.size();
     CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
-    RetainPtr<CTFontRef> ctFont = createCTFontWithoutSynthesizableFeatures(m_platformData.font());
+    auto ctFont = createCTFontWithoutSynthesizableFeatures(m_platformData.font());
     return createDerivativeFont(ctFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.widthVariant(), m_platformData.textRenderingMode(), m_platformData.customPlatformData());
 }
 

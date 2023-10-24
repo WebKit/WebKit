@@ -85,7 +85,7 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
 
     // Use the IOSurface backed image directly
     auto& renderBuffer = m_renderBuffers[bufferIndex];
-    RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
+    auto cgContext = renderBuffer->createPlatformContext();
     if (cgContext)
         displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
 

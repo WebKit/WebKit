@@ -13246,8 +13246,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         RetainPtr<NSURL> alternateURL = targetURL;
         RetainPtr<NSDictionary> imageInfo;
-        RetainPtr<CGImageRef> cgImage = _positionInformation.image->makeCGImageCopy();
-        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+        auto cgImage = _positionInformation.image->makeCGImageCopy();
+        auto uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
         if ([uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
             NSDictionary *userInfo;
             alternateURL = [uiDelegate _webView:self.webView alternateURLFromImage:uiImage.get() userInfo:&userInfo];

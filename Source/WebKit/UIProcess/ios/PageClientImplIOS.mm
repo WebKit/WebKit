@@ -385,7 +385,7 @@ void PageClientImpl::positionInformationDidChange(const InteractionInformationAt
 
 void PageClientImpl::saveImageToLibrary(Ref<SharedBuffer>&& imageBuffer)
 {
-    RetainPtr<NSData> imageData = imageBuffer->createNSData();
+    auto imageData = imageBuffer->createNSData();
     UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);
 }
 

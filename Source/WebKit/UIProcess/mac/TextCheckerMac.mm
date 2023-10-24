@@ -331,7 +331,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 {
     Vector<TextCheckingResult> results;
 
-    RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
+    auto textString = text.createNSStringWithoutCopying();
     NSDictionary *options = @{
         NSTextCheckingInsertionPointKey : @(insertionPoint),
         NSTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled)

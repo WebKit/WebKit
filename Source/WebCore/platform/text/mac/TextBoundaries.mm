@@ -153,7 +153,7 @@ static void findSimpleWordBoundary(StringView text, int position, int* start, in
 // Complex case: use CFStringTokenizer to find word boundary.
 static void findComplexWordBoundary(StringView text, int position, int* start, int* end)
 {
-    RetainPtr<CFStringRef> charString = text.createCFStringWithoutCopying();
+    auto charString = text.createCFStringWithoutCopying();
 
     CFStringTokenizerRef tokenizer = tokenizerForString(charString.get());
     if (!tokenizer) {

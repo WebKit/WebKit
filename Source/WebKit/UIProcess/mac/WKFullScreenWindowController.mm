@@ -213,7 +213,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     size_t bytesPerRow = CGImageGetBytesPerRow(sourceImage);
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(sourceImage);
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceImage);
-    RetainPtr<CGDataProviderRef> provider = createImageProviderWithCopiedData(CGImageGetDataProvider(sourceImage));
+    auto provider = createImageProviderWithCopiedData(CGImageGetDataProvider(sourceImage));
     bool shouldInterpolate = CGImageGetShouldInterpolate(sourceImage);
     CGColorRenderingIntent intent = CGImageGetRenderingIntent(sourceImage);
 

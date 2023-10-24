@@ -843,7 +843,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 {
-    RetainPtr<CFURLRef> url = URL { urlString }.createCFURL();
+    auto url = URL { urlString }.createCFURL();
 
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }

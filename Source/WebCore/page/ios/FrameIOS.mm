@@ -145,14 +145,14 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
                 if (deprecatedIsSpaceOrNewline(text[i]) || text[i] == noBreakSpace) {
                     int wordLength = i - startOfWordBoundary;
                     if (wordLength > 0) {
-                        RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, wordLength).createNSString();
+                        auto chunk = text.substring(startOfWordBoundary, wordLength).createNSString();
                         [words addObject:chunk.get()];
                     }
                     startOfWordBoundary += wordLength + 1;
                 }
             }
             if (startOfWordBoundary < length) {
-                RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, length - startOfWordBoundary).createNSString();
+                auto chunk = text.substring(startOfWordBoundary, length - startOfWordBoundary).createNSString();
                 [words addObject:chunk.get()];
             }
         }

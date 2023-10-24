@@ -91,7 +91,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceMetadataOptions()
     
 static RetainPtr<CFMutableDictionaryRef> createImageSourceThumbnailOptions()
 {
-    RetainPtr<CFMutableDictionaryRef> options = createImageSourceOptions();
+    auto options = createImageSourceOptions();
     CFDictionarySetValue(options.get(), kCGImageSourceShouldCacheImmediately, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceCreateThumbnailFromImageAlways, kCFBooleanTrue);
     return options;

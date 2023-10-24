@@ -1469,7 +1469,7 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thicknes
 
 void GraphicsContextCG::setURLForRect(const URL& link, const FloatRect& destRect)
 {
-    RetainPtr<CFURLRef> urlRef = link.createCFURL();
+    auto urlRef = link.createCFURL();
     if (!urlRef)
         return;
 

@@ -292,7 +292,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBu
 
     Ref<LegacyWebArchive> archive = create();
 
-    RetainPtr<CFDataRef> cfData = data.makeContiguous()->createCFData();
+    auto cfData = data.makeContiguous()->createCFData();
     if (!cfData)
         return nullptr;
 
