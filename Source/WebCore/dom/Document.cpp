@@ -5996,7 +5996,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             // called too early on in the process of a page exiting the cache for that work to be possible in this
             // function. It would be nice if there was more symmetry here.
             // https://bugs.webkit.org/show_bug.cgi?id=98698
-            v->cacheCurrentScrollPosition();
+            v->cacheCurrentScrollState();
             if (page && m_frame->isMainFrame()) {
                 v->resetScrollbarsAndClearContentsSize();
                 if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
