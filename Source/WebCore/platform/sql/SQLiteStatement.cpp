@@ -47,35 +47,35 @@ SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, sqlite3_stmt* statement)
     , m_statement(statement)
 {
     ASSERT(statement);
-    m_database.incrementStatementCount();
+    m_database->incrementStatementCount();
 }
 
 SQLiteStatement::SQLiteStatement(SQLiteStatement&& other)
     : m_database(other.database())
     , m_statement(std::exchange(other.m_statement, nullptr))
 {
-    m_database.incrementStatementCount();
+    m_database->incrementStatementCount();
 }
 
 SQLiteStatement::~SQLiteStatement()
 {
     sqlite3_finalize(m_statement);
-    m_database.decrementStatementCount();
+    m_database->decrementStatementCount();
 }
 
 int SQLiteStatement::step()
 {
-    Locker databaseLock { m_database.databaseMutex() };
+    Locker databaseLock { m_database->databaseMutex() };
 
     // If we're not within a transaction and we call sqlite3_step(), SQLite will implicitly create a transaction for us.
     // In such case, we should bump our transaction count to reflect that.
     std::optional<SQLiteTransactionInProgressAutoCounter> transactionCounter;
-    if (!m_database.transactionInProgress() && !isReadOnly())
+    if (!m_database->transactionInProgress() && !isReadOnly())
         transactionCounter.emplace();
 
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW)
-        LOG(SQLDatabase, "sqlite3_step failed (%i)\nError - %s", error, sqlite3_errmsg(m_database.sqlite3Handle()));
+        LOG(SQLDatabase, "sqlite3_step failed (%i)\nError - %s", error, sqlite3_errmsg(m_database->sqlite3Handle()));
 
     return error;
 }
