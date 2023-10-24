@@ -54,6 +54,8 @@ class SessionID;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
+class NetworkProcess;
+class ServiceWorkerDownloadTask;
 class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
@@ -80,7 +82,7 @@ public:
     void unregisterDownload(ServiceWorkerDownloadTask&);
 
     WebCore::ProcessIdentifier webProcessIdentifier() const final;
-    NetworkProcess& networkProcess() { return m_connection.networkProcess(); }
+    NetworkProcess& networkProcess();
 
 private:
     // IPC::MessageSender

@@ -52,6 +52,12 @@ messages -> WebSWContextManagerConnection {
 
     NavigationPreloadIsReady(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier, WebCore::ResourceResponse response)
     NavigationPreloadFailed(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier, WebCore::ResourceError error)
+
+    UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
+    UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:uint8_t WebCore::ServiceWorkerState state)
+    FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+    SetRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+    SetRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerUpdateViaCache updateViaCache)
 }
 
 #endif

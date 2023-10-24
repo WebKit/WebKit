@@ -38,6 +38,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
+#include "WebSWServerToContextConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
@@ -220,6 +221,10 @@ public:
 
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    WeakPtr<WebSWServerToContextConnection> swContextConnection() { return m_swContextConnection.get(); }
 #endif
 
 private:
