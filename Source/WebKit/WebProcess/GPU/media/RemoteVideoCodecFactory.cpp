@@ -126,12 +126,25 @@ RemoteVideoCodecFactory::~RemoteVideoCodecFactory()
 {
 }
 
+static bool shouldUseLocalDecoder(std::optional<VideoCodecType> type, const VideoDecoder::Config& config)
+{
+    if (!type)
+        return true;
+
+#if PLATFORM(MAC) && CPU(X86_64)
+    if (*type == VideoCodecType::VP9 && config.prefersSoftware)
+        return true;
+#endif
+
+    return false;
+}
+
 void RemoteVideoCodecFactory::createDecoder(const String& codec, const VideoDecoder::Config& config, VideoDecoder::CreateCallback&& createCallback, VideoDecoder::OutputCallback&& outputCallback, VideoDecoder::PostTaskCallback&& postTaskCallback)
 {
     LibWebRTCCodecs::initializeIfNeeded();
 
     auto type = WebProcess::singleton().libWebRTCCodecs().videoCodecTypeFromWebCodec(codec);
-    if (!type) {
+    if (shouldUseLocalDecoder(type, config)) {
         VideoDecoder::createLocalDecoder(codec, config, WTFMove(createCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         return;
     }
