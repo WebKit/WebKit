@@ -1913,6 +1913,8 @@ fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Skip ] # Timeout
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
