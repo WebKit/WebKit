@@ -101,11 +101,8 @@ void ScaleForFrameNumber(unsigned int frame, unsigned int initial_w,
       *h = initial_h;
       return;
     }
-    if (frame < 100) {
-      *w = initial_w * 7 / 10;
-      *h = initial_h * 16 / 10;
-      return;
-    }
+    *w = initial_w * 7 / 10;
+    *h = initial_h * 16 / 10;
     return;
   }
   if (frame < 10) {
@@ -578,7 +575,7 @@ TEST_P(ResizeRealtimeTest, TestExternalResizeWorks) {
   }
 }
 
-TEST_P(ResizeRealtimeTest, DISABLED_TestExternalResizeSmallerWidthBiggerSize) {
+TEST_P(ResizeRealtimeTest, TestExternalResizeSmallerWidthBiggerSize) {
   ResizingVideoSource video;
   video.flag_codec_ = true;
   video.smaller_width_larger_size_ = true;
