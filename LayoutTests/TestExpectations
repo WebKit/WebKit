@@ -6810,6 +6810,8 @@ webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
 
 webkit.org/b/262734 http/tests/security/service-worker-network-load.html [ Pass Timeout ]
 
+webkit.org/b/263233 http/tests/security/block-top-level-navigation-via-redirect-by-third-party-iframes.html [ Failure Pass ]
+
 webkit.org/b/263434 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html [ Skip ]
 
 webkit.org/b/261810 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
