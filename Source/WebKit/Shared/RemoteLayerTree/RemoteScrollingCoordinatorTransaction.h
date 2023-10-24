@@ -36,6 +36,8 @@ class Encoder;
 }
 
 namespace WebCore {
+class ScrollingStateFrameScrollingNode;
+class ScrollingStateNode;
 class ScrollingStateTree;
 }
 
@@ -71,9 +73,13 @@ private:
 } // namespace WebKit
 
 namespace IPC {
-template<> struct ArgumentCoder<WebCore::ScrollingStateTree> {
-    static void encode(Encoder&, const WebCore::ScrollingStateTree&);
-    static std::optional<WebCore::ScrollingStateTree> decode(Decoder&);
+template<> struct ArgumentCoder<WebCore::ScrollingStateNode> {
+    static void encode(Encoder&, const WebCore::ScrollingStateNode&);
+    static std::optional<Ref<WebCore::ScrollingStateNode>> decode(Decoder&);
+};
+template<> struct ArgumentCoder<WebCore::ScrollingStateFrameScrollingNode> {
+    static void encode(Encoder&, const WebCore::ScrollingStateFrameScrollingNode&);
+    static std::optional<Ref<WebCore::ScrollingStateFrameScrollingNode>> decode(Decoder&);
 };
 }
 
