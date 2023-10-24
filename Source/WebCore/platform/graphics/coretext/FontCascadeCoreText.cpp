@@ -421,7 +421,10 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     bool triedBaseCharacterFont = false;
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        const Font* font = fallbackRangesAt(i).fontForCharacter(baseCharacter);
+        auto& fontRanges = fallbackRangesAt(i);
+        if (fontRanges.isGeneric() && isPrivateUseAreaCharacter(baseCharacter))
+            continue;
+        const Font* font = fontRanges.fontForCharacter(baseCharacter);
         if (!font)
             continue;
 #if PLATFORM(IOS_FAMILY)

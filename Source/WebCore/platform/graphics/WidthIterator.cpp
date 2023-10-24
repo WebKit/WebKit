@@ -415,16 +415,18 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         advanceInternalState.updateFont(glyphData.font ? glyphData.font : &primaryFont);
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font, character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);
-        if (rtl())
-            characterToWrite = u_charMirror(characterToWrite);
 
         advanceInternalState.rangeFont = fontForRange(advanceInternalState.lastFont, smallCapsState, smallCapsState.isLastSmallCaps);
         startNewFontRangeIfNeeded(advanceInternalState, smallCapsState, fontDescription);
         if (resetFontRangeIfNeeded(advanceInternalState, smallCapsState, fontDescription, textIterator))
             continue;
 
-        Glyph glyph;
-        glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);
+        if (rtl())
+            characterToWrite = u_charMirror(characterToWrite);
+
+        Glyph glyph = glyphData.glyph;
+        if (glyphData.font != advanceInternalState.nextRangeFont || character != characterToWrite)
+            glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);
 
         if (!glyph && !characterMustDrawSomething) {
             commitCurrentFontRange(advanceInternalState);
