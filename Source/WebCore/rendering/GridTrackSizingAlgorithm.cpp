@@ -637,6 +637,14 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::estimatedGridAreaBreadthForC
     return gridAreaSize;
 }
 
+static LayoutUnit computeGridSpanSize(const Vector<GridTrack>& tracks, const GridSpan& gridSpan, const std::optional<LayoutUnit> gridItemOffset, const LayoutUnit totalGuttersSize)
+{
+    LayoutUnit totalTracksSize;
+    for (auto trackPosition : gridSpan)
+        totalTracksSize += tracks[trackPosition].baseSize();
+    return totalTracksSize + totalGuttersSize + ((gridSpan.integerSpan() - 1) * gridItemOffset.value_or(0_lu));
+}
+
 std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection direction) const
 {
     if (m_renderGrid->areMasonryColumns())
@@ -656,18 +664,8 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForChild(cons
         addContentAlignmentOffset = true;
     }
 
-    const Vector<GridTrack>& allTracks = tracks(direction);
     const GridSpan& span = m_renderGrid->gridSpanForChild(child, direction);
-    LayoutUnit gridAreaBreadth;
-    for (auto trackPosition : span)
-        gridAreaBreadth += allTracks[trackPosition].baseSize();
-
-    if (addContentAlignmentOffset)
-        gridAreaBreadth += (span.integerSpan() - 1) * m_renderGrid->gridItemOffset(direction);
-
-    gridAreaBreadth += m_renderGrid->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace(direction));
-
-    return gridAreaBreadth;
+    return computeGridSpanSize(tracks(direction), span, addContentAlignmentOffset ? std::make_optional(m_renderGrid->gridItemOffset(direction)) : std::nullopt, m_renderGrid->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace(direction)));
 }
 
 bool GridTrackSizingAlgorithm::isRelativeGridLengthAsAuto(const GridLength& length, GridTrackSizingDirection direction) const
@@ -995,7 +993,7 @@ void GridTrackSizingAlgorithm::clearBaselineItemsCache()
     m_rowBaselineItemsMap.clear();
 }
 
-void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, GridAxis axis)
+void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, GridAxis axis, bool cachingRowSubgridsForRootGrid)
 {
     ASSERT(downcast<RenderGrid>(item.parent())->isBaselineAlignmentForChild(item, axis));
 
@@ -1006,6 +1004,13 @@ void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, G
         m_columnBaselineItemsMap.add(&item, true);
     else
         m_rowBaselineItemsMap.add(&item, true);
+
+    const auto* gridItemParent = dynamicDowncast<RenderGrid>(item.parent());
+    if (gridItemParent) {
+        auto gridItemParentIsSubgridRowsOfRootGrid = GridLayoutFunctions::isOrthogonalChild(*m_renderGrid, *gridItemParent) ? gridItemParent->isSubgridColumns() : gridItemParent->isSubgridRows();
+        if (cachingRowSubgridsForRootGrid && gridItemParentIsSubgridRowsOfRootGrid)
+            m_rowSubgridsWithBaselineAlignedItems.add(*gridItemParent);
+    }
 }
 
 void GridTrackSizingAlgorithm::copyBaselineItemsCache(const GridTrackSizingAlgorithm& source, GridAxis axis)
@@ -1597,6 +1602,17 @@ void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigne
     m_needsSetup = false;
     m_hasPercentSizedRowsIndefiniteHeight = false;
     m_hasFlexibleMaxTrackBreadth = false;
+
+    auto resolveAndSetNonAutoRowStartMarginsOnRowSubgrids = [&] {
+        for (auto& subgrid : m_rowSubgridsWithBaselineAlignedItems) {
+            const auto subgridSpan = m_renderGrid->gridSpanForChild(subgrid, GridTrackSizingDirection::ForColumns);
+            const auto subgridRowStartMargin = subgrid.style().marginBeforeUsing(&m_renderGrid->style());
+            if (!subgridRowStartMargin.isAuto())
+                m_renderGrid->setMarginBeforeForChild(subgrid, minimumValueForLength(subgridRowStartMargin, computeGridSpanSize(tracks(GridTrackSizingDirection::ForColumns), subgridSpan, std::make_optional(m_renderGrid->gridItemOffset(direction)), m_renderGrid->guttersSize(GridTrackSizingDirection::ForColumns, subgridSpan.startLine(), subgridSpan.integerSpan(), this->availableSpace(GridTrackSizingDirection::ForColumns)))));
+        }
+    };
+    if (m_direction == GridTrackSizingDirection::ForRows && (m_sizingState == SizingState::RowSizingFirstIteration || m_sizingState == SizingState::RowSizingSecondIteration))
+        resolveAndSetNonAutoRowStartMarginsOnRowSubgrids();
 
     computeBaselineAlignmentContext();
 }

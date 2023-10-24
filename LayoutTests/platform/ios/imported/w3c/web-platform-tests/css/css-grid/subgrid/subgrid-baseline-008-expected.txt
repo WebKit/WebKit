@@ -10,27 +10,27 @@ FAIL .item 2 assert_equals:
 <div data-offset-x="428" class="item last">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 428 but got 407
+offsetLeft expected 428 but got 415
 FAIL .item 3 assert_equals:
 <div data-offset-x="325" class="item first">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 325 but got 329
+offsetLeft expected 325 but got 337
 FAIL .item 4 assert_equals:
 <div data-offset-x="234" class="item last">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 234 but got 217
+offsetLeft expected 234 but got 225
 FAIL .item 5 assert_equals:
 <div data-offset-x="131" class="item first">
       <span></span><br><span></span>
     </div>
-offsetLeft expected 131 but got 137
+offsetLeft expected 131 but got 142
 FAIL .item 6 assert_equals:
 <div data-offset-x="40" class="item last">
       <span></span><br><span></span>
     </div>
-offsetLeft expected 40 but got 25
+offsetLeft expected 40 but got 30
 FAIL .item 7 assert_equals:
 <div data-offset-x="524" class="item small first"></div>
 offsetLeft expected 524 but got 547

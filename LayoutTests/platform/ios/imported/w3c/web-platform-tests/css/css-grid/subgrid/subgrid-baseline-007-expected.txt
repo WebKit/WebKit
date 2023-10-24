@@ -10,27 +10,27 @@ FAIL .item 2 assert_equals:
 <div data-offset-y="58" class="item last">
         <span></span><br><span></span>
       </div>
-offsetTop expected 58 but got 51
+offsetTop expected 58 but got 43
 FAIL .item 3 assert_equals:
 <div data-offset-y="151" class="item first">
         <span></span><br><span></span>
       </div>
-offsetTop expected 151 but got 129
+offsetTop expected 151 but got 121
 FAIL .item 4 assert_equals:
 <div data-offset-y="181" class="item last">
         <span></span><br><span></span>
       </div>
-offsetTop expected 181 but got 149
+offsetTop expected 181 but got 141
 FAIL .item 5 assert_equals:
 <div data-offset-y="291" class="item first">
       <span></span><br><span></span>
     </div>
-offsetTop expected 291 but got 229
+offsetTop expected 291 but got 224
 FAIL .item 6 assert_equals:
 <div data-offset-y="321" class="item last">
       <span></span><br><span></span>
     </div>
-offsetTop expected 321 but got 249
+offsetTop expected 321 but got 244
 FAIL .item 7 assert_equals:
 <div data-offset-y="11" class="item small first"></div>
 offsetTop expected 11 but got 3
