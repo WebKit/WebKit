@@ -74,6 +74,7 @@ struct ConstantValue : BaseValue {
 
     void dump(PrintStream&) const;
 
+    bool isBool() const { return std::holds_alternative<bool>(*this); }
     bool isInt() const { return std::holds_alternative<int64_t>(*this); }
     bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
 

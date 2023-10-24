@@ -98,20 +98,28 @@ operator :%, {
 }
 
 # Comparison operations
-["==", "!="].each do |op|
+{
+    "==" => 'constantEqual',
+    "!=" => 'constantNotEqual',
+}.each do |op, const_function|
     operator :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: const_function,
 
         [T < Scalar].(T, T) => bool,
         [T < Scalar, N].(vec[N][T], vec[N][T]) => vec[N][bool],
     }
 end
 
-["<", "<=", ">", ">="].each do |op|
+{
+    "<" => 'constantLt',
+    "<=" => 'constantLtEq',
+    ">" => 'constantGt',
+    ">=" => 'constantGtEq',
+}.each do |op, const_function|
     operator :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: const_function,
 
         [T < Number].(T, T) => bool,
         [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][bool],
@@ -122,7 +130,7 @@ end
 
 operator :!, {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantNot',
 
     [].(bool) => bool,
     [N].(vec[N][bool]) => vec[N][bool],
@@ -130,21 +138,21 @@ operator :!, {
 
 operator :'||', {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantOr',
 
     [].(bool, bool) => bool,
 }
 
 operator :'&&', {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantAnd',
 
     [].(bool, bool) => bool,
 }
 
 operator :'|', {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantBitwiseOr',
 
     [].(bool, bool) => bool,
     [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
@@ -152,7 +160,7 @@ operator :'|', {
 
 operator :'&', {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantBitwiseAnd',
 
     # unary
     # FIXME: move this out of here
@@ -167,16 +175,22 @@ operator :'&', {
 
 operator :~, {
     must_use: true,
-    #FIXME: add constant function
+    const: 'constantBitwiseNot',
 
     [T < Integer].(T) => T,
     [T < Integer, N].(vec[N][T]) => vec[N][T]
 }
 
-["|", "&", "^", "<<", ">>"].each do |op|
+{
+    "|" => 'constantBitwiseOr',
+    "&" => 'constantBitwiseAnd',
+    "^" => 'constantBitwiseXor',
+    "<<" => 'constantBitwiseShiftLeft',
+    ">>" => 'constantBitwiseShiftRight',
+}.each do |op, const_function|
     operator :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: const_function,
 
         [T < Integer].(T, T) => T,
         [T < Integer, N].(vec[N][T], vec[N][T]) => vec[N][T]
@@ -188,28 +202,28 @@ end
 # 16.1.1. Zero Value Built-in Functions
 constructor :bool, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [].() => bool,
 }
 
 constructor :i32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [].() => i32,
 }
 
 constructor :u32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [].() => u32,
 }
 
 constructor :f32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [].() => f32,
 }
@@ -239,7 +253,7 @@ constructor :vec4, {
     (2..4).each do |rows|
         constructor :"mat#{columns}x#{rows}", {
             must_use: true,
-            #FIXME: add constant function
+            const: true,
 
             [T < ConcreteFloat].() => mat[columns,rows][T],
         }
@@ -254,7 +268,7 @@ end
 # 16.1.2.2.
 constructor :bool, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteScalar].(T) => bool,
 }
@@ -265,7 +279,7 @@ constructor :bool, {
 # 16.1.2.4.
 constructor :f32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteScalar].(T) => f32,
 }
@@ -273,7 +287,7 @@ constructor :f32, {
 # 16.1.2.5.
 constructor :i32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteScalar].(T) => i32,
 }
@@ -283,7 +297,7 @@ constructor :i32, {
     (2..4).each do |rows|
         constructor :"mat#{columns}x#{rows}", {
             must_use: true,
-            #FIXME: add constant function
+            const: true,
 
             [T < ConcreteFloat, S < Float].(mat[columns,rows][S]) => mat[columns,rows][T],
             [T < Float].(mat[columns,rows][T]) => mat[columns,rows][T],
@@ -299,7 +313,7 @@ end
 # 16.1.2.16.
 constructor :u32, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteScalar].(T) => u32,
 }
