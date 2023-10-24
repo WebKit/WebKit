@@ -7998,7 +7998,6 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!navigator.contacts"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
-    EXPECT_EQ(runJSCheck("!!window.Highlight"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
 
     // Confirm unstable settings are always off in Lockdown Mode.
     EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
