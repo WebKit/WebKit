@@ -89,6 +89,8 @@ operator :/, {
 }
 
 operator :%, {
+    must_use: true,
+    const: "constantModulo",
     [T < Number].(T, T) => T,
 
     # vector scaling
@@ -375,7 +377,7 @@ constructor :vec4, {
 ["all", "any"].each do |op|
     function :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: true,
 
         [N].(vec[N][bool]) => bool,
         [N].(bool) => bool,
@@ -385,7 +387,7 @@ end
 # 17.3.3
 function :select, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Scalar].(T, T, bool) => T,
     [T < Scalar, N].(vec[N][T], vec[N][T], bool) => vec[N][T],
@@ -397,7 +399,6 @@ function :select, {
 # 16.4.1.
 function :arrayLength, {
     must_use: true,
-    #FIXME: add constant function
 
     [T].(ptr[storage, array[T], read]) => u32,
     [T].(ptr[storage, array[T], read_write]) => u32,
@@ -410,7 +411,7 @@ function :arrayLength, {
  "acosh", "asinh", "atanh", "cosh", "sinh", "tanh"].each do |op|
     function :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: true,
 
         [T < Float].(T) => T,
         [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -420,7 +421,7 @@ end
 # 17.5.1
 function :abs, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Number].(T) => T,
     [T < Number, N].(vec[N][T]) => vec[N][T],
@@ -437,7 +438,7 @@ function :abs, {
 # 17.5.8
 function :atan2, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
@@ -446,7 +447,7 @@ function :atan2, {
 # 17.5.9
 function :ceil, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -455,7 +456,7 @@ function :ceil, {
 # 17.5.10
 function :clamp, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Number].(T, T, T) => T,
     [T < Number, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
@@ -469,7 +470,7 @@ function :clamp, {
 ["countLeadingZeros", "countOneBits", "countTrailingZeros"].each do |op|
     function :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: true,
 
         [T < ConcreteInteger].(T) => T,
         [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
@@ -479,7 +480,7 @@ end
 # 17.5.16
 function :cross, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(vec3[T], vec3[T]) => vec3[T],
 }
@@ -487,7 +488,7 @@ function :cross, {
 # 17.5.17
 function :degrees, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -496,7 +497,7 @@ function :degrees, {
 # 17.5.18
 function :determinant, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, C].(mat[C,C][T]) => T,
 }
@@ -504,7 +505,7 @@ function :determinant, {
 # 17.5.19
 function :distance, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T]) => T,
@@ -513,7 +514,7 @@ function :distance, {
 # 17.5.20
 function :dot, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Number, N].(vec[N][T], vec[N][T]) => T
 }
@@ -522,7 +523,7 @@ function :dot, {
 ["exp", "exp2"].each do |op|
     function :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: true,
 
         [T < Float].(T) => T,
         [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -532,7 +533,7 @@ end
 # 17.5.23 & 17.5.24
 function :extractBits, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     # signed
     [].(i32, u32, u32) => i32,
@@ -546,7 +547,7 @@ function :extractBits, {
 # 17.5.25
 function :faceForward, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
 }
@@ -554,7 +555,7 @@ function :faceForward, {
 # 17.5.26 & 17.5.27
 function :firstLeadingBit, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     # signed
     [].(i32) => i32,
@@ -568,7 +569,7 @@ function :firstLeadingBit, {
 # 17.5.28
 function :firstTrailingBit, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteInteger].(T) => T,
     [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
@@ -577,7 +578,7 @@ function :firstTrailingBit, {
 # 17.5.29
 function :floor, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -586,7 +587,7 @@ function :floor, {
 # 17.5.30
 function :fma, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
@@ -595,7 +596,7 @@ function :fma, {
 # 17.5.31
 function :fract, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -604,7 +605,7 @@ function :fract, {
 # 17.5.32
 function :frexp, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     # FIXME: this needs the special return types __frexp_result_*
 }
@@ -612,7 +613,7 @@ function :frexp, {
 # 17.5.33
 function :insertBits, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteInteger].(T, T, u32, u32) => T,
     [T < ConcreteInteger, N].(vec[N][T], vec[N][T], u32, u32) => vec[N][T],
@@ -621,7 +622,7 @@ function :insertBits, {
 # 17.5.34
 function :inverseSqrt, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -630,7 +631,7 @@ function :inverseSqrt, {
 # 17.5.35
 function :ldexp, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteFloat].(T, i32) => T,
     [].(abstract_float, abstract_int) => abstract_float,
@@ -641,7 +642,7 @@ function :ldexp, {
 # 17.5.36
 function :length, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => T,
@@ -651,7 +652,7 @@ function :length, {
 ["log", "log2"].each do |op|
     function :"#{op}", {
         must_use: true,
-        #FIXME: add constant function
+        const: true,
 
         [T < Float].(T) => T,
         [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -661,7 +662,7 @@ end
 # 17.5.39
 function :max, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Number].(T, T) => T,
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
@@ -670,7 +671,7 @@ function :max, {
 # 17.5.40
 function :min, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Number].(T, T) => T,
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
@@ -679,7 +680,7 @@ function :min, {
 # 17.5.41
 function :mix, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
@@ -689,7 +690,7 @@ function :mix, {
 # 17.5.42
 function :modf, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     # FIXME: this needs the special return types __modf_result_*
 }
@@ -697,7 +698,7 @@ function :modf, {
 # 17.5.43
 function :normalize, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
@@ -714,7 +715,7 @@ function :pow, {
 # 17.5.45
 function :quantizeToF16, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [].(f32) => f32,
     [N].(vec[N][f32]) => vec[N][f32],
@@ -723,7 +724,7 @@ function :quantizeToF16, {
 # 17.5.46
 function :radians, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -732,7 +733,7 @@ function :radians, {
 # 17.5.47
 function :reflect, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
@@ -740,7 +741,7 @@ function :reflect, {
 # 17.5.48
 function :refract, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, N].(vec[N][T], vec[N][T], T) => vec[N][T],
 }
@@ -748,7 +749,7 @@ function :refract, {
 # 17.5.49
 function :reverseBits, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < ConcreteInteger].(T) => T,
     [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
@@ -757,7 +758,7 @@ function :reverseBits, {
 # 17.5.50
 function :round, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -766,7 +767,7 @@ function :round, {
 # 17.5.51
 function :saturate, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -775,7 +776,7 @@ function :saturate, {
 # 17.5.52
 function :sign, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < SignedNumber].(T) => T,
     [T < SignedNumber, N].(vec[N][T]) => vec[N][T],
@@ -788,7 +789,7 @@ function :sign, {
 # 17.5.55
 function :smoothstep, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
@@ -797,7 +798,7 @@ function :smoothstep, {
 # 17.5.56
 function :sqrt, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
@@ -806,7 +807,7 @@ function :sqrt, {
 # 17.5.57
 function :step, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T, T) => T,
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
@@ -819,7 +820,7 @@ function :step, {
 # 17.5.60
 function :transpose, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float, C, R].(mat[C,R][T]) => mat[R,C][T],
 }
@@ -827,7 +828,7 @@ function :transpose, {
 # 17.5.61
 function :trunc, {
     must_use: true,
-    #FIXME: add constant function
+    const: true,
 
     [T < Float].(T) => T,
     [T < Float, N].(vec[N][T]) => vec[N][T],
