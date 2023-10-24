@@ -2212,9 +2212,6 @@ webkit.org/b/182763 accessibility/gtk/aria-activedescendant-changed-notification
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
-webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
-webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
-
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
