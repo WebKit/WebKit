@@ -2347,8 +2347,7 @@ webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/pay
 
 webkit.org/b/245967 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 
-webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
-webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Pass Failure ]
+webkit.org/b/263575 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
 

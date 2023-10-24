@@ -2020,3 +2020,5 @@ webkit.org/b/263407 [ Sonoma+ ] fast/selectors/text-field-selection-stroke-color
 webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
+
+webkit.org/b/263575 [ Sonoma+ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Failure ]
