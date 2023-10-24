@@ -681,9 +681,11 @@ bool TextFieldInputType::appendFormData(DOMFormData& formData) const
 {
     InputType::appendFormData(formData);
     ASSERT(element());
-    auto& dirnameAttrValue = element()->attributeWithoutSynchronization(dirnameAttr);
-    if (!dirnameAttrValue.isNull())
-        formData.append(dirnameAttrValue, element()->directionForFormData());
+    // FIXME: should type=number be TextFieldInputType to begin with?
+    if (element()->isNumberField())
+        return true;
+    if (auto& dirname = element()->attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+        formData.append(dirname, element()->directionForFormData());
     return true;
 }
 

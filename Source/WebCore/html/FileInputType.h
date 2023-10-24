@@ -103,6 +103,8 @@ private:
 
     bool allowsDirectories() const;
 
+    bool dirAutoUsesValue() const final;
+
     RefPtr<FileChooser> m_fileChooser;
     std::unique_ptr<FileIconLoader> m_fileIconLoader;
 

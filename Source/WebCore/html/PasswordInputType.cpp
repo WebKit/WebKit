@@ -86,9 +86,4 @@ bool PasswordInputType::shouldRespectListAttribute()
     return false;
 }
 
-bool PasswordInputType::dirAutoUsesValue() const
-{
-    return false;
-}
-
 } // namespace WebCore

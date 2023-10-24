@@ -14,8 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-only-if-applies.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-rtl-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-rtl-inherited.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/disabled-elements-01.html

@@ -1,0 +1,24 @@
+
+PASS <input dir=auto type=hidden> directionality
+PASS <input dir=auto type=text> directionality
+PASS <input dir=auto type=search> directionality
+PASS <input dir=auto type=tel> directionality
+PASS <input dir=auto type=url> directionality
+PASS <input dir=auto type=email> directionality
+PASS <input dir=auto type=password> directionality
+PASS <input dir=auto type=submit> directionality
+PASS <input dir=auto type=reset> directionality
+PASS <input dir=auto type=button> directionality
+FAIL <input dir=auto type=date> directionality assert_equals: expected "date" but got "text"
+FAIL <input dir=auto type=month> directionality assert_equals: expected "month" but got "text"
+FAIL <input dir=auto type=week> directionality assert_equals: expected "week" but got "text"
+FAIL <input dir=auto type=time> directionality assert_equals: expected "time" but got "text"
+FAIL <input dir=auto type=datetime-local> directionality assert_equals: expected "datetime-local" but got "text"
+PASS <input dir=auto type=number> directionality
+PASS <input dir=auto type=range> directionality
+FAIL <input dir=auto type=color> directionality assert_equals: expected "color" but got "text"
+PASS <input dir=auto type=checkbox> directionality
+PASS <input dir=auto type=radio> directionality
+PASS <input dir=auto type=image> directionality
+PASS <textarea dir=auto> directionality
+

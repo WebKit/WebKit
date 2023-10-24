@@ -54,7 +54,6 @@ private:
     bool shouldUseInputMethod() const final;
     bool shouldResetOnDocumentActivation() final;
     bool shouldRespectListAttribute() final;
-    bool dirAutoUsesValue() const final;
 };
 
 } // namespace WebCore
