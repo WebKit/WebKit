@@ -1980,14 +1980,16 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
     @defer.inlineCallbacks
     def fail_build(self, reason, comment):
-        self.setProperty('comment_text', comment)
-
         yield self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
         if self.getProperty('buildername', '') == 'Safe-Merge-Queue':
+            build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+            url = '[#{}]({})'.format(self.getProperty("buildnumber", ""), build_url)
+            comment += f'\n\nSafe-Merge-Queue: Build {url}.'
             self.build.addStepsAfterCurrentStep([LeaveComment(), CheckStatusOfPR(pr_number=self.getProperty('github.number'))])
         else:
             self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
+        self.setProperty('comment_text', comment)
         self.descriptionDone = reason
         defer.returnValue(FAILURE)
 
@@ -2320,9 +2322,18 @@ class RemoveAndAddLabels(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         self.setProperty('github.number', pr_number)
         yield self._addToLog('stdio', f'Updating labels for PR {pr_number}...\n')
         self.setProperty(pr_status, prs_to_label)
-        if len(prs_to_label):
-            self.build.addStepsAfterCurrentStep([RemoveAndAddLabels(label_to_add=self.label_to_add)])
         rc = yield self.update_labels(pr_number)
+
+        # When a PR is removed from safe-merge-queue, add a comment with the build link.
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        url = '[#{}]({})'.format(self.getProperty("buildnumber", ""), build_url)
+        comment = f'\n\nSafe-Merge-Queue: Build {url}.'
+        self.setProperty('comment_text', comment)
+        steps_to_add = [LeaveComment()]
+        if len(prs_to_label):
+            steps_to_add += [RemoveAndAddLabels(label_to_add=self.label_to_add)]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
         defer.returnValue(rc)
 
     def getResultSummary(self):
