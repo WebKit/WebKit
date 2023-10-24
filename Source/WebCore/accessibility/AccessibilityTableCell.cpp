@@ -333,7 +333,7 @@ void AccessibilityTableCell::ensureIndexesUpToDate() const
 std::pair<unsigned, unsigned> AccessibilityTableCell::rowIndexRange() const
 {
     ensureIndexesUpToDate();
-    return { m_rowIndex, rowSpan() };
+    return { m_rowIndex, m_effectiveRowSpan };
 }
     
 std::pair<unsigned, unsigned> AccessibilityTableCell::columnIndexRange() const

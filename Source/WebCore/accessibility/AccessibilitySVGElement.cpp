@@ -220,7 +220,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
             return false;
     }
 
-    if (roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole())
+    if (ignoredFromPresentationalRole())
         return true;
 
     if (ariaRoleAttribute() != AccessibilityRole::Unknown)

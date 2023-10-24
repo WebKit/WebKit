@@ -482,25 +482,62 @@ void AccessibilityTable::addChildren()
     unsigned yCurrent = 0;
     RefPtr<HTMLTableCaptionElement> captionElement;
 
-    HashSet<AccessibilityObject*> appendedRows;
+    struct DownwardGrowingCell {
+        CheckedRef<AccessibilityTableCell> axObject;
+        // The column the cell starts in.
+        unsigned x;
+        // The number of columns the cell spans (called "width" in the spec).
+        unsigned colSpan;
+        unsigned remainingRowsToSpan;
+    };
+    Vector<DownwardGrowingCell> downwardGrowingCells;
+
+    // https://html.spec.whatwg.org/multipage/tables.html#algorithm-for-growing-downward-growing-cells
+    auto growDownwardsCells = [&] () {
+        // ...for growing downward-growing cells, the user agent must, for each {cell, cellX, width} tuple in the list
+        // of downward-growing cells, extend the cell so that it also covers the slots with coordinates (x, yCurrent), where cellX ≤ x < cellX+width.
+        for (auto& cell : downwardGrowingCells) {
+            if (!cell.remainingRowsToSpan)
+                continue;
+            --cell.remainingRowsToSpan;
+            cell.axObject->incrementEffectiveRowSpan();
+
+            for (unsigned column = cell.x; column < cell.x + cell.colSpan; column++) {
+                ensureRowAndColumn(yCurrent, column);
+                m_cellSlots[yCurrent][column] = cell.axObject->objectID();
+            }
+        }
+    };
+
+    HashSet<AccessibilityObject*> processedRows;
     // https://html.spec.whatwg.org/multipage/tables.html#algorithm-for-processing-rows
-    auto processRow = [&, this] (AccessibilityTableRow* row) {
-        if (!row || appendedRows.contains(row))
+    auto processRow = [&] (AccessibilityTableRow* row) {
+        if (!row || processedRows.contains(row))
             return;
-        appendedRows.add(row);
+        processedRows.add(row);
+
+        if (row->roleValue() != AccessibilityRole::Unknown && row->accessibilityIsIgnored()) {
+            // Skip ignored rows (except for those ignored because they have an unknown role, which will happen after a table has become un-exposed but is potentially becoming re-exposed).
+            // This is an addition on top of the HTML algorithm because the computed AX table has extra restrictions (e.g. cannot contain aria-hidden or role="presentation" rows).
+            return;
+        }
+
         // Step 1: If yheight is equal to ycurrent, then increase yheight by 1. (ycurrent must never be greater than yheight.)
         if (yHeight <= yCurrent)
             yHeight = yCurrent + 1;
 
         // Step 2.
         unsigned xCurrent = 0;
-        // Step 3: Run the algorithm for growing downward-growing cells (not implemented).
+        // Step 3: Run the algorithm for growing downward-growing cells.
+        growDownwardsCells();
 
         // Step 4: If the tr element being processed has no td or th element children, then increase ycurrent by 1, abort this set of steps, and return to the algorithm above.
         for (const auto& child : row->children()) {
             auto* currentCell = dynamicDowncast<AccessibilityTableCell>(child.get());
             if (!currentCell)
                 continue;
+            // (Not specified): As part of beginning to process this cell, reset its effective rowspan in case it had a non-default value set from a previous call to AccessibilityTable::addChildren().
+            currentCell->resetEffectiveRowSpan();
 
             // Step 6: While the slot with coordinate (xcurrent, ycurrent) already has a cell assigned to it, increase xcurrent by 1.
             ensureRowAndColumn(yCurrent, xCurrent);
@@ -526,23 +563,36 @@ void AccessibilityTable::addChildren()
                 xWidth = xCurrent + colSpan;
 
             // Step 12: If yheight < ycurrent+rowspan, then let yheight be ycurrent+rowspan.
-            if (yHeight < yCurrent + rowSpan)
-                yHeight = yCurrent + rowSpan;
+            // NOTE: An explicit choice is made not to follow this part of the spec, because rowspan
+            // can be some arbitrarily large number (up to 65535) that will not actually reflect how
+            // many rows the cell spans in the final table. Taking it as-provided will cause incorrect
+            // results in many scenarios. Instead, only check for yHeight < yCurrent.
+            if (yHeight < yCurrent)
+                yHeight = yCurrent;
 
             // Step 13: Let the slots with coordinates (x, y) such that xcurrent ≤ x < xcurrent+colspan and
             // ycurrent ≤ y < ycurrent+rowspan be covered by a new cell c, anchored at (xcurrent, ycurrent),
             // which has width colspan and height rowspan, corresponding to the current cell element.
+            // NOTE: We don't implement this exactly, instead using the downward-growing cell algorithm to accurately
+            // handle rowspan cells. This makes it easy to avoid extending cells outside their rowgroup.
             currentCell->setRowIndex(yCurrent);
             currentCell->setColumnIndex(xCurrent);
-            for (unsigned y = yCurrent; y < yCurrent + rowSpan; y++) {
-                for (unsigned x = xCurrent; x < xCurrent + colSpan; x++) {
-                    ensureRowAndColumn(y, x);
-                    m_cellSlots[y][x] = currentCell->objectID();
-                }
+            for (unsigned x = xCurrent; x < xCurrent + colSpan; x++) {
+                ensureRowAndColumn(yCurrent, x);
+                m_cellSlots[yCurrent][x] = currentCell->objectID();
             }
 
             // Step 14: If cell grows downward is true, then add the tuple {c, xcurrent, colspan} to the
-            // list of downward-growing cells. Not implemented.
+            // list of downward-growing cells.
+            // NOTE: We use the downward-growing cell algorithm to expand rowspanned cells.
+            if (rowSpan > 1) {
+                downwardGrowingCells.append({
+                    *currentCell,
+                    xCurrent,
+                    colSpan,
+                    rowSpan - 1
+                });
+            }
 
             // Step 15.
             xCurrent += colSpan;
@@ -559,9 +609,9 @@ void AccessibilityTable::addChildren()
         // Step 16: If current cell is the last td or th element child in the tr element being processed, then increase ycurrent by 1, abort this set of steps, and return to the algorithm above.
         yCurrent += 1;
     };
-    auto needsToDescend = [&appendedRows] (AXCoreObject& axObject) {
+    auto needsToDescend = [&processedRows] (AXCoreObject& axObject) {
         return (!axObject.isTableRow() || !axObject.node())
-            && !appendedRows.contains(dynamicDowncast<AccessibilityObject>(axObject));
+            && !processedRows.contains(dynamicDowncast<AccessibilityObject>(axObject));
     };
     std::function<void(AXCoreObject*)> processRowDescendingIfNeeded = [&] (AXCoreObject* axObject) {
         if (!axObject)
@@ -575,8 +625,15 @@ void AccessibilityTable::addChildren()
     };
     // https://html.spec.whatwg.org/multipage/tables.html#algorithm-for-ending-a-row-group
     auto endRowGroup = [&] () {
-        if (yCurrent < yHeight)
-            yCurrent = yHeight;
+        // 1. While yCurrent is less than yHeight, follow these steps:
+        while (yCurrent < yHeight) {
+            // 1a. Run the algorithm for growing downward-growing cells.
+            growDownwardsCells();
+            // 1b. Increase yCurrent by 1.
+            ++yCurrent;
+        }
+        // 2. Empty the list of downward-growing cells.
+        downwardGrowingCells.clear();
     };
     // https://html.spec.whatwg.org/multipage/tables.html#algorithm-for-processing-row-groups
     auto processRowGroup = [&] (Element& sectionElement) {
@@ -608,7 +665,8 @@ void AccessibilityTable::addChildren()
     if (!is<HTMLTableElement>(tableElement.get()) && !isAriaTable())
         return;
 
-    std::function<void(Node*)> processTableDescendant = [&, this] (Node* node) {
+    bool withinImplicitRowGroup = false;
+    std::function<void(Node*)> processTableDescendant = [&] (Node* node) {
         // Step 8: While the current element is not one of the following elements, advance the
         // current element to the next child of the table.
         if (auto* caption = dynamicDowncast<HTMLTableCaptionElement>(node)) {
@@ -622,9 +680,19 @@ void AccessibilityTable::addChildren()
         bool descendantIsRow = element && (element->hasTagName(trTag) || nodeHasRole(element, "row"_s));
         bool descendantIsRowGroup = element && !descendantIsRow && (element->hasTagName(theadTag) || element->hasTagName(tbodyTag) || element->hasTagName(tfootTag) || nodeHasRole(element, "rowgroup"_s));
 
+        if (descendantIsRowGroup)
+            withinImplicitRowGroup = false;
+        else {
+            // (Not specified): For ARIA tables, we need to track implicit rowgroups (allowed by the ARIA spec)
+            // in order to properly perform the downward-growing cell algorithm.
+            withinImplicitRowGroup = isAriaTable();
+        }
+
         // Step 9: Handle the colgroup element. Not implemented.
         // Step 10: Handled above.
-        // Step 11: Skipped. Not currently implementing "downward-growing cells" algorithm.
+        // Step 11: Let the list of downward-growing cells be an empty list.
+        if (!withinImplicitRowGroup)
+            downwardGrowingCells.clear();
         // Step 12: While the current element is not one of the following elements, advance the current element to the next child of the table
         if (!descendantIsRow && !descendantIsRowGroup) {
             if (isAriaTable()) {
@@ -643,7 +711,8 @@ void AccessibilityTable::addChildren()
             processRow(dynamicDowncast<AccessibilityTableRow>(cache->getOrCreate(element)));
 
         // Step 14: Run the algorithm for ending a row group.
-        endRowGroup();
+        if (!withinImplicitRowGroup)
+            endRowGroup();
 
         // Step 15: If the current element is a tfoot...
         if (element->hasTagName(tfootTag)) {
