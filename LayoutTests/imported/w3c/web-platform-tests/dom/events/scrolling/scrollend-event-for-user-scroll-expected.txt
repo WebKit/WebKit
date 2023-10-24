@@ -1,8 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL Tests that the target_div gets scrollend event when dragging scroll on target. promise_test: Unhandled rejection with value: "target_div did not receive scrollend event after dragging scroll on target."
-FAIL Tests that the target_div gets scrollend event when click scrollbar on target. promise_test: Unhandled rejection with value: "target_div did not receive scrollend event after clicking scrollbar on target."
-TIMEOUT Tests that the target_div gets scrollend event when drag the thumb of target. Test timed out
-NOTRUN Tests that the target_div gets scrollend event when send DOWN key to target.
+PASS Tests that the target_div gets scrollend event when touch dragging.
+FAIL Tests that the target_div gets scrollend event when clicking scrollbar. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+FAIL Tests that the target_div gets scrollend event when dragging the scrollbar thumb. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+FAIL Tests that the target_div gets scrollend event when mouse wheel scrolling. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+FAIL Tests that the target_div gets scrollend event when sending DOWN key to the target. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
 

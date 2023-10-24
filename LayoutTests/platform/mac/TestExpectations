@@ -1481,8 +1481,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_poin
 imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?touch [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_visible_descendant.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_iframe-touch-action-none_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_inactivate_pointer.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html?touch [ Skip ]
