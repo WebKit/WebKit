@@ -54,13 +54,13 @@ bool RenderSVGResourceFilter::isIdentity() const
     return SVGFilter::isIdentity(filterElement());
 }
 
-void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation)
+void RenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
-    LOG(Filters, "RenderSVGResourceFilter %p removeAllClientsFromCache", this);
+    LOG(Filters, "RenderSVGResourceFilter %p removeAllClientsFromCacheIfNeeded", this);
 
     m_rendererFilterDataMap.clear();
 
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool markForInvalidation)
