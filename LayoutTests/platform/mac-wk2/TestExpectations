@@ -2157,3 +2157,7 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 
 # rdar://114452082 (REGRESSION (262124@main?): [ Sonoma wk2 ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html is a consistent failure)
 [ Sonoma+ ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
+
+# rdar://117496707 (Suppress failures on the 7617-branch)
+imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-table-border-currentcolor-responsive.html [ Skip ]

@@ -2486,3 +2486,6 @@ webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform
 
 webkit.org/b/260322 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree.html [ Failure ]
 webkit.org/b/260322 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree-nested.html [ Failure ]
+
+# rdar://117496707 (Suppress failures on the 7617-branch)
+imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Skip ]
