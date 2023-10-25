@@ -1160,15 +1160,18 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyDownload(*m_frame, mainResourceLoader->identifier(), *this, m_response);
 
-        // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
-        // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
-        frameLoader()->setOriginalURLForDownloadRequest(m_request);
+        if (!(frameLoader()->effectiveSandboxFlags() & SandboxDownloads)) {
+            // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
+            // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
+            frameLoader()->setOriginalURLForDownloadRequest(m_request);
 
-        if (m_request.url().protocolIsData()) {
-            // We decode data URL internally, there is no resource load to convert.
-            frameLoader()->client().startDownload(m_request);
-        } else
-            frameLoader()->client().convertMainResourceLoadToDownload(this, m_request, m_response);
+            if (m_request.url().protocolIsData()) {
+                // We decode data URL internally, there is no resource load to convert.
+                frameLoader()->client().startDownload(m_request);
+            } else
+                frameLoader()->client().convertMainResourceLoadToDownload(this, m_request, m_response);
+        } else if (m_frame && m_frame->document())
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
 
         // The main resource might be loading from the memory cache, or its loader might have gone missing.
         if (mainResourceLoader()) {
