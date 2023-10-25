@@ -1745,14 +1745,6 @@ $(PROJECT_DIR)/page/LocalDOMWindow.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
 $(PROJECT_DIR)/page/Navigator+UserActivation.idl
-$(PROJECT_DIR)/page/NavigateEvent.idl
-$(PROJECT_DIR)/page/Navigation.idl
-$(PROJECT_DIR)/page/NavigationCurrentEntryChangeEvent.idl
-$(PROJECT_DIR)/page/NavigationDestination.idl
-$(PROJECT_DIR)/page/NavigationHistoryEntry.idl
-$(PROJECT_DIR)/page/NavigationInterceptHandler.idl
-$(PROJECT_DIR)/page/NavigationTransition.idl
-$(PROJECT_DIR)/page/NavigationType.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl

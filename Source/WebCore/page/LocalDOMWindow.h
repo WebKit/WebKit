@@ -72,7 +72,6 @@ class IdleRequestCallback;
 class LocalDOMWindowProperty;
 class Location;
 class MediaQueryList;
-class Navigation;
 class Navigator;
 class Node;
 class NodeList;
@@ -380,9 +379,6 @@ public:
     WebKitNamespace* webkitNamespace();
 #endif
 
-    // Navigation API
-    Navigation& navigation();
-
     // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its
     // frame), we would like to zero out m_frame to avoid being confused
@@ -458,7 +454,6 @@ private:
     mutable RefPtr<BarProp> m_statusbar;
     mutable RefPtr<BarProp> m_toolbar;
     mutable RefPtr<VisualViewport> m_visualViewport;
-    mutable RefPtr<Navigation> m_navigation;
 
     String m_status;
 

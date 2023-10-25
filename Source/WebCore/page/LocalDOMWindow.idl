@@ -51,7 +51,6 @@
     [LegacyUnforgeable] readonly attribute Document document;
     attribute [AtomString] DOMString name;
     readonly attribute History history;
-    [EnabledBySetting=NavigationAPIEnabled] readonly attribute Navigation navigation;
     [ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
     [Replaceable] readonly attribute BarProp locationbar;
     [Replaceable] readonly attribute BarProp menubar;

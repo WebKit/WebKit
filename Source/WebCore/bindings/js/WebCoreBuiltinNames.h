@@ -299,13 +299,7 @@ namespace WebCore {
     macro(MediaStreamTrack) \
     macro(MerchantValidationEvent) \
     macro(MockRTCRtpTransform) \
-    macro(NavigateEvent) \
-    macro(Navigation) \
-    macro(NavigationCurrentEntryChangeEvent) \
-    macro(NavigationDestination) \
-    macro(NavigationHistoryEntry) \
     macro(NavigationPreloadManager) \
-    macro(NavigationTransition) \
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
     macro(NavigatorPermissions) \
@@ -592,7 +586,6 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
-    macro(navigation) \
     macro(onbackgroundfetchsuccess) \
     macro(onbackgroundfetchfail) \
     macro(onbackgroundfetchabort) \

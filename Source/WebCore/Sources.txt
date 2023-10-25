@@ -1933,12 +1933,6 @@ page/Location.cpp
 page/LoggedInStatus.cpp
 page/MemoryRelease.cpp
 page/MouseEventWithHitTestResults.cpp
-page/NavigateEvent.cpp
-page/Navigation.cpp
-page/NavigationCurrentEntryChangeEvent.cpp
-page/NavigationDestination.cpp
-page/NavigationHistoryEntry.cpp
-page/NavigationTransition.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
 page/NavigatorIsLoggedIn.cpp
@@ -3880,14 +3874,6 @@ JSMutationEvent.cpp
 JSMutationObserver.cpp
 JSMutationRecord.cpp
 JSNamedNodeMap.cpp
-JSNavigateEvent.cpp
-JSNavigation.cpp
-JSNavigationCurrentEntryChangeEvent.cpp
-JSNavigationDestination.cpp
-JSNavigationHistoryEntry.cpp
-JSNavigationInterceptHandler.cpp
-JSNavigationTransition.cpp
-JSNavigationType.cpp
 JSNavigator.cpp
 JSNavigatorGPU.cpp
 JSNode.cpp

@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
@@ -25,7 +25,7 @@ PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
@@ -44,7 +44,7 @@ PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
@@ -63,7 +63,7 @@ PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
@@ -82,7 +82,7 @@ PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
@@ -102,7 +102,7 @@ PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
-PASS performance.navigation.redirectCount is 0
+PASS navigation.redirectCount is 0
 PASS timing.fetchStart is >= timing.navigationStart
 PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
