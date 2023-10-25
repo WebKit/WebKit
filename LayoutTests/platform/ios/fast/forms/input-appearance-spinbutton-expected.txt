@@ -141,4 +141,3 @@ layer at (231,545) size 282x28
   RenderBlock {DIV} at (12,5) size 283x29
 layer at (231,586) size 282x28
   RenderBlock {DIV} at (12,5) size 283x29
-
