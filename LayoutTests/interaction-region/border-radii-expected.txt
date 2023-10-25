@@ -1,4 +1,4 @@
-uniform half pill diagonal tongue degenerate changing
+uniform half pill diagonal tongue degenerate changing default explicit
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -23,7 +23,11 @@ uniform half pill diagonal tongue degenerate changing
         (interaction (434,10) width=102 height=52)
         (borderRadius 2.00),
         (interaction (559,10) width=92 height=52)
-        (borderRadius 20.00)])
+        (borderRadius 20.00),
+        (interaction (674,10) width=77 height=52)
+        (borderRadius 8.00),
+        (interaction (10,82) width=80 height=52)
+        (borderRadius 0.00)])
       )
     )
   )
