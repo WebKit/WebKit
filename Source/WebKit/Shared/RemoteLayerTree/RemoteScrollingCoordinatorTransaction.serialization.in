@@ -32,3 +32,21 @@ class WebKit::RemoteScrollingCoordinatorTransaction {
     bool hasChangedProperties()
     RefPtr<WebCore::ScrollingStateFrameScrollingNode> rootStateNode()
 }
+
+header: <WebCore/ScrollingStateFrameScrollingNode.h>
+header: <WebCore/ScrollingStateFrameHostingNode.h>
+header: <WebCore/ScrollingStateOverflowScrollingNode.h>
+header: <WebCore/ScrollingStateOverflowScrollProxyNode.h>
+header: <WebCore/ScrollingStateFixedNode.h>
+header: <WebCore/ScrollingStateStickyNode.h>
+header: <WebCore/ScrollingStatePositionedNode.h>
+
+[RefCounted] class WebCore::ScrollingStateNode subclasses {
+    WebCore::ScrollingStateFrameScrollingNode,
+    WebCore::ScrollingStateFrameHostingNode,
+    WebCore::ScrollingStateOverflowScrollingNode,
+    WebCore::ScrollingStateOverflowScrollProxyNode,
+    WebCore::ScrollingStateFixedNode,
+    WebCore::ScrollingStateStickyNode,
+    WebCore::ScrollingStatePositionedNode,
+}

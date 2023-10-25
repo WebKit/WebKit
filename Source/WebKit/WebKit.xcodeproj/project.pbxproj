@@ -2281,6 +2281,7 @@
 		F4648E92296E81FA00744170 /* WebPrivacyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F4648E90296E81F500744170 /* WebPrivacyHelpers.h */; };
 		F4660BC225DEF08100E86598 /* PasteboardAccessIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */; };
 		F48570A32644BEC500C05F71 /* Timeout.h in Headers */ = {isa = PBXBuildFile; fileRef = F48570A22644BEC400C05F71 /* Timeout.h */; };
+		F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */ = {isa = PBXBuildFile; fileRef = F48C81E32AE0BA6E00073850 /* CoreIPCData.h */; };
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
 		F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = F496A42F1F58A272004C1757 /* DragDropInteractionState.h */; };
 		F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */; };
@@ -7430,6 +7431,8 @@
 		F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		F48BB8DF26F96392001C1C40 /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
 		F48BB8E026F96392001C1C40 /* RemoteDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorder.cpp; sourceTree = "<group>"; };
+		F48C81E32AE0BA6E00073850 /* CoreIPCData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCData.h; sourceTree = "<group>"; };
+		F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCData.serialization.in; sourceTree = "<group>"; };
 		F48D2A8421583A0200C6752B /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		F496A42F1F58A272004C1757 /* DragDropInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DragDropInteractionState.h; path = ios/DragDropInteractionState.h; sourceTree = "<group>"; };
 		F496A4301F58A272004C1757 /* DragDropInteractionState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DragDropInteractionState.mm; path = ios/DragDropInteractionState.mm; sourceTree = "<group>"; };
@@ -10561,6 +10564,8 @@
 				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
+				F48C81E32AE0BA6E00073850 /* CoreIPCData.h */,
+				F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */,
 				1C739E872347BD0F00C621EC /* CoreTextHelpers.h */,
 				1C739E852347BCF600C621EC /* CoreTextHelpers.mm */,
 				C55F916C1C595E440029E92D /* DataDetectionResult.h */,
@@ -14721,6 +14726,7 @@
 				CA05397923EE324400A553DC /* ContentAsStringIncludesChildFrames.h in Headers */,
 				5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */,
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
+				F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */,
 				A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */,
 				37C21CAE1E994C0C0029D5F9 /* CorePredictionSPI.h in Headers */,
 				1C62900D28EE2CD300C26B60 /* CoreSVGSPI.h in Headers */,

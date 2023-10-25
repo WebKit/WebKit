@@ -133,6 +133,7 @@ class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBa
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using WebGLVersion = GraphicsContextGLWebGLVersion;
+    using SurfaceBuffer = GraphicsContextGL::SurfaceBuffer;
 
     using GPUBasedCanvasRenderingContext::weakPtrFactory;
     using GPUBasedCanvasRenderingContext::WeakValueType;
@@ -400,9 +401,9 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY);
+    RefPtr<PixelBuffer> drawingBufferToPixelBuffer(GraphicsContextGL::FlipY);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
+    RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
 #endif
 
     void removeSharedObject(WebGLObject&);

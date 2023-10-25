@@ -4749,20 +4749,6 @@ MuteCameraOnMicrophoneInterruptionEnabled:
     WebCore:
       default: false
 
-NavigationAPIEnabled:
-  type: bool
-  status: testable
-  category: dom
-  humanReadableName: "Navigation API"
-  humanReadableDescription: "Enable Navigation API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 NeedsAdobeFrameReloadingQuirk:
   comment: 'FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need
     to phase it out once Adobe can fix the bug from their end.'

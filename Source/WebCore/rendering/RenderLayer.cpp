@@ -2929,11 +2929,10 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
-void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, const AffineTransform& layerContentTransform)
+void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContextStateSaver&, const AffineTransform& layerContentTransform)
 {
     bool wasPaintingSVGResourceLayer = m_isPaintingSVGResourceLayer;
     m_isPaintingSVGResourceLayer = true;
-    stateSaver.save();
     context.concatCTM(layerContentTransform);
 
     auto localPaintDirtyRect = LayoutRect::infiniteRect();
@@ -3377,6 +3376,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
         setupClipPath(context, stateSaver, regionContextStateSaver, paintingInfo, localPaintFlags, columnAwareOffsetFromRoot);
 
+    bool applySVGClippingMask = localPaintFlags.contains(PaintLayerFlag::PaintingSVGClippingMask);
+    if (applySVGClippingMask)
+        localPaintFlags.remove(PaintLayerFlag::PaintingSVGClippingMask);
+
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
     bool selectionOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
 
@@ -3512,7 +3515,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
 
-        if ((paintFlags & PaintLayerFlag::PaintingSVGClippingMask) || (!(paintFlags & PaintLayerFlag::PaintingCompositingMaskPhase) && (paintFlags & PaintLayerFlag::PaintingCompositingClipPathPhase))) {
+        if (applySVGClippingMask || (!(paintFlags & PaintLayerFlag::PaintingCompositingMaskPhase) && (paintFlags & PaintLayerFlag::PaintingCompositingClipPathPhase))) {
             // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
             paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
@@ -4231,6 +4234,19 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return { nullptr };
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // If we're hit testing 'SVG clip content' (aka. RenderSVGResourceClipper) do not early exit.
+    if (!request.svgClipContent()) {
+        // SVG resource layers and their children are never hit tested.
+        if (m_enclosingSVGResourceContainer)
+            return { nullptr };
+
+        // Hidden SVG containers (<defs> / <symbol> ...) are never hit tested directly.
+        if (is<RenderSVGHiddenContainer>(renderer()))
+            return { nullptr };
+    }
+#endif
 
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 

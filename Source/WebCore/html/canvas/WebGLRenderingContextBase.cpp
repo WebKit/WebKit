@@ -1039,7 +1039,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
                 // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
                 // canvas element repeatedly.
                 buffer->flushDrawingContext();
-                m_context->paintCompositedResultsToCanvas(*buffer);
+                m_context->drawSurfaceBufferToImageBuffer(SurfaceBuffer::DisplayBuffer, *buffer);
             }
         }
         return;
@@ -1059,24 +1059,26 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
         // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
         // canvas element repeatedly.
         buffer->flushDrawingContext();
-        m_context->paintRenderingResultsToCanvas(*buffer);
+        m_context->drawSurfaceBufferToImageBuffer(SurfaceBuffer::DrawingBuffer, *buffer);
     }
 }
 
-RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY flipY)
+RefPtr<PixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer(GraphicsContextGL::FlipY flipY)
 {
     if (isContextLost())
         return nullptr;
     clearIfComposited(CallerTypeOther);
-    return m_context->paintRenderingResultsToPixelBuffer(flipY);
+    return m_context->drawingBufferToPixelBuffer(flipY);
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> WebGLRenderingContextBase::paintCompositedResultsToVideoFrame()
+RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
     if (isContextLost())
         return nullptr;
-    return m_context->paintCompositedResultsToVideoFrame();
+    if (buffer == SurfaceBuffer::DrawingBuffer)
+        clearIfComposited(CallerTypeOther);
+    return m_context->surfaceBufferToVideoFrame(buffer);
 }
 #endif
 

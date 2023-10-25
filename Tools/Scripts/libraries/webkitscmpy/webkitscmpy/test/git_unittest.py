@@ -746,6 +746,11 @@ class TestGitHub(testing.TestCase):
                 ['Source/main.cpp', 'Source/main.h'],
             )
 
+    def test_files_changed_no_argument(self):
+        with mocks.remote.GitHub():
+            with self.assertRaises(ValueError):
+                remote.GitHub(self.remote).files_changed()
+
     def test_checkout_url(self):
         self.assertEqual(remote.GitHub(self.remote).checkout_url(), 'git@github.example.com:WebKit/WebKit.git')
         self.assertEqual(remote.GitHub(self.remote).checkout_url(http=True), 'https://github.example.com/WebKit/WebKit.git')
@@ -891,6 +896,11 @@ class TestBitBucket(testing.TestCase):
                 remote.BitBucket(self.remote).files_changed('4@main'),
                 ['Source/main.cpp', 'Source/main.h'],
             )
+
+    def test_files_changed_no_argument(self):
+        with mocks.remote.BitBucket():
+            with self.assertRaises(ValueError):
+                remote.BitBucket(self.remote).files_changed()
 
     def test_checkout_url(self):
         self.assertEqual(remote.BitBucket(self.remote).checkout_url(), 'git@bitbucket.example.com/WEBKIT/webkit.git')

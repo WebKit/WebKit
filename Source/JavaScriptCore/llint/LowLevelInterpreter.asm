@@ -781,7 +781,7 @@ end
 if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
-    const CalleeSaveRegisterCount = 5 + 2 * 1 // 5 32-bit GPRs + 1 64-bit FPR
+    const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
 elsif MIPS
     const CalleeSaveRegisterCount = 3
 elsif X86 or X86_WIN
@@ -801,7 +801,7 @@ macro pushCalleeSaves()
     # callee save in the JIT ABI.
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
-        emit "vpush.64 {d15}"
+        emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
     elsif MIPS
         emit "addiu $sp, $sp, -12"
@@ -825,7 +825,7 @@ macro popCalleeSaves()
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
-        emit "vpop.64 {d15}"
+        emit "vpop.64 {d14, d15}"
     elsif MIPS
         emit "lw $s0, 0($sp)"
         emit "lw $s1, 4($sp)"
@@ -964,7 +964,6 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             stored csfr3, 32[entryFrame]
             stored csfr4, 40[entryFrame]
             stored csfr5, 48[entryFrame]
-            stored csfr6, 56[entryFrame]
         elsif MIPS
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
@@ -1041,7 +1040,6 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadd 32[temp], csfr3
             loadd 40[temp], csfr4
             loadd 48[temp], csfr5
-            loadd 56[temp], csfr6
         elsif MIPS
             loadp [temp], csr0
             loadp 4[temp], csr1

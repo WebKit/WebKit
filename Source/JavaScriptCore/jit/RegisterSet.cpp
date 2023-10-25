@@ -196,7 +196,6 @@ RegisterSet RegisterSetBuilder::vmCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS3, IgnoreVectors);
     result.add(FPRInfo::fpRegCS4, IgnoreVectors);
     result.add(FPRInfo::fpRegCS5, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
 #elif CPU(MIPS)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);

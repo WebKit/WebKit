@@ -3082,11 +3082,11 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
     }
 }
 
-RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::paintRenderingResultsToPixelBuffer(WebCore::GraphicsContextGL::FlipY arg0)
+RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY arg0)
 {
     if (isContextLost())
         return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToPixelBuffer(arg0));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawingBufferToPixelBuffer(arg0));
     if (!sendResult.succeeded()) {
         markContextLost();
         return { };

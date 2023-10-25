@@ -2,14 +2,14 @@
 <html>
 <head>
 <link rel="stylesheet" href="resources/empty.css?link-css-disabled-value-with-slow-loading-sheet-in-error&default" media="all" title="Default Style Sheet" type="text/css">
-<link rel="alternate stylesheet" href="resources/500.py" media="all" title="green" type="text/css">
+<link rel="alternate stylesheet" href="resources/shared.css" media="all" title="green" type="text/css">
 <script src="/js-test-resources/js-test-pre.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("Test that HTMLLinkElement's disabled attribute is properly cached while set when loading a stylesheet.");
+description("Test that HTMLLinkElement's disabled attribute is properly set when loading a stylesheet.");
 
 window.jsTestIsAsync = true;
 
@@ -20,8 +20,8 @@ mainSheetLink.disabled = true;
 alternateSheetLink.disabled = false;
 
 debug("Testing value of 'disabled' prior to load just after setting them");
-shouldBeNonNull("mainSheetLink.sheet");
-shouldBeNull("alternateSheetLink.sheet");
+shouldBeNull("mainSheetLink.sheet");
+shouldBeNonNull("alternateSheetLink.sheet");
 shouldBeTrue("mainSheetLink.disabled");
 shouldBeFalse("alternateSheetLink.disabled");
 
@@ -30,7 +30,7 @@ debug("Testing the values when the alternate sheet is loaded (as this is the onl
 var testTimer = setInterval(function() {
     if (!alternateSheetLink.sheet)
         return;
-    shouldBeNonNull("mainSheetLink.sheet");
+    shouldBeNull("mainSheetLink.sheet");
     shouldBeNonNull("alternateSheetLink.sheet");
     shouldBeTrue("mainSheetLink.disabled");
     shouldBeFalse("alternateSheetLink.disabled");

@@ -106,7 +106,6 @@ namespace WebCore {
     macro(copy) \
     DOM_EVENT_NAME_APPLE_PAY_COUPON_CODE_CHANGED(macro) \
     macro(cuechange) \
-    macro(currententrychange) \
     macro(cut) \
     macro(dataavailable) \
     macro(datachannel) \
@@ -117,7 +116,6 @@ namespace WebCore {
     macro(deviceorientation) \
     macro(dischargingtimechange) \
     macro(disconnect) \
-    macro(dispose) \
     macro(downloading) \
     macro(drag) \
     macro(dragend) \
@@ -196,9 +194,6 @@ namespace WebCore {
     macro(mouseup) \
     macro(mousewheel) \
     macro(mute) \
-    macro(navigate) \
-    macro(navigateerror) \
-    macro(navigatesuccess) \
     macro(negotiationneeded) \
     macro(nexttrack) \
     macro(nomatch) \

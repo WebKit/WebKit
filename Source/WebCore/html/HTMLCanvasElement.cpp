@@ -799,7 +799,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY::Yes);
+    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).drawingBufferToPixelBuffer(GraphicsContextGL::FlipY::Yes);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return nullptr;
 
@@ -821,9 +821,10 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         if (document().settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToVideoFrame();
+        return downcast<WebGLRenderingContextBase>(*m_context).surfaceBufferToVideoFrame(WebGLRenderingContextBase::SurfaceBuffer::DrawingBuffer);
     }
 #endif
+
     RefPtr imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;

@@ -29,7 +29,9 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
+#import "CoreIPCData.h"
 #import "CoreTextHelpers.h"
+#import "DataReference.h"
 #import "LegacyGlobalSettings.h"
 #import "MessageNames.h"
 #import "WebPreferencesKeys.h"
@@ -390,15 +392,20 @@ static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
 
 static inline void encodeDataInternal(Encoder& encoder, NSData *data)
 {
-    encoder << bridge_cast(data);
+    IPC::DataReference dataRef(reinterpret_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length]);
+    encoder << WebKit::CoreIPCData(dataRef);
 }
 
 static inline std::optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
 {
-    RetainPtr<CFDataRef> data;
-    if (!decoder.decode(data))
-        return std::nullopt;
-    return { bridge_cast(WTFMove(data)) };
+    std::optional<WebKit::CoreIPCData> data;
+
+    decoder >> data;
+    if (data) {
+        auto ret = data->createData();
+        return { bridge_cast(WTFMove(ret)) };
+    }
+    return { };
 }
 
 #pragma mark - NSDate

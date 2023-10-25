@@ -1033,6 +1033,11 @@ void Connection::connectionDidClose()
     }
     m_waitForMessageCondition.notifyAll();
 
+    {
+        Locker locker { m_outgoingMessagesLock };
+        m_outgoingMessages.clear();
+    }
+
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);
 

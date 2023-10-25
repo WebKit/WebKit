@@ -859,16 +859,21 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         return false;
     }
 
+    // The https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4535 merge request in qtdemux is causing EOS on
+    // a "to be removed" stream before the no-more-pads message is triggered. That message makes AppendPipeline realize that
+    // the stream is actually going to be removed. AppendPipeline may therefore be trying to reuse a former EOSed parser and
+    // appsink elements from the old terminated stream, so "restarting" them (by stopping them now and restarting them at the
+    // end) is required.
+    // Note that what happens before qtdemux is irrelevant. Qtdemux itself is never receiving EOS in this case.
+    if (matchingTrack->parser)
+        gst_element_set_state(matchingTrack->parser.get(), GST_STATE_NULL);
+    gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_NULL);
+
     GRefPtr<GstCaps> matchingTrackCaps = adoptGRef(gst_pad_get_current_caps(matchingTrack->entryPad.get()));
     if (!matchingTrack->isLinked() && (!matchingTrackCaps || gst_caps_can_intersect(parsedCaps.get(), matchingTrackCaps.get())))
         linkPadWithTrack(demuxerSrcPad, *matchingTrack);
     else {
-        // Unlink from old track and link to new track, by 1. stopping parser/sink, 2. unlinking
-        // demuxer from track, 3. restarting parser/sink.
-        if (matchingTrack->parser)
-            gst_element_set_state(matchingTrack->parser.get(), GST_STATE_NULL);
-        gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_NULL);
-
+        // Unlink from old track and link to new track.
         auto peer = adoptGRef(gst_pad_get_peer(matchingTrack->entryPad.get()));
         if (peer.get() != demuxerSrcPad) {
             if (peer) {
@@ -887,10 +892,12 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         } else
             GST_DEBUG_OBJECT(pipeline(), "%s track pads match, nothing to re-link", matchingTrack->trackId.string().ascii().data());
 
-        gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_PLAYING);
-        if (matchingTrack->parser)
-            gst_element_set_state(matchingTrack->parser.get(), GST_STATE_PLAYING);
     }
+
+    gst_element_set_state(matchingTrack->appsink.get(), GST_STATE_PLAYING);
+    if (matchingTrack->parser)
+        gst_element_set_state(matchingTrack->parser.get(), GST_STATE_PLAYING);
+
     return true;
 }
 

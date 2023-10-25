@@ -314,7 +314,7 @@ public:
 
     void createShadowSubtreeIfNeeded();
     virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
+    virtual void removeShadowSubtree();
 
     virtual HTMLElement* containerElement() const { return nullptr; }
     virtual HTMLElement* innerBlockElement() const { return nullptr; }

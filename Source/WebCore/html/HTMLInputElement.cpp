@@ -532,7 +532,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
             setAttributeWithoutSynchronization(valueAttr, AtomString { WTFMove(dirtyValue) });
     }
 
-    m_inputType->destroyShadowSubtree();
+    m_inputType->removeShadowSubtree();
     m_inputType->detachFromElement();
     auto oldType = m_inputType->type();
 

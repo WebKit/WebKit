@@ -49,6 +49,24 @@ struct MockTestMessageWithConnection {
     std::tuple<IPC::Connection::Handle&&> m_arguments;
 };
 
+struct MockTestSyncMessage {
+    static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
+    using ReplyArguments = std::tuple<>;
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+    MockTestSyncMessage()
+    {
+    }
+
+    std::tuple<> m_arguments;
+};
+
 namespace {
 class SimpleConnectionTest : public testing::Test {
 public:
@@ -88,6 +106,36 @@ TEST_F(SimpleConnectionTest, ConnectLocalConnection)
     clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
     clientConnection->invalidate();
+}
+
+TEST_F(SimpleConnectionTest, ClearOutgoingMessages)
+{
+    // Create a connection, but leave the client
+    // handle pending.
+    auto firstIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    ASSERT_NE(firstIdentifiers, std::nullopt);
+    Ref<IPC::Connection> firstServerConnection = IPC::Connection::createServerConnection(WTFMove(firstIdentifiers->server));
+    firstServerConnection->open(m_mockServerClient);
+
+    // Create a second connection, and send the client
+    // handle in a message over the first connection (such
+    // that it will be stored as a pending message).
+    auto secondIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    ASSERT_NE(secondIdentifiers, std::nullopt);
+    Ref<IPC::Connection> secondServerConnection = IPC::Connection::createServerConnection(WTFMove(secondIdentifiers->server));
+    MockConnectionClient mockSecondServerClient;
+    secondServerConnection->open(mockSecondServerClient);
+
+    firstServerConnection->send(MockTestMessageWithConnection { WTFMove(secondIdentifiers->client) }, 0);
+
+    // Invalidate the first connection's client handle,
+    // which should clear pending messages and also invalidate
+    // the second connection.
+    firstIdentifiers->client = IPC::Connection::Handle();
+
+    // Try a sync send over the second connection, which should
+    // fail immediately if the client handle has been released.
+    secondServerConnection->sendSync(MockTestSyncMessage(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting);
 }
 
 class ConnectionTest : public testing::Test, protected ConnectionTestBase {

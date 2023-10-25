@@ -118,6 +118,7 @@ public:
 
     // Temporary registers.
     // d8-d15 are callee saved, d15 is use by the MacroAssembler as fpTempRegister.
+    // d14 is reserved as an additional scratch for wasm JITs
     static constexpr FPRReg fpRegT0 = ARMRegisters::d0;
     static constexpr FPRReg fpRegT1 = ARMRegisters::d1;
     static constexpr FPRReg fpRegT2 = ARMRegisters::d2;
@@ -132,7 +133,6 @@ public:
     static constexpr FPRReg fpRegCS3 = ARMRegisters::d11;
     static constexpr FPRReg fpRegCS4 = ARMRegisters::d12;
     static constexpr FPRReg fpRegCS5 = ARMRegisters::d13;
-    static constexpr FPRReg fpRegCS6 = ARMRegisters::d14;
 
     // ARMv7 doesn't pass arguments in fp registers. The return
     // value is also actually in integer registers, for now
@@ -141,7 +141,7 @@ public:
     static constexpr FPRReg argumentFPR0 = ARMRegisters::d0; // fpRegT0
     static constexpr FPRReg argumentFPR1 = ARMRegisters::d1; // fpRegT1
 
-    static constexpr FPRReg nonPreservedNonArgumentFPR0 = ARMRegisters::d7;
+    static constexpr FPRReg nonPreservedNonArgumentFPR0 = ARMRegisters::d14;
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.

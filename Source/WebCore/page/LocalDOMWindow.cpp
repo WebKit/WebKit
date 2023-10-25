@@ -84,7 +84,6 @@
 #include "MediaQueryMatcher.h"
 #include "MessageEvent.h"
 #include "MessageWithMessagePorts.h"
-#include "Navigation.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
 #include "OriginAccessPatterns.h"
@@ -672,13 +671,6 @@ History& LocalDOMWindow::history()
     if (!m_history)
         m_history = History::create(*this);
     return *m_history;
-}
-
-Navigation& LocalDOMWindow::navigation()
-{
-    if (!m_navigation)
-        m_navigation = Navigation::create(scriptExecutionContext(), *this);
-    return *m_navigation;
 }
 
 Crypto& LocalDOMWindow::crypto() const

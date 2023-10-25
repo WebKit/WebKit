@@ -1797,11 +1797,7 @@ webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html [ Failure ]
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Failure ]
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
-# TransportStats is missing required key for RTCDtlsTransportState causing a crash in the following
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Skip ]
-webrtc/audio-muted-stats.html [ Skip ]
-webrtc/video-autoplay2.html [ Skip ]
-webrtc/video-mute.html [ Skip ]
+webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
 
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]

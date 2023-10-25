@@ -121,10 +121,9 @@ protected:
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
     void getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&&);
-    void paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    void paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
+    void surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     void copyTextureFromVideoFrame(SharedVideoFrame&&, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
@@ -147,8 +146,6 @@ protected:
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
-    void paintRenderingResultsToCanvasWithQualifiedIdentifier(WebCore::RenderingResourceIdentifier);
-    void paintCompositedResultsToCanvasWithQualifiedIdentifier(WebCore::RenderingResourceIdentifier);
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
 
 protected:

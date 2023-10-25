@@ -40,8 +40,8 @@
 
 #if USE(GBM)
 #include <WebCore/GBMDevice.h>
+#include <WebCore/GBMVersioning.h>
 #include <drm_fourcc.h>
-#include <gbm.h>
 #endif
 
 namespace WebKit {
@@ -137,11 +137,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     uint64_t modifier = DRM_FORMAT_MOD_INVALID;
     uint32_t flags = dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? GBM_BO_USE_SCANOUT : GBM_BO_USE_RENDERING;
     if (dmabufFormat.modifiers[0] != DRM_FORMAT_MOD_INVALID) {
-#if HAVE(GBM_BO_CREATE_WITH_MODIFIERS2)
         bo = gbm_bo_create_with_modifiers2(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size(), flags);
-#else
-        bo = gbm_bo_create_with_modifiers(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size());
-#endif
         if (bo)
             modifier = gbm_bo_get_modifier(bo);
     }
