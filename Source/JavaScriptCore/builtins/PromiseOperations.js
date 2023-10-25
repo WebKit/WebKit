@@ -202,7 +202,12 @@ function resolvePromise(promise, resolution)
     if (!@isCallable(then))
         return @fulfillPromise(promise, resolution);
 
-    @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctions(promise));
+    var asyncContext = @getInternalField(@asyncContext, 0);
+    if (!asyncContext) {
+        @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctions(promise), @undefined);
+    } else {
+        @enqueueJob(@promiseResolveThenableJobWithAsyncContext, resolution, then, @createResolvingFunctions(promise), asyncContext);
+    }
 }
 
 // Keep in sync with JSPromise::rejectedPromise.
@@ -313,10 +318,10 @@ function createResolvingFunctions(promise)
 function promiseReactionJobWithoutPromise(handler, argument, context, asyncContext)
 {
     "use strict";
-    var prev;
+    var prev, hasAsyncContext;
     if (asyncContext) {
         prev = @getInternalField(@asyncContext, 0);
-        var hasAsyncContext = true;
+        hasAsyncContext = true;
         @putInternalField(@asyncContext, 0, asyncContext);
     }
 
@@ -327,10 +332,10 @@ function promiseReactionJobWithoutPromise(handler, argument, context, asyncConte
             handler(argument);
     } catch {
         // This is user-uncatchable promise. We just ignore the error here.
-    } finally {
-        if (hasAsyncContext) {
-            @putInternalField(@asyncContext, 0, prev);
-        }
+    }
+
+    if (hasAsyncContext) {
+        @putInternalField(@asyncContext, 0, prev);
     }
 }
 
@@ -338,10 +343,10 @@ function promiseReactionJobWithoutPromise(handler, argument, context, asyncConte
 function promiseReactionJobWithoutPromiseUnwrapAsyncContext(handler, argument, context)
 {
     "use strict";
-    var prev;
+    var prev, hasAsyncContext;
     if (@isJSArray(context)) {
         prev = @getInternalField(@asyncContext, 0);
-        var hasAsyncContext = true
+        hasAsyncContext = true
         @putInternalField(@asyncContext, 0, context[1]);
         context = context[0];
     }
@@ -353,10 +358,10 @@ function promiseReactionJobWithoutPromiseUnwrapAsyncContext(handler, argument, c
             handler(argument);
     } catch {
         // This is user-uncatchable promise. We just ignore the error here.
-    } finally {
-        if (hasAsyncContext) {
-            @putInternalField(@asyncContext, 0, prev);
-        }
+    }
+
+    if (hasAsyncContext) {
+        @putInternalField(@asyncContext, 0, prev);
     }
 }
 
@@ -390,7 +395,12 @@ function resolveWithoutPromise(resolution, onFulfilled, onRejected, context, tem
     }
 
     // Wrap onFulfilled and onRejected with @createResolvingFunctionsWithoutPromise to ensure that each function will be called at most once.
-    @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context));
+    var asyncContext = @getInternalField(@asyncContext, 0);
+    if (!asyncContext) {
+        @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context));
+    } else {
+        @enqueueJob(@promiseResolveThenableJobWithAsyncContext, resolution, then, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context), asyncContext);
+    }
 }
 
 // This function has strong guarantee that each handler function (onFulfilled and onRejected) will be called at most once.
@@ -537,7 +547,13 @@ function promiseResolveThenableJobFast(thenable, promiseToResolve)
     // we need to call this constructor.
     var constructor = @speciesConstructor(thenable, @Promise);
     if (constructor !== @Promise && constructor !== @InternalPromise) {
-        @promiseResolveThenableJobWithDerivedPromise(thenable, constructor, @createResolvingFunctions(promiseToResolve));
+        var asyncContext = @getInternalField(@asyncContext, 0);
+        if (!asyncContext) {
+            @promiseResolveThenableJobWithDerivedPromise(thenable, constructor, @createResolvingFunctions(promiseToResolve));
+        } else {
+            @promiseResolveThenableJobWithDerivedPromiseWithAsyncContext(thenable, constructor, @createResolvingFunctions(promiseToResolve), asyncContext);
+        }
+        
         return;
     }
 
@@ -565,7 +581,12 @@ function promiseResolveThenableJobWithoutPromiseFast(thenable, onFulfilled, onRe
     // we need to call this constructor.
     var constructor = @speciesConstructor(thenable, @Promise);
     if (constructor !== @Promise && constructor !== @InternalPromise) {
-        @promiseResolveThenableJobWithDerivedPromise(thenable, constructor, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context));
+        var asyncContext = @getInternalField(@asyncContext, 0);
+        if (!asyncContext) {
+            @promiseResolveThenableJobWithDerivedPromise(thenable, constructor, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context));
+        } else {
+            @promiseResolveThenableJobWithDerivedPromiseWithAsyncContext(thenable, constructor, @createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context), asyncContext);
+        }
         return;
     }
 
@@ -607,6 +628,41 @@ function promiseResolveThenableJobWithDerivedPromise(thenable, constructor, reso
         @performPromiseThen(thenable, resolvingFunctions.resolve, resolvingFunctions.reject, promiseOrCapability, @undefined);
         return promiseOrCapability.promise;
     } catch (error) {
+        return resolvingFunctions.reject.@call(@undefined, error);
+    }
+}
+
+@linkTimeConstant
+function promiseResolveThenableJobWithAsyncContext(thenable, then, resolvingFunctions, asyncContext)
+{
+    "use strict";
+    var prev = @getInternalField(@asyncContext, 0);
+    @putInternalField(@asyncContext, 0, asyncContext);
+
+    try {
+        const result = then.@call(thenable, resolvingFunctions.resolve, resolvingFunctions.reject);
+        @putInternalField(@asyncContext, 0, prev);
+        return result;
+    } catch (error) {
+        @putInternalField(@asyncContext, 0, prev);
+        return resolvingFunctions.reject.@call(@undefined, error);
+    }
+}
+
+@linkTimeConstant
+function promiseResolveThenableJobWithDerivedPromiseWithAsyncContext(thenable, constructor, resolvingFunctions, asyncContext)
+{
+    "use strict";
+    var prev = @getInternalField(@asyncContext, 0);
+    @putInternalField(@asyncContext, 0, asyncContext);
+
+    try {
+        var promiseOrCapability = @newPromiseCapabilitySlow(constructor);
+        @performPromiseThen(thenable, resolvingFunctions.resolve, resolvingFunctions.reject, promiseOrCapability, @undefined);
+        @putInternalField(@asyncContext, 0, prev);
+        return promiseOrCapability.promise;
+    } catch (error) {
+        @putInternalField(@asyncContext, 0, prev);
         return resolvingFunctions.reject.@call(@undefined, error);
     }
 }
