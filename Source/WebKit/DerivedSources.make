@@ -527,6 +527,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
+	Shared/Cocoa/CoreIPCData.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
