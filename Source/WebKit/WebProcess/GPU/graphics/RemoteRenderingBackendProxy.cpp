@@ -253,6 +253,8 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     auto sendResult = sendSync(Messages::RemoteImageBuffer::GetShareableBitmap(preserveResolution), imageBuffer);
+    if (!sendResult.succeeded())
+        return { };
     auto [handle] = sendResult.takeReply();
     if (!handle)
         return { };
