@@ -1638,7 +1638,7 @@ uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
         return 8;
     case WGPUTextureFormat_BC2RGBAUnorm:
     case WGPUTextureFormat_BC2RGBAUnormSrgb:
-        return 8;
+        return 16;
     case WGPUTextureFormat_BC3RGBAUnorm:
     case WGPUTextureFormat_BC3RGBAUnormSrgb:
         return 16;
@@ -1658,12 +1658,12 @@ uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
     case WGPUTextureFormat_ETC2RGB8UnormSrgb:
     case WGPUTextureFormat_ETC2RGB8A1Unorm:
     case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
         return 8;
     case WGPUTextureFormat_EACR11Unorm:
     case WGPUTextureFormat_EACR11Snorm:
         return 8;
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
     case WGPUTextureFormat_EACRG11Unorm:
     case WGPUTextureFormat_EACRG11Snorm:
         return 16;
