@@ -573,13 +573,20 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
         forceContextLost();
 }
 
-GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
-{
-    return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
-}
-
 GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
 {
+    return surfaceBuffer(SurfaceBuffer::DrawingBuffer);
+}
+
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
+{
+    return surfaceBuffer(SurfaceBuffer::DisplayBuffer);
+}
+
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
+{
+    if (buffer == SurfaceBuffer::DisplayBuffer)
+        return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
     return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers];
 }
 
@@ -879,13 +886,20 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLCocoa::paintCompositedResultsToVideoFrame()
+
+RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    auto& buffer = displayBuffer();
-    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
+    if (!makeContextCurrent())
         return nullptr;
-    // Display surface is not marked in use since we will mirror and rotate it explicitly.
-    auto pixelBuffer = createCVPixelBuffer(buffer.surface->surface());
+    if (buffer == SurfaceBuffer::DrawingBuffer) {
+        prepareTexture();
+        waitUntilWorkScheduled();
+    }
+    auto& source = surfaceBuffer(buffer);
+    if (!source || source.surface->size() != getInternalFramebufferSize())
+        return nullptr;
+    // We will mirror and rotate the buffer explicitly. Thus the source being used is always a new one.
+    auto pixelBuffer = createCVPixelBuffer(source.surface->surface());
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
@@ -936,81 +950,45 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(NativeImage&)> func)
+void GraphicsContextGLCocoa::withBufferAsNativeImage(SurfaceBuffer buffer, Function<void(NativeImage&)> func)
 {
-    if (!makeContextCurrent())
-        return;
-
-    auto& buffer = drawingBuffer();
-    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
-        return;
-
-    prepareTexture();
-
     RetainPtr<CGContextRef> cgContext;
-    RefPtr<NativeImage> drawingImage;
-
+    RefPtr<NativeImage> image;
     if (contextAttributes().premultipliedAlpha) {
         // Use the IOSurface backed image directly
-        waitUntilWorkScheduled();
-
-        cgContext = buffer.surface->createPlatformContext();
+        if (!makeContextCurrent())
+            return;
+        if (buffer == SurfaceBuffer::DrawingBuffer) {
+            prepareTexture();
+            waitUntilWorkScheduled();
+        }
+        IOSurfacePbuffer& source = surfaceBuffer(buffer);
+        if (!source || source.surface->size() != getInternalFramebufferSize())
+            return;
+        cgContext = source.surface->createPlatformContext();
         if (cgContext)
-            drawingImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
+            image = NativeImage::create(source.surface->createImage(cgContext.get()));
     } else {
         // Since IOSurface-backed images only support premultiplied alpha, read
         // the image into a PixelBuffer which can be used to create a CGImage
         // that does the conversion.
         //
         // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer(FlipY::No);
-        if (!drawingPixelBuffer)
+        RefPtr<PixelBuffer> pixelBuffer;
+        if (buffer == SurfaceBuffer::DrawingBuffer)
+            pixelBuffer = drawingBufferToPixelBuffer(FlipY::No);
+        else
+            pixelBuffer = readCompositedResults();
+        if (!pixelBuffer)
             return;
-
-        drawingImage = createNativeImageFromPixelBuffer(contextAttributes(), drawingPixelBuffer.releaseNonNull());
+        image = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
     }
 
-    if (!drawingImage)
+    if (!image)
         return;
 
-    CGImageSetCachingFlags(drawingImage->platformImage().get(), kCGImageCachingTransient);
-    func(*drawingImage);
-}
-
-void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
-{
-    auto& buffer = displayBuffer();
-    if (!buffer)
-        return;
-    if (buffer.surface->size() != getInternalFramebufferSize())
-        return;
-
-    RetainPtr<CGContextRef> cgContext;
-    RefPtr<NativeImage> displayImage;
-
-    if (contextAttributes().premultipliedAlpha) {
-        // Use the IOSurface backed image directly
-        cgContext = buffer.surface->createPlatformContext();
-        if (cgContext)
-            displayImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
-    } else {
-        // Since IOSurface-backed images only support premultiplied alpha, read
-        // the image into a PixelBuffer which can be used to create a CGImage
-        // that does the conversion.
-        //
-        // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto displayPixelBuffer = readCompositedResults();
-        if (!displayPixelBuffer)
-            return;
-
-        displayImage = createNativeImageFromPixelBuffer(contextAttributes(), displayPixelBuffer.releaseNonNull());
-    }
-
-    if (!displayImage)
-        return;
-
-    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-    func(*displayImage);
+    CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
+    func(*image);
 }
 
 void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signal)

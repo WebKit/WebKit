@@ -388,7 +388,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         auto* gc3d = webGLContext->graphicsContextGL();
-        gc3d->paintRenderingResultsToCanvas(*imageBitmap->buffer());
+        gc3d->drawSurfaceBufferToImageBuffer(WebGLRenderingContextBase::SurfaceBuffer::DrawingBuffer, *imageBitmap->buffer());
 
         // FIXME: The transfer algorithm requires that the canvas effectively
         // creates a new backing store. Since we're not doing that yet, we

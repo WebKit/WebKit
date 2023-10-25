@@ -1492,11 +1492,11 @@
         assertIsCurrent(workQueue());
         m_context->setDrawingBufferColorSpace(arg0);
     }
-    void paintRenderingResultsToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
+    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         RefPtr<WebCore::PixelBuffer> returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->paintRenderingResultsToPixelBuffer(arg0);
+        returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
     void destroyEGLSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)

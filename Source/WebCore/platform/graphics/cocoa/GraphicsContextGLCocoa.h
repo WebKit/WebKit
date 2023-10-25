@@ -88,15 +88,14 @@ public:
     GraphicsContextGLCV* asCV() final;
 #endif
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
+    RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
     void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
-    void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>) override;
-    void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>) override;
+    void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>) override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();
@@ -124,6 +123,7 @@ protected:
     };
     IOSurfacePbuffer& drawingBuffer();
     IOSurfacePbuffer& displayBuffer();
+    IOSurfacePbuffer& surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     void freeDrawingBuffers();
 

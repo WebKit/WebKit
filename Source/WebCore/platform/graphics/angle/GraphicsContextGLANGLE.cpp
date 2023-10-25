@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -1847,7 +1847,7 @@ void GraphicsContextGLANGLE::getFloatv(GCGLenum pname, std::span<GCGLfloat> valu
 
     GL_GetFloatvRobustANGLE(pname, value.size(), nullptr, value.data());
 }
-    
+
 GCGLint64 GraphicsContextGLANGLE::getInteger64(GCGLenum pname)
 {
     GCGLint64 value = 0;
@@ -1896,7 +1896,7 @@ String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
     GLint length = 0;
     GL_GetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
     if (!length)
-        return String(); 
+        return String();
 
     GLsizei size = 0;
     Vector<GLchar> info(length);
@@ -1933,7 +1933,7 @@ String GraphicsContextGLANGLE::getShaderInfoLog(PlatformGLObject shader)
     GLint length = 0;
     GL_GetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
     if (!length)
-        return String(); 
+        return String();
 
     GLsizei size = 0;
     Vector<GLchar> info(length);
@@ -3162,47 +3162,26 @@ void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting ev
     }
 }
 
-void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
+void GraphicsContextGLANGLE::drawSurfaceBufferToImageBuffer(SurfaceBuffer buffer, ImageBuffer& imageBuffer)
 {
-    withDrawingBufferAsNativeImage([&](NativeImage& image) {
+    withBufferAsNativeImage(buffer, [&](NativeImage& image) {
         paintToCanvas(image, imageBuffer.backendSize(), imageBuffer.context());
     });
 }
 
-void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
-{
-    withDisplayBufferAsNativeImage([&](NativeImage& image) {
-        paintToCanvas(image, imageBuffer.backendSize(), imageBuffer.context());
-    });
-}
-
-void GraphicsContextGLANGLE::withDrawingBufferAsNativeImage(Function<void(NativeImage&)> func)
+void GraphicsContextGLANGLE::withBufferAsNativeImage(SurfaceBuffer source, Function<void(NativeImage&)> func)
 {
     if (!makeContextCurrent())
         return;
     if (getInternalFramebufferSize().isEmpty())
         return;
-    auto pixelBuffer = readRenderingResults();
+    RefPtr<PixelBuffer> pixelBuffer;
+    if (source == SurfaceBuffer::DrawingBuffer)
+        pixelBuffer = readRenderingResults();
+    else
+        pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return;
-
-    auto drawingImage = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
-    if (!drawingImage)
-        return;
-
-    func(*drawingImage);
-}
-
-void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
-{
-    if (!makeContextCurrent())
-        return;
-    if (getInternalFramebufferSize().isEmpty())
-        return;
-    auto pixelBuffer = readCompositedResults();
-    if (!pixelBuffer)
-        return;
-
     auto displayImage = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
     if (!displayImage)
         return;
@@ -3210,7 +3189,7 @@ void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(Function<void(Native
     func(*displayImage);
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer(FlipY flipY)
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY flipY)
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)

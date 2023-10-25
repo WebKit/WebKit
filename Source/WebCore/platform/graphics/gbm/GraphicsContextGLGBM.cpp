@@ -71,7 +71,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBM::layerContents
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLGBM::paintCompositedResultsToVideoFrame()
+RefPtr<VideoFrame> GraphicsContextGLGBM::surfaceBufferToVideoFrame(SurfaceBuffer)
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())

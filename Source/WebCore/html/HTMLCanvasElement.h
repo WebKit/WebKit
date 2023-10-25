@@ -112,6 +112,7 @@ public:
     void paint(GraphicsContext&, const LayoutRect&);
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    // Returns the context drawing buffer as a VideoFrame.
     RefPtr<VideoFrame> toVideoFrame();
 #endif
 #if ENABLE(MEDIA_STREAM)

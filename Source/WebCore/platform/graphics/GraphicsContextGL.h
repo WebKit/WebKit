@@ -1647,12 +1647,15 @@ public:
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
-    virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) = 0;
-    virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
+    enum class SurfaceBuffer : uint8_t {
+        DrawingBuffer,
+        DisplayBuffer
+    };
+    virtual void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
+    virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
+    virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree
@@ -1770,5 +1773,17 @@ IMPLEMENT_GCGL_OWNED(Texture)
 #undef IMPLEMENT_GCGL_OWNED
 
 } // namespace WebCore
+
+namespace WTF {
+
+template <> struct EnumTraits<WebCore::GraphicsContextGL::SurfaceBuffer> {
+    using values = EnumValues<
+        WebCore::GraphicsContextGL::SurfaceBuffer,
+        WebCore::GraphicsContextGL::SurfaceBuffer::DrawingBuffer,
+        WebCore::GraphicsContextGL::SurfaceBuffer::DisplayBuffer
+    >;
+};
+
+}
 
 #endif

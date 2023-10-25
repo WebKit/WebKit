@@ -344,14 +344,12 @@ public:
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
-    void paintRenderingResultsToCanvas(ImageBuffer&) override;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) override;
-    void paintCompositedResultsToCanvas(ImageBuffer&) override;
+    void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) override;
+    RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
 
-    virtual void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>);
-    virtual void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>);
+    virtual void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>);
 
     // Reads pixels from positive pixel coordinates with tight packing.
     // Returns columns, rows of executed read on success.

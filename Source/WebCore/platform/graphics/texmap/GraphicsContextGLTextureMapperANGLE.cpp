@@ -158,7 +158,7 @@ bool GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia(MediaPlayer&, Pla
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::paintCompositedResultsToVideoFrame()
+RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFrame(SurfaceBuffer)
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())
