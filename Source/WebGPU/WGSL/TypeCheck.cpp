@@ -136,6 +136,7 @@ private:
     bool isBottom(const Type*) const;
     void introduceType(const AST::Identifier&, const Type*);
     void introduceValue(const AST::Identifier&, const Type*, std::optional<ConstantValue> = std::nullopt);
+    bool convertValue(const SourceSpan&, const Type*, ConstantValue&);
 
     template<typename TargetConstructor, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
@@ -363,10 +364,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
-        if (variable.flavor() == AST::VariableFlavor::Const) {
-            value = variable.maybeInitializer()->constantValue();
-            ASSERT(value.has_value());
-        }
+        value = variable.maybeInitializer()->constantValue();
         if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
             initializerType = reference->element;
             variable.maybeInitializer()->m_inferredType = initializerType;
@@ -383,8 +381,15 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.maybeInitializer()->m_inferredType = result;
         else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
-
     }
+
+    if (value.has_value())
+        convertValue(variable.span(), result, *value);
+    if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType())
+        ASSERT(value.has_value());
+    else
+        value = std::nullopt;
+
     if (variable.flavor() == AST::VariableFlavor::Var) {
         AddressSpace addressSpace;
         AccessMode accessMode;
@@ -410,6 +415,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.m_referenceType = &referenceType;
         }
     }
+
     introduceValue(variable.name(), result, value);
 }
 
@@ -1383,6 +1389,134 @@ void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
     if (!introduceVariable(name, { Binding::Type, type, std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
+}
+
+bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, ConstantValue& value)
+{
+
+    if (shouldDumpConstantValues) {
+        StringPrintStream valueString;
+        value.dump(valueString);
+        dataLogLn("converting value ", valueString.toString(), " to '", *type, "'");
+    }
+
+    auto converted = WTF::switchOn(*type,
+        [&](const Types::Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F32: {
+                auto result = convertFloat<float>(value.toDouble());
+                if (!result.has_value())
+                    return false;
+                value = { *result };
+                return true;
+            }
+            case Types::Primitive::I32: {
+                auto result = convertInteger<int>(value.toInt());
+                if (!result.has_value())
+                    return false;
+                value = { *result };
+                return true;
+            }
+            case Types::Primitive::U32: {
+                auto result = convertInteger<unsigned>(value.toInt());
+                if (!result.has_value())
+                    return false;
+                value = { *result };
+                return true;
+            }
+            case Types::Primitive::AbstractInt: {
+                auto result = convertInteger<int64_t>(value.toInt());
+                if (!result.has_value())
+                    return false;
+                value = { *result };
+                return true;
+            }
+            case Types::Primitive::AbstractFloat: {
+                auto result = convertFloat<double>(value.toDouble());
+                if (!result.has_value())
+                    return false;
+                value = { *result };
+                return true;
+            }
+            case Types::Primitive::Bool:
+                ASSERT(value.isBool());
+                return true;
+            case Types::Primitive::Void:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Types::Vector& vectorType) -> bool {
+            ASSERT(value.isVector());
+            auto& vector = std::get<ConstantVector>(value);
+            for (auto& element : vector.elements) {
+                if (!convertValue(span, vectorType.element, element))
+                    return false;
+            }
+            return true;
+        },
+        [&](const Types::Matrix& matrixType) -> bool {
+            ASSERT(value.isMatrix());
+            auto& matrix = std::get<ConstantMatrix>(value);
+            for (auto& element : matrix.elements) {
+                if (!convertValue(span, matrixType.element, element))
+                    return false;
+            }
+            return true;
+        },
+        [&](const Types::Array& arrayType) -> bool {
+            ASSERT(value.isArray());
+            auto& array = std::get<ConstantArray>(value);
+            for (auto& element : array.elements) {
+                if (!convertValue(span, arrayType.element, element))
+                    return false;
+            }
+            return true;
+        },
+        [&](const Types::Struct&) -> bool {
+            // FIXME: this should be supported
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Function&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Texture&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::TextureStorage&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::TextureDepth&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Reference&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Pointer&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Atomic&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::TypeConstructor&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Bottom&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+
+    if (UNLIKELY(!converted)) {
+        StringPrintStream valueString;
+        value.dump(valueString);
+        typeError(InferBottom::No, span, "value ", valueString.toString(), " cannot be represented as '", *type, "'");
+    }
+
+    return converted;
 }
 
 void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, std::optional<ConstantValue> value)

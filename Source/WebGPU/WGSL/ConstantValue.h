@@ -100,6 +100,7 @@ struct ConstantValue : BaseValue {
     bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
     bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
     bool isMatrix() const { return std::holds_alternative<ConstantMatrix>(*this); }
+    bool isArray() const { return std::holds_alternative<ConstantArray>(*this); }
 
     bool toBool() const { return std::get<bool>(*this); }
     int64_t toInt() const
@@ -121,5 +122,24 @@ struct ConstantValue : BaseValue {
         return std::get<ConstantVector>(*this);
     }
 };
+
+template<typename To, typename From>
+std::optional<To> convertInteger(From value)
+{
+    auto result = Checked<To, RecordOverflow>(value);
+    if (UNLIKELY(result.hasOverflowed()))
+        return std::nullopt;
+    return { result.value() };
+}
+
+template<typename To, typename From>
+std::optional<To> convertFloat(From value)
+{
+    if (value > std::numeric_limits<To>::max())
+        return std::nullopt;
+    if (value < std::numeric_limits<To>::min())
+        return { 0 };
+    return { value };
+}
 
 } // namespace WGSL
