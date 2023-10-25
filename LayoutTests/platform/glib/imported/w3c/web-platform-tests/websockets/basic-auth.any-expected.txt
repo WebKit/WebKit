@@ -1,3 +1,0 @@
-
-PASS HTTP basic authentication should work with WebSockets
-

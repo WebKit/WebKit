@@ -46,6 +46,8 @@ class ApplePort(Port):
     ARCHITECTURES = []
     _crash_logs_to_skip_for_host = {}
 
+    supports_localhost_aliases = True
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         options = options or {}
@@ -83,6 +85,9 @@ class ApplePort(Port):
 
         port_name = port_name.replace('-wk2', '')
         self._version = self._strip_port_name_prefix(port_name)
+
+        if not self.get_option('local_dns_resolver'):
+            self.set_option('local_dns_resolver', True)
 
     def setup_test_run(self, device_type=None):
         self._crash_logs_to_skip_for_host[self.host] = self.host.filesystem.files_under(self.path_to_crash_logs())

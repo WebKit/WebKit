@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Header 'foo' has invalid value: 'b
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/sample?test.
-
-PASS Verify the response of FetchEvent using XMLHttpRequest
-

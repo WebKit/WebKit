@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Navigator.getGamepads() will be removed from insecure contexts in a future release
 
 FAIL Gamepad API is not exposed in non-secure contexts assert_equals: Gamepad type is undefined expected "undefined" but got "function"
 

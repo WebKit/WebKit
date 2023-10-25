@@ -15,8 +15,8 @@ PASS BigInt: 12345678901234567890
 PASS String:
 PASS String: this is a sample string
 PASS String: null(\0)
-PASS Date: Sun Feb 09 1653 22:20:22 GMT-0752 (Pacific Standard Time)
-PASS Date: Sun Apr 24 1938 14:13:20 GMT-0800 (Pacific Standard Time)
-PASS Date: Sat Dec 20 1969 02:13:20 GMT-0800 (Pacific Standard Time)
-PASS Date: Wed Dec 31 1969 15:43:20 GMT-0800 (Pacific Standard Time)
+PASS Date: Mon Feb 10 1653 06:12:05 GMT-0001 (Greenwich Mean Time)
+PASS Date: Sun Apr 24 1938 23:13:20 GMT+0100 (British Summer Time)
+PASS Date: Sat Dec 20 1969 11:13:20 GMT+0100 (Greenwich Mean Time)
+PASS Date: Thu Jan 01 1970 00:43:20 GMT+0100 (Greenwich Mean Time)
 

@@ -36,6 +36,7 @@
 #import "TestWebsiteDataStoreDelegate.h"
 #import "WebCoreTestSupport.h"
 #import <Foundation/Foundation.h>
+#import <Network/Network.h>
 #import <Security/SecItem.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKContextConfigurationRef.h>
@@ -57,6 +58,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -152,6 +154,45 @@ void TestController::cocoaPlatformInitialize(const Options& options)
         @selector(processRequest:progressHandler:completionHandler:),
         reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
     );
+#endif
+
+#if PLATFORM(MAC)
+    // See NetworkProcess::platformInitializeNetworkProcessCocoa for supporting a local DNS resolver on iOS Simulator.
+
+    if (!options.useLocalDNSResolver)
+        return;
+
+    NSUUID *agentUUID = [[NSUUID alloc] init];
+    if (!agentUUID) {
+        NSLog(@"UUID for DNS resolver not allocated, using local DNS resolver failed.");
+        return;
+    }
+
+    uuid_t agentUUIDBytes;
+    [agentUUID getUUIDBytes:agentUUIDBytes];
+
+    nw_resolver_config_t resolverConfig = nw_resolver_config_create();
+    nw_resolver_config_set_protocol(resolverConfig, nw_resolver_protocol_dns53);
+    nw_resolver_config_set_class(resolverConfig, nw_resolver_class_designated_direct);
+    nw_resolver_config_add_name_server(resolverConfig, "127.0.0.1:8053");
+    nw_resolver_config_set_identifier(resolverConfig, agentUUIDBytes);
+    bool published = nw_resolver_config_publish(resolverConfig);
+    if (!published) {
+        NSLog(@"Failed to register DNS resolver agent UUID: %@. Using local DNS resolver failed.", agentUUID);
+        return;
+    }
+
+    // The following NetworkExtension policy is needed so we can run tests while a VPN is connected
+    NEPolicySession *policySession = [[NEPolicySession alloc] init];
+    NEPolicy *domainPolicy = [[NEPolicy alloc] initWithOrder:1 result:[NEPolicyResult netAgentUUID:agentUUID] conditions:@[ [NEPolicyCondition domain:@"web-platform.test"] ]];
+    [policySession addPolicy:domainPolicy];
+
+    NSString *agentString = agentUUID.UUIDString;
+    NEPolicy *agentPolicy = [[NEPolicy alloc] initWithOrder:1 result:[NEPolicyResult netAgentUUID:agentUUID] conditions:@[ [NEPolicyCondition domain:agentString] ]];
+    [policySession addPolicy:agentPolicy];
+
+    policySession.priority = NEPolicySessionPriorityHigh;
+    [policySession apply];
 #endif
 }
 

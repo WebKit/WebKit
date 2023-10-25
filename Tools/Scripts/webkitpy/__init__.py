@@ -90,6 +90,7 @@ else:
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
+AutoInstall.register(Package('dnslib', Version(0, 9, 23)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))

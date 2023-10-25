@@ -54,6 +54,8 @@
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #endif
 
+#import <pal/spi/cocoa/NetworkSPI.h>
+
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -111,6 +113,18 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
         [NEFilterSource setDelegation:&auditToken.value()];
 #endif
+
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    // See TestController::cocoaPlatformInitialize for supporting a local DNS resolver on Mac.
+    if (!localhostAliasesForTesting().isEmpty()) {
+        static nw_resolver_config_t resolverConfig = nw_resolver_config_create();
+        nw_resolver_config_set_protocol(resolverConfig, nw_resolver_protocol_dns53);
+        nw_resolver_config_set_class(resolverConfig, nw_resolver_class_designated_direct);
+        nw_resolver_config_add_name_server(resolverConfig, "127.0.0.1:8053");
+        nw_privacy_context_require_encrypted_name_resolution(NW_DEFAULT_PRIVACY_CONTEXT, true, resolverConfig);
+    }
+#endif
+
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const

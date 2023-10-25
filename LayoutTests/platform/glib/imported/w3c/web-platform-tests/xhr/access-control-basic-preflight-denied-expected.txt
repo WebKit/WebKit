@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
-
-PASS Tests async XHR preflight denial due to lack of CORS headers
-

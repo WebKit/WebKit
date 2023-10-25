@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/fetch/api/resources/top.txt because it does not appear in the connect-src directive of the Content Security Policy.
-
-PASS Fetch is blocked by CSP, got a TypeError
-

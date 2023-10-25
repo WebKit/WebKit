@@ -2667,8 +2667,26 @@ fast/text/word-break-keep-all-with-zero-width-space.html [ ImageOnlyFailure ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Failure Pass ]
 
 # Tests that rely on custom domain names.
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/embed.https.sub.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/object.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-popup-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
+
+# These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure Pass ]

@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-event-respond-with-argument-iframe.html?other-value.
-
-PASS respondWith() takes either a Response or a promise that resolves with a Response. Other values should raise a network error.
-

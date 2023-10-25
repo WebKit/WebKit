@@ -29,6 +29,11 @@
 
 #import <nw/private.h>
 
+#if PLATFORM(MAC)
+// Only needed for running tests.
+#import <NetworkExtension/NEPolicySession.h>
+#endif
+
 #else
 
 WTF_EXTERN_C_BEGIN
@@ -54,6 +59,46 @@ void nw_connection_reset_traffic_class(nw_connection_t, uint32_t traffic_class);
 void nw_parameters_set_traffic_class(nw_parameters_t, uint32_t traffic_class);
 
 nw_interface_t nw_path_copy_interface(nw_path_t);
+
+// Only needed for running tests.
+typedef enum {
+    nw_resolver_protocol_dns53 = 0,
+} nw_resolver_protocol_t;
+
+typedef enum {
+    nw_resolver_class_designated_direct = 2,
+} nw_resolver_class_t;
+
+extern "C" {
+nw_resolver_config_t nw_resolver_config_create(void);
+void nw_resolver_config_set_protocol(nw_resolver_config_t, nw_resolver_protocol_t);
+void nw_resolver_config_set_class(nw_resolver_config_t, nw_resolver_class_t);
+void nw_resolver_config_add_name_server(nw_resolver_config_t, const char *name_server);
+void nw_resolver_config_set_identifier(nw_resolver_config_t, const uuid_t _Nonnull identifier);
+bool nw_resolver_config_publish(nw_resolver_config_t);
+}
+
+typedef NS_ENUM(NSInteger, NEPolicySessionPriority) {
+    NEPolicySessionPriorityHigh = 300,
+};
+
+@interface NEPolicyCondition : NSObject
++ (NEPolicyCondition *)domain:(NSString *)domain;
+@end
+
+@interface NEPolicyResult : NSObject
++ (NEPolicyResult *)netAgentUUID:(NSUUID *)agentUUID;
+@end
+
+@interface NEPolicy : NSObject
+- (instancetype)initWithOrder:(uint32_t)order result:(NEPolicyResult *)result conditions:(NSArray<NEPolicyCondition *> *)conditions;
+@end
+
+@interface NEPolicySession : NSObject
+@property NEPolicySessionPriority priority;
+- (NSUInteger)addPolicy:(NEPolicy *)policy;
+- (BOOL)apply;
+@end
 
 WTF_EXTERN_C_END
 

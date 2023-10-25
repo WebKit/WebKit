@@ -51,6 +51,7 @@ struct Options {
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     bool enableAllExperimentalFeatures { true };
     bool lockdownModeEnabled { false };
+    bool useLocalDNSResolver { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;

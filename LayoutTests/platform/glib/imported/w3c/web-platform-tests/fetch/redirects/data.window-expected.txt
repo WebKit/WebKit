@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Cross-origin redirection to data:, denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?location=data:, due to access control checks.
-
-FAIL <img> fetch that redirects to data: URL assert_unreached: Reached unreachable code
-FAIL <script> fetch that redirects to data: URL assert_unreached: Reached unreachable code
-PASS XMLHttpRequest fetch that redirects to data: URL
-

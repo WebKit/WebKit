@@ -1,4 +1,4 @@
 
 PASS Generate Test Report
-PASS Reporting-Endpoints target received the test report.
+FAIL Reporting-Endpoints target received the test report. assert_unreached: A report of test from http://web-platform.test:8800/reporting/generateTestReport-honors-endpoint.http.sub.html was not found. Reached unreachable code
 
