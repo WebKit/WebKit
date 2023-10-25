@@ -97,7 +97,6 @@ protected:
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
-    bool hasSmoothStroke() const;
 
     inline bool hasNonScalingStroke() const;
     AffineTransform nonScalingStrokeTransform() const;
@@ -106,6 +105,7 @@ protected:
     virtual FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 
     FloatRect strokeBoundingBox() const final;
+    FloatRect approximateStrokeBoundingBox() const;
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -146,6 +146,7 @@ private:
 protected:
     FloatRect m_fillBoundingBox;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_approximateStrokeBoundingBox;
 private:
     FloatRect m_repaintBoundingBox;
 

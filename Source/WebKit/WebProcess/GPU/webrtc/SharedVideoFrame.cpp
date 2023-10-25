@@ -156,7 +156,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
     if (auto* provider = webrtc::videoFrameBufferProvider(frame))
         return writeBuffer(*static_cast<VideoFrame*>(provider), newSemaphoreCallback, newMemoryCallback);
 
-    if (auto pixelBuffer = adoptCF(webrtc::pixelBufferFromFrame(frame)))
+    if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
         return writeBuffer(pixelBuffer.get(), newSemaphoreCallback, newMemoryCallback);
 
     return writeBuffer(*frame.video_frame_buffer(), newSemaphoreCallback, newMemoryCallback);

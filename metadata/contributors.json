@@ -52,11 +52,13 @@
       "emails" : [
          "abigail_fox@apple.com"
       ],
+      "github" : "abigailfox",
       "name" : "Abigail Fox",
       "nicks" : [
          "abigailf",
          "abigailfox"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

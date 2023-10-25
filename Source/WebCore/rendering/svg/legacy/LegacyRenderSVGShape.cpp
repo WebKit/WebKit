@@ -124,7 +124,12 @@ bool LegacyRenderSVGShape::fillContains(const FloatPoint& point, bool requiresFi
 
 bool LegacyRenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
-    if (strokeBoundingBox().isEmpty() || !strokeBoundingBox().contains(point))
+    // "A zero value causes no stroke to be painted."
+    if (!strokeWidth())
+        return false;
+
+    auto approximateStrokeBoundingBox = this->approximateStrokeBoundingBox();
+    if (approximateStrokeBoundingBox.isEmpty() || !approximateStrokeBoundingBox.contains(point))
         return false;
 
     Color fallbackColor;
@@ -386,6 +391,18 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
     return adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Accurate, strokeBoundingBox);
 }
 
+FloatRect LegacyRenderSVGShape::approximateStrokeBoundingBox() const
+{
+    if (m_shapeType == ShapeType::Empty)
+        return { };
+    if (!m_approximateStrokeBoundingBox) {
+        // Initialize m_approximateStrokeBoundingBox before calling calculateApproximateStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_approximateStrokeBoundingBox = FloatRect { };
+        m_approximateStrokeBoundingBox = calculateApproximateStrokeBoundingBox();
+    }
+    return *m_approximateStrokeBoundingBox;
+}
+
 FloatRect LegacyRenderSVGShape::calculateApproximateStrokeBoundingBox() const
 {
     if (m_shapeType == ShapeType::Empty)
@@ -399,7 +416,7 @@ FloatRect LegacyRenderSVGShape::calculateApproximateStrokeBoundingBox() const
 
 void LegacyRenderSVGShape::updateRepaintBoundingBox()
 {
-    m_repaintBoundingBox = calculateApproximateStrokeBoundingBox();
+    m_repaintBoundingBox = approximateStrokeBoundingBox();
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
 }
 
@@ -417,15 +434,6 @@ float LegacyRenderSVGShape::strokeWidth() const
 {
     SVGLengthContext lengthContext(&graphicsElement());
     return lengthContext.valueForLength(style().strokeWidth());
-}
-
-bool LegacyRenderSVGShape::hasSmoothStroke() const
-{
-    const SVGRenderStyle& svgStyle = style().svgStyle();
-    return svgStyle.strokeDashArray().isEmpty()
-        && style().strokeMiterLimit() == defaultMiterLimit
-        && style().joinStyle() == LineJoin::Miter
-        && style().capStyle() == LineCap::Butt;
 }
 
 Path& LegacyRenderSVGShape::ensurePath()

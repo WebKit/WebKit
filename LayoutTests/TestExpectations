@@ -5510,7 +5510,7 @@ webkit.org/b/237108 http/tests/websocket/tests/hybi/deflate-frame-parameter.html
 webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
 
 # Only certain ports have WebGPU implementations.
-http/tests/webgpu [ Failure ImageOnlyFailure Pass Timeout ]
+http/tests/webgpu [ Skip ]
 
 # Only some ports automatically relayout if a font is installed while the page is open
 fast/text/install-font-style-recalc.html [ Failure ]

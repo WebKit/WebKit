@@ -81,7 +81,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
-    IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 

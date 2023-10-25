@@ -72,8 +72,6 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
-#import <WebCore/UTIRegistry.h>
-#import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -114,8 +112,6 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #if PLATFORM(IOS_FAMILY)
     setInsertionPointColor(parameters.insertionPointColor);
 #endif
-    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
-    WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
 }
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)

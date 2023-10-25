@@ -254,29 +254,6 @@ static constexpr NSString *innerColorKey = @"WK.CocoaColor";
 namespace IPC {
 using namespace WebCore;
 
-static std::optional<bool>& strictSecureDecodingForAllObjCEnabledValue()
-{
-    static std::optional<bool> value;
-    return value;
-}
-
-void setStrictSecureDecodingForAllObjCEnabled(bool enabled)
-{
-    strictSecureDecodingForAllObjCEnabledValue() = enabled;
-}
-
-bool strictSecureDecodingForAllObjCEnabled()
-{
-    if (isInAuxiliaryProcess()) {
-        ASSERT(strictSecureDecodingForAllObjCEnabledValue());
-        return *strictSecureDecodingForAllObjCEnabledValue();
-    }
-    ASSERT(!strictSecureDecodingForAllObjCEnabledValue());
-
-    static bool cachedValue { WebKit::experimentalFeatureEnabled(WebKit::WebPreferencesKey::strictSecureDecodingForAllObjCKey(), true) };
-    return cachedValue;
-}
-
 #pragma mark - Types
 
 enum class NSType {
@@ -667,51 +644,50 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     && HAVE(STRICT_DECODABLE_PKCONTACT) \
     && HAVE(STRICT_DECODABLE_CNCONTACT)
     // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
-    if (strictSecureDecodingForAllObjCEnabled())
-        return true;
+    return true;
 #endif
 
 #if ENABLE(DATA_DETECTION)
     // rdar://107553330 - don't re-introduce rdar://107676726
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
-        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
+        return haveSecureActionContext();
 #if PLATFORM(MAC)
     // rdar://107553348 - don't re-introduce rdar://107676726
     if (PAL::isDataDetectorsFrameworkAvailable() && [allowedClasses containsObject:PAL::getWKDDActionContextClass()])
-        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
+        return haveSecureActionContext();
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(REVEAL)
     // rdar://107553310 - don't re-introduce rdar://107673064
     if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
-        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
+        return haveSecureActionContext();
 #endif // ENABLE(REVEAL)
 
 #if ENABLE(APPLE_PAY)
     // rdar://107553480 Don't reintroduce rdar://108235706
     if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
-        return haveStrictDecodableCNContact() && strictSecureDecodingForAllObjCEnabled();
+        return haveStrictDecodableCNContact();
 
     // Don't reintroduce rdar://108660074
     if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKContactClass()])
-        return haveStrictDecodablePKContact() && strictSecureDecodingForAllObjCEnabled();
+        return haveStrictDecodablePKContact();
 #endif
 
     // rdar://107553230 don't reintroduce rdar://108038436
     if ([allowedClasses containsObject:NSParagraphStyle.class])
-        return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
+        return haveStrictDecodableNSTextTable();
 
     // rdar://109121874
     if ([allowedClasses containsObject:NSPresentationIntent.class])
-        return strictSecureDecodingForAllObjCEnabled();
+        return true;
 
     // rdar://107553194, Don't reintroduce rdar://108339450
     if ([allowedClasses containsObject:NSMutableURLRequest.class])
-        return strictSecureDecodingForAllObjCEnabled();
+        return true;
 
     // rdar://108674269
     if ([allowedClasses containsObject:NSURLProtectionSpace.class] && isDecodingKnownProtectionSpaceMessage(decoder))
-        return strictSecureDecodingForAllObjCEnabled();
+        return true;
 
     if ([allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273

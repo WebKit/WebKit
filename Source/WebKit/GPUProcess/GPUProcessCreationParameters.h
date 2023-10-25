@@ -66,9 +66,6 @@ struct GPUProcessCreationParameters {
 #endif
 
     String applicationVisibleName;
-#if PLATFORM(COCOA)
-    bool strictSecureDecodingForAllObjCEnabled { false };
-#endif
 
 #if USE(GBM)
     String renderDeviceFile;

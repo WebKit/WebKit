@@ -35,9 +35,8 @@ MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
 WEBCORE_EXPORT bool isSupportedImageType(const String&);
-WEBCORE_EXPORT Vector<String> allowableImageTypes();
 bool isGIFImageType(StringView);
 String preferredExtensionForImageType(const String& type);
 String MIMETypeForImageType(const String& type);
 
-} // namespace WebCore
+}

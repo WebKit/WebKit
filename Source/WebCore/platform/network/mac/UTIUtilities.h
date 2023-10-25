@@ -35,6 +35,4 @@ RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef);
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
 WEBCORE_EXPORT String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);
-WEBCORE_EXPORT void setImageSourceAllowableTypes(const Vector<String>&);
-
-} // namespace WebCore
+}

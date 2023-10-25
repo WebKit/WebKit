@@ -33,14 +33,9 @@
 #import <wtf/TinyLRUCache.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/WTFString.h>
-#include <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-#include <pal/spi/cg/ImageIOSPI.h>
 #endif
 
 namespace WebCore {
@@ -154,14 +149,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return u.get();
 }
 
-void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
-{
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-    auto allowableTypes = createNSArray(supportedImageTypes);
-    CGImageSourceSetAllowableTypes((__bridge CFArrayRef)allowableTypes.get());
-#else
-    UNUSED_PARAM(supportedImageTypes);
-#endif
 }
-
-} // namespace WebCore

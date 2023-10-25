@@ -163,7 +163,6 @@
 #if PLATFORM(COCOA)
     bool systemHasBattery;
     bool systemHasAC;
-    bool strictSecureDecodingForAllObjCEnabled;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
