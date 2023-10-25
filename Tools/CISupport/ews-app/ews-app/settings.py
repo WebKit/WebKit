@@ -32,9 +32,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import ews.common.util as util
 
-is_test_mode_enabled = os.getenv('EWS_PRODUCTION') is None
-is_dev_instance = (os.getenv('DEV_INSTANCE', '').lower() == 'true')
+is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
+is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +45,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('EWS_SECRET_KEY', 'secret')
+SECRET_KEY = util.load_password('EWS_SECRET_KEY', default='secret')
 
 DEBUG = False
 if (is_test_mode_enabled and not is_dev_instance):
@@ -111,10 +112,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('DB_NAME', None),
-            'USER': os.environ.get('DB_USERNAME', None),
-            'PASSWORD': os.environ.get('DB_PASSWORD', None),
-            'HOST': os.environ.get('DB_URL', None),
+            'NAME': util.load_password('DB_NAME'),
+            'USER': util.load_password('DB_USERNAME'),
+            'PASSWORD': util.load_password('DB_PASSWORD'),
+            'HOST': util.load_password('DB_URL'),
         }
     }
 
