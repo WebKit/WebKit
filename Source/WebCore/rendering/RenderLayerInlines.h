@@ -61,7 +61,7 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
         return true;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer().document().settings().layerBasedSVGEngineEnabled())
+    if (!renderer().document().settings().layerBasedSVGEngineEnabled())
         return false;
 
     // SVG clip-paths may use clipping masks, if so, flag this layer as transparent.

@@ -232,7 +232,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             AtomString id(clipPath.fragment());
             if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, id))
                 ensureResources(foundResources).setClipper(clipper);
-            else
+            else if (!renderer.document().settings().layerBasedSVGEngineEnabled())
                 treeScope.addPendingSVGResource(id, element);
         }
 
