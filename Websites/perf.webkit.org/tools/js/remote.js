@@ -36,13 +36,17 @@ class NodeRemoteAPI extends CommonRemoteAPI {
 
         let auth = null;
         if (server.auth) {
-            assert.strictEqual(typeof(server.auth), 'object', 'auth should be a dictionary with username and password as keys');
-            assert.strictEqual(typeof(server.auth.username), 'string', 'auth should contain a string username');
-            assert.strictEqual(typeof(server.auth.password), 'string', 'auth should contain a string password');
-            auth = {
-                username: server.auth.username,
-                password: server.auth.password,
-            };
+            assert.strictEqual(typeof(server.auth), 'object', 'auth should be a dictionary');
+            if (server.auth.scheme) {
+                assert.strictEqual(typeof(server.auth.scheme), 'string', 'auth scheme must be contain a string');
+                assert.strictEqual(typeof(server.auth.parameter), 'string', 'auth parameter must be a string');
+                auth = `${server.auth.scheme} ${server.auth.parameter}`;
+            }
+            else {
+                assert.strictEqual(typeof(server.auth.username), 'string', 'auth username must be a string');
+                assert.strictEqual(typeof(server.auth.password), 'string', 'auth password be a string');
+                auth = `Basic ${server.auth.username}:${server.auth.password}`;
+            }
         }
 
         const defaultPort = server.scheme == 'http' ? 80 : 443;
@@ -73,7 +77,6 @@ class NodeRemoteAPI extends CommonRemoteAPI {
             let options = {
                 hostname: server.host,
                 port: server.port,
-                auth: server.auth ? server.auth.username + ':' + server.auth.password : null,
                 method: method,
                 path: path,
             };
@@ -107,6 +110,9 @@ class NodeRemoteAPI extends CommonRemoteAPI {
 
             if (this._cookies.size)
                 request.setHeader('Cookie', Array.from(this._cookies.keys()).map((key) => `${key}=${this._cookies.get(key)}`).join('; '));
+
+            if (server.auth)
+                request.setHeader('Authorization', server.auth);
 
             if (requestOptions.headers) {
                 const requestHeaders = requestOptions.headers;
