@@ -20,8 +20,8 @@ mainSheetLink.disabled = true;
 alternateSheetLink.disabled = false;
 
 debug("Testing value of 'disabled' prior to load just after setting them");
-shouldBeNonNull("mainSheetLink.sheet");
-shouldBeNull("alternateSheetLink.sheet");
+shouldBeNull("mainSheetLink.sheet");
+shouldBeNonNull("alternateSheetLink.sheet");
 shouldBeTrue("mainSheetLink.disabled");
 shouldBeFalse("alternateSheetLink.disabled");
 
@@ -30,7 +30,7 @@ debug("Testing the values when the alternate sheet is loaded (as this is the onl
 var testTimer = setInterval(function() {
     if (!alternateSheetLink.sheet)
         return;
-    shouldBeNonNull("mainSheetLink.sheet");
+    shouldBeNull("mainSheetLink.sheet");
     shouldBeNonNull("alternateSheetLink.sheet");
     shouldBeTrue("mainSheetLink.disabled");
     shouldBeFalse("alternateSheetLink.disabled");
