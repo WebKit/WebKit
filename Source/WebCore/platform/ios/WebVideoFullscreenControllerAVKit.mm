@@ -211,7 +211,7 @@ private:
     void fullscreenMayReturnToInline() final;
 
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
-    HashSet<VideoPresentationModelClient*> m_fullscreenClients;
+    HashSet<VideoPresentationModelClient*> m_presentationClients;
     RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
     RefPtr<VideoPresentationModelVideoElement> m_presentationModel;
     RefPtr<PlaybackSessionModelMediaElement> m_playbackModel;
