@@ -26,6 +26,7 @@ import re
 import sys
 import time
 
+from collections import defaultdict
 from datetime import datetime
 from webkitbugspy import User
 from webkitbugspy.github import Tracker
@@ -45,6 +46,7 @@ class GitHub(Scm):
     KNOWN_400_MESSAGES = [
         'No commit found for SHA',
     ]
+    DIFF_HEADER = 'application/vnd.github.diff'
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
@@ -297,17 +299,56 @@ class GitHub(Scm):
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
+
+            manufactured_comments = defaultdict(set)
+            top_level_reviews = []
+            for review in self.repository.request('pulls/{}/reviews'.format(pull_request.number)):
+                username = review.get('user', {}).get('login')
+                if not username:
+                    continue
+
+                body = review.get('body', '')
+                hash = review.get('commit_id', '?')[:Commit.HASH_LABEL_SIZE]
+
+                if review.get('state') == 'APPROVED':
+                    body = 'r+ on {}{}'.format(hash, ', ' if body else '') + body
+                elif review.get('state') == 'CHANGES_REQUESTED':
+                    body = 'r- on {}{}'.format(hash, ', ' if body else '') + body
+                elif hash != pull_request.hash[:Commit.HASH_LABEL_SIZE] and body:
+                    body = 'Added comments on {}, {}'.format(hash, body)
+                    manufactured_comments[username].add(hash)
+                elif hash not in manufactured_comments[username] and hash != pull_request.hash[:Commit.HASH_LABEL_SIZE] and not body:
+                    body = 'Added comments on {}'.format(hash)
+                    manufactured_comments[username].add(hash)
+
+                if not body:
+                    continue
+
+                tm = review.get('submitted_at', None)
+                if tm:
+                    tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+                top_level_reviews.append(PullRequest.Comment(
+                    author=self._contributor(review['user']['login']),
+                    timestamp=tm,
+                    content=body,
+                ))
+
             for comment in issue.comments:
+                if top_level_reviews and top_level_reviews[0].timestamp < comment.timestamp:
+                    yield top_level_reviews.pop(0)
                 yield PullRequest.Comment(
                     author=self._contributor(comment.user.username),
                     timestamp=comment.timestamp,
                     content=comment.content,
                 )
+            for comment in top_level_reviews:
+                yield comment
 
-        def review(self, pull_request, comment=None, approve=None):
-            if not comment and approve is None:
+        def review(self, pull_request, comment=None, approve=None, file_comments=None):
+            if not comment and approve is None and not file_comments:
                 raise self.repository.Exception('No review comment or approval provided')
 
+            did_fail = False
             body = dict(
                 event={
                     True: 'APPROVE',
@@ -316,6 +357,58 @@ class GitHub(Scm):
             )
             if comment:
                 body['body'] = comment
+
+            if file_comments:
+                # Assume that every comment made on the same line as an existing comment
+                # is intended as a reply to the existing comment
+                existing_comment_ids = {}
+                diff = self.diff(pull_request)
+                for comment in self.repository.request('pulls/{}/comments'.format(pull_request.number)):
+                    file = comment.get('path', None)
+                    id = comment.get('id', None)
+                    if not id or file not in file_comments:
+                        continue
+                    if comment.get('commit_id') != comment.get('original_commit_id') and comment.get('diff_hunk') not in diff:
+                        continue
+                    existing_comment_ids[file] = existing_comment_ids.get(file, {})
+                    existing_comment_ids[file][comment.get('position', 1)] = id
+
+                body['comments'] = []
+                for file, comments in file_comments.items():
+                    for position, content in comments.items():
+                        if not (existing_comment_ids.get(file) or {}).get(position or 1):
+                            body['comments'].append(dict(
+                                path=file,
+                                body=content,
+                                position=position or 1,
+                            ))
+                            continue
+                        url = '{api_url}/repos/{owner}/{name}/pulls/{number}/comments/{id}/replies'.format(
+                            api_url=self.repository.api_url,
+                            owner=self.repository.owner,
+                            name=self.repository.name,
+                            number=pull_request.number,
+                            id=existing_comment_ids[file][position],
+                        )
+                        response = self.repository.session.post(
+                            url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                            headers=dict(Accept=self.repository.ACCEPT_HEADER),
+                            json=dict(body=content),
+                        )
+                        if response.status_code // 100 != 2:
+                            did_fail = True
+                            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+                            sys.stderr.write(self.repository.tracker.parse_error(response.json()))
+                            if response.status_code != 422:
+                                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+                            break
+                if not body['comments']:
+                    del body['comments']
+                    if not body['body']:
+                        del body['event']
+
+            if not body:
+                return pull_request
 
             url = '{api_url}/repos/{owner}/{name}/pulls/{number}/reviews'.format(
                 api_url=self.repository.api_url,
@@ -354,8 +447,45 @@ class GitHub(Scm):
                     content=comment,
                 ))
 
-            return pull_request
+            return None if did_fail else pull_request
 
+        def add_reviewers(self, reviewers):
+            return None
+
+        def diff(self, pull_request, comments=False, hash=None):
+            url = '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
+                api_url=self.repository.api_url,
+                owner=self.repository.owner,
+                name=self.repository.name,
+                number=pull_request.number,
+            )
+            response = self.repository.session.get(
+                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept=self.repository.DIFF_HEADER),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to retrieve diff or PR-{} with status code {}\n'.format(pull_request.number, response.status_code))
+                return None
+
+            if not comments:
+                return response.text
+            original_diff = response.text
+            result = original_diff
+
+            for comment in self.repository.request('pulls/{}/comments'.format(pull_request.number)):
+                if comment.get('commit_id') != comment.get('original_commit_id') and comment.get('diff_hunk') not in original_diff:
+                    continue
+                username = (comment.get('user') or {}).get('login') or None
+                body = comment.get('body', '')
+                if username:
+                    body = '{}: {}'.format(self._contributor(username), body)
+                position = comment.get('position', None)
+                result = self.repository.insert_comment_to_diff(
+                    result, comment=body,
+                    file=comment.get('path', None),
+                    position=position if position != 1 else None,
+                )
+            return result
 
     @classmethod
     def is_webserver(cls, url):
@@ -783,6 +913,30 @@ class GitHub(Scm):
             for file in self.request('commits/{}'.format(argument)).get('files', [])
             if file.get('filename')
         ]
+
+    def diff(self, argument=None):
+        if not argument:
+            raise ValueError('No argument provided')
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
+
+        url = '{api_url}/repos/{owner}/{name}/commits/{hash}'.format(
+            api_url=self.api_url,
+            owner=self.owner,
+            name=self.name,
+            hash=argument,
+        )
+        response = self.session.get(
+            url, auth=HTTPBasicAuth(*self.credentials(required=True)),
+            headers=dict(Accept=self.DIFF_HEADER),
+        )
+        if response.status_code // 100 != 2:
+            sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(argument, response.status_code))
+            return None
+        return response.text
 
     def create_release(self, name, tag_name, target_commitish='main', body='', draft=False, prerelease=False):
         data = {

@@ -155,6 +155,7 @@ class PullRequest(object):
         self._blockers = None
         self._metadata = metadata
         self._comments = None
+        self._diff = None
         self.generator = generator
         self.url = url
 
@@ -209,10 +210,20 @@ class PullRequest(object):
             self._comments = list(self.generator.comments(self))
         return self._comments
 
-    def review(self, comment=None, approve=None):
+    def review(self, comment=None, approve=None, file_comments=None):
         if not self.generator:
             raise self.Exception('No associated pull-request generator')
-        return self.generator.review(self, comment=comment, approve=approve)
+        return self.generator.review(self, comment=comment, approve=approve, file_comments=file_comments)
+
+    def add_reviewers(self, reviewers):
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        return self.generator.add_reviewers(reviewers)
+
+    def diff(self, comments=False):
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        return self.generator.diff(self, comments=comments)
 
     def __repr__(self):
         return 'PR {}{}'.format(self.number, ' | {}'.format(self.title) if self.title else '')

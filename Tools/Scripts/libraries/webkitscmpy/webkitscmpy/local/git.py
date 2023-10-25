@@ -1289,6 +1289,23 @@ class Git(Scm):
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return output.stdout.rstrip().splitlines()
 
+    def diff(self, argument=None):
+        if not argument:
+            return self.modified()
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
+
+        output = run(
+            [self.executable(), 'diff', '{}~1'.format(argument), argument],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if output.returncode:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        return output.stdout.rstrip()
+
     def remote_for(self, argument):
         candidates = self.source_remotes()
         while candidates:

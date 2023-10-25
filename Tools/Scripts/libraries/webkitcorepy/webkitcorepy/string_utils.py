@@ -75,7 +75,6 @@ def join(list, conjunction='and'):
         return list[0]
     return '{} {} {}'.format(', '.join(list[:-1]), conjunction, list[-1])
 
-
 def split(string, conjunctions=None):
     conjunctions = ['and', 'or']
     if not string:

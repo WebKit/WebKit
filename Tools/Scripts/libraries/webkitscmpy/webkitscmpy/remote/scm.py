@@ -77,6 +77,45 @@ class Scm(ScmBase):
 
         raise OSError("'{}' is not a known SCM server".format(url))
 
+    @classmethod
+    def insert_comment_to_diff(cls, diff, comment, file=None, position=None):
+        diff = diff or ''
+        comment = '>>>>\n{}\n<<<<\n'.format(comment or '')
+        if not file and not position:
+            return comment + diff
+
+        result = ''
+        did_insert = False
+        current_file = None
+        current_position = None
+        in_comment = False
+        for line in diff.splitlines():
+            if line.startswith('--- a') or line.startswith('--- b'):
+                current_file = line[6:]
+                current_position = None
+            elif not did_insert and current_file and line.startswith('@@ '):
+                if file == current_file and position is None:
+                    result += comment
+                    did_insert = True
+                current_position = 0
+            elif line.startswith('>>>>'):
+                in_comment = True
+
+            if not in_comment and not did_insert and file == current_file and position and current_position and position == current_position - 1:
+                result += comment
+                did_insert = True
+
+            result += line + '\n'
+
+            if not in_comment and current_position is not None:
+                current_position += 1
+            if line.startswith('<<<<'):
+                in_comment = False
+
+        if not did_insert:
+            result += comment
+        return result
+
     def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         super(Scm, self).__init__(
             dev_branches=dev_branches,

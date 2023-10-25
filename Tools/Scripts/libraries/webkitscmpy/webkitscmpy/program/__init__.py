@@ -47,6 +47,7 @@ from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
 from .revert import Revert
+from .review import Review
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 from .show import Show
@@ -96,7 +97,7 @@ def main(
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
-        Classify, InstallHooks,
+        Classify, InstallHooks, Review,
     ] + (programs or [])
     if subversion:
         programs.append(SetupGitSvn)

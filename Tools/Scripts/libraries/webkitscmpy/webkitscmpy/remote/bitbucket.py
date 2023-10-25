@@ -32,6 +32,7 @@ requests = CallByNeed(lambda: __import__('requests'))
 
 class BitBucket(Scm):
     URL_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)/projects/(?P<project>\S+)/repos/(?P<repository>\S+)\Z')
+    DIFF_CONTEXT = 3
 
     class PRGenerator(Scm.PRGenerator):
         TITLE_CHAR_LIMIT = 254
@@ -320,6 +321,44 @@ class BitBucket(Scm):
 
             return None if failed else pull_request
 
+        def add_reviewers(self, reviewers):
+            return None
+
+        def diff(self, pull_request, comments=False):
+            response = requests.get(
+                'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/diff?contextLines={context}'.format(
+                    domain=self.repository.domain,
+                    project=self.repository.project,
+                    name=self.repository.name,
+                    id=pull_request.number,
+                    context=self.repository.DIFF_CONTEXT,
+                ),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to retrieve diff or PR-{} with status code {}\n'.format(pull_request.number, response.status_code))
+                return None
+            return self.repository.json_to_diff(response.json())
+
+
+    @classmethod
+    def json_to_diff(cls, data):
+        output = ''
+        for diff in data.get('diffs', []):
+            output += '--- a/{}\n'.format(diff['source']['toString'])
+            output += '+++ b/{}\n'.format(diff['destination']['toString'])
+            for hunk in diff.get('hunks', []):
+                output += '@@ -{},{} +{},{} @@ '.format(
+                    hunk['sourceLine'], hunk['sourceSpan'],
+                    hunk['destinationLine'], hunk['destinationSpan'],
+                )
+                for segment in hunk.get('segments', []):
+                    leader = dict(
+                        ADDED='+',
+                        REMOVED='-',
+                    ).get(segment['type'], ' ')
+                    for line in segment.get('lines'):
+                        output += '{}{}\n'.format(leader, line['line'])
+        return output
 
     @classmethod
     def is_webserver(cls, url):
@@ -618,3 +657,15 @@ class BitBucket(Scm):
             for change in self.request('commits/{}/changes'.format(argument))
             if change.get('path', {}).get('toString')
         ]
+
+    def diff(self, argument=None):
+        if not argument:
+            raise ValueError('No argument provided')
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
+
+        response = self.request('commits/{}/diff?contextLines={}'.format(argument, self.DIFF_CONTEXT))
+        return self.json_to_diff(response) if response else None
