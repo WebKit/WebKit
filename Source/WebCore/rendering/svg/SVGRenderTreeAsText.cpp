@@ -154,7 +154,7 @@ static TextStream& operator<<(TextStream& ts, const SVGSpreadMethodType& type)
     return ts;
 }
 
-static void writeSVGPaintingResource(TextStream& ts, const RenderSVGResource& resource)
+static void writeSVGPaintingResource(TextStream& ts, const LegacyRenderSVGResource& resource)
 {
     auto resourceType = resource.resourceType();
     if (resourceType == SolidColorResourceType) {
@@ -174,7 +174,7 @@ static void writeSVGPaintingResource(TextStream& ts, const RenderSVGResource& re
     ts << " [id=\"" << container.element().getIdAttribute() << "\"]";
 }
 
-static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& renderer, const RenderSVGResource& fillPaintingResource)
+static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& renderer, const LegacyRenderSVGResource& fillPaintingResource)
 {
     TextStreamSeparator s(' ');
     ts << " [fill={" << s;
@@ -186,7 +186,7 @@ static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& re
     ts << "}]";
 }
 
-static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& renderer, const RenderSVGResource& strokePaintingResource, const SVGGraphicsElement& shape)
+static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& renderer, const LegacyRenderSVGResource& strokePaintingResource, const SVGGraphicsElement& shape)
 {
     TextStreamSeparator s(' ');
     ts << " [stroke={" << s;
@@ -233,10 +233,10 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
         const auto& shape = downcast<LegacyRenderSVGShape>(renderer);
 
         Color fallbackColor;
-        if (auto* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor))
+        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor))
             writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape.graphicsElement());
 
-        if (auto* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor))
+        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
 
         writeIfNotDefault(ts, "clip rule", svgStyle.clipRule(), WindRule::NonZero);
@@ -247,10 +247,10 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
         const auto& shape = downcast<RenderSVGShape>(renderer);
 
         Color fallbackColor;
-        if (auto* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor))
+        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor))
             writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape.graphicsElement());
 
-        if (auto* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor))
+        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
 
         writeIfNotDefault(ts, "clip rule", svgStyle.clipRule(), WindRule::NonZero);

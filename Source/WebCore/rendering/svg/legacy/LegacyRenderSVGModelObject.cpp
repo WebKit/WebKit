@@ -31,10 +31,10 @@
 #include "config.h"
 #include "LegacyRenderSVGModelObject.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "NotImplemented.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
-#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"

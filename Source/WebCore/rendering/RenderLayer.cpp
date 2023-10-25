@@ -3149,7 +3149,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Applying clip-path on <clipPath> enforces us to use mask based clipping, so return false here to disable path based clipping.
     // Furthermore if we're the child of a resource container (<clipPath> / <mask> / ...) disabled path based clipping.
-    if (m_enclosingSVGResourceContainer && m_enclosingSVGResourceContainer->resourceType() == ClipperResourceType) {
+    if (m_enclosingSVGResourceContainer && is<RenderSVGResourceClipper>(m_enclosingSVGResourceContainer)) {
         // If m_isPaintingSVGResourceLayer is true, this function was invoked via paintSVGResourceLayer() -- clipping on <clipPath> is already
         // handled in RenderSVGResourceClipper::applyMaskClipping(), so do not set paintSVGClippingMask to true here.
         paintFlags.set(PaintLayerFlag::PaintingSVGClippingMask, !m_isPaintingSVGResourceLayer);

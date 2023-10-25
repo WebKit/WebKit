@@ -24,9 +24,9 @@
 #include "SVGFELightElement.h"
 
 #include "ElementChildIteratorInlines.h"
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDistantLightElement.h"

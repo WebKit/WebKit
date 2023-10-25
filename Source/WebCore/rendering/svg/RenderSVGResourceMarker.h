@@ -76,4 +76,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceMarker, MarkerResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceMarker, MarkerResourceType)

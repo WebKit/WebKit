@@ -29,8 +29,8 @@
 #include "Document.h"
 #include "FEImage.h"
 #include "Image.h"
+#include "LegacyRenderSVGResource.h"
 #include "RenderObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
@@ -175,7 +175,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!parentRenderer)
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
 std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const

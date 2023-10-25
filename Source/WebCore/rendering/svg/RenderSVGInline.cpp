@@ -22,10 +22,10 @@
 #include "config.h"
 #include "RenderSVGInline.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGInlineInlines.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGGraphicsElement.h"
 #include "SVGInlineFlowBox.h"

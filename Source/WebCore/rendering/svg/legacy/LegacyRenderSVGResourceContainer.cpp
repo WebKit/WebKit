@@ -124,7 +124,7 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
         if (markForInvalidation)
             markClientForInvalidation(client, mode);
 
-        RenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(client, needsLayout, visitedRenderers);
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(client, needsLayout, visitedRenderers);
     }
 
     markAllClientLayersForInvalidation();

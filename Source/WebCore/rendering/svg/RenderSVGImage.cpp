@@ -28,7 +28,6 @@
 #include "RenderSVGImage.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "DocumentInlines.h"
@@ -36,12 +35,12 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResource.h"
 #include "PointerEventsHitRules.h"
 #include "RenderElementInlines.h"
 #include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
@@ -350,7 +349,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         resources->removeClientFromCache(*this);
 
     // Eventually notify parent resources, that we've changed.
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderSVGModelObject::imageChanged(newImage, rect);

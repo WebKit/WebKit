@@ -23,9 +23,9 @@
 #include "SVGEllipseElement.h"
 
 #include "LegacyRenderSVGEllipse.h"
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGEllipse.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include <wtf/IsoMallocInlines.h>
 

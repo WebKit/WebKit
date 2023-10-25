@@ -20,14 +20,15 @@
 
 #pragma once
 
+#include "LegacyRenderSVGResource.h"
 #include "RenderSVGHiddenContainer.h"
-#include "RenderSVGResource.h"
 
 namespace WebCore {
 
 class RenderLayer;
 
-class RenderSVGResourceContainer : public RenderSVGHiddenContainer, public RenderSVGResource {
+// FIXME: Get rid of LegacyRenderSVGResource inheritance.
+class RenderSVGResourceContainer : public RenderSVGHiddenContainer, public LegacyRenderSVGResource {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceContainer);
 public:
     virtual ~RenderSVGResourceContainer();

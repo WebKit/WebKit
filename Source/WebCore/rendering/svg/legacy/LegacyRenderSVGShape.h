@@ -36,7 +36,6 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContextStateSaver;
-class RenderSVGResource;
 class SVGGraphicsElement;
 
 class LegacyRenderSVGShape : public LegacyRenderSVGModelObject {

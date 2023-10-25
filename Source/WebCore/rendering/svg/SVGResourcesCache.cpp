@@ -79,7 +79,7 @@ SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement&
     return resourcesCacheFromRenderer(renderer).m_cache.get(&renderer);
 }
 
-static bool hasPaintResourceRequiringRemovalOnClientLayoutChange(RenderSVGResource* resource)
+static bool hasPaintResourceRequiringRemovalOnClientLayoutChange(LegacyRenderSVGResource* resource)
 {
     return resource && resource->resourceType() == PatternResourceType;
 }
@@ -166,7 +166,7 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
         cache.addResourcesFromRenderer(renderer, newStyle);
     }
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
@@ -174,7 +174,7 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
         return;
@@ -187,7 +187,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
         return;

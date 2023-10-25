@@ -21,13 +21,13 @@
 
 #include "Color.h"
 #include "FloatRect.h"
-#include "RenderSVGResource.h"
+#include "LegacyRenderSVGResource.h"
 
 namespace WebCore {
 
 class RenderObject;
 
-class RenderSVGResourceSolidColor final : public RenderSVGResource {
+class RenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderSVGResourceSolidColor();
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceSolidColor, SolidColorResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceSolidColor, SolidColorResourceType)

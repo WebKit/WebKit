@@ -54,10 +54,10 @@ class RenderObject;
 class RenderSVGResourceSolidColor;
 class RenderStyle;
 
-class RenderSVGResource {
+class LegacyRenderSVGResource {
 public:
-    RenderSVGResource() = default;
-    virtual ~RenderSVGResource() = default;
+    LegacyRenderSVGResource() = default;
+    virtual ~LegacyRenderSVGResource() = default;
 
     void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers) = 0;
@@ -70,8 +70,8 @@ public:
     virtual RenderSVGResourceType resourceType() const = 0;
 
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns & solid colors only)
-    static RenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
-    static RenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
+    static LegacyRenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
+    static LegacyRenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
@@ -83,7 +83,7 @@ protected:
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(ToValueTypeName, ResourceType) \
+#define SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(ToValueTypeName, ResourceType) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::ResourceType; } \
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::ResourceType; } \
 SPECIALIZE_TYPE_TRAITS_END()

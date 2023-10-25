@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceRadialGradient, RadialGradientResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceRadialGradient, RadialGradientResourceType)

@@ -20,7 +20,7 @@
 #pragma once
 
 #include "LegacyRenderSVGHiddenContainer.h"
-#include "RenderSVGResource.h"
+#include "LegacyRenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include <wtf/WeakHashSet.h>
 
@@ -28,8 +28,7 @@ namespace WebCore {
 
 class RenderLayer;
 
-class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer,
-                                         public RenderSVGResource {
+class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer, public LegacyRenderSVGResource {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
 public:
     virtual ~LegacyRenderSVGResourceContainer();
@@ -94,9 +93,9 @@ inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeS
 template<typename Renderer>
 Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 {
-    // Using the RenderSVGResource type here avoids ambiguous casts for types that
+    // Using the LegacyRenderSVGResource type here avoids ambiguous casts for types that
     // descend from both RenderObject and LegacyRenderSVGResourceContainer.
-    RenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
+    LegacyRenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
     if (is<Renderer>(container))
         return downcast<Renderer>(container);
 

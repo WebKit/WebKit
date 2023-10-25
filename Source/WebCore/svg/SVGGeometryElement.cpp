@@ -24,8 +24,8 @@
 #include "SVGGeometryElement.h"
 
 #include "DOMPoint.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGShape.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGPathUtilities.h"
