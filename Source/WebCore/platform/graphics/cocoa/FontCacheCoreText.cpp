@@ -221,7 +221,7 @@ Vector<String> FontCache::systemFontFamilies()
 
 static inline bool isSystemFont(const String& family)
 {
-    // AtomString's operator[] handles out-of-bounds by returning 0.
+    // String's operator[] handles out-of-bounds by returning 0.
     return family[0] == '.';
 }
 
