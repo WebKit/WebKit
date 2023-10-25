@@ -109,6 +109,7 @@ protected:
 
     // GraphicsContextGLANGLE overrides.
     bool platformInitializeContext() final;
+    bool platformInitializeExtensions() final;
     bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
     bool reshapeDrawingBuffer() final;
@@ -130,6 +131,10 @@ protected:
     // Inserts new fence that will invoke `signal` from a background thread when completed.
     // If not possible, calls the `signal`.
     void insertFinishedSignalOrInvoke(Function<void()> signal);
+#if ENABLE(WEBXR)
+    bool enableRequiredWebXRExtensionsImpl();
+#endif
+
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;

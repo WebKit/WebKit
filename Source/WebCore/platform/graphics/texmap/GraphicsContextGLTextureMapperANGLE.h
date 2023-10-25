@@ -64,7 +64,7 @@ private:
     bool platformInitializeContext() final;
     bool platformInitialize() final;
 
-    void prepareTexture() final;
+    void swapCompositorTexture();
 
 #if USE(NICOSIA)
     GCGLuint setupCurrentTexture();

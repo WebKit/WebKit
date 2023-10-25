@@ -1561,7 +1561,7 @@ public:
     // Has no other side-effects.
     virtual bool isExtensionEnabled(const String&) = 0;
 
-    virtual bool enableRequiredWebXRExtensions() { return true; }
+    virtual bool enableRequiredWebXRExtensions() { return false; }
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;

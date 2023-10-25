@@ -402,6 +402,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     auto context = createTestContext({ 20, 20 });
     ASSERT_NE(context, nullptr);
     context->setClient(&client);
+    EXPECT_TRUE(context->getErrors().isEmpty());
     ASSERT_TRUE(changeContextContents(*context, 0));
     EXPECT_TRUE(context->getErrors().isEmpty());
     context->simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting::DisplayBufferAllocationFailure);

@@ -103,6 +103,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
         return;
 
     prepareTexture();
+    GL_Flush();
     markLayerComposited();
 
     m_swapchain.displayBO = WTFMove(m_swapchain.drawBO);
@@ -232,61 +233,13 @@ bool GraphicsContextGLGBM::platformInitializeContext()
     return true;
 }
 
-bool GraphicsContextGLGBM::platformInitialize()
+bool GraphicsContextGLGBM::platformInitializeExtensions()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
-
     // We require this extension to render into the dmabuf-backed EGLImage.
     RELEASE_ASSERT(supportsExtension("GL_OES_EGL_image"_s));
-    GL_RequestExtensionANGLE("GL_OES_EGL_image");
-
-    validateAttributes();
-    auto attributes = contextAttributes(); // They may have changed during validation.
-
-    GLenum textureTarget = drawingBufferTextureTarget();
-    // Create a texture to render into.
-    GL_GenTextures(1, &m_texture);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GL_BindTexture(textureTarget, 0);
-
-    // Create an FBO.
-    GL_GenFramebuffers(1, &m_fbo);
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-    // Create a multisample FBO.
-    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
-    if (attributes.antialias) {
-        GL_GenFramebuffers(1, &m_multisampleFBO);
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-    } else {
-        // Bind canvas FBO.
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_depthStencilBuffer);
-    }
-
-    GL_ClearColor(0, 0, 0, 0);
-    return GraphicsContextGLANGLE::platformInitialize();
-}
-
-void GraphicsContextGLGBM::prepareTexture()
-{
-    ASSERT(!m_layerComposited);
-
-    if (contextAttributes().antialias)
-        resolveMultisamplingIfNecessary();
-
-    GL_Flush();
+    if (!enableExtension("GL_OES_EGL_image"_s))
+        return false;
+    return true;
 }
 
 bool GraphicsContextGLGBM::reshapeDrawingBuffer()

@@ -64,9 +64,8 @@ public:
 
     // GraphicsContextGLANGLE overrides
     bool platformInitializeContext() override;
-    bool platformInitialize() override;
+    bool platformInitializeExtensions() override;
 
-    void prepareTexture() override;
     bool reshapeDrawingBuffer() override;
 
     struct Swapchain {

@@ -386,98 +386,41 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
     return true;
 }
 
-bool GraphicsContextGLCocoa::platformInitialize()
+bool GraphicsContextGLCocoa::platformInitializeExtensions()
 {
     auto attributes = contextAttributes();
-    if (m_isForWebGL2)
-        GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
-
-    Vector<ASCIILiteral, 4> requiredExtensions;
-    if (m_isForWebGL2) {
-        // For WebGL 2.0 occlusion queries to work.
-        requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
-    }
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!needsEAGLOnMac()) {
         // For IOSurface-backed textures.
-        if (!attributes.useMetal)
-            requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
+        if (!attributes.useMetal && !enableExtension("GL_ANGLE_texture_rectangle"_s))
+            return false;
         // For creating the EGL surface from an IOSurface.
-        requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
+        if (!enableExtension("GL_EXT_texture_format_BGRA8888"_s))
+            return false;
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ENABLE(WEBXR)
-    if (attributes.xrCompatible && !enableRequiredWebXRExtensions())
+    if (attributes.xrCompatible && !enableRequiredWebXRExtensionsImpl())
         return false;
 #endif
-    if (m_isForWebGL2)
-        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
 
-    for (auto& extension : requiredExtensions) {
-        if (!supportsExtension(extension)) {
-            LOG(WebGL, "Missing required extension. %s", extension.characters());
-            return false;
-        }
-        ensureExtensionEnabled(extension);
-    }
-    if (attributes.useMetal) {
-        // GraphicsContextGLANGLE uses sync objects to throttle display on Metal implementations.
-        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
-        // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
-        // some sort of internal throttling.
-        if (supportsExtension("GL_ARB_sync"_s))
-            ensureExtensionEnabled("GL_ARB_sync"_s);
-    }
-    validateAttributes();
-    attributes = contextAttributes(); // They may have changed during validation.
+    // GraphicsContextGLANGLE uses sync objects to throttle display on Metal implementations.
+    // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
+    // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
+    // some sort of internal throttling.
+    if (attributes.useMetal && !enableExtension("GL_ARB_sync"_s))
+        return false;
+    return true;
+}
 
-    // Create the texture that will be used for the framebuffer.
-    GLenum textureTarget = drawingBufferTextureTarget();
-
-    GL_GenTextures(1, &m_texture);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GL_BindTexture(textureTarget, 0);
-
-    GL_GenFramebuffers(1, &m_fbo);
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-
-    if (!attributes.antialias && (attributes.stencil || attributes.depth))
-        GL_GenRenderbuffers(1, &m_depthStencilBuffer);
-
-    // If necessary, create another framebuffer for the multisample results.
-    if (attributes.antialias) {
-        GL_GenFramebuffers(1, &m_multisampleFBO);
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-    } else if (attributes.preserveDrawingBuffer) {
-        // If necessary, create another texture to handle preserveDrawingBuffer:true without
-        // antialiasing.
-        GL_GenTextures(1, &m_preserveDrawingBufferTexture);
-        GL_BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        GL_BindTexture(GL_TEXTURE_2D, 0);
-        // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
-        GL_GenFramebuffers(1, &m_preserveDrawingBufferFBO);
-    }
-
-    GL_ClearColor(0, 0, 0, 0);
-
+bool GraphicsContextGLCocoa::platformInitialize()
+{
 #if PLATFORM(MAC)
+    auto attributes = contextAttributes();
     if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
         m_switchesGPUOnDisplayReconfiguration = true;
 #endif
-    return GraphicsContextGLANGLE::platformInitialize();
+    return true;
 }
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
@@ -772,22 +715,24 @@ GCEGLSync GraphicsContextGLCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
 bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
 {
 #if ENABLE(WEBXR)
-    String requiredExtensions[] = {
-        "GL_ANGLE_framebuffer_multisample"_str,
-        "GL_ANGLE_framebuffer_blit"_str,
-        "GL_EXT_sRGB"_str,
-        "GL_OES_EGL_image"_str,
-        "GL_OES_rgb8_rgba8"_str
-    };
-
-    for (const auto& ext : requiredExtensions) {
-        if (!supportsExtension(ext))
-            return false;
-        ensureExtensionEnabled(ext);
-    }
+    if (!makeContextCurrent())
+        return false;
+    if (enableRequiredWebXRExtensionsImpl())
+        return true;
 #endif
-    return true;
+    return false;
 }
+
+#if ENABLE(WEBXR)
+bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
+{
+    return enableExtension("GL_ANGLE_framebuffer_multisample"_s)
+        && enableExtension("GL_ANGLE_framebuffer_blit"_s)
+        && enableExtension("GL_EXT_sRGB"_s)
+        && enableExtension("GL_OES_EGL_image"_s)
+        && enableExtenison("GL_OES_rgb8_rgba8"_s);
+}
+#endif
 
 GCEGLSync GraphicsContextGLCocoa::createEGLSync(id sharedEvent, uint64_t signalValue)
 {
