@@ -63,11 +63,6 @@ String DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey()
     return "postPageBackgroundingMemoryUsage"_s;
 }
 
-String DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey()
-{
-    return "pageHandlesWebGLContextLoss"_s;
-}
-
 String DiagnosticLoggingKeys::postPageLoadCPUUsageKey()
 {
     return "postPageLoadCPUUsage"_s;

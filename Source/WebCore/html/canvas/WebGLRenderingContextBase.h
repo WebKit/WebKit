@@ -1012,7 +1012,6 @@ private:
     void maybeRestoreContext();
 
     void registerWithWebGLStateTracker();
-    void checkForContextLossHandling();
 
     void activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState) override;
 
@@ -1031,7 +1030,6 @@ private:
 #endif
 
     WebGLStateTracker::Token m_trackerToken;
-    Timer m_checkForContextLossHandlingTimer;
     bool m_isSuspended { false };
 
 #if ENABLE(WEBXR)

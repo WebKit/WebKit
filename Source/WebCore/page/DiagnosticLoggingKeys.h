@@ -120,7 +120,6 @@ public:
     static String visuallyEmptyKey();
     static String pageContainsAtLeastOneMediaEngineKey();
     static String pageContainsMediaEngineKey();
-    static String pageHandlesWebGLContextLossKey();
     static String pageLoadedKey();
     static String playedKey();
     static String postPageBackgroundingCPUUsageKey();
