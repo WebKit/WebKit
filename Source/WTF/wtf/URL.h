@@ -73,6 +73,47 @@ public:
     {
     }
 
+    URL(const URL&) = default;
+    URL& operator=(const URL&) = default;
+
+    URL(URL&& other)
+        : m_string(WTFMove(other.m_string))
+        , m_isValid(other.m_isValid)
+        , m_protocolIsInHTTPFamily(other.m_protocolIsInHTTPFamily)
+        , m_hasOpaquePath(other.m_hasOpaquePath)
+        , m_portLength(other.m_portLength)
+        , m_schemeEnd(other.m_schemeEnd)
+        , m_userStart(other.m_userStart)
+        , m_userEnd(other.m_userEnd)
+        , m_passwordEnd(other.m_passwordEnd)
+        , m_hostEnd(other.m_hostEnd)
+        , m_pathAfterLastSlash(other.m_pathAfterLastSlash)
+        , m_pathEnd(other.m_pathEnd)
+        , m_queryEnd(other.m_queryEnd)
+    {
+        other.m_isValid = false;
+    }
+
+    URL& operator=(URL&& other)
+    {
+        m_string = WTFMove(other.m_string);
+        m_isValid = other.m_isValid;
+        other.m_isValid = false;
+        m_protocolIsInHTTPFamily = other.m_protocolIsInHTTPFamily;
+        m_hasOpaquePath = other.m_hasOpaquePath;
+        m_portLength = other.m_portLength;
+        m_schemeEnd = other.m_schemeEnd;
+        m_userStart = other.m_userStart;
+        m_userEnd = other.m_userEnd;
+        m_passwordEnd = other.m_passwordEnd;
+        m_hostEnd = other.m_hostEnd;
+        m_pathAfterLastSlash = other.m_pathAfterLastSlash;
+        m_pathEnd = other.m_pathEnd;
+        m_queryEnd = other.m_queryEnd;
+
+        return *this;
+    }
+
     WTF_EXPORT_PRIVATE static URL fakeURLWithRelativePart(StringView);
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
