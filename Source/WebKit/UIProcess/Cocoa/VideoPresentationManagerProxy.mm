@@ -621,7 +621,7 @@ void VideoPresentationManagerProxy::forEachSession(Function<void(VideoPresentati
 void VideoPresentationManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
     if (!m_page) {
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
