@@ -155,9 +155,9 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     return TextFieldInputType::handleKeydownEvent(event);
 }
 
-void SearchInputType::destroyShadowSubtree()
+void SearchInputType::removeShadowSubtree()
 {
-    TextFieldInputType::destroyShadowSubtree();
+    TextFieldInputType::removeShadowSubtree();
     m_resultsButton = nullptr;
     m_cancelButton = nullptr;
 }

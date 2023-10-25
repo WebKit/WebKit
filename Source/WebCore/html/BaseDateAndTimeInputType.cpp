@@ -346,9 +346,9 @@ void BaseDateAndTimeInputType::createShadowSubtree()
     updateInnerTextValue();
 }
 
-void BaseDateAndTimeInputType::destroyShadowSubtree()
+void BaseDateAndTimeInputType::removeShadowSubtree()
 {
-    InputType::destroyShadowSubtree();
+    InputType::removeShadowSubtree();
     m_dateTimeEditElement = nullptr;
 }
 

@@ -414,9 +414,9 @@ HTMLElement* TextFieldInputType::placeholderElement() const
     return m_placeholder.get();
 }
 
-void TextFieldInputType::destroyShadowSubtree()
+void TextFieldInputType::removeShadowSubtree()
 {
-    InputType::destroyShadowSubtree();
+    InputType::removeShadowSubtree();
     m_innerText = nullptr;
     m_placeholder = nullptr;
     m_innerBlock = nullptr;
