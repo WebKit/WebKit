@@ -214,11 +214,15 @@ private:
 
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
+#if OS(DARWIN)
+    memset_pattern4(bitwise_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
+#else
     int32_t ptr = regionStart / sizeof(int32_t);
     const int32_t end = regionEnd / sizeof(int32_t);
     int32_t* offsets = reinterpret_cast_ptr<int32_t*>(assemblerData.buffer());
     while (ptr < end)
         offsets[ptr++] = offset;
+#endif
 }
 
 // We use this to prevent compile errors on some platforms that are unhappy
