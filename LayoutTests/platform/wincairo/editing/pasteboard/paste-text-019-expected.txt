@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
             text run at (0,27) width 158: "Fix for this bug: "
           RenderInline {A} at (0,0) size 544x27 [color=#0000EE]
             RenderText {#text} at (158,27) size 544x27
-              text run at (158,27) width 544: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+              text run at (158,27) width 544: "<https://bugs.webkit.org/show_bug.cgi?id=3429>"
           RenderText {#text} at (702,27) size 752x55
             text run at (702,27) width 50: " Text"
             text run at (0,55) width 671: "transformed with text-transform does not copy with transform applied"

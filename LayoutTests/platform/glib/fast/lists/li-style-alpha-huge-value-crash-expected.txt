@@ -12,4 +12,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,18) size 487x35
                 text run at (0,18) width 189: "SUCCESS (you didn't crash) "
                 text run at (189,18) width 298: "Our behavior here matches WinIE not FireFox."
-                text run at (0,36) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8542"
+                text run at (0,36) width 343: "https://bugs.webkit.org/show_bug.cgi?id=8542"

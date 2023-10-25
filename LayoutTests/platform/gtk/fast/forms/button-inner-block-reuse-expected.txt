@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 783x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (207,0) size 348x17
-              text run at (207,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8420"
+              text run at (207,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=8420"
           RenderText {#text} at (554,0) size 783x35
             text run at (554,0) width 5: " "
             text run at (558,0) width 225: "iExploder(#12): Assertion failure in"

@@ -20,20 +20,20 @@
 </head>
 <body>
 <p>
-This tests for a regression against <i><a href="https://bugs.webkit.org/show_bug.cgi?id=6334">http://bugzilla.opendarwin.org/show_bug.cgi?id=6334</a> REGRESSION: &lt;input type="button"&gt; text is reversed on "visual Hebrew" pages</i>.
+This tests for a regression against <i><a href="https://bugs.webkit.org/show_bug.cgi?id=6334">https://bugs.webkit.org/show_bug.cgi?id=6334</a> REGRESSION: &lt;input type="button"&gt; text is reversed on "visual Hebrew" pages</i>.
 </p>
 <hr>
-<p>The text on both buttons should like this: шеъфл</p>
-<button>шеъфл</button>
+<p>The text on both buttons should like this: пїЅпїЅпїЅпїЅпїЅ</p>
+<button>пїЅпїЅпїЅпїЅпїЅ</button>
 <br>
-<input type="button" value="лфъеш">
+<input type="button" value="пїЅпїЅпїЅпїЅпїЅ">
 <hr>
 <p>The following lines should be identical:</p>
 <p style="-webkit-rtl-ordering: logical;">
-доад д-21
+пїЅпїЅпїЅпїЅ пїЅ-21
 </p>
 <p>
-21-д даод
+21-пїЅ пїЅпїЅпїЅпїЅ
 </p>
 </body>
 </html>

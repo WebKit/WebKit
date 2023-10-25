@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 750x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
+              text run at (104,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=9316"
           RenderText {#text} at (451,0) size 750x35
             text run at (451,0) width 5: " "
             text run at (455,0) width 295: "REGRESSION: text field width shrinks on first"

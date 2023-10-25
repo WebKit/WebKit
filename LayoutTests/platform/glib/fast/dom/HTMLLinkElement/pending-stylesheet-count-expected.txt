@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 772x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9252"
+              text run at (104,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=9252"
           RenderText {#text} at (451,0) size 772x35
             text run at (451,0) width 5: " "
             text run at (455,0) width 317: "REGRESSION: Very odd roll-over issues (content"

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 763x36
           RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (217,0) size 354x18
-              text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6888"
+              text run at (217,0) width 354: "https://bugs.webkit.org/show_bug.cgi?id=6888"
           RenderText {#text} at (570,0) size 763x36
             text run at (570,0) width 193: " Collapsed borders appear on"
             text run at (0,18) width 317: "the wrong side or on the wrong cell in RTL tables"

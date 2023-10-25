@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 711x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
-              text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8485"
+              text run at (172,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=8485"
           RenderText {#text} at (520,0) size 711x35
             text run at (520,0) width 4: " "
             text run at (524,0) width 187: "iExploder(#11705): Freeze in"

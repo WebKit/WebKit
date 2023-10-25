@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 104: "This is a test for "
         RenderInline {I} at (0,0) size 756x35
           RenderText {#text} at (104,0) size 756x35
-            text run at (104,0) width 652: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6139 ATSUI code path should implement small caps,"
+            text run at (104,0) width 652: "https://bugs.webkit.org/show_bug.cgi?id=6139 ATSUI code path should implement small caps,"
             text run at (0,18) width 403: "synthetic bold and oblique and correct metrics for fallback fonts"
         RenderText {#text} at (402,18) size 5x17
           text run at (402,18) width 5: "."

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 763x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (139,0) size 348x17
-              text run at (139,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4334"
+              text run at (139,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=4334"
           RenderText {#text} at (486,0) size 763x35
             text run at (486,0) width 5: " "
             text run at (490,0) width 273: "REGRESSION: Flickering when css-hover"

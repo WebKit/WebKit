@@ -10,7 +10,7 @@ layer at (0,0) size 800x238
         RenderInline {I} at (0,0) size 778x36
           RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
             RenderText {#text} at (321,0) size 353x18
-              text run at (321,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9561"
+              text run at (321,0) width 353: "https://bugs.webkit.org/show_bug.cgi?id=9561"
           RenderText {#text} at (673,0) size 778x36
             text run at (673,0) width 5: " "
             text run at (677,0) width 101: "REGRESSION:"

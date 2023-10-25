@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 759x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
-              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6418"
+              text run at (212,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=6418"
           RenderText {#text} at (560,0) size 759x35
             text run at (560,0) width 4: " "
             text run at (564,0) width 195: "Incorrect scrollbar when using"

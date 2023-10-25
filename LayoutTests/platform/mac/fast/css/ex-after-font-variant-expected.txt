@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 696x18
           RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 353x18
-              text run at (53,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4227"
+              text run at (53,0) width 353: "https://bugs.webkit.org/show_bug.cgi?id=4227"
           RenderText {#text} at (405,0) size 344x18
             text run at (405,0) width 5: " "
             text run at (409,0) width 340: "The ex unit doesn't work for font-variant: small-caps"

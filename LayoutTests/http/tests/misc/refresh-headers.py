@@ -28,5 +28,5 @@ else:
 
 sys.stdout.write(
     '<script>if (window.testRunner) { testRunner.dumpAsText(); }</script>'
-    '<p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5499">bug 5499</a>: Page reload does not send any cache control headers.</p>'
+    '<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=5499">bug 5499</a>: Page reload does not send any cache control headers.</p>'
 )
