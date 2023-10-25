@@ -179,7 +179,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
         offsetLayoutU, layoutU.sourceWidthBytes,
         offsetLayoutV, layoutV.sourceWidthBytes
     };
-    auto pixelBuffer = adoptCF(webrtc::pixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout));
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;
@@ -211,7 +211,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
         },
         offsetLayoutA, layoutA.sourceWidthBytes
     };
-    auto pixelBuffer = adoptCF(webrtc::pixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;

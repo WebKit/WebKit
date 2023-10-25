@@ -126,7 +126,7 @@ static bool copyI420BufferToPixelBuffer(CVPixelBufferRef pixelBuffer, const uint
 
 }
 
-CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout layout)
+CVPixelBufferRef createPixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout layout)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
 
@@ -147,7 +147,7 @@ CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length,
     return pixelBuffer;
 }
 
-CVPixelBufferRef pixelBufferFromI420ABuffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420ABufferLayout layout)
+CVPixelBufferRef createPixelBufferFromI420ABuffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420ABufferLayout layout)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
 
@@ -317,7 +317,7 @@ CVPixelBufferRef createPixelBufferFromFrameBuffer(VideoFrameBuffer& buffer, cons
     return CVPixelBufferRetain(rtcPixelBuffer.pixelBuffer);
 }
 
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame)
+CVPixelBufferRef copyPixelBufferForFrame(const VideoFrame& frame)
 {
     auto buffer = frame.video_frame_buffer();
     if (buffer->type() != VideoFrameBuffer::Type::kNative)
