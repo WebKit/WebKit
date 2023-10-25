@@ -24,14 +24,14 @@
  */
 
 #import "config.h"
+#import "WKFullScreenViewController.h"
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-#import "WKFullScreenViewController.h"
 
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitUtilities.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
@@ -372,8 +372,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     auto page = [self._webView _page];
-    auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
-    auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+    auto* videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
+    auto* videoFullscreenInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
     auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
 
     _playbackClient.setInterface(playbackSessionInterface);

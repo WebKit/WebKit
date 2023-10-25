@@ -175,7 +175,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebPermissionControllerProxy \
 	UIProcess/Cocoa/PlaybackSessionManagerProxy \
 	UIProcess/Cocoa/UserMediaCaptureManagerProxy \
-	UIProcess/Cocoa/VideoFullscreenManagerProxy \
+	UIProcess/Cocoa/VideoPresentationManagerProxy \
 	UIProcess/ViewGestureController \
 	UIProcess/WebProcessProxy \
 	UIProcess/Automation/WebAutomationSession \
@@ -243,7 +243,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/cocoa/PlaybackSessionManager \
 	WebProcess/cocoa/RemoteCaptureSampleManager \
 	WebProcess/cocoa/UserMediaCaptureManager \
-	WebProcess/cocoa/VideoFullscreenManager \
+	WebProcess/cocoa/VideoPresentationManager \
 	WebProcess/Geolocation/WebGeolocationManager \
 	WebProcess/Automation/WebAutomationSessionProxy \
 	WebProcess/FullScreen/WebFullScreenManager \

@@ -22,6 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "WebFullScreenManager.h"
 
@@ -51,7 +52,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
-#include "VideoFullscreenManager.h"
+#include "VideoPresentationManager.h"
 #endif
 
 namespace WebKit {
@@ -208,7 +209,7 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     isVideoElement = is<HTMLVideoElement>(element);
 
-    if (m_page->videoFullscreenManager().videoElementInPictureInPicture() && m_element->document().quirks().blocksEnteringStandardFullscreenFromPictureInPictureQuirk())
+    if (m_page->videoPresentationManager().videoElementInPictureInPicture() && m_element->document().quirks().blocksEnteringStandardFullscreenFromPictureInPictureQuirk())
         return;
 
     if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())

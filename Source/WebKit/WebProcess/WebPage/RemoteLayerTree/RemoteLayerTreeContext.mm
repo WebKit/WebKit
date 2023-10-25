@@ -32,7 +32,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
-#import "VideoFullscreenManager.h"
+#import "VideoPresentationManager.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import <WebCore/HTMLMediaElementIdentifier.h>
@@ -132,7 +132,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
         videoElement.naturalSize()
     };
 
-    m_webPage.videoFullscreenManager().setupRemoteLayerHosting(videoElement);
+    m_webPage.videoPresentationManager().setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());
 
     m_createdLayers.add(layerID, WTFMove(creationProperties));
@@ -148,7 +148,7 @@ void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
-        m_webPage.videoFullscreenManager().willRemoveLayerForID(videoLayerIter->value);
+        m_webPage.videoPresentationManager().willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
     }
 #endif

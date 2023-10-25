@@ -80,7 +80,7 @@ public:
 
 private:
     friend class PlaybackSessionManagerProxy;
-    friend class VideoFullscreenModelContext;
+    friend class VideoPresentationModelContext;
 
     PlaybackSessionModelContext(PlaybackSessionManagerProxy&, PlaybackSessionContextIdentifier);
 
@@ -191,7 +191,7 @@ public:
 
 private:
     friend class PlaybackSessionModelContext;
-    friend class VideoFullscreenManagerProxy;
+    friend class VideoPresentationManagerProxy;
 
     explicit PlaybackSessionManagerProxy(WebPageProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -254,7 +254,7 @@ private:
 
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "VideoFullscreenManagerProxy"; }
+    const char* logClassName() const { return "VideoPresentationManagerProxy"; }
     WTFLogChannel& logChannel() const;
 #endif
 
