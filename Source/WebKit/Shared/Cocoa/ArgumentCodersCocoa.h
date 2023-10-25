@@ -111,9 +111,6 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
 };
 #endif // __OBJC__
 
-void setStrictSecureDecodingForAllObjCEnabled(bool);
-bool strictSecureDecodingForAllObjCEnabled();
-
 } // namespace IPC
 
 #endif // PLATFORM(COCOA)

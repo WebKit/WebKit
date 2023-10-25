@@ -57,10 +57,6 @@ struct WebKit::GPUProcessCreationParameters {
 
     String applicationVisibleName;
 
-#if PLATFORM(COCOA)
-    bool strictSecureDecodingForAllObjCEnabled;
-#endif
-
 #if USE(GBM)
     String renderDeviceFile;
 #endif

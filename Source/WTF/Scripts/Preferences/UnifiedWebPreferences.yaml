@@ -6539,16 +6539,6 @@ StorageBlockingPolicy:
     WebCore:
       default: StorageBlockingPolicy::AllowAll
 
-StrictSecureDecodingForAllObjC:
-  type: bool
-  status: internal
-  humanReadableName: "Enable strict decoding of all ObjC classes"
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
-
 SubgridEnabled:
   type: bool
   status: stable
