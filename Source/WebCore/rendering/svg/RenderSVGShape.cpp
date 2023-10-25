@@ -122,7 +122,12 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
 
 bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
-    if (strokeBoundingBox().isEmpty() || !strokeBoundingBox().contains(point))
+    // "A zero value causes no stroke to be painted."
+    if (!strokeWidth())
+        return false;
+
+    auto approximateStrokeBoundingBox = this->approximateStrokeBoundingBox();
+    if (approximateStrokeBoundingBox.isEmpty() || !approximateStrokeBoundingBox.contains(point))
         return false;
 
     Color fallbackColor;
@@ -394,8 +399,11 @@ FloatRect RenderSVGShape::approximateStrokeBoundingBox() const
 {
     if (m_shapeType == ShapeType::Empty)
         return { };
-    if (!m_approximateStrokeBoundingBox)
+    if (!m_approximateStrokeBoundingBox) {
+        // Initialize m_approximateStrokeBoundingBox before calling calculateApproximateStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_approximateStrokeBoundingBox = FloatRect { };
         m_approximateStrokeBoundingBox = calculateApproximateStrokeBoundingBox();
+    }
     return *m_approximateStrokeBoundingBox;
 }
 
@@ -411,15 +419,6 @@ float RenderSVGShape::strokeWidth() const
 {
     SVGLengthContext lengthContext(&graphicsElement());
     return lengthContext.valueForLength(style().strokeWidth());
-}
-
-bool RenderSVGShape::hasSmoothStroke() const
-{
-    const SVGRenderStyle& svgStyle = style().svgStyle();
-    return svgStyle.strokeDashArray().isEmpty()
-        && style().strokeMiterLimit() == defaultMiterLimit
-        && style().joinStyle() == LineJoin::Miter
-        && style().capStyle() == LineCap::Butt;
 }
 
 Path& RenderSVGShape::ensurePath()

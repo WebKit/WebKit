@@ -55,6 +55,7 @@ void LegacyRenderSVGPath::updateShapeFromElement()
     m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = ensurePath().boundingRect();
     m_strokeBoundingBox = std::nullopt;
+    m_approximateStrokeBoundingBox = std::nullopt;
     processMarkerPositions();
     updateZeroLengthSubpaths();
 
