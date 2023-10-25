@@ -318,7 +318,7 @@ function createResolvingFunctions(promise)
 function promiseReactionJobWithoutPromise(handler, argument, context, asyncContext)
 {
     "use strict";
-    var prev, hasAsyncContext;
+    var prev, hasAsyncContext = false;
     if (asyncContext) {
         prev = @getInternalField(@asyncContext, 0);
         hasAsyncContext = true;
@@ -343,7 +343,7 @@ function promiseReactionJobWithoutPromise(handler, argument, context, asyncConte
 function promiseReactionJobWithoutPromiseUnwrapAsyncContext(handler, argument, context)
 {
     "use strict";
-    var prev, hasAsyncContext;
+    var prev, hasAsyncContext = false;
     if (@isJSArray(context)) {
         prev = @getInternalField(@asyncContext, 0);
         hasAsyncContext = true
@@ -511,14 +511,15 @@ function promiseReactionJob(promiseOrCapability, handler, argument, contextOrSta
     try {
         var result = (contextOrState) ? handler(argument, contextOrState) : handler(argument);
     } catch (error) {
+        if (hasAsyncContext) {
+            @putInternalField(@asyncContext, 0, prev);
+        }
+
         if (@isPromise(promiseOrCapability)) {
             @rejectPromise(promiseOrCapability, error);
             return;
         }
         promiseOrCapability.reject.@call(@undefined, error);
-        if (hasAsyncContext) {
-            @putInternalField(@asyncContext, 0, prev);
-        }
         return;
     }
 
