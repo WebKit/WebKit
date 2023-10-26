@@ -80,11 +80,11 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     auto layoutRange = InlineItemRange { 0 , m_inlineItemList.size() };
     auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
-    auto previousLine = std::optional<PreviousLine> { };
+    auto previousContent = std::optional<PreviousContent> { };
     auto lineIndex = 0lu;
 
     while (true) {
-        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousContent);
         auto floatContentWidth = [&] {
             auto leftWidth = LayoutUnit { };
             auto rightWidth = LayoutUnit { };
@@ -115,7 +115,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
         // Support single line only.
         mayCacheLayoutResult = MayCacheLayoutResult::No;
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        previousContent = { true, PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) } };
     }
     return maximumContentWidth;
 }

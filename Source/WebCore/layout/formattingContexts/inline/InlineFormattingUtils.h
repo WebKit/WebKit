@@ -44,7 +44,7 @@ public:
     ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
     enum class IsIntrinsicWidthMode : bool { No, Yes };
-    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, std::optional<bool> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
+    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, std::optional<bool> previousContentEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
 
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&) const;
 
