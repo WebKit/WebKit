@@ -49,7 +49,7 @@ Color::Color(Color&& other)
     *this = WTFMove(other);
 }
 
-Color::Color(std::optional<Color::ColorDataForIPC>&& colorData)
+Color::Color(std::optional<ColorDataForIPC>&& colorData)
 {
     if (colorData) {
         OptionSet<FlagsIncludingPrivate> flags;
@@ -60,14 +60,14 @@ Color::Color(std::optional<Color::ColorDataForIPC>&& colorData)
 
         WTF::switchOn(colorData->data,
             [&] (const PackedColor::RGBA& d) { setColor(asSRGBA(d), flags); },
-            [&] (const ColorDataForIPC::OutOfLineColorData& d) {
+            [&] (const OutOfLineColorDataForIPC& d) {
                 setOutOfLineComponents(OutOfLineComponents::create({ d.c1, d.c2, d.c3, d.alpha }), d.colorSpace, flags);
             }
         );
     }
 }
 
-std::optional<Color::ColorDataForIPC> Color::data() const
+std::optional<ColorDataForIPC> Color::data() const
 {
     if (!isValid())
         return std::nullopt;
@@ -76,7 +76,7 @@ std::optional<Color::ColorDataForIPC> Color::data() const
         auto& outOfLineComponents = asOutOfLine();
         auto [c1, c2, c3, alpha] = outOfLineComponents.unresolvedComponents();
 
-        Color::ColorDataForIPC::OutOfLineColorData oolcd = {
+        OutOfLineColorDataForIPC oolcd = {
             .colorSpace = colorSpace(),
             .c1 = c1,
             .c2 = c2,

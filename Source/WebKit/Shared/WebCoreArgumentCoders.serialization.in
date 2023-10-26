@@ -2052,7 +2052,7 @@ header: <WebCore/ColorTypes.h>
 }
 
 header: <WebCore/Color.h>
-[Nested, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Color::ColorDataForIPC::OutOfLineColorData {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::OutOfLineColorDataForIPC {
     WebCore::ColorSpace colorSpace;
     float c1;
     float c2;
@@ -2060,14 +2060,14 @@ header: <WebCore/Color.h>
     float alpha;
 }
 
-[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Color::ColorDataForIPC {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorDataForIPC {
     bool isSemantic;
     bool usesFunctionSerialization;
-    std::variant<WebCore::PackedColor::RGBA, WebCore::Color::ColorDataForIPC::OutOfLineColorData> data;
+    std::variant<WebCore::PackedColor::RGBA, WebCore::OutOfLineColorDataForIPC> data;
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::Color {
-    std::optional<WebCore::Color::ColorDataForIPC> data();
+    std::optional<WebCore::ColorDataForIPC> data();
 }
 
 struct WebCore::MediaCapabilitiesInfo {
