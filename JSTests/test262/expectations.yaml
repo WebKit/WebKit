@@ -1010,8 +1010,8 @@ test/intl402/DurationFormat/prototype/format/negative-durationstyle-digital-en.j
   default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
   strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
-  default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000002») to be true'
-  strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000002») to be true'
+  default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000001») to be true'
+  strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000001») to be true'
 test/intl402/DurationFormat/prototype/format/style-digital-en.js:
   default: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
   strict mode: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
@@ -1036,9 +1036,6 @@ test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
-test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
-  default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'

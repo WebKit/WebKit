@@ -102,6 +102,8 @@ public:
     {
     }
 
+    static IntlMathematicalValue parseString(JSGlobalObject*, StringView);
+
     void ensureNonDouble()
     {
         if (std::holds_alternative<double>(m_value)) {

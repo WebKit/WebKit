@@ -326,7 +326,7 @@ inline IntlNumberFormat* IntlNumberFormat::unwrapForOldFunctions(JSGlobalObject*
     return unwrapForLegacyIntlConstructor<IntlNumberFormat>(globalObject, thisValue, globalObject->numberFormatConstructor());
 }
 
-// https://tc39.es/proposal-intl-numberformat-v3/out/numberformat/diff.html#sec-tointlmathematicalvalue
+// https://tc39.es/ecma402/#sec-tointlmathematicalvalue
 inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
@@ -364,19 +364,7 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
     String string = asString(primitive)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue bigInt = JSBigInt::stringToBigInt(globalObject, string);
-    if (bigInt) {
-        // If it is -0, we cannot handle it in JSBigInt. Reparse the string as double.
-#if USE(BIGINT32)
-        if (bigInt.isBigInt32() && !value.bigInt32AsInt32())
-            return IntlMathematicalValue { jsToNumber(string) };
-#endif
-        if (bigInt.isHeapBigInt() && !asHeapBigInt(bigInt)->length())
-            return IntlMathematicalValue { jsToNumber(string) };
-        RELEASE_AND_RETURN(scope, bigIntToIntlMathematicalValue(globalObject, bigInt));
-    }
-
-    return IntlMathematicalValue { jsToNumber(string) };
+    RELEASE_AND_RETURN(scope, IntlMathematicalValue::parseString(globalObject, WTFMove(string)));
 }
 
 } // namespace JSC
