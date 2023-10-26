@@ -30,7 +30,6 @@
 #include "AuxiliaryProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
@@ -67,7 +66,7 @@ struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 struct GPUProcessPreferencesForWebProcess;
 
-class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
+class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;

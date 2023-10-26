@@ -254,8 +254,13 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
                     weakThis->uiAssertionWillExpireImminently();
             });
             m_assertion = WTFMove(assertion);
-        } else
+        } else {
+#if USE(EXTENSIONKIT_ASSERTIONS)
+            m_assertion = ProcessAssertion::create(m_process, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+#else
             m_assertion = ProcessAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+#endif
+        }
     }
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
         if (weakThis)
@@ -301,6 +306,17 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
     updateThrottleStateNow();
 }
 
+#if USE(EXTENSIONKIT_ASSERTIONS)
+void ProcessThrottler::didConnectToProcess(RetainPtr<_SEExtensionProcess> process)
+{
+    PROCESSTHROTTLER_RELEASE_LOG("didConnectToProcess");
+    RELEASE_ASSERT(!m_assertion);
+
+    m_process = process;
+    updateThrottleStateNow();
+    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
+}
+#else
 void ProcessThrottler::didConnectToProcess(ProcessID pid)
 {
     PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didConnectToProcess:", pid);
@@ -310,6 +326,7 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
     updateThrottleStateNow();
     RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
 }
+#endif
 
 void ProcessThrottler::didDisconnectFromProcess()
 {
