@@ -67,6 +67,7 @@ HistoryItem::~HistoryItem()
 
 HistoryItem::HistoryItem(const HistoryItem& item)
     : RefCounted<HistoryItem>()
+    , CanMakeCheckedPtr()
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
     , m_referrer(item.m_referrer)

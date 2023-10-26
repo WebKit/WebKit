@@ -935,7 +935,7 @@ bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
         auto it = previousStates.find(*containerElement);
         bool changed = it == previousStates.end() || sizeChanged(it->value);
         // Protect against unstable layout by invalidating only once per container.
-        if (changed && context.invalidatedContainers.add(*containerElement).isNewEntry)
+        if (changed && context.invalidatedContainers.add(containerElement).isNewEntry)
             containersToInvalidate.append(containerElement);
         m_queryContainerStates.add(*containerElement, size);
     }

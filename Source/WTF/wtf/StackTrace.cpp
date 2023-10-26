@@ -30,6 +30,7 @@
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
+#include <wtf/StringPrintStream.h>
 
 #if USE(LIBBACKTRACE)
 #include <string.h>
@@ -119,6 +120,13 @@ std::unique_ptr<StackTrace> StackTrace::captureStackTrace(size_t maxFrames, size
         initialFrame = framesToSkip - 2; 
     }
     return std::unique_ptr<StackTrace> { new (NotNull, storage) StackTrace(size, initialFrame) };
+}
+
+String StackTrace::toString() const
+{
+    StringPrintStream stream;
+    dump(stream);
+    return stream.toString();
 }
 
 auto StackTraceSymbolResolver::demangle(void* pc) -> std::optional<DemangleEntry>

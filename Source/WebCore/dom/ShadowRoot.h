@@ -68,6 +68,12 @@ public:
     // Resolve ambiguity for CanMakeCheckedPtr.
     void incrementPtrCount() const { static_cast<const DocumentFragment*>(this)->incrementPtrCount(); }
     void decrementPtrCount() const { static_cast<const DocumentFragment*>(this)->decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const { static_cast<const DocumentFragment*>(this)->registerCheckedPtr(pointer); }
+    void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const DocumentFragment*>(this)->copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const { static_cast<const DocumentFragment*>(this)->moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const { static_cast<const DocumentFragment*>(this)->unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
 
     using TreeScope::getElementById;
     using TreeScope::rootNode;
