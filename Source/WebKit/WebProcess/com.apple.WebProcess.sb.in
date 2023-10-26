@@ -1840,13 +1840,9 @@
 
 (define (syscall-unix-only-in-use-before-launch)
     (syscall-number
-        SYS_csops
-        SYS_fsgetpath
         SYS_getaudit_addr
-        SYS_getfsstat64
         SYS_kdebug_trace
-        SYS_pathconf
-        SYS_statfs64))
+        SYS_pathconf))
 
 (define (syscall-unix-in-use-after-launch)
     (syscall-number
@@ -1858,6 +1854,7 @@
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
+        SYS_csops
         SYS_csops_audittoken
         SYS_csrctl
         SYS_dup ;; Remove when <rdar://88210738> is fixed
@@ -1865,6 +1862,7 @@
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fgetxattr
+        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatfs64
         SYS_getattrlist
@@ -1872,14 +1870,18 @@
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
+        SYS_getfsstat64
+        SYS_getgid
         SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
+        SYS_getxattr
         SYS_ioctl
         SYS_issetugid
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
         SYS_lseek
@@ -1901,11 +1903,14 @@
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
         SYS_read
+        SYS_read_nocancel
         SYS_readlink
+        SYS_sendto
 #if ASAN_ENABLED
         SYS_sigaltstack
 #endif
         SYS_stat64
+        SYS_statfs64
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
@@ -1915,26 +1920,12 @@
         SYS_write_nocancel
         SYS_writev))
 
+#if !PLATFORM(MAC)
 (define (syscall-unix-possibly-in-use-after-launch)
     (syscall-number
-        SYS___semwait_signal
-        SYS_flock
-        SYS_fsetxattr ;; <rdar://problem/56332491>
-        SYS_ftruncate
-        SYS_getgid
-        SYS_getxattr
-#if !PLATFORM(MAC)
         SYS_memorystatus_control
+        SYS_thread_selfusage))
 #endif
-        SYS_msync
-        SYS_read_nocancel
-        SYS_rename
-        SYS_sendto
-        SYS_sigaltstack
-#if !PLATFORM(MAC)
-        SYS_thread_selfusage
-#endif
-        ))
 
 (define (syscall-unix-apple-silicon)
     (syscall-number
@@ -1944,35 +1935,16 @@
 (define (syscalls-rarely-used)
     (syscall-number
         SYS_getegid
-        SYS_kdebug_typefilter
+        SYS___semwait_signal
         SYS_write))
 
 (define (syscalls-rarely-used-blocked-in-lockdown-mode)
     (syscall-number
         SYS___pthread_kill
-        SYS___semwait_signal_nocancel
-        SYS_change_fdguard_np
-        SYS_chmod
-        SYS_fchmod
-        SYS_fsync
-        SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
-        SYS_guarded_close_np
-        SYS_guarded_open_np
-        SYS_guarded_pwrite_np
-        SYS_kevent ;; <rdar://89072361>
-        SYS_mlock
-        SYS_munlock
-        SYS_openat_nocancel
-        SYS_proc_rlimit_control
         SYS_psynch_rw_rdlock
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
 #endif
-        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
-        SYS_setsockopt ;; <rdar://90249455>
-        SYS_shm_open
-        SYS_sigaction
-        SYS_unlink
 #if !PLATFORM(MAC)
         SYS_abort_with_payload
         SYS_fgetattrlist
@@ -2002,24 +1974,68 @@
     SYS_umask
     SYS_work_interval_ctl))
 
-(deny syscall-unix)
+(define (syscall-unix-downlevels)
+    (syscall-number
+        SYS_flock
+        SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_ftruncate
+        SYS_msync
+        SYS_rename))
 
+(define (syscall-unix-downlevels-blocked-in-lockdown-mode)
+    (syscall-number
+        SYS___semwait_signal_nocancel
+        SYS_change_fdguard_np
+        SYS_chmod
+        SYS_fchmod
+        SYS_fsync
+        SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
+        SYS_guarded_close_np
+        SYS_guarded_open_np
+        SYS_guarded_pwrite_np
+        SYS_kevent ;; <rdar://89072361>
+        SYS_mlock
+        SYS_munlock
+        SYS_openat_nocancel
+        SYS_proc_rlimit_control
+        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
+        SYS_setsockopt ;; <rdar://90249455>
+        SYS_shm_open
+        SYS_sigaction
+        SYS_unlink))
+
+(deny syscall-unix)
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
     (allow syscall-unix (syscall-unix-only-in-use-before-launch)))
 (with-filter (webcontent-process-launched)
-    (allow syscall-unix (with report) (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
+    (deny syscall-unix (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
 (allow syscall-unix (syscall-unix-in-use-after-launch))
+#if !PLATFORM(MAC)
 (allow syscall-unix (with report) (with telemetry) (syscall-unix-possibly-in-use-after-launch))
+#endif
+(with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+    (allow syscall-unix (syscall-unix-downlevels)))
+(with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)
     (syscall-unix-in-use-after-launch)
-    (syscall-unix-possibly-in-use-after-launch))
+#if !PLATFORM(MAC)
+    (syscall-unix-possibly-in-use-after-launch)
+#endif
+    (syscall-unix-downlevels))
 #endif
 
 (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
+
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+(allow syscall-unix (syscall-unix-downlevels))
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+#endif
 
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (require-not (lockdown-mode))
