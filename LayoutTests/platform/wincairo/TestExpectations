@@ -975,8 +975,6 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
 
-webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
-
 webkit.org/b/263423 http/tests/multipart/invalid-image-data.html [ Skip ]
 webkit.org/b/263423 http/tests/multipart/multipart-async-image.html [ Skip ]
   

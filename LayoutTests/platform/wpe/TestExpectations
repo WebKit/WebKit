@@ -881,8 +881,6 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Timeout Pass ]
 
 webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
-webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
-
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
