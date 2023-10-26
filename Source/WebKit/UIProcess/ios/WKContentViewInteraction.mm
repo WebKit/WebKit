@@ -5290,13 +5290,6 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     _page->replaceDictatedText(oldText, newText);
 }
 
-- (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *beforeText, NSString *afterText))completionHandler
-{
-    _page->requestDictationContext([dictationHandler = makeBlockPtr(completionHandler)](const String& selectedText, const String& beforeText, const String& afterText) {
-        dictationHandler(selectedText, beforeText, afterText);
-    });
-}
-
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {

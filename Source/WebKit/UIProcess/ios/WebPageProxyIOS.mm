@@ -502,14 +502,6 @@ void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntP
     sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithFocusedElement), WTFMove(callback));
 }
 
-void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)
-{
-    if (!hasRunningProcess())
-        return callbackFunction({ }, { }, { });
-
-    sendWithAsyncReply(Messages::WebPage::RequestDictationContext(), WTFMove(callbackFunction));
-}
-
 #if ENABLE(REVEAL)
 void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& callbackFunction)
 {
