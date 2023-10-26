@@ -2257,33 +2257,45 @@
     MSC_mk_timer_destroy
     MSC_semaphore_signal_trap
     MSC_semaphore_timedwait_trap
+    MSC_semaphore_wait_trap
     MSC_syscall_thread_switch
+    MSC_task_name_for_pid
     MSC_thread_get_special_reply_port))
 
-(define (syscall-mach-possibly-in-use) (machtrap-number
+(define (syscall-mach-downlevels) (machtrap-number
     MSC__kernelrpc_mach_port_get_attributes_trap
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
     MSC_iokit_user_client_trap
 #endif
-    MSC_pid_for_task
-    MSC_semaphore_wait_trap
-    MSC_task_name_for_pid))
+    MSC_pid_for_task))
 
 (define (syscall-mach-blocked-in-lockdown-mode) (machtrap-number
+    MSC_thread_self_trap))
+
+(define (syscall-mach-downlevels-blocked-in-lockdown-mode) (machtrap-number
     MSC_host_create_mach_voucher_trap
     MSC_mach_msg_trap
     MSC_mach_reply_port
     MSC_mach_voucher_extract_attr_recipe_trap
-    MSC_swtch_pri
-    MSC_thread_self_trap))
+    MSC_swtch_pri))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
     (allow syscall-mach (syscall-mach-in-use))
-    (allow syscall-mach (with report) (with telemetry) (syscall-mach-possibly-in-use))
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+        (allow syscall-mach (syscall-mach-downlevels)))
+    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+        (allow syscall-unix (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+#endif
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+    (allow syscall-mach (syscall-mach-downlevels))
+    (with-filter (require-not (lockdown-mode))
+        (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+#endif
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
     (with-filter (require-not (lockdown-mode))
-        (allow syscall-mach (with report) (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
+        (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
     (with-filter (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
 #else
