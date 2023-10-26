@@ -1315,6 +1315,8 @@ PASS Invalid: "(function () {'use strict'; ({...arguments} = {}); })()". Produce
 PASS Invalid: "function f() { (function () {'use strict'; ({...arguments} = {}); })() }". Produced the following syntax error: "SyntaxError: Cannot modify 'arguments' in strict mode."
 PASS Invalid: "async function foo () { let {...await} = {}; }". Produced the following syntax error: "SyntaxError: Cannot use 'await' as a lexical variable name in an async function."
 PASS Invalid: "function f() { async function foo () { let {...await} = {}; } }". Produced the following syntax error: "SyntaxError: Cannot use 'await' as a lexical variable name in an async function."
+PASS Invalid: "(async function* yield() {})". Produced the following syntax error: "SyntaxError: Cannot declare async generator function named 'yield'."
+PASS Invalid: "function f() { (async function* yield() {}) }". Produced the following syntax error: "SyntaxError: Cannot declare async generator function named 'yield'."
 PASS Invalid: "let {...let} = {a: 1, b: 2};". Produced the following syntax error: "SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration."
 PASS Invalid: "function f() { let {...let} = {a: 1, b: 2}; }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration."
 PASS Invalid: "const {...let} = {a: 1, b: 2};". Produced the following syntax error: "SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration."
