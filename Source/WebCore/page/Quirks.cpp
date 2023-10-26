@@ -1041,6 +1041,18 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 #endif
 }
 
+// youtube.com rdar://117304719
+bool Quirks::shouldInjectYouTubeFullscreenStyles() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldInjectYouTubeFullscreenStyles)
+        m_shouldInjectYouTubeFullscreenStyles = m_document->url().host() == "youtube.com"_s || m_document->url().host().endsWith(".youtube.com"_s);
+
+    return *m_shouldInjectYouTubeFullscreenStyles;
+}
+
 #if ENABLE(TRACKING_PREVENTION)
 // kinja.com and related sites rdar://60601895
 static bool isKinjaLoginAvatarElement(const Element& element)

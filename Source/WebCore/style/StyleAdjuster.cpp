@@ -904,6 +904,22 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         }
     }
 #endif
+#if PLATFORM(IOS)
+    if (m_element->document().quirks().shouldInjectYouTubeFullscreenStyles()) {
+        auto* page = m_element->document().page();
+        if (page && is<HTMLDivElement>(m_element) && m_element->document().fullscreenManager().isFullscreen() && m_element->isDescendantOrShadowDescendantOf(m_element->document().fullscreenManager().fullscreenElement())) {
+            static MainThreadNeverDestroyed<const AtomString> ytpChromeTop("ytp-chrome-top"_s);
+            static MainThreadNeverDestroyed<const AtomString> ytpChromeBottom("ytp-chrome-bottom"_s);
+
+            auto& div = downcast<HTMLDivElement>(*m_element);
+
+            if (div.hasClass() && div.classNames().contains(ytpChromeTop))
+                style.setTop({ page->fullscreenInsets().top(), LengthType::Fixed });
+            if (div.hasClass() && div.classNames().contains(ytpChromeBottom))
+                style.setBottom({ page->fullscreenInsets().bottom(), LengthType::Fixed });
+        }
+    }
+#endif
 }
 
 void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)

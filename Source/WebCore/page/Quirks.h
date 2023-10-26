@@ -102,6 +102,8 @@ public:
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
     WEBCORE_EXPORT bool shouldAvoidUsingIOS17UserAgentForFacebook() const;
 
+    WEBCORE_EXPORT bool shouldInjectYouTubeFullscreenStyles() const;
+
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
     bool needsFullscreenDisplayNoneQuirk() const;
@@ -241,6 +243,7 @@ private:
     mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
     mutable std::optional<bool> m_shouldAvoidUsingIOS17UserAgentForFacebook;
+    mutable std::optional<bool> m_shouldInjectYouTubeFullscreenStyles;
 };
 
 } // namespace WebCore
