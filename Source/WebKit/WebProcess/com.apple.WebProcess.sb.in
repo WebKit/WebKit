@@ -2138,12 +2138,16 @@
     io_service_get_matching_service_bin
     io_service_get_matching_services_bin
     io_service_open_extended
+    mach_exception_raise
     mach_memory_entry_ownership
+    mach_port_extract_right
+    mach_port_get_context_from_user
     mach_port_get_refs
     mach_port_request_notification
     mach_port_set_attributes
     mach_vm_copy
     mach_vm_map_external
+    mach_vm_region
     mach_vm_region_recurse
     mach_vm_remap_external
     semaphore_create
@@ -2157,12 +2161,8 @@
     thread_resume
     thread_suspend))
 
-(define (kernel-mig-routines-possibly-in-use) (kernel-mig-routine
-    io_registry_entry_get_property_bytes
-    mach_exception_raise
-    mach_port_extract_right
-    mach_port_get_context_from_user
-    mach_vm_region))
+(define (kernel-mig-routines-downlevels) (kernel-mig-routine
+    io_registry_entry_get_property_bytes))
 
 (define (kernel-mig-routines-iokit) (kernel-mig-routine
     io_connect_add_client
@@ -2172,6 +2172,11 @@
     io_connect_set_notification_port_64))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
+    task_threads_from_user
+    thread_policy
+    thread_policy_set))
+
+(define (kernel-mig-routines-downlevels-blocked-in-lockdown-mode) (kernel-mig-routine
     clock_get_time
     host_request_notification
     io_connect_map_memory_into_task
@@ -2181,10 +2186,7 @@
     io_registry_entry_get_name_in_plane
     io_registry_entry_get_properties_bin_buf
     io_registry_get_root_entry
-    io_service_close
-    task_threads_from_user
-    thread_policy
-    thread_policy_set))
+    io_service_close))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
     thread_info
@@ -2196,7 +2198,7 @@
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
-                (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
+                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
             (with-filter (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
@@ -2207,14 +2209,20 @@
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+            (allow mach-message-send (kernel-mig-routines-downlevels))
+            (with-filter (require-not (lockdown-mode))
+                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
+#endif
 #if HAVE(SANDBOX_STATE_FLAGS)
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+                (allow mach-message-send (kernel-mig-routines-downlevels))
                 (allow mach-message-send (kernel-mig-routines-iokit)))
+            (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit))
 #endif
-            (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
-                
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
             ;; <rdar://105161083>
             (with-filter (require-not (webcontent-process-launched))
