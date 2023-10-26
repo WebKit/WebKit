@@ -30,12 +30,12 @@
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGViewportContainer.h"
 #include "LocalFrame.h"
 #include "NodeName.h"
 #include "RenderBoxInlines.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
@@ -717,7 +717,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     if (fragmentIdentifier.startsWith("xpointer("_s)) {
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
         if (renderer && hadUseCurrentView)
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return false;
     }
 
@@ -729,7 +729,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
         else
             view->reset();
         if (renderer && (hadUseCurrentView || m_useCurrentView))
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return m_useCurrentView;
     }
 
@@ -754,7 +754,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
 
             rootElement->inheritViewAttributes(*viewElement);
             if (auto* renderer = rootElement->renderer())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+                LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
             m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
             return true;
         }
@@ -785,7 +785,7 @@ void SVGSVGElement::resetScrollAnchor()
 
     m_useCurrentView = false;
     if (renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer());
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer());
 }
 
 void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)

@@ -356,6 +356,20 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
+bool Quirks::shouldAvoidUsingIOS17UserAgentForFacebook() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldAvoidUsingIOS17UserAgentForFacebook)
+        m_shouldAvoidUsingIOS17UserAgentForFacebook = isDomain("facebook.com"_s);
+    return m_shouldAvoidUsingIOS17UserAgentForFacebook.value();
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {

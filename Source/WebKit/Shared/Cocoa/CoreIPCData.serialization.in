@@ -22,7 +22,9 @@
 
 #if PLATFORM(COCOA)
 
-class WebKit::CoreIPCData {
+webkit_platform_headers: "CoreIPCData.h"
+
+[WebKitPlatform] class WebKit::CoreIPCData {
     IPC::DataReference get();
 }
 

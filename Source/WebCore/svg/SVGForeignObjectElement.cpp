@@ -24,9 +24,9 @@
 
 #include "CSSPropertyNames.h"
 #include "LegacyRenderSVGForeignObject.h"
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGForeignObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"

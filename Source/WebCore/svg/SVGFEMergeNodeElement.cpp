@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGFEMergeNodeElement.h"
 
-#include "RenderSVGResource.h"
+#include "LegacyRenderSVGResource.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"

@@ -24,9 +24,9 @@
 #include "SVGRectElement.h"
 
 #include "LegacyRenderSVGRect.h"
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGRect.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include <wtf/IsoMallocInlines.h>
 

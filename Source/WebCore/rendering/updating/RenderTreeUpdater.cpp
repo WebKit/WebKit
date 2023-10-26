@@ -34,6 +34,7 @@
 #include "HTMLSlotElement.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
+#include "LegacyRenderSVGResource.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "NodeRenderStyle.h"
@@ -43,7 +44,6 @@
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
-#include "RenderSVGResource.h"
 #include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
@@ -309,7 +309,7 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
     ASSERT(element.needsSVGRendererUpdate());
     element.setNeedsSVGRendererUpdate(false);
     if (element.renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
 }
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)

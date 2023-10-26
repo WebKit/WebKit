@@ -41,6 +41,7 @@ public:
     void applyPathClipping(GraphicsContext&, const FloatRect& objectBoundingBox, SVGGraphicsElement&);
     void applyMaskClipping(PaintInfo&, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox);
 
+    // FIXME: Remove LegacyRenderSVGResource support methods.
     void removeAllClientsFromCacheIfNeeded(bool, WeakHashSet<RenderObject>*) final { }
     void removeClientFromCache(RenderElement&, bool = true) final { }
 

@@ -68,7 +68,7 @@ private:
     LayoutUnit marginUnderForChild(const RenderBox&, GridAxis) const;
     LayoutUnit logicalAscentForChild(const RenderBox&, GridAxis, ItemPosition) const;
     LayoutUnit ascentForChild(const RenderBox&, GridAxis, ItemPosition) const;
-    LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis) const;
+    LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis, ExtraMarginsFromSubgrids) const;
     bool isDescentBaselineForChild(const RenderBox&, GridAxis) const;
     bool isHorizontalBaselineAxis(GridAxis) const;
     bool isOrthogonalChildForBaseline(const RenderBox&) const;

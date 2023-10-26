@@ -1277,9 +1277,6 @@ http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 
-# HTTP tests that are flaky:
-http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
-
 # HTTP test that assert:
 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 

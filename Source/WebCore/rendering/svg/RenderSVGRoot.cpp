@@ -26,10 +26,10 @@
 #include "RenderSVGRoot.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -40,7 +40,6 @@
 #include "RenderIterator.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"

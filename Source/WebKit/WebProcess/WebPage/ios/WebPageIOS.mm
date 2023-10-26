@@ -2433,43 +2433,6 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     callback(m_selectionAnchor == Start);
 }
 
-void WebPage::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
-{
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    VisiblePosition startPosition = frame->selection().selection().start();
-    VisiblePosition endPosition = frame->selection().selection().end();
-    const unsigned dictationContextWordCount = 5;
-
-    String selectedText = plainTextForContext(frame->selection().selection().toNormalizedRange());
-
-    String contextBefore;
-    if (startPosition != startOfEditableContent(startPosition)) {
-        VisiblePosition currentPosition = startPosition;
-        VisiblePosition lastPosition = startPosition;
-        for (unsigned i = 0; i < dictationContextWordCount; ++i) {
-            currentPosition = startOfWord(positionOfNextBoundaryOfGranularity(lastPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
-            if (currentPosition.isNull())
-                break;
-            lastPosition = currentPosition;
-        }
-        contextBefore = plainTextForContext(makeSimpleRange(lastPosition, startPosition));
-    }
-
-    String contextAfter;
-    if (endPosition != endOfEditableContent(endPosition)) {
-        VisiblePosition currentPosition = endPosition;
-        VisiblePosition lastPosition = endPosition;
-        for (unsigned i = 0; i < dictationContextWordCount; ++i) {
-            currentPosition = endOfWord(positionOfNextBoundaryOfGranularity(lastPosition, TextGranularity::WordGranularity, SelectionDirection::Forward));
-            if (currentPosition.isNull())
-                break;
-            lastPosition = currentPosition;
-        }
-        contextAfter = plainTextForContext(makeSimpleRange(endPosition, lastPosition));
-    }
-
-    completionHandler(selectedText, contextBefore, contextAfter);
-}
 #if ENABLE(REVEAL)
 RetainPtr<RVItem> WebPage::revealItemForCurrentSelection()
 {
@@ -4673,9 +4636,13 @@ String WebPage::platformUserAgent(const URL&) const
     if (!document)
         return String();
 
-    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS"_s)
-        return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
+    if (osNameForUserAgent() == "iPhone OS"_s) {
+        if (document->quirks().shouldAvoidUsingIOS13ForGmail())
+            return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
 
+        if (document->quirks().shouldAvoidUsingIOS17UserAgentForFacebook())
+            return standardUserAgentWithApplicationName({ }, "16_6_1"_s);
+    }
     return String();
 }
 

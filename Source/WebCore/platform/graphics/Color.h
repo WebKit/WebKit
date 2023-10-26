@@ -48,6 +48,20 @@ typedef struct _GdkRGBA GdkRGBA;
 
 namespace WebCore {
 
+struct OutOfLineColorDataForIPC {
+    ColorSpace colorSpace;
+    float c1;
+    float c2;
+    float c3;
+    float alpha;
+};
+
+struct ColorDataForIPC {
+    bool isSemantic;
+    bool usesFunctionSerialization;
+    std::variant<PackedColor::RGBA, OutOfLineColorDataForIPC> data;
+};
+
 // Able to represent:
 //    - Special "invalid color" state, treated as transparent black but distinguishable
 //    - 4x 8-bit (0-255) sRGBA, stored inline, no allocation
@@ -59,19 +73,6 @@ public:
     enum class Flags {
         Semantic                        = 1 << 0,
         UseColorFunctionSerialization   = 1 << 1,
-    };
-
-    struct ColorDataForIPC {
-        struct OutOfLineColorData {
-            ColorSpace colorSpace;
-            float c1;
-            float c2;
-            float c3;
-            float alpha;
-        };
-        bool isSemantic;
-        bool usesFunctionSerialization;
-        std::variant<PackedColor::RGBA, OutOfLineColorData> data;
     };
 
     Color() = default;

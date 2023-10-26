@@ -251,6 +251,13 @@ void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef
 #endif
 }
 
+void WKAccessibilityEnable()
+{
+#if ENABLE(ACCESSIBILITY)
+    WebCore::AXObjectCache::enableAccessibility();
+#endif
+}
+
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
 #if ENABLE(ACCESSIBILITY)

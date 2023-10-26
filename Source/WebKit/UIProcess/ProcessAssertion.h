@@ -42,6 +42,11 @@ OBJC_CLASS RBSAssertion;
 OBJC_CLASS WKRBSAssertionDelegate;
 #endif // USE(RUNNINGBOARD)
 
+#if USE(EXTENSIONKIT_ASSERTIONS)
+OBJC_CLASS _SEExtensionProcess;
+OBJC_CLASS _SEGrant;
+#endif
+
 namespace WebKit {
 
 enum class ProcessAssertionType : uint8_t {
@@ -56,22 +61,19 @@ enum class ProcessAssertionType : uint8_t {
 
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);
 
+class AuxiliaryProcessProxy;
+
 class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ProcessAssertion> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode : bool { Sync, Async };
-    static Ref<ProcessAssertion> create(ProcessID pid, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr)
-    {
-        auto assertion = adoptRef(*new ProcessAssertion(pid, reason, type, environmentIdentifier));
-        if (mode == Mode::Async)
-            assertion->acquireAsync(WTFMove(acquisisionHandler));
-        else {
-            assertion->acquireSync();
-            if (acquisisionHandler)
-                acquisisionHandler();
-        }
-        return assertion;
-    }
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    static Ref<ProcessAssertion> create(RetainPtr<_SEExtensionProcess>, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
+#else
+    static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
+#endif
+    static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+
     static double remainingRunTimeInSeconds(ProcessID);
     virtual ~ProcessAssertion();
 
@@ -85,6 +87,9 @@ public:
 
 protected:
     ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
+    ProcessAssertion(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType);
+
+    void aquireAssertion(Mode, CompletionHandler<void()>&&);
 
     void acquireAsync(CompletionHandler<void()>&&);
     void acquireSync();
@@ -105,6 +110,9 @@ private:
 #endif
     Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    RetainPtr<_SEGrant> m_grant;
+#endif
 };
 
 class ProcessAndUIAssertion final : public ProcessAssertion {

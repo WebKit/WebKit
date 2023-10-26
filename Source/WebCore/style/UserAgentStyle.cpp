@@ -83,6 +83,7 @@ StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 StyleSheetContents* UserAgentStyle::popoverStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
+StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
 StyleSheetContents* UserAgentStyle::rubyStyleSheet;
 #if ENABLE(FULLSCREEN_API)
@@ -228,6 +229,10 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             addToDefaultStyle(*colorInputStyleSheet);
         }
 #endif // ENABLE(INPUT_TYPE_COLOR)
+        else if (!htmlSwitchControlStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSwitch()) {
+            htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet, sizeof(htmlSwitchControlUserAgentStyleSheet)));
+            addToDefaultStyle(*htmlSwitchControlStyleSheet);
+        }
     } else if (is<SVGElement>(element)) {
         if (!svgStyleSheet) {
             // SVG rules.

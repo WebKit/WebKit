@@ -70,8 +70,8 @@ DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
-THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
-MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
+THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT = 1000000
+MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT}'
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -3062,7 +3062,7 @@ class BuildLogLineObserver(ParseByLineLogObserver):
 
     def parseOutputLine(self, line):
         self.line_count += 1
-        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT:
             self.thresholdExceedCallBack()
             return
 
@@ -5068,6 +5068,8 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
     failedTestCount = 0
     cancelled_due_to_huge_logs = False
     line_count = 0
+    THRESHOLD_FOR_EXCESSIVE_LOGS_API_TESTS = 100000
+    MSG_FOR_EXCESSIVE_LOGS_API_TEST = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_API_TESTS}'
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
@@ -5116,7 +5118,7 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
 
     def parseOutputLine(self, line):
         self.line_count += 1
-        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+        if self.line_count == self.THRESHOLD_FOR_EXCESSIVE_LOGS_API_TESTS:
             self.handleExcessiveLogging()
             return
 
@@ -5126,10 +5128,10 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        print(f'\n{self.MSG_FOR_EXCESSIVE_LOGS_API_TEST}, {build_url}\n')
         self.cancelled_due_to_huge_logs = True
-        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
-        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+        self.build.stopBuild(reason=self.MSG_FOR_EXCESSIVE_LOGS_API_TEST, results=FAILURE)
+        self.build.buildFinished([self.MSG_FOR_EXCESSIVE_LOGS_API_TEST], FAILURE)
 
     def getResultSummary(self):
         if self.cancelled_due_to_huge_logs:

@@ -22,9 +22,9 @@
 #include "config.h"
 #include "RenderSVGBlock.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
-#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"

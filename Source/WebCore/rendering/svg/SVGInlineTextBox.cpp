@@ -329,9 +329,9 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
 
     Color fallbackColor;
     if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
-        m_paintingResource = RenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
+        m_paintingResource = LegacyRenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
     else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
-        m_paintingResource = RenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
+        m_paintingResource = LegacyRenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
     else {
         // We're either called for stroking or filling.
         ASSERT_NOT_REACHED();
@@ -346,7 +346,7 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
             return false;
         }
         
-        RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
+        RenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
 
         m_paintingResource = fallbackResource;

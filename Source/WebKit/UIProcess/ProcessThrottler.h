@@ -34,6 +34,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(EXTENSIONKIT)
+OBJC_CLASS _SEExtensionProcess;
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -128,7 +132,11 @@ public:
 
     using TimedActivity = ProcessThrottlerTimedActivity;
 
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    void didConnectToProcess(RetainPtr<_SEExtensionProcess>);
+#else
     void didConnectToProcess(ProcessID);
+#endif
     void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return !m_foregroundActivities.isEmptyIgnoringNullReferences() || !m_backgroundActivities.isEmptyIgnoringNullReferences(); }
     void setAllowsActivities(bool);
@@ -172,7 +180,11 @@ private:
 
     UniqueRef<ProcessAssertionCache> m_assertionCache;
     ProcessThrottlerClient& m_process;
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    RetainPtr<_SEExtensionProcess> m_process;
+#else
     ProcessID m_processID { 0 };
+#endif
     RefPtr<ProcessAssertion> m_assertion;
     RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;

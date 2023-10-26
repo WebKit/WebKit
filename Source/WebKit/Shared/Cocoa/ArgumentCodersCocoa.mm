@@ -33,6 +33,7 @@
 #import "CoreTextHelpers.h"
 #import "DataReference.h"
 #import "LegacyGlobalSettings.h"
+#import "Logging.h"
 #import "MessageNames.h"
 #import "WebPreferencesKeys.h"
 #import <CoreText/CTFont.h>
@@ -46,6 +47,7 @@
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/StringHash.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
@@ -170,8 +172,6 @@
 {
     return YES;
 }
-
-static constexpr NSString *baseURLKey = @"WK.baseURL";
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
@@ -570,45 +570,6 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
-#if ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
-static bool haveSecureActionContext()
-{
-#if HAVE(SECURE_ACTION_CONTEXT)
-    return true;
-#else
-    return false;
-#endif // HAVE(SECURE_ACTION_CONTEXT)
-}
-#endif // ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
-
-#if ENABLE(APPLE_PAY)
-static bool haveStrictDecodableCNContact()
-{
-#if HAVE(STRICT_DECODABLE_CNCONTACT)
-    return true;
-#else
-    return false;
-#endif
-}
-static bool haveStrictDecodablePKContact()
-{
-#if HAVE(STRICT_DECODABLE_PKCONTACT)
-    return true;
-#else
-    return false;
-#endif
-}
-#endif // ENABLE(APPLE_PAY)
-
-static bool haveStrictDecodableNSTextTable()
-{
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE)
-    return true;
-#else
-    return false;
-#endif
-}
-
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
 #if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
@@ -618,6 +579,22 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
             || messageName == IPC::MessageName::WebPageProxy_RequestTextRecognitionReply; // UIP -> WCP
     };
 #endif
+
+#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
+    // blocked by rdar://108673895
+    if (PAL::isVisionKitCoreFrameworkAvailable()
+        && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()]
+        && isDecodingKnownVKCImageAnalysisMessageFromUIProcess(decoder)
+        && isInWebProcess())
+        return false;
+#endif
+
+#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
+    && HAVE(STRICT_DECODABLE_PKCONTACT) \
+    && HAVE(STRICT_DECODABLE_CNCONTACT)
+    // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
+    return true;
+#else
 
     auto isDecodingKnownProtectionSpaceMessage = [] (auto& decoder) {
         auto messageName = decoder.messageName();
@@ -638,51 +615,56 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
             || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
     };
 
-#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
-    // blocked by rdar://108673895
-    if (PAL::isVisionKitCoreFrameworkAvailable()
-        && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()]
-        && isDecodingKnownVKCImageAnalysisMessageFromUIProcess(decoder)
-        && isInWebProcess())
-        return false;
-#endif
-
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
-    && HAVE(STRICT_DECODABLE_PKCONTACT) \
-    && HAVE(STRICT_DECODABLE_CNCONTACT)
-    // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
-    return true;
+#if HAVE(SECURE_ACTION_CONTEXT)
+static constexpr bool haveSecureActionContext = true;
+#else
+static constexpr bool haveSecureActionContext = false;
 #endif
 
 #if ENABLE(DATA_DETECTION)
     // rdar://107553330 - don't re-introduce rdar://107676726
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
-        return haveSecureActionContext();
+        return haveSecureActionContext;
 #if PLATFORM(MAC)
     // rdar://107553348 - don't re-introduce rdar://107676726
     if (PAL::isDataDetectorsFrameworkAvailable() && [allowedClasses containsObject:PAL::getWKDDActionContextClass()])
-        return haveSecureActionContext();
+        return haveSecureActionContext;
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(REVEAL)
     // rdar://107553310 - don't re-introduce rdar://107673064
     if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
-        return haveSecureActionContext();
+        return haveSecureActionContext;
 #endif // ENABLE(REVEAL)
 
 #if ENABLE(APPLE_PAY)
     // rdar://107553480 Don't reintroduce rdar://108235706
+#if HAVE(STRICT_DECODABLE_CNCONTACT)
+    static constexpr bool haveStrictDecodableCNContact = true;
+#else
+    static constexpr bool haveStrictDecodableCNContact = false;
+#endif
     if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
-        return haveStrictDecodableCNContact();
+        return haveStrictDecodableCNContact;
 
     // Don't reintroduce rdar://108660074
+#if HAVE(STRICT_DECODABLE_PKCONTACT)
+    static constexpr bool haveStrictDecodablePKContact = true;
+#else
+    static constexpr bool haveStrictDecodablePKContact = false;
+#endif
     if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKContactClass()])
-        return haveStrictDecodablePKContact();
+        return haveStrictDecodablePKContact;
 #endif
 
     // rdar://107553230 don't reintroduce rdar://108038436
+#if HAVE(STRICT_DECODABLE_NSTEXTTABLE)
+    static constexpr bool haveStrictDecodableNSTextTable = true;
+#else
+    static constexpr bool haveStrictDecodableNSTextTable = false;
+#endif
     if ([allowedClasses containsObject:NSParagraphStyle.class])
-        return haveStrictDecodableNSTextTable();
+        return haveStrictDecodableNSTextTable;
 
     // rdar://109121874
     if ([allowedClasses containsObject:NSPresentationIntent.class])
@@ -712,6 +694,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     RELEASE_LOG_FAULT(SecureCoding, "Strict mode check found unknown classes %@", allowedClasses);
     ASSERT_NOT_REACHED();
     return true;
+#endif
 }
 
 static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSArray<Class> *allowedClasses)

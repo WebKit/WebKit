@@ -12,19 +12,9 @@ PASS .item 4
 PASS .item 5
 PASS .item 6
 PASS .item 7
-FAIL .item 8 assert_equals:
-<div data-offset-y="110" class="item small last"></div>
-offsetTop expected 110 but got 120
-FAIL .item 9 assert_equals:
-<div data-offset-y="168" class="item small first"></div>
-offsetTop expected 168 but got 158
-FAIL .item 10 assert_equals:
-<div data-offset-y="243" class="item small last"></div>
-offsetTop expected 243 but got 270
-FAIL .item 11 assert_equals:
-<div data-offset-y="313" class="item small first"></div>
-offsetTop expected 313 but got 308
-FAIL .item 12 assert_equals:
-<div data-offset-y="385" class="item small last"></div>
-offsetTop expected 385 but got 420
+PASS .item 8
+PASS .item 9
+PASS .item 10
+PASS .item 11
+PASS .item 12
 

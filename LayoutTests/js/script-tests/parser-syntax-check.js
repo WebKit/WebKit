@@ -765,6 +765,7 @@ invalid("(function * (o) { ({ ...{ x: yield } } = o); })()");
 invalid("(function () {'use strict'; ({...eval} = {}); })()");
 invalid("(function () {'use strict'; ({...arguments} = {}); })()");
 invalid("async function foo () { let {...await} = {}; }");
+invalid("(async function* yield() {})");
 invalid("let {...let} = {a: 1, b: 2};");
 invalid("const {...let} = {a: 1, b: 2};");
 invalid("try { throw {a:2} } catch({...foo.a}) {}");

@@ -50,7 +50,10 @@ public:
     void promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     bool canRequestDisplayCapturePermission();
     void setIndexOfDeviceSelectedForTesting(std::optional<unsigned> index) { m_indexOfDeviceSelectedForTesting = index; }
-    void setSystemCanPromptForTesting(bool canPrompt) { m_systemCanPromptForTesting = canPrompt; }
+
+    enum class PromptOverride { Default, CanPrompt, CanNotPrompt };
+    void setSystemCanPromptForTesting(bool canPrompt) { m_systemCanPromptForTesting = canPrompt ? PromptOverride::CanPrompt : PromptOverride::CanNotPrompt; }
+    bool overrideCanRequestDisplayCapturePermissionForTesting() const { return useMockCaptureDevices() && m_systemCanPromptForTesting != PromptOverride::Default; }
 
 private:
 
@@ -65,7 +68,7 @@ private:
     bool useMockCaptureDevices() const;
 
     std::optional<unsigned> m_indexOfDeviceSelectedForTesting;
-    bool m_systemCanPromptForTesting { false };
+    PromptOverride m_systemCanPromptForTesting { PromptOverride::Default };
 };
 
 } // namespace WebKit

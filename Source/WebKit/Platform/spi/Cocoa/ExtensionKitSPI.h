@@ -68,4 +68,17 @@ NS_REFINED_FOR_SWIFT
 
 @end
 
+@protocol _SEGrant <NSObject>
+-(BOOL)invalidateWithError:(NSError* _Nullable*)error;
+@property (readonly) BOOL isValid;
+@end
+
+@interface _SECapabilities : NSObject
++(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name;
+@end
+
+@interface _SEExtensionProcess: NSObject
+-(nullable id<_SEGrant>)grantCapabilities:(_SECapabilities*)capabilities error:(NSError* _Nullable*)error;
+@end
+
 NS_ASSUME_NONNULL_END

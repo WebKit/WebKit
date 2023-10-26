@@ -1154,8 +1154,6 @@ test/language/expressions/assignmenttargettype/direct-callexpression-arguments.j
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/assignmenttargettype/parenthesized-callexpression-arguments.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/early-errors-expression-yield-as-function-binding-identifier.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'

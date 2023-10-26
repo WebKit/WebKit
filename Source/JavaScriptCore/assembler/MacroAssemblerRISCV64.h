@@ -650,8 +650,6 @@ public:
 
     void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (UNLIKELY(!imm.m_value))
-            return move(src, dest);
         m_assembler.slliwInsn(dest, src, uint32_t(imm.m_value & ((1 << 5) - 1)));
         m_assembler.maskRegister<32>(dest);
     }
@@ -710,8 +708,6 @@ public:
 
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (UNLIKELY(!imm.m_value))
-            return move(src, dest);
         m_assembler.sraiwInsn(dest, src, uint32_t(imm.m_value & ((1 << 5) - 1)));
         m_assembler.maskRegister<32>(dest);
     }
@@ -756,8 +752,6 @@ public:
 
     void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (UNLIKELY(!imm.m_value))
-            return move(src, dest);
         m_assembler.srliwInsn(dest, src, uint32_t(imm.m_value & ((1 << 5) - 1)));
         m_assembler.maskRegister<32>(dest);
     }

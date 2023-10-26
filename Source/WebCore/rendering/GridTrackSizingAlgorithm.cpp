@@ -1041,7 +1041,7 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
             // If the item is subgridded in this direction (and thus the tracks it covers are tracks
             // owned by this sizing algorithm), then we want to take the breadth of the tracks we occupy,
             // and subtract any space occupied by the subgrid itself (and any ancestor subgrids).
-            *overrideSize -= GridLayoutFunctions::extraMarginForSubgridAncestors(subgridDirection, child);
+            *overrideSize -= GridLayoutFunctions::extraMarginForSubgridAncestors(subgridDirection, child).extraTotalMargin();
         } else {
             // Otherwise the tracks that this child covers (in this non-subgridded axis) are owned
             // by one of the intermediate RenderGrids (which are subgrids in the other axis), which may

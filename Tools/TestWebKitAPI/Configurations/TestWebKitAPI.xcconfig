@@ -31,7 +31,7 @@ FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited);
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
 
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
 

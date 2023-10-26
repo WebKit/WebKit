@@ -115,6 +115,10 @@ public:
     void terminateProcess();
     void invalidate();
 
+#if USE(EXTENSIONKIT)
+    RetainPtr<_SEExtensionProcess> extensionProcess() const { return m_process; }
+#endif
+
 private:
     ProcessLauncher(Client*, LaunchOptions&&);
 

@@ -563,8 +563,12 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     }
     
 #if USE(RUNNINGBOARD)
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    m_throttler.didConnectToProcess(extensionProcess());
+#else
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
+#endif
 #endif
 }
 
@@ -1670,14 +1674,14 @@ void NetworkProcessProxy::setWebProcessHasUploads(WebCore::ProcessIdentifier pro
         RELEASE_LOG(ProcessSuspension, "NetworkProcessProxy::setWebProcessHasUploads: The number of uploads in progress is now greater than 0. Taking Networking and UI process assertions.");
         m_uploadActivity = UploadActivity {
             ProcessAssertion::create(getCurrentProcessID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
-            ProcessAssertion::create(this->processID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
+            ProcessAssertion::create(*this, "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
             HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>>()
         };
     }
 
     m_uploadActivity->webProcessAssertions.ensure(processID, [&] {
         RELEASE_LOG(ProcessSuspension, "NetworkProcessProxy::setWebProcessHasUploads: Taking upload assertion on behalf of WebProcess with PID %d", process->processID());
-        return ProcessAssertion::create(process->processID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
+        return ProcessAssertion::create(*process, "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
     });
 }
 
@@ -1833,7 +1837,7 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
     if (auto it = permissions.find(origin); it != permissions.end())
         permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
 
-    RefPtr<ProcessAssertion> assertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit Process Push Event"_s, WebKit::ProcessAssertionType::UnboundedNetworking);
+    RefPtr<ProcessAssertion> assertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit Process Push Event"_s, ProcessAssertionType::UnboundedNetworking);
 
     auto assertionTimer = makeUnique<Timer>([assertion = WTFMove(assertion)] () mutable {
         RELEASE_LOG_ERROR(ServiceWorker, "NetworkProcess is taking too much time to process a push message");
@@ -1853,7 +1857,7 @@ void NetworkProcessProxy::processNotificationEvent(const NotificationData& data,
 {
     RELEASE_ASSERT(!!callback);
 
-    RefPtr<ProcessAssertion> assertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit Process Notification Event"_s, WebKit::ProcessAssertionType::UnboundedNetworking);
+    RefPtr<ProcessAssertion> assertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit Process Notification Event"_s, ProcessAssertionType::UnboundedNetworking);
 
     auto assertionTimer = makeUnique<Timer>([assertion = WTFMove(assertion)] () mutable {
         RELEASE_LOG_ERROR(ServiceWorker, "NetworkProcess is taking too much time to process a notification event");

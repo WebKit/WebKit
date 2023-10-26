@@ -74,4 +74,13 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 #endif
 }
 
+#if USE(EXTENSIONKIT)
+RetainPtr<_SEExtensionProcess> AuxiliaryProcessProxy::extensionProcess()
+{
+    if (!m_processLauncher)
+        return nullptr;
+    return m_processLauncher->extensionProcess();
+}
+#endif
+
 } // namespace WebKit

@@ -46,6 +46,10 @@
 using WebKit::ProcessAndUIAssertion;
 #endif
 
+#if USE(EXTENSIONKIT)
+#import "ExtensionKitSPI.h"
+#endif
+
 static WorkQueue& assertionsWorkQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> workQueue(WorkQueue::create("ProcessAssertion Queue", WorkQueue::QOS::UserInitiated));
@@ -373,7 +377,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         target = [RBSTarget targetWithPid:pid];
     else
         target = [RBSTarget targetWithPid:pid environmentIdentifier:environmentIdentifier];
-        
+
     RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(assertionType) name:runningBoardAssertionName];
     m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
 
@@ -387,6 +391,25 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, pid);
         processAssertionWillBeInvalidated();
     };
+}
+
+ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
+    : m_assertionType(assertionType)
+    , m_pid(process.processID())
+    , m_reason(reason)
+{
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
+    NSString *runningBoardDomain = runningBoardDomainForAssertionType(assertionType);
+    auto capability = adoptNS([_SECapabilities assertionWithDomain:runningBoardDomain name:runningBoardAssertionName]);
+    auto extensionProcess = process.extensionProcess();
+    NSError* error = nil;
+    m_grant = [extensionProcess.get() grantCapabilities:capability.get() error:&error];
+    if (!m_grant)
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability with error %@", this, error);
+#else
+    ProcessAssertion(m_pid, reason, assertionType, process.environmentIdentifier());
+#endif
 }
 
 double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
@@ -444,6 +467,10 @@ ProcessAssertion::~ProcessAssertion()
         m_delegate = nil;
         [m_rbsAssertion invalidate];
     }
+
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    [m_grant invalidateWithError:nil];
+#endif
 }
 
 void ProcessAssertion::processAssertionWillBeInvalidated()

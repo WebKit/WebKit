@@ -113,33 +113,36 @@ static bool receivedMessage;
 
 @interface QuotaMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)setExpectedMessage:(NSString *)message;
-- (String)receivedMessage;
+- (void)setExpectedMessages:(NSArray<NSString *> *)messages;
 @end
 
 @implementation QuotaMessageHandler {
-    String _expectedMessage;
-    String _message;
+    Deque<String> _expectedMessages;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    _message = [message body];
-    if (!_expectedMessage.isNull()) {
-        EXPECT_STREQ(_message.utf8().data(), _expectedMessage.utf8().data());
-        _expectedMessage = { };
+    if (!_expectedMessages.isEmpty()) {
+        auto expectedMessage = _expectedMessages.takeFirst();
+        EXPECT_WK_STREQ(expectedMessage, [message body]);
     }
-    receivedMessage = true;
+
+    if (_expectedMessages.isEmpty())
+        receivedMessage = true;
 }
 
 - (void)setExpectedMessage:(NSString *)message
 {
-    _expectedMessage = message;
+    [self setExpectedMessages:@[message]];
 }
 
-- (String)receivedMessage
+- (void)setExpectedMessages:(NSArray<NSString *> *)messages
 {
-    return _message;
+    EXPECT_TRUE(_expectedMessages.isEmpty());
+    for (NSString *message in messages)
+        _expectedMessages.append({ message });
 }
+
 @end
 
 static constexpr auto TestBytes = R"SWRESOURCE(
@@ -280,9 +283,9 @@ TEST(WebKit, QuotaDelegateHidden)
 
     receivedQuotaDelegateCalled = false;
     receivedMessage = false;
+    [messageHandler setExpectedMessage: @"put failed"];
     [webView loadRequest:server.request()];
     Util::run(&receivedMessage);
-    EXPECT_STREQ([messageHandler receivedMessage].utf8().data(), "put failed");
 
     NSLog(@"QuotaDelegateHidden 2");
 
@@ -292,6 +295,7 @@ TEST(WebKit, QuotaDelegateHidden)
 
     receivedQuotaDelegateCalled = false;
     receivedMessage = false;
+    [messageHandler setExpectedMessage: @"put succeeded"];
     [webView reload];
     Util::run(&receivedQuotaDelegateCalled);
 
@@ -299,7 +303,6 @@ TEST(WebKit, QuotaDelegateHidden)
 
     [delegate grantQuota];
     Util::run(&receivedMessage);
-    EXPECT_STREQ([messageHandler receivedMessage].utf8().data(), "put succeeded");
 
     NSLog(@"QuotaDelegateHidden 4");
 }
@@ -367,12 +370,7 @@ TEST(WebKit, QuotaDelegate)
     NSLog(@"QuotaDelegate 6");
 }
 
-// FIXME when rdar://115919262 is resolved.
-#if PLATFORM(IOS)
-TEST(WebKit, DISABLED_QuotaDelegateReload)
-#else
 TEST(WebKit, QuotaDelegateReload)
-#endif
 {
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -401,28 +399,25 @@ TEST(WebKit, QuotaDelegateReload)
     [webView setUIDelegate:delegate.get()];
     setVisible(webView.get());
 
-    [messageHandler setExpectedMessage: @"start"];
+    [messageHandler setExpectedMessages: @[@"start", @"fail"]];
     receivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request()];
+    Util::run(&receivedQuotaDelegateCalled);
+
+    [delegate denyQuota];
     Util::run(&receivedMessage);
 
     while (!receivedQuotaDelegateCalled)
         TestWebKitAPI::Util::spinRunLoop();
     
-    [messageHandler setExpectedMessage: @"fail"];
+    [messageHandler setExpectedMessages: @[@"start", @"pass"]];
     receivedMessage = false;
-    [delegate denyQuota];
-    Util::run(&receivedMessage);
-
     receivedQuotaDelegateCalled = false;
     [webView reload];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate grantQuota];
-
-    [messageHandler setExpectedMessage: @"pass"];
-    receivedMessage = false;
     Util::run(&receivedMessage);
 }
 

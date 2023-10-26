@@ -787,7 +787,7 @@ template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, 
 }
 
 // FIXME: Replace with std::fabs() once std::fabs() is constexpr. requires C++23
-template<typename T> constexpr bool fabsConstExpr(T value)
+template<typename T> constexpr T fabsConstExpr(T value)
 {
     static_assert(std::is_floating_point_v<T>);
     if (value != value)

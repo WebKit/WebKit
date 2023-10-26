@@ -78,39 +78,39 @@ bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingD
     return child.hasRelativeLogicalHeight() || child.style().logicalHeight().isIntrinsicOrAuto();
 }
 
-static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned startLine, unsigned endLine, GridTrackSizingDirection direction)
+static ExtraMarginsFromSubgrids extraMarginForSubgrid(const RenderGrid& parent, unsigned startLine, unsigned endLine, GridTrackSizingDirection direction)
 {
     unsigned numTracks = parent.numTracks(direction);
     if (!numTracks || !parent.isSubgrid(direction))
-        return 0_lu;
+        return { };
 
     std::optional<LayoutUnit> availableSpace;
     if (!hasRelativeOrIntrinsicSizeForChild(parent, direction))
         availableSpace = parent.availableSpaceForGutters(direction);
 
     RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
-    LayoutUnit mbp;
+    ExtraMarginsFromSubgrids extraMargins;
     if (!startLine)
-        mbp += (direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore();
+        extraMargins.addTrackStartMargin((direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore());
     else
-        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
+        extraMargins.addTrackStartMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
 
     if (endLine == numTracks)
-        mbp += (direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter();
+        extraMargins.addTrackEndMargin((direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter());
     else
-        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
+        extraMargins.addTrackEndMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
 
-    return mbp;
+    return extraMargins;
 }
 
-LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
+ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
 {
-    LayoutUnit mbp;
+    ExtraMarginsFromSubgrids extraMargins;
     for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(child, direction)) {
         GridSpan span = currentAncestorSubgrid.gridSpanForChild(child, direction);
-        mbp += extraMarginForSubgrid(currentAncestorSubgrid, span.startLine(), span.endLine(), direction);
+        extraMargins += extraMarginForSubgrid(currentAncestorSubgrid, span.startLine(), span.endLine(), direction);
     }
-    return mbp;
+    return extraMargins;
 }
 
 LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& child)
@@ -128,7 +128,7 @@ LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDire
 
     if (&grid != child.parent()) {
         GridTrackSizingDirection subgridDirection = flowAwareDirectionForChild(grid, *downcast<RenderGrid>(child.parent()), direction);
-        margin += extraMarginForSubgridAncestors(subgridDirection, child);
+        margin += extraMarginForSubgridAncestors(subgridDirection, child).extraTotalMargin();
     }
 
     return margin;

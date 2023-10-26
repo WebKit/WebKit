@@ -131,7 +131,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         }
         dataLogLn(message.toString());
         generateAValidationError(message.toString());
-        return ShaderModule::createInvalid(*this);
+        return ShaderModule::createInvalid(*this, failedCheck);
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
@@ -153,8 +153,8 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
 {
 }
 
-ShaderModule::ShaderModule(Device& device)
-    : m_checkResult(std::monostate { })
+ShaderModule::ShaderModule(Device& device, CheckResult&& checkResult)
+    : m_checkResult(WTFMove(checkResult))
     , m_device(device)
 {
 }

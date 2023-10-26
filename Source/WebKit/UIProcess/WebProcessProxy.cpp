@@ -1290,11 +1290,14 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
 #if USE(RUNNINGBOARD)
+#if USE(EXTENSIONKIT_ASSERTIONS)
+    m_throttler.didConnectToProcess(extensionProcess());
+#else
     if (connection()) {
         if (xpc_connection_t xpcConnection = connection()->xpcConnection())
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
     }
-
+#endif // USE(EXTENSIONKIT_ASSERTIONS)
 #if PLATFORM(MAC)
     for (const auto& page : pages()) {
         if (page && page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())

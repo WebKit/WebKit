@@ -730,7 +730,7 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
-        && enableExtenison("GL_OES_rgb8_rgba8"_s);
+        && enableExtension("GL_OES_rgb8_rgba8"_s);
 }
 #endif
 

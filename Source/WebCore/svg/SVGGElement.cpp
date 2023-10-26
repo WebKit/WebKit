@@ -23,9 +23,9 @@
 #include "SVGGElement.h"
 
 #include "LegacyRenderSVGHiddenContainer.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGHiddenContainer.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
