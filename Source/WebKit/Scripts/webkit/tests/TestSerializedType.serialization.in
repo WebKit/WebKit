@@ -176,7 +176,7 @@ webkit_platform_headers: "PlatformClass.h"
   int value;
 };
 
-class WebKit::LayerProperties {
+[LegacyPopulateFromEmptyConstructor] class WebKit::LayerProperties {
     [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties
     [NotSerialized] int nonSerializedMember
     [OptionalTupleBit=WebKit::LayerChange::NameChanged] String name;
@@ -198,4 +198,20 @@ template: enum class JSC::Incredible
 template: enum class Testing::StorageSize : uint8_t
 class WebKit::TemplateTest {
   bool value;
+}
+
+[RefCounted] class WebCore::ScrollingStateFrameHostingNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+}
+
+[RefCounted] class WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Other] bool otherMember
+    int memberAfterTuple
 }

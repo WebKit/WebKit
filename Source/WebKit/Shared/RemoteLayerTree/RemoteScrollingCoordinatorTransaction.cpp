@@ -198,12 +198,6 @@ void ArgumentCoder<WebCore::ScrollingStateFrameScrollingNode>::encode(Encoder& e
         encoder << node.rootContentsLayer().layerIDForEncoding();
 }
 
-void ArgumentCoder<WebCore::ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const WebCore::ScrollingStateFrameHostingNode& node)
-{
-    encoder << node.scrollingNodeID();
-    encodeNodeShared(encoder, node);
-}
-
 void ArgumentCoder<WebCore::ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const WebCore::ScrollingStateOverflowScrollingNode& node)
 {
     encoder << node.scrollingNodeID();
@@ -368,19 +362,6 @@ std::optional<Ref<WebCore::ScrollingStateFrameScrollingNode>> ArgumentCoder<WebC
             return std::nullopt;
         node->setRootContentsLayer(layerID.value_or(WebCore::PlatformLayerIdentifier { }));
     }
-
-    return WTFMove(node);
-}
-
-std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> ArgumentCoder<WebCore::ScrollingStateFrameHostingNode>::decode(Decoder& decoder)
-{
-    auto nodeID = decoder.decode<WebCore::ScrollingNodeID>();
-    if (!nodeID)
-        return std::nullopt;
-    auto node = WebCore::ScrollingStateFrameHostingNode::create(*nodeID);
-
-    if (!decodeNodeShared(decoder, node))
-        return std::nullopt;
 
     return WTFMove(node);
 }

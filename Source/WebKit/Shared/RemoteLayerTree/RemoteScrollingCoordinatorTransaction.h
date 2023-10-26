@@ -37,7 +37,6 @@ class Encoder;
 
 namespace WebCore {
 class ScrollingStateFrameScrollingNode;
-class ScrollingStateFrameHostingNode;
 class ScrollingStateOverflowScrollingNode;
 class ScrollingStateOverflowScrollProxyNode;
 class ScrollingStateFixedNode;
@@ -81,10 +80,6 @@ namespace IPC {
 template<> struct ArgumentCoder<WebCore::ScrollingStateFrameScrollingNode> {
     static void encode(Encoder&, const WebCore::ScrollingStateFrameScrollingNode&);
     static std::optional<Ref<WebCore::ScrollingStateFrameScrollingNode>> decode(Decoder&);
-};
-template<> struct ArgumentCoder<WebCore::ScrollingStateFrameHostingNode> {
-    static void encode(Encoder&, const WebCore::ScrollingStateFrameHostingNode&);
-    static std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> decode(Decoder&);
 };
 template<> struct ArgumentCoder<WebCore::ScrollingStateOverflowScrollingNode> {
     static void encode(Encoder&, const WebCore::ScrollingStateOverflowScrollingNode&);

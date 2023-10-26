@@ -34,7 +34,6 @@ class WebKit::RemoteScrollingCoordinatorTransaction {
 }
 
 header: <WebCore/ScrollingStateFrameScrollingNode.h>
-header: <WebCore/ScrollingStateFrameHostingNode.h>
 header: <WebCore/ScrollingStateOverflowScrollingNode.h>
 header: <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 header: <WebCore/ScrollingStateFixedNode.h>
@@ -50,3 +49,11 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     WebCore::ScrollingStateStickyNode,
     WebCore::ScrollingStatePositionedNode,
 }
+
+[RefCounted] class WebCore::ScrollingStateFrameHostingNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+}
+
