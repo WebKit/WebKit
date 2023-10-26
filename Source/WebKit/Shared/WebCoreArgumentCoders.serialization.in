@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+webkit_platform_headers: <WebCore/Color.h> <WebCore/ColorTypes.h>
+
 header: <WebCore/DOMCacheEngine.h>
 [CustomHeader] struct WebCore::DOMCacheEngine::CacheInfo {
     WebCore::DOMCacheIdentifier identifier
@@ -2023,7 +2025,7 @@ class WebCore::BlobPart {
     std::variant<Vector<uint8_t>, URL> m_dataOrURL;
 };
 
-enum class WebCore::ColorSpace : uint8_t {
+[WebKitPlatform] enum class WebCore::ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,
     ExtendedA98RGB,
@@ -2047,12 +2049,12 @@ enum class WebCore::ColorSpace : uint8_t {
 }
 
 header: <WebCore/ColorTypes.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PackedColor::RGBA {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] struct WebCore::PackedColor::RGBA {
     uint32_t value;
 }
 
 header: <WebCore/Color.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::OutOfLineColorDataForIPC {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] struct WebCore::OutOfLineColorDataForIPC {
     WebCore::ColorSpace colorSpace;
     float c1;
     float c2;
@@ -2060,13 +2062,13 @@ header: <WebCore/Color.h>
     float alpha;
 }
 
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorDataForIPC {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] struct WebCore::ColorDataForIPC {
     bool isSemantic;
     bool usesFunctionSerialization;
     std::variant<WebCore::PackedColor::RGBA, WebCore::OutOfLineColorDataForIPC> data;
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Color {
+[AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] class WebCore::Color {
     std::optional<WebCore::ColorDataForIPC> data();
 }
 
