@@ -1202,6 +1202,7 @@
 		51FAEC3A1B0657630009C4E7 /* AuxiliaryProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* AuxiliaryProcessMessages.h */; };
 		51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FAEC361B0657310009C4E7 /* AuxiliaryProcessMessageReceiver.cpp */; };
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
+		51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */; };
 		522F792928D50EBB0069B45B /* HidService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5772F205217DBD6A0056BF2C /* HidService.mm */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
 		522F792A28D50EC60069B45B /* HidConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57AC8F4F217FEED90055438C /* HidConnection.mm */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
 		522F792B28D5318A0069B45B /* CtapHidDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57597EC021818BE20037F924 /* CtapHidDriver.cpp */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
@@ -17527,6 +17528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */,
 				7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */,
 				7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */,
 				7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */,
