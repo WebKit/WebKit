@@ -99,7 +99,6 @@ EGLContext PlatformDisplay::angleSharingGLContext()
     EGLint contextAttributes[] = {
         EGL_CONTEXT_CLIENT_VERSION, 2,
         EGL_EXTERNAL_CONTEXT_ANGLE, EGL_TRUE,
-        EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE, EGL_TRUE,
         EGL_NONE
     };
     m_angleSharingGLContext = EGL_CreateContext(m_angleEGLDisplay, config, EGL_NO_CONTEXT, contextAttributes);
