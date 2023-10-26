@@ -26,41 +26,49 @@ import webkitscmpy
 from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.autoinstalled import twisted
 
-AutoInstall.install(Package('attrs', Version(21, 4, 0)))
+AutoInstall.install(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 AutoInstall.install(Package('constantly', Version(15, 1, 0)))
 AutoInstall.install(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.install(Package('future', Version(0, 18, 2)))
 AutoInstall.install(Package('jinja2', Version(2, 11, 3), pypi_name='Jinja2'))
 AutoInstall.install(Package('pbr', Version(5, 9, 0)))
-AutoInstall.install(Package('PyJWT', Version(1, 7, 1), pypi_name='PyJWT', aliases=['jwt']))
+AutoInstall.install(Package('lz4', Version(4, 3, 2)))
+AutoInstall.install(Package('jwt', Version(1, 7, 1), pypi_name='PyJWT'))
 AutoInstall.install(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
-AutoInstall.install(Package('Tempita', Version(0, 4, 0)))
 
 AutoInstall.install('markupsafe')
 
 if sys.version_info >= (3, 0):
-    AutoInstall.install(Package('autobahn', Version(20, 7, 1)))
+    # autobahn has wheel=False because of https://bugs.webkit.org/show_bug.cgi?id=263392
+    AutoInstall.install(Package('autobahn', Version(20, 7, 1), wheel=False))
     AutoInstall.install(Package('automat', Version(20, 2, 0), pypi_name='Automat'))
     AutoInstall.install(Package('decorator', Version(5, 1, 1)))
-    AutoInstall.install(Package('PyHamcrest', Version(2, 0, 3)))
+    AutoInstall.install(Package('hamcrest', Version(2, 0, 3), pypi_name='PyHamcrest'))
     AutoInstall.install(Package('sqlalchemy', Version(1, 3, 20), pypi_name='SQLAlchemy'))
     AutoInstall.install(Package('sqlalchemy-migrate', Version(0, 13, 0)))
     AutoInstall.install(Package('sqlparse', Version(0, 4, 2)))
     AutoInstall.install(Package('txaio', Version(20, 4, 1)))
+    AutoInstall.install(Package('tempita', Version(0, 5, 2), pypi_name='Tempita'))
 
-    AutoInstall.install(Package('buildbot', Version(2, 10, 5)))
+    # buildbot has wheel=False because we rely on items in buildbot.test that only
+    # became public API and started being included in wheels from 3.5.0.
+    AutoInstall.install(Package('buildbot', Version(2, 10, 5), wheel=False))
     AutoInstall.install(Package('buildbot-worker', Version(2, 10, 5)))
 
     from buildbot import statistics
 else:
-    AutoInstall.install(Package('autobahn', Version(17, 8, 1)))
+    # autobahn has wheel=False because of https://bugs.webkit.org/show_bug.cgi?id=263392
+    AutoInstall.install(Package('autobahn', Version(17, 8, 1), wheel=False))
     AutoInstall.install(Package('automat', Version(0, 6, 0), pypi_name='Automat'))
     AutoInstall.install(Package('decorator', Version(3, 4, 0)))
     AutoInstall.install(Package('sqlalchemy-migrate', Version(0, 11, 0)))
     AutoInstall.install(Package('sqlparse', Version(0, 2, 3)))
     AutoInstall.install(Package('txaio', Version(2, 8, 1)))
+    AutoInstall.install(Package('tempita', Version(0, 4, 0), pypi_name='Tempita'))
 
-    AutoInstall.install(Package('buildbot', Version(1, 1, 1)))
+    # buildbot has wheel=False because we rely on items in buildbot.test that only
+    # became public API and started being included in wheels from 3.5.0.
+    AutoInstall.install(Package('buildbot', Version(1, 1, 1), wheel=False))
     AutoInstall.install(Package('buildbot-worker', Version(1, 1, 1)))
 
 sys.modules[__name__] = __import__('buildbot')
