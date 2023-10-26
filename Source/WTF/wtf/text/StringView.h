@@ -561,7 +561,7 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
 
 inline UChar StringView::characterAt(unsigned index) const
 {
-    RELEASE_ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     if (is8Bit())
         return characters8()[index];
     return characters16()[index];
@@ -569,7 +569,7 @@ inline UChar StringView::characterAt(unsigned index) const
 
 inline UChar StringView::unsafeCharacterAt(unsigned index) const
 {
-    ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     if (is8Bit())
         return characters8()[index];
     return characters16()[index];
