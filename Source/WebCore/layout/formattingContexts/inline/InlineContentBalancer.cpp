@@ -139,11 +139,11 @@ void InlineContentBalancer::initialize()
     auto layoutRange = InlineItemRange { 0, m_inlineItemList.size() };
     auto lineBuilder = LineBuilder { m_inlineFormattingContext, m_horizontalConstraints, m_inlineItemList };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
-    auto previousLine = std::optional<PreviousLine> { };
+    auto previousContent = std::optional<PreviousContent> { };
     auto lineIndex = 0lu;
     while (!layoutRange.isEmpty()) {
         auto lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, m_horizontalConstraints.logicalWidth, 0.f };
-        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, previousLine);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, previousContent);
 
         // Record relevant geometry measurements from one line layout
         m_originalLineInlineItemRanges.append(lineLayoutResult.inlineItemRange);
@@ -157,7 +157,8 @@ void InlineContentBalancer::initialize()
 
         layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        // FIXME: Balancer may care about text indent with preceding floats (currently not supported combination).
+        previousContent = { true, PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) } };
         lineIndex++;
     }
 

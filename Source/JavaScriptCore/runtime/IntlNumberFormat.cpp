@@ -35,6 +35,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "ParseInt.h"
 #include <wtf/Range.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -1529,5 +1530,77 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
     return parts;
 }
 #endif
+
+IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalObject, StringView view)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto trimmed = view.trim([](auto character) {
+        return isStrWhiteSpace(character);
+    });
+
+    if (!trimmed.length())
+        return IntlMathematicalValue { 0.0 };
+
+    if (trimmed.length() > 2 && trimmed[0] == '0') {
+        auto character = trimmed[1];
+        auto remaining = trimmed.substring(2);
+        int32_t radix = 0;
+        if (character == 'b' || character == 'B') {
+            radix = 2;
+            if (!remaining.containsOnly<isASCIIBinaryDigit>())
+                return IntlMathematicalValue { PNaN };
+        } else if (character == 'o' || character == 'O') {
+            radix = 8;
+            if (!remaining.containsOnly<isASCIIOctalDigit>())
+                return IntlMathematicalValue { PNaN };
+        } else if (character == 'x' || character == 'X') {
+            radix = 16;
+            if (!remaining.containsOnly<isASCIIHexDigit>())
+                return IntlMathematicalValue { PNaN };
+        }
+
+        if (radix) {
+            double result = parseInt(remaining, radix);
+            if (result <= maxSafeInteger())
+                return IntlMathematicalValue { result };
+
+            JSValue bigInt = JSBigInt::parseInt(globalObject, vm, remaining, radix, JSBigInt::ErrorParseMode::IgnoreExceptions, JSBigInt::ParseIntSign::Unsigned);
+            if (!bigInt)
+                return IntlMathematicalValue { PNaN };
+
+#if USE(BIGINT32)
+            if (bigInt.isBigInt32())
+                return IntlMathematicalValue { value.bigInt32AsInt32() };
+#endif
+
+            auto* heapBigInt = bigInt.asHeapBigInt();
+            auto string = heapBigInt->toString(globalObject, 10);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            return IntlMathematicalValue {
+                IntlMathematicalValue::NumberType::Integer,
+                false,
+                string.ascii(),
+            };
+        }
+    }
+
+    if (trimmed == "Infinity"_s || trimmed == "+Infinity"_s)
+        return IntlMathematicalValue { std::numeric_limits<double>::infinity() };
+
+    if (trimmed == "-Infinity"_s)
+        return IntlMathematicalValue { -std::numeric_limits<double>::infinity() };
+
+    size_t parsedLength = 0;
+    double result = parseDouble(trimmed, parsedLength);
+    if (parsedLength != trimmed.length())
+        return IntlMathematicalValue { PNaN };
+    if (!std::isfinite(result))
+        return IntlMathematicalValue { result };
+
+    return IntlMathematicalValue { IntlMathematicalValue::NumberType::Integer, trimmed[0] == '-', trimmed.utf8() };
+}
 
 } // namespace JSC

@@ -234,10 +234,11 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Horiz
 {
 }
 
-LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
+LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousContent>& previousContent)
 {
-    auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
+    auto previousLine = !previousContent ? std::nullopt : std::make_optional(previousContent->previousLine);
+    auto previousContentEndsWithLineBreak = !previousLine || !previousContent->hasInlineContent ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
+    initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousContentEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
 
@@ -524,10 +525,10 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     return lineContent;
 }
 
-LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
+LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousContentEndsWithLineBreak) const
 {
     auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No;
-    auto textIndent = formattingContext().formattingUtils().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+    auto textIndent = formattingContext().formattingUtils().computedTextIndent(isIntrinsicWidthMode, previousContentEndsWithLineBreak, initialLineLogicalRect.width());
 
     return floatConstrainedRect(initialLineLogicalRect, textIndent);
 }

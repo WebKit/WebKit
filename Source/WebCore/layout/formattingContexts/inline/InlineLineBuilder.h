@@ -42,7 +42,7 @@ class LineBuilder : public AbstractLineBuilder {
 public:
     LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     virtual ~LineBuilder() { };
-    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
+    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousContent>&) final;
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
@@ -54,7 +54,7 @@ private:
         InlineLayoutUnit marginStart { 0 };
         OptionSet<UsedFloat> isConstrainedByFloat { };
     };
-    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousContentEndsWithLineBreak) const;
     UsedConstraints floatConstrainedRect(const InlineRect& lineLogicalRect, InlineLayoutUnit marginStart) const;
 
     struct Result {

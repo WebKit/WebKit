@@ -185,21 +185,21 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
 {
     for (auto& bundle : bundles) {
         const auto& renderBundle = bundle.get();
-        if (renderBundle.currentPipelineState())
-            [m_renderCommandEncoder setRenderPipelineState:renderBundle.currentPipelineState()];
-        if (renderBundle.depthStencilState())
-            [m_renderCommandEncoder setDepthStencilState:renderBundle.depthStencilState()];
-        [m_renderCommandEncoder setCullMode:renderBundle.cullMode()];
-        [m_renderCommandEncoder setFrontFacingWinding:renderBundle.frontFace()];
-        [m_renderCommandEncoder setDepthClipMode:renderBundle.depthClipMode()];
+        for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
+            if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
+                [m_renderCommandEncoder setDepthStencilState:depthStencilState];
+            [m_renderCommandEncoder setCullMode:icb.cullMode];
+            [m_renderCommandEncoder setFrontFacingWinding:icb.frontFace];
+            [m_renderCommandEncoder setDepthClipMode:icb.depthClipMode];
 
-        for (const auto& resource : renderBundle.resources()) {
-            if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
-                [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+            for (const auto& resource : *icb.resources) {
+                if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+                    [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+            }
+
+            id<MTLIndirectCommandBuffer> indirectCommandBuffer = icb.indirectCommandBuffer;
+            [m_renderCommandEncoder executeCommandsInBuffer:indirectCommandBuffer withRange:NSMakeRange(0, indirectCommandBuffer.size)];
         }
-
-        id<MTLIndirectCommandBuffer> icb = renderBundle.indirectCommandBuffer();
-        [m_renderCommandEncoder executeCommandsInBuffer:icb withRange:NSMakeRange(0, icb.size)];
     }
 }
 

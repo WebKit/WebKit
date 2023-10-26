@@ -196,6 +196,7 @@ webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cach
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]
 webkit.org/b/201270 [ Release ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Crash ]
+webkit.org/b/263720 http/tests/security/redirect-BLOCKED-to-localURL.html [ Crash ]
 
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure Timeout ]

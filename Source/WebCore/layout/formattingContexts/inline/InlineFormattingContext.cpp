@@ -121,7 +121,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         return { };
     }
 
-    auto previousLine = [&]() -> std::optional<PreviousLine> {
+    auto previousContent = [&]() -> std::optional<PreviousContent> {
         if (!needsLayoutRange.start)
             return { };
         if (!lineDamage || !lineDamage->start()) {
@@ -129,8 +129,8 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
             return { };
         }
         auto lastLineIndex = lineDamage->start()->lineIndex - 1;
-        // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
-        return PreviousLine { lastLineIndex, { }, { }, { }, { } };
+        // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction) including "has seen inline content".
+        return PreviousContent { true, { lastLineIndex, { }, { }, { }, { } } };
     };
 
     if (root().style().textWrapMode() == TextWrapMode::Wrap && root().style().textWrapStyle() == TextWrapStyle::Balance) {
@@ -142,10 +142,10 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), this->inlineContentCache(), &placedFloats)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItemList };
-        return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
+        return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousContent(), constraints, lineDamage);
     }
     auto lineBuilder = LineBuilder { *this, constraints.horizontal(), inlineItemList };
-    return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
+    return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousContent(), constraints, lineDamage);
 }
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const InlineDamage* lineDamage)
@@ -192,7 +192,7 @@ static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t line
     return trailingContentFromPreviousLayout ? (!newContent.isEmpty() && *trailingContentFromPreviousLayout == newContent.last()) : false;
 }
 
-InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
+InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousContent> previousContent, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
@@ -202,7 +202,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 
     auto isPartialLayout = lineDamage && lineDamage->start();
     if (!isPartialLayout && createDisplayContentForLineFromCachedContent(constraints, layoutResult)) {
-        ASSERT(!previousLine);
+        ASSERT(!previousContent);
         layoutResult.range = InlineLayoutResult::Range::Full;
         return layoutResult;
     }
@@ -213,11 +213,11 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
     auto leadingInlineItemPosition = needsLayoutRange.start;
     while (true) {
 
-        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingUtils().initialLineHeight(!previousLine.has_value()) };
+        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingUtils().initialLineHeight(!previousContent.has_value()) };
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect };
-        auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
+        auto lineIndex = previousContent ? (previousContent->previousLine.lineIndex + 1) : 0lu;
 
-        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousContent);
         auto lineBox = LineBoxBuilder { *this, lineLayoutResult }.build(lineIndex);
         auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, layoutResult.displayContent);
         updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
@@ -235,7 +235,8 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
             break;
         }
 
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        auto hasSeenInlineContent = previousContent ? previousContent->hasInlineContent || !lineLayoutResult.inlineContent.isEmpty() : !lineLayoutResult.inlineContent.isEmpty();
+        previousContent = { hasSeenInlineContent, PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) } };
         previousLineEnd = lineContentEnd;
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }

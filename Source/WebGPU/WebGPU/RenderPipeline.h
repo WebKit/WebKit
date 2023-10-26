@@ -68,6 +68,7 @@ public:
     MTLWinding frontFace() const { return m_frontFace; }
     MTLCullMode cullMode() const { return m_cullMode; }
     MTLDepthClipMode depthClipMode() const { return m_clipMode; }
+    MTLDepthStencilDescriptor *depthStencilDescriptor() const { return m_depthStencilDescriptor; }
 
     Device& device() const { return m_device; }
     PipelineLayout& pipelineLayout() const;

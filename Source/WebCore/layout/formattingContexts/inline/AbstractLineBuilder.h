@@ -38,7 +38,7 @@ struct LineInput {
 
 class AbstractLineBuilder {
 public:
-    virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) = 0;
+    virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousContent>&) = 0;
     virtual ~AbstractLineBuilder() { };
 
     void setIntrinsicWidthMode(IntrinsicWidthMode);

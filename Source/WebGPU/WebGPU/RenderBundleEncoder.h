@@ -37,6 +37,21 @@
 struct WGPURenderBundleEncoderImpl {
 };
 
+@interface RenderBundleICBWithResources : NSObject
+
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@property (readonly, nonatomic) id<MTLIndirectCommandBuffer> indirectCommandBuffer;
+@property (readonly, nonatomic) id<MTLRenderPipelineState> currentPipelineState;
+@property (readonly, nonatomic) id<MTLDepthStencilState> depthStencilState;
+@property (readonly, nonatomic) MTLCullMode cullMode;
+@property (readonly, nonatomic) MTLWinding frontFace;
+@property (readonly, nonatomic) MTLDepthClipMode depthClipMode;
+
+- (Vector<WebGPU::BindableResources>*)resources;
+@end
+
 namespace WebGPU {
 
 class BindGroup;
@@ -87,6 +102,7 @@ private:
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
     void executePreDrawCommands();
+    void endCurrentICB();
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -103,7 +119,7 @@ private:
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
-    Vector<WTF::Function<void(void)>> m_recordedCommands;
+    Vector<WTF::Function<bool(void)>> m_recordedCommands;
     NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>* m_resources;
     struct BufferAndOffset {
         id<MTLBuffer> buffer { nil };
@@ -116,6 +132,7 @@ private:
     const Ref<Device> m_device;
     const RenderPipeline* m_pipeline { nullptr };
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
     uint64_t m_vertexDynamicOffset { 0 };

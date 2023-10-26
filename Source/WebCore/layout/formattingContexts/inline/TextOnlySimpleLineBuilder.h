@@ -42,7 +42,7 @@ struct TextOnlyLineBreakResult;
 class TextOnlySimpleLineBuilder : public AbstractLineBuilder {
 public:
     TextOnlySimpleLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
-    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
+    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousContent>&) final;
 
     static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache&, const PlacedFloats* = nullptr);
 
@@ -51,20 +51,20 @@ private:
     InlineItemPosition placeNonWrappingInlineTextContent(const InlineItemRange&);
     TextOnlyLineBreakResult handleOverflowingTextContent(const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
     TextOnlyLineBreakResult commitCandidateContent(const CandidateTextContent&, const InlineItemRange&);
-    void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
+    void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousContent>&);
     void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
     size_t revertToTrailingItem(const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const InlineItemRange&);
     InlineLayoutUnit availableWidth() const;
     bool isWrappingAllowed() const { return m_isWrappingAllowed; }
 
-    bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
+    bool isFirstFormattedLine() const { return !m_previousContent.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ElementBox& root() const;
 
 private:
-    std::optional<PreviousLine> m_previousLine { };
+    std::optional<PreviousContent> m_previousContent { };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
