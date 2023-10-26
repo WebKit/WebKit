@@ -192,6 +192,9 @@ editing/pasteboard/file-drag-to-editable.html [ Skip ]
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61827 fast/events/drag-image-filename.html
 
+# Only Mac has a way to fail mock capture on device removal
+fast/mediastream/microphone-change-while-muted.html [ Pass ]
+
 # Media Stream API is not fully supported.
 fast/mediastream/MediaStream-add-ended-tracks.html
 

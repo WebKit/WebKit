@@ -169,6 +169,11 @@ void BaseAudioSharedUnit::devicesChanged()
         return;
     }
 
+    if (!m_producingCount) {
+        RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - returning early as not capturing");
+        return;
+    }
+
     RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - failing capture, capturing device is missing");
     captureFailed();
 }
