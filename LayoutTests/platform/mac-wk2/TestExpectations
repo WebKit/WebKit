@@ -2023,3 +2023,5 @@ webkit.org/b/263575 [ Sonoma+ Debug ] fast/text/glyph-display-lists/glyph-displa
 
 # WebGPU
 http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
+
+http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
