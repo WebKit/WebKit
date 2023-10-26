@@ -54,7 +54,7 @@ def _FindAapt():
 
 
 def _RemovePrefix(str, prefix):
-    assert str.startswith(prefix)
+    assert str.startswith(prefix), 'Expected prefix %s, got: %s' % (prefix, str)
     return str[len(prefix):]
 
 

@@ -231,6 +231,7 @@ void GetRenderTargetLayerCountAndIndex(vk::ImageHelper *image,
     {
         case gl::TextureType::_2D:
         case gl::TextureType::_2DMultisample:
+        case gl::TextureType::External:
             ASSERT(*layerIndex == 0 &&
                    (*layerCount == 1 ||
                     *layerCount == static_cast<GLuint>(gl::ImageIndex::kEntireLevel)));
@@ -661,6 +662,14 @@ bool TextureVk::isMutableTextureConsistentlySpecifiedForFlush()
         return false;
     }
 
+    // For performance, flushing is skipped if the number of staged updates in a mip level is not
+    // one. For a cubemap, this applies to each face of the cube instead.
+    size_t maxUpdatesPerMipLevel = (mState.getType() == gl::TextureType::CubeMap) ? 6 : 1;
+    if (mImage->getLevelUpdateCount(gl::LevelIndex(0)) != maxUpdatesPerMipLevel)
+    {
+        return false;
+    }
+
     // The mip levels that are already defined should have attributes compatible with those of the
     // base mip level. For each defined mip level, its size, format, number of samples, and depth
     // are checked before flushing the texture updates. For complete cubemaps, there are 6 images
@@ -699,7 +708,12 @@ bool TextureVk::isMutableTextureConsistentlySpecifiedForFlush()
                                    mipImageDesc.format.info->sizedInternalFormat);
         bool isNumberOfSamplesCompatible = (baseImageDesc.samples == mipImageDesc.samples);
 
-        if (!isSizeCompatible || !isFormatCompatible || !isNumberOfSamplesCompatible)
+        bool isUpdateCompatible =
+            (mImage->getLevelUpdateCount(gl::LevelIndex(static_cast<GLint>(image))) ==
+             maxUpdatesPerMipLevel);
+
+        if (!isSizeCompatible || !isFormatCompatible || !isNumberOfSamplesCompatible ||
+            !isUpdateCompatible)
         {
             return false;
         }
@@ -2782,37 +2796,62 @@ void TextureVk::initSingleLayerRenderTargets(ContextVk *contextVk,
     const bool isMultisampledRenderToTexture =
         renderToTextureIndex != gl::RenderToTextureImageIndex::Default;
 
+    vk::ImageHelper *drawImage             = mImage;
+    vk::ImageViewHelper *drawImageViews    = &getImageViews();
+    vk::ImageHelper *resolveImage          = nullptr;
+    vk::ImageViewHelper *resolveImageViews = nullptr;
+
+    RenderTargetTransience transience = RenderTargetTransience::Default;
+
+    // If multisampled render to texture, use the multisampled image as draw image instead, and
+    // resolve into the texture's image automatically.
+    if (isMultisampledRenderToTexture)
+    {
+        ASSERT(mMultisampledImages[renderToTextureIndex].valid());
+        ASSERT(!mImage->isYuvResolve());
+
+        resolveImage      = drawImage;
+        resolveImageViews = drawImageViews;
+        drawImage         = &mMultisampledImages[renderToTextureIndex];
+        drawImageViews    = &mMultisampledImageViews[renderToTextureIndex];
+
+        // If the texture is depth/stencil, GL_EXT_multisampled_render_to_texture2 explicitly
+        // indicates that there is no need for the image to be resolved.  In that case, mark the
+        // render target as entirely transient.
+        if (mImage->getAspectFlags() != VK_IMAGE_ASPECT_COLOR_BIT)
+        {
+            transience = RenderTargetTransience::EntirelyTransient;
+        }
+        else
+        {
+            transience = RenderTargetTransience::MultisampledTransient;
+        }
+    }
+    else if (mImage->isYuvResolve())
+    {
+        // If rendering to YUV, similar to multisampled render to texture
+        resolveImage      = drawImage;
+        resolveImageViews = drawImageViews;
+
+        if (contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+        {
+            // If null color attachment, we still keep drawImage as is (the same as
+            // resolveImage) to avoid special treatment in many places where they assume there must
+            // be a color attachment if there is a resolve attachment. But when renderPass is
+            // created, color attachment will be ignored.
+        }
+        else
+        {
+            transience = RenderTargetTransience::YuvResolveTransient;
+            // Need to populate drawImage here; either abuse mMultisampledImages etc
+            // or build something parallel to it. we don't have a vulkan implementation which
+            // wants this path yet, though.
+            UNREACHABLE();
+        }
+    }
+
     for (uint32_t layerIndex = 0; layerIndex < layerCount; ++layerIndex)
     {
-        vk::ImageHelper *drawImage             = mImage;
-        vk::ImageViewHelper *drawImageViews    = &getImageViews();
-        vk::ImageHelper *resolveImage          = nullptr;
-        vk::ImageViewHelper *resolveImageViews = nullptr;
-
-        RenderTargetTransience transience = isMultisampledRenderToTexture
-                                                ? RenderTargetTransience::MultisampledTransient
-                                                : RenderTargetTransience::Default;
-
-        // If multisampled render to texture, use the multisampled image as draw image instead, and
-        // resolve into the texture's image automatically.
-        if (isMultisampledRenderToTexture)
-        {
-            ASSERT(mMultisampledImages[renderToTextureIndex].valid());
-
-            resolveImage      = drawImage;
-            resolveImageViews = drawImageViews;
-            drawImage         = &mMultisampledImages[renderToTextureIndex];
-            drawImageViews    = &mMultisampledImageViews[renderToTextureIndex];
-
-            // If the texture is depth/stencil, GL_EXT_multisampled_render_to_texture2 explicitly
-            // indicates that there is no need for the image to be resolved.  In that case, mark the
-            // render target as entirely transient.
-            if (mImage->getAspectFlags() != VK_IMAGE_ASPECT_COLOR_BIT)
-            {
-                transience = RenderTargetTransience::EntirelyTransient;
-            }
-        }
-
         renderTargets[layerIndex].init(drawImage, drawImageViews, resolveImage, resolveImageViews,
                                        mImageSiblingSerial, getNativeImageLevel(levelIndex),
                                        getNativeImageLayer(layerIndex), 1, transience);
@@ -2835,7 +2874,7 @@ RenderTargetVk *TextureVk::getMultiLayerRenderTarget(ContextVk *contextVk,
     }
 
     // Create the layered render target.  Note that multisampled render to texture is not
-    // allowed with layered render targets.
+    // allowed with layered render targets; nor is YUV rendering.
     std::unique_ptr<RenderTargetVk> &rt = mMultiLayerRenderTargets[range];
     if (!rt)
     {
@@ -3127,8 +3166,12 @@ angle::Result TextureVk::syncState(const gl::Context *context,
                                                     : ImageMipLevels::EnabledLevels));
 
     // Mask out the IMPLEMENTATION dirty bit to avoid unnecessary syncs.
+    // Keep it set when the border color is used and needs to be resynced.
     gl::Texture::DirtyBits localBits = dirtyBits;
-    localBits.reset(gl::Texture::DIRTY_BIT_IMPLEMENTATION);
+    if (!mState.getSamplerState().usesBorderColor())
+    {
+        localBits.reset(gl::Texture::DIRTY_BIT_IMPLEMENTATION);
+    }
     localBits.reset(gl::Texture::DIRTY_BIT_BASE_LEVEL);
     localBits.reset(gl::Texture::DIRTY_BIT_MAX_LEVEL);
 

@@ -39,9 +39,6 @@ class ProgramVk : public ProgramImpl
     angle::Result link(const gl::Context *context, std::shared_ptr<LinkTask> *linkTaskOut) override;
     GLboolean validate(const gl::Caps &caps) override;
 
-    angle::Result syncState(const gl::Context *context,
-                            const gl::Program::DirtyBits &dirtyBits) override;
-
     const ProgramExecutableVk *getExecutable() const
     {
         return vk::GetImpl(&mState.getExecutable());

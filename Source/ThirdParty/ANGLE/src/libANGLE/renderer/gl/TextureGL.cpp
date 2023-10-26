@@ -116,6 +116,18 @@ size_t GetMaxLevelInfoCountForTextureType(gl::TextureType type)
     }
 }
 
+bool FormatHasBorderColorWorkarounds(GLenum format)
+{
+    switch (format)
+    {
+        case GL_ALPHA:
+        case GL_LUMINANCE_ALPHA:
+            return true;
+        default:
+            return false;
+    }
+}
+
 }  // anonymous namespace
 
 LUMAWorkaroundGL::LUMAWorkaroundGL() : LUMAWorkaroundGL(false, GL_NONE) {}
@@ -1533,6 +1545,13 @@ angle::Result TextureGL::syncState(const gl::Context *context,
         {
             syncDirtyBits.set(gl::Texture::DIRTY_BIT_DEPTH_STENCIL_TEXTURE_MODE);
         }
+
+        // If the base level format has changed, border color may need to be updated
+        if (!mState.getImmutableFormat() && (context->getClientVersion() >= gl::ES_3_2 ||
+                                             context->getExtensions().textureBorderClampAny()))
+        {
+            syncDirtyBits.set(gl::Texture::DIRTY_BIT_BORDER_COLOR);
+        }
     }
     for (auto dirtyBit : syncDirtyBits)
     {
@@ -1613,6 +1632,7 @@ angle::Result TextureGL::syncState(const gl::Context *context,
             {
                 const LevelInfoGL &levelInfo    = getBaseLevelInfo();
                 angle::ColorGeneric borderColor = mState.getSamplerState().getBorderColor();
+                // Formats that have workarounds must be present in FormatHasBorderColorWorkarounds.
                 if (levelInfo.sourceFormat == GL_ALPHA)
                 {
                     if (levelInfo.lumaWorkaround.enabled)
@@ -2061,6 +2081,10 @@ void TextureGL::setLevelInfo(const gl::Context *context,
     bool updateDepthStencilTextureMode = false;
     const bool setToDepthStencil       = levelInfo.sourceFormat == GL_DEPTH_STENCIL;
 
+    bool updateBorderColor = false;
+    const bool targetFormatHasBorderColorWorkarounds =
+        FormatHasBorderColorWorkarounds(levelInfo.sourceFormat);
+
     for (size_t i = level; i < level + levelCount; i++)
     {
         size_t index = GetLevelInfoIndex(target, i);
@@ -2079,6 +2103,14 @@ void TextureGL::setLevelInfo(const gl::Context *context,
             updateDepthStencilTextureMode = true;
         }
 
+        // When redefining a level to or from a format that has border color workarounds,
+        // ensure that the texture border color is synced.
+        if (FormatHasBorderColorWorkarounds(curLevelInfo.sourceFormat) ||
+            targetFormatHasBorderColorWorkarounds)
+        {
+            updateBorderColor = true;
+        }
+
         curLevelInfo = levelInfo;
     }
 
@@ -2087,7 +2119,11 @@ void TextureGL::setLevelInfo(const gl::Context *context,
         updateDepthStencilTextureMode && (context->getClientVersion() >= gl::ES_3_1 ||
                                           context->getExtensions().stencilTexturingANGLE);
 
-    if (updateWorkarounds || updateDepthStencilTextureMode)
+    // Skip this step when unsupported
+    updateBorderColor = updateBorderColor && (context->getClientVersion() >= gl::ES_3_2 ||
+                                              context->getExtensions().textureBorderClampAny());
+
+    if (updateWorkarounds || updateDepthStencilTextureMode || updateBorderColor)
     {
         if (updateWorkarounds)
         {
@@ -2096,6 +2132,10 @@ void TextureGL::setLevelInfo(const gl::Context *context,
         if (updateDepthStencilTextureMode)
         {
             mLocalDirtyBits.set(gl::Texture::DIRTY_BIT_DEPTH_STENCIL_TEXTURE_MODE);
+        }
+        if (updateBorderColor)
+        {
+            mLocalDirtyBits.set(gl::Texture::DIRTY_BIT_BORDER_COLOR);
         }
         onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
     }

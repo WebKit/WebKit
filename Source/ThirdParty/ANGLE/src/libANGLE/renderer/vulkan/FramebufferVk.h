@@ -214,11 +214,12 @@ class FramebufferVk : public FramebufferImpl
                             const VkClearColorValue &clearColorValue,
                             const VkClearDepthStencilValue &clearDepthStencilValue);
 
-    void mergeClearsWithDeferredClears(gl::DrawBufferMask clearColorBuffers,
-                                       bool clearDepth,
-                                       bool clearStencil,
-                                       const VkClearColorValue &clearColorValue,
-                                       const VkClearDepthStencilValue &clearDepthStencilValue);
+    void mergeClearsWithDeferredClears(
+        gl::DrawBufferMask clearColorBuffers,
+        bool clearDepth,
+        bool clearStencil,
+        const gl::DrawBuffersArray<VkClearColorValue> &clearColorValues,
+        const VkClearDepthStencilValue &clearDepthStencilValue);
     angle::Result clearWithDraw(ContextVk *contextVk,
                                 const gl::Rectangle &clearArea,
                                 gl::DrawBufferMask clearColorBuffers,
@@ -226,7 +227,7 @@ class FramebufferVk : public FramebufferImpl
                                 bool clearStencil,
                                 gl::BlendStateExt::ColorMaskStorage::Type colorMasks,
                                 uint8_t stencilMask,
-                                const VkClearColorValue &clearColorValue,
+                                const gl::DrawBuffersArray<VkClearColorValue> &clearColorValues,
                                 const VkClearDepthStencilValue &clearDepthStencilValue);
     void restageDeferredClears(ContextVk *contextVk);
     void restageDeferredClearsForReadFramebuffer(ContextVk *contextVk);
@@ -295,6 +296,7 @@ class FramebufferVk : public FramebufferImpl
     gl::DrawBufferMask mAttachmentHasFrontBufferUsage;
 
     bool mIsCurrentFramebufferCached;
+    bool mIsYUVResolve;
 
     // Serial of the render pass this framebuffer has opened, if any.
     QueueSerial mLastRenderPassQueueSerial;

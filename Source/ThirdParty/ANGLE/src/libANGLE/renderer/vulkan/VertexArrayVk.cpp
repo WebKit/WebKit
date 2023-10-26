@@ -721,6 +721,12 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
         // Emulated and/or client-side attribs will be streamed
         bool isStreamingVertexAttrib =
             (binding.getDivisor() > renderer->getMaxVertexAttribDivisor()) || (bufferGL == nullptr);
+        // If we sre switching between streaming and buffer mode, set bufferOnly to false since we
+        // are actually changing the buffer.
+        if (bufferOnly && isStreamingVertexAttrib != mStreamingVertexAttribsMask.test(attribIndex))
+        {
+            bufferOnly = false;
+        }
         mStreamingVertexAttribsMask.set(attribIndex, isStreamingVertexAttrib);
         bool compressed = false;
 

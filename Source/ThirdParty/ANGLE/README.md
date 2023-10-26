@@ -8,12 +8,12 @@ Metal and MacOS, Chrome OS, and Fuchsia support.
 
 ### Level of OpenGL ES support via backing renderers
 
-|                |  Direct3D 9   |  Direct3D 11     |   Desktop GL   |    GL ES      |    Vulkan     |    Metal      |
-|----------------|:-------------:|:----------------:|:--------------:|:-------------:|:-------------:|:-------------:|
-| OpenGL ES 2.0  |    complete   |    complete      |    complete    |    complete   |    complete   |    complete   |
-| OpenGL ES 3.0  |               |    complete      |    complete    |    complete   |    complete   |    complete   |
-| OpenGL ES 3.1  |        | [incomplete][ES31OnD3D] |    complete    |    complete   |    complete   |               |
-| OpenGL ES 3.2  |               |                  |  in progress   |  in progress  |  in progress  |               |
+|                |  Direct3D 9   |  Direct3D 11     |   Desktop GL   |    GL ES      |  Vulkan  |    Metal      |
+|----------------|:-------------:|:----------------:|:--------------:|:-------------:|:--------:|:-------------:|
+| OpenGL ES 2.0  |    complete   |    complete      |    complete    |    complete   | complete |    complete   |
+| OpenGL ES 3.0  |               |    complete      |    complete    |    complete   | complete |    complete   |
+| OpenGL ES 3.1  |        | [incomplete][ES31OnD3D] |    complete    |    complete   | complete |               |
+| OpenGL ES 3.2  |               |                  |  in progress   |  in progress  | complete |               |
 
 Additionally, OpenGL ES 1.1 is implemented in the front-end using OpenGL ES 3.0 features.  This
 version of the specification is thus supported on all platforms specified above that support OpenGL
@@ -45,6 +45,7 @@ ANGLE has received the following certifications with the Vulkan backend:
 * OpenGL ES 2.0: ANGLE 2.1.0.d46e2fb1e341 (Nov, 2019)
 * OpenGL ES 3.0: ANGLE 2.1.0.f18ff947360d (Feb, 2020)
 * OpenGL ES 3.1: ANGLE 2.1.0.f5dace0f1e57 (Jul, 2020)
+* OpenGL ES 3.2: ANGLE 2.1.2.21688.59f158c1695f (Sept, 2023)
 
 ANGLE also provides an implementation of the EGL 1.5 specification.
 

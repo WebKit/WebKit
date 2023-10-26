@@ -2678,9 +2678,15 @@ angle::Result RenderPassCommandBufferHelper::flushToPrimary(Context *context,
     VkRenderPassAttachmentBeginInfoKHR rpAttachmentBeginInfo = {};
     if (mFramebuffer.isImageless())
     {
+        // If nullColorAttachmentWithExternalFormatResolve is true, there will be no color
+        // attachment even though mRenderPassDesc indicates so.
+        ASSERT((mRenderPassDesc.hasYUVResolveAttachment() &&
+                context->getRenderer()->nullColorAttachmentWithExternalFormatResolve()) ||
+               mFramebuffer.getImageViews().size() ==
+                   static_cast<uint32_t>(mRenderPassDesc.attachmentCount()));
         rpAttachmentBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO_KHR;
         rpAttachmentBeginInfo.attachmentCount =
-            static_cast<uint32_t>(mRenderPassDesc.attachmentCount());
+            static_cast<uint32_t>(mFramebuffer.getImageViews().size());
         rpAttachmentBeginInfo.pAttachments = mFramebuffer.getImageViews().data();
 
         AddToPNextChain(&beginInfo, &rpAttachmentBeginInfo);
@@ -5570,11 +5576,16 @@ angle::Result ImageHelper::initExternal(Context *context,
 
     if (actualFormat.isYUV)
     {
-        // The Vulkan spec states: If sampler is used and the VkFormat of the image is a
-        // multi-planar format, the image must have been created with
+        // The Vulkan spec states: If the pNext chain includes a VkExternalFormatANDROID structure
+        // whose externalFormat member is not 0, flags must not include
         // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT
-        mCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
-
+        if (!IsYUVExternalFormat(actualFormatID))
+        {
+            // The Vulkan spec states: If sampler is used and the VkFormat of the image is a
+            // multi-planar format, the image must have been created with
+            // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT
+            mCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
+        }
         // The Vulkan spec states: The potential format features of the sampler YCBCR conversion
         // must support VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT or
         // VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT
@@ -7349,11 +7360,10 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
         GLuint depthPitch;
         GLuint totalSize;
 
-        ANGLE_VK_CHECK_MATH(contextVk, storageFormatInfo.computeCompressedImageSize(
-                                           gl::Extents(glExtents.width, 1, 1), &rowPitch));
-        ANGLE_VK_CHECK_MATH(contextVk,
-                            storageFormatInfo.computeCompressedImageSize(
-                                gl::Extents(glExtents.width, glExtents.height, 1), &depthPitch));
+        ANGLE_VK_CHECK_MATH(contextVk, storageFormatInfo.computeCompressedImageRowPitch(
+                                           glExtents.width, &rowPitch));
+        ANGLE_VK_CHECK_MATH(contextVk, storageFormatInfo.computeCompressedImageDepthPitch(
+                                           glExtents.height, rowPitch, &depthPitch));
 
         ANGLE_VK_CHECK_MATH(contextVk,
                             storageFormatInfo.computeCompressedImageSize(glExtents, &totalSize));
@@ -9789,6 +9799,10 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
 {
     RendererVk *renderer = contextVk->getRenderer();
 
+    bool isExternalFormat = getExternalFormat() != 0;
+    ASSERT(!isExternalFormat || (mActualFormatID >= angle::FormatID::EXTERNAL0 &&
+                                 mActualFormatID <= angle::FormatID::EXTERNAL7));
+
     // If the source image is multisampled, we need to resolve it into a temporary image before
     // performing a readback.
     bool isMultisampled = mSamples > 1;
@@ -9805,10 +9819,21 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
             gl::Extents(area.width, area.height, 1), mIntendedFormatID, mActualFormatID,
             VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, 1));
     }
+    else if (isExternalFormat)
+    {
+        ANGLE_TRY(resolvedImage.get().init2DStaging(
+            contextVk, contextVk->getState().hasProtectedContent(), renderer->getMemoryProperties(),
+            gl::Extents(area.width, area.height, 1), angle::FormatID::R8G8B8A8_UNORM,
+            angle::FormatID::R8G8B8A8_UNORM,
+            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            1));
+    }
 
     VkImageAspectFlags layoutChangeAspectFlags = src->getAspectFlags();
 
-    const angle::Format *readFormat = &getActualFormat();
+    const angle::Format *rgbaFormat = &angle::Format::Get(angle::FormatID::R8G8B8A8_UNORM);
+    const angle::Format *readFormat = isExternalFormat ? rgbaFormat : &getActualFormat();
     const vk::Format &vkFormat      = contextVk->getRenderer()->getFormat(readFormat->id);
     const gl::InternalFormat &storageFormatInfo =
         vkFormat.getInternalFormatInfo(readFormat->componentType);
@@ -9834,6 +9859,51 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
         // Depth > 1 means this is a 3D texture and we need special handling
         srcOffset.z                   = layer;
         srcSubresource.baseArrayLayer = 0;
+    }
+
+    if (isExternalFormat)
+    {
+        CommandBufferAccess access;
+        access.onImageTransferRead(layoutChangeAspectFlags, this);
+        OutsideRenderPassCommandBuffer *commandBuffer;
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+
+        // Create some temp views because copyImage works in terms of them
+        gl::TextureType textureType = Get2DTextureType(1, resolvedImage.get().getSamples());
+
+        // Surely we have a view of this already!
+        vk::ImageView srcView;
+        ANGLE_TRY(src->initImageView(contextVk, textureType, VK_IMAGE_ASPECT_COLOR_BIT,
+                                     gl::SwizzleState(), &srcView, vk::LevelIndex(0), 1,
+                                     vk::ImageHelper::kDefaultImageViewUsageFlags));
+        vk::ImageView stagingView;
+        ANGLE_TRY(resolvedImage.get().initImageView(
+            contextVk, textureType, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(), &stagingView,
+            vk::LevelIndex(0), 1, vk::ImageHelper::kDefaultImageViewUsageFlags));
+
+        UtilsVk::CopyImageParameters params = {};
+        params.srcOffset[0]                 = srcOffset.x;
+        params.srcOffset[1]                 = srcOffset.y;
+        params.srcExtents[0]                = srcExtent.width;
+        params.srcExtents[1]                = srcExtent.height;
+        params.srcHeight                    = srcExtent.height;
+        ANGLE_TRY(contextVk->getUtils().copyImage(contextVk, &resolvedImage.get(), &stagingView,
+                                                  src, &srcView, params));
+
+        CommandBufferAccess readAccess;
+        readAccess.onImageTransferRead(layoutChangeAspectFlags, &resolvedImage.get());
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(readAccess, &commandBuffer));
+
+        // Make the resolved image the target of buffer copy
+        src                           = &resolvedImage.get();
+        srcOffset                     = {0, 0, 0};
+        srcSubresource.baseArrayLayer = 0;
+        srcSubresource.layerCount     = 1;
+        srcSubresource.mipLevel       = 0;
+
+        // Mark our temp views as garbage immediately
+        contextVk->addGarbage(&srcView);
+        contextVk->addGarbage(&stagingView);
     }
 
     if (isMultisampled)
@@ -9914,7 +9984,7 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     size_t allocationSize      = readFormat->pixelBytes * area.width * area.height;
 
     ANGLE_TRY(contextVk->initBufferForImageCopy(stagingBuffer, allocationSize,
-                                                MemoryCoherency::Coherent, mActualFormatID,
+                                                MemoryCoherency::Coherent, readFormat->id,
                                                 &stagingOffset, &readPixelBuffer));
     VkBuffer bufferHandle = stagingBuffer->getBuffer().getHandle();
 
@@ -10210,6 +10280,13 @@ VkImageAspectFlags ImageHelper::SubresourceUpdate::getDestAspectFlags() const
         ASSERT(updateSource == UpdateSource::Image);
         return data.image.copyRegion.dstSubresource.aspectMask;
     }
+}
+
+size_t ImageHelper::getLevelUpdateCount(gl::LevelIndex level) const
+{
+    return static_cast<size_t>(level.get()) < mSubresourceUpdates.size()
+               ? mSubresourceUpdates[level.get()].size()
+               : 0;
 }
 
 std::vector<ImageHelper::SubresourceUpdate> *ImageHelper::getLevelUpdates(gl::LevelIndex level)
@@ -10586,30 +10663,38 @@ angle::Result ImageViewHelper::initReadViewsImpl(ContextVk *contextVk,
                                            &getReadImageView(), baseLevel, levelCount, baseLayer,
                                            layerCount, gl::SrgbWriteControlMode::Default,
                                            gl::YuvSamplingMode::Default, imageUsageFlags));
-        ANGLE_TRY(image.initLayerImageView(
-            contextVk, viewType, aspectFlags, readSwizzle, &getSamplerExternal2DY2YEXTImageView(),
-            baseLevel, levelCount, baseLayer, layerCount, gl::SrgbWriteControlMode::Default,
-            gl::YuvSamplingMode::Y2Y, imageUsageFlags));
+
+        if (image.getActualFormat().isYUV)
+        {
+            ANGLE_TRY(image.initLayerImageView(contextVk, viewType, aspectFlags, readSwizzle,
+                                               &getSamplerExternal2DY2YEXTImageView(), baseLevel,
+                                               levelCount, baseLayer, layerCount,
+                                               gl::SrgbWriteControlMode::Default,
+                                               gl::YuvSamplingMode::Y2Y, imageUsageFlags));
+        }
     }
 
     gl::TextureType fetchType = viewType;
-
     if (viewType == gl::TextureType::CubeMap || viewType == gl::TextureType::_2DArray ||
         viewType == gl::TextureType::_2DMultisampleArray)
     {
         fetchType = Get2DTextureType(layerCount, image.getSamples());
+        if (contextVk->emulateSeamfulCubeMapSampling())
+        {
+            ANGLE_TRY(image.initLayerImageView(
+                contextVk, fetchType, aspectFlags, readSwizzle, &getFetchImageView(), baseLevel,
+                levelCount, baseLayer, layerCount, gl::SrgbWriteControlMode::Default,
+                gl::YuvSamplingMode::Default, imageUsageFlags));
+        }
+    }
 
-        ANGLE_TRY(image.initLayerImageView(contextVk, fetchType, aspectFlags, readSwizzle,
-                                           &getFetchImageView(), baseLevel, levelCount, baseLayer,
+    if (!image.getActualFormat().isBlock)
+    {
+        ANGLE_TRY(image.initLayerImageView(contextVk, fetchType, aspectFlags, formatSwizzle,
+                                           &getCopyImageView(), baseLevel, levelCount, baseLayer,
                                            layerCount, gl::SrgbWriteControlMode::Default,
                                            gl::YuvSamplingMode::Default, imageUsageFlags));
     }
-
-    ANGLE_TRY(image.initLayerImageView(contextVk, fetchType, aspectFlags, formatSwizzle,
-                                       &getCopyImageView(), baseLevel, levelCount, baseLayer,
-                                       layerCount, gl::SrgbWriteControlMode::Default,
-                                       gl::YuvSamplingMode::Default, imageUsageFlags));
-
     return angle::Result::Continue;
 }
 
@@ -10664,41 +10749,45 @@ angle::Result ImageViewHelper::initSRGBReadViewsImpl(ContextVk *contextVk,
         viewType == gl::TextureType::_2DMultisampleArray)
     {
         fetchType = Get2DTextureType(layerCount, image.getSamples());
-
-        if (!mPerLevelRangeLinearFetchImageViews[mCurrentBaseMaxLevelHash].valid())
+        if (contextVk->emulateSeamfulCubeMapSampling())
         {
+            if (!mPerLevelRangeLinearFetchImageViews[mCurrentBaseMaxLevelHash].valid())
+            {
 
+                ANGLE_TRY(image.initReinterpretedLayerImageView(
+                    contextVk, fetchType, aspectFlags, readSwizzle,
+                    &mPerLevelRangeLinearFetchImageViews[mCurrentBaseMaxLevelHash], baseLevel,
+                    levelCount, baseLayer, layerCount, imageUsageFlags, linearFormat));
+            }
+            if (srgbOverrideFormat != angle::FormatID::NONE &&
+                !mPerLevelRangeSRGBFetchImageViews[mCurrentBaseMaxLevelHash].valid())
+            {
+                ANGLE_TRY(image.initReinterpretedLayerImageView(
+                    contextVk, fetchType, aspectFlags, readSwizzle,
+                    &mPerLevelRangeSRGBFetchImageViews[mCurrentBaseMaxLevelHash], baseLevel,
+                    levelCount, baseLayer, layerCount, imageUsageFlags, srgbOverrideFormat));
+            }
+        }
+    }
+
+    if (!image.getActualFormat().isBlock)
+    {
+        if (!mPerLevelRangeLinearCopyImageViews[mCurrentBaseMaxLevelHash].valid())
+        {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, readSwizzle,
-                &mPerLevelRangeLinearFetchImageViews[mCurrentBaseMaxLevelHash], baseLevel,
+                contextVk, fetchType, aspectFlags, formatSwizzle,
+                &mPerLevelRangeLinearCopyImageViews[mCurrentBaseMaxLevelHash], baseLevel,
                 levelCount, baseLayer, layerCount, imageUsageFlags, linearFormat));
         }
         if (srgbOverrideFormat != angle::FormatID::NONE &&
-            !mPerLevelRangeSRGBFetchImageViews[mCurrentBaseMaxLevelHash].valid())
+            !mPerLevelRangeSRGBCopyImageViews[mCurrentBaseMaxLevelHash].valid())
         {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, readSwizzle,
-                &mPerLevelRangeSRGBFetchImageViews[mCurrentBaseMaxLevelHash], baseLevel, levelCount,
+                contextVk, fetchType, aspectFlags, formatSwizzle,
+                &mPerLevelRangeSRGBCopyImageViews[mCurrentBaseMaxLevelHash], baseLevel, levelCount,
                 baseLayer, layerCount, imageUsageFlags, srgbOverrideFormat));
         }
     }
-
-    if (!mPerLevelRangeLinearCopyImageViews[mCurrentBaseMaxLevelHash].valid())
-    {
-        ANGLE_TRY(image.initReinterpretedLayerImageView(
-            contextVk, fetchType, aspectFlags, formatSwizzle,
-            &mPerLevelRangeLinearCopyImageViews[mCurrentBaseMaxLevelHash], baseLevel, levelCount,
-            baseLayer, layerCount, imageUsageFlags, linearFormat));
-    }
-    if (srgbOverrideFormat != angle::FormatID::NONE &&
-        !mPerLevelRangeSRGBCopyImageViews[mCurrentBaseMaxLevelHash].valid())
-    {
-        ANGLE_TRY(image.initReinterpretedLayerImageView(
-            contextVk, fetchType, aspectFlags, formatSwizzle,
-            &mPerLevelRangeSRGBCopyImageViews[mCurrentBaseMaxLevelHash], baseLevel, levelCount,
-            baseLayer, layerCount, imageUsageFlags, srgbOverrideFormat));
-    }
-
     return angle::Result::Continue;
 }
 

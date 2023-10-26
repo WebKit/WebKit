@@ -533,7 +533,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isTransformFeedbackGenerated(TransformFeedbackID transformFeedback) const;
 
     bool isExternal() const { return mIsExternal; }
-    bool saveAndRestoreState() const { return mSaveAndRestoreState; }
 
     void getBooleanvImpl(GLenum pname, GLboolean *params) const;
     void getFloatvImpl(GLenum pname, GLfloat *params) const;
@@ -954,7 +953,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     OverlayType mOverlay;
 
     const bool mIsExternal;
-    const bool mSaveAndRestoreState;
 
     bool mIsDestroyed;
 

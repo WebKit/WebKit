@@ -332,3 +332,13 @@
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.polygon_offset.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.rasterization.primitives.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.shaders.random.* = SKIP
+
+// Undefined behavior in dEQP framework due to NaN
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.1 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.6 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.18 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.19 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.23 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.29 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.texture.vertex.34 = SKIP
+b/307584642 ANDROID : dEQP-GLES2.functional.shaders.random.all_features.fragment.6 = SKIP

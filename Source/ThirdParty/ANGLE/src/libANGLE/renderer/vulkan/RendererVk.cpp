@@ -196,18 +196,10 @@ VkResult VerifyExtensionsPresent(const vk::ExtensionNameList &haystack,
 
 // Array of Validation error/warning messages that will be ignored, should include bugID
 constexpr const char *kSkippedMessages[] = {
-    // http://anglebug.com/2866
-    "UNASSIGNED-CoreValidation-Shader-OutputNotConsumed",
-    // http://anglebug.com/4928
-    "VUID-vkMapMemory-memory-00683",
-    // http://anglebug.com/5027
-    "UNASSIGNED-CoreValidation-Shader-PushConstantOutOfRange",
     // http://anglebug.com/5304
     "VUID-vkCmdDraw-magFilter-04553",
     "VUID-vkCmdDrawIndexed-magFilter-04553",
     // http://anglebug.com/5309
-    "VUID-VkImageViewCreateInfo-usage-02652",
-    // http://issuetracker.google.com/175584609
     "VUID-vkCmdDraw-None-04584",
     "VUID-vkCmdDrawIndexed-None-04584",
     "VUID-vkCmdDrawIndirect-None-04584",
@@ -231,8 +223,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdBindVertexBuffers2-pStrides-06209",
     // http://anglebug.com/7729
     "VUID-vkDestroySemaphore-semaphore-01137",
-    // http://anglebug.com/7843
-    "VUID-VkGraphicsPipelineCreateInfo-Vertex-07722",
     // https://issuetracker.google.com/303219657
     "VUID-VkGraphicsPipelineCreateInfo-pStages-00738",
     "VUID-VkGraphicsPipelineCreateInfo-pStages-00739",
@@ -245,10 +235,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkDescriptorImageInfo-descriptorType-06713",
     // http://crbug.com/1412096
     "VUID-VkImageCreateInfo-pNext-00990",
-    // http://crbug.com/1420265
-    "VUID-vkCmdEndDebugUtilsLabelEXT-commandBuffer-01912",
-    // http://anglebug.com/8076
-    "VUID-VkGraphicsPipelineCreateInfo-None-06573",
     // http://anglebug.com/8119
     "VUID-VkGraphicsPipelineCreateInfo-Input-07904",
     "VUID-VkGraphicsPipelineCreateInfo-Input-07905",
@@ -259,7 +245,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDraw-None-07845",
     "VUID-vkCmdDraw-None-07848",
     // https://anglebug.com/8128#c3
-    "VUID-VkBufferViewCreateInfo-buffer-08779",
+    "VUID-VkBufferViewCreateInfo-format-08779",
     // https://anglebug.com/8203
     "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
     // https://anglebug.com/8237
@@ -279,6 +265,9 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkSamplerCreateInfo-pNext-pNext",
     // https://issuetracker.google.com/303441816
     "VUID-VkRenderPassBeginInfo-renderPass-00904",
+    // http://b/223456677 VK_ANDROID_external_format_resolve: remove once ARM/ VVL are fixed.
+    "VUID-VkImageViewCreateInfo-usage-08931",
+    "VUID-VkImageCreateInfo-pNext-02397",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -2119,6 +2108,7 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 //                                                     pCopySrcLayouts (property),
 //                                                     pCopyDstLayouts (property),
 //                                                     identicalMemoryTypeRequirements (property)
+// - VK_ANDROID_external_format_resolve:               externalFormatResolve (feature)
 //
 void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -2273,6 +2263,14 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
         vk::AddToPNextChain(deviceFeatures, &mHostImageCopyFeatures);
         vk::AddToPNextChain(deviceProperties, &mHostImageCopyProperties);
     }
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    if (ExtensionFound(VK_ANDROID_EXTERNAL_FORMAT_RESOLVE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mExternalFormatResolveFeatures);
+        vk::AddToPNextChain(deviceProperties, &mExternalFormatResolveProperties);
+    }
+#endif
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.1:
@@ -2568,6 +2566,16 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mHostImageCopyProperties.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+    mExternalFormatResolveFeatures = {};
+    mExternalFormatResolveFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID;
+
+    mExternalFormatResolveProperties = {};
+    mExternalFormatResolveProperties.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID;
+#endif
+
     // Query features and properties.
     VkPhysicalDeviceFeatures2KHR deviceFeatures = {};
     deviceFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -2633,6 +2641,10 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mTimelineSemaphoreFeatures.pNext                        = nullptr;
     mHostImageCopyFeatures.pNext                            = nullptr;
     mHostImageCopyProperties.pNext                          = nullptr;
+#if defined(ANGLE_PLATFORM_ANDROID)
+    mExternalFormatResolveFeatures.pNext   = nullptr;
+    mExternalFormatResolveProperties.pNext = nullptr;
+#endif
 }
 
 // See comment above appendDeviceExtensionFeaturesNotPromoted.  Additional extensions are enabled
@@ -2933,6 +2945,14 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
         getFeatures().forceDisableFullScreenExclusive.enabled)
     {
         mEnabledDeviceExtensions.push_back(VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME);
+    }
+#endif
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    if (mFeatures.supportsExternalFormatResolve.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_ANDROID_EXTERNAL_FORMAT_RESOLVE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mExternalFormatResolveFeatures);
     }
 #endif
 }
@@ -4443,6 +4463,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, emulateDithering,
                             IsAndroid() && !mFeatures.supportsLegacyDithering.enabled);
 
+    ANGLE_FEATURE_CONDITION(&mFeatures, adjustClearColorPrecision,
+                            IsAndroid() && mFeatures.supportsLegacyDithering.enabled && isARM);
+
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
     // expose the coherent version of the GL extension despite unofficial Vulkan support.
@@ -4608,6 +4631,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     //
     // - ARM drivers
     // - Imagination drivers
+    // - Virtio-GPU Venus atop MESA ANV and RADV drivers
     //
     // The following drivers are instead known to _not_ include said state, and hit the cache at
     // draw time.
@@ -4623,7 +4647,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     const bool libraryBlobsAreReusedByMonolithicPipelines = !isARM && !isPowerVR;
     ANGLE_FEATURE_CONDITION(&mFeatures, warmUpPipelineCacheAtLink,
                             libraryBlobsAreReusedByMonolithicPipelines && !isQualcommProprietary &&
-                                !(IsLinux() && isIntel) && !(IsChromeOS() && isSwiftShader));
+                                !(IsLinux() && isIntel) && !(IsChromeOS() && isSwiftShader) &&
+                                !isVenus);
 
     // On SwiftShader, no data is retrieved from the pipeline cache, so there is no reason to
     // serialize it or put it in the blob cache.
@@ -4786,6 +4811,13 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsTimelineSemaphore,
                             mTimelineSemaphoreFeatures.timelineSemaphore == VK_TRUE);
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve,
+                            mExternalFormatResolveFeatures.externalFormatResolve == VK_TRUE);
+#else
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve, false);
+#endif
 
     // Disable memory report feature overrides if extension is not supported.
     if ((mFeatures.logMemoryReportCallbacks.enabled || mFeatures.logMemoryReportStats.enabled) &&
@@ -5166,16 +5198,25 @@ VkFormatFeatureFlags RendererVk::getFormatFeatureBits(angle::FormatID formatID,
             return featureBits;
         }
 
-        VkFormat vkFormat = vk::GetVkFormatFromFormatID(formatID);
-        ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
-
-        // Otherwise query the format features and cache it.
-        vkGetPhysicalDeviceFormatProperties(mPhysicalDevice, vkFormat, &deviceProperties);
-        // Workaround for some Android devices that don't indicate filtering
-        // support on D16_UNORM and they should.
-        if (mFeatures.forceD16TexFilter.enabled && vkFormat == VK_FORMAT_D16_UNORM)
+        if (vk::IsYUVExternalFormat(formatID))
         {
-            deviceProperties.*features |= VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
+            const vk::ExternalYuvFormatInfo &externalFormatInfo =
+                mExternalFormatTable.getExternalFormatInfo(formatID);
+            deviceProperties.optimalTilingFeatures = externalFormatInfo.formatFeatures;
+        }
+        else
+        {
+            VkFormat vkFormat = vk::GetVkFormatFromFormatID(formatID);
+            ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
+
+            // Otherwise query the format features and cache it.
+            vkGetPhysicalDeviceFormatProperties(mPhysicalDevice, vkFormat, &deviceProperties);
+            // Workaround for some Android devices that don't indicate filtering
+            // support on D16_UNORM and they should.
+            if (mFeatures.forceD16TexFilter.enabled && vkFormat == VK_FORMAT_D16_UNORM)
+            {
+                deviceProperties.*features |= VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
+            }
         }
     }
 

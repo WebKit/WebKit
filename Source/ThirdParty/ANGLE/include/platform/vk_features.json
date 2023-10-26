@@ -839,6 +839,14 @@
             "issue": "http://anglebug.com/6953"
         },
         {
+            "name": "adjust_clear_color_precision",
+            "category": "Workarounds",
+            "description": [
+                "Adjust normalized clear color precision based on framebuffer color channel bits count"
+            ],
+            "issue": "https://issuetracker.google.com/292282210"
+        },
+        {
             "name": "emulate_advanced_blend_equations",
             "category": "Features",
             "description": [
@@ -1398,6 +1406,13 @@
                 "prefer host cached memory for non static buffer usage"
             ],
             "issue": "https://issuetracker.google.com/288119108"
+        },
+        {
+            "name": "supports_external_format_resolve",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_ANDROID_external_format_resolve extension"
+            ]
         }
     ]
 }

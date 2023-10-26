@@ -228,6 +228,39 @@ class FormatTable final : angle::NonCopyable
     std::array<Format, angle::kNumANGLEFormats> mFormatData;
 };
 
+// Extra data required for a renderable external format, for EXT_yuv_target support.
+// We have one of these structures per external format slot (angle::FormatID::EXTERNALn)
+// and allocate them to particular actual external formats in the order we see them.
+struct ExternalYuvFormatInfo
+{
+    // Vendor-specific external format value to be passed in VkExternalFormatANDROID
+    uint64_t externalFormat;
+    // Format the driver wants us to use for a temporary color attachment in order to render into
+    // this external format
+    VkFormat colorAttachmentFormat;
+    VkFormatFeatureFlags formatFeatures;
+};
+
+class ExternalFormatTable final : angle::NonCopyable
+{
+  public:
+    // Convert externalFormat to one of angle::FormatID::EXTERNALn so that we can pass around in
+    // ANGLE
+    angle::FormatID getOrAllocExternalFormatID(uint64_t externalFormat,
+                                               VkFormat colorAttachmentFormat,
+                                               VkFormatFeatureFlags formatFeatures);
+    const ExternalYuvFormatInfo &getExternalFormatInfo(angle::FormatID format) const;
+
+  private:
+    static constexpr size_t kMaxExternalFormatCountSupported =
+        ToUnderlying(angle::FormatID::EXTERNAL7) - ToUnderlying(angle::FormatID::EXTERNAL0) + 1;
+    // YUV rendering format cache. We build this table at run time when external formats are used.
+    angle::FixedVector<ExternalYuvFormatInfo, kMaxExternalFormatCountSupported> mExternalYuvFormats;
+    mutable std::mutex mExternalYuvFormatMutex;
+};
+
+bool IsYUVExternalFormat(angle::FormatID formatID);
+
 // This will return a reference to a VkFormatProperties with the feature flags supported
 // if the format is a mandatory format described in section 31.3.3. Required Format Support
 // of the Vulkan spec. If the vkFormat isn't mandatory, it will return a VkFormatProperties

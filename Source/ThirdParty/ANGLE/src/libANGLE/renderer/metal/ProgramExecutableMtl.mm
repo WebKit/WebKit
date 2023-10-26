@@ -1514,22 +1514,10 @@ void ProgramExecutableMtl::setUniformImpl(GLint location,
                                           GLenum entryPointType)
 {
     const std::vector<gl::VariableLocation> &uniformLocations = mExecutable->getUniformLocations();
-    if (location < 0 || static_cast<size_t>(location) >= uniformLocations.size())
-    {
-        ERR() << "Invalid uniform location " << location << ", expected [0, "
-              << uniformLocations.size() << ")";
-        return;
-    }
-    const gl::VariableLocation &locationInfo = uniformLocations[location];
+    const gl::VariableLocation &locationInfo                  = uniformLocations[location];
 
     const std::vector<gl::LinkedUniform> &linkedUniforms = mExecutable->getUniforms();
-    if (locationInfo.index >= linkedUniforms.size())
-    {
-        ERR() << "Invalid uniform location index " << locationInfo.index << ", expected [0, "
-              << linkedUniforms.size() << ")";
-        return;
-    }
-    const gl::LinkedUniform &linkedUniform = linkedUniforms[locationInfo.index];
+    const gl::LinkedUniform &linkedUniform               = linkedUniforms[locationInfo.index];
 
     if (linkedUniform.isSampler())
     {

@@ -1,10 +1,10 @@
 {
   "src/libANGLE/renderer/angle_format.py":
-    "601bfb757e052c50ac8f4cb4e0b58eb5",
+    "8269a72cc5629fb2544975b6c36c2bd4",
   "src/libANGLE/renderer/angle_format_map.json":
     "eab6744df71f7bf6bfe9e8bb39949b79",
   "src/libANGLE/renderer/gen_angle_format_table.py":
-    "2ec32d6ad86d2dece50bc7db3cd0d807",
+    "30485da3abcd7f100b459394dfe869a8",
   "src/libANGLE/renderer/metal/shaders/blit.metal":
     "103dfa7c302b03719a36709f9cfa9462",
   "src/libANGLE/renderer/metal/shaders/clear.metal":
@@ -20,15 +20,11 @@
   "src/libANGLE/renderer/metal/shaders/gen_mipmap.metal":
     "fab35deec42fd89ae7a11d2f87b6e0b4",
   "src/libANGLE/renderer/metal/shaders/gen_mtl_internal_shaders.py":
-    "35717adb82858bca41bc931284845805",
+    "5208b2c20cbe03a06aa6278b41aa654d",
   "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_autogen.metal":
-    "652efddc19c31a34cd8e3ff156e693d8",
-  "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_ios_autogen.h":
-    "a96315520cfb44b9487c11e100384a67",
-  "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_macos_autogen.h":
-    "d99f2a5c5224ed02256e93f620e4f6e9",
+    "47e628b4074d12d8caa4598d87ff7fd8",
   "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h":
-    "483dd9b737eef0d3556f6ee5b840f6f3",
+    "0c0eb1a1350162e6a67d2be199b135c8",
   "src/libANGLE/renderer/metal/shaders/rewrite_indices.metal":
     "a29210b023ed3393e1342d94e338d449",
   "src/libANGLE/renderer/metal/shaders/visibility.metal":

@@ -56,6 +56,9 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         angle::Format::InternalFormatToID(internalFormat.sizedInternalFormat);
     mFormat = contextMtl->getPixelFormat(angleFormatId);
 
+    bool useImplicitResolve =
+        contextMtl->getDisplay()->getFeatures().alwaysResolveMultisampleRenderBuffers.enabled;
+
     uint32_t actualSamples;
     if (samples == 0)
     {
@@ -74,12 +77,27 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
 
     if ((mTexture == nullptr || !mTexture->valid()) && (width != 0 && height != 0))
     {
-        if (actualSamples == 1)
+        if (actualSamples == 1 || (useImplicitResolve && mFormat.getCaps().resolve))
         {
             ANGLE_TRY(mtl::Texture::Make2DTexture(
                 contextMtl, mFormat, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1,
                 /* renderTargetOnly */ false,
                 /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
+
+            // Use implicit resolve if alwaysResolveMultisampleRenderBuffers feature is enabled. At
+            // the end of every render pass, the MSAA render buffer will be automatically resolved
+            // to a single sampled texture.
+            if (actualSamples > 1)
+            {
+                // This format must supports implicit resolve
+                ASSERT(mFormat.getCaps().resolve);
+
+                ANGLE_TRY(mtl::Texture::Make2DMSTexture(
+                    contextMtl, mFormat, static_cast<uint32_t>(width),
+                    static_cast<uint32_t>(height), actualSamples,
+                    /* renderTargetOnly */ true,
+                    /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mImplicitMSTexture));
+            }
         }
         else
         {

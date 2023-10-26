@@ -747,6 +747,14 @@
                 "Disable EXT_texture_mirror_clamp_to_edge extension."
             ],
             "issue": "https://anglebug.com/8319"
+        },
+        {
+            "name": "resync_depth_range_on_clip_control",
+            "category": "Workarounds",
+            "description": [
+                "Resync depth range to apply clip control updates."
+            ],
+            "issue": "https://anglebug.com/8381"
         }
     ]
 }

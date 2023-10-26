@@ -749,6 +749,17 @@ class RendererVk : angle::NonCopyable
     // Static function to get Vulkan object type name.
     static const char *GetVulkanObjectTypeName(VkObjectType type);
 
+    bool nullColorAttachmentWithExternalFormatResolve() const
+    {
+#if defined(ANGLE_PLATFORM_ANDROID)
+        ASSERT(mFeatures.supportsExternalFormatResolve.enabled);
+        return mExternalFormatResolveProperties.nullColorAttachmentWithExternalFormatResolve;
+#else
+        return false;
+#endif
+    }
+    vk::ExternalFormatTable mExternalFormatTable;
+
   private:
     angle::Result setupDevice(DisplayVk *displayVk);
     angle::Result createDeviceAndQueue(DisplayVk *displayVk, uint32_t queueFamilyIndex);
@@ -915,6 +926,10 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceHostImageCopyPropertiesEXT mHostImageCopyProperties;
     std::vector<VkImageLayout> mHostImageCopySrcLayoutsStorage;
     std::vector<VkImageLayout> mHostImageCopyDstLayoutsStorage;
+#if defined(ANGLE_PLATFORM_ANDROID)
+    VkPhysicalDeviceExternalFormatResolveFeaturesANDROID mExternalFormatResolveFeatures;
+    VkPhysicalDeviceExternalFormatResolvePropertiesANDROID mExternalFormatResolveProperties;
+#endif
 
     angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;

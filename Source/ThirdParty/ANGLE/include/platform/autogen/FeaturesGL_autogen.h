@@ -689,6 +689,13 @@ struct FeaturesGL : FeatureSetBase
         &members, "https://anglebug.com/8319"
     };
 
+    FeatureInfo resyncDepthRangeOnClipControl = {
+        "resyncDepthRangeOnClipControl",
+        FeatureCategory::OpenGLWorkarounds,
+        "Resync depth range to apply clip control updates.",
+        &members, "https://anglebug.com/8381"
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

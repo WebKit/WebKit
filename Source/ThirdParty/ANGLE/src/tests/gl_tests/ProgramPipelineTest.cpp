@@ -1824,6 +1824,122 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// Test a PPO scenario from a game, calling glBindBufferRange between two draws with
+// multiple binding points, some unused.  This would result in a crash without the fix.
+// https://issuetracker.google.com/issues/299532942
+TEST_P(ProgramPipelineTest31, ProgramPipelineBindBufferRange)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    const GLchar *vertString = R"(#version 310 es
+in vec4 position;
+layout(std140, binding = 0) uniform ubo1 {
+    vec4 color;
+};
+layout(location=0) out vec4 vsColor;
+void main()
+{
+    vsColor = color;
+    gl_Position = position;
+})";
+
+    const GLchar *fragString = R"(#version 310 es
+precision mediump float;
+layout(std140, binding = 1) uniform globals {
+    vec4 fsColor;
+};
+layout(std140, binding = 2) uniform params {
+    vec4 foo;
+};
+layout(std140, binding = 3) uniform layer {
+    vec4 bar;
+};
+layout(location=0) highp in vec4 vsColor;
+layout(location=0) out vec4 diffuse;
+void main()
+{
+    diffuse = vsColor + fsColor;
+})";
+
+    // Create the pipeline
+    GLProgramPipeline programPipeline;
+    glBindProgramPipeline(programPipeline);
+
+    // Create the vertex shader
+    GLShader vertShader(GL_VERTEX_SHADER);
+    glShaderSource(vertShader, 1, &vertString, nullptr);
+    glCompileShader(vertShader);
+    mVertProg = glCreateProgram();
+    glProgramParameteri(mVertProg, GL_PROGRAM_SEPARABLE, 1);
+    glAttachShader(mVertProg, vertShader);
+    glLinkProgram(mVertProg);
+    glUseProgramStages(programPipeline, GL_VERTEX_SHADER_BIT, mVertProg);
+    EXPECT_GL_NO_ERROR();
+
+    // Create the fragment shader
+    GLShader fragShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragShader, 1, &fragString, nullptr);
+    glCompileShader(fragShader);
+    mFragProg = glCreateProgram();
+    glProgramParameteri(mFragProg, GL_PROGRAM_SEPARABLE, 1);
+    glAttachShader(mFragProg, fragShader);
+    glLinkProgram(mFragProg);
+    glUseProgramStages(programPipeline, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    EXPECT_GL_NO_ERROR();
+
+    // Set up a uniform buffer with room for five offsets, four active at a time
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, 2048, 0, GL_DYNAMIC_DRAW);
+    uint8_t *mappedBuffer =
+        static_cast<uint8_t *>(glMapBufferRange(GL_UNIFORM_BUFFER, 0, 2048, GL_MAP_WRITE_BIT));
+    ASSERT_NE(nullptr, mappedBuffer);
+
+    // Only set up three of the five offsets. The other two must be present, but unused.
+    GLColor32F *binding0 = reinterpret_cast<GLColor32F *>(mappedBuffer);
+    GLColor32F *binding1 = reinterpret_cast<GLColor32F *>(mappedBuffer + 256);
+    GLColor32F *binding4 = reinterpret_cast<GLColor32F *>(mappedBuffer + 1024);
+    *binding0            = kFloatRed;
+    *binding1            = kFloatGreen;
+    *binding4            = kFloatBlue;
+    glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+    // Start with binding0=red and binding1=green
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 256);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, ubo, 256, 512);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 2, ubo, 512, 768);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 3, ubo, 768, 1024);
+    EXPECT_GL_NO_ERROR();
+
+    // Set up data for draw
+    std::array<Vector3, 6> verts = GetQuadVertices();
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts[0]), verts.data(), GL_STATIC_DRAW);
+    GLint posLoc = glGetAttribLocation(mVertProg, "position");
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+    EXPECT_GL_NO_ERROR();
+
+    // Perform the first draw
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // At this point we have red+green=yellow, but read-back changes dirty bits and breaks the test
+    // EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    EXPECT_GL_NO_ERROR();
+
+    // This is the key here - call glBindBufferRange between glDraw* calls, changing binding0=blue
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 1024, 1280);
+    EXPECT_GL_NO_ERROR();
+
+    // The next draw would crash in handleDirtyGraphicsUniformBuffers without the accompanying fix
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // We should now have green+blue=cyan
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+    EXPECT_GL_NO_ERROR();
+}
+
 class ProgramPipelineTest32 : public ProgramPipelineTest
 {
   protected:

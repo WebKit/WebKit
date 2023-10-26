@@ -67,21 +67,8 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
-diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 8e52937f55bcd77be026e2d99bead9ac4db2c2b9..f956247eaf93806b62d84d15b65f1ab2f59479bc 100644
---- a/src/libANGLE/Context.cpp
-+++ b/src/libANGLE/Context.cpp
-@@ -828,6 +828,8 @@ egl::Error Context::onDestroy(const egl::Display *display)
-         return egl::NoError();
-     }
- 
-+    mState.ensureNoPendingLink(this);
-+
-     // eglDestoryContext() must have been called for this Context and there must not be any Threads
-     // that still have it current.
-     ASSERT(mIsDestroyed == true && mRefCount == 0);
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 68e94d1594a4c2b0d11b9ae2a87a38db88c8fde8..dcfdbf60ae37d2b3f461df8e65e8965909c1c679 100644
+index f72bf7949554c89c830822c9d395179908e190d8..16935eafa62ee9f234cfaa43b49237b723e88957 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -111,7 +98,7 @@ index a6fe076c72d043dba3fc347bf020ebf8ec895f51..add46e99c91d19bbd790d2de0d8768b8
 +
  #endif  // LIBANGLE_FEATURES_H_
 diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
-index ac154983262b48c1f8bf04f188b0346dabbd4b82..f9d9df5de07847f58b728ee0f778406871dbaecf 100644
+index 5de0e3cd46989f2cdb31a63b0b4a230c5fa2d874..5f88309ab2d299890a7e34ac848865448380d7bf 100644
 --- a/src/libANGLE/formatutils.cpp
 +++ b/src/libANGLE/formatutils.cpp
 @@ -592,7 +592,8 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
@@ -181,10 +168,10 @@ index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e2091598714921
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 834694ede402e06f69ebdf271c3898f00a82b875..800e5ce771988c2eb198e191b098854f117aef75 100644
+index eaa9bc8bb13bdbb95bf2956dcf3da89ff4c042cc..0d60a01000a2a97d5fe5c0fe4dcf07eaafcf9745 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -182,12 +182,22 @@ void DisplayMtl::terminate()
+@@ -185,12 +185,22 @@ void DisplayMtl::terminate()
  
  bool DisplayMtl::testDeviceLost()
  {
@@ -207,7 +194,7 @@ index 834694ede402e06f69ebdf271c3898f00a82b875..800e5ce771988c2eb198e191b098854f
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1421,8 +1431,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1432,8 +1442,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -237,7 +224,7 @@ index 5f3f10a86f707290bcad9f823dec0a9126425fde..860f798cf68bb4fad87bee1ea9cd507d
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 0637c62bb7f2c5e0476a7d288b0304c5abdfcea3..3e7cf6fa397a31cb238312bc3bb6d558048fa85d 100644
+index b44cf2fc53cf35bbb62dba261af3b3078a52b151..68ea7af382187bd455b4725e6338a5202fe7a002 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 @@ -897,7 +897,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
@@ -491,7 +478,7 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0
  {
  namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index ea0c0df6638aaaec5092b85930669ff74ed756c2..3fc1f9097f613cac238a47adf0f151c6dd2ba17b 100644
+index 77887e0639c7884908da04e76bd139805a5df632..ba325c85acc980f0969daee23a57026855f94437 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
 @@ -1562,6 +1562,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)

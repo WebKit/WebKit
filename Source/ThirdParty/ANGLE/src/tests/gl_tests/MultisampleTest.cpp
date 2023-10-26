@@ -1025,6 +1025,8 @@ ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND(MultisampleTestES3,
 
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     MultisampleResolveTest,
+    ES3_METAL().disable(Feature::AlwaysResolveMultisampleRenderBuffers),
+    ES3_METAL().enable(Feature::AlwaysResolveMultisampleRenderBuffers),
     ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
     ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
     ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
