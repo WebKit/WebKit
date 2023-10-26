@@ -236,12 +236,13 @@ class SharedGarbageList final : angle::NonCopyable
         VkDeviceSize bytesDestroyed = 0;
         while (!mSubmittedQueue.empty())
         {
-            T &garbage = mSubmittedQueue.front();
+            T &garbage        = mSubmittedQueue.front();
+            VkDeviceSize size = garbage.getSize();
             if (!garbage.destroyIfComplete(renderer))
             {
                 break;
             }
-            bytesDestroyed += garbage.getSize();
+            bytesDestroyed += size;
             mSubmittedQueue.pop();
         }
         mTotalSubmittedGarbageBytes -= bytesDestroyed;

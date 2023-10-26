@@ -46,11 +46,50 @@
         await new Promise(resolve => video.srcObject.getAudioTracks()[0].onmute = resolve);
 
         testRunner.removeMockMediaDevice("usbmic");
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        assert_true(video.srcObject.getAudioTracks()[0].muted);
+        assert_equals(video.srcObject.getAudioTracks()[0].readyState, "live");
+
+        testRunner.addMockMicrophoneDevice("usbmic", "my USB microphone");
+
+        if (window.internals)
+            internals.setPageMuted("");
+
+        await new Promise(resolve => video.srcObject.getAudioTracks()[0].onunmute = resolve);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        assert_false(video.srcObject.getAudioTracks()[0].muted);
+        assert_equals(video.srcObject.getAudioTracks()[0].readyState, "live");
+    }, "Detection of missing capturing device should not trigger capture to fail if device disappears when track is muted");
+
+    promise_test(async (test) => {
+        await setup(test);
+
+        testRunner.addMockMicrophoneDevice("usbmic", "my USB microphone");
+
+        const deviceId = await getDeviceId("my USB microphone");
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId } });
+        await video.play();
+
+        if (window.internals)
+            internals.setPageMuted("capturedevices");
+
+        await new Promise(resolve => video.srcObject.getAudioTracks()[0].onmute = resolve);
+
+        testRunner.removeMockMediaDevice("usbmic");
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        assert_true(video.srcObject.getAudioTracks()[0].muted);
+        assert_equals(video.srcObject.getAudioTracks()[0].readyState, "live");
+
+        if (window.internals)
+            internals.setPageMuted("");
+
         return new Promise((resolve, reject) => {
             video.srcObject.getAudioTracks()[0].onended = resolve;
             setTimeout(() => reject("track did not end"), 2000);
         });
-    }, "Detection of missing capturing device should trigger capture to fail even if track is muted");
+    }, "Detection of missing capturing device should trigger capture to fail even if device disappears when track is muted and track gets later on unmuted");
     </script>
 </body>
 </html>

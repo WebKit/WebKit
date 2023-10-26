@@ -189,7 +189,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     std::unique_ptr<WebKit::RemoteLayerBackingStoreProperties> properties;
 };
 
-struct WebKit::LayerProperties {
+[LegacyPopulateFromEmptyConstructor] struct WebKit::LayerProperties {
     [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties;
     [NotSerialized] OptionSet<WebKit::LayerChange> everChangedProperties;
 

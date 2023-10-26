@@ -824,6 +824,7 @@ action("angle_program_version_id") {
   visibility = [ ":angle_version" ]
 
   inputs = angle_code_affecting_program_serialize
+  deps = angle_dependencies_affecting_program_serialize
 
   args = [
     rebase_path(_program_version_header, root_build_dir),

@@ -1530,6 +1530,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     forward_variables_from(invoker, [ "mustpass_suffix" ])
     if (mustpass_suffix != "master") {
       target_name = "${_api}_${mustpass_suffix}"
+      target_name = string_replace(target_name, "-", "_")
     }
     angle_deqp_gtest(target_name) {
       forward_variables_from(invoker, "*")
@@ -1573,13 +1574,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     mustpass_suffix = "multisample"
   }
 
-  angle_deqp_core_gtest("gles3") {
-    defines = [ "ANGLE_DEQP_GLES3_565_NO_DEPTH_NO_STENCIL_TESTS" ]
-    deps = [ ":angle_deqp_gles3_common" ]
-    mustpass_dir = _aosp_gles_mustpass
-    mustpass_suffix = "565-no-depth-no-stencil"
-  }
-
   angle_deqp_core_gtest("gles31") {
     defines = [ "ANGLE_DEQP_GLES31_TESTS" ]
     deps = [ ":angle_deqp_gles31_common" ]
@@ -1594,18 +1588,27 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     mustpass_suffix = "multisample"
   }
 
-  angle_deqp_core_gtest("gles31") {
-    defines = [ "ANGLE_DEQP_GLES31_565_NO_DEPTH_NO_STENCIL_TESTS" ]
-    deps = [ ":angle_deqp_gles31_common" ]
-    mustpass_dir = _aosp_gles_mustpass
-    mustpass_suffix = "565-no-depth-no-stencil"
-  }
-
   angle_deqp_core_gtest("egl") {
     defines = [ "ANGLE_DEQP_EGL_TESTS" ]
     sources = deqp_egl_sources
     mustpass_dir = _aosp_egl_mustpass
     mustpass_suffix = "master"
+  }
+
+  if (is_android) {
+    angle_deqp_core_gtest("gles3") {
+      defines = [ "ANGLE_DEQP_GLES3_565_NO_DEPTH_NO_STENCIL_TESTS" ]
+      deps = [ ":angle_deqp_gles3_common" ]
+      mustpass_dir = _aosp_gles_mustpass
+      mustpass_suffix = "565-no-depth-no-stencil"
+    }
+
+    angle_deqp_core_gtest("gles31") {
+      defines = [ "ANGLE_DEQP_GLES31_565_NO_DEPTH_NO_STENCIL_TESTS" ]
+      deps = [ ":angle_deqp_gles31_common" ]
+      mustpass_dir = _aosp_gles_mustpass
+      mustpass_suffix = "565-no-depth-no-stencil"
+    }
   }
 
   # The CTS also includes a set of "KHR" tests that are separate from the main body of dEQP tests.
@@ -1877,8 +1880,8 @@ group("angle_tests") {
 
     if (is_android) {
       deps += [
-        ":angle_deqp_gles31_565-no-depth-no-stencil_tests",
-        ":angle_deqp_gles3_565-no-depth-no-stencil_tests",
+        ":angle_deqp_gles31_565_no_depth_no_stencil_tests",
+        ":angle_deqp_gles3_565_no_depth_no_stencil_tests",
       ]
     }
   }

@@ -478,8 +478,8 @@ TEST_P(IOSurfaceClientBufferTest, RenderToRGBA8888IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
-    // OpenGL doesn't support RGBA IOSurface.
-    ANGLE_SKIP_TEST_IF(IsOpenGL());
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
 
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
 
@@ -492,8 +492,8 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromRGBA8888IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
-    // OpenGL doesn't support RGBA IOSurface.
-    ANGLE_SKIP_TEST_IF(IsOpenGL());
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
 
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
 
@@ -530,8 +530,8 @@ TEST_P(IOSurfaceClientBufferTest, RenderToRGBX8888IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
-    // OpenGL doesn't support RGBA IOSurface.
-    ANGLE_SKIP_TEST_IF(IsOpenGL());
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
 
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
 
@@ -544,8 +544,8 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromRGBX8888IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
-    // OpenGL doesn't support RGBA IOSurface.
-    ANGLE_SKIP_TEST_IF(IsOpenGL());
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
 
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
 

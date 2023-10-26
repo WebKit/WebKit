@@ -4,6 +4,9 @@
 
 import("../../../../gni/angle.gni")
 
+metal_internal_shaders_header =
+    "$root_gen_dir/angle/mtl_internal_shaders_metallib.h"
+
 metal_backend_sources = [
   "BufferMtl.h",
   "BufferMtl.mm",
@@ -85,9 +88,7 @@ metal_backend_sources = [
   "renderermtl_utils.cpp",
   "renderermtl_utils.h",
   "shaders/constants.h",
-  "shaders/mtl_internal_shaders_ios_autogen.h",
-  "shaders/mtl_internal_shaders_macos_autogen.h",
-  "shaders/mtl_internal_shaders_metallib.h",
   "shaders/mtl_internal_shaders_src_autogen.h",
   "shaders/rewrite_indices_shared.h",
+  metal_internal_shaders_header,
 ]

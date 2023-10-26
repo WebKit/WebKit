@@ -3139,7 +3139,7 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     const angle::Format &srcIntendedFormat = src->getIntendedFormat();
     const angle::Format &dstIntendedFormat = dst->getIntendedFormat();
 
-    bool isYUV = srcIntendedFormat.isYUV;
+    bool isYUV = src->getYcbcrConversionDesc().valid();
 
     vk::SamplerDesc samplerDesc;
     if (isYUV)

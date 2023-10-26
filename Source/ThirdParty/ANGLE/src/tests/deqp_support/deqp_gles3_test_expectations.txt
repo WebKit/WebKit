@@ -832,3 +832,12 @@
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.separate.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.random.* = FAIL
+
+// Undefined behavior in dEQP framework due to NaN
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.1 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.6 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.18 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.19 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.23 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.29 = SKIP
+b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.34 = SKIP

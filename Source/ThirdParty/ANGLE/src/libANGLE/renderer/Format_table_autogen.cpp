@@ -264,6 +264,14 @@ const Format gFormatInfoTable[] = {
     { FormatID::X2R10G10B10_UINT_VERTEX, GL_X2_RGB10_UINT_ANGLEX, GL_X2_RGB10_UINT_ANGLEX, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_INT, 10, 10, 10, 0, 0, 0, 0, 4, std::numeric_limits<GLuint>::max(), false, false, false, false, false, gl::VertexAttribType::UnsignedInt1010102 },
     { FormatID::X2R10G10B10_UNORM_VERTEX, GL_X2_RGB10_UNORM_ANGLEX, GL_X2_RGB10_UNORM_ANGLEX, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 10, 10, 10, 0, 0, 0, 0, 4, std::numeric_limits<GLuint>::max(), false, false, false, false, false, gl::VertexAttribType::UnsignedInt1010102 },
     { FormatID::X2R10G10B10_USCALED_VERTEX, GL_X2_RGB10_USCALED_ANGLEX, GL_X2_RGB10_USCALED_ANGLEX, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_INT, 10, 10, 10, 0, 0, 0, 0, 4, std::numeric_limits<GLuint>::max(), false, false, true, false, false, gl::VertexAttribType::UnsignedInt1010102 },
+    { FormatID::EXTERNAL0, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL1, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL2, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL3, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL4, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL5, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL6, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
+    { FormatID::EXTERNAL7, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_UNSIGNED_NORMALIZED, 8, 8, 8, 8, 0, 0, 0, 4, 0, false, false, false, false, true, gl::VertexAttribType::InvalidEnum },
     // clang-format on
 };
 

@@ -564,11 +564,12 @@ TEST(WebArchive, SaveResourcesBlobURL)
             } else {
                 // Image file from img and the second iframe element.
                 unsigned replacementPathCount = 0;
-                NSRange range = [savedMainResource rangeOfString:replacementPath];
+                NSString *savedMainResourceCopy = [NSString stringWithString:savedMainResource];
+                NSRange range = [savedMainResourceCopy rangeOfString:replacementPath];
                 while (range.location != NSNotFound) {
                     ++replacementPathCount;
-                    savedMainResource = [savedMainResource substringFromIndex:range.location + 1];
-                    range = [savedMainResource rangeOfString:replacementPath];
+                    savedMainResourceCopy = [savedMainResourceCopy substringFromIndex:range.location + 1];
+                    range = [savedMainResourceCopy rangeOfString:replacementPath];
                 }
                 EXPECT_EQ(2u, replacementPathCount);
             }

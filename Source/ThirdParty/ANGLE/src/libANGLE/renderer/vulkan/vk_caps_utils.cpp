@@ -1197,6 +1197,8 @@ void RendererVk::ensureCapsInitialized() const
     }
 
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;
+
+    mNativeExtensions.YUVTargetEXT = mFeatures.supportsExternalFormatResolve.enabled;
 }
 
 namespace vk

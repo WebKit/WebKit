@@ -117,6 +117,11 @@ bool MediaStreamTrackPrivate::muted() const
     return m_source->muted();
 }
 
+bool MediaStreamTrackPrivate::interrupted() const
+{
+    return m_source->interrupted();
+}
+
 bool MediaStreamTrackPrivate::isCaptureTrack() const
 {
     return m_source->isCaptureSource();

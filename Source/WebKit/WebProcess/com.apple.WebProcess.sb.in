@@ -1840,13 +1840,9 @@
 
 (define (syscall-unix-only-in-use-before-launch)
     (syscall-number
-        SYS_csops
-        SYS_fsgetpath
         SYS_getaudit_addr
-        SYS_getfsstat64
         SYS_kdebug_trace
-        SYS_pathconf
-        SYS_statfs64))
+        SYS_pathconf))
 
 (define (syscall-unix-in-use-after-launch)
     (syscall-number
@@ -1858,6 +1854,7 @@
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
+        SYS_csops
         SYS_csops_audittoken
         SYS_csrctl
         SYS_dup ;; Remove when <rdar://88210738> is fixed
@@ -1865,6 +1862,7 @@
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fgetxattr
+        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatfs64
         SYS_getattrlist
@@ -1872,14 +1870,18 @@
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
+        SYS_getfsstat64
+        SYS_getgid
         SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
+        SYS_getxattr
         SYS_ioctl
         SYS_issetugid
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
         SYS_lseek
@@ -1901,11 +1903,14 @@
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
         SYS_read
+        SYS_read_nocancel
         SYS_readlink
+        SYS_sendto
 #if ASAN_ENABLED
         SYS_sigaltstack
 #endif
         SYS_stat64
+        SYS_statfs64
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
@@ -1915,26 +1920,12 @@
         SYS_write_nocancel
         SYS_writev))
 
+#if !PLATFORM(MAC)
 (define (syscall-unix-possibly-in-use-after-launch)
     (syscall-number
-        SYS___semwait_signal
-        SYS_flock
-        SYS_fsetxattr ;; <rdar://problem/56332491>
-        SYS_ftruncate
-        SYS_getgid
-        SYS_getxattr
-#if !PLATFORM(MAC)
         SYS_memorystatus_control
+        SYS_thread_selfusage))
 #endif
-        SYS_msync
-        SYS_read_nocancel
-        SYS_rename
-        SYS_sendto
-        SYS_sigaltstack
-#if !PLATFORM(MAC)
-        SYS_thread_selfusage
-#endif
-        ))
 
 (define (syscall-unix-apple-silicon)
     (syscall-number
@@ -1944,35 +1935,16 @@
 (define (syscalls-rarely-used)
     (syscall-number
         SYS_getegid
-        SYS_kdebug_typefilter
+        SYS___semwait_signal
         SYS_write))
 
 (define (syscalls-rarely-used-blocked-in-lockdown-mode)
     (syscall-number
         SYS___pthread_kill
-        SYS___semwait_signal_nocancel
-        SYS_change_fdguard_np
-        SYS_chmod
-        SYS_fchmod
-        SYS_fsync
-        SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
-        SYS_guarded_close_np
-        SYS_guarded_open_np
-        SYS_guarded_pwrite_np
-        SYS_kevent ;; <rdar://89072361>
-        SYS_mlock
-        SYS_munlock
-        SYS_openat_nocancel
-        SYS_proc_rlimit_control
         SYS_psynch_rw_rdlock
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
 #endif
-        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
-        SYS_setsockopt ;; <rdar://90249455>
-        SYS_shm_open
-        SYS_sigaction
-        SYS_unlink
 #if !PLATFORM(MAC)
         SYS_abort_with_payload
         SYS_fgetattrlist
@@ -2002,24 +1974,68 @@
     SYS_umask
     SYS_work_interval_ctl))
 
-(deny syscall-unix)
+(define (syscall-unix-downlevels)
+    (syscall-number
+        SYS_flock
+        SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_ftruncate
+        SYS_msync
+        SYS_rename))
 
+(define (syscall-unix-downlevels-blocked-in-lockdown-mode)
+    (syscall-number
+        SYS___semwait_signal_nocancel
+        SYS_change_fdguard_np
+        SYS_chmod
+        SYS_fchmod
+        SYS_fsync
+        SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
+        SYS_guarded_close_np
+        SYS_guarded_open_np
+        SYS_guarded_pwrite_np
+        SYS_kevent ;; <rdar://89072361>
+        SYS_mlock
+        SYS_munlock
+        SYS_openat_nocancel
+        SYS_proc_rlimit_control
+        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
+        SYS_setsockopt ;; <rdar://90249455>
+        SYS_shm_open
+        SYS_sigaction
+        SYS_unlink))
+
+(deny syscall-unix)
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
     (allow syscall-unix (syscall-unix-only-in-use-before-launch)))
 (with-filter (webcontent-process-launched)
-    (allow syscall-unix (with report) (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
+    (deny syscall-unix (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
 (allow syscall-unix (syscall-unix-in-use-after-launch))
+#if !PLATFORM(MAC)
 (allow syscall-unix (with report) (with telemetry) (syscall-unix-possibly-in-use-after-launch))
+#endif
+(with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+    (allow syscall-unix (syscall-unix-downlevels)))
+(with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)
     (syscall-unix-in-use-after-launch)
-    (syscall-unix-possibly-in-use-after-launch))
+#if !PLATFORM(MAC)
+    (syscall-unix-possibly-in-use-after-launch)
+#endif
+    (syscall-unix-downlevels))
 #endif
 
 (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
+
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+(allow syscall-unix (syscall-unix-downlevels))
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+#endif
 
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (require-not (lockdown-mode))
@@ -2122,12 +2138,16 @@
     io_service_get_matching_service_bin
     io_service_get_matching_services_bin
     io_service_open_extended
+    mach_exception_raise
     mach_memory_entry_ownership
+    mach_port_extract_right
+    mach_port_get_context_from_user
     mach_port_get_refs
     mach_port_request_notification
     mach_port_set_attributes
     mach_vm_copy
     mach_vm_map_external
+    mach_vm_region
     mach_vm_region_recurse
     mach_vm_remap_external
     semaphore_create
@@ -2141,12 +2161,8 @@
     thread_resume
     thread_suspend))
 
-(define (kernel-mig-routines-possibly-in-use) (kernel-mig-routine
-    io_registry_entry_get_property_bytes
-    mach_exception_raise
-    mach_port_extract_right
-    mach_port_get_context_from_user
-    mach_vm_region))
+(define (kernel-mig-routines-downlevels) (kernel-mig-routine
+    io_registry_entry_get_property_bytes))
 
 (define (kernel-mig-routines-iokit) (kernel-mig-routine
     io_connect_add_client
@@ -2156,6 +2172,11 @@
     io_connect_set_notification_port_64))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
+    task_threads_from_user
+    thread_policy
+    thread_policy_set))
+
+(define (kernel-mig-routines-downlevels-blocked-in-lockdown-mode) (kernel-mig-routine
     clock_get_time
     host_request_notification
     io_connect_map_memory_into_task
@@ -2165,10 +2186,7 @@
     io_registry_entry_get_name_in_plane
     io_registry_entry_get_properties_bin_buf
     io_registry_get_root_entry
-    io_service_close
-    task_threads_from_user
-    thread_policy
-    thread_policy_set))
+    io_service_close))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
     thread_info
@@ -2180,7 +2198,7 @@
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
-                (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
+                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
             (with-filter (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
@@ -2191,14 +2209,20 @@
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+            (allow mach-message-send (kernel-mig-routines-downlevels))
+            (with-filter (require-not (lockdown-mode))
+                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
+#endif
 #if HAVE(SANDBOX_STATE_FLAGS)
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+                (allow mach-message-send (kernel-mig-routines-downlevels))
                 (allow mach-message-send (kernel-mig-routines-iokit)))
+            (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit))
 #endif
-            (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
-                
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
             ;; <rdar://105161083>
             (with-filter (require-not (webcontent-process-launched))
@@ -2233,33 +2257,45 @@
     MSC_mk_timer_destroy
     MSC_semaphore_signal_trap
     MSC_semaphore_timedwait_trap
+    MSC_semaphore_wait_trap
     MSC_syscall_thread_switch
+    MSC_task_name_for_pid
     MSC_thread_get_special_reply_port))
 
-(define (syscall-mach-possibly-in-use) (machtrap-number
+(define (syscall-mach-downlevels) (machtrap-number
     MSC__kernelrpc_mach_port_get_attributes_trap
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
     MSC_iokit_user_client_trap
 #endif
-    MSC_pid_for_task
-    MSC_semaphore_wait_trap
-    MSC_task_name_for_pid))
+    MSC_pid_for_task))
 
 (define (syscall-mach-blocked-in-lockdown-mode) (machtrap-number
+    MSC_thread_self_trap))
+
+(define (syscall-mach-downlevels-blocked-in-lockdown-mode) (machtrap-number
     MSC_host_create_mach_voucher_trap
     MSC_mach_msg_trap
     MSC_mach_reply_port
     MSC_mach_voucher_extract_attr_recipe_trap
-    MSC_swtch_pri
-    MSC_thread_self_trap))
+    MSC_swtch_pri))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
     (allow syscall-mach (syscall-mach-in-use))
-    (allow syscall-mach (with report) (with telemetry) (syscall-mach-possibly-in-use))
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+        (allow syscall-mach (syscall-mach-downlevels)))
+    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+        (allow syscall-unix (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+#endif
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+    (allow syscall-mach (syscall-mach-downlevels))
+    (with-filter (require-not (lockdown-mode))
+        (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+#endif
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
     (with-filter (require-not (lockdown-mode))
-        (allow syscall-mach (with report) (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
+        (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
     (with-filter (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
 #else

@@ -16,18 +16,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 import angle_format
 import gen_angle_format_table
 
-configs = [{
-    "sdk": "macosx",
-    "compile_flags": ["--std=macos-metal2.1", "-mmacosx-version-min=10.14"],
-    "variable_name": "gDefaultMetallib",
-    "header": "mtl_internal_shaders_macos_autogen.h"
-}, {
-    "sdk": "iphoneos",
-    "compile_flags": ["--std=ios-metal2.1", "-mios-version-min=12"],
-    "variable_name": "gDefaultMetallib",
-    "header": "mtl_internal_shaders_ios_autogen.h"
-}]
-
 metal_source_output_header = "mtl_internal_shaders_src_autogen.h"
 
 metal_shader_output_file = "mtl_internal_shaders_autogen.metal"
@@ -84,63 +72,6 @@ def find_clang():
         raise Exception('Cannot find clang')
 
     return clang
-
-
-def metal_to_air(metal_src, sdk, compile_flags, dest_air_file):
-    temp_fname = 'temp_metal_src.metal'
-    with open(temp_fname, 'wt') as out_file:
-        out_file.write(metal_src.decode("utf-8"))
-
-    result = subprocess.run(
-        ["xcrun", "-sdk", sdk, "metal"] + compile_flags + ["-c", temp_fname, "-o", dest_air_file],
-        stdout=subprocess.PIPE,
-        text=True)
-    os.remove(temp_fname)
-
-    if result.returncode != 0:
-        raise Exception('Failed to compile metal to air: ' + result.stdout.strip())
-
-
-def air_to_mtllib(src_air_file, sdk, dest_mtllib_file):
-    result = subprocess.run(
-        ["xcrun", "-sdk", sdk, "metallib", src_air_file, "-o", dest_mtllib_file],
-        stdout=subprocess.PIPE,
-        text=True)
-    if result.returncode != 0:
-        raise Exception('Failed to compile metal to air: ' + result.stdout.strip())
-
-
-def metal_to_metallib(metal_src, sdk, compile_flags):
-    intermediate_air_file = "temp_metal.air"
-    metal_to_air(metal_src, sdk, compile_flags, intermediate_air_file)
-
-    intermediate_metallib_file = "temp_metal.metallib"
-    air_to_mtllib(intermediate_air_file, sdk, intermediate_metallib_file)
-    os.remove(intermediate_air_file)
-
-    with open(intermediate_metallib_file, 'rb') as f:
-        mtllib = f.read()
-    os.remove(intermediate_metallib_file)
-
-    return mtllib
-
-
-def generate_metallib_header(metal_src, sdk, compile_flags, variable_name, dest_header_file):
-    boilerplate_code = template_header_boilerplate.format(
-        script_name=os.path.basename(sys.argv[0]))
-
-    metallib_data = metal_to_metallib(metal_src, sdk, compile_flags)
-
-    with open(dest_header_file, 'wt') as out_file:
-        out_file.write(boilerplate_code)
-        out_file.write('\n')
-        out_file.write('// C++ string version of default shaders mtllib.\n\n')
-        out_file.write('\n\nstatic constexpr uint8_t ' + variable_name + '[] = {\n')
-        for byte in metallib_data:
-            out_file.write(f"{byte}, ")
-        out_file.write('\n')
-        out_file.write('};\n')
-        out_file.close()
 
 
 def generate_metal_autogen_header(dest_metal_header):
@@ -221,8 +152,7 @@ def main():
     # auto_script parameters.
     if len(sys.argv) > 1:
         inputs = angle_format_script_files + src_files + ['common.h', 'constants.h']
-        outputs = [config["header"] for config in configs
-                  ] + [metal_source_output_header, metal_shader_output_file]
+        outputs = [metal_source_output_header, metal_shader_output_file]
 
         if sys.argv[1] == 'inputs':
             print(','.join(inputs))
@@ -245,9 +175,7 @@ def main():
     # of the include path before the real libANGLE file.
     generate_combined_metal_shader_file(combined_metal_src, metal_shader_output_file)
 
-    for config in configs:
-        generate_metallib_header(combined_metal_src, config["sdk"], config["compile_flags"],
-                                 config["variable_name"], config["header"])
+    return 0
 
 
 if __name__ == '__main__':

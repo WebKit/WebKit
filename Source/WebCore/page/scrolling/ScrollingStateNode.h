@@ -335,7 +335,8 @@ public:
 
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
-    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree*, ScrollingNodeID);
+    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree*, ScrollingNodeID); // FIXME: This ScrollingStateTree* should be ScrollingStateTree& once all subclasses have generated serialization.
+    ScrollingStateNode(ScrollingNodeType, ScrollingNodeID, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, Vector<Ref<ScrollingStateNode>>&&);
 
     void setPropertyChangedInternal(Property property) { m_changedProperties.add(property); }
     void setPropertiesChangedInternal(OptionSet<Property> properties) { m_changedProperties.add(properties); }

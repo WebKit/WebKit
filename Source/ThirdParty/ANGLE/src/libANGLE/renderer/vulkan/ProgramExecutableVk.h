@@ -326,7 +326,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     {
         return mTextureWriteDescriptorDescs;
     }
-    const gl::Program::DirtyBits &getDirtyBits() const { return mDirtyBits; }
+    const gl::ProgramExecutable::DirtyBits &getDirtyBits() const { return mDirtyBits; }
     void resetUniformBufferDirtyBits() { mDirtyBits.reset(); }
 
     // The following functions are for internal use of programs, including from a threaded link job:
@@ -529,7 +529,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     vk::DescriptorSetLayoutDesc mTextureSetDesc;
     vk::DescriptorSetLayoutDesc mDefaultUniformAndXfbSetDesc;
 
-    gl::Program::DirtyBits mDirtyBits;
+    gl::ProgramExecutable::DirtyBits mDirtyBits;
 };
 
 }  // namespace rx

@@ -183,7 +183,7 @@ TYPED_TEST(FloatLexTest, SlightlyBelowMinSubnormalFloat)
 
 TYPED_TEST(FloatLexTest, SlightlyAboveMinNormalFloat)
 {
-    ASSERT_FALSE(TestFixture::ParsedMatches("1.0e-37", 0.0f));
+    ASSERT_FALSE(TestFixture::ParsedMatches("1.1754943E-38", 0.0f));
 }
 
 TYPED_TEST(FloatLexTest, ManySignificantDigits)

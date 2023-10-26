@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture source interruption and AudioSession category</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+ </head>
+<body>
+    <script>
+    var context = new AudioContext();
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+        if (!window.internals)
+            return;
+        assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test1");
+
+        // Muting capture should trigger change of category.
+        const onMutePromise1 = new Promise(resolve => stream.getAudioTracks()[0].onmute = resolve);
+        if (window.internals)
+            internals.setPageMuted("capturedevices");
+        await onMutePromise1;
+        // We clone the capture stream to trigger an audio session category recomputation.
+        let clone = stream.clone();
+        assert_equals(internals.audioSessionCategory(), "AmbientSound", "test2");
+
+        const onUnmutePromise1 = new Promise(resolve => stream.getAudioTracks()[0].onunmute = resolve);
+        if (window.internals)
+            internals.setPageMuted("");
+        await onUnmutePromise1;
+        clone = stream.clone();
+        assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test3");
+
+        // PlayAndRecord should stick even with capture interruption.
+        const onMutePromise2 = new Promise(resolve => stream.getAudioTracks()[0].onmute = resolve);
+        if (window.internals)
+            internals.beginAudioSessionInterruption();
+        await onMutePromise2;
+        clone = stream.clone();
+        assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test4");
+
+        const onUnmutePromise2 = new Promise(resolve => stream.getAudioTracks()[0].onunmute = resolve);
+        if (window.internals)
+            internals.endAudioSessionInterruption();
+        await onUnmutePromise2;
+        clone = stream.clone();
+        assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test5");
+    }, "AudioSession category should staty to PlayAndRecord when interrupted, not when muted by user");
+    </script>
+</body>
+</html>

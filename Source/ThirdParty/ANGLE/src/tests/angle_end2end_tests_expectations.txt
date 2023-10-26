@@ -290,11 +290,11 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 6418 MAC APPLE METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMatrixAndInstanced/ES3_Metal = SKIP
 6418 MAC APPLE METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsStructAndInstancedArray/ES3_Metal = SKIP
 
-7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FS8F4Samples/ES3_Metal = SKIP
-7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24S8Samples/ES3_Metal = SKIP
-7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FSamples/ES3_Metal = SKIP
-7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24Samples/ES3_Metal = SKIP
-7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD16Samples/ES3_Metal = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FS8F4Samples/ES3_Metal_AlwaysResolveMultisampleRenderBuffers = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24S8Samples/ES3_Metal_AlwaysResolveMultisampleRenderBuffers = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FSamples/ES3_Metal_AlwaysResolveMultisampleRenderBuffers = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24Samples/ES3_Metal_AlwaysResolveMultisampleRenderBuffers = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD16Samples/ES3_Metal_AlwaysResolveMultisampleRenderBuffers = SKIP
 
 4908 MAC METAL INTEL : BlitFramebufferTest.MultisampleDepth/* = SKIP
 4908 MAC METAL AMD : BlitFramebufferTest.MultisampleDepth/* = SKIP
@@ -562,6 +562,9 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7684 PIXEL4ORXL VULKAN : PixelLocalStorageTest.MipMapLevels/* = SKIP
 7771 PIXEL4ORXL VULKAN : PixelLocalStorageTest.DrawStateReset/* = SKIP
 7771 PIXEL4ORXL VULKAN : PixelLocalStorageTestES31.DrawStateReset/* = SKIP
+
+b/305292977 PIXEL4ORXL VULKAN : FramebufferTest_ES31.ClearWithColorMasksRGB5A1/* = SKIP
+b/305311693 PIXEL4ORXL GLES : FramebufferTest_ES31.ClearColorMorePrecisionThanFBOFormatShouldNotApplyDithering/* = SKIP
 
 8310 PIXEL4ORXL VULKAN : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP
 8310 LINUX SWIFTSHADER : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP

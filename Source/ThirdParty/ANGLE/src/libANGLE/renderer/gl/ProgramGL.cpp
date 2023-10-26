@@ -779,14 +779,14 @@ void ProgramGL::linkResources(const gl::ProgramLinkedResources &resources)
     resources.atomicCounterBufferLinker.link(sizeMap);
 }
 
-angle::Result ProgramGL::syncState(const gl::Context *context,
-                                   const gl::Program::DirtyBits &dirtyBits)
+angle::Result ProgramGL::syncState(const gl::Context *context)
 {
     const gl::ProgramExecutable &executable = mState.getExecutable();
 
+    gl::ProgramExecutable::DirtyBits dirtyBits = executable.getAndResetDirtyBits();
     for (size_t dirtyBit : dirtyBits)
     {
-        ASSERT(dirtyBit <= gl::Program::DIRTY_BIT_UNIFORM_BLOCK_BINDING_MAX);
+        ASSERT(dirtyBit <= gl::ProgramExecutable::DIRTY_BIT_UNIFORM_BLOCK_BINDING_MAX);
         GLuint binding = static_cast<GLuint>(dirtyBit);
         setUniformBlockBinding(binding, executable.getUniformBlockBinding(binding));
     }

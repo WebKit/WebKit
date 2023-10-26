@@ -1784,16 +1784,6 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
                 return false;
             }
             break;
-        case EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE:
-            if (!display->getExtensions().externalContextAndSurface)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE,
-                              "Attribute "
-                              "EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE requires "
-                              "EGL_ANGLE_external_context_and_surface.");
-                return false;
-            }
-            break;
 
         case EGL_PROTECTED_CONTENT_EXT:
             if (!display->getExtensions().protectedContentEXT)
@@ -2063,15 +2053,6 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
                 val->setError(
                     EGL_BAD_ATTRIBUTE,
                     "EGL_EXTERNAL_CONTEXT_ANGLE doesn't allow creating with sharedContext.");
-                return false;
-            }
-            break;
-        case EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE:
-            if (value != EGL_TRUE && value != EGL_FALSE)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE,
-                              "EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE must "
-                              "be either EGL_TRUE or EGL_FALSE.");
                 return false;
             }
             break;

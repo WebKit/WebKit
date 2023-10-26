@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ import sys
 # Validator - additional C++ to validate the value when decoding
 # NotSerialized - member is present in structure but intentionally not serialized.
 # SecureCodingAllowed - ObjC classes to allow when decoding.
-# OptionalTupleBits - This member stores bits of whether each following member is serialized. Attribute must be on first member.
+# OptionalTupleBits - This member stores bits of whether each following member is serialized. Attribute must be immediately before members with OptionalTupleBit.
 # OptionalTupleBit - The name of the bit indicating whether this member is serialized.
 
 
@@ -148,7 +148,10 @@ class SerializedType(object):
     def has_optional_tuple_bits(self):
         if len(self.members) == 0:
             return False
-        return 'OptionalTupleBits' in self.members[0].attributes
+        for member in self.members:
+            if 'OptionalTupleBits' in member.attributes:
+                return True
+        return False
 
     def should_skip_forward_declare(self):
         return self.nested or self.templates
@@ -254,7 +257,7 @@ def sanitize_string_for_variable_name(string):
     return string.replace('()', '').replace('.', '')
 
 _license_header = """/*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -449,65 +452,30 @@ def check_type_members(type, checking_parent_class):
             if member.condition is not None:
                 result.append('#endif')
         result.append('    >::value);')
+    if type.has_optional_tuple_bits():
+        serialized_members = type.serialized_members()
+        optional_tuple_state = None
+        for i in range(len(serialized_members)):
+            member = serialized_members[i]
+            if member.optional_tuple_bits():
+                result.append('    static_assert(static_cast<uint64_t>(' + serialized_members[i + 1].optional_tuple_bit() + ') == 1);')
+                result.append('    static_assert(BitsInIncreasingOrder<')
+                optional_tuple_state = 'begin'
+            elif member.optional_tuple_bit():
+                if member.condition is not None:
+                    result.append('#if ' + member.condition)
+                result.append('        ' + (', ' if i > 1 else '') + 'static_cast<uint64_t>(' + member.optional_tuple_bit() + ')')
+                if member.condition is not None:
+                    result.append('#endif')
+                optional_tuple_state = 'middle'
+            elif optional_tuple_state == 'middle':
+                result.append('    >::value);')
+                optional_tuple_state = None
+        if optional_tuple_state == 'middle':
+            result.append('    >::value);')
+            optional_tuple_state = None
+    result.append('')
     return result
-
-
-def encode_optional_tuple(type):
-    result = []
-    serialized_members = type.serialized_members()
-    result.append('    static_assert(static_cast<uint64_t>(' + serialized_members[1].optional_tuple_bit() + ') == 1);')
-    result.append('    static_assert(BitsInIncreasingOrder<')
-    for i in range(len(serialized_members)):
-        member = serialized_members[i]
-        bit = member.optional_tuple_bit()
-        if bit is not None:
-            if member.condition is not None:
-                result.append('#if ' + member.condition)
-            result.append('        ' + (', ' if i > 1 else '') + 'static_cast<uint64_t>(' + bit + ')')
-            if member.condition is not None:
-                result.append('#endif')
-    result.append('    >::value);')
-
-    for member in serialized_members:
-        if member.condition is not None:
-            result.append('#if ' + member.condition)
-        if member.optional_tuple_bits():
-            result.append('    encoder << instance.' + member.name + ';')
-            bits_variable_name = member.name
-        bit = member.optional_tuple_bit()
-        if bit is not None:
-            result.append('    if (instance.' + bits_variable_name + ' & ' + bit + ')')
-            result.append('        encoder << instance.' + member.name + ';')
-        if member.condition is not None:
-            result.append('#endif')
-    return result
-
-
-def decode_optional_tuple(type):
-    result = []
-    bits_variable_name = None
-    result.append('    ' + type.namespace_and_name() + ' result;')
-    for member in type.serialized_members():
-        if member.optional_tuple_bits():
-            result.append('    auto bits = decoder.decode<' + member.type + '>();')
-            result.append('    if (!bits)')
-            result.append('        return std::nullopt;')
-            result.append('    result.' + member.name + ' = *bits;')
-        bit = member.optional_tuple_bit()
-        if bit is not None:
-            if member.condition is not None:
-                result.append('#if ' + member.condition)
-            result.append('    if (*bits & ' + bit + ') {')
-            result.append('        if (auto deserialized = decoder.decode<' + member.type + '>())')
-            result.append('            result.' + member.name + ' = WTFMove(*deserialized);')
-            result.append('        else')
-            result.append('            return std::nullopt;')
-            result.append('    }')
-            if member.condition is not None:
-                result.append('#endif')
-        result.append('')
-    return result
-
 
 def encode_type(type):
     result = []
@@ -525,6 +493,12 @@ def encode_type(type):
                 result.append('        encoder << *subclass;')
             result.append('        return;')
             result.append('    }')
+        elif member.optional_tuple_bits():
+            result.append('    encoder << instance.' + member.name + ';')
+            bits_variable_name = member.name
+        elif member.optional_tuple_bit() is not None:
+            result.append('    if (instance.' + bits_variable_name + ' & ' + member.optional_tuple_bit() + ')')
+            result.append('        encoder << instance.' + member.name + ';')
         else:
             if type.rvalue and not type.serialize_with_function_calls:
                 result.append('    encoder << WTFMove(instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ');')
@@ -547,6 +521,9 @@ def decode_type(type):
         result.append('        return std::nullopt;')
         result.append('')
 
+    if type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
+        result.append('    ' + type.namespace_and_name() + ' result;')
+
     for member in type.serialized_members():
         if member.condition is not None:
             result.append('#if ' + member.condition)
@@ -565,6 +542,30 @@ def decode_type(type):
             result.append('            return std::nullopt;')
             result.append('        return WTFMove(*result);')
             result.append('    }')
+        elif member.optional_tuple_bits():
+            bits_name = sanitized_variable_name
+            result.append('    auto ' + bits_name + ' = decoder.decode<' + member.type + '>();')
+            result.append('    if (!' + bits_name + ')')
+            result.append('        return std::nullopt;')
+            if type.populate_from_empty_constructor:
+                result.append('    result.' + member.name + ' = *' + bits_name + ';')
+        elif member.optional_tuple_bit() is not None:
+            if type.populate_from_empty_constructor:
+                result.append('    if (*' + bits_name + ' & ' + member.optional_tuple_bit() + ') {')
+                result.append('        if (auto deserialized = decoder.decode<' + member.type + '>())')
+                result.append('            result.' + sanitized_variable_name + ' = WTFMove(*deserialized);')
+                result.append('        else')
+                result.append('            return std::nullopt;')
+                result.append('    }')
+            else:
+                result.append('')
+                result.append('    ' + member.type + ' ' + sanitized_variable_name + ' { };')
+                result.append('    if (*' + bits_name + ' & ' + member.optional_tuple_bit() + ') {')
+                result.append('        if (auto deserialized = decoder.decode<' + member.type + '>())')
+                result.append('            ' + bits_name + ' = WTFMove(*deserialized);')
+                result.append('        else')
+                result.append('            return std::nullopt;')
+                result.append('    }')
         else:
             assert len(decodable_classes) == 0
             result.append('    auto ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
@@ -648,10 +649,7 @@ def generate_one_impl(type, template_argument):
         result.append('{')
         if not type.members_are_subclasses:
             result = result + check_type_members(type, False)
-        if type.has_optional_tuple_bits():
-            result = result + encode_optional_tuple(type)
-        else:
-            result = result + encode_type(type)
+        result = result + encode_type(type)
         if type.members_are_subclasses:
             result.append('    ASSERT_NOT_REACHED();')
         result.append('}')
@@ -661,15 +659,11 @@ def generate_one_impl(type, template_argument):
     else:
         result.append('std::optional<' + name_with_template + '> ArgumentCoder<' + name_with_template + '>::decode(Decoder& decoder)')
     result.append('{')
-    if type.has_optional_tuple_bits():
-        result = result + decode_optional_tuple(type)
-    else:
-        result = result + decode_type(type)
+    result = result + decode_type(type)
     if not type.members_are_subclasses:
-        if not type.has_optional_tuple_bits():
-            result.append('    if (UNLIKELY(!decoder.isValid()))')
-            result.append('        return std::nullopt;')
-        if type.populate_from_empty_constructor:
+        result.append('    if (UNLIKELY(!decoder.isValid()))')
+        result.append('        return std::nullopt;')
+        if type.populate_from_empty_constructor and not type.has_optional_tuple_bits():
             result.append('    ' + name_with_template + ' result;')
             for member in type.serialized_members():
                 if member.condition is not None:
@@ -678,7 +672,7 @@ def generate_one_impl(type, template_argument):
                 if member.condition is not None:
                     result.append('#endif')
             result.append('    return { WTFMove(result) };')
-        elif type.has_optional_tuple_bits():
+        elif type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
             result.append('    return { WTFMove(result) };')
         else:
             result.append('    return {')
@@ -873,25 +867,40 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     result.append('    return {')
     for type in serialized_types:
         result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
-        if type.has_optional_tuple_bits():
-            result = result + generate_optional_tuple_type_info(type)
-            result.append('        } },')
-            continue
         if type.members_are_subclasses:
             result.append('            { "std::variant<' + ', '.join([member.namespace + '::' + member.name for member in type.members]) + '>"_s, "subclasses"_s }')
             result.append('        } },')
             continue
 
         serialized_members = type.serialized_members()
+        optional_tuple_state = None
         for member in serialized_members:
             if member.condition is not None:
                 result.append('#if ' + member.condition)
-            result.append('            {')
-            result.append('                "' + member.type + '"_s,')
-            result.append('                "' + member.name + '"_s')
-            result.append('            },')
+            if member.optional_tuple_bits():
+                result.append('            {')
+                result.append('                "OptionalTuple<"')
+                optional_tuple_state = 'begin'
+            elif member.optional_tuple_bit():
+                result.append('                    "' + ('' if optional_tuple_state == 'begin' else ', ') + member.type + '"')
+                optional_tuple_state = 'middle'
+            else:
+                if optional_tuple_state == 'middle':
+                    result.append('                ">"_s,')
+                    result.append('                "optionalTuple"_s')
+                    result.append('            },')
+                    optional_tuple_state = None
+                result.append('            {')
+                result.append('                "' + member.type + '"_s,')
+                result.append('                "' + member.name + '"_s')
+                result.append('            },')
+                optional_tuple_state = None
             if member.condition is not None:
                 result.append('#endif')
+        if optional_tuple_state == 'middle':
+            result.append('                ">"_s,')
+            result.append('                "optionalTuple"_s')
+            result.append('            },')
         result.append('        } },')
     for using_statement in using_statements:
         if using_statement.condition is not None:

@@ -30,11 +30,15 @@ from ews.common.buildbot import Buildbot
 from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 import ews.config as config
+import ews.common.util as util
 
 _log = logging.getLogger(__name__)
 
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
+
+is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
+is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
 
 
 class GitHub(object):
@@ -338,6 +342,10 @@ class GitHubEWS(GitHub):
     def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None, allow_new_comment=False):
         if not pr_id or pr_id == -1:
             _log.error('Invalid pr_id: {}'.format(pr_id))
+            return -1
+
+        if is_test_mode_enabled or is_dev_instance:
+            _log.info('Skipped updating GitHub PR since this is not production instance.')
             return -1
 
         repository_url = GITHUB_URL + pr_project if pr_project else None

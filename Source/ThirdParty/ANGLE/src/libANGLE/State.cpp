@@ -3786,11 +3786,6 @@ angle::Result State::installProgramExecutable(const Context *context)
 
     mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
 
-    if (mProgram->hasAnyDirtyBit())
-    {
-        mDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM);
-    }
-
     // The bound Program always overrides the ProgramPipeline, so install the executable regardless
     // of whether a program pipeline is bound.
     InstallExecutable(context, mProgram->getSharedExecutable(), &mExecutable);
@@ -3969,8 +3964,6 @@ void State::onUniformBufferStateChange(size_t uniformBufferIndex)
     {
         mProgramPipeline->onUniformBufferStateChange(uniformBufferIndex);
     }
-    // So that program object syncState will get triggered and process the program's dirty bits
-    setObjectDirty(GL_PROGRAM);
     // This could be represented by a different dirty bit. Using the same one keeps it simple.
     mDirtyBits.set(state::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);
 }

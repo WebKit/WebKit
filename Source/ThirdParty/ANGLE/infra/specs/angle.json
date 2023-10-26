@@ -66,7 +66,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles31_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles31_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -79,8 +79,8 @@
           "expiration": 21600,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles31_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles31_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -145,7 +145,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles3_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles3_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -158,8 +158,8 @@
           "expiration": 21600,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles3_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles3_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -733,7 +733,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles31_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles31_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -745,8 +745,8 @@
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles31_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles31_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -809,7 +809,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles3_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles3_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -821,8 +821,8 @@
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles3_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles3_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -1595,7 +1595,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles31_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles31_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -1607,8 +1607,8 @@
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles31_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles31_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles31_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -1671,7 +1671,7 @@
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
-        "name": "angle_deqp_gles3_565-no-depth-no-stencil_vulkan_tests",
+        "name": "angle_deqp_gles3_565_no_depth_no_stencil_vulkan_tests",
         "swarming": {
           "containment_type": "AUTO",
           "dimensions": {
@@ -1683,8 +1683,8 @@
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
-        "test": "angle_deqp_gles3_565-no-depth-no-stencil_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565-no-depth-no-stencil_tests/",
+        "test": "angle_deqp_gles3_565_no_depth_no_stencil_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_565_no_depth_no_stencil_tests/",
         "use_isolated_scripts_api": true
       },
       {

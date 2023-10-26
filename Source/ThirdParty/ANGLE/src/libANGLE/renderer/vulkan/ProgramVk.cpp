@@ -394,12 +394,4 @@ GLboolean ProgramVk::validate(const gl::Caps &caps)
     return GL_TRUE;
 }
 
-angle::Result ProgramVk::syncState(const gl::Context *context,
-                                   const gl::Program::DirtyBits &dirtyBits)
-{
-    ASSERT(dirtyBits.any());
-    // Push dirty bits to executable so that they can be used later.
-    getExecutable()->mDirtyBits |= dirtyBits;
-    return angle::Result::Continue;
-}
 }  // namespace rx

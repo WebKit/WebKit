@@ -169,6 +169,12 @@ struct InternalFormat
 
     [[nodiscard]] bool computePalettedImageRowPitch(GLsizei width, GLuint *resultOut) const;
 
+    [[nodiscard]] bool computeCompressedImageRowPitch(GLsizei width, GLuint *resultOut) const;
+
+    [[nodiscard]] bool computeCompressedImageDepthPitch(GLsizei height,
+                                                        GLuint rowPitch,
+                                                        GLuint *resultOut) const;
+
     [[nodiscard]] bool computeCompressedImageSize(const Extents &size, GLuint *resultOut) const;
 
     [[nodiscard]] std::pair<GLuint, GLuint> getCompressedImageMinBlocks() const;

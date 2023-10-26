@@ -2442,7 +2442,7 @@ GLuint ProgramExecutable::getUniformIndex(const std::string &name) const
 
 bool ProgramExecutable::shouldIgnoreUniform(UniformLocation location) const
 {
-    if (location.value == -1)
+    if (location.value < 0 || static_cast<size_t>(location.value) > mUniformLocations.size())
     {
         return true;
     }
@@ -3101,6 +3101,13 @@ void ProgramExecutable::setBaseInstanceUniform(GLuint baseInstance)
     mImplementation->setUniform1iv(mPod.baseInstanceLocation, 1, &baseInstanceInt);
 }
 
+gl::ProgramExecutable::DirtyBits ProgramExecutable::getAndResetDirtyBits() const
+{
+    DirtyBits dirtyBits = mDirtyBits;
+    mDirtyBits.reset();
+    return dirtyBits;
+}
+
 void InstallExecutable(const Context *context,
                        const SharedProgramExecutable &toInstall,
                        SharedProgramExecutable *executable)
@@ -3124,4 +3131,5 @@ void UninstallExecutable(const Context *context, SharedProgramExecutable *execut
 
     executable->reset();
 }
+
 }  // namespace gl

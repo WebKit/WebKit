@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -47,12 +48,12 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, FirstResponderSuppression)
 {
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window makeKeyAndOrderFront:nil];
 
-    RetainPtr<FirstResponderNavigationDelegate> delegate = adoptNS([[FirstResponderNavigationDelegate alloc] init]);
+    RetainPtr delegate = adoptNS([[FirstResponderNavigationDelegate alloc] init]);
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView _setShouldSuppressFirstResponderChanges:YES];
     [webView setNavigationDelegate:delegate.get()];
     [[window contentView] addSubview:webView.get()];
@@ -73,6 +74,9 @@ TEST(WebKit, FirstResponderSuppression)
     // Ensure having an autofocused input field does steal focus.
     [webView loadHTMLString:testHTML baseURL:nil];
     TestWebKitAPI::Util::run(&finishedLoad);
+
+    [webView waitForNextPresentationUpdate];
+
     EXPECT_NE([window firstResponder], [window contentView]);
 }
 

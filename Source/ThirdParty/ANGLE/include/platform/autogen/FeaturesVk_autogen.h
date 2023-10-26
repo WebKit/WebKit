@@ -782,6 +782,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/6953"
     };
 
+    FeatureInfo adjustClearColorPrecision = {
+        "adjustClearColorPrecision",
+        FeatureCategory::VulkanWorkarounds,
+        "Adjust normalized clear color precision based on framebuffer color channel bits count",
+        &members, "https://issuetracker.google.com/292282210"
+    };
+
     FeatureInfo emulateAdvancedBlendEquations = {
         "emulateAdvancedBlendEquations",
         FeatureCategory::VulkanFeatures,
@@ -1291,6 +1298,13 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "prefer host cached memory for non static buffer usage",
         &members, "https://issuetracker.google.com/288119108"
+    };
+
+    FeatureInfo supportsExternalFormatResolve = {
+        "supportsExternalFormatResolve",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_ANDROID_external_format_resolve extension",
+        &members,
     };
 
 };

@@ -2450,6 +2450,7 @@ class ImageHelper final : public Resource, public angle::Subject
                  VkImageAspectFlags aspectFlags);
     bool hasImmutableSampler() const { return mYcbcrConversionDesc.valid(); }
     uint64_t getExternalFormat() const { return mYcbcrConversionDesc.getExternalFormat(); }
+    bool isYuvResolve() const { return mYcbcrConversionDesc.getExternalFormat() != 0; }
     bool updateChromaFilter(RendererVk *rendererVk, VkFilter filter)
     {
         return mYcbcrConversionDesc.updateChromaFilter(rendererVk, filter);
@@ -2522,6 +2523,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                           bool hasProtectedContent,
                                           VkMemoryPropertyFlags flags,
                                           VkDeviceSize size);
+
+    size_t getLevelUpdateCount(gl::LevelIndex level) const;
 
   private:
     ANGLE_ENABLE_STRUCT_PADDING_WARNINGS

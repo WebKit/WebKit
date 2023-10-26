@@ -407,6 +407,13 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://anglebug.com/8311"
     };
 
+    FeatureInfo alwaysResolveMultisampleRenderBuffers = {
+        "alwaysResolveMultisampleRenderBuffers",
+        FeatureCategory::MetalFeatures,
+        "Always automatically resolve MSAA render buffers to single sampled texture.",
+        &members, "http://crbug.com/1486094"
+    };
+
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

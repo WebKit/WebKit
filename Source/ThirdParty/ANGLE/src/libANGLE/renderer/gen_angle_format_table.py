@@ -118,6 +118,8 @@ def get_channel_struct(angle_format):
         return None
     if 'VERTEX' in angle_format['id']:
         return None
+    if 'EXTERNAL' in angle_format['id']:
+        return None
 
     bits = angle_format['bits']
 
@@ -342,9 +344,9 @@ def json_to_table_data(format_id, json, angle_to_gl):
     parsed["isFixed"] = bool_str("FIXED" in format_id)
     parsed["isScaled"] = bool_str("SCALED" in format_id)
     parsed["isSRGB"] = bool_str("SRGB" in format_id)
-    # For now we only look for the 'PLANE' substring in format string. Expand this condition
+    # For now we only look for the 'PLANE' or 'EXTERNAL' substring in format string. Expand this condition
     # when adding support for YUV formats that have different identifying markers.
-    parsed["isYUV"] = bool_str("PLANE" in format_id)
+    parsed["isYUV"] = bool_str("PLANE" in format_id or "EXTERNAL" in format_id)
 
     parsed["vertexAttribType"] = "gl::VertexAttribType::" + get_vertex_attrib_type(format_id)
 
@@ -356,15 +358,18 @@ def json_to_table_data(format_id, json, angle_to_gl):
 def sorted_ds_first(all_angle):
     ds_sorted = []
     color_sorted = []
+    external_sorted = []
     for format_id in sorted(all_angle):
         if format_id == 'NONE':
             continue
-        if format_id[0] == 'D' or format_id[0] == 'S':
+        if 'EXTERNAL' in format_id:
+            external_sorted.append(format_id)
+        elif format_id[0] == 'D' or format_id[0] == 'S':
             ds_sorted.append(format_id)
         else:
             color_sorted.append(format_id)
 
-    return ds_sorted + color_sorted
+    return ds_sorted + color_sorted + external_sorted
 
 
 def parse_angle_format_table(all_angle, json_data, angle_to_gl):

@@ -57,8 +57,7 @@ class ProgramGL : public ProgramImpl
 
     ANGLE_INLINE GLuint getProgramID() const { return mProgramID; }
 
-    angle::Result syncState(const gl::Context *context,
-                            const gl::Program::DirtyBits &dirtyBits) override;
+    angle::Result syncState(const gl::Context *context) override;
 
     const ProgramExecutableGL *getExecutable() const
     {

@@ -93,23 +93,23 @@ const std::vector<const char *> gTestSuiteConfigParameters[] = {
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2-khr
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3-khr
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31-khr
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32-khr
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2-khr-noctx
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32-khr-noctx
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32-khr-single
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3-rotate90
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3-rotate180
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3-rotate270
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31-rotate90
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31-rotate180
-    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31-rotate270
-    {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gles3-multisample
-    {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles3-rgb565-no-depth-no-stencil
-    {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gles31-multisample
-    {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles31-rgb565-no-depth-no-stencil
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2_khr
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3_khr
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31_khr
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2_khr_noctx
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr_noctx
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr_single
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3_rotate90
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3_rotate180
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3_rotate270
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31_rotate90
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31_rotate180
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31_rotate270
+    {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gles3_multisample
+    {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles3_rgb565_no_depth_no_stencil
+    {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gles31_multisample
+    {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles31_rgb565_no_depth_no_stencil
     {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gl46
 };
 
@@ -135,9 +135,9 @@ const char *gTestExpectationsFiles[] = {
     "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gles3_multisample_test_expectations.txt",
-    "deqp_gles3_565-no-depth-no-stencil_test_expectations.txt",
+    "deqp_gles3_565_no_depth_no_stencil_test_expectations.txt",
     "deqp_gles31_multisample_test_expectations.txt",
-    "deqp_gles31_565-no-depth-no-stencil_test_expectations.txt",
+    "deqp_gles31_565_no_depth_no_stencil_test_expectations.txt",
     "deqp_gl46_test_expectations.txt",
 };
 

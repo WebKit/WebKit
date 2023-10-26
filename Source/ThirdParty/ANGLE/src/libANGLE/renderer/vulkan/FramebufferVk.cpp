@@ -341,6 +341,7 @@ FramebufferVk::FramebufferVk(RendererVk *renderer, const gl::FramebufferState &s
     }
 
     mIsCurrentFramebufferCached = !renderer->getFeatures().supportsImagelessFramebuffer.enabled;
+    mIsYUVResolve               = false;
 }
 
 FramebufferVk::~FramebufferVk() = default;
@@ -465,6 +466,41 @@ angle::Result FramebufferVk::clear(const gl::Context *context, GLbitfield mask)
                      clearDepthStencilValue);
 }
 
+VkClearColorValue adjustFloatClearColorPrecision(const VkClearColorValue &color,
+                                                 const angle::Format &colorFormat)
+{
+    // Truncate x to b bits: round(x * (2^b-1)) / (2^b-1)
+    // Implemented as floor(x * ((1 << b) - 1) + 0.5) / ((1 << b) - 1)
+
+    float floatClearColorRed = color.float32[0];
+    GLuint targetRedBits     = colorFormat.redBits;
+    floatClearColorRed       = floor(floatClearColorRed * ((1 << targetRedBits) - 1) + 0.5f);
+    floatClearColorRed       = floatClearColorRed / ((1 << targetRedBits) - 1);
+
+    float floatClearColorGreen = color.float32[1];
+    GLuint targetGreenBits     = colorFormat.greenBits;
+    floatClearColorGreen       = floor(floatClearColorGreen * ((1 << targetGreenBits) - 1) + 0.5f);
+    floatClearColorGreen       = floatClearColorGreen / ((1 << targetGreenBits) - 1);
+
+    float floatClearColorBlue = color.float32[2];
+    GLuint targetBlueBits     = colorFormat.blueBits;
+    floatClearColorBlue       = floor(floatClearColorBlue * ((1 << targetBlueBits) - 1) + 0.5f);
+    floatClearColorBlue       = floatClearColorBlue / ((1 << targetBlueBits) - 1);
+
+    float floatClearColorAlpha = color.float32[3];
+    GLuint targetAlphaBits     = colorFormat.alphaBits;
+    floatClearColorAlpha       = floor(floatClearColorAlpha * ((1 << targetAlphaBits) - 1) + 0.5f);
+    floatClearColorAlpha       = floatClearColorAlpha / ((1 << targetAlphaBits) - 1);
+
+    VkClearColorValue adjustedClearColor = color;
+    adjustedClearColor.float32[0]        = floatClearColorRed;
+    adjustedClearColor.float32[1]        = floatClearColorGreen;
+    adjustedClearColor.float32[2]        = floatClearColorBlue;
+    adjustedClearColor.float32[3]        = floatClearColorAlpha;
+
+    return adjustedClearColor;
+}
+
 angle::Result FramebufferVk::clearImpl(const gl::Context *context,
                                        gl::DrawBufferMask clearColorBuffers,
                                        bool clearDepth,
@@ -491,6 +527,34 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
 
     // When this function is called, there should always be something to clear.
     ASSERT(clearColor || clearDepth || clearStencil);
+
+    // Temporary workaround for https://issuetracker.google.com/292282210 to avoid dithering
+    // being automatically applied
+    const bool adjustClearColorPrecision =
+        contextVk->getRenderer()->getFeatures().adjustClearColorPrecision.enabled;
+    gl::DrawBuffersArray<VkClearColorValue> adjustedClearColorValues;
+    const gl::DrawBufferMask colorAttachmentMask = mState.getColorAttachmentsMask();
+    const auto &colorRenderTargets               = mRenderTargetCache.getColors();
+    for (size_t colorIndexGL = 0; colorIndexGL < colorAttachmentMask.size(); ++colorIndexGL)
+    {
+        if (colorAttachmentMask[colorIndexGL])
+        {
+            adjustedClearColorValues[colorIndexGL] = clearColorValue;
+
+            if (adjustClearColorPrecision)
+            {
+                RenderTargetVk *colorRenderTarget = colorRenderTargets[colorIndexGL];
+                ASSERT(colorRenderTarget);
+                const angle::FormatID colorRenderTargetFormat =
+                    colorRenderTarget->getImageForRenderPass().getActualFormatID();
+                if (colorRenderTargetFormat == angle::FormatID::R5G5B5A1_UNORM)
+                {
+                    adjustedClearColorValues[colorIndexGL] = adjustFloatClearColorPrecision(
+                        clearColorValue, angle::Format::Get(colorRenderTargetFormat));
+                }
+            }
+        }
+    }
 
     const uint8_t stencilMask =
         static_cast<uint8_t>(contextVk->getState().getDepthStencilState().stencilWritemask);
@@ -572,8 +636,8 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
         }
 
         mergeClearsWithDeferredClears(clearColorDrawBuffersMask, clearDepth && !clearDepthWithDraw,
-                                      clearStencil && !clearStencilWithDraw, clearColorValue,
-                                      clearDepthStencilValue);
+                                      clearStencil && !clearStencilWithDraw,
+                                      adjustedClearColorValues, clearDepthStencilValue);
     }
 
     // If any deferred clears, we can further defer them, clear them with vkCmdClearAttachments or
@@ -686,9 +750,9 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
         if (!maskedClearColor && !mEmulatedAlphaAttachmentMask.any())
         {
             VkClearValue colorClearValue = {};
-            colorClearValue.color        = clearColorValue;
             for (size_t colorIndexGL : clearColorBuffers)
             {
+                colorClearValue.color = adjustedClearColorValues[colorIndexGL];
                 clears.store(static_cast<uint32_t>(colorIndexGL), VK_IMAGE_ASPECT_COLOR_BIT,
                              colorClearValue);
             }
@@ -724,7 +788,7 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
     // The most costly clear mode is when we need to mask out specific color channels or stencil
     // bits. This can only be done with a draw call.
     return clearWithDraw(contextVk, scissoredRenderArea, clearColorBuffers, clearDepthWithDraw,
-                         clearStencilWithDraw, colorMasks, stencilMask, clearColorValue,
+                         clearStencilWithDraw, colorMasks, stencilMask, adjustedClearColorValues,
                          clearDepthStencilValue);
 }
 
@@ -2188,13 +2252,24 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
         {
             RenderTargetVk *colorRenderTarget = colorRenderTargets[colorIndexGL];
             ASSERT(colorRenderTarget);
-            mRenderPassDesc.packColorAttachment(
-                colorIndexGL, colorRenderTarget->getImageForRenderPass().getActualFormatID());
 
-            // Add the resolve attachment, if any.
-            if (colorRenderTarget->hasResolveAttachment())
+            if (colorRenderTarget->isYuvResolve())
             {
-                mRenderPassDesc.packColorResolveAttachment(colorIndexGL);
+                // If this is YUV resolve target, we use resolveImage's format since image maybe
+                // nullptr
+                auto const &resolveImage = colorRenderTarget->getResolveImageForRenderPass();
+                mRenderPassDesc.packColorAttachment(colorIndexGL, resolveImage.getActualFormatID());
+                mRenderPassDesc.packYUVResolveAttachment(colorIndexGL);
+            }
+            else
+            {
+                mRenderPassDesc.packColorAttachment(
+                    colorIndexGL, colorRenderTarget->getImageForRenderPass().getActualFormatID());
+                // Add the resolve attachment, if any.
+                if (colorRenderTarget->hasResolveAttachment())
+                {
+                    mRenderPassDesc.packColorResolveAttachment(colorIndexGL);
+                }
             }
         }
         else
@@ -2261,17 +2336,26 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
     vk::FramebufferAttachmentsVector<RenderTargetInfo> *renderTargetsInfoOut)
 {
     // Color attachments.
+    mIsYUVResolve                  = false;
     const auto &colorRenderTargets = mRenderTargetCache.getColors();
     for (size_t colorIndexGL : mState.getColorAttachmentsMask())
     {
         RenderTargetVk *colorRenderTarget = colorRenderTargets[colorIndexGL];
         ASSERT(colorRenderTarget);
 
+        if (colorRenderTarget->isYuvResolve())
+        {
+            mIsYUVResolve = true;
+            if (contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+            {
+                continue;
+            }
+        }
         const vk::ImageView *imageView = nullptr;
         ANGLE_TRY(colorRenderTarget->getImageViewWithColorspace(
             contextVk, mCurrentFramebufferDesc.getWriteControlMode(), &imageView));
-
         attachments->push_back(imageView->getHandle());
+
         renderTargetsInfoOut->emplace_back(
             RenderTargetInfo(colorRenderTarget, RenderTargetImage::AttachmentImage));
     }
@@ -2419,7 +2503,9 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                                                   : 1;
 
     // Check that our description matches our attachments. Can catch implementation bugs.
-    ASSERT(static_cast<uint32_t>(attachments.size()) == mCurrentFramebufferDesc.attachmentCount());
+    ASSERT((mIsYUVResolve &&
+            contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve()) ||
+           static_cast<uint32_t>(attachments.size()) == mCurrentFramebufferDesc.attachmentCount());
 
     if (!useImagelessFramebuffer)
     {
@@ -2454,7 +2540,8 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
         for (auto const &info : renderTargetsInfo)
         {
             vk::ImageHelper *renderTargetImage =
-                (info.renderTargetImage == RenderTargetImage::ResolveImage)
+                (info.renderTargetImage == RenderTargetImage::ResolveImage ||
+                 info.renderTarget->isYuvResolve())
                     ? &info.renderTarget->getResolveImageForRenderPass()
                     : &info.renderTarget->getImageForRenderPass();
             uint32_t renderTargetLevel      = info.renderTarget->getLevelIndex().get();
@@ -2512,7 +2599,7 @@ void FramebufferVk::mergeClearsWithDeferredClears(
     gl::DrawBufferMask clearColorBuffers,
     bool clearDepth,
     bool clearStencil,
-    const VkClearColorValue &clearColorValue,
+    const gl::DrawBuffersArray<VkClearColorValue> &clearColorValues,
     const VkClearDepthStencilValue &clearDepthStencilValue)
 {
     // Apply clears to mDeferredClears.  Note that clears override deferred clears.
@@ -2521,7 +2608,8 @@ void FramebufferVk::mergeClearsWithDeferredClears(
     for (size_t colorIndexGL : clearColorBuffers)
     {
         ASSERT(mState.getEnabledDrawBuffers().test(colorIndexGL));
-        VkClearValue clearValue = getCorrectedColorClearValue(colorIndexGL, clearColorValue);
+        VkClearValue clearValue =
+            getCorrectedColorClearValue(colorIndexGL, clearColorValues[colorIndexGL]);
         mDeferredClears.store(static_cast<uint32_t>(colorIndexGL), VK_IMAGE_ASPECT_COLOR_BIT,
                               clearValue);
     }
@@ -2545,22 +2633,22 @@ void FramebufferVk::mergeClearsWithDeferredClears(
     }
 }
 
-angle::Result FramebufferVk::clearWithDraw(ContextVk *contextVk,
-                                           const gl::Rectangle &clearArea,
-                                           gl::DrawBufferMask clearColorBuffers,
-                                           bool clearDepth,
-                                           bool clearStencil,
-                                           gl::BlendStateExt::ColorMaskStorage::Type colorMasks,
-                                           uint8_t stencilMask,
-                                           const VkClearColorValue &clearColorValue,
-                                           const VkClearDepthStencilValue &clearDepthStencilValue)
+angle::Result FramebufferVk::clearWithDraw(
+    ContextVk *contextVk,
+    const gl::Rectangle &clearArea,
+    gl::DrawBufferMask clearColorBuffers,
+    bool clearDepth,
+    bool clearStencil,
+    gl::BlendStateExt::ColorMaskStorage::Type colorMasks,
+    uint8_t stencilMask,
+    const gl::DrawBuffersArray<VkClearColorValue> &clearColorValues,
+    const VkClearDepthStencilValue &clearDepthStencilValue)
 {
     // All deferred clears should be handled already.
     ASSERT(mDeferredClears.empty());
 
     UtilsVk::ClearFramebufferParameters params = {};
     params.clearArea                           = clearArea;
-    params.colorClearValue                     = clearColorValue;
     params.depthStencilClearValue              = clearDepthStencilValue;
     params.stencilMask                         = stencilMask;
 
@@ -2574,7 +2662,8 @@ angle::Result FramebufferVk::clearWithDraw(ContextVk *contextVk,
         const RenderTargetVk *colorRenderTarget = colorRenderTargets[colorIndexGL];
         ASSERT(colorRenderTarget);
 
-        params.colorFormat = &colorRenderTarget->getImageForRenderPass().getActualFormat();
+        params.colorClearValue = clearColorValues[colorIndexGL];
+        params.colorFormat     = &colorRenderTarget->getImageForRenderPass().getActualFormat();
         params.colorAttachmentIndexGL = static_cast<uint32_t>(colorIndexGL);
         params.colorMaskFlags =
             gl::BlendStateExt::ColorMaskStorage::GetValueIndexed(colorIndexGL, colorMasks);

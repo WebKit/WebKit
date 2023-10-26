@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,8 @@ namespace WebKit { class Fabulous; }
 namespace WebCore { struct Amazing; }
 namespace JSC { enum class Incredible; }
 namespace Testing { enum class StorageSize : uint8_t; }
+namespace WebCore { class ScrollingStateFrameHostingNode; }
+namespace WebCore { class ScrollingStateFrameHostingNodeWithStuffAfterTuple; }
 
 namespace IPC {
 
@@ -206,6 +208,16 @@ template<> struct ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>> {
 template<> struct ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>> {
     static void encode(Encoder&, const WebKit::TemplateTest<Testing::StorageSize>&);
     static std::optional<WebKit::TemplateTest<Testing::StorageSize>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::ScrollingStateFrameHostingNode> {
+    static void encode(Encoder&, const WebCore::ScrollingStateFrameHostingNode&);
+    static std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple> {
+    static void encode(Encoder&, const WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple&);
+    static std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> decode(Decoder&);
 };
 
 } // namespace IPC

@@ -140,6 +140,10 @@ TEST(FixedQueue, ConcurrentPushPop)
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
+            if (dequeueThreadFinished)
+            {
+                break;
+            }
             q.push(value);
             value++;
         } while (difftime(std::time(nullptr), t1) < timeOut && value < kMaxLoop);
@@ -212,6 +216,11 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 enqueueLock.unlock();
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
                 enqueueLock.lock();
+            }
+
+            if (dequeueThreadFinished)
+            {
+                break;
             }
 
             q.push(value);

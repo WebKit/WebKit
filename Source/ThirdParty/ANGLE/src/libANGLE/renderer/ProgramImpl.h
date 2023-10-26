@@ -102,8 +102,7 @@ class ProgramImpl : angle::NonCopyable
 
     const gl::ProgramState &getState() const { return mState; }
 
-    virtual angle::Result syncState(const gl::Context *context,
-                                    const gl::Program::DirtyBits &dirtyBits);
+    virtual angle::Result syncState(const gl::Context *context);
 
     virtual angle::Result onLabelUpdate(const gl::Context *context);
 
@@ -111,8 +110,7 @@ class ProgramImpl : angle::NonCopyable
     const gl::ProgramState &mState;
 };
 
-inline angle::Result ProgramImpl::syncState(const gl::Context *context,
-                                            const gl::Program::DirtyBits &dirtyBits)
+inline angle::Result ProgramImpl::syncState(const gl::Context *context)
 {
     return angle::Result::Continue;
 }
