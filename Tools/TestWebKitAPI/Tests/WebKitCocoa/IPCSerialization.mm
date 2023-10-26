@@ -34,9 +34,8 @@
 // The primary focus here is Objective-C and similar types - Objects that exist on the platform or in
 // runtime that the WebKit project doesn't have direct control of.
 // To test a new ObjC type:
-// 1 - Add a member of that type to ObjCHolderForTesting
-// 2 - Include that new member in ObjCHolderForTesting::encode() and ObjCHolderForTesting::decode()
-// 3 - Include an equality comparison of that new member in the operator== function
+// 1 - Add that type to ObjCHolderForTesting's ValueType variant
+// 2 - Run a test exercising that type
 
 class ObjCSerializationTester final : public IPC::MessageSender {
 public:
@@ -62,31 +61,50 @@ struct ObjCHolderForTesting {
     void encode(IPC::Encoder&) const;
     static std::optional<ObjCHolderForTesting> decode(IPC::Decoder&);
 
-    RetainPtr<NSString> stringValue;
+    id valueAsID() const
+    {
+        id result;
+        std::visit([&](auto&& arg) {
+            result = arg.get();
+        }, value);
+        return result;
+    }
+
+    typedef std::variant<
+        RetainPtr<NSString>,
+        RetainPtr<NSURL>,
+        RetainPtr<NSData>
+    > ValueType;
+
+    ValueType value;
 };
 
 void ObjCHolderForTesting::encode(IPC::Encoder& encoder) const
 {
-    encoder << stringValue;
+    encoder << value;
 }
 
 std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& decoder)
 {
-    std::optional<RetainPtr<NSString>> stringValue;
-    decoder >> stringValue;
-    if (!stringValue)
+    std::optional<ValueType> value;
+    decoder >> value;
+    if (!value)
         return std::nullopt;
 
     return { {
-        WTFMove(*stringValue)
+        WTFMove(*value)
     } };
 }
 
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
-    if (![a.stringValue.get() isEqualToString:b.stringValue.get()])
-        return false;
-    return true;
+    id aObject = a.valueAsID();
+    id bObject = b.valueAsID();
+
+    EXPECT_TRUE(aObject != nil);
+    EXPECT_TRUE(bObject != nil);
+
+    return [aObject isEqual:bObject];
 }
 
 class BasicPingBackMessage {
@@ -100,8 +118,8 @@ public:
 
     static constexpr bool isSync = false;
 
-    BasicPingBackMessage(ObjCHolderForTesting&& holder)
-        : m_arguments(WTFMove(holder))
+    BasicPingBackMessage(const ObjCHolderForTesting& holder)
+        : m_arguments(holder)
     {
     }
 
@@ -116,16 +134,20 @@ private:
 
 TEST(IPCSerialization, Basic)
 {
-    __block ObjCHolderForTesting holder;
-    holder.stringValue = @"Hello world";
+    auto runTest = [](ObjCHolderForTesting&& holderArg) {
+        __block bool done = false;
+        __block ObjCHolderForTesting holder = WTFMove(holderArg);
+        auto sender = ObjCSerializationTester { };
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(BasicPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
+            EXPECT_TRUE(holder == result);
+            done = true;
+        });
 
-    auto sender = ObjCSerializationTester { };
-    __block bool done = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(BasicPingBackMessage(WTFMove(holder)), ^(ObjCHolderForTesting&& result) {
-        EXPECT_EQ(holder, result);
-        done = true;
-    });
+        // The completion handler should be called synchronously, so this should be true already.
+        EXPECT_TRUE(done);
+    };
 
-    // The completion handler should be called synchronously, so this should be true already.
-    EXPECT_TRUE(done);
+    runTest({ @"Hello world" });
+    runTest({ [NSURL URLWithString:@"https://webkit.org/"] });
+    runTest({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
 }
