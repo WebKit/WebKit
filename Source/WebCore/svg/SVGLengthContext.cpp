@@ -88,26 +88,34 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
 
 float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengthMode)
 {
-    if (length.isPercent()) {
+    switch (length.type()) {
+    case LengthType::Percent: {
         auto result = convertValueFromPercentageToUserUnits(length.value() / 100, lengthMode);
         if (result.hasException())
             return 0;
         return result.releaseReturnValue();
     }
-    if (length.isAuto() || !length.isSpecified())
+
+    case LengthType::Fixed:
+        return length.value();
+
+    case LengthType::Calculated: {
+        auto viewportSize = this->viewportSize().value_or(FloatSize { });
+        switch (lengthMode) {
+        case SVGLengthMode::Width:
+            return length.nonNanCalculatedValue(viewportSize.width());
+        case SVGLengthMode::Height:
+            return length.nonNanCalculatedValue(viewportSize.height());
+        case SVGLengthMode::Other:
+            return length.nonNanCalculatedValue(viewportSize.diagonalLength() / sqrtOfTwoFloat);
+        }
+        ASSERT_NOT_REACHED();
         return 0;
+    }
 
-    auto viewportSize = this->viewportSize().value_or(FloatSize { });
-
-    switch (lengthMode) {
-    case SVGLengthMode::Width:
-        return floatValueForLength(length, viewportSize.width());
-    case SVGLengthMode::Height:
-        return floatValueForLength(length, viewportSize.height());
-    case SVGLengthMode::Other:
-        return floatValueForLength(length, viewportSize.diagonalLength() / sqrtOfTwoFloat);
-    };
-    return 0;
+    default:
+        return 0;
+    }
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLengthType lengthType, SVGLengthMode lengthMode) const
