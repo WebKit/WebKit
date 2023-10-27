@@ -36,6 +36,7 @@
 #include "DocumentType.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "ElementRareData.h"
 #include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLFrameElement.h"
@@ -45,6 +46,7 @@
 #include "NodeName.h"
 #include "ProcessingInstruction.h"
 #include "ScriptController.h"
+#include "ShadowRoot.h"
 #include "TemplateContentDocumentFragment.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -189,11 +191,12 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, ShouldIncludeShadowDOM shouldIncludeShadowDOM)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
     , m_replacementURLStrings(WTFMove(replacementURLStrings))
+    , m_shouldIncludeShadowDOM(shouldIncludeShadowDOM == ShouldIncludeShadowDOM::Yes)
 {
 }
 
@@ -236,6 +239,15 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
         shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
         if (!shouldSkipNode) {
+            if (m_shouldIncludeShadowDOM) {
+                RefPtr shadowRoot = current->shadowRoot();
+                if (shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent) {
+                    current = shadowRoot;
+                    namespaceStack.append(namespaceStack.last());
+                    continue;
+                }
+            }
+
             auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(*current).content().firstChild() : current->firstChild();
             if (firstChild) {
                 current = firstChild;
@@ -254,7 +266,12 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                 namespaceStack.append(namespaceStack.last());
                 break;
             }
-            current = current->parentNode();
+
+            if (m_shouldIncludeShadowDOM && current->isShadowRoot())
+                current = current->shadowHost();
+            else
+                current = current->parentNode();
+
             namespaceStack.removeLast();
             if (RefPtr fragment = dynamicDowncast<TemplateContentDocumentFragment>(current.get())) {
                 if (current != &targetNode)
@@ -291,10 +308,30 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const Strin
     return element.resolveURLStringIfNeeded(urlString, m_resolveURLs);
 }
 
+RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
+{
+    if (!m_shouldIncludeShadowDOM || !node.isShadowRoot())
+        return nullptr;
+
+    auto& shadowRoot = downcast<ShadowRoot>(node);
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+
+    auto element = HTMLTemplateElement::create(HTMLNames::templateTag, node.document());
+    if (shadowRoot.mode() == ShadowRootMode::Open)
+        element->setShadowRootMode(AtomString { "open"_s });
+    else if (shadowRoot.mode() == ShadowRootMode::Closed)
+        element->setShadowRootMode(AtomString { "closed"_s });
+
+    return element;
+}
+
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
 {
     if (is<Element>(node))
         appendStartTag(m_markup, downcast<Element>(node), namespaces);
+    else if (auto element = replacementElement(node))
+        appendStartTag(m_markup, *element, namespaces);
     else
         appendNonElementNode(m_markup, node, namespaces);
 
