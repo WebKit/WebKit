@@ -22,26 +22,26 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceMarker.h"
+#include "LegacyRenderSVGResourceMarker.h"
 
 #include "GraphicsContext.h"
+#include "LegacyRenderSVGResourceMarkerInlines.h"
 #include "LegacyRenderSVGRoot.h"
-#include "RenderSVGResourceMarkerInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceMarker);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceMarker);
 
-RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceMarker::LegacyRenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::SVGResourceMarker, element, WTFMove(style))
 {
 }
 
-RenderSVGResourceMarker::~RenderSVGResourceMarker() = default;
+LegacyRenderSVGResourceMarker::~LegacyRenderSVGResourceMarker() = default;
 
-void RenderSVGResourceMarker::layout()
+void LegacyRenderSVGResourceMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Invalidate all resources if our layout changed.
@@ -54,23 +54,23 @@ void RenderSVGResourceMarker::layout()
     LegacyRenderSVGContainer::layout();
 }
 
-void RenderSVGResourceMarker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceMarker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
-void RenderSVGResourceMarker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void LegacyRenderSVGResourceMarker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
+void LegacyRenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
 {
     if (SVGRenderSupport::isOverflowHidden(*this))
         paintInfo.context().clip(m_viewport);
 }
 
-FloatRect RenderSVGResourceMarker::markerBoundaries(RepaintRectCalculation repaintRectCalculation, const AffineTransform& markerTransformation) const
+FloatRect LegacyRenderSVGResourceMarker::markerBoundaries(RepaintRectCalculation repaintRectCalculation, const AffineTransform& markerTransformation) const
 {
     FloatRect coordinates = LegacyRenderSVGContainer::repaintRectInLocalCoordinates(repaintRectCalculation);
 
@@ -80,7 +80,7 @@ FloatRect RenderSVGResourceMarker::markerBoundaries(RepaintRectCalculation repai
     return markerTransformation.mapRect(coordinates);
 }
 
-const AffineTransform& RenderSVGResourceMarker::localToParentTransform() const
+const AffineTransform& LegacyRenderSVGResourceMarker::localToParentTransform() const
 {
     m_localToParentTransform = AffineTransform::makeTranslation(toFloatSize(m_viewport.location())) * viewportTransform();
     return m_localToParentTransform;
@@ -88,20 +88,20 @@ const AffineTransform& RenderSVGResourceMarker::localToParentTransform() const
     // return viewportTranslation * localTransform() * viewportTransform();
 }
 
-FloatPoint RenderSVGResourceMarker::referencePoint() const
+FloatPoint LegacyRenderSVGResourceMarker::referencePoint() const
 {
     SVGLengthContext lengthContext(&markerElement());
     return FloatPoint(markerElement().refX().value(lengthContext), markerElement().refY().value(lengthContext));
 }
 
-std::optional<float> RenderSVGResourceMarker::angle() const
+std::optional<float> LegacyRenderSVGResourceMarker::angle() const
 {
     if (markerElement().orientType() == SVGMarkerOrientAngle)
         return markerElement().orientAngle().value();
     return std::nullopt;
 }
 
-AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& origin, float autoAngle, float strokeWidth) const
+AffineTransform LegacyRenderSVGResourceMarker::markerTransformation(const FloatPoint& origin, float autoAngle, float strokeWidth) const
 {
     bool useStrokeWidth = markerElement().markerUnits() == SVGMarkerUnitsStrokeWidth;
 
@@ -112,7 +112,7 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
     return transform;
 }
 
-void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
+void LegacyRenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
     // An empty viewBox disables rendering.
     if (markerElement().hasAttribute(SVGNames::viewBoxAttr) && markerElement().hasEmptyViewBox())
@@ -124,7 +124,7 @@ void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& 
     LegacyRenderSVGContainer::paint(info, IntPoint());
 }
 
-AffineTransform RenderSVGResourceMarker::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const
+AffineTransform LegacyRenderSVGResourceMarker::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const
 {
     // The 'origin' coordinate maps to SVGs refX/refY, given in coordinates relative to the viewport established by the marker
     FloatPoint mappedOrigin = viewportTransform().mapPoint(origin);
@@ -137,12 +137,12 @@ AffineTransform RenderSVGResourceMarker::markerContentTransformation(const Affin
     return transformation;
 }
 
-AffineTransform RenderSVGResourceMarker::viewportTransform() const
+AffineTransform LegacyRenderSVGResourceMarker::viewportTransform() const
 {
     return markerElement().viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
 }
 
-void RenderSVGResourceMarker::calcViewport()
+void LegacyRenderSVGResourceMarker::calcViewport()
 {
     if (!selfNeedsLayout())
         return;

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "SVGMaskElement.h"
 
+#include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "NodeName.h"
-#include "RenderSVGResourceMaskerInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
@@ -130,7 +130,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceMasker>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceMasker>(*this, WTFMove(style));
 }
 
 }

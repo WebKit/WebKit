@@ -27,8 +27,8 @@
 #include "config.h"
 #include "SVGResourceImage.h"
 
+#include "LegacyRenderSVGResourceMasker.h"
 #include "ReferencedSVGResources.h"
-#include "RenderSVGResourceMasker.h"
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ SVGResourceImage::SVGResourceImage(LegacyRenderSVGResourceContainer& renderResou
 
 ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
-    if (auto* masker = dynamicDowncast<RenderSVGResourceMasker>(m_renderResource.get())) {
+    if (auto* masker = dynamicDowncast<LegacyRenderSVGResourceMasker>(m_renderResource.get())) {
         if (masker->drawContentIntoContext(context, destinationRect, sourceRect, options))
             return ImageDrawResult::DidDraw;
     }

@@ -27,11 +27,11 @@ class AffineTransform;
 class RenderObject;
 class SVGMarkerElement;
 
-class RenderSVGResourceMarker final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMarker);
+class LegacyRenderSVGResourceMarker final : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceMarker);
 public:
-    RenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
-    virtual ~RenderSVGResourceMarker();
+    LegacyRenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGResourceMarker();
 
     inline SVGMarkerElement& markerElement() const;
 
@@ -76,4 +76,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceMarker, MarkerResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceMarker, MarkerResourceType)

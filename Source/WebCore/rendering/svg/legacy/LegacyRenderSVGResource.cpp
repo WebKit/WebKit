@@ -25,12 +25,12 @@
 #include "LegacyRenderSVGResource.h"
 
 #include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceMasker.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
@@ -167,7 +167,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
         if (RenderSVGResourceFilter* filter = resources->filter())
             filter->removeClientFromCache(renderer);
 
-        if (RenderSVGResourceMasker* masker = resources->masker())
+        if (LegacyRenderSVGResourceMasker* masker = resources->masker())
             masker->removeClientFromCache(renderer);
 
         if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())

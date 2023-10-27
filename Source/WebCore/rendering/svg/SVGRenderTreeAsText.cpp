@@ -33,6 +33,8 @@
 #include "ColorSerialization.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGResourceMarkerInlines.h"
+#include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
@@ -44,8 +46,6 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "RenderSVGResourceLinearGradientInlines.h"
-#include "RenderSVGResourceMarkerInlines.h"
-#include "RenderSVGResourceMaskerInlines.h"
 #include "RenderSVGResourcePattern.h"
 #include "RenderSVGResourceRadialGradientInlines.h"
 #include "RenderSVGResourceSolidColor.h"
@@ -463,7 +463,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
     writeNameAndQuotedValue(ts, "id", id);    
 
     if (resource.resourceType() == MaskerResourceType) {
-        const auto& masker = static_cast<const RenderSVGResourceMasker&>(resource);
+        const auto& masker = static_cast<const LegacyRenderSVGResourceMasker&>(resource);
         writeNameValuePair(ts, "maskUnits", masker.maskUnits());
         writeNameValuePair(ts, "maskContentUnits", masker.maskContentUnits());
         ts << "\n";
@@ -485,7 +485,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         writeNameValuePair(ts, "clipPathUnits", clipper.clipPathUnits());
         ts << "\n";
     } else if (resource.resourceType() == MarkerResourceType) {
-        const auto& marker = static_cast<const RenderSVGResourceMarker&>(resource);
+        const auto& marker = static_cast<const LegacyRenderSVGResourceMarker&>(resource);
         writeNameValuePair(ts, "markerUnits", marker.markerUnits());
         ts << " [ref at " << marker.referencePoint() << "]";
         ts << " [angle=";
@@ -610,7 +610,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
 
         if (!reresolvedURL.isEmpty()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
-            if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.treeScopeForSVGReferences(), resourceID)) {
+            if (auto* masker = getRenderSVGResourceById<LegacyRenderSVGResourceMasker>(renderer.treeScopeForSVGReferences(), resourceID)) {
                 ts << indent << " ";
                 writeNameAndQuotedValue(ts, "masker", resourceID);
                 ts << " ";

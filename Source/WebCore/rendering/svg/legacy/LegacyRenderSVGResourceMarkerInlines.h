@@ -25,25 +25,20 @@
 
 #pragma once
 
-#include "RenderSVGResourceMasker.h"
+#include "LegacyRenderSVGResourceMarker.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGMaskElement.h"
+#include "SVGMarkerElement.h"
 
 namespace WebCore {
 
-inline SVGMaskElement& RenderSVGResourceMasker::maskElement() const
+inline SVGMarkerElement& LegacyRenderSVGResourceMarker::markerElement() const
 {
-    return downcast<SVGMaskElement>(LegacyRenderSVGResourceContainer::element());
+    return downcast<SVGMarkerElement>(LegacyRenderSVGResourceContainer::element());
 }
 
-SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskUnits() const
+inline SVGMarkerUnitsType LegacyRenderSVGResourceMarker::markerUnits() const
 {
-    return maskElement().maskUnits();
+    return markerElement().markerUnits();
 }
 
-SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskContentUnits() const
-{
-    return maskElement().maskContentUnits();
-}
-
-}
+} // namespace WebCore

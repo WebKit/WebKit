@@ -19,30 +19,30 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceMasker.h"
+#include "LegacyRenderSVGResourceMasker.h"
 
 #include "Element.h"
 #include "ElementChildIteratorInlines.h"
 #include "FloatPoint.h"
 #include "Image.h"
 #include "IntRect.h"
-#include "RenderSVGResourceMaskerInlines.h"
+#include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceMasker);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceMasker);
 
-RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceMasker::LegacyRenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::SVGResourceMasker, element, WTFMove(style))
 {
 }
 
-RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
+LegacyRenderSVGResourceMasker::~LegacyRenderSVGResourceMasker() = default;
 
-void RenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_maskContentBoundaries.fill(FloatRect { });
     m_masker.clear();
@@ -50,14 +50,14 @@ void RenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInva
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
-void RenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void LegacyRenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_masker.remove(&client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -105,7 +105,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     return true;
 }
 
-bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)
+bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)
 {
     auto& maskImageContext = maskerData->maskImage->context();
     auto objectBoundingBox = object->objectBoundingBox();
@@ -126,7 +126,7 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
     return true;
 }
 
-bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& objectBoundingBox)
+bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& objectBoundingBox)
 {
     // Eventually adjust the mask image context according to the target objectBoundingBox.
     AffineTransform maskContentTransformation;
@@ -153,7 +153,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     return true;
 }
 
-bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     GraphicsContextStateSaver stateSaver(context);
 
@@ -169,7 +169,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     return drawContentIntoContext(context, { { }, destinationRect.size() });
 }
 
-void RenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
+void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     for (Node* childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
@@ -182,7 +182,7 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalcula
     }
 }
 
-FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
+FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     FloatRect objectBoundingBox = object.objectBoundingBox();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);

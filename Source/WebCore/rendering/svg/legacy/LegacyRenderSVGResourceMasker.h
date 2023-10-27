@@ -37,11 +37,11 @@ struct MaskerData {
     RefPtr<ImageBuffer> maskImage;
 };
 
-class RenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMasker);
+class LegacyRenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceMasker);
 public:
-    RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
-    virtual ~RenderSVGResourceMasker();
+    LegacyRenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGResourceMasker();
 
     inline SVGMaskElement& maskElement() const;
 
@@ -71,4 +71,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceMasker, MaskerResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceMasker, MaskerResourceType)
