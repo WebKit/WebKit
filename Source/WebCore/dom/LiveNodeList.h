@@ -58,6 +58,7 @@ protected:
     LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
 
     Document& document() const { return m_ownerNode->document(); }
+    Ref<Document> protectedDocument() const { return document(); }
     ContainerNode& rootNode() const;
 
 private:

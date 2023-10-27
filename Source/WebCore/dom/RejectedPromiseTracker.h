@@ -44,7 +44,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class UnhandledPromise;
 
-class RejectedPromiseTracker {
+class RejectedPromiseTracker : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RejectedPromiseTracker);
 public:

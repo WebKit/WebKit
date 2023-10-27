@@ -2118,9 +2118,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         }
 
         if (!oldValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
+            treeScope().idTargetObserverRegistry().notifyObservers(oldValue);
         if (!newValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
+            treeScope().idTargetObserverRegistry().notifyObservers(newValue);
         break;
     }
     case AttributeNames::nameAttr:

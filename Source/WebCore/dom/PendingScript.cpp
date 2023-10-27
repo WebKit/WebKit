@@ -35,7 +35,7 @@ namespace WebCore {
 
 Ref<PendingScript> PendingScript::create(ScriptElement& element, LoadableScript& loadableScript)
 {
-    auto pendingScript = adoptRef(*new PendingScript(element, loadableScript));
+    Ref pendingScript = adoptRef(*new PendingScript(element, loadableScript));
     loadableScript.addClient(pendingScript.get());
     return pendingScript;
 }
