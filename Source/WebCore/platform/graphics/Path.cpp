@@ -520,6 +520,17 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
     return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeContains(point, strokeStyleApplier);
 }
 
+bool Path::hasSubpaths() const
+{
+    if (auto segment = asSingle())
+        return PathStream::computeHasSubpaths({ segment, 1 });
+
+    if (auto impl = asImpl())
+        return impl->hasSubpaths();
+
+    return false;
+}
+
 FloatRect Path::fastBoundingRect() const
 {
     if (auto segment = asSingle())

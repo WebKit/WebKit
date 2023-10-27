@@ -83,6 +83,8 @@ public:
 
     virtual bool isClosed() const;
 
+    virtual bool hasSubpaths() const;
+
     virtual FloatPoint currentPoint() const = 0;
 
     virtual FloatRect fastBoundingRect() const = 0;

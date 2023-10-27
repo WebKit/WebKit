@@ -101,6 +101,7 @@ public:
 
     float length() const;
     bool isClosed() const;
+    bool hasSubpaths() const;
     FloatPoint currentPoint() const;
     PathTraversalState traversalStateAtLength(float length) const;
     FloatPoint pointAtLength(float length) const;

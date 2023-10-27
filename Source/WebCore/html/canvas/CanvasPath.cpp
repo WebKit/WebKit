@@ -50,8 +50,10 @@ void CanvasPath::closePath()
     if (m_path.isEmpty())
         return;
 
-    FloatRect boundRect = m_path.fastBoundingRect();
-    if (boundRect.width() || boundRect.height())
+    // The closePath() method, when invoked, must do nothing if the object's path has no subpaths.
+    // Otherwise, it must mark the last subpath as closed, create a new subpath whose first point
+    // is the same as the previous subpath's first point, and finally add this new subpath to the path.
+    if (m_path.hasSubpaths())
         m_path.closeSubpath();
 }
 

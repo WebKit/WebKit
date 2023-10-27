@@ -273,6 +273,30 @@ FloatRect PathStream::computeFastBoundingRect(std::span<const PathSegment> segme
     return boundingRect;
 }
 
+bool PathStream::computeHasSubpaths(std::span<const PathSegment> segments)
+{
+    FloatPoint lastMoveToPoint;
+    FloatPoint currentPoint;
+    FloatRect boundingRect = FloatRect::smallestRect();
+
+    for (auto& segment : segments) {
+        segment.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+        if (!boundingRect.isSmallest() && (boundingRect.height() || boundingRect.width()))
+            return true;
+        currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
+    }
+
+    if (boundingRect.isSmallest())
+        boundingRect.extend(currentPoint);
+
+    return boundingRect.height() || boundingRect.width();
+}
+
+bool PathStream::hasSubpaths() const
+{
+    return computeHasSubpaths(m_segments.span());
+}
+
 FloatRect PathStream::fastBoundingRect() const
 {
     return computeFastBoundingRect(m_segments.span());

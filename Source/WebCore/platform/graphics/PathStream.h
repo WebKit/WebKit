@@ -67,8 +67,11 @@ public:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
+    bool hasSubpaths() const final;
+
     static FloatRect computeFastBoundingRect(std::span<const PathSegment>);
     static FloatRect computeBoundingRect(std::span<const PathSegment>);
+    static bool computeHasSubpaths(std::span<const PathSegment>);
 
 private:
     PathStream() = default;
