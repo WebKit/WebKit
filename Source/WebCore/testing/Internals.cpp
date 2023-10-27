@@ -4793,6 +4793,13 @@ void Internals::endAudioSessionInterruption()
 #endif
 }
 
+void Internals::clearAudioSessionInterruptionFlag()
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::sharedSession().clearInterruptionFlagForTesting();
+#endif
+}
+
 void Internals::suspendAllMediaBuffering()
 {
     auto frame = this->frame();

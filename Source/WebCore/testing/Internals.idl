@@ -871,6 +871,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
     [Conditional=VIDEO] undefined beginAudioSessionInterruption();
     [Conditional=VIDEO] undefined endAudioSessionInterruption();
+    [Conditional=VIDEO] undefined clearAudioSessionInterruptionFlag();
     [Conditional=VIDEO] undefined suspendAllMediaBuffering();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
