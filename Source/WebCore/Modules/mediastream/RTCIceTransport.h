@@ -57,7 +57,7 @@ public:
     RTCIceGatheringState gatheringState() const { return m_gatheringState; }
 
     const RTCIceTransportBackend& backend() const { return m_backend.get(); }
-    RTCPeerConnection* connection() const { return m_connection.get(); }
+    RefPtr<RTCPeerConnection> connection() const { return m_connection.get(); }
 
     using RefCounted<RTCIceTransport>::ref;
     using RefCounted<RTCIceTransport>::deref;
