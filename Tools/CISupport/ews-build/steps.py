@@ -2490,7 +2490,12 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stderr', 'Failed to retrieve commit hash.\n')
             defer.returnValue(None)
 
-        head_sha = response['data']['repository']['pullRequest']['commits']['edges'][0]['node']['commit']['oid']
+        try:
+            head_sha = response['data']['repository']['pullRequest']['commits']['edges'][0]['node']['commit']['oid']
+        except TypeError:
+            yield self._addToLog('stderr', 'Failed to retrieve commit hash.\n')
+            defer.returnValue(None)
+
         rc = yield self.getQueueStatusFromList(head_sha, pr_number)
         defer.returnValue(rc)
 
