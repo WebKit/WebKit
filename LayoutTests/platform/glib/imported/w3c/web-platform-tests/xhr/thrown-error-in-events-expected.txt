@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Error: oh no!
-CONSOLE MESSAGE: Error: oh no 2!
-CONSOLE MESSAGE: Error: assert_equals: expected object "Error: oh no!" but got object "Error: oh no 2!"
-
-PASS errors thrown in XMLHttpRequest's load event (using addEventListener) goes to window.onerror
-PASS errors thrown in XMLHttpRequest's load event (using onload) goes to window.onerror
-

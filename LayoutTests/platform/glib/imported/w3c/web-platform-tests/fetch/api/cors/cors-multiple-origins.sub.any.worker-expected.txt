@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
 
 PASS Listing multiple origins is illegal: "",http://example.com,http://web-platform.test:8800
 PASS Listing multiple origins is illegal: "",http://example.com,*

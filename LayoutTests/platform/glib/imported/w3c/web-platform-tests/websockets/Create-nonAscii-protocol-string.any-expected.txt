@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Wrong protocol for WebSocket '\u0080echo'
-
-PASS Create WebSocket - Pass a valid URL and a protocol string with non-ascii values - SYNTAX_ERR is thrown
-
