@@ -53,4 +53,9 @@ RefPtr<RemotePageProxy> ProvisionalFrameProxy::takeRemotePageProxy()
     return std::exchange(m_remotePageProxy, nullptr);
 }
 
+Ref<WebProcessProxy> ProvisionalFrameProxy::protectedProcess() const
+{
+    return process();
 }
+
+} // namespace WebKit

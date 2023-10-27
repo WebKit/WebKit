@@ -27,6 +27,7 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <QuartzCore/CATextLayer.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKFrameInfo.h>
@@ -68,7 +69,7 @@ static const int testFooterBannerHeight = 58;
 
 @end
 
-@interface WK2BrowserWindowController () <NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
+@interface WK2BrowserWindowController () <NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
@@ -82,6 +83,8 @@ static const int testFooterBannerHeight = 58;
     MiniBrowserNSTextFinder *_textFinder;
     NSView *_textFindBarView;
     BOOL _findBarVisible;
+
+    CATextLayer *_pointerLockBanner;
 }
 
 - (void)awakeFromNib
@@ -992,6 +995,25 @@ static BOOL isJavaScriptURL(NSURL *url)
             }];
         }
     }];
+}
+
+- (void)_webViewDidRequestPointerLock:(WKWebView *)webView completionHandler:(void (^)(BOOL))completionHandler
+{
+    if (!_pointerLockBanner) {
+        _pointerLockBanner = [[CATextLayer alloc] init];
+        [_pointerLockBanner setString:[[NSAttributedString alloc] initWithString:@"Your mouse pointer is hidden. Press Esc (Escape) once to reveal your mouse pointer." attributes:@{ NSFontAttributeName:[NSFont systemFontOfSize:16], NSForegroundColorAttributeName:NSColor.blackColor }]];
+        [_pointerLockBanner setBackgroundColor:NSColor.lightGrayColor.CGColor];
+        [_pointerLockBanner setWrapped:YES];
+        [_pointerLockBanner setFrame:CGRectMake(0, 0, 0, testHeaderBannerHeight)];
+        [_pointerLockBanner setContentsScale:[NSScreen mainScreen].backingScaleFactor];
+    }
+    [webView _setHeaderBannerLayer:_pointerLockBanner];
+    completionHandler(YES);
+}
+
+- (void)_webViewDidLosePointerLock:(WKWebView *)webView
+{
+    [webView _setHeaderBannerLayer:nil];
 }
 
 @end

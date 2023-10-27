@@ -98,12 +98,12 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint (step 4).
     auto* vmPtr = &vm;
-    m_eventLoop->forEachAssociatedContext([vmPtr](auto& context) {
+    Ref { *m_eventLoop }->forEachAssociatedContext([vmPtr](auto& context) {
         auto& vm = *vmPtr;
         if (UNLIKELY(vm.executionForbidden()))
             return;
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
-        if (auto* tracker = context.rejectedPromiseTracker())
+        if (CheckedPtr tracker = context.rejectedPromiseTracker())
             tracker->processQueueSoon();
         catchScope.clearExceptionExceptTermination();
     });

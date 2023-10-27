@@ -36,6 +36,11 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
+#include "ShadowRoot.h"
+#include "SwitchThumbElement.h"
+#include "SwitchTrackElement.h"
 
 namespace WebCore {
 
@@ -58,14 +63,17 @@ String CheckboxInputType::valueMissingText() const
     return validationMessageValueMissingForCheckboxText();
 }
 
-void CheckboxInputType::attributeChanged(const QualifiedName& name)
+void CheckboxInputType::createShadowSubtree()
 {
+    ASSERT(needsShadowSubtree());
     ASSERT(element());
-    if (element()->document().settings().switchControlEnabled() && name == HTMLNames::switchAttr) {
-        if (element()->renderer())
-            element()->invalidateStyleAndRenderersForSubtree();
-    }
-    InputType::attributeChanged(name);
+    ASSERT(element()->userAgentShadowRoot());
+
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+
+    Ref document = element()->document();
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, SwitchTrackElement::create(document));
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, SwitchThumbElement::create(document));
 }
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
@@ -113,7 +121,7 @@ bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 bool CheckboxInputType::shouldAppearIndeterminate() const
 {
     ASSERT(element());
-    return element()->indeterminate() && !element()->isSwitch();
+    return element()->indeterminate() && !isSwitch();
 }
 
 } // namespace WebCore

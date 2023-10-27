@@ -55,10 +55,11 @@ public:
 
     Vector<String> supportedPropertyNames() const;
 
-    Element& element() { return m_element; }
+    Element& element();
+    Ref<Element> protectedElement() const;
 
 private:
-    Element& m_element;
+    CheckedRef<Element> m_element;
 };
 
 } // namespace WebCore

@@ -205,7 +205,7 @@ int KeyboardEvent::charCode() const
     // Firefox: 0 for keydown/keyup events, character code for keypress
     // We match Firefox, unless in backward compatibility mode, where we always return the character code.
     bool backwardCompatibilityMode = false;
-    auto* window = view() ? view()->window() : nullptr;
+    RefPtr window = view() ? view()->window() : nullptr;
     if (is<LocalDOMWindow>(window) && downcast<LocalDOMWindow>(*window).frame())
         backwardCompatibilityMode = downcast<LocalDOMWindow>(*window).frame()->eventHandler().needsKeyboardEventDisambiguationQuirks();
 

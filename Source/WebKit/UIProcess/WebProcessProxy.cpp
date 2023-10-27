@@ -2138,6 +2138,11 @@ WebProcessPool& WebProcessProxy::processPool() const
     return *m_processPool.get();
 }
 
+Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
+{
+    return processPool();
+}
+
 PAL::SessionID WebProcessProxy::sessionID() const
 {
     ASSERT(m_websiteDataStore);

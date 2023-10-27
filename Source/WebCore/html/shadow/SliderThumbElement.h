@@ -57,8 +57,8 @@ public:
     void hostDisabledStateChanged();
 
 private:
-    constexpr static auto CreateSliderThumbElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    SliderThumbElement(Document&);
+    static constexpr auto CreateSliderThumbElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit SliderThumbElement(Document&);
     bool isSliderThumbElement() const final { return true; }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
@@ -113,8 +113,8 @@ public:
     static Ref<SliderContainerElement> create(Document&);
 
 private:
-    constexpr static auto CreateSliderContainerElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    SliderContainerElement(Document&);
+    static constexpr auto CreateSliderContainerElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool isSliderContainerElement() const final { return true; }
 };

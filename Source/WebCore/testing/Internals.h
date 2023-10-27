@@ -801,6 +801,7 @@ public:
     bool isPlayerMuted(const HTMLMediaElement&) const;
     void beginAudioSessionInterruption();
     void endAudioSessionInterruption();
+    void clearAudioSessionInterruptionFlag();
     void suspendAllMediaBuffering();
 #endif
 

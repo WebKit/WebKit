@@ -47,6 +47,7 @@ public:
 
     enum class WellKnownOrder : uint8_t {
         GraphicsCommit,
+        PostGraphicsCommit,
         RenderingUpdate,
         ActivityStateChange,
         InspectorFrameBegin,

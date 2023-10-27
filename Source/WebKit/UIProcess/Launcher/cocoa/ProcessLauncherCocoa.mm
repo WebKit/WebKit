@@ -192,9 +192,6 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    xpc_dictionary_set_string(initializationMessage.get(), "WebKitBundleVersion", [[NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
-#endif
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
     // Create the listening port.
@@ -226,6 +223,10 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", [[NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.

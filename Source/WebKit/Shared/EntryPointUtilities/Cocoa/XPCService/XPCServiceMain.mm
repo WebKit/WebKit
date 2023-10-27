@@ -99,6 +99,24 @@ static void initializeLogd(bool disableLogging)
     RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
+{
+    CRASH();
+}
+static void checkFrameworkVersion(xpc_object_t message)
+{
+    auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
+    String expectedBundleVersion = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
+    if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
+        auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
+        logAndSetCrashLogMessage(errorMessage.utf8().data());
+        crashDueWebKitFrameworkVersionMismatch();
+    }
+}
+#endif // PLATFORM(MAC)
+
 void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
@@ -181,7 +199,9 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
-
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+                checkFrameworkVersion(event.get());
+#endif
                 initializerFunctionPtr(retainedPeerConnection.get(), event.get());
 
                 setAppleLanguagesPreference();
@@ -195,15 +215,6 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
     xpc_connection_resume(peer);
 }
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-
-NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
-{
-    CRASH();
-}
-
-#endif // PLATFORM(MAC)
 
 int XPCServiceMain(int, const char**)
 {
@@ -224,13 +235,6 @@ int XPCServiceMain(int, const char**)
             }
         }
 #endif
-        auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion"));
-        String expectedBundleVersion = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
-        if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
-            auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
-            logAndSetCrashLogMessage(errorMessage.utf8().data());
-            crashDueWebKitFrameworkVersionMismatch();
-        }
 #endif
     }
 

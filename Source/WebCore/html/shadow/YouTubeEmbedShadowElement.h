@@ -38,7 +38,7 @@ public:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
 private:
-    YouTubeEmbedShadowElement(Document&);
+    explicit YouTubeEmbedShadowElement(Document&);
 };
 
 } // namespace WebCore

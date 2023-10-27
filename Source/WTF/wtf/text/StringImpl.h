@@ -197,6 +197,8 @@ class StringImpl : private StringImplShape {
     template<typename> friend struct WTF::BufferFromStaticDataTranslator;
     template<typename> friend struct WTF::HashAndCharactersTranslator;
 
+    friend WTF_EXPORT_PRIVATE bool equal(const StringImpl&, const StringImpl&);
+
 public:
     enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
 

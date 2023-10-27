@@ -101,9 +101,9 @@ TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(const InlineFormattingConte
 {
 }
 
-LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousContent>& previousContent)
+LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
-    initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousContent);
+    initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine);
     auto placedContentEnd = isWrappingAllowed() ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
 
@@ -125,11 +125,11 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
     };
 }
 
-void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, const InlineRect& initialLogicalRect, const std::optional<PreviousContent>& previousContent)
+void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>& previousLine)
 {
-    ASSERT(!layoutRange.isEmpty() || (previousContent && !previousContent->previousLine.suspendedFloats.isEmpty()));
+    ASSERT(!layoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
     auto partialLeadingTextItem = [&]() -> std::optional<InlineTextItem> {
-        if (!previousContent || !layoutRange.start.offset)
+        if (!previousLine || !layoutRange.start.offset)
             return { };
 
         auto& overflowingInlineTextItem = downcast<InlineTextItem>(m_inlineItemList[layoutRange.start.index]);
@@ -138,13 +138,13 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
         if (overflowingLength) {
             // Turn previous line's overflow content into the next line's leading content.
             // "sp[<-line break->]lit_content" -> break position: 2 -> leading partial content length: 11.
-            return overflowingInlineTextItem.right(overflowingLength, previousContent->previousLine.trailingOverflowingContentWidth);
+            return overflowingInlineTextItem.right(overflowingLength, previousLine->trailingOverflowingContentWidth);
         }
         return { };
     };
     m_partialLeadingTextItem = partialLeadingTextItem();
     m_line.initialize({ }, isFirstFormattedLine());
-    m_previousContent = previousContent;
+    m_previousLine = previousLine;
     m_lineLogicalRect = initialLogicalRect;
     m_wrapOpportunityList = { };
     m_trimmedTrailingWhitespaceWidth = { };

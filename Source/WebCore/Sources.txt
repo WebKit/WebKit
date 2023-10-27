@@ -1609,6 +1609,8 @@ html/shadow/ProgressShadowElement.cpp
 html/shadow/ShadowPseudoIds.cpp
 html/shadow/SliderThumbElement.cpp
 html/shadow/SpinButtonElement.cpp
+html/shadow/SwitchThumbElement.cpp
+html/shadow/SwitchTrackElement.cpp
 html/shadow/TextControlInnerElements.cpp
 html/shadow/TextPlaceholderElement.cpp
 html/track/AudioTrack.cpp

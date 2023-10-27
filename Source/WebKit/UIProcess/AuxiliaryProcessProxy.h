@@ -105,6 +105,8 @@ public:
         return m_connection.get();
     }
 
+    RefPtr<IPC::Connection> protectedConnection() const { return connection(); }
+
     bool hasConnection() const
     {
         return !!m_connection;

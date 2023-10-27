@@ -60,6 +60,7 @@ public:
     void clear();
 
     WebBackForwardListItem* currentItem() const;
+    RefPtr<WebBackForwardListItem> protectedCurrentItem() const;
     WebBackForwardListItem* backItem() const;
     WebBackForwardListItem* forwardItem() const;
     WebBackForwardListItem* itemAtIndex(int) const;
