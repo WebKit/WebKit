@@ -577,7 +577,6 @@ public:
     int computeLineHeight(const Length&) const;
 
     WhiteSpace whiteSpace() const;
-    static constexpr bool autoWrap(WhiteSpace);
     inline bool autoWrap() const;
     static constexpr bool preserveNewline(WhiteSpace);
     inline bool preserveNewline() const;
