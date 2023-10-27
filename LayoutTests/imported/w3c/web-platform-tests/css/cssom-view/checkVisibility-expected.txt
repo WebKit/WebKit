@@ -18,4 +18,5 @@ PASS checkVisibility on content-visibility:auto with visibility:hidden inside.
 PASS checkVisibility on nested content-visibility:auto containers reports that the content is visible.
 PASS checkVisibility on content-visibility:hidden child after forced layout update.
 PASS checkVisibility on content-visibility:hidden element after forced layout update.
+PASS checkVisibility on root element with content-visibility: hidden returns true.
 

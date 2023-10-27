@@ -5475,6 +5475,22 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     if (options.checkVisibilityCSS && style->visibility() != Visibility::Visible)
         return false;
 
+    RefPtr parent = parentElementInComposedTree();
+    auto isSkippedContentWithReason = [&](ContentVisibility reason) -> bool {
+        ASSERT(!parent || parent->computedStyle());
+        if (style->skippedContentReason().value_or(ContentVisibility::Visible) != reason)
+            return false;
+
+        // skippedContentReason() includes the skipped content root, so we query the parent to make sure roots are not considered as skipped.
+        if (!parent || parent->computedStyle()->skippedContentReason().value_or(ContentVisibility::Visible) != reason)
+            return false;
+
+        return true;
+    };
+
+    if (isSkippedContentWithReason(ContentVisibility::Hidden))
+        return false;
+
     for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
         auto* ancestorStyle = ancestor->computedStyle();
         if (ancestorStyle->display() == DisplayType::None)
@@ -5484,11 +5500,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
             return false;
     }
 
-    // skippedContentReason() includes the skipped content root, so we query the parent to make sure we exclude roots that are visible.
-    auto* parent = parentElementInComposedTree();
-    ASSERT(!parent || parent->computedStyle());
-    return style->skippedContentReason().value_or(ContentVisibility::Visible) != ContentVisibility::Hidden
-        || (parent && parent->computedStyle()->skippedContentReason().value_or(ContentVisibility::Visible) != ContentVisibility::Hidden);
+    return true;
 }
 
 AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
