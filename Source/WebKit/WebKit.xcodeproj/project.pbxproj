@@ -1746,6 +1746,7 @@
 		9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */; };
 		9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */; };
 		9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */; };
+		9B38009E2AEA2D9D0011A892 /* ViewWindowCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */; };
 		9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */; };
 		9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908E253151CC00EC11AB /* JSIPCBinding.h */; };
 		9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */; };
@@ -6395,6 +6396,8 @@
 		9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationManager.cpp; sourceTree = "<group>"; };
 		9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationManager.messages.in; sourceTree = "<group>"; };
 		9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationIdentifier.h; sourceTree = "<group>"; };
+		9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewWindowCoordinates.serialization.in; sourceTree = "<group>"; };
+		9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewWindowCoordinates.h; sourceTree = "<group>"; };
 		9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageArgumentDescriptions.h; sourceTree = "<group>"; };
 		9B47908E253151CC00EC11AB /* JSIPCBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSIPCBinding.h; sourceTree = "<group>"; };
 		9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageArgumentDescriptions.cpp; sourceTree = "<group>"; };
@@ -8372,6 +8375,8 @@
 				1AC1336618565B5700F3EC05 /* UserData.h */,
 				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
 				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
+				9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */,
+				9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
 				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,
@@ -15232,6 +15237,7 @@
 				2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */,
 				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
+				9B38009E2AEA2D9D0011A892 /* ViewWindowCoordinates.h in Headers */,
 				52CDC5C42731DA0D00A3E3EB /* VirtualAuthenticatorConfiguration.h in Headers */,
 				52CDC5CA2731DA0D00A3E3EB /* VirtualAuthenticatorManager.h in Headers */,
 				52F4B46927E1197700FFD129 /* VirtualAuthenticatorUtils.h in Headers */,

@@ -116,6 +116,7 @@
 #include "UndoOrRedo.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "UserMediaProcessManager.h"
+#include "ViewWindowCoordinates.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
 #include "WebBackForwardCache.h"
@@ -9560,6 +9561,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.useFormSemanticContext = useFormSemanticContext();
     parameters.headerBannerHeight = headerBannerHeight();
     parameters.footerBannerHeight = footerBannerHeight();
+    if (m_viewWindowCoordinates)
+        parameters.viewWindowCoordinates = *m_viewWindowCoordinates;
 #endif
 
 #if ENABLE(META_VIEWPORT)
