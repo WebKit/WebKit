@@ -3196,13 +3196,18 @@ void WKPageSetMockCaptureDevicesInterrupted(WKPageRef pageRef, bool isCameraInte
 #endif
 }
 
-void WKPageTriggerMockMicrophoneConfigurationChange(WKPageRef pageRef)
+void WKPageTriggerMockCaptureConfigurationChange(WKPageRef pageRef, bool forMicrophone, bool forDisplay)
 {
     CRASH_IF_SUSPENDED;
-#if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
+
+#if ENABLE(GPU_PROCESS)
     auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
-    gpuProcess.triggerMockMicrophoneConfigurationChange();
-#endif
+    gpuProcess.triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
+#endif // ENABLE(GPU_PROCESS)
+
+#endif // ENABLE(MEDIA_STREAM)
 }
 
 void WKPageLoadedSubresourceDomains(WKPageRef pageRef, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext)

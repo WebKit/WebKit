@@ -451,7 +451,12 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     }
 
     m_currentFrame = WTFMove(sampleBuffer);
-    m_intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+
+    auto intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+    if (!m_intrinsicSize || *m_intrinsicSize != intrinsicSize) {
+        m_intrinsicSize = intrinsicSize;
+        configurationChanged();
+    }
 }
 
 dispatch_queue_t ScreenCaptureKitCaptureSource::captureQueue()

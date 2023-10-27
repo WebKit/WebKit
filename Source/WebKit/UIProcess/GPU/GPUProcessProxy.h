@@ -93,7 +93,7 @@ public:
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void triggerMockMicrophoneConfigurationChange();
+    void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
     void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
 #endif
 
