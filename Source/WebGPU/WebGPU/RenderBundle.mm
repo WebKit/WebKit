@@ -43,8 +43,9 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Device& device)
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, Device& device)
     : m_device(device)
+    , m_renderBundleEncoder(encoder)
 {
     m_renderBundlesResources = resources;
 }
@@ -59,6 +60,11 @@ RenderBundle::~RenderBundle() = default;
 void RenderBundle::setLabel(String&& label)
 {
     m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label;
+}
+
+bool RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) const
+{
+    return m_renderBundleEncoder ? m_renderBundleEncoder->replayCommands(commandEncoder) : false;
 }
 
 } // namespace WebGPU

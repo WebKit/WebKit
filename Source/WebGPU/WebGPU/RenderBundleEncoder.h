@@ -92,6 +92,7 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_indirectCommandBuffer; }
+    bool replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
 
 private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
@@ -103,6 +104,8 @@ private:
     void makeInvalid() { m_indirectCommandBuffer = nil; }
     void executePreDrawCommands();
     void endCurrentICB();
+    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
+    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -137,6 +140,8 @@ private:
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
+
+    id<MTLRenderCommandEncoder> m_commandEncoder { nil };
 };
 
 } // namespace WebGPU

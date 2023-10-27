@@ -185,6 +185,9 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
 {
     for (auto& bundle : bundles) {
         const auto& renderBundle = bundle.get();
+        if (renderBundle.replayCommands(m_renderCommandEncoder))
+            continue;
+
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [m_renderCommandEncoder setDepthStencilState:depthStencilState];
