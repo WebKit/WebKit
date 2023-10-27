@@ -11541,7 +11541,7 @@ void WebPageProxy::requestPointerUnlock()
     m_isPointerLocked = false;
     m_isPointerLockPending = false;
 }
-#endif
+#endif // ENABLE(POINTER_LOCK)
 
 void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handler, const String& scheme)
 {
