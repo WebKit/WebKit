@@ -838,6 +838,44 @@ bool Pasteboard::canWriteTrustworthyWebURLsPboardType()
     return true;
 }
 
+RefPtr<WebCore::SharedBuffer> Pasteboard::bufferConvertedToPasteboardType(const PasteboardBuffer& pasteboardBuffer, const String& pasteboardType)
+{
+    if (pasteboardBuffer.type == pasteboardType)
+        return pasteboardBuffer.data;
+
+    if (pasteboardType != String(legacyTIFFPasteboardType()))
+        return pasteboardBuffer.data;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (pasteboardBuffer.type == String(kUTTypeTIFF))
+        return pasteboardBuffer.data;
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    auto sourceData = pasteboardBuffer.data->createCFData();
+    auto sourceType = pasteboardBuffer.type.createCFString();
+
+    const void* key = kCGImageSourceTypeIdentifierHint;
+    const void* value = sourceType.get();
+    auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    auto source = adoptCF(CGImageSourceCreateWithData(sourceData.get(), options.get()));
+    if (!source)
+        return nullptr;
+
+    auto data = adoptCF(CFDataCreateMutable(0, 0));
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    auto destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, 1, NULL));
+ALLOW_DEPRECATED_DECLARATIONS_END
+    if (!destination)
+        return nullptr;
+
+    CGImageDestinationAddImageFromSource(destination.get(), source.get(), 0, NULL);
+    if (!CGImageDestinationFinalize(destination.get()))
+        return nullptr;
+
+    return SharedBuffer::create(data.get());
+}
+
 }
 
 #endif // PLATFORM(MAC)

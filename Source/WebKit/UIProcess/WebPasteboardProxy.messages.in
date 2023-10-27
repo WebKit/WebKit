@@ -46,7 +46,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> pathnames, Vector<WebKit::SandboxExtension::Handle> sandboxExtensions) Synchronous
     GetPasteboardStringForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous
     GetPasteboardStringsForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> strings) Synchronous
-    GetPasteboardBufferForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (struct WebCore::PasteboardBuffer pasteboardBuffer) Synchronous
     GetPasteboardChangeCount(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous
     GetPasteboardColor(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (WebCore::Color color) Synchronous
     GetPasteboardURL(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String urlString) Synchronous

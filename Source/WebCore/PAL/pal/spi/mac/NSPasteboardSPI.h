@@ -29,3 +29,7 @@
 // but that file won't compile as C++.
 
 extern NSString *_NXSmartPaste;
+
+@interface NSPasteboard ()
+- (NSData *)_dataWithoutConversionForType:(NSString *)type securityScoped:(BOOL)securityScoped;
+@end
