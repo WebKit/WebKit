@@ -1370,13 +1370,12 @@ void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& 
     if (isManaged()) {
         auto addedRanges = ranges;
         addedRanges -= m_buffered->ranges();
-        auto addedTimeRanges = addedRanges.length() ? RefPtr { TimeRanges::create(WTFMove(addedRanges)) } : nullptr;
+        auto addedTimeRanges = TimeRanges::create(WTFMove(addedRanges));
 
         auto removedRanges = m_buffered->ranges();
         removedRanges -= ranges;
-        auto removedTimeRanges = removedRanges.length() ? RefPtr { TimeRanges::create(WTFMove(removedRanges)) } : nullptr;
+        auto removedTimeRanges = TimeRanges::create(WTFMove(removedRanges));
 
-        ASSERT(addedTimeRanges || removedTimeRanges, "Can't generate an empty dictionary");
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, BufferedChangeEvent::create(WTFMove(addedTimeRanges), WTFMove(removedTimeRanges)));
     }
 #endif
