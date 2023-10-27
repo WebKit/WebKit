@@ -451,6 +451,8 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
 {
     if (floatingState && !floatingState->isEmpty())
         return false;
+    if (inlineFormattingState.inlineItems().isEmpty())
+        return false;
     if (!inlineFormattingState.isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;
 

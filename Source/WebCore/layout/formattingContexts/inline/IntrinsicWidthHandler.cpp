@@ -89,6 +89,9 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
         horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
     auto& inlineItems = formattingState().inlineItems();
     auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
+    if (layoutRange.isEmpty())
+        return { };
+
     auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
