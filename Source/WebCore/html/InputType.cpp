@@ -677,6 +677,7 @@ void InputType::removeShadowSubtree()
         return;
 
     root->removeChildren();
+    m_hasCreatedShadowSubtree = false;
 }
 
 Decimal InputType::parseToNumber(const String&, const Decimal& defaultValue) const

@@ -848,6 +848,20 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         break;
 #endif
+    case AttributeNames::switchAttr:
+        if (document().settings().switchControlEnabled()) {
+            auto hasSwitchAttribute = !newValue.isNull();
+            if (hasSwitchAttribute == isSwitch())
+                return;
+            m_hasSwitchAttribute = hasSwitchAttribute;
+            if (isSwitch())
+                m_inputType->createShadowSubtreeIfNeeded();
+            else if (isCheckbox())
+                m_inputType->removeShadowSubtree();
+            if (renderer())
+                invalidateStyleAndRenderersForSubtree();
+        }
+        break;
     default:
         break;
     }
@@ -1855,7 +1869,7 @@ bool HTMLInputElement::isCheckbox() const
 
 bool HTMLInputElement::isSwitch() const
 {
-    return document().settings().switchControlEnabled() && isCheckbox() && hasAttributeWithoutSynchronization(switchAttr);
+    return m_inputType->isSwitch();
 }
 
 bool HTMLInputElement::isRangeControl() const

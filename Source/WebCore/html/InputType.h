@@ -176,6 +176,7 @@ public:
     // scattered code with special cases for various types.
 
     bool isCheckbox() const { return m_type == Type::Checkbox; }
+    bool isSwitch() const { return isCheckbox() && m_element && m_element->hasSwitchAttribute(); }
     bool isColorControl() const { return m_type == Type::Color; }
     bool isDateField() const { return m_type == Type::Date; }
     bool isDateTimeLocalField() const { return m_type == Type::DateTimeLocal; }
@@ -208,7 +209,7 @@ public:
     bool isInteractiveContent() const;
     bool isLabelable() const;
     bool isEnumeratable() const;
-    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
+    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type) || isSwitch(); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
     // Form value functions.

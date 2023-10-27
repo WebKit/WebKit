@@ -1259,7 +1259,8 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
     case WebCore::StyleAppearance::SearchFieldCancelButton:
     case WebCore::StyleAppearance::SliderThumbHorizontal:
     case WebCore::StyleAppearance::SliderThumbVertical:
-    case WebCore::StyleAppearance::Switch:
+    case WebCore::StyleAppearance::SwitchThumb:
+    case WebCore::StyleAppearance::SwitchTrack:
         break;
     }
 }
@@ -1382,7 +1383,8 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::StyleAppearance::SliderThumbVertical:
         return WebCore::SliderThumbPart::create(*type);
 
-    case WebCore::StyleAppearance::Switch:
+    case WebCore::StyleAppearance::SwitchThumb:
+    case WebCore::StyleAppearance::SwitchTrack:
         break;
     }
 
