@@ -2018,3 +2018,5 @@ http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
 
 webkit.org/b/263738 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
+
+webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
