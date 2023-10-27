@@ -660,7 +660,7 @@ Token Lexer<T>::lexNumber()
     const T* fract = nullptr;
     const T* exponent = nullptr;
 
-    while (m_code != m_codeEnd) {
+    while (true) {
         switch (state) {
         case Start:
             switch (m_current) {
