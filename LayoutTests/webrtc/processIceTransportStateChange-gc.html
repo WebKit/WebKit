@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ICETransport statechangeEvent</title>
+<script src="../resources/gc.js"></script>
+</head>
+<body>
+<div>This test passes if not crashing</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function doTest()
+{
+    let value = window.localStorage.getItem("test-done");
+    if (value && value.length === 5) {
+        window.localStorage.removeItem("test-done");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    const iframe = document.body.appendChild(document.createElement('iframe'));
+    const local_connection = new iframe.contentWindow.RTCPeerConnection();
+    const remote_connection = new iframe.contentWindow.RTCPeerConnection();
+
+    local_connection.onicecandidate = event => {
+        remote_connection.addIceCandidate(event.candidate);
+    };
+
+    local_connection.createDataChannel('test');
+
+    const offer = await local_connection.createOffer();
+    await local_connection.setLocalDescription(offer);
+    await remote_connection.setRemoteDescription(offer);
+
+    const answer = await remote_connection.createAnswer();
+    await remote_connection.setLocalDescription(answer);
+
+    local_connection.sctp.transport.iceTransport.onstatechange = () => {
+        iframe.remove();
+        gc();
+
+        window.localStorage.setItem("test-done", (value ? value : "") + "a");
+
+        location.reload();
+    };
+}
+doTest();
+</script>
+</body>
+</html>
