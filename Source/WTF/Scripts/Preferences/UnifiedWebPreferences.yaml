@@ -5239,7 +5239,7 @@ PreferFasterClickOverDoubleTap:
 
 PreferPageRenderingUpdatesNear60FPSEnabled:
   type: bool
-  status: developer
+  status: stable
   category: dom
   humanReadableName: "Prefer Page Rendering Updates near 60fps"
   humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than using the display's refresh rate"
