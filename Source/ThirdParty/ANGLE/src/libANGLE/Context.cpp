@@ -861,6 +861,9 @@ egl::Error Context::onDestroy(const egl::Display *display)
         return egl::NoError();
     }
 
+    // webkitglib/2.42 note: this is equivalent to State::ensureNoPendingLink in newer ANGLE
+    mState.getLinkedProgramExecutable(this);
+
     // eglDestoryContext() must have been called for this Context and there must not be any Threads
     // that still have it current.
     ASSERT(mIsDestroyed == true && mRefCount == 0);
