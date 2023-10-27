@@ -36,6 +36,8 @@ static constexpr CFIndex cfRunLoopOrder(RunLoopObserver::WellKnownOrder order)
     switch (order) {
     case RunLoopObserver::WellKnownOrder::GraphicsCommit:
         return coreAnimationCommit;
+    case RunLoopObserver::WellKnownOrder::PostGraphicsCommit:
+        return coreAnimationCommit + 1;
     case RunLoopObserver::WellKnownOrder::RenderingUpdate:
         return coreAnimationCommit - 1;
     case RunLoopObserver::WellKnownOrder::ActivityStateChange:
