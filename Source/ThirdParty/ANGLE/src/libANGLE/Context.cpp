@@ -828,6 +828,8 @@ egl::Error Context::onDestroy(const egl::Display *display)
         return egl::NoError();
     }
 
+    mState.ensureNoPendingLink(this);
+
     // eglDestoryContext() must have been called for this Context and there must not be any Threads
     // that still have it current.
     ASSERT(mIsDestroyed == true && mRefCount == 0);
@@ -895,7 +897,6 @@ egl::Error Context::onDestroy(const egl::Display *display)
 
     releaseShaderCompiler();
 
-    mState.ensureNoPendingLink(this);
     mState.reset(this);
 
     releaseSharedObjects();
