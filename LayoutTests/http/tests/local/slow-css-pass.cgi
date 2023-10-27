@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 print "Content-type: text/css\n"; 
 print "Cache-control: no-store\n\n";

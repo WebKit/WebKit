@@ -1,4 +1,6 @@
 #!/usr/bin/perl -w
+binmode STDIN;
+binmode STDOUT;
 
 print "Content-type: text/plain\n";
 print "Cache-control: max-age=3600\n";

@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 print "Content-type: application/octet-stream\n";
 print "Cache-control: no-cache, no-store\n\n";

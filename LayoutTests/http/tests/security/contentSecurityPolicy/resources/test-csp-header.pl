@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+binmode STDOUT;
 
 if ($ENV{HTTP_CSP} eq "active") {
     print "Status: 200\r\n";

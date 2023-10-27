@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+binmode STDOUT;
 
 print "Content-Type: text/html; charset=UTF-8\n";
 print "Content-Security-Policy: frame-ancestors 'self'\n";

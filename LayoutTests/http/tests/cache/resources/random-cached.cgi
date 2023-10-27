@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 print "Content-type: text/javascript\n";
 print "Cache-control: max-age=60000\n";

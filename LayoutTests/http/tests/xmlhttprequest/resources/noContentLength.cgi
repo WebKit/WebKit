@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 print "Content-Type: text/html\r\n\r\n";
 

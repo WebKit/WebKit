@@ -3,6 +3,7 @@
 
 use strict;
 use warnings;
+binmode STDOUT;
 
 use MIME::Base64;
 
