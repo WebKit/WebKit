@@ -76,11 +76,6 @@ struct PreviousLine {
     Vector<const Box*> suspendedFloats;
 };
 
-struct PreviousContent {
-    bool hasInlineContent { false };
-    PreviousLine previousLine { };
-};
-
 inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)
     : start(start)
     , end(end)
