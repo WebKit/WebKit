@@ -173,6 +173,7 @@
 #include "NodeWithIndex.h"
 #include "NoiseInjectionPolicy.h"
 #include "NotificationController.h"
+#include "OpportunisticTaskScheduler.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -7452,6 +7453,8 @@ int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds t
 {
     if (!m_idleCallbackController)
         m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
+    if (auto page = checkedPage())
+        page->opportunisticTaskScheduler().willQueueIdleCallback();
     return m_idleCallbackController->queueIdleCallback(WTFMove(callback), timeout);
 }
 

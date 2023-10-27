@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RunLoopObserver.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -59,7 +60,9 @@ public:
 
     ~OpportunisticTaskScheduler();
 
-    void reschedule(MonotonicTime deadline);
+    void willQueueIdleCallback() { m_mayHavePendingIdleCallbacks = true; }
+
+    void rescheduleIfNeeded(MonotonicTime deadline);
     bool hasImminentlyScheduledWork() const { return m_imminentlyScheduledWorkCount; }
 
     WARN_UNUSED_RETURN Ref<ImminentlyScheduledWorkScope> makeScheduledWorkScope();
@@ -70,11 +73,17 @@ private:
     OpportunisticTaskScheduler(Page&);
     void runLoopObserverFired();
 
+    bool isPageInactiveOrLoading() const;
+
+    bool shouldAllowOpportunisticallyScheduledTasks() const;
+    CheckedPtr<Page> checkedPage() const;
+
     WeakPtr<Page> m_page;
     uint64_t m_imminentlyScheduledWorkCount { 0 };
     uint64_t m_runloopCountAfterBeingScheduled { 0 };
     MonotonicTime m_currentDeadline;
     std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+    bool m_mayHavePendingIdleCallbacks { false };
 };
 
 } // namespace WebCore
