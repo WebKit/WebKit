@@ -30,6 +30,15 @@
 
 #import "UIKitSPI.h"
 
+#if HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
+
+@interface UIScrollView (Staging_112474630)
+@property (nonatomic) BOOL transfersHorizontalScrollingToParent;
+@property (nonatomic) BOOL transfersVerticalScrollingToParent;
+@end
+
+#endif // HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
+
 #if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
 
 @interface UIScrollView (Staging_112474145)
@@ -147,6 +156,33 @@ static constexpr auto epsilonForComputingScrollability = 0.0001;
     return self._wk_contentHeightIncludingInsets - CGRectGetHeight(self.bounds) > epsilonForComputingScrollability;
 }
 
+- (void)_wk_setTransfersHorizontalScrollingToParent:(BOOL)value
+{
+#if HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
+    static BOOL hasAPI = [UIScrollView instancesRespondToSelector:@selector(setTransfersHorizontalScrollingToParent:)];
+    if (hasAPI) {
+        self.transfersHorizontalScrollingToParent = value;
+        return;
+    }
+#endif
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    self._allowsParentToBeginHorizontally = value;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+- (void)_wk_setTransfersVerticalScrollingToParent:(BOOL)value
+{
+#if HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
+    static BOOL hasAPI = [UIScrollView instancesRespondToSelector:@selector(setTransfersVerticalScrollingToParent:)];
+    if (hasAPI) {
+        self.transfersVerticalScrollingToParent = value;
+        return;
+    }
+#endif
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    self._allowsParentToBeginVertically = value;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
 @end
 
 @implementation UIView (WebKitInternal)

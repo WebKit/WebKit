@@ -232,10 +232,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavio
         scrollView.bouncesVertically = verticalOverscrollBehavior != OverscrollBehavior::None;
     }
     if (allowPropogation == AllowOverscrollToPreventScrollPropagation::Yes) {
-#if HAVE(UIKIT_OVERSCROLL_BEHAVIOR_SUPPORT)
-        scrollView._allowsParentToBeginHorizontally = horizontalOverscrollBehavior == OverscrollBehavior::Auto;
-        scrollView._allowsParentToBeginVertically = verticalOverscrollBehavior == OverscrollBehavior::Auto;
-#endif
+        [scrollView _wk_setTransfersHorizontalScrollingToParent:horizontalOverscrollBehavior == OverscrollBehavior::Auto];
+        [scrollView _wk_setTransfersVerticalScrollingToParent:verticalOverscrollBehavior == OverscrollBehavior::Auto];
     }
 }
 
