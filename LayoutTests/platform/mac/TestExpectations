@@ -2884,3 +2884,17 @@ webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transfo
 
 # rdar://114294654 (REGRESSION (265615@main): [ Sonoma ] fast/attachment/cocoa/wide-attachment-rendering.html is a constant failure)
 [ Sonoma+ ] fast/attachment/cocoa/wide-attachment-rendering.html [ Failure ]
+
+# webkit.org/b/263441 [ mac-wk1 ] Several WPTs using wheel actions are timing out after b243272
+# webkit.org/b/263476 [ mac-wk2 ] Some WPTs exercising wheel actions interface timing out on pre-Sonoma MacOS after b243272
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]

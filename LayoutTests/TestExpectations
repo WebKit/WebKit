@@ -6675,3 +6675,15 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pl
 imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/root-element-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/svg/mix-blend-mode-in-svg-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/263434 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html [ Skip ]
+
+webkit.org/b/261810 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
+
+webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
+
+# webkit.org/b/263438 Three dom/events/scrolling WPTs are constantly timing out
+imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html [ Skip ]
