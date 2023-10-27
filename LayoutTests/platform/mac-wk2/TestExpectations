@@ -2016,7 +2016,7 @@ webkit.org/b/263575 [ Sonoma+ Debug ] fast/text/glyph-display-lists/glyph-displa
 
 # WebGPU
 http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
-
+http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
 
 webkit.org/b/263738 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
