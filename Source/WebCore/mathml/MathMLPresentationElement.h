@@ -39,7 +39,7 @@ public:
     static Ref<MathMLPresentationElement> create(const QualifiedName& tagName, Document&);
 
 protected:
-    constexpr static auto CreateMathMLPresentationElement = CreateMathMLElement;
+    static constexpr auto CreateMathMLPresentationElement = CreateMathMLElement;
     MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 

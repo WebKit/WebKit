@@ -106,7 +106,7 @@ public:
     using Node::deref;
 
 protected:
-    constexpr static auto CreateHTMLFormControlElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLFormControlElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;

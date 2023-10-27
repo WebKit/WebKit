@@ -652,20 +652,20 @@ protected:
     void setIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildrenFinished); }
     void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
 
-    constexpr static auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
-    constexpr static auto CreateOther = DefaultNodeFlags;
-    constexpr static auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
-    constexpr static auto CreateText = CreateCharacterData | NodeFlag::IsText;
-    constexpr static auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
-    constexpr static auto CreateElement = CreateContainer | NodeFlag::IsElement;
-    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
-    constexpr static auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
-    constexpr static auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
-    constexpr static auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
-    constexpr static auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    constexpr static auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
-    constexpr static auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
-    constexpr static auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
+    static constexpr auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
+    static constexpr auto CreateOther = DefaultNodeFlags;
+    static constexpr auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
+    static constexpr auto CreateText = CreateCharacterData | NodeFlag::IsText;
+    static constexpr auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
+    static constexpr auto CreateElement = CreateContainer | NodeFlag::IsElement;
+    static constexpr auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
+    static constexpr auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
+    static constexpr auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
+    static constexpr auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
+    static constexpr auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
+    static constexpr auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
     using ConstructionType = OptionSet<NodeFlag>;
     Node(Document&, ConstructionType);
 

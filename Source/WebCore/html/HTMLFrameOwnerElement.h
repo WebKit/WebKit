@@ -67,7 +67,7 @@ public:
     virtual bool isLazyLoadObserverActive() const { return false; }
 
 protected:
-    constexpr static auto CreateHTMLFrameOwnerElement = CreateHTMLElement;
+    static constexpr auto CreateHTMLFrameOwnerElement = CreateHTMLElement;
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, ConstructionType = CreateHTMLFrameOwnerElement);
     void setSandboxFlags(SandboxFlags);
     bool isProhibitedSelfReference(const URL&) const;
