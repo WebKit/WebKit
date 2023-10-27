@@ -139,7 +139,10 @@ public:
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
     struct QueryContainerUpdateContext {
-        HashSet<CheckedRef<Element>> invalidatedContainers;
+        // FIXME: Switching to a WeakHashSet causes fast/dom/Node/Node-destruction-crash.html
+        // to time out. Scope::updateQueryContainerState() seems to rely on this container
+        // containing stale pointers.
+        HashSet<Element*> invalidatedContainers;
     };
     bool updateQueryContainerState(QueryContainerUpdateContext&);
 

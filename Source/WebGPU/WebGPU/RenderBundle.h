@@ -47,14 +47,16 @@ namespace WebGPU {
 
 class Device;
 
+class RenderBundleEncoder;
+
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, device));
+        return adoptRef(*new RenderBundle(resources, encoder, device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -70,11 +72,13 @@ public:
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
 
+    bool replayCommands(id<MTLRenderCommandEncoder>) const;
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, Device&);
     RenderBundle(Device&);
 
     const Ref<Device> m_device;
+    RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
 };
 

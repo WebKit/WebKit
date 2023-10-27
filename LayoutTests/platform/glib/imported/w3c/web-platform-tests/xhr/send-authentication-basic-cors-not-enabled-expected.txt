@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Preflight response is not successful. Status code: 401
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/xhr/resources/auth10/auth.py due to access control checks.
-
-PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure)
-

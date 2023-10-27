@@ -442,6 +442,7 @@ struct TextCheckerRequestType;
 struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
+struct ViewWindowCoordinates;
 struct WebAutocorrectionContext;
 struct WebAutocorrectionData;
 struct WebBackForwardListCounts;
@@ -3179,7 +3180,10 @@ private:
     bool m_hasScheduledActivityStateUpdate { false };
     Vector<CompletionHandler<void()>> m_activityStateUpdateCallbacks;
 #endif
-        
+#if PLATFORM(MAC)
+    std::unique_ptr<ViewWindowCoordinates> m_viewWindowCoordinates;
+#endif
+
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
     ActivityStateChangeID m_currentActivityStateChangeID { };

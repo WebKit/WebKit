@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Fweb-platform.test%3A8800 due to access control checks.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20* due to access control checks.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fweb-platform.test%3A8800%2C%20http%3A%2F%2Fweb-platform.test%3A8800 due to access control checks.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20* due to access control checks.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Fweb-platform.test%3A8800 due to access control checks.
-CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8801/fetch/api/resources/preflight.py?origin=%2C%20http%3A%2F%2Fexample.com%2C%20https%3A%2F%2Fexample2.com due to access control checks.
 
 PASS Listing multiple origins is illegal: "",http://example.com,http://web-platform.test:8800
 PASS Listing multiple origins is illegal: "",http://example.com,*

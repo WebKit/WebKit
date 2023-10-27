@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL https://web-platform.test:9443/fetch/api/resources/top.txt?location=https%3A%2F%2Fweb-platform.test%3A9443%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from origin http://web-platform.test:8800. Domains, protocols and ports must match.
-
-CONSOLE MESSAGE: Unsafe attempt to load URL http://www1.web-platform.test:8800/fetch/api/resources/top.txt?location=http%3A%2F%2Fwww1.web-platform.test%3A8800%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from origin http://web-platform.test:8800. Domains, protocols and ports must match.
-
 
 PASS Fetch ../resources/top.txt with same-origin mode
 PASS Fetch http://web-platform.test:8800/fetch/api/resources/top.txt with same-origin mode

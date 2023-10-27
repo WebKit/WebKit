@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/fetch/cross-origin-resource-policy/resources/hello.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/fetch/cross-origin-resource-policy/resources/hello.py?corp=same-site due to access control checks.
-
-PASS Cross-Origin-Resource-Policy: same-site blocks retrieving HTTPS from HTTP
-

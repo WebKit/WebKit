@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/top.txt due to access control checks.
-
-
-PASS CORS with sandboxed iframe
-

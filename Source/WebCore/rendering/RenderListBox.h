@@ -46,6 +46,12 @@ public:
     // Resolve ambiguity for CanMakeCheckedPtr.
     void incrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->incrementPtrCount(); }
     void decrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const { static_cast<const RenderBlockFlow*>(this)->registerCheckedPtr(pointer); }
+    void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const RenderBlockFlow*>(this)->copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const { static_cast<const RenderBlockFlow*>(this)->moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const { static_cast<const RenderBlockFlow*>(this)->unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
 
     RenderListBox(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderListBox();

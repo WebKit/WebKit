@@ -28,8 +28,8 @@
     EnabledBySetting=ManagedMediaSourceEnabled
 ]
 dictionary BufferedChangeEventInit : EventInit {
-  TimeRanges? addedRanges = null;
-  TimeRanges? removedRanges = null;
+  TimeRanges addedRanges;
+  TimeRanges removedRanges;
 };
 
 [
@@ -38,7 +38,7 @@ dictionary BufferedChangeEventInit : EventInit {
     Exposed=Window
 ]
 interface BufferedChangeEvent : Event {
-  constructor([AtomString] DOMString type, optional BufferedChangeEventInit eventInitDict);
-  [SameObject] readonly attribute TimeRanges? addedRanges;
-  [SameObject] readonly attribute TimeRanges? removedRanges;
+  constructor([AtomString] DOMString type, BufferedChangeEventInit eventInitDict);
+  [SameObject] readonly attribute TimeRanges addedRanges;
+  [SameObject] readonly attribute TimeRanges removedRanges;
 };

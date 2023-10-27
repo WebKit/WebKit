@@ -135,10 +135,14 @@ std::optional<To> convertInteger(From value)
 template<typename To, typename From>
 std::optional<To> convertFloat(From value)
 {
+    static_assert(std::is_floating_point<To>::value || std::is_same<To, __fp16>::value, "Result type is expected to be a floating point type: double, float, or __fp16");
     if (value > std::numeric_limits<To>::max())
         return std::nullopt;
-    if (value < std::numeric_limits<To>::min())
+    if (value < std::numeric_limits<To>::lowest())
+        return std::nullopt;
+    if (std::abs(value) < std::numeric_limits<To>::min())
         return { 0 };
+
     return { value };
 }
 

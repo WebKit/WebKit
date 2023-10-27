@@ -54,20 +54,37 @@ public:
         : m_ptr { ptr }
     {
         refIfNotNull();
+#if CHECKED_POINTER_DEBUG
+        if (ptr)
+            ptr->registerCheckedPtr(this);
+#endif
     }
 
     ALWAYS_INLINE CheckedPtr(const CheckedPtr& other)
         : m_ptr { other.m_ptr }
     {
         refIfNotNull();
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
+            ptr->copyCheckedPtr(&other, this);
+#endif
     }
 
     ALWAYS_INLINE CheckedPtr(CheckedPtr&& other)
         : m_ptr { PtrTraits::exchange(other.m_ptr, nullptr) }
-    { }
+    {
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
+            ptr->moveCheckedPtr(&other, this);
+#endif
+    }
 
     ALWAYS_INLINE ~CheckedPtr()
     {
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
+            ptr->unregisterCheckedPtr(this);
+#endif
         derefIfNotNull();
     }
 
@@ -77,7 +94,12 @@ public:
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr(CheckedPtr<OtherType, OtherPtrTraits>&& other)
         : m_ptr { OtherPtrTraits::exchange(other.m_ptr, nullptr) }
-    { }
+    {
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
+            ptr->moveCheckedPtr(&other, this);
+#endif
+    }
 
     CheckedPtr(CheckedRef<T, PtrTraits>& other)
         : CheckedPtr(PtrTraits::unwrap(other.m_ptr))
@@ -91,12 +113,19 @@ public:
         : m_ptr { other.releasePtr() }
     {
         ASSERT(get());
+#if CHECKED_POINTER_DEBUG
+        T* ptr = PtrTraits::unwrap(m_ptr);
+        ptr->moveCheckedPtr(&other, this);
+#endif
     }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr(CheckedRef<OtherType, OtherPtrTraits>&& other)
         : m_ptr { other.releasePtr() }
     {
         ASSERT(get());
+#if CHECKED_POINTER_DEBUG
+        PtrTraits::unwrap(m_ptr)->moveCheckedPtr(&other, this);
+#endif
     }
 
     CheckedPtr(HashTableDeletedValueType)
@@ -115,7 +144,15 @@ public:
     ALWAYS_INLINE T& operator*() const { ASSERT(m_ptr); return *get(); }
     ALWAYS_INLINE T* operator->() const { return get(); }
 
-    CheckedRef<T> releaseNonNull() { ASSERT(m_ptr); return CheckedRef { *PtrTraits::unwrap(std::exchange(m_ptr, nullptr)), CheckedRef<T>::Adopt }; }
+    CheckedRef<T> releaseNonNull()
+    {
+        ASSERT(m_ptr);
+        auto& ptr = *PtrTraits::unwrap(std::exchange(m_ptr, nullptr));
+#if CHECKED_POINTER_DEBUG
+        ptr.unregisterCheckedPtr(this);
+#endif
+        return CheckedRef { ptr, CheckedRef<T>::Adopt };
+    }
 
     bool operator==(const T* other) const { return m_ptr == other; }
     template<typename U> bool operator==(U* other) const { return m_ptr == other; }
@@ -127,6 +164,7 @@ public:
 
     CheckedPtr& operator=(std::nullptr_t)
     {
+        unregisterCheckedPtrIfNecessary();
         derefIfNotNull();
         m_ptr = nullptr;
         return *this;
@@ -134,36 +172,61 @@ public:
 
     CheckedPtr& operator=(T* ptr)
     {
+        unregisterCheckedPtrIfNecessary();
         CheckedPtr copy { ptr };
         PtrTraits::swap(m_ptr, copy.m_ptr);
+#if CHECKED_POINTER_DEBUG
+        if (ptr)
+            ptr->copyCheckedPtr(&copy, this);
+#endif
         return *this;
     }
 
     CheckedPtr& operator=(const CheckedPtr& other)
     {
+        unregisterCheckedPtrIfNecessary();
         CheckedPtr copy { other };
         PtrTraits::swap(m_ptr, copy.m_ptr);
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); ptr)
+            ptr->copyCheckedPtr(&copy, this);
+#endif
         return *this;
     }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr& operator=(const CheckedPtr<OtherType, OtherPtrTraits>& other)
     {
+        unregisterCheckedPtrIfNecessary();
         CheckedPtr copy { other };
         PtrTraits::swap(m_ptr, copy.m_ptr);
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); ptr)
+            ptr->copyCheckedPtr(&copy, this);
+#endif
         return *this;
     }
 
     CheckedPtr& operator=(CheckedPtr&& other)
     {
+        unregisterCheckedPtrIfNecessary();
         CheckedPtr moved { WTFMove(other) };
         PtrTraits::swap(m_ptr, moved.m_ptr);
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); ptr)
+            ptr->copyCheckedPtr(&moved, this);
+#endif
         return *this;
     }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr& operator=(CheckedPtr<OtherType, OtherPtrTraits>&& other)
     {
+        unregisterCheckedPtrIfNecessary();
         CheckedPtr moved { WTFMove(other) };
         PtrTraits::swap(m_ptr, moved.m_ptr);
+#if CHECKED_POINTER_DEBUG
+        if (T* ptr = PtrTraits::unwrap(m_ptr); ptr)
+            ptr->copyCheckedPtr(&moved, this);
+#endif
         return *this;
     }
 
@@ -182,6 +245,17 @@ private:
     {
         if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
             ptr->decrementPtrCount();
+    }
+
+    ALWAYS_INLINE void unregisterCheckedPtrIfNecessary()
+    {
+#if CHECKED_POINTER_DEBUG
+        if (isHashTableDeletedValue())
+            return;
+
+        if (T* ptr = PtrTraits::unwrap(m_ptr); ptr)
+            ptr->unregisterCheckedPtr(this);
+#endif
     }
 
     typename PtrTraits::StorageType m_ptr;

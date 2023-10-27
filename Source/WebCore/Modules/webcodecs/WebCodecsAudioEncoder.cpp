@@ -154,14 +154,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
 
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec);
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
-        if (!isSupportedCodec) {
-            closeEncoder(Exception { NotSupportedError, "Codec is not supported"_s });
-            return;
-        }
-
         m_isMessageQueueBlocked = true;
-        m_baseConfiguration = config;
-
         AudioEncoder::PostTaskCallback postTaskCallback = [weakThis = WeakPtr { *this }, identifier](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
                 if (!weakThis)
@@ -170,11 +163,22 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
             });
         };
 
-        auto encoderConfig = createAudioEncoderConfig(config);
-        if (encoderConfig.hasException()) {
-            closeEncoder(Exception { NotSupportedError, encoderConfig.releaseException().message() });
+        if (!isSupportedCodec) {
+            postTaskCallback([this] {
+                closeEncoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            });
             return;
         }
+
+        auto encoderConfig = createAudioEncoderConfig(config);
+        if (encoderConfig.hasException()) {
+            postTaskCallback([this, message = encoderConfig.releaseException().message()]() mutable {
+                closeEncoder(Exception { NotSupportedError, WTFMove(message) });
+            });
+            return;
+        }
+
+        m_baseConfiguration = config;
 
         AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this, weakThis = WeakPtr { *this }](auto&& result) {
             if (!weakThis)

@@ -65,7 +65,7 @@ constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Q
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { });
+    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, ShouldIncludeShadowDOM = ShouldIncludeShadowDOM::No);
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, SerializedNodes, Vector<QualifiedName>* tagNamesToSkip = nullptr);
@@ -110,18 +110,22 @@ private:
     LocalFrame* frameForAttributeReplacement(const Element&) const;
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
     void appendURLAttributeIfNecessary(StringBuilder&, const Element&, Namespaces*);
+    RefPtr<Element> replacementElement(const Node&);
 
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
     const SerializationSyntax m_serializationSyntax;
     unsigned m_prefixLevel { 0 };
     HashMap<String, String> m_replacementURLStrings;
+    bool m_shouldIncludeShadowDOM { false };
 };
 
 inline void MarkupAccumulator::endAppendingNode(const Node& node)
 {
     if (is<Element>(node))
         appendEndTag(m_markup, downcast<Element>(node));
+    else if (auto element = replacementElement(node))
+        appendEndTag(m_markup, *element);
 }
 
 } // namespace WebCore

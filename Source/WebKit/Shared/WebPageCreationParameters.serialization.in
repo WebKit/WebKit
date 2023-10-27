@@ -108,6 +108,7 @@ struct WebKit::WebPageCreationParameters {
     bool useFormSemanticContext;
     int headerBannerHeight;
     int footerBannerHeight;
+    std::optional<WebKit::ViewWindowCoordinates> viewWindowCoordinates;
 #endif
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;

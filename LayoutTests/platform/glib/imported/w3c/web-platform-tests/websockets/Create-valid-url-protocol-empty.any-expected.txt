@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/echo' failed: WebSocket is closed before the connection is established.
-
-PASS Create WebSocket - wsocket.protocol should be empty before connection is established
-

@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 print "Content-Type: text/plain\n";
 print "Access-Control-Allow-Origin: http://127.0.0.1:8000\n\n";

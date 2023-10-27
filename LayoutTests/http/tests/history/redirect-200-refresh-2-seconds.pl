@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # Script to generate a Refresh header HTTP redirect
+binmode STDOUT;
 
 print "Status: 200 ok\r\n";
 print "Refresh: 2; url=resources/redirect-target.html#1\r\n";

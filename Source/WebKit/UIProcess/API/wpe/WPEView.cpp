@@ -77,7 +77,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         preferences->setAcceleratedCompositingEnabled(true);
         preferences->setForceCompositingMode(true);
         preferences->setThreadedScrollingEnabled(true);
-        preferences->setWebGLEnabled(true);
     }
 
     auto* pool = configuration->processPool();

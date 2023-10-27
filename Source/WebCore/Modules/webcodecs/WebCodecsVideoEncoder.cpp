@@ -139,21 +139,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
 
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
-        if (!isSupportedCodec) {
-            closeEncoder(Exception { NotSupportedError, "Codec is not supported"_s });
-            return;
-        }
-
-        auto encoderConfig = createVideoEncoderConfig(config);
-        if (encoderConfig.hasException()) {
-            closeEncoder(Exception { NotSupportedError, encoderConfig.releaseException().message() });
-            return;
-        }
-
-
         m_isMessageQueueBlocked = true;
-        m_baseConfiguration = config;
-
         VideoEncoder::PostTaskCallback postTaskCallback = [weakThis = WeakPtr { *this }, identifier](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
                 if (!weakThis)
@@ -162,14 +148,31 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             });
         };
 
+        if (!isSupportedCodec) {
+            postTaskCallback([this] {
+                closeEncoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            });
+            return;
+        }
+
+        auto encoderConfig = createVideoEncoderConfig(config);
+        if (encoderConfig.hasException()) {
+            postTaskCallback([this, message = encoderConfig.releaseException().message()]() mutable {
+                closeEncoder(Exception { NotSupportedError, WTFMove(message) });
+            });
+            return;
+        }
+
+        m_baseConfiguration = config;
+
         VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this](auto&& result) {
-            m_isMessageQueueBlocked = false;
             if (!result.has_value()) {
                 closeEncoder(Exception { NotSupportedError, WTFMove(result.error()) });
                 return;
             }
             setInternalEncoder(WTFMove(result.value()));
             m_hasNewActiveConfiguration = true;
+            m_isMessageQueueBlocked = false;
             processControlMessageQueue();
         }, [this](VideoEncoder::ActiveConfiguration&& configuration) {
             m_activeConfiguration = WTFMove(configuration);

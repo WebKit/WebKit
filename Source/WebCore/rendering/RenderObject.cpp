@@ -110,15 +110,8 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
+struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedPtr {
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
-#if ASSERT_ENABLED
-    WeakHashSet<void*> cachedResourceClientAssociatedResources; // CachedImageClient.
-#endif
-    uint32_t m_checkedPtrCount; // CanMakeCheckedPtr.
-#if ASSERT_ENABLED && !USE(WEB_THREAD)
-    Ref<Thread> m_thread; // CanMakeCheckedPtr.
-#endif
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif

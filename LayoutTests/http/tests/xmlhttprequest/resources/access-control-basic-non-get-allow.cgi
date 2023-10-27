@@ -1,5 +1,7 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDIN;
+binmode STDOUT;
 
 my $request;
 

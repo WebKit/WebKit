@@ -128,11 +128,6 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
 
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
-        if (!isSupportedCodec) {
-            closeDecoder(Exception { NotSupportedError, "Codec is not supported"_s });
-            return;
-        }
-
         m_isMessageQueueBlocked = true;
         VideoDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
@@ -144,13 +139,20 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
             });
         };
 
+        if (!isSupportedCodec) {
+            postTaskCallback([this] {
+                closeDecoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            });
+            return;
+        }
+
         VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [this](auto&& result) {
-            m_isMessageQueueBlocked = false;
             if (!result.has_value()) {
                 closeDecoder(Exception { NotSupportedError, WTFMove(result.error()) });
                 return;
             }
             setInternalDecoder(WTFMove(result.value()));
+            m_isMessageQueueBlocked = false;
             processControlMessageQueue();
         }, [this](auto&& result) {
             if (m_state != WebCodecsCodecState::Configured)

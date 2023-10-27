@@ -71,6 +71,12 @@ public:
     // For CheckedPtr / CheckedRef use.
     void incrementPtrCount() const;
     void decrementPtrCount() const;
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void*) const;
+    void copyCheckedPtr(const void* source, const void* destination) const;
+    void moveCheckedPtr(const void* source, const void* destination) const;
+    void unregisterCheckedPtr(const void*) const;
+#endif // CHECKED_POINTER_DEBUG
 
     Element* focusedElementInScope();
     Element* pointerLockElement() const;

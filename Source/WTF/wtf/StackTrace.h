@@ -28,6 +28,7 @@
 
 #include <optional>
 #include <span>
+#include <wtf/Forward.h>
 #include <wtf/SystemFree.h>
 
 #if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
@@ -67,8 +68,9 @@ public:
     }
 
     void dump(PrintStream&) const;
-private:
+    WTF_EXPORT_PRIVATE String toString() const;
 
+private:
     StackTrace(size_t size, size_t initialFrame)
         : m_size(size)
         , m_initialFrame(initialFrame)

@@ -145,6 +145,13 @@ public:
 
     using CanMakeThreadSafeCheckedPtr::incrementPtrCount;
     using CanMakeThreadSafeCheckedPtr::decrementPtrCount;
+#if CHECKED_POINTER_DEBUG
+    using CanMakeThreadSafeCheckedPtr::registerCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::copyCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::moveCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::unregisterCheckedPtr;
+#endif // CHECKED_POINTER_DEBUG
+
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();

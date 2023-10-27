@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # Simple script to generate a 404 HTTP error
+binmode STDOUT;
 
 print "Status: 404 Not Found\r\n";
 print "Content-type: text/html\r\n";

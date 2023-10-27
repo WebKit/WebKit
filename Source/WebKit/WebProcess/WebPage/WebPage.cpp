@@ -894,6 +894,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setUseFormSemanticContext(parameters.useFormSemanticContext);
     setHeaderBannerHeight(parameters.headerBannerHeight);
     setFooterBannerHeight(parameters.footerBannerHeight);
+    if (parameters.viewWindowCoordinates)
+        windowAndViewFramesChanged(*parameters.viewWindowCoordinates);
 #endif
 
     // If the page is created off-screen, its visibilityState should be prerender.
@@ -5722,13 +5724,13 @@ void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
 
 #if PLATFORM(COCOA)
 
-void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
+void WebPage::windowAndViewFramesChanged(const ViewWindowCoordinates& coordinates)
 {
-    m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
-    m_windowFrameInUnflippedScreenCoordinates = windowFrameInUnflippedScreenCoordinates;
-    m_viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
+    m_windowFrameInScreenCoordinates = coordinates.windowFrameInScreenCoordinates;
+    m_windowFrameInUnflippedScreenCoordinates = coordinates.windowFrameInUnflippedScreenCoordinates;
+    m_viewFrameInWindowCoordinates = coordinates.viewFrameInWindowCoordinates;
 
-    m_accessibilityPosition = accessibilityViewCoordinates;
+    m_accessibilityPosition = coordinates.accessibilityViewCoordinates;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     cacheAXPosition(m_accessibilityPosition);
 #endif
