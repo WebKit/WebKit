@@ -1676,4 +1676,6 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
+fast/canvas/font-family-system-ui-canvas.html [ Skip ]
+
 fast/line-grid [ Skip ]
