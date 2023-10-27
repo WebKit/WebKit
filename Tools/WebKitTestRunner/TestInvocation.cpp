@@ -1394,6 +1394,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetOriginQuotaRatioEnabled")) {
+        TestController::singleton().setOriginQuotaRatioEnabled(booleanValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "InjectUserScript")) {
         TestController::singleton().injectUserScript(stringValue(messageBody));
         return nullptr;

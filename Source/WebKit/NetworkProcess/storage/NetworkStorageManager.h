@@ -113,6 +113,7 @@ public:
     void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&);
     void resetQuotaForTesting(CompletionHandler<void()>&&);
     void resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&&);
+    void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif
@@ -243,6 +244,7 @@ private:
     };
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
+    OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
@@ -262,6 +264,7 @@ private:
     String m_customCacheStoragePath;
     String m_customServiceWorkerStoragePath;
     uint64_t m_defaultOriginQuota;
+    bool m_originQuotaRatioEnabled { true };
     std::optional<double> m_originQuotaRatio;
     std::optional<double> m_totalQuotaRatio;
     std::optional<uint64_t> m_standardVolumeCapacity;

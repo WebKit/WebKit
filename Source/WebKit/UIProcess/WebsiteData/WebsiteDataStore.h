@@ -474,7 +474,9 @@ public:
     void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&);
 #endif
     void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
-    
+
+    void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

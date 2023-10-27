@@ -643,35 +643,34 @@ String OriginStorageManager::originFileIdentifier()
     return originFileName;
 }
 
-Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager()
+Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager(OriginQuotaManager::Parameters&& parameters)
 {
-    auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
-    auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
-    auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
-    OriginQuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }, idbStoragePath, cacheStoragePath, fileSystemStoragePath]() {
+    OriginQuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }]() -> uint64_t {
+        if (!weakThis)
+            return 0;
+
+        auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
+        auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
+        auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
         uint64_t fileSystemStorageSize = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
-        if (weakThis) {
-            if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
-                CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
-                totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
-                if (!totalFileSystemStorageSize.hasOverflowed())
-                    fileSystemStorageSize = totalFileSystemStorageSize;
-            }
+        if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
+            CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
+            totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
+            if (!totalFileSystemStorageSize.hasOverflowed())
+                fileSystemStorageSize = totalFileSystemStorageSize;
         }
         return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath) + fileSystemStorageSize;
     };
-    return OriginQuotaManager::create(m_quota, m_standardReportedQuota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }), std::exchange(m_notifySpaceGrantedFunction, { }));
+
+    return OriginQuotaManager::create(WTFMove(parameters), WTFMove(getUsageFunction));
 }
 
-OriginStorageManager::OriginStorageManager(uint64_t quota, uint64_t standardReportedQuota, OriginQuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, OriginQuotaManager::NotifySpaceGrantedFunction&& notifySpaceGrantedFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
+OriginStorageManager::OriginStorageManager(OriginQuotaManager::Parameters&& parameters, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
     : m_path(WTFMove(path))
     , m_customLocalStoragePath(WTFMove(customLocalStoragePath))
     , m_customIDBStoragePath(WTFMove(customIDBStoragePath))
     , m_customCacheStoragePath(WTFMove(customCacheStoragePath))
-    , m_quota(quota)
-    , m_standardReportedQuota(standardReportedQuota)
-    , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
-    , m_notifySpaceGrantedFunction(WTFMove(notifySpaceGrantedFunction))
+    , m_quotaManager(createQuotaManager(WTFMove(parameters)))
     , m_level(level)
 {
     ASSERT(!RunLoop::isMain());
@@ -695,10 +694,7 @@ OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
 
 OriginQuotaManager& OriginStorageManager::quotaManager()
 {
-    if (!m_quotaManager)
-        m_quotaManager = createQuotaManager();
-
-    return *m_quotaManager;
+    return m_quotaManager.get();
 }
 
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)

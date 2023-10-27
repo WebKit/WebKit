@@ -5,8 +5,10 @@
 </head>
 <body>
 <script>
-if (window.testRunner) 
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 description("This test makes sure that storage of indexedDB does not grow unboundedly.");
 
