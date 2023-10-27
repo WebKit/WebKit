@@ -79,16 +79,36 @@ LayoutUnit GridBaselineAlignment::logicalAscentForChild(const RenderBox& child, 
 
 LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxis baselineAxis, ItemPosition position) const
 {
+    static const LayoutUnit noValidBaseline = LayoutUnit(-1);
+
     ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
+    auto baseline = 0_lu;
     LayoutUnit margin = isDescentBaselineForChild(child, baselineAxis) ? marginUnderForChild(child, baselineAxis) : marginOverForChild(child, baselineAxis);
-    std::optional<LayoutUnit> computedBaselineValue = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
-    LayoutUnit baseline(isParallelToBaselineAxisForChild(child, baselineAxis) ? computedBaselineValue.value_or(LayoutUnit(-1)) : LayoutUnit(-1));
-    // We take border-box's under edge if no valid baseline.
-    if (baseline == -1) {
-        ASSERT(!child.needsLayout());
-        if (isHorizontalBaselineAxis(baselineAxis))
-            return isFlippedWritingMode(m_blockFlow) ? child.size().width().toInt() + margin : margin;
-        return child.size().height() + margin;
+
+    if (baselineAxis == GridAxis::GridColumnAxis) {
+        ASSERT(child.parentStyle());
+        auto* parentStyle = child.parentStyle();
+
+        auto alignmentContextDirection = [&] {
+            return child.parentStyle()->isHorizontalWritingMode() ? LineDirectionMode::HorizontalLine : LineDirectionMode::VerticalLine;
+        };
+
+        if (!isParallelToBaselineAxisForChild(child, baselineAxis))
+            return (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu) + margin;
+        auto ascent = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
+        if (!ascent)
+            return (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu) + margin;
+        baseline = ascent.value();
+    } else {
+        auto computedBaselineValue = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
+        baseline = isParallelToBaselineAxisForChild(child, baselineAxis) ? computedBaselineValue.value_or(noValidBaseline) : noValidBaseline;
+        // We take border-box's under edge if no valid baseline.
+        if (baseline == noValidBaseline) {
+            ASSERT(!child.needsLayout());
+            if (isHorizontalBaselineAxis(baselineAxis))
+                return isFlippedWritingMode(m_blockFlow) ? child.size().width().toInt() + margin : margin;
+            return child.size().height() + margin;
+        }
     }
 
     return margin + baseline;
