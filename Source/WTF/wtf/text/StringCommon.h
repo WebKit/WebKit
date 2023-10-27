@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/ASCIIFastPath.h>
@@ -70,72 +71,105 @@ bool equalLettersIgnoringASCIICase(const char*, ASCIILiteral);
 #if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
 {
-    unsigned dwordLength = length >> 3;
+    // These branches could be combined into one, but it's measurably faster
+    // for length 0 or 1 strings to separate them out like this.
+    if (!length)
+        return true;
+    if (length == 1)
+        return *aLChar == *bLChar;
 
-    const char* a = reinterpret_cast<const char*>(aLChar);
-    const char* b = reinterpret_cast<const char*>(bLChar);
-
-    if (dwordLength) {
-        for (unsigned i = 0; i != dwordLength; ++i) {
-            if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b))
+#if COMPILER(GCC_COMPATIBLE)
+    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
+#else
+    switch (fastLog2(length - 1)) {
+#endif
+    case 0:
+        RELEASE_ASSERT_NOT_REACHED();
+    case 1: // Length is 2.
+        return unalignedLoad<uint16_t>(aLChar) == unalignedLoad<uint16_t>(bLChar);
+    case 2: // Length is 3 or 4.
+        return unalignedLoad<uint16_t>(aLChar) == unalignedLoad<uint16_t>(bLChar)
+            && unalignedLoad<uint16_t>(aLChar + length - 2) == unalignedLoad<uint16_t>(bLChar + length - 2);
+    case 3: // Length is between 5 and 8 inclusive.
+        return unalignedLoad<uint32_t>(aLChar) == unalignedLoad<uint32_t>(bLChar)
+            && unalignedLoad<uint32_t>(aLChar + length - 4) == unalignedLoad<uint32_t>(bLChar + length - 4);
+    case 4: // Length is between 9 and 16 inclusive.
+        return unalignedLoad<uint64_t>(aLChar) == unalignedLoad<uint64_t>(bLChar)
+            && unalignedLoad<uint64_t>(aLChar + length - 8) == unalignedLoad<uint64_t>(bLChar + length - 8);
+#if CPU(ARM64)
+    case 5: // Length is between 17 and 32 inclusive.
+        return vminvq_u8(vandq_u8(
+            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar), unalignedLoad<uint8x16_t>(bLChar)),
+            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar + length - 16), unalignedLoad<uint8x16_t>(bLChar + length - 16))
+        ));
+    default: // Length is longer than 32 bytes.
+        if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar), unalignedLoad<uint8x16_t>(bLChar))))
+            return false;
+        for (unsigned i = length % 16; i < length; i += 16) {
+            if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar + i), unalignedLoad<uint8x16_t>(bLChar + i))))
                 return false;
-
-            a += sizeof(uint64_t);
-            b += sizeof(uint64_t);
         }
-    }
-
-    if (length & 4) {
-        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
+        return true;
+#else
+    default: // Length is longer than 16 bytes.
+        if (unalignedLoad<uint64_t>(aLChar) != unalignedLoad<uint64_t>(bLChar))
             return false;
-
-        a += sizeof(uint32_t);
-        b += sizeof(uint32_t);
+        for (unsigned i = length % 8; i < length; i += 8) {
+            if (unalignedLoad<uint64_t>(aLChar + i) != unalignedLoad<uint64_t>(bLChar + i))
+                return false;
+        }
+        return true;
+#endif
     }
-
-    if (length & 2) {
-        if (unalignedLoad<uint16_t>(a) != unalignedLoad<uint16_t>(b))
-            return false;
-
-        a += sizeof(uint16_t);
-        b += sizeof(uint16_t);
-    }
-
-    if (length & 1 && (*reinterpret_cast<const LChar*>(a) != *reinterpret_cast<const LChar*>(b)))
-        return false;
-
-    return true;
 }
 
 ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned length)
 {
-    unsigned dwordLength = length >> 2;
+    if (!length)
+        return true;
+    if (length == 1)
+        return *aUChar == *bUChar;
 
-    const char* a = reinterpret_cast<const char*>(aUChar);
-    const char* b = reinterpret_cast<const char*>(bUChar);
-
-    if (dwordLength) {
-        for (unsigned i = 0; i != dwordLength; ++i) {
-            if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b))
-                return false;
-
-            a += sizeof(uint64_t);
-            b += sizeof(uint64_t);
-        }
-    }
-
-    if (length & 2) {
-        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
+#if COMPILER(GCC_COMPATIBLE)
+    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
+#else
+    switch (fastLog2(length - 1)) {
+#endif
+    case 0:
+        RELEASE_ASSERT_NOT_REACHED();
+    case 1: // Length is 2 (4 bytes).
+        return unalignedLoad<uint32_t>(aUChar) == unalignedLoad<uint32_t>(bUChar);
+    case 2: // Length is 3 or 4 (6-8 bytes).
+        return unalignedLoad<uint32_t>(aUChar) == unalignedLoad<uint32_t>(bUChar)
+            && unalignedLoad<uint32_t>(aUChar + length - 2) == unalignedLoad<uint32_t>(bUChar + length - 2);
+    case 3: // Length is between 5 and 8 inclusive (10-16 bytes).
+        return unalignedLoad<uint64_t>(aUChar) == unalignedLoad<uint64_t>(bUChar)
+            && unalignedLoad<uint64_t>(aUChar + length - 4) == unalignedLoad<uint64_t>(bUChar + length - 4);
+#if CPU(ARM64)
+    case 4: // Length is between 9 and 16 inclusive (18-32 bytes).
+        return vminvq_u16(vandq_u16(
+            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar), unalignedLoad<uint16x8_t>(bUChar)),
+            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar + length - 8), unalignedLoad<uint16x8_t>(bUChar + length - 8))
+        ));
+    default: // Length is longer than 16 (32 bytes).
+        if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar), unalignedLoad<uint16x8_t>(bUChar))))
             return false;
-
-        a += sizeof(uint32_t);
-        b += sizeof(uint32_t);
+        for (unsigned i = length % 8; i < length; i += 8) {
+            if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar + i), unalignedLoad<uint16x8_t>(bUChar + i))))
+                return false;
+        }
+        return true;
+#else
+    default: // Length is longer than 8 (16 bytes).
+        if (unalignedLoad<uint64_t>(aUChar) != unalignedLoad<uint64_t>(bUChar))
+            return false;
+        for (unsigned i = length % 4; i < length; i += 4) {
+            if (unalignedLoad<uint64_t>(aUChar + i) != unalignedLoad<uint64_t>(bUChar + i))
+                return false;
+        }
+        return true;
+#endif
     }
-
-    if (length & 1 && (*reinterpret_cast<const UChar*>(a) != *reinterpret_cast<const UChar*>(b)))
-        return false;
-
-    return true;
 }
 #elif CPU(X86) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
@@ -296,6 +330,22 @@ ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
 
 ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
 {
+#if CPU(ARM64)
+    if (length >= 8) {
+        uint16x8_t aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a)); // Extends 8 LChars into 8 UChars.
+        uint16x8_t bHalves = unalignedLoad<uint16x8_t>(b);
+        if (!vminvq_u16(vceqq_u16(aHalves, bHalves)))
+            return false;
+        for (unsigned i = length % 8; i < length; i += 8) {
+            aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a + i));
+            bHalves = unalignedLoad<uint16x8_t>(b + i);
+            if (!vminvq_u16(vceqq_u16(aHalves, bHalves)))
+                return false;
+        }
+        return true;
+    }
+    // Otherwise, we just do a naive loop.
+#endif
     for (unsigned i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;

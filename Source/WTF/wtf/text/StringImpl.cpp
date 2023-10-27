@@ -1458,6 +1458,10 @@ bool equal(const StringImpl* a, const LChar* b)
 
 bool equal(const StringImpl& a, const StringImpl& b)
 {
+    unsigned aHash = a.rawHash();
+    unsigned bHash = b.rawHash();
+    if (aHash != bHash && aHash && bHash)
+        return false;
     return equalCommon(a, b);
 }
 
