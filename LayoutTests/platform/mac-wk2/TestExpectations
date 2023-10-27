@@ -2012,11 +2012,11 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 webkit.org/b/263575 [ Sonoma+ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Failure ]
 
-# WebGPU
-http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
-
 webkit.org/b/263738 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
 
 webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
+
+# webkit.org/b/263801 [ macOS Debug ] http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html
+http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Skip ]
