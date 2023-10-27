@@ -565,7 +565,6 @@ protected:
 
     EventLoopTimerHandle m_restoreTimer;
     GCGLErrorCodeSet m_errors;
-    bool m_needsUpdate;
     bool m_markedCanvasDirty;
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
