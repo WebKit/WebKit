@@ -2037,18 +2037,11 @@
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
 #endif
 
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (require-not (lockdown-mode))
     (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (allow syscall-unix (syscall-unix-apple-silicon)))
     (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode)))
-#else
-(allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
-(when (equal? (param "CPU") "arm64")
-    (allow syscall-unix (syscall-unix-apple-silicon)))
-(allow syscall-unix (syscalls-rarely-used-blocked-in-lockdown-mode))
-#endif
 
 (when (defined? 'SYS_objc_bp_assist_cfg_np)
     (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
@@ -2063,13 +2056,11 @@
     (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
 
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (lockdown-mode)
     (deny syscall-unix (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (deny syscall-unix (with telemetry) (syscall-unix-apple-silicon))))
-#endif
 
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
 (if (equal? (param "CPU") "arm64")
@@ -2196,17 +2187,12 @@
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send)
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
             (with-filter (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
-#else
-            (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
-            (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
-#endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
@@ -2293,14 +2279,10 @@
     (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
 #endif
-#if ENABLE(LOCKDOWN_MODE_TELEMETRY)
     (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
     (with-filter (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
-#else
-    (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode))
-#endif
     (when (defined? 'MSC_mach_msg2_trap)
         (allow syscall-mach (machtrap-number MSC_mach_msg2_trap))))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
