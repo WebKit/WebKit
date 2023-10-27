@@ -2584,7 +2584,8 @@ void vp9_rc_update_framerate(VP9_COMP *cpi) {
   RATE_CONTROL *const rc = &cpi->rc;
   int vbr_max_bits;
 
-  rc->avg_frame_bandwidth = (int)(oxcf->target_bandwidth / cpi->framerate);
+  rc->avg_frame_bandwidth =
+      (int)VPXMIN(oxcf->target_bandwidth / cpi->framerate, INT_MAX);
   rc->min_frame_bandwidth =
       (int)(rc->avg_frame_bandwidth * oxcf->two_pass_vbrmin_section / 100);
 

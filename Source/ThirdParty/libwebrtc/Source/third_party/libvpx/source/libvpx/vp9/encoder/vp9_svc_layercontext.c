@@ -231,7 +231,8 @@ void vp9_update_layer_context_change_config(VP9_COMP *const cpi,
             VPXMIN(lrc->bits_off_target, lrc->maximum_buffer_size);
         lrc->buffer_level = VPXMIN(lrc->buffer_level, lrc->maximum_buffer_size);
         lc->framerate = cpi->framerate / oxcf->ts_rate_decimator[tl];
-        lrc->avg_frame_bandwidth = (int)(lc->target_bandwidth / lc->framerate);
+        lrc->avg_frame_bandwidth =
+            (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
         lrc->max_frame_bandwidth = rc->max_frame_bandwidth;
         lrc->worst_quality = rc->worst_quality;
         lrc->best_quality = rc->best_quality;
@@ -269,7 +270,8 @@ void vp9_update_layer_context_change_config(VP9_COMP *const cpi,
       } else {
         lc->framerate = cpi->framerate;
       }
-      lrc->avg_frame_bandwidth = (int)(lc->target_bandwidth / lc->framerate);
+      lrc->avg_frame_bandwidth =
+          (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
       lrc->max_frame_bandwidth = rc->max_frame_bandwidth;
       // Update qp-related quantities.
       lrc->worst_quality = rc->worst_quality;
@@ -311,7 +313,8 @@ void vp9_update_temporal_layer_framerate(VP9_COMP *const cpi) {
   const int tl = svc->temporal_layer_id;
 
   lc->framerate = cpi->framerate / oxcf->ts_rate_decimator[tl];
-  lrc->avg_frame_bandwidth = (int)(lc->target_bandwidth / lc->framerate);
+  lrc->avg_frame_bandwidth =
+      (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
   lrc->max_frame_bandwidth = cpi->rc.max_frame_bandwidth;
   // Update the average layer frame size (non-cumulative per-frame-bw).
   if (tl == 0) {
@@ -333,7 +336,8 @@ void vp9_update_spatial_layer_framerate(VP9_COMP *const cpi, double framerate) {
   RATE_CONTROL *const lrc = &lc->rc;
 
   lc->framerate = framerate;
-  lrc->avg_frame_bandwidth = (int)(lc->target_bandwidth / lc->framerate);
+  lrc->avg_frame_bandwidth =
+      (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
   lrc->min_frame_bandwidth =
       (int)(lrc->avg_frame_bandwidth * oxcf->two_pass_vbrmin_section / 100);
   lrc->max_frame_bandwidth = (int)(((int64_t)lrc->avg_frame_bandwidth *
