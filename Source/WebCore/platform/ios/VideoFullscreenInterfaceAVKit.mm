@@ -1570,11 +1570,15 @@ void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError
     }
 
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p)", this);
-    if (!m_standby) {
+    if (!m_standby)
         setMode(HTMLMediaElementEnums::VideoFullscreenModeStandard, !nextActions.contains(NextAction::NeedsEnterFullScreen));
-        [m_playerViewController setShowsPlaybackControls:YES];
-    } else
-        [m_playerViewController setShowsPlaybackControls:NO];
+
+    // NOTE: During a "returnToStandby" operation, this will cause the AVKit controls
+    // to be visible if the user taps on the fullscreen presentation before the Element
+    // Fullscreen presentation is fully restored. This is intentional; in the case that
+    // the Element Fullscreen presentation fails for any reason, this gives the user
+    // the ability to dismiss AVKit fullscreen.
+    [m_playerViewController setShowsPlaybackControls:YES];
 
     if (nextActions.contains(NextAction::NeedsEnterFullScreen))
         doEnterFullscreen();

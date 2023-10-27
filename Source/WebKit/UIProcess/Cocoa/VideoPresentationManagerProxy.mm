@@ -723,6 +723,19 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 }
 
 #if PLATFORM(IOS_FAMILY)
+PlatformVideoFullscreenInterface* VideoPresentationManagerProxy::returningToStandbyInterface() const
+{
+    if (m_contextMap.isEmpty())
+        return nullptr;
+
+    for (auto& value : copyToVector(m_contextMap.values())) {
+        auto& interface = std::get<1>(value);
+        if (interface && interface->returningToStandby())
+            return interface.get();
+    }
+    return nullptr;
+}
+
 RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
