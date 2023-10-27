@@ -234,6 +234,11 @@ WebBackForwardListItem* WebBackForwardList::currentItem() const
     return m_page && m_currentIndex ? m_entries[*m_currentIndex].ptr() : nullptr;
 }
 
+RefPtr<WebBackForwardListItem> WebBackForwardList::protectedCurrentItem() const
+{
+    return currentItem();
+}
+
 WebBackForwardListItem* WebBackForwardList::backItem() const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());

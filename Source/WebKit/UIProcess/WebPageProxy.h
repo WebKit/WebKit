@@ -516,6 +516,7 @@ public:
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
 
     const API::PageConfiguration& configuration() const;
+    Ref<API::PageConfiguration> protectedConfiguration() const;
 
     using Identifier = WebPageProxyIdentifier;
 
@@ -534,6 +535,7 @@ public:
     WebNavigationState& navigationState() { return *m_navigationState; }
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
+    Ref<WebsiteDataStore> protectedWebsiteDataStore() const;
 
     void addPreviouslyVisitedPath(const String&);
 
@@ -560,6 +562,7 @@ public:
 #endif
 
     WebBackForwardList& backForwardList() { return m_backForwardList; }
+    Ref<WebBackForwardList> protectedBackForwardList() const;
 
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
@@ -573,6 +576,8 @@ public:
     bool isSuspended() const { return m_isSuspended; }
 
     WebInspectorUIProxy* inspector() const;
+    RefPtr<WebInspectorUIProxy> protectedInspector() const;
+
     GeolocationPermissionRequestManagerProxy& geolocationPermissionRequestManager();
 
     void resourceLoadDidSendRequest(ResourceLoadInfo&&, WebCore::ResourceRequest&&);
@@ -1462,9 +1467,12 @@ public:
 
     const WebPreferences& preferences() const { return m_preferences; }
     WebPreferences& preferences() { return m_preferences; }
+    Ref<WebPreferences> protectedPreferences() const;
+
     void setPreferences(WebPreferences&);
 
     WebPageGroup& pageGroup() { return m_pageGroup; }
+    Ref<WebPageGroup> protectedPageGroup() const;
 
     bool hasRunningProcess() const;
     void launchInitialProcessIfNecessary();

@@ -200,4 +200,9 @@ void RemotePageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, co
     });
 }
 
+Ref<WebProcessProxy> RemotePageProxy::protectedProcess() const
+{
+    return m_process;
+}
+
 }
