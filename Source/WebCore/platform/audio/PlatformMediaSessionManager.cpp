@@ -160,7 +160,7 @@ int PlatformMediaSessionManager::countActiveAudioCaptureSources()
 {
     int count = 0;
     for (const auto& source : m_audioCaptureSources) {
-        if (source.isCapturingAudio())
+        if (source.wantsToCaptureAudio())
             ++count;
     }
     return count;

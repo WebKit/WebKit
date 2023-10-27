@@ -638,6 +638,12 @@ bool MediaStreamTrack::isCapturingAudio() const
     return !ended() && !muted();
 }
 
+bool MediaStreamTrack::wantsToCaptureAudio() const
+{
+    ASSERT(isCaptureTrack() && m_private->isAudio());
+    return !ended() && (!muted() || m_private->interrupted());
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStreamTrack::logChannel() const
 {

@@ -209,6 +209,7 @@ public:
     public:
         virtual ~AudioCaptureSource() = default;
         virtual bool isCapturingAudio() const = 0;
+        virtual bool wantsToCaptureAudio() const = 0;
     };
 
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;

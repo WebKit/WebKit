@@ -185,6 +185,7 @@ private:
 
     // PlatformMediaSession::AudioCaptureSource
     bool isCapturingAudio() const final;
+    bool wantsToCaptureAudio() const final;
 
     void updateVideoCaptureAccordingMicrophoneInterruption(Document&, bool);
 
