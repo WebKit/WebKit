@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
@@ -37,9 +38,9 @@
 // 1 - Add that type to ObjCHolderForTesting's ValueType variant
 // 2 - Run a test exercising that type
 
-class ObjCSerializationTester final : public IPC::MessageSender {
+class SerializationTestSender final : public IPC::MessageSender {
 public:
-    ~ObjCSerializationTester() final { };
+    ~SerializationTestSender() final { };
 
 private:
     bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
@@ -48,13 +49,63 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
 };
 
-bool ObjCSerializationTester::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
     auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, { });
     ASSERT(decoder);
 
     completionHandler(decoder.get());
     return true;
+}
+
+struct CFHolderForTesting {
+    void encode(IPC::Encoder&) const;
+    static std::optional<CFHolderForTesting> decode(IPC::Decoder&);
+
+    CFTypeRef valueAsCFType() const
+    {
+        CFTypeRef result;
+        std::visit([&](auto&& arg) {
+            result = arg.get();
+        }, value);
+        return result;
+    }
+
+    typedef std::variant<
+        RetainPtr<CFStringRef>,
+        RetainPtr<CFURLRef>,
+        RetainPtr<CFDataRef>
+    > ValueType;
+
+    ValueType value;
+};
+
+void CFHolderForTesting::encode(IPC::Encoder& encoder) const
+{
+    encoder << value;
+}
+
+std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decoder)
+{
+    std::optional<ValueType> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*value)
+    } };
+}
+
+inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
+{
+    auto aObject = a.valueAsCFType();
+    auto bObject = b.valueAsCFType();
+
+    EXPECT_TRUE(aObject);
+    EXPECT_TRUE(bObject);
+
+    return CFEqual(aObject, bObject);
 }
 
 struct ObjCHolderForTesting {
@@ -107,7 +158,7 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
     return [aObject isEqual:bObject];
 }
 
-class BasicPingBackMessage {
+class ObjCPingBackMessage {
 public:
     using Arguments = std::tuple<ObjCHolderForTesting>;
     using ReplyArguments = std::tuple<ObjCHolderForTesting>;
@@ -118,7 +169,7 @@ public:
 
     static constexpr bool isSync = false;
 
-    BasicPingBackMessage(const ObjCHolderForTesting& holder)
+    ObjCPingBackMessage(const ObjCHolderForTesting& holder)
         : m_arguments(holder)
     {
     }
@@ -132,13 +183,38 @@ private:
     std::tuple<const ObjCHolderForTesting&> m_arguments;
 };
 
+class CFPingBackMessage {
+public:
+    using Arguments = std::tuple<CFHolderForTesting>;
+    using ReplyArguments = std::tuple<CFHolderForTesting>;
+
+    // We can use any MessageName here
+    static IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_AsyncPingReply; }
+
+    static constexpr bool isSync = false;
+
+    CFPingBackMessage(const CFHolderForTesting& holder)
+        : m_arguments(holder)
+    {
+    }
+
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+private:
+    std::tuple<const CFHolderForTesting&> m_arguments;
+};
+
 TEST(IPCSerialization, Basic)
 {
-    auto runTest = [](ObjCHolderForTesting&& holderArg) {
+    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
         __block bool done = false;
         __block ObjCHolderForTesting holder = WTFMove(holderArg);
-        auto sender = ObjCSerializationTester { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(BasicPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
+        auto sender = SerializationTestSender { };
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
             EXPECT_TRUE(holder == result);
             done = true;
         });
@@ -147,7 +223,27 @@ TEST(IPCSerialization, Basic)
         EXPECT_TRUE(done);
     };
 
-    runTest({ @"Hello world" });
-    runTest({ [NSURL URLWithString:@"https://webkit.org/"] });
-    runTest({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
+    auto runTestCF = [](CFHolderForTesting&& holderArg) {
+        __block bool done = false;
+        __block CFHolderForTesting holder = WTFMove(holderArg);
+        auto sender = SerializationTestSender { };
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holder), ^(CFHolderForTesting&& result) {
+            EXPECT_TRUE(holder == result);
+            done = true;
+        });
+
+        // The completion handler should be called synchronously, so this should be true already.
+        EXPECT_TRUE(done);
+    };
+
+    runTestNS({ @"Hello world" });
+    runTestCF({ CFSTR("Hello world") });
+
+    runTestNS({ [NSURL URLWithString:@"https://webkit.org/"] });
+    auto cfURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR("https://webkit.org/"), NULL));
+    runTestCF({ cfURL.get() });
+
+    runTestNS({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
+    auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)"Data test", strlen("Data test")));
+    runTestCF({ cfData.get() });
 }

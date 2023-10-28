@@ -85,7 +85,7 @@ static bool hasInlineRun(RenderObject& renderer)
 static Node* nextRenderedEditable(Node* node)
 {
     while ((node = nextLeafNode(node))) {
-        RenderObject* renderer = node->renderer();
+        CheckedPtr renderer = node->renderer();
         if (!renderer || !node->hasEditableStyle())
             continue;
         if (hasInlineRun(*renderer))
@@ -97,7 +97,7 @@ static Node* nextRenderedEditable(Node* node)
 static Node* previousRenderedEditable(Node* node)
 {
     while ((node = previousLeafNode(node))) {
-        RenderObject* renderer = node->renderer();
+        CheckedPtr renderer = node->renderer();
         if (!renderer || !node->hasEditableStyle())
             continue;
         if (hasInlineRun(*renderer))
@@ -240,7 +240,7 @@ int Position::offsetForPositionAfterAnchor() const
 {
     ASSERT(m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren);
     ASSERT(!m_isLegacyEditingPosition);
-    auto anchorNode = protectedAnchorNode();
+    RefPtr anchorNode = this->anchorNode();
     ASSERT(anchorNode);
     return anchorNode ? lastOffsetForEditing(*anchorNode) : 0;
 }
@@ -249,7 +249,7 @@ int Position::offsetForPositionAfterAnchor() const
 // fixed up before handing them off to the Range object.
 Position Position::parentAnchoredEquivalent() const
 {
-    auto anchorNode = protectedAnchorNode();
+    RefPtr anchorNode = this->anchorNode();
     if (!anchorNode)
         return { };
     

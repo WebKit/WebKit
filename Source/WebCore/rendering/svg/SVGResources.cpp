@@ -22,11 +22,11 @@
 
 #include "FilterOperation.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGResourceMarkerInlines.h"
+#include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "PathOperation.h"
 #include "RenderSVGResourceFilterInlines.h"
-#include "RenderSVGResourceMarkerInlines.h"
-#include "RenderSVGResourceMaskerInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
@@ -258,7 +258,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
             if (!reresolvedURL.isEmpty()) {
                 auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
-                if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(treeScope, resourceID))
+                if (auto* masker = getRenderSVGResourceById<LegacyRenderSVGResourceMasker>(treeScope, resourceID))
                     ensureResources(foundResources).setMasker(masker);
                 else
                     treeScope.addPendingSVGResource(resourceID, element);
@@ -267,9 +267,9 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     }
 
     if (markerTags().contains(tagName) && svgStyle.hasMarkers()) {
-        auto buildCachedMarkerResource = [&](const String& markerResource, bool (SVGResources::*setMarker)(RenderSVGResourceMarker*)) {
+        auto buildCachedMarkerResource = [&](const String& markerResource, bool (SVGResources::*setMarker)(LegacyRenderSVGResourceMarker*)) {
             auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
-            if (auto* marker = getRenderSVGResourceById<RenderSVGResourceMarker>(treeScope, markerId))
+            if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(treeScope, markerId))
                 (ensureResources(foundResources).*setMarker)(marker);
             else
                 treeScope.addPendingSVGResource(markerId, element);
@@ -536,7 +536,7 @@ void SVGResources::resetFilter()
     m_clipperFilterMaskerData->filter = nullptr;
 }
 
-bool SVGResources::setMarkerStart(RenderSVGResourceMarker* markerStart)
+bool SVGResources::setMarkerStart(LegacyRenderSVGResourceMarker* markerStart)
 {
     ASSERT(markerStart);
     ASSERT(markerStart->resourceType() == MarkerResourceType);
@@ -555,7 +555,7 @@ void SVGResources::resetMarkerStart()
     m_markerData->markerStart = nullptr;
 }
 
-bool SVGResources::setMarkerMid(RenderSVGResourceMarker* markerMid)
+bool SVGResources::setMarkerMid(LegacyRenderSVGResourceMarker* markerMid)
 {
     ASSERT(markerMid);
     ASSERT(markerMid->resourceType() == MarkerResourceType);
@@ -574,7 +574,7 @@ void SVGResources::resetMarkerMid()
     m_markerData->markerMid = nullptr;
 }
 
-bool SVGResources::setMarkerEnd(RenderSVGResourceMarker* markerEnd)
+bool SVGResources::setMarkerEnd(LegacyRenderSVGResourceMarker* markerEnd)
 {
     ASSERT(markerEnd);
     ASSERT(markerEnd->resourceType() == MarkerResourceType);
@@ -593,7 +593,7 @@ void SVGResources::resetMarkerEnd()
     m_markerData->markerEnd = nullptr;
 }
 
-bool SVGResources::setMasker(RenderSVGResourceMasker* masker)
+bool SVGResources::setMasker(LegacyRenderSVGResourceMasker* masker)
 {
     ASSERT(masker);
     ASSERT(masker->resourceType() == MaskerResourceType);

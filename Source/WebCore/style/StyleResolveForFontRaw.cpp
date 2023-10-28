@@ -72,9 +72,13 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
         bool isGenericFamily = false;
         switchOn(item, [&] (CSSValueID ident) {
             isGenericFamily = ident != CSSValueWebkitBody;
-            if (isGenericFamily)
-                family = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
-            else
+            if (isGenericFamily) {
+                // FIXME: Treat system-ui like other generic font families
+                if (ident == CSSValueSystemUi)
+                    family = nameString(CSSValueSystemUi);
+                else
+                    family = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
+            } else
                 family = AtomString(context.settingsValues().fontGenericFamilies.standardFontFamily());
         }, [&] (const AtomString& familyString) {
             family = familyString;

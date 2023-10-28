@@ -38,7 +38,7 @@ class Document;
 class ScriptElement;
 class LoadableScript;
 
-class ScriptRunner : private PendingScriptClient, public CanMakeCheckedPtr {
+class ScriptRunner : public PendingScriptClient {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScriptRunner(Document&);

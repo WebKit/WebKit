@@ -76,7 +76,7 @@ private:
     Ref<ScriptElement> m_element;
     TextPosition m_startingPosition; // Only used for inline script tags.
     RefPtr<LoadableScript> m_loadableScript;
-    PendingScriptClient* m_client { nullptr };
+    CheckedPtr<PendingScriptClient> m_client;
 };
 
 inline LoadableScript* PendingScript::loadableScript() const

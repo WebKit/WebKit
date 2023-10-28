@@ -886,9 +886,15 @@ inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(
     case CSSValueFromFont:
         return TextDecorationThickness::createFromFont();
     default:
+        if (primitiveValue.isPercentage())
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(primitiveValue.floatValue(), minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Percent));
+
+        auto conversionData = builderState.cssToLengthConversionData();
+        if (primitiveValue.isCalculatedPercentageWithLength())
+            return TextDecorationThickness::createWithLength(Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData)));
+
         ASSERT(primitiveValue.isLength());
-        auto computedLength = convertComputedLength<float>(builderState, primitiveValue);
-        return TextDecorationThickness::createWithLength(computedLength);
+        return TextDecorationThickness::createWithLength(primitiveValue.computeLength<Length>(conversionData));
     }
 }
 

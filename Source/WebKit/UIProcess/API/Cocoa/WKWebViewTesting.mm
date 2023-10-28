@@ -617,9 +617,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             : WebKit::MediaSessionCoordinatorProxyPrivate()
             , m_clientCoordinator(clientCoordinator)
         {
-            auto* delegateHelper = [[WKMediaSessionCoordinatorHelper alloc] initWithCoordinator:this];
-            [m_clientCoordinator setDelegate:delegateHelper];
-            m_coordinatorDelegate = adoptNS(delegateHelper);
+            m_coordinatorDelegate = adoptNS([[WKMediaSessionCoordinatorHelper alloc] initWithCoordinator:this]);
+            [m_clientCoordinator setDelegate:m_coordinatorDelegate.get()];
         }
 
         void seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback) final

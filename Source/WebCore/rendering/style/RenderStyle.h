@@ -1838,7 +1838,7 @@ public:
     static constexpr TextDecorationSkipInk initialTextDecorationSkipInk();
     static constexpr TextUnderlinePosition initialTextUnderlinePosition();
     static constexpr TextUnderlineOffset initialTextUnderlineOffset();
-    static constexpr TextDecorationThickness initialTextDecorationThickness();
+    static inline TextDecorationThickness initialTextDecorationThickness();
     static float initialZoom() { return 1.0f; }
     static constexpr TextZoom initialTextZoom();
     static float initialOutlineOffset() { return 0; }

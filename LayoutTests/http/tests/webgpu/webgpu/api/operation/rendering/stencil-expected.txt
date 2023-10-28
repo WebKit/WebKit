@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:59497/optional_cts_websocket_logger' failed: Could not connect to the server.
 
 PASS :stencil_compare_func:format="stencil8";stencilCompare="always";stencilRefValue=0
 PASS :stencil_compare_func:format="stencil8";stencilCompare="always";stencilRefValue=1

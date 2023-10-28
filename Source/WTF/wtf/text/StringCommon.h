@@ -81,7 +81,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned leng
 #if COMPILER(GCC_COMPATIBLE)
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
 #else
-    switch (fastLog2(length - 1)) {
+    switch (fastLog2(length)) {
 #endif
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
@@ -133,7 +133,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 #if COMPILER(GCC_COMPATIBLE)
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
 #else
-    switch (fastLog2(length - 1)) {
+    switch (fastLog2(length)) {
 #endif
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
