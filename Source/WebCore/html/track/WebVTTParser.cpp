@@ -60,13 +60,14 @@ constexpr unsigned styleIdentifierLength = 5;
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
     float number;
-    if (!valueScanner.scanFloat(number))
+    bool isNegative = false;
+    if (!valueScanner.scanFloat(number, &isNegative))
         return false;
     // '%' must be present and at the end of the setting value.
     if (!valueScanner.scan('%'))
         return false;
 
-    if (number < 0 || number > 100)
+    if (isNegative || number > 100)
         return false;
 
     percentage = number;
