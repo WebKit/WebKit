@@ -163,8 +163,8 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
 
     bool addsVisitedLinks = processPool.historyClient().addsVisitedLinks();
 
-    for (auto& process : processPool.processes()) {
-        for (auto& page : process->pages())
+    for (Ref process : processPool.processes()) {
+        for (Ref page : process->pages())
             page->setAddsVisitedLinks(addsVisitedLinks);
     }
 }

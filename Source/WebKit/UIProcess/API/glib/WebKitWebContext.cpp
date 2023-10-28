@@ -1915,7 +1915,7 @@ void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context
 
     // We sink the reference in case of being floating.
     GRefPtr<WebKitUserMessage> adoptedMessage = message;
-    for (auto& process : context->priv->processPool->processes())
+    for (Ref process : context->priv->processPool->processes())
         process->send(Messages::WebProcess::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), 0);
 }
 

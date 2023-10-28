@@ -389,7 +389,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
-    for (auto& process : _processPool->processes()) {
+    for (Ref process : _processPool->processes()) {
         if (process->processID() == pid)
             process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
         return YES;
@@ -399,7 +399,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (BOOL)_isWebProcessSuspended:(pid_t)pid
 {
-    for (auto& process : _processPool->processes()) {
+    for (Ref process : _processPool->processes()) {
         if (process->processID() == pid)
             return process->throttler().isSuspended();
     }
@@ -413,7 +413,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (BOOL)_hasPrewarmedWebProcess
 {
-    for (auto& process : _processPool->processes()) {
+    for (Ref process : _processPool->processes()) {
         if (process->isPrewarmed())
             return YES;
     }
@@ -428,7 +428,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (size_t)_webProcessCountIgnoringPrewarmedAndCached
 {
     size_t count = 0;
-    for (auto& process : _processPool->processes()) {
+    for (Ref process : _processPool->processes()) {
         if (!process->isInProcessCache() && !process->isPrewarmed())
             ++count;
     }

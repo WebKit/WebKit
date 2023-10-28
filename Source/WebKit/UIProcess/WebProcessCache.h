@@ -29,6 +29,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +39,7 @@ namespace WebKit {
 class WebProcessPool;
 class WebsiteDataStore;
 
-class WebProcessCache {
+class WebProcessCache : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebProcessCache(WebProcessPool&);

@@ -725,8 +725,8 @@ WebPageProxy::~WebPageProxy()
 
     ASSERT(m_process->webPage(internals().identifier) != this);
 #if ASSERT_ENABLED
-    for (auto& page : m_process->pages())
-        ASSERT(page.get() != this);
+    for (Ref page : m_process->pages())
+        ASSERT(page.ptr() != this);
 #endif
 
     setPageLoadStateObserver(nullptr);
@@ -6758,9 +6758,9 @@ RefPtr<WebPageProxy> WebPageProxy::nonEphemeralWebPageProxy()
     if (processPools.isEmpty())
         return nullptr;
     
-    for (auto& webProcess : processPools[0]->processes()) {
-        for (auto& page : webProcess->pages()) {
-            if (!page || page->sessionID().isEphemeral())
+    for (Ref webProcess : processPools[0]->processes()) {
+        for (Ref page : webProcess->pages()) {
+            if (page->sessionID().isEphemeral())
                 continue;
             return page;
         }
@@ -13166,6 +13166,11 @@ void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier
     }
 
     remotePageProxy->send(Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+}
+
+Ref<VisitedLinkStore> WebPageProxy::protectedVisitedLinkStore()
+{
+    return m_visitedLinkStore;
 }
 
 void WebPageProxy::broadcastFocusedFrameToOtherProcesses(IPC::Connection& connection, const WebCore::FrameIdentifier& frameID)

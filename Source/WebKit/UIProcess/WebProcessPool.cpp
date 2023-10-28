@@ -2092,7 +2092,7 @@ void WebProcessPool::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain
 {    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& process : processes())
+    for (Ref process : processes())
         process->sendWithAsyncReply(Messages::WebProcess::SetDomainsWithCrossPageStorageAccess(domains), [callbackAggregator] { });
 
     for (auto& topDomain : domains.keys())
@@ -2103,7 +2103,7 @@ void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomai
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& process : processes())
+    for (Ref process : processes())
         process->sendWithAsyncReply(Messages::WebProcess::SeedResourceLoadStatisticsForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification), [callbackAggregator] { });
 }
 
@@ -2111,7 +2111,7 @@ void WebProcessPool::sendResourceLoadStatisticsDataImmediately(CompletionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& process : processes()) {
+    for (Ref process : processes()) {
         if (!process->pageCount())
             continue;
 
@@ -2197,11 +2197,9 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
 
 bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
 {
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
-        if (processPool->shouldTakeUIBackgroundAssertion())
-            return true;
-    }
-    return false;
+    return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& processPool) {
+        return processPool->shouldTakeUIBackgroundAssertion();
+    });
 }
 
 void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Function<void(WebProcessProxy&)>& apply)
@@ -2209,8 +2207,18 @@ void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Fu
     for (auto& process : m_processes) {
         if (process->isPrewarmed() || process->sessionID() != sessionID)
             continue;
-        apply(process.get());
+        apply(process);
     }
+}
+
+CheckedRef<WebProcessCache> WebProcessPool::checkedWebProcessCache()
+{
+    return m_webProcessCache.get();
+}
+
+CheckedRef<WebBackForwardCache> WebProcessPool::checkedBackForwardCache()
+{
+    return m_backForwardCache.get();
 }
 
 #if ENABLE(SERVICE_WORKER)
