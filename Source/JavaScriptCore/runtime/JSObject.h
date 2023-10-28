@@ -167,7 +167,8 @@ public:
     template<typename PropertyNameType> JSValue getIfPropertyExists(JSGlobalObject*, const PropertyNameType&);
     bool noSideEffectMayHaveNonIndexProperty(VM&, PropertyName);
 
-    template<typename Functor>
+    enum class SortMode { Default, Ascending };
+    template<SortMode mode = SortMode::Default, typename Functor>
     void forEachOwnIndexedProperty(JSGlobalObject*, const Functor&);
 
 private:
