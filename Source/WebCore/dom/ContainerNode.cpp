@@ -579,7 +579,7 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
             document().adoptNode(newChild);
 
         insertBeforeCommon(nextChild, newChild);
-
+        newChild.setTreeScopeRecursively(treeScope());
         newChild.updateAncestorConnectedSubframeCountForInsertion();
     });
 }
