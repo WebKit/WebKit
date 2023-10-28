@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:59497/optional_cts_websocket_logger' failed: Could not connect to the server.
 
 PASS :arguments:first=0;count=0;first_instance=0;instance_count=0;indexed=false;indirect=false;vertex_buffer_offset=0;index_buffer_offset="_undef_";base_vertex="_undef_"
 PASS :arguments:first=0;count=0;first_instance=0;instance_count=0;indexed=false;indirect=false;vertex_buffer_offset=32;index_buffer_offset="_undef_";base_vertex="_undef_"
