@@ -681,20 +681,21 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (auto* layer = renderer.layer())
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
-        auto& logicalGeometry = layoutState().geometryForBox(layoutBox);
+        auto& visualGeometry = layoutState().geometryForBox(layoutBox);
         auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
 
-        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + adjustmentOffset);
+        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft() + adjustmentOffset);
         auto relayoutRubyAnnotationIfNeeded = [&] {
             // Annotation inline-block may get resized during inline layout (when base is wider) and
             // we need to apply this new size on the annotation content by running layout.
             if (!layoutBox.isRubyAnnotationBox())
                 return;
-            auto usedMarginBoxSize = Layout::BoxGeometry::marginBoxRect(logicalGeometry).size();
-            if (usedMarginBoxSize == renderer.size())
+            auto visualMarginBoxRect = Layout::BoxGeometry::marginBoxRect(visualGeometry);
+            if (visualMarginBoxRect.size() == renderer.size())
                 return;
-            renderer.setSize(usedMarginBoxSize);
-            renderer.setOverridingLogicalWidthLength({ usedMarginBoxSize.width(), LengthType::Fixed });
+            renderer.setSize(visualMarginBoxRect.size());
+            auto logicalMarginBoxWidth = renderer.isHorizontalWritingMode() ? visualMarginBoxRect.width() : visualMarginBoxRect.height();
+            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxWidth, LengthType::Fixed });
             renderer.setNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
             renderer.clearOverridingLogicalWidthLength();
@@ -720,6 +721,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (layoutBox.isLineBreakBox())
             continue;
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        // FIXME: Figure out if this should all be visual geometry at this point.
         auto& logicalGeometry = layoutState().geometryForBox(layoutBox);
 
         if (layoutBox.isFloatingPositioned()) {
