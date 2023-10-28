@@ -1087,41 +1087,34 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
 
     auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
-    auto accumulatedShift = InlineLayoutUnit { };
-    size_t currentRubyBaseIndex = 0;
+    for (auto startEndPair : m_interlinearRubyColumnRangeList) {
+        auto rubyBaseIndex = startEndPair.begin();
+        auto& rubyBaseLayoutBox = boxes[rubyBaseIndex].layoutBox();
+        ASSERT(rubyBaseLayoutBox.isRubyBase());
+        ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
 
-    for (auto index = m_interlinearRubyColumnRangeList[0].begin(); index < boxes.size(); ++index) {
+        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseIndex, boxes);
+        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, rubyBaseIndex, startEndPair.end(), boxes);
 
-        if (currentRubyBaseIndex == m_interlinearRubyColumnRangeList.size()) {
-            isHorizontalWritingMode ? boxes[index].moveHorizontally(-accumulatedShift) : boxes[index].moveVertically(-accumulatedShift);
-            continue;
-        }
-
-        auto handleOverhangBefore = [&] {
-            if (index != m_interlinearRubyColumnRangeList[currentRubyBaseIndex].begin())
-                return;
-            auto& rubyBaseLayoutBox = boxes[index].layoutBox();
-            ASSERT(rubyBaseLayoutBox.isRubyBase());
-            ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
-            accumulatedShift += rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, index, boxes);
-            auto& annotationBoxGeometry = formattingContext().geometryForBox(*rubyBaseLayoutBox.associatedRubyAnnotationBox());
-            isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -accumulatedShift }) : annotationBoxGeometry.moveVertically(LayoutUnit { -accumulatedShift });
+        // FIXME: If this turns out to be a pref bottleneck, make sure we pass in the accumulated shift to overhangForAnnotationBefore/after and
+        // offset all box geometry as we check for overlap.
+        auto moveBoxRangeToVisualLeft = [&](auto start, auto end, auto shiftValue) {
+            for (auto index = start; index <= end; ++index) {
+                isHorizontalWritingMode ? boxes[index].moveHorizontally(LayoutUnit { -shiftValue }) : boxes[index].moveVertically(LayoutUnit { -shiftValue });
+                auto updateAnnotationGeometryIfNeeded = [&] {
+                    auto& layoutBox = boxes[index].layoutBox();
+                    if (!layoutBox.isRubyBase() || !rubyBaseLayoutBox.associatedRubyAnnotationBox())
+                        return;
+                    auto& annotationBoxGeometry = formattingContext().geometryForBox(*layoutBox.associatedRubyAnnotationBox());
+                    isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -shiftValue }) : annotationBoxGeometry.moveVertically(LayoutUnit { -shiftValue });
+                };
+                updateAnnotationGeometryIfNeeded();
+            }
         };
-        handleOverhangBefore();
-
-        isHorizontalWritingMode ? boxes[index].moveHorizontally(LayoutUnit { -accumulatedShift }) : boxes[index].moveVertically(LayoutUnit { -accumulatedShift });
-
-        auto handleOverhangAfter = [&] {
-            if (index != m_interlinearRubyColumnRangeList[currentRubyBaseIndex].end())
-                return;
-            auto rubyBaseIndex = m_interlinearRubyColumnRangeList[currentRubyBaseIndex].begin();
-            auto& rubyBaseLayoutBox = boxes[rubyBaseIndex].layoutBox();
-            ASSERT(rubyBaseLayoutBox.isRubyBase());
-            ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
-            accumulatedShift += rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, rubyBaseIndex, index, boxes);
-            ++currentRubyBaseIndex;
-        };
-        handleOverhangAfter();
+        if (beforeOverhang)
+            moveBoxRangeToVisualLeft(rubyBaseIndex, boxes.size() - 1, beforeOverhang);
+        if (afterOverhang)
+            moveBoxRangeToVisualLeft(startEndPair.end() + 1, boxes.size() - 1, afterOverhang);
     }
 }
 

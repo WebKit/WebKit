@@ -86,6 +86,7 @@ public:
     LayoutUnit contentBoxRight() const { return contentBoxLeft() + contentBoxWidth(); }
     LayoutUnit contentBoxHeight() const;
     LayoutUnit contentBoxWidth() const;
+    LayoutSize contentBoxSize() const { return { contentBoxWidth(), contentBoxHeight() }; }
 
     LayoutUnit paddingBoxTop() const { return borderBefore(); }
     LayoutUnit paddingBoxLeft() const { return borderStart(); }
