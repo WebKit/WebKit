@@ -1,0 +1,44 @@
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+}
+
+function deserialize(additional_data) {
+    const array_buffer = new ArrayBuffer(0, {maxByteLength: 1});
+    const array = [array_buffer];
+
+    array.__defineGetter__(1, () => {
+        array_buffer.resize(1);
+
+        return new DataView(array_buffer, 1);
+    });
+
+    array[0x25] = (new Uint8Array([1, 2, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2].concat(additional_data))).buffer;
+
+    try {
+        return "" + structuredClone(array);
+    } catch (e) {
+        return "" + e;
+    }
+}
+
+function main() {
+    const a = deserialize([0x01, 0x00, 0x00, 0x00,
+        0x03,
+        0xff, 0xff, 0xff, 0xff]);
+
+    const b = deserialize([0x00]);
+
+    if (a !== b) {
+        throw "result: " + (a === b) + " a: " + a + " b: " + b;
+    }
+}
+
+main();
+
+</script>
+</body>
+</html>
