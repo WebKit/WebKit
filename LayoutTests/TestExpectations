@@ -5153,6 +5153,8 @@ imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html [ DumpJSC
 
 http/tests/local/blob/navigate-blob.html [ DumpJSConsoleLogInStdErr ]
 
+http/tests/webshare/navigator-share-files-fail-access-control-checks-crash.html [ DumpJSConsoleLogInStdErr ]
+
 # "Opacity on an inline element should apply on float child".
 webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity-float-child.html [ ImageOnlyFailure ]
 
