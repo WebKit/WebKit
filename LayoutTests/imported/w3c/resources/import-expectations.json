@@ -351,6 +351,7 @@
     "web-platform-tests/mathml": "import",
     "web-platform-tests/media": "import",
     "web-platform-tests/media-capabilities": "import",
+    "web-platform-tests/media-playback-quality": "import",
     "web-platform-tests/media-source": "import",
     "web-platform-tests/mediacapture-image": "skip",
     "web-platform-tests/mediacapture-record": "import",
