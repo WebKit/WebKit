@@ -161,12 +161,15 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
         if (!targetNode)
             continue;
 
+        auto currentScrollPosition = targetNode->currentScrollPosition();
+
         if (auto previousData = std::exchange(data.requestedDataBeforeAnimatedScroll, std::nullopt)) {
-            auto& [type, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
-            targetNode->scrollTo(type == ScrollRequestType::DeltaUpdate ? (targetNode->currentScrollPosition() + std::get<FloatSize>(positionOrDeltaBeforeAnimatedScroll)) : std::get<FloatPoint>(positionOrDeltaBeforeAnimatedScroll), scrollType, clamping);
+            auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
+            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
+            targetNode->scrollTo(intermediatePosition, scrollType, clamping);
         }
 
-        targetNode->startAnimatedScrollToPosition(data.destinationPosition(targetNode->currentScrollPosition()));
+        targetNode->startAnimatedScrollToPosition(data.destinationPosition(currentScrollPosition));
     }
 
     auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });

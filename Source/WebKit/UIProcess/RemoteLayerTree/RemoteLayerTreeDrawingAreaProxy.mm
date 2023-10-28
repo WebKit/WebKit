@@ -279,13 +279,13 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     // Handle requested scroll position updates from the scrolling tree transaction after didCommitLayerTree()
     // has updated the view size based on the content size.
     if (requestedScroll) {
-        auto previousScrollPosition = webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
+        auto currentScrollPosition = webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
         if (auto previousData = std::exchange(requestedScroll->requestedDataBeforeAnimatedScroll, std::nullopt)) {
-            auto& [type, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
-            previousScrollPosition = type == ScrollRequestType::DeltaUpdate ? (webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition() + std::get<FloatSize>(positionOrDeltaBeforeAnimatedScroll)) : std::get<FloatPoint>(positionOrDeltaBeforeAnimatedScroll);
+            auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
+            currentScrollPosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
         }
 
-        webPageProxy->requestScroll(requestedScroll->destinationPosition(previousScrollPosition), layerTreeTransaction.scrollOrigin(), requestedScroll->animated);
+        webPageProxy->requestScroll(requestedScroll->destinationPosition(currentScrollPosition), layerTreeTransaction.scrollOrigin(), requestedScroll->animated);
     }
 #endif // ENABLE(ASYNC_SCROLLING)
 

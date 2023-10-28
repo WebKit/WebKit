@@ -115,7 +115,10 @@ struct RequestedScrollData {
     std::optional<std::tuple<ScrollRequestType, std::variant<FloatPoint, FloatSize>, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
 
     void merge(RequestedScrollData&&);
-    WEBCORE_EXPORT FloatPoint destinationPosition(const FloatPoint&) const;
+
+    WEBCORE_EXPORT FloatPoint destinationPosition(FloatPoint currentScrollPosition) const;
+    WEBCORE_EXPORT static FloatPoint computeDestinationPosition(FloatPoint currentScrollPosition, ScrollRequestType, const std::variant<FloatPoint, FloatSize>& scrollPositionOrDelta);
+
     bool comparePositionOrDelta(const RequestedScrollData& other) const
     {
         if (requestType == ScrollRequestType::PositionUpdate)
