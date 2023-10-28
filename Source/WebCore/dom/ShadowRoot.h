@@ -79,6 +79,7 @@ public:
     using TreeScope::rootNode;
 
     Style::Scope& styleScope() { return *m_styleScope; }
+    CheckedRef<Style::Scope> checkedStyleScope() const;
     StyleSheetList& styleSheets();
 
     bool delegatesFocus() const { return m_delegatesFocus; }

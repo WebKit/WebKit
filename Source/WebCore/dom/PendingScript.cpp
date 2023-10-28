@@ -59,8 +59,8 @@ PendingScript::PendingScript(ScriptElement& element, LoadableScript& loadableScr
 
 PendingScript::~PendingScript()
 {
-    if (m_loadableScript)
-        m_loadableScript->removeClient(*this);
+    if (RefPtr loadableScript = m_loadableScript)
+        loadableScript->removeClient(*this);
 }
 
 void PendingScript::notifyClientFinished()

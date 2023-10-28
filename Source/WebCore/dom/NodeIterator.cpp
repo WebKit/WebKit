@@ -26,6 +26,7 @@
 #include "NodeIterator.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "NodeTraversal.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -46,7 +47,7 @@ inline void NodeIterator::NodePointer::clear()
 
 inline bool NodeIterator::NodePointer::moveToNext(Node& root)
 {
-    auto currentNode = protectedNode();
+    RefPtr currentNode = node;
     if (!currentNode)
         return false;
     if (isPointerBeforeNode) {
@@ -59,7 +60,7 @@ inline bool NodeIterator::NodePointer::moveToNext(Node& root)
 
 inline bool NodeIterator::NodePointer::moveToPrevious(Node& root)
 {
-    auto currentNode = protectedNode();
+    RefPtr currentNode = node;
     if (!currentNode)
         return false;
     if (!isPointerBeforeNode) {
@@ -78,7 +79,7 @@ inline NodeIterator::NodeIterator(Node& rootNode, unsigned whatToShow, RefPtr<No
     : NodeIteratorBase(rootNode, whatToShow, WTFMove(filter))
     , m_referenceNode(rootNode, true)
 {
-    root().document().attachNodeIterator(*this);
+    root().protectedDocument()->attachNodeIterator(*this);
 }
 
 Ref<NodeIterator> NodeIterator::create(Node& rootNode, unsigned whatToShow, RefPtr<NodeFilter>&& filter)
@@ -96,12 +97,12 @@ ExceptionOr<RefPtr<Node>> NodeIterator::nextNode()
     RefPtr<Node> result;
 
     m_candidateNode = m_referenceNode;
-    auto root = protectedRoot();
+    Ref root = this->root();
     while (m_candidateNode.moveToNext(root)) {
         // NodeIterators treat the DOM tree as a flat list of nodes.
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
-        RefPtr<Node> provisionalResult = m_candidateNode.node;
+        RefPtr provisionalResult = m_candidateNode.node;
 
         auto filterResult = acceptNode(*provisionalResult);
         if (filterResult.hasException()) {
@@ -126,12 +127,12 @@ ExceptionOr<RefPtr<Node>> NodeIterator::previousNode()
     RefPtr<Node> result;
 
     m_candidateNode = m_referenceNode;
-    auto root = protectedRoot();
+    Ref root = this->root();
     while (m_candidateNode.moveToPrevious(root)) {
         // NodeIterators treat the DOM tree as a flat list of nodes.
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
-        RefPtr<Node> provisionalResult = m_candidateNode.node;
+        RefPtr provisionalResult = m_candidateNode.node;
 
         auto filterResult = acceptNode(*provisionalResult);
         if (filterResult.hasException()) {
@@ -163,7 +164,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
 
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    auto root = protectedRoot();
+    Ref root = this->root();
     if (!removedNode.isDescendantOf(root))
         return;
     bool willRemoveReferenceNode = &removedNode == referenceNode.node;

@@ -94,8 +94,8 @@ ShadowRoot::~ShadowRoot()
     if (isConnected())
         document().didRemoveInDocumentShadowRoot(*this);
 
-    if (m_styleSheetList)
-        m_styleSheetList->detach();
+    if (RefPtr styleSheetList = m_styleSheetList)
+        styleSheetList->detach();
 
     // We cannot let ContainerNode destructor call willBeDeletedFrom()
     // for this ShadowRoot instance because TreeScope destructor
@@ -118,8 +118,13 @@ Node::InsertedIntoAncestorResult ShadowRoot::insertedIntoAncestor(InsertionType 
     if (insertionType.connectedToDocument)
         protectedDocument()->didInsertInDocumentShadowRoot(*this);
     if (!adoptedStyleSheets().empty() && document().frame())
-        styleScope().didChangeActiveStyleSheetCandidates();
+        checkedStyleScope()->didChangeActiveStyleSheetCandidates();
     return InsertedIntoAncestorResult::Done;
+}
+
+CheckedRef<Style::Scope> ShadowRoot::checkedStyleScope() const
+{
+    return *m_styleScope;
 }
 
 void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

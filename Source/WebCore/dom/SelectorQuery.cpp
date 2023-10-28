@@ -152,8 +152,8 @@ inline Element* SelectorDataList::selectorClosest(const SelectorData& selectorDa
 
 bool SelectorDataList::matches(Element& targetElement) const
 {
-    for (auto& selctor : m_selectors) {
-        if (selectorMatches(selctor, targetElement, targetElement))
+    for (auto& selector : m_selectors) {
+        if (selectorMatches(selector, targetElement, targetElement))
             return true;
     }
     return false;
