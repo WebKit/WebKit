@@ -586,6 +586,23 @@ static void overrideDefaults()
     }
 }
 
+bool Options::setAllJITCodeValidations(const char* valueStr)
+{
+    auto value = parse<OptionsStorage::Bool>(valueStr);
+    if (!value)
+        return false;
+    setAllJITCodeValidations(value.value());
+    return true;
+}
+
+void Options::setAllJITCodeValidations(bool value)
+{
+    Options::validateDFGClobberize() = value;
+    Options::validateDFGExceptionHandling() = value;
+    Options::validateDoesGC() = value;
+    Options::useJITAsserts() = value;
+}
+
 static inline void disableAllJITOptions()
 {
     Options::useLLInt() = true;
@@ -653,9 +670,6 @@ void Options::notifyOptionsChanged()
     if (thresholdForGlobalLexicalBindingEpoch == 0 || thresholdForGlobalLexicalBindingEpoch == 1)
         Options::thresholdForGlobalLexicalBindingEpoch() = UINT_MAX;
 
-#if !defined(NDEBUG)
-    Options::validateDFGExceptionHandling() = true;
-#endif
 #if !ENABLE(JIT)
     Options::useJIT() = false;
 #endif

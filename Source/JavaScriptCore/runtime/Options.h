@@ -106,6 +106,8 @@ public:
     JS_EXPORT_PRIVATE static void initialize();
     static void finalize();
 
+    JS_EXPORT_PRIVATE static bool setAllJITCodeValidations(const char* arg);
+
     // Parses a string of options where each option is of the format "--<optionName>=<value>"
     // and are separated by a space. The leading "--" is optional and will be ignored.
     JS_EXPORT_PRIVATE static bool setOptions(const char* optionsList);
@@ -151,6 +153,8 @@ private:
 #if !PLATFORM(COCOA)
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 #endif
+
+    static void setAllJITCodeValidations(bool);
 
     static bool defaultTCSMValue();
     static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers);
