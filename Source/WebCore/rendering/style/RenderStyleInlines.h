@@ -492,7 +492,6 @@ constexpr UserModify RenderStyle::initialUserModify() { return UserModify::ReadO
 constexpr UserSelect RenderStyle::initialUserSelect() { return UserSelect::Text; }
 constexpr VerticalAlign RenderStyle::initialVerticalAlign() { return VerticalAlign::Baseline; }
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
-constexpr WhiteSpace RenderStyle::initialWhiteSpace() { return WhiteSpace::Normal; }
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialWordSpacing() { return zeroLength(); }
