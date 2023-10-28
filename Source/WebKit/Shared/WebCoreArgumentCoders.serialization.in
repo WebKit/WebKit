@@ -1747,17 +1747,12 @@ header: <WebCore/RectEdges.h>
 
 header: <WebCore/DisplayListItems.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
-    uint8_t colorData().resolved().red
-    uint8_t colorData().resolved().green
-    uint8_t colorData().resolved().blue
-    uint8_t colorData().resolved().alpha
+    WebCore::PackedColor::RGBA colorData()
 }
 
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineStrokeColor {
-    uint8_t colorData().resolved().red
-    uint8_t colorData().resolved().green
-    uint8_t colorData().resolved().blue
-    uint8_t colorData().resolved().alpha
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineStroke {
+    std::optional<WebCore::PackedColor::RGBA> colorData()
+    std::optional<float> thickness()
 }
 
 header: <WebCore/HTTPHeaderMap.h>
@@ -1958,6 +1953,11 @@ header: <WebCore/VP9Utilities.h>
     double width;
     double height;
     double scale;
+}
+
+header: <WebCore/ColorTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PackedColor::RGBA {
+    uint32_t value;
 }
 
 struct WebCore::MediaCapabilitiesInfo {

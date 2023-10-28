@@ -86,13 +86,12 @@ class Save;
 class Scale;
 class SetCTM;
 class SetInlineFillColor;
-class SetInlineStrokeColor;
+class SetInlineStroke;
 class SetLineCap;
 class SetLineDash;
 class SetLineJoin;
 class SetMiterLimit;
 class SetState;
-class SetStrokeThickness;
 class StrokeEllipse;
 class StrokeLine;
 class StrokePathSegment;
@@ -162,13 +161,12 @@ using Item = std::variant
     , Scale
     , SetCTM
     , SetInlineFillColor
-    , SetInlineStrokeColor
+    , SetInlineStroke
     , SetLineCap
     , SetLineDash
     , SetLineJoin
     , SetMiterLimit
     , SetState
-    , SetStrokeThickness
     , StrokeEllipse
     , StrokeLine
     , StrokePathSegment

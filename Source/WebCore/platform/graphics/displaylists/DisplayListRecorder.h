@@ -72,9 +72,8 @@ protected:
     virtual void recordScale(const FloatSize&) = 0;
     virtual void recordSetCTM(const AffineTransform&) = 0;
     virtual void recordConcatenateCTM(const AffineTransform&) = 0;
-    virtual void recordSetInlineFillColor(SRGBA<uint8_t>) = 0;
-    virtual void recordSetInlineStrokeColor(SRGBA<uint8_t>) = 0;
-    virtual void recordSetStrokeThickness(float) = 0;
+    virtual void recordSetInlineFillColor(PackedColor::RGBA) = 0;
+    virtual void recordSetInlineStroke(SetInlineStroke&&) = 0;
     virtual void recordSetState(const GraphicsContextState&) = 0;
     virtual void recordSetLineCap(LineCap) = 0;
     virtual void recordSetLineDash(const DashArray&, float dashOffset) = 0;
@@ -128,7 +127,7 @@ protected:
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
     virtual void recordStrokeLine(const PathDataLine&) = 0;
-    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SRGBA<uint8_t>, float thickness) = 0;
+    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) = 0;
     virtual void recordStrokeArc(const PathArc&) = 0;
     virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
     virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
@@ -282,6 +281,8 @@ private:
 
     void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextState&);
+
+    SetInlineStroke buildSetInlineStroke(const GraphicsContextState&);
 
     const AffineTransform& ctm() const;
 

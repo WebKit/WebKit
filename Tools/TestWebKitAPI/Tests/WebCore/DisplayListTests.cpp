@@ -64,7 +64,7 @@ TEST(DisplayListTests, AppendItems)
     auto path = createComplexPath();
 
     for (int i = 0; i < 50; ++i) {
-        list.append(SetStrokeThickness(1.5));
+        list.append(SetInlineStroke(1.5));
         list.append(FillPath(path));
         list.append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
         list.append(SetInlineFillColor(Color::red));
@@ -78,7 +78,7 @@ TEST(DisplayListTests, AppendItems)
     bool observedUnexpectedItem = false;
     for (const auto& item : list.items()) {
         WTF::switchOn(item,
-        [&](const SetStrokeThickness& item) {
+        [&](const SetInlineStroke& item) {
             EXPECT_EQ(item.thickness(), 1.5);
         }, [&](const FillPath& item) {
             EXPECT_EQ(item.path(), path);

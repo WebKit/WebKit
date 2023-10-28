@@ -89,19 +89,14 @@ void RecorderImpl::recordConcatenateCTM(const AffineTransform& transform)
     append(ConcatenateCTM(transform));
 }
 
-void RecorderImpl::recordSetInlineFillColor(SRGBA<uint8_t> inlineColor)
+void RecorderImpl::recordSetInlineFillColor(PackedColor::RGBA inlineColor)
 {
     append(SetInlineFillColor(inlineColor));
 }
 
-void RecorderImpl::recordSetInlineStrokeColor(SRGBA<uint8_t> inlineColor)
+void RecorderImpl::recordSetInlineStroke(SetInlineStroke&& strokeItem)
 {
-    append(SetInlineStrokeColor(inlineColor));
-}
-
-void RecorderImpl::recordSetStrokeThickness(float thickness)
-{
-    append(SetStrokeThickness(thickness));
+    append(strokeItem);
 }
 
 void RecorderImpl::recordSetState(const GraphicsContextState& state)
@@ -355,10 +350,9 @@ void RecorderImpl::recordStrokeLine(const PathDataLine& line)
     append(StrokeLine(line));
 }
 
-void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
+void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SetInlineStroke&& strokeItem)
 {
-    append(SetInlineStrokeColor(color));
-    append(SetStrokeThickness(thickness));
+    append(strokeItem);
     append(StrokePathSegment(PathSegment { line }));
 }
 

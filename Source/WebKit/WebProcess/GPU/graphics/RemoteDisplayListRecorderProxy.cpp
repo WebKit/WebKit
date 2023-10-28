@@ -118,19 +118,14 @@ void RemoteDisplayListRecorderProxy::recordConcatenateCTM(const AffineTransform&
     send(Messages::RemoteDisplayListRecorder::ConcatenateCTM(transform));
 }
 
-void RemoteDisplayListRecorderProxy::recordSetInlineFillColor(SRGBA<uint8_t> color)
+void RemoteDisplayListRecorderProxy::recordSetInlineFillColor(PackedColor::RGBA color)
 {
     send(Messages::RemoteDisplayListRecorder::SetInlineFillColor(DisplayList::SetInlineFillColor { color }));
 }
 
-void RemoteDisplayListRecorderProxy::recordSetInlineStrokeColor(SRGBA<uint8_t> color)
+void RemoteDisplayListRecorderProxy::recordSetInlineStroke(DisplayList::SetInlineStroke&& strokeItem)
 {
-    send(Messages::RemoteDisplayListRecorder::SetInlineStrokeColor(DisplayList::SetInlineStrokeColor { color }));
-}
-
-void RemoteDisplayListRecorderProxy::recordSetStrokeThickness(float thickness)
-{
-    send(Messages::RemoteDisplayListRecorder::SetStrokeThickness(thickness));
+    send(Messages::RemoteDisplayListRecorder::SetInlineStroke(strokeItem));
 }
 
 void RemoteDisplayListRecorderProxy::recordSetState(const GraphicsContextState& state)
@@ -398,9 +393,9 @@ void RemoteDisplayListRecorderProxy::recordStrokeLine(const PathDataLine& line)
     send(Messages::RemoteDisplayListRecorder::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
+void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStroke&& strokeItem)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(line, color, thickness));
+    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(line, strokeItem));
 }
 
 void RemoteDisplayListRecorderProxy::recordStrokeArc(const PathArc& arc)

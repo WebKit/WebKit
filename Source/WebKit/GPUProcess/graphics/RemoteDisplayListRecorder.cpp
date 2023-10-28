@@ -126,19 +126,14 @@ void RemoteDisplayListRecorder::concatenateCTM(const AffineTransform& ctm)
     handleItem(DisplayList::ConcatenateCTM(ctm));
 }
 
-void RemoteDisplayListRecorder::setInlineFillColor(DisplayList::SetInlineFillColor&& item)
+void RemoteDisplayListRecorder::setInlineFillColor(DisplayList::SetInlineFillColor&& fillColorItem)
 {
-    handleItem(WTFMove(item));
+    handleItem(WTFMove(fillColorItem));
 }
 
-void RemoteDisplayListRecorder::setInlineStrokeColor(DisplayList::SetInlineStrokeColor&& item)
+void RemoteDisplayListRecorder::setInlineStroke(DisplayList::SetInlineStroke&& strokeItem)
 {
-    handleItem(WTFMove(item));
-}
-
-void RemoteDisplayListRecorder::setStrokeThickness(float thickness)
-{
-    handleItem(DisplayList::SetStrokeThickness(thickness));
+    handleItem(WTFMove(strokeItem));
 }
 
 void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
@@ -539,10 +534,9 @@ void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
     handleItem(DisplayList::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStrokeColor&& color, float thickness)
+void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStroke&& strokeItem)
 {
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
+    handleItem(WTFMove(strokeItem));
     handleItem(DisplayList::StrokeLine(line));
 }
 
