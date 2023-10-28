@@ -688,7 +688,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         auto relayoutRubyAnnotationIfNeeded = [&] {
             // Annotation inline-block may get resized during inline layout (when base is wider) and
             // we need to apply this new size on the annotation content by running layout.
-            if (!layoutBox.isRubyAnnotationBox())
+            if (!layoutBox.isRubyAnnotationBox() || !layoutBox.isInterlinearRubyAnnotationBox())
                 return;
             auto visualMarginBoxRect = Layout::BoxGeometry::marginBoxRect(visualGeometry);
             if (visualMarginBoxRect.size() == renderer.size())

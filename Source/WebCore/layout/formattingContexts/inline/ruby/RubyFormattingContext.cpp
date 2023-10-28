@@ -225,8 +225,8 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
 
     // Note that inter-character geometry follows the ruby base's writing direction even though it's flipped in horizontal mode.
     if (isHorizontalWritingMode)
-        return { logicalAnnotationBoxGeometry.contentBoxWidth(), std::max(logicalAnnotationBoxGeometry.marginBoxHeight(), visualRubyBaseGeometry.marginBoxHeight()) -  logicalAnnotationBoxGeometry.verticalMarginBorderAndPadding() };
-    return { logicalAnnotationBoxGeometry.contentBoxHeight(), std::max(logicalAnnotationBoxGeometry.marginBoxWidth(), visualRubyBaseGeometry.marginBoxHeight()) -  logicalAnnotationBoxGeometry.horizontalMarginBorderAndPadding() };
+        return logicalAnnotationBoxGeometry.contentBoxSize();
+    return { logicalAnnotationBoxGeometry.contentBoxHeight(), logicalAnnotationBoxGeometry.marginBoxWidth() };
 }
 
 RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
