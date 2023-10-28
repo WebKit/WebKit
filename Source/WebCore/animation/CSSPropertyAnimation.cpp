@@ -371,13 +371,6 @@ static inline TextUnderlineOffset blendFunc(const TextUnderlineOffset& from, con
     return TextUnderlineOffset::createWithAuto();
 }
 
-static inline TextDecorationThickness blendFunc(const TextDecorationThickness& from, const TextDecorationThickness& to, const CSSPropertyBlendingContext& context)
-{
-    if (from.isLength() && to.isLength())
-        return TextDecorationThickness::createWithLength(blendFunc(from.lengthValue(), to.lengthValue(), context));
-    return TextDecorationThickness::createWithAuto();
-}
-
 static inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::NonNegative)
 {
     LengthBox result(blendFunc(from.top(), to.top(), context, valueRange),
@@ -2757,6 +2750,49 @@ private:
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperBaselineShift);
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperTextDecorationThickness);
+class PropertyWrapperTextDecorationThickness final : public PropertyWrapperGetter<TextDecorationThickness> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperTextDecorationThickness);
+public:
+    PropertyWrapperTextDecorationThickness()
+        : PropertyWrapperGetter(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        auto fromTextDecorationThickness = from.textDecorationThickness();
+        auto toTextDecorationThickness = to.textDecorationThickness();
+        if (fromTextDecorationThickness.isAuto() || toTextDecorationThickness.isAuto())
+            return false;
+
+        auto fromValue = fromTextDecorationThickness.resolve(from.computedFontSize(), from.metricsOfPrimaryFont());
+        auto toValue = toTextDecorationThickness.resolve(to.computedFontSize(), to.metricsOfPrimaryFont());
+        return fromValue != toValue;
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        auto blendedTextDecorationThickness = [&]() -> TextDecorationThickness {
+            if (context.isDiscrete)
+                return (!context.progress ? from : to).textDecorationThickness();
+
+            auto fromTextDecorationThickness = from.textDecorationThickness();
+            auto toTextDecorationThickness = to.textDecorationThickness();
+
+            auto fromValue = fromTextDecorationThickness.resolve(from.computedFontSize(), from.metricsOfPrimaryFont());
+            auto toValue = toTextDecorationThickness.resolve(to.computedFontSize(), to.metricsOfPrimaryFont());
+
+            auto blendedValue = blendFunc(fromValue, toValue, context);
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+        };
+
+        destination.setTextDecorationThickness(blendedTextDecorationThickness());
+    }
+};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperTextDecorationThickness);
+
 template <typename T>
 class AutoPropertyWrapper final : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -3732,7 +3768,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperFontWeight,
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
         new PropertyWrapperFontStyle,
-        new PropertyWrapper<TextDecorationThickness>(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness, &RenderStyle::setTextDecorationThickness),
+        new PropertyWrapperTextDecorationThickness,
         new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),
         new PropertyWrapperVisitedAffectedStyleColor(CSSPropertyTextDecorationColor, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::visitedLinkTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor),
 

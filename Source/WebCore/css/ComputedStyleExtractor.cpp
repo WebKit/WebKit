@@ -1917,14 +1917,18 @@ static Ref<CSSValue> textUnderlineOffsetToCSSValue(const TextUnderlineOffset& te
     return CSSPrimitiveValue::create(textUnderlineOffset.lengthValue(), CSSUnitType::CSS_PX);
 }
 
-static Ref<CSSValue> textDecorationThicknessToCSSValue(const TextDecorationThickness& textDecorationThickness)
+static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style, const TextDecorationThickness& textDecorationThickness)
 {
     if (textDecorationThickness.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
     if (textDecorationThickness.isFromFont())
         return CSSPrimitiveValue::create(CSSValueFromFont);
+
     ASSERT(textDecorationThickness.isLength());
-    return CSSPrimitiveValue::create(textDecorationThickness.lengthValue(), CSSUnitType::CSS_PX);
+    const auto& length = textDecorationThickness.length();
+    if (length.isPercent())
+        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+    return zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasisPosition> textEmphasisPosition)
@@ -3670,7 +3674,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextUnderlineOffset:
         return textUnderlineOffsetToCSSValue(style.textUnderlineOffset());
     case CSSPropertyTextDecorationThickness:
-        return textDecorationThicknessToCSSValue(style.textDecorationThickness());
+        return textDecorationThicknessToCSSValue(style, style.textDecorationThickness());
     case CSSPropertyWebkitTextDecorationsInEffect:
         return renderTextDecorationLineFlagsToCSSValue(style.textDecorationsInEffect());
     case CSSPropertyWebkitTextFillColor:

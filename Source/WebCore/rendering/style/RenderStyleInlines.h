@@ -457,7 +457,7 @@ inline StyleColor RenderStyle::initialTextDecorationColor() { return StyleColor:
 constexpr OptionSet<TextDecorationLine> RenderStyle::initialTextDecorationLine() { return { }; }
 constexpr TextDecorationSkipInk RenderStyle::initialTextDecorationSkipInk() { return TextDecorationSkipInk::Auto; }
 constexpr TextDecorationStyle RenderStyle::initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
-constexpr TextDecorationThickness RenderStyle::initialTextDecorationThickness() { return TextDecorationThickness::createWithAuto(); }
+inline TextDecorationThickness RenderStyle::initialTextDecorationThickness() { return TextDecorationThickness::createWithAuto(); }
 inline StyleColor RenderStyle::initialTextEmphasisColor() { return StyleColor::currentColor(); }
 inline const AtomString& RenderStyle::initialTextEmphasisCustomMark() { return nullAtom(); }
 constexpr TextEmphasisFill RenderStyle::initialTextEmphasisFill() { return TextEmphasisFill::Filled; }

@@ -3978,9 +3978,6 @@ webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/line-gap-overr
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range-nbsp.html [ ImageOnlyFailure ]
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-font-loading/fontface-override-descriptors.html [ ImageOnlyFailure ]
 
-# @font-face: size-adjust and text-decoration
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-text-decoration.tentative.html [ ImageOnlyFailure ]
-
 # We intentionally do not want to allow disabling required ligatures, so we don't honor this optional test.
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.optional.html [ ImageOnlyFailure ]
 
@@ -4933,7 +4930,6 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-009.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-010.html [ ImageOnlyFailure ]
 
-webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-fixed.html [ ImageOnlyFailure ]
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation.html [ ImageOnlyFailure ]
 
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image.html [ ImageOnlyFailure ]

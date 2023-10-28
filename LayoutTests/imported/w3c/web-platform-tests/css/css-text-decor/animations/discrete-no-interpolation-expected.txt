@@ -55,34 +55,34 @@ PASS Web Animations: property <text-decoration-style> from [initial] to [dashed]
 PASS Web Animations: property <text-decoration-style> from [initial] to [dashed] at (0.6) should be [dashed]
 PASS Web Animations: property <text-decoration-style> from [initial] to [dashed] at (1) should be [dashed]
 PASS Web Animations: property <text-decoration-style> from [initial] to [dashed] at (1.5) should be [dashed]
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px] assert_equals: expected "123px " but got "auto "
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px]
+PASS CSS Transitions: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px]
+PASS CSS Transitions with transition: all: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px]
 PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [initial]
 PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [initial]
 PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [initial]
-FAIL CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px] assert_equals: expected "123px " but got "auto "
+PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px]
+PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px]
+PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px]
+PASS CSS Animations: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px]
 PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (-0.3) should be [initial]
 PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0) should be [initial]
 PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.3) should be [initial]
-FAIL Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px] assert_equals: expected "123px " but got "auto "
-FAIL Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px] assert_equals: expected "123px " but got "auto "
+PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.5) should be [123px]
+PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (0.6) should be [123px]
+PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (1) should be [123px]
+PASS Web Animations: property <text-decoration-thickness> from [initial] to [123px] at (1.5) should be [123px]
 PASS CSS Transitions: property <text-emphasis-position> from [initial] to [under right] at (-0.3) should be [under right]
 PASS CSS Transitions: property <text-emphasis-position> from [initial] to [under right] at (0) should be [under right]
 PASS CSS Transitions: property <text-emphasis-position> from [initial] to [under right] at (0.3) should be [under right]

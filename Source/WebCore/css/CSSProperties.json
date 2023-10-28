@@ -8319,7 +8319,7 @@
         "text-decoration-thickness": {
             "codegen-properties": {
                 "converter": "TextDecorationThickness",
-                "parser-grammar": "auto | from-font | <length>",
+                "parser-grammar": "auto | from-font | <length-percentage>",
                 "parser-grammar-comment": "The current specification has a <length-percentage>, not just <length>"
             },
             "specification": {
