@@ -30,6 +30,7 @@ namespace WebCore {
 struct CheckVisibilityOptions {
     bool checkOpacity { false };
     bool checkVisibilityCSS { false };
+    bool checkContentVisibilityAuto { false };
 };
 
 }

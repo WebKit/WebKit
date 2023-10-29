@@ -27,4 +27,5 @@
 dictionary CheckVisibilityOptions {
     boolean checkOpacity = false;
     boolean checkVisibilityCSS = false;
+    boolean checkContentVisibilityAuto = false;
 };

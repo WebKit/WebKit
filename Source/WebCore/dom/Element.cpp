@@ -5491,6 +5491,9 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     if (isSkippedContentWithReason(ContentVisibility::Hidden))
         return false;
 
+    if (options.checkContentVisibilityAuto && isSkippedContentWithReason(ContentVisibility::Auto))
+        return false;
+
     for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
         auto* ancestorStyle = ancestor->computedStyle();
         if (ancestorStyle->display() == DisplayType::None)
