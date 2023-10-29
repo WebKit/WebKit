@@ -6,12 +6,13 @@ FAIL action reflects initialized attribute Can't find variable: InvokeEvent
 FAIL action set to undefined Can't find variable: InvokeEvent
 FAIL action set to null Can't find variable: InvokeEvent
 FAIL action set to false Can't find variable: InvokeEvent
+FAIL action explicitly set to empty string Can't find variable: InvokeEvent
 FAIL action set to true Can't find variable: InvokeEvent
 FAIL action set to a number Can't find variable: InvokeEvent
 FAIL action set to [] Can't find variable: InvokeEvent
 FAIL action set to [1, 2, 3] Can't find variable: InvokeEvent
 FAIL action set to an object Can't find variable: InvokeEvent
-FAIL action set to an object with a valueOf function Can't find variable: InvokeEvent
+FAIL action set to an object with a toString function Can't find variable: InvokeEvent
 FAIL InvokeEventInit properties set value Can't find variable: InvokeEvent
 FAIL InvokeEventInit properties set value 2 Can't find variable: InvokeEvent
 FAIL InvokeEventInit properties set value 3 Can't find variable: InvokeEvent

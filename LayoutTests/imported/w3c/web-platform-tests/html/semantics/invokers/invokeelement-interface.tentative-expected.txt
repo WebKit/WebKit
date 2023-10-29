@@ -9,7 +9,7 @@ FAIL invokeTargetElement throws error on assignment of non Element assert_throws
       }" did not throw
 FAIL invokeAction reflects 'auto' when attribute not present assert_equals: expected (string) "auto" but got (undefined) undefined
 FAIL invokeAction reflects 'auto' when attribute empty assert_equals: expected (string) "auto" but got (undefined) undefined
-PASS invokeAction reflects same casing
+FAIL invokeAction reflects same casing assert_equals: expected "fooBarBaz" but got ""
 FAIL invokeAction reflects 'auto' when attribute empty 2 assert_equals: expected "auto" but got ""
 FAIL invokeAction reflects tostring value assert_equals: expected "1,2,3" but got ""
 FAIL invokeAction reflects 'auto' when attribute set to [] assert_equals: expected (string) "auto" but got (object) []

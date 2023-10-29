@@ -1,3 +1,20 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error fetching /interfaces/invokers.tentative.idl."
+PASS idl_test setup
+PASS idl_test validation
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+FAIL InvokeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface object length assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface object name assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface: attribute invoker assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent interface: attribute action assert_own_property: self does not have own property "InvokeEvent" expected property "InvokeEvent" missing
+FAIL InvokeEvent must be primary interface of new InvokeEvent("invoke") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: InvokeEvent"
+FAIL Stringification of new InvokeEvent("invoke") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: InvokeEvent"
+FAIL InvokeEvent interface: new InvokeEvent("invoke") must inherit property "invoker" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: InvokeEvent"
+FAIL InvokeEvent interface: new InvokeEvent("invoke") must inherit property "action" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: InvokeEvent"
 
