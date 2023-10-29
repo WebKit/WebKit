@@ -96,7 +96,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsLink, object.isLink());
     setProperty(AXPropertyName::IsList, object.isList());
     setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
-    setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsRequired, object.isRequired());
     setProperty(AXPropertyName::IsSecureField, object.isSecureField());
     setProperty(AXPropertyName::IsSelected, object.isSelected());
@@ -341,6 +340,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 #if PLATFORM(ATSPI)
     setProperty(AXPropertyName::ActionVerb, object.actionVerb().isolatedCopy());
     setProperty(AXPropertyName::IsFieldset, object.isFieldset());
+    setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::IsVisible, object.isVisible());
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
@@ -1551,8 +1551,10 @@ bool AXIsolatedObject::isOffScreen() const
 
 bool AXIsolatedObject::isPressed() const
 {
+#if PLATFORM(MAC)
     ASSERT_NOT_REACHED();
-    return false;
+#endif
+    return boolAttributeValue(AXPropertyName::IsPressed);
 }
 
 bool AXIsolatedObject::isSelectedOptionActive() const

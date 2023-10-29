@@ -68,7 +68,7 @@ public:
     bool isChecked() const override;
     bool isEnabled() const override;
     bool isIndeterminate() const override;
-    bool isPressed() const override;
+    bool isPressed() const final;
     bool isRequired() const override;
     bool supportsARIAOwns() const final;
     bool supportsRequiredAttribute() const override;
