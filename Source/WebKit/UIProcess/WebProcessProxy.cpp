@@ -674,7 +674,8 @@ void WebProcessProxy::shutDown()
     m_routingArbitrator->processDidTerminate();
 #endif
 
-    protectedProcessPool()->disconnectProcess(*this);
+    // Unable to protect the process pool as it may have started destruction.
+    processPool().disconnectProcess(*this);
 }
 
 RefPtr<WebPageProxy> WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
