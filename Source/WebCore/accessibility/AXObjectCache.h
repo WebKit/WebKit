@@ -349,6 +349,7 @@ public:
         AXDescribedByChanged,
         AXDisabledStateChanged,
         AXDropEffectChanged,
+        AXExtendedDescriptionChanged,
         AXFlowToChanged,
         AXFocusableStateChanged,
         AXFocusedUIElementChanged,
