@@ -225,4 +225,13 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolati
     });
 }
 
+void RemoteLayerWithRemoteRenderingBackingStoreCollection::gpuProcessConnectionWasDestroyed()
+{
+    for (auto& backingStore : m_liveBackingStore)
+        backingStore->setNeedsDisplay();
+
+    for (auto& backingStore : m_unparentedBackingStore)
+        backingStore->setNeedsDisplay();
+}
+
 } // namespace WebKit

@@ -94,6 +94,8 @@ public:
     bool useCGDisplayListImageCache() const { return m_useCGDisplayListImageCache; }
     void setUseCGDisplayListImageCache(bool useCGDisplayListImageCache) { m_useCGDisplayListImageCache = useCGDisplayListImageCache; }
     
+    void gpuProcessConnectionWasDestroyed();
+
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
 #endif

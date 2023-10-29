@@ -72,6 +72,8 @@ public:
 
     virtual RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&);
 
+    virtual void gpuProcessConnectionWasDestroyed() { }
+
 protected:
     RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 

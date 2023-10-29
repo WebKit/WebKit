@@ -324,6 +324,7 @@
 #include "DefaultWebBrowserChecks.h"
 #include "InsertTextOptions.h"
 #include "PlaybackSessionManager.h"
+#include "RemoteLayerTreeDrawingArea.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
@@ -345,7 +346,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "InteractionInformationAtPosition.h"
 #include "InteractionInformationRequest.h"
-#include "RemoteLayerTreeDrawingArea.h"
 #include "WebAutocorrectionContext.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
@@ -1122,6 +1122,15 @@ void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuPr
     UNUSED_PARAM(gpuProcessConnection);
 #endif
 }
+
+void WebPage::gpuProcessConnectionWasDestroyed()
+{
+#if PLATFORM(COCOA)
+    if (auto* remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(m_drawingArea.get()))
+        remoteLayerTreeDrawingArea->gpuProcessConnectionWasDestroyed();
+#endif
+}
+
 #endif
 
 void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)

@@ -229,4 +229,9 @@ RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBacken
     return m_webPage.ensureRemoteRenderingBackendProxy();
 }
 
+void RemoteLayerTreeContext::gpuProcessConnectionWasDestroyed()
+{
+    m_backingStoreCollection->gpuProcessConnectionWasDestroyed();
+}
+
 } // namespace WebKit

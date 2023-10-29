@@ -58,6 +58,8 @@ public:
 
     bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
 
+    void gpuProcessConnectionWasDestroyed();
+
 protected:
     void updateRendering();
 

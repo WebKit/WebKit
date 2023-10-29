@@ -1349,6 +1349,11 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 
     m_gpuProcessConnection = nullptr;
 
+    for (auto& page : m_pageMap.values()) {
+        if (page)
+            page->gpuProcessConnectionWasDestroyed();
+    }
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     if (m_audioMediaStreamTrackRendererInternalUnitManager)
         m_audioMediaStreamTrackRendererInternalUnitManager->restartAllUnits();
