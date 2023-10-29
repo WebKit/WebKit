@@ -60,9 +60,17 @@ void RequestedScrollData::merge(RequestedScrollData&& other)
     *this = WTFMove(other);
 }
 
-FloatPoint RequestedScrollData::destinationPosition(const FloatPoint& currentScrollPosition) const
+FloatPoint RequestedScrollData::destinationPosition(FloatPoint currentScrollPosition) const
 {
-    return requestType == ScrollRequestType::DeltaUpdate ? (currentScrollPosition + std::get<FloatSize>(scrollPositionOrDelta)) : std::get<FloatPoint>(scrollPositionOrDelta);
+    return computeDestinationPosition(currentScrollPosition, requestType, scrollPositionOrDelta);
+}
+
+FloatPoint RequestedScrollData::computeDestinationPosition(FloatPoint currentScrollPosition, ScrollRequestType requestType, const std::variant<FloatPoint, FloatSize>& scrollPositionOrDelta)
+{
+    if (requestType == ScrollRequestType::DeltaUpdate)
+        return currentScrollPosition + std::get<FloatSize>(scrollPositionOrDelta);
+
+    return std::get<FloatPoint>(scrollPositionOrDelta);
 }
 
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)

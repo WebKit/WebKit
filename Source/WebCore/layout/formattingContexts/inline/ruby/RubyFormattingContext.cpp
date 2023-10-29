@@ -56,7 +56,7 @@ static inline size_t nextWrapOpportunityWithinRubyContainer(size_t startIndex, c
 
 static bool isInterlinearAnnotation(const Box* annotationBox)
 {
-    return annotationBox && annotationBox->style().rubyPosition() != RubyPosition::InterCharacter;
+    return annotationBox && annotationBox->isInterlinearRubyAnnotationBox();
 }
 
 RubyFormattingContext::RubyFormattingContext(const InlineFormattingContext& parentFormattingContext)

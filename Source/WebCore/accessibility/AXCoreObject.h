@@ -111,8 +111,7 @@ enum class AXAncestorFlag : uint8_t {
 };
 
 enum class AccessibilityRole {
-    Annotation = 1,
-    Application,
+    Application = 1,
     ApplicationAlert,
     ApplicationAlertDialog,
     ApplicationDialog,
@@ -124,8 +123,6 @@ enum class AccessibilityRole {
     ApplicationTimer,
     Audio,
     Blockquote,
-    Browser,
-    BusyIndicator,
     Button,
     Canvas,
     Caption,
@@ -143,13 +140,10 @@ enum class AccessibilityRole {
     DescriptionListTerm,
     Details,
     Directory,
-    DisclosureTriangle,
     Document,
     DocumentArticle,
     DocumentMath,
     DocumentNote,
-    Drawer,
-    EditableText,
     Feed,
     Figure,
     Footer,
@@ -162,9 +156,7 @@ enum class AccessibilityRole {
     Grid,
     GridCell,
     Group,
-    GrowArea,
     Heading,
-    HelpTag,
     HorizontalRule,
     Ignored,
     Inline,
@@ -191,7 +183,6 @@ enum class AccessibilityRole {
     ListMarker,
     Mark,
     MathElement,
-    Matte,
     Menu,
     MenuBar,
     MenuButton,
@@ -202,7 +193,6 @@ enum class AccessibilityRole {
     MenuListOption,
     Meter,
     Model,
-    Outline,
     Paragraph,
     PopUpButton,
     Pre,
@@ -218,17 +208,13 @@ enum class AccessibilityRole {
     RubyInline,
     RubyRun,
     RubyText,
-    Ruler,
-    RulerMarker,
     ScrollArea,
     ScrollBar,
     SearchField,
-    Sheet,
     Slider,
     SliderThumb,
     SpinButton,
     SpinButtonPart,
-    SplitGroup,
     Splitter,
     StaticText,
     Subscript,
@@ -236,7 +222,6 @@ enum class AccessibilityRole {
     Summary,
     Superscript,
     Switch,
-    SystemWide,
     SVGRoot,
     SVGText,
     SVGTSpan,
@@ -259,12 +244,10 @@ enum class AccessibilityRole {
     Toolbar,
     Unknown,
     UserInterfaceTooltip,
-    ValueIndicator,
     Video,
     WebApplication,
     WebArea,
     WebCoreLink,
-    Window,
 };
 
 using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
@@ -272,8 +255,6 @@ using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRol
 ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
 {
     switch (role) {
-    case AccessibilityRole::Annotation:
-        return "Annotation"_s;
     case AccessibilityRole::Application:
         return "Application"_s;
     case AccessibilityRole::ApplicationAlert:
@@ -298,10 +279,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Audio"_s;
     case AccessibilityRole::Blockquote:
         return "Blockquote"_s;
-    case AccessibilityRole::Browser:
-        return "Browser"_s;
-    case AccessibilityRole::BusyIndicator:
-        return "BusyIndicator"_s;
     case AccessibilityRole::Button:
         return "Button"_s;
     case AccessibilityRole::Canvas:
@@ -336,8 +313,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Details"_s;
     case AccessibilityRole::Directory:
         return "Directory"_s;
-    case AccessibilityRole::DisclosureTriangle:
-        return "DisclosureTriangle"_s;
     case AccessibilityRole::Document:
         return "Document"_s;
     case AccessibilityRole::DocumentArticle:
@@ -346,10 +321,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "DocumentMath"_s;
     case AccessibilityRole::DocumentNote:
         return "DocumentNote"_s;
-    case AccessibilityRole::Drawer:
-        return "Drawer"_s;
-    case AccessibilityRole::EditableText:
-        return "EditableText"_s;
     case AccessibilityRole::Feed:
         return "Feed"_s;
     case AccessibilityRole::Figure:
@@ -374,12 +345,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "GridCell"_s;
     case AccessibilityRole::Group:
         return "Group"_s;
-    case AccessibilityRole::GrowArea:
-        return "GrowArea"_s;
     case AccessibilityRole::Heading:
         return "Heading"_s;
-    case AccessibilityRole::HelpTag:
-        return "HelpTag"_s;
     case AccessibilityRole::HorizontalRule:
         return "HorizontalRule"_s;
     case AccessibilityRole::Ignored:
@@ -432,8 +399,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Mark"_s;
     case AccessibilityRole::MathElement:
         return "MathElement"_s;
-    case AccessibilityRole::Matte:
-        return "Matte"_s;
     case AccessibilityRole::Menu:
         return "Menu"_s;
     case AccessibilityRole::MenuBar:
@@ -454,8 +419,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Meter"_s;
     case AccessibilityRole::Model:
         return "Model"_s;
-    case AccessibilityRole::Outline:
-        return "Outline"_s;
     case AccessibilityRole::Paragraph:
         return "Paragraph"_s;
     case AccessibilityRole::PopUpButton:
@@ -486,18 +449,12 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "RubyRun"_s;
     case AccessibilityRole::RubyText:
         return "RubyText"_s;
-    case AccessibilityRole::Ruler:
-        return "Ruler"_s;
-    case AccessibilityRole::RulerMarker:
-        return "RulerMarker"_s;
     case AccessibilityRole::ScrollArea:
         return "ScrollArea"_s;
     case AccessibilityRole::ScrollBar:
         return "ScrollBar"_s;
     case AccessibilityRole::SearchField:
         return "SearchField"_s;
-    case AccessibilityRole::Sheet:
-        return "Sheet"_s;
     case AccessibilityRole::Slider:
         return "Slider"_s;
     case AccessibilityRole::SliderThumb:
@@ -506,8 +463,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "SpinButton"_s;
     case AccessibilityRole::SpinButtonPart:
         return "SpinButtonPart"_s;
-    case AccessibilityRole::SplitGroup:
-        return "SplitGroup"_s;
     case AccessibilityRole::Splitter:
         return "Splitter"_s;
     case AccessibilityRole::StaticText:
@@ -522,8 +477,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Superscript"_s;
     case AccessibilityRole::Switch:
         return "Switch"_s;
-    case AccessibilityRole::SystemWide:
-        return "SystemWide"_s;
     case AccessibilityRole::SVGRoot:
         return "SVGRoot"_s;
     case AccessibilityRole::SVGText:
@@ -568,8 +521,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Unknown"_s;
     case AccessibilityRole::UserInterfaceTooltip:
         return "UserInterfaceTooltip"_s;
-    case AccessibilityRole::ValueIndicator:
-        return "ValueIndicator"_s;
     case AccessibilityRole::Video:
         return "Video"_s;
     case AccessibilityRole::WebApplication:
@@ -578,8 +529,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "WebArea"_s;
     case AccessibilityRole::WebCoreLink:
         return "WebCoreLink"_s;
-    case AccessibilityRole::Window:
-        return "Window"_s;
     }
     UNREACHABLE();
     return ""_s;

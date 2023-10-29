@@ -4567,6 +4567,16 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 }
 
+CheckedRef<ProgressTracker> Page::checkedProgress()
+{
+    return m_progress.get();
+}
+
+CheckedRef<const ProgressTracker> Page::checkedProgress() const
+{
+    return m_progress.get();
+}
+
 String Page::sceneIdentifier() const
 {
 #if PLATFORM(IOS_FAMILY)

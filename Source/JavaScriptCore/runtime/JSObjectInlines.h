@@ -877,7 +877,7 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
 
 // Function forEachOwnIndexedProperty should only used in the fast path
 // for copying own non-GetterSetter indexed properties.
-template<typename Functor>
+template<JSObject::SortMode mode, typename Functor>
 void JSObject::forEachOwnIndexedProperty(JSGlobalObject* globalObject, const Functor& functor)
 {
     ASSERT(structure()->canPerformFastPropertyEnumerationCommon());
@@ -904,31 +904,50 @@ void JSObject::forEachOwnIndexedProperty(JSGlobalObject* globalObject, const Fun
     }
 
     case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-        Vector<unsigned, 8> properties;
-        MarkedArgumentBuffer values;
-
         ArrayStorage* storage = m_butterfly->arrayStorage();
         unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
         for (unsigned i = 0; i < usedVectorLength; ++i) {
             auto value = storage->m_vector[i];
-            if (value) {
-                properties.append(i);
-                values.appendWithCrashOnOverflow(value.get());
-            }
+            if (!value)
+                continue;
+            if (functor(i, value.get()) == IterationStatus::Done)
+                return;
         }
 
         if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
-            for (auto& [key, value] : *map) {
-                if (!(value.attributes() & PropertyAttribute::DontEnum)) {
-                    properties.append(key);
-                    values.appendWithCrashOnOverflow(value.get());
+            MarkedArgumentBuffer values;
+            if constexpr (mode == JSObject::SortMode::Default) {
+                Vector<unsigned, 8> properties;
+                for (auto& [key, value] : *map) {
+                    if (!(value.attributes() & PropertyAttribute::DontEnum)) {
+                        properties.append(key);
+                        values.appendWithCrashOnOverflow(value.get());
+                    }
+                }
+
+                for (size_t i = 0; i < properties.size(); ++i) {
+                    if (functor(properties[i], values.at(i)) == IterationStatus::Done)
+                        return;
+                }
+            } else {
+                Vector<std::tuple<unsigned, unsigned>, 8> propertyAndValueIndexTuples;
+                unsigned valueIndex = 0;
+                for (auto& [key, value] : *map) {
+                    if (!(value.attributes() & PropertyAttribute::DontEnum)) {
+                        propertyAndValueIndexTuples.append({ key, valueIndex++ });
+                        values.appendWithCrashOnOverflow(value.get());
+                    }
+                }
+
+                std::sort(propertyAndValueIndexTuples.begin(), propertyAndValueIndexTuples.end(), [](auto a, auto b) {
+                    return std::get<0>(a) < std::get<0>(b);
+                });
+                for (size_t i = 0; i < propertyAndValueIndexTuples.size(); ++i) {
+                    auto [property, valueIndex] = propertyAndValueIndexTuples.at(i);
+                    if (functor(property, values.at(valueIndex)) == IterationStatus::Done)
+                        return;
                 }
             }
-        }
-
-        for (size_t i = 0; i < properties.size(); ++i) {
-            if (functor(properties[i], values.at(i)) == IterationStatus::Done)
-                return;
         }
         break;
     }

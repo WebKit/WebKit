@@ -585,7 +585,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::ApplicationTimer, { "timer", N_("timer") } },
     { AccessibilityRole::Audio, { "audio", N_("audio") } },
     { AccessibilityRole::Blockquote, { "block quote", N_("block quote") } },
-    { AccessibilityRole::BusyIndicator, { "progress bar", N_("progress bar") } },
     { AccessibilityRole::Button, { "push button", N_("push button") } },
     { AccessibilityRole::Canvas, { "canvas", N_("canvas") } },
     { AccessibilityRole::Caption, { "caption", N_("caption") } },
@@ -650,7 +649,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::MenuListPopup, { "menu", N_("menu") } },
     { AccessibilityRole::MenuListOption, { "menu item", N_("menu item") } },
     { AccessibilityRole::Meter, { "level bar", N_("level bar") } },
-    { AccessibilityRole::Outline, { "tree", N_("tree") } },
     { AccessibilityRole::Paragraph, { "paragraph", N_("paragraph") } },
     { AccessibilityRole::PopUpButton, { "combo box", N_("combo box") } },
     { AccessibilityRole::Pre, { "section", N_("section") } },
@@ -664,7 +662,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::SearchField, { "entry", N_("entry") } },
     { AccessibilityRole::Slider, { "slider", N_("slider") } },
     { AccessibilityRole::SpinButton, { "spin button", N_("spin button") } },
-    { AccessibilityRole::SplitGroup, { "split pane", N_("split pane") } },
     { AccessibilityRole::Splitter, { "separator", N_("separator") } },
     { AccessibilityRole::StaticText, { "text", N_("text") } },
     { AccessibilityRole::Subscript, { "subscript", N_("subscript") } },
@@ -694,7 +691,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::Video, { "video", N_("video") } },
     { AccessibilityRole::WebArea, { "document web", N_("document web") } },
     { AccessibilityRole::WebCoreLink, { "link", N_("link") } },
-    { AccessibilityRole::Window, { "window", N_("window") } }
 };
 
 const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)

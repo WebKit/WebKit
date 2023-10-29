@@ -944,4 +944,14 @@ void FrameLoader::HistoryController::replaceCurrentItem(HistoryItem* item)
         m_currentItem = item;
 }
 
+RefPtr<HistoryItem> FrameLoader::HistoryController::protectedCurrentItem() const
+{
+    return m_currentItem;
+}
+
+RefPtr<HistoryItem> FrameLoader::HistoryController::protectedProvisionalItem() const
+{
+    return m_provisionalItem;
+}
+
 } // namespace WebCore

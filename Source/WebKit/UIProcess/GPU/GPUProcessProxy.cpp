@@ -709,7 +709,7 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
     // For the time being, each of the below features are enabled in the GPU Process if it is enabled by at least one web page's preferences.
     // In practice, all web pages' preferences should agree on these feature flag values.
     GPUProcessPreferences gpuPreferences;
-    for (auto page : webProcess.pages()) {
+    for (Ref page : webProcess.pages()) {
         Ref webPreferences = page->preferences();
         if (!webPreferences->useGPUProcessForMediaEnabled())
             continue;

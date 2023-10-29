@@ -548,6 +548,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::DisclosedRows:
             propertyMap.set(AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()));
             break;
+        case AXPropertyName::ExtendedDescription:
+            propertyMap.set(AXPropertyName::ExtendedDescription, axObject.extendedDescription().isolatedCopy());
+            break;
         case AXPropertyName::IdentifierAttribute:
             propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
             break;

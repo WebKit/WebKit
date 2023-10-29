@@ -86,6 +86,8 @@ public:
 
     WebPageProxy& page() { return m_page.get(); }
     const WebPageProxy& page() const { return m_page.get(); }
+    Ref<WebPageProxy> protectedPage() const;
+
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebProcessProxy& process() { return m_process.get(); }
@@ -124,7 +126,6 @@ public:
     void processDidTerminate();
 
 private:
-    Ref<WebPageProxy> protectedPage() const;
     RefPtr<WebFrameProxy> protectedMainFrame() const;
 
     // IPC::MessageReceiver

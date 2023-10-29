@@ -264,7 +264,7 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 
 static void logProcessPoolState(const WebProcessPool& pool)
 {
-    for (const auto& process : pool.processes()) {
+    for (Ref process : pool.processes()) {
         WTF::TextStream stream;
         stream << process;
 
@@ -932,12 +932,12 @@ void WebProcessPool::lockdownModeStateChanged()
 
     WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::lockdownModeStateChanged() isNowEnabled=%d", isNowEnabled);
 
-    for (auto& process : m_processes) {
+    for (Ref process : m_processes) {
         bool processHasLockdownModeEnabled = process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
         if (processHasLockdownModeEnabled == isNowEnabled)
             continue;
 
-        for (auto& page : process->pages()) {
+        for (Ref page : process->pages()) {
             // When the Lockdown mode changes globally at system level, we reload every page that relied on the system setting (rather
             // than being explicitly opted in/out by the client app at navigation or PageConfiguration level).
             if (page->isLockdownModeExplicitlySet())
@@ -1012,7 +1012,7 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
         if (!m_processesShouldSuspend) {
-            for (auto& page : process->pages())
+            for (Ref&& page : process->pages())
                 page->restartXRSessionActivityOnProcessResumeIfNeeded();
         }
 #endif

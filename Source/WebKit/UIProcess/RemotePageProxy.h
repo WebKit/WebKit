@@ -68,6 +68,7 @@ public:
     ~RemotePageProxy();
 
     WebPageProxy* page() const { return m_page.get(); }
+    RefPtr<WebPageProxy> protectedPage() const;
 
     template<typename M> void send(M&&);
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);

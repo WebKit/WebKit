@@ -325,7 +325,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::ColorWell:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::Heading:
     case AccessibilityRole::ImageMapLink:
     case AccessibilityRole::Image:
@@ -956,7 +955,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Slider:
     case AccessibilityRole::MenuButton:
-    case AccessibilityRole::ValueIndicator:
     case AccessibilityRole::Image:
     case AccessibilityRole::ImageMapLink:
     case AccessibilityRole::ProgressIndicator:
@@ -966,7 +964,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::Incrementor:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::ImageMap:
     case AccessibilityRole::ListMarker:
     case AccessibilityRole::ListBoxOption:
@@ -1009,7 +1006,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         if ([self isSVGGroupElement])
             return true;
         FALLTHROUGH;
-    case AccessibilityRole::Annotation:
     case AccessibilityRole::Application:
     case AccessibilityRole::ApplicationAlert:
     case AccessibilityRole::ApplicationAlertDialog:
@@ -1022,8 +1018,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::ApplicationTimer:
     case AccessibilityRole::Audio:
     case AccessibilityRole::Blockquote:
-    case AccessibilityRole::Browser:
-    case AccessibilityRole::BusyIndicator:
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
@@ -1040,8 +1034,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Document:
     case AccessibilityRole::DocumentArticle:
     case AccessibilityRole::DocumentNote:
-    case AccessibilityRole::Drawer:
-    case AccessibilityRole::EditableText:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Figure:
     case AccessibilityRole::Footer:
@@ -1053,8 +1045,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::GraphicsSymbol:
     case AccessibilityRole::Grid:
     case AccessibilityRole::GridCell:
-    case AccessibilityRole::GrowArea:
-    case AccessibilityRole::HelpTag:
     case AccessibilityRole::Inline:
     case AccessibilityRole::Insertion:
     case AccessibilityRole::Label:
@@ -1072,13 +1062,11 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::ListItem:
     case AccessibilityRole::Mark:
     case AccessibilityRole::MathElement:
-    case AccessibilityRole::Matte:
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
     case AccessibilityRole::MenuListPopup:
     case AccessibilityRole::MenuListOption:
     case AccessibilityRole::Model:
-    case AccessibilityRole::Outline:
     case AccessibilityRole::Paragraph:
     case AccessibilityRole::Pre:
     case AccessibilityRole::RadioGroup:
@@ -1090,19 +1078,14 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::RubyInline:
     case AccessibilityRole::RubyRun:
     case AccessibilityRole::RubyText:
-    case AccessibilityRole::Ruler:
-    case AccessibilityRole::RulerMarker:
     case AccessibilityRole::ScrollArea:
     case AccessibilityRole::ScrollBar:
-    case AccessibilityRole::Sheet:
     case AccessibilityRole::SpinButtonPart:
-    case AccessibilityRole::SplitGroup:
     case AccessibilityRole::Splitter:
     case AccessibilityRole::Subscript:
     case AccessibilityRole::Suggestion:
     case AccessibilityRole::Superscript:
     case AccessibilityRole::Summary:
-    case AccessibilityRole::SystemWide:
     case AccessibilityRole::SVGRoot:
     case AccessibilityRole::SVGTextPath:
     case AccessibilityRole::SVGText:
@@ -1122,7 +1105,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::UserInterfaceTooltip:
     case AccessibilityRole::WebApplication:
     case AccessibilityRole::WebArea:
-    case AccessibilityRole::Window:
         // Consider focusable leaf-nodes with a label to be accessible elements.
         // https://bugs.webkit.org/show_bug.cgi?id=223492
         return self.axBackingObject->isKeyboardFocusable()

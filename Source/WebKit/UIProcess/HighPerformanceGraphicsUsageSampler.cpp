@@ -52,12 +52,10 @@ void HighPerformanceGraphicsUsageSampler::timerFired()
 
     RefPtr<WebPageProxy> firstPage;
     Ref pool = m_webProcessPool.get();
-    for (auto& webProcess : pool->processes()) {
-        for (auto& page : webProcess->pages()) {
-            if (!page)
-                continue;
+    for (Ref webProcess : pool->processes()) {
+        for (Ref page : webProcess->pages()) {
             if (!firstPage)
-                firstPage = page;
+                firstPage = page.copyRef();
 
             if (page->isUsingHighPerformanceWebGL()) {
                 isUsingHighPerformanceWebGL = true;

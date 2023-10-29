@@ -304,12 +304,11 @@ void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedT
 void WebAutomationSession::getBrowsingContexts(Ref<GetBrowsingContextsCallback>&& callback)
 {
     Vector<Ref<WebPageProxy>> pages;
-    for (auto& process : protectedProcessPool()->processes()) {
-        for (auto& page : process->pages()) {
-            ASSERT(page);
-            if (!page || !page->isControlledByAutomation())
+    for (Ref process : protectedProcessPool()->processes()) {
+        for (Ref page : process->pages()) {
+            if (!page->isControlledByAutomation())
                 continue;
-            pages.append(page.releaseNonNull());
+            pages.append(WTFMove(page));
         }
     }
 

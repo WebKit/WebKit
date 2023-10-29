@@ -282,11 +282,11 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
     if (!localMainFrame)
         return;
-    LocalFrame& mainFrame = *localMainFrame;
+    Ref mainFrame = *localMainFrame;
 
-    UserGestureIndicator indicator { ProcessingUserGesture, mainFrame.document() };
+    UserGestureIndicator indicator { ProcessingUserGesture, mainFrame->document() };
 
-    FrameLoadRequest frameLoadRequest { *mainFrame.document(), mainFrame.document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *mainFrame->document(), mainFrame->document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
     bool created;
     WindowFeatures features;
@@ -294,12 +294,12 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     if (!frame)
         return;
 
-    frame->loader().setOpener(&mainFrame);
+    frame->loader().setOpener(mainFrame.copyRef());
     frame->page()->setOpenedByDOM();
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
     ResourceRequest resourceRequest { frame->document()->completeURL(url) };
-    FrameLoadRequest frameLoadRequest2 { *mainFrame.document(), mainFrame.document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest2 { mainFrame->protectedDocument().releaseNonNull(), mainFrame->document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
     frame->loader().changeLocation(WTFMove(frameLoadRequest2));
 }
 

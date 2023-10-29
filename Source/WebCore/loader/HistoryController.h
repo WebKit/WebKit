@@ -73,6 +73,7 @@ public:
     void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
+    RefPtr<HistoryItem> protectedCurrentItem() const;
     WEBCORE_EXPORT void setCurrentItem(HistoryItem&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
@@ -82,6 +83,7 @@ public:
     void clearPreviousItem();
 
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
+    RefPtr<HistoryItem> protectedProvisionalItem() const;
     void setProvisionalItem(HistoryItem*);
 
     void pushState(RefPtr<SerializedScriptValue>&&, const String& title, const String& url);

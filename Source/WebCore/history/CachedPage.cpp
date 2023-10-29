@@ -207,4 +207,9 @@ bool CachedPage::hasExpired() const
     return MonotonicTime::now() > m_expirationTime;
 }
 
+RefPtr<DocumentLoader> CachedPage::protectedDocumentLoader() const
+{
+    return documentLoader();
+}
+
 } // namespace WebCore

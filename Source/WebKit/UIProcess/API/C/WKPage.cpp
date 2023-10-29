@@ -2899,9 +2899,9 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
 {
     Vector<RefPtr<API::Object>> relatedPages;
 
-    for (auto& page : toImpl(pageRef)->process().pages()) {
-        if (page.get() != toImpl(pageRef))
-            relatedPages.append(page);
+    for (Ref page : toImpl(pageRef)->process().pages()) {
+        if (page.ptr() != toImpl(pageRef))
+            relatedPages.append(WTFMove(page));
     }
 
     return toAPI(&API::Array::create(WTFMove(relatedPages)).leakRef());

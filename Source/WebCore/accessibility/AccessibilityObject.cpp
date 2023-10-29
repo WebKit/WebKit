@@ -3391,7 +3391,6 @@ bool AccessibilityObject::supportsExpanded() const
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Link:
     case AccessibilityRole::ListBox:
@@ -3468,7 +3467,6 @@ bool AccessibilityObject::supportsRowCountChange() const
     case AccessibilityRole::TreeGrid:
     case AccessibilityRole::Grid:
     case AccessibilityRole::Table:
-    case AccessibilityRole::Browser:
         return true;
     default:
         return false;
@@ -4307,7 +4305,6 @@ bool AccessibilityObject::shouldFocusActiveDescendant() const
     case AccessibilityRole::Meter:
     case AccessibilityRole::ProgressIndicator:
     case AccessibilityRole::Toolbar:
-    case AccessibilityRole::Outline:
     case AccessibilityRole::Tree:
     case AccessibilityRole::Grid:
     /* FIXME: replace these with actual roles when they are added to AccessibilityRole

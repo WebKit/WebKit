@@ -1,6 +1,7 @@
 This test ensures video accessibility elements return URL attribute values when appropriate.
 
 PASS: video.url.includes(baseVideoPath) === true
+PASS: video.url.includes('foo-bar.mp4') === true
 PASS: video.url.includes(baseVideoPath) === true
 PASS: !accessibilityController.accessibleElementById('video-with-empty-source-element').url === true
 PASS: !accessibilityController.accessibleElementById('empty-video').url === true

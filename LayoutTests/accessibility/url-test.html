@@ -12,26 +12,31 @@
 <img id="img" src="url-test3.png" width=100 height=100 alt="test"><BR>
 
 <script>
-    var testOutput = "This test ensures that we can retrieve URLs for appropriate elements.\n\n";
+var output = "This test ensures that we can retrieve URLs for appropriate elements.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        testOutput += expect("accessibilityController.accessibleElementById('input').url.indexOf('url-test1.html') !== -1", "true");
-        testOutput += expect("accessibilityController.accessibleElementById('anchor').url.indexOf('url-test2.html') !== -1", "true");
-        testOutput += expect("accessibilityController.accessibleElementById('anchor-display-contents').url.indexOf('url-test2-display-contents.html') !== -1", "true");
-        testOutput += expect("accessibilityController.accessibleElementById('img').url.indexOf('url-test3.png') !== -1", "true");
+    output += expect("accessibilityController.accessibleElementById('input').url.indexOf('url-test1.html') !== -1", "true");
+    output += expect("accessibilityController.accessibleElementById('anchor').url.indexOf('url-test2.html') !== -1", "true");
+    output += expect("accessibilityController.accessibleElementById('anchor-display-contents').url.indexOf('url-test2-display-contents.html') !== -1", "true");
+    output += expect("accessibilityController.accessibleElementById('img').url.indexOf('url-test3.png') !== -1", "true");
 
-        testOutput += "\nChanging href of #anchor to 'foobar.html'\n";
-        document.getElementById("anchor").setAttribute("href", "foobar.html");
-        setTimeout(async function() {
-            await waitFor(() => accessibilityController.accessibleElementById("anchor").url.indexOf("foobar.html") !== -1);
-            testOutput += expect("accessibilityController.accessibleElementById('anchor').url.indexOf('foobar.html') !== -1", "true");
+    output += "\nChanging href of #anchor to 'foobar.html'\n";
+    document.getElementById("anchor").setAttribute("href", "foobar.html");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('anchor').url.indexOf('foobar.html') !== -1", "true");
 
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        document.getElementById("input").setAttribute("src", "foo-bar.html");
+        output += await expectAsync("accessibilityController.accessibleElementById('input').url.includes('foo-bar.html')", "true");
+
+        document.getElementById("img").setAttribute("src", "foo-bar.png");
+        output += await expectAsync("accessibilityController.accessibleElementById('img').url.includes('foo-bar.png')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

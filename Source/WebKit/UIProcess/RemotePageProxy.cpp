@@ -205,4 +205,9 @@ Ref<WebProcessProxy> RemotePageProxy::protectedProcess() const
     return m_process;
 }
 
+RefPtr<WebPageProxy> RemotePageProxy::protectedPage() const
+{
+    return m_page.get();
+}
+
 }
