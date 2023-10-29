@@ -247,10 +247,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
     }
 
-    if (object.isRadioButton()) {
-        if (auto nameAttribute = object.attributeValue("name"_s))
-            setProperty(AXPropertyName::NameAttribute, nameAttribute->isolatedCopy());
-    }
+    if (object.isRadioButton())
+        setProperty(AXPropertyName::NameAttribute, object.nameAttribute().isolatedCopy());
 
     if (object.canHaveSelectedChildren())
         setObjectVectorProperty(AXPropertyName::SelectedChildren, object.selectedChildren());
@@ -1816,15 +1814,6 @@ OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
         [] (OptionSet<AXAncestorFlag>& typedValue) -> OptionSet<AXAncestorFlag> { return typedValue; },
         [] (auto&) { return OptionSet<AXAncestorFlag>(); }
     );
-}
-
-std::optional<String> AXIsolatedObject::attributeValue(const String& attributeName) const
-{
-    if (attributeName == "name"_s) {
-        if (m_propertyMap.contains(AXPropertyName::NameAttribute))
-            return stringAttributeValue(AXPropertyName::NameAttribute);
-    }
-    return std::nullopt;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::columnHeaders()

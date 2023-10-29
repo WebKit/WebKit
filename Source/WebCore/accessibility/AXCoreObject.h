@@ -1206,7 +1206,7 @@ public:
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
 
-    virtual std::optional<String> attributeValue(const String&) const = 0;
+    virtual String nameAttribute() const = 0;
     virtual AtomString tagName() const = 0;
 
     virtual std::optional<SimpleRange> simpleRange() const = 0;

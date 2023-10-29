@@ -364,6 +364,7 @@ public:
         AXLayoutComplete,
         AXLevelChanged,
         AXLoadComplete,
+        AXNameChanged,
         AXNewDocumentLoadComplete,
         AXPageScrolled,
         AXPlaceholderChanged,

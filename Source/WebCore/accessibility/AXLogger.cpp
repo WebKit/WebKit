@@ -628,6 +628,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXMultiSelectableStateChanged:
         stream << "AXMultiSelectableStateChanged";
         break;
+    case AXObjectCache::AXNotification::AXNameChanged:
+        stream << "AXNameChanged";
+        break;
     case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
         stream << "AXNewDocumentLoadComplete";
         break;

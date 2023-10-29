@@ -514,7 +514,7 @@ private:
     bool isInDescriptionListTerm() const final { return ancestorFlags().contains(AXAncestorFlag::IsInDescriptionListTerm); }
     bool isInCell() const final { return ancestorFlags().contains(AXAncestorFlag::IsInCell); }
 
-    std::optional<String> attributeValue(const String&) const final;
+    String nameAttribute() const final { return stringAttributeValue(AXPropertyName::NameAttribute); }
 #if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const final { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }
 #endif

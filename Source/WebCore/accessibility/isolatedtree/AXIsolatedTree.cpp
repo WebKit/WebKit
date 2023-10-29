@@ -586,6 +586,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::Orientation:
             propertyMap.set(AXPropertyName::Orientation, static_cast<int>(axObject.orientation()));
             break;
+        case AXPropertyName::NameAttribute:
+            propertyMap.set(AXPropertyName::NameAttribute, axObject.nameAttribute().isolatedCopy());
+            break;
         case AXPropertyName::PosInSet:
             propertyMap.set(AXPropertyName::PosInSet, axObject.posInSet());
             break;

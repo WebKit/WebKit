@@ -530,7 +530,7 @@ public:
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     virtual bool hasAttribute(const QualifiedName&) const;
     virtual const AtomString& getAttribute(const QualifiedName&) const;
-    std::optional<String> attributeValue(const String&) const override;
+    String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
     AtomString tagName() const override;

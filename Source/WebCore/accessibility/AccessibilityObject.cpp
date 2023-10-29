@@ -2489,14 +2489,9 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
     return nullAtom();
 }
 
-std::optional<String> AccessibilityObject::attributeValue(const String& attributeName) const
+String AccessibilityObject::nameAttribute() const
 {
-    if (attributeName == "name"_s) {
-        auto value = getAttribute(nameAttr);
-        if (!value.isNull())
-            return value;
-    }
-    return std::nullopt;
+    return getAttribute(nameAttr);
 }
 
 int AccessibilityObject::getIntegralAttribute(const QualifiedName& attributeName) const
@@ -4412,7 +4407,7 @@ static bool isRadioButtonInDifferentAdhocGroup(RefPtr<AXCoreObject> axObject, AX
     if (!referenceObject || !referenceObject->isRadioButton())
         return true;
 
-    return axObject->attributeValue("name"_s) != referenceObject->attributeValue("name"_s);
+    return axObject->nameAttribute() != referenceObject->nameAttribute();
 }
 
 static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria, size_t index)
