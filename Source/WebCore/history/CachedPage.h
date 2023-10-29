@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CachedFrame.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ class Document;
 class DocumentLoader;
 class Page;
 
-class CachedPage {
+class CachedPage : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CachedPage(Page&);
@@ -46,6 +47,7 @@ public:
     Page& page() const { return m_page; }
     Document* document() const { return m_cachedMainFrame->document(); }
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }
+    RefPtr<DocumentLoader> protectedDocumentLoader() const;
 
     bool hasExpired() const;
     

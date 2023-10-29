@@ -823,8 +823,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     }
 
     if (parameters.isProcessSwap && parameters.openerFrameIdentifier) {
-        if (auto* openerFrame = WebProcess::singleton().webFrame(*parameters.openerFrameIdentifier)) {
-            if (auto* coreMainFrame = m_mainFrame->coreLocalFrame())
+        if (RefPtr openerFrame = WebProcess::singleton().webFrame(*parameters.openerFrameIdentifier)) {
+            if (RefPtr coreMainFrame = m_mainFrame->coreLocalFrame())
                 coreMainFrame->loader().setOpener(openerFrame->coreRemoteFrame());
             else
                 ASSERT_NOT_REACHED();

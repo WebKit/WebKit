@@ -108,7 +108,8 @@ public:
     WEBCORE_EXPORT void init();
     void initForSynthesizedDocument(const URL&);
 
-    LocalFrame& frame() const { return m_frame; }
+    WEBCORE_EXPORT LocalFrame& frame() const;
+    WEBCORE_EXPORT Ref<LocalFrame> protectedFrame() const;
 
     class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
@@ -172,8 +173,10 @@ public:
 
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+    RefPtr<DocumentLoader> protectedDocumentLoader() const;
     DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
+    RefPtr<DocumentLoader> protectedProvisionalDocumentLoader() const;
     FrameState state() const { return m_state; }
 
     bool shouldReportResourceTimingToParentFrame() const { return m_shouldReportResourceTimingToParentFrame; };
@@ -252,7 +255,7 @@ public:
 
     WEBCORE_EXPORT Frame* opener();
     WEBCORE_EXPORT const Frame* opener() const;
-    WEBCORE_EXPORT void setOpener(Frame*);
+    WEBCORE_EXPORT void setOpener(RefPtr<Frame>&&);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
     void resetMultipleFormSubmissionProtection();
@@ -281,8 +284,7 @@ public:
 
     void advanceStatePastInitialEmptyDocument();
 
-    // FIXME: should return RefPtr.
-    WEBCORE_EXPORT LocalFrame* findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
+    WEBCORE_EXPORT RefPtr<LocalFrame> findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 
     void applyUserAgentIfNeeded(ResourceRequest&);
 
@@ -383,9 +385,9 @@ private:
     void checkLoadCompleteForThisFrame();
     void handleLoadFailureRecovery(DocumentLoader&, const ResourceError&, bool);
 
-    void setDocumentLoader(DocumentLoader*);
-    void setPolicyDocumentLoader(DocumentLoader*);
-    void setProvisionalDocumentLoader(DocumentLoader*);
+    void setDocumentLoader(RefPtr<DocumentLoader>&&);
+    void setPolicyDocumentLoader(RefPtr<DocumentLoader>&&);
+    void setProvisionalDocumentLoader(RefPtr<DocumentLoader>&&);
 
     void setState(FrameState);
 
@@ -444,7 +446,7 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    LocalFrame& m_frame;
+    CheckedRef<LocalFrame> m_frame;
     UniqueRef<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;

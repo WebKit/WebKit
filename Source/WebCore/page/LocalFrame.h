@@ -155,6 +155,7 @@ public:
     FrameLoader& loader() { return m_loader.get(); }
     CheckedRef<const FrameLoader> checkedLoader() const;
     CheckedRef<FrameLoader> checkedLoader();
+
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     ScriptController& script() { return m_script; }

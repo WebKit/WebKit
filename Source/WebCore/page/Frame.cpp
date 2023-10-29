@@ -116,4 +116,9 @@ void Frame::takeWindowProxyFrom(Frame& frame)
     m_windowProxy->replaceFrame(*this);
 }
 
+Ref<WindowProxy> Frame::protectedWindowProxy() const
+{
+    return m_windowProxy;
+}
+
 } // namespace WebCore
