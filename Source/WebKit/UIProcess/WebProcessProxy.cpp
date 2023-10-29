@@ -604,7 +604,8 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 #if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(nullptr);
-    protectedProcessPool()->displayLinks().stopDisplayLinks(m_displayLinkClient);
+    // Unable to protect the process pool as it may have started destruction.
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 }
 
