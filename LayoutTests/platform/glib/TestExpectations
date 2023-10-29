@@ -1161,12 +1161,6 @@ imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Failure ]
 
-# Needs rebasing
-imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.worker.html [ Pass Failure ]
-
 imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-data.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-data.any.worker.html [ Pass ]

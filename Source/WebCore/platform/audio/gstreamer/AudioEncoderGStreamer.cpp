@@ -88,7 +88,7 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
     if (codecName.startsWith("pcm-"_s)) {
         auto components = codecName.split('-');
         if (components.size() != 2) {
-            gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
+            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
                 callback(makeUnexpected(makeString("Invalid LPCM codec string: "_s, codecName)));
             });
             return;
@@ -98,7 +98,7 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto& scanner = GStreamerRegistryScanner::singleton();
         auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName);
         if (!lookupResult) {
-            gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
+            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
                 callback(makeUnexpected(makeString("No GStreamer encoder found for codec ", codecName)));
             });
             return;
@@ -107,15 +107,16 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
     }
     auto encoder = makeUniqueRef<GStreamerAudioEncoder>(codecName, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
     auto error = encoder->initialize(config);
-    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
+    if (!error.isEmpty()) {
+        encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
+            GST_WARNING("Error creating encoder: %s", error.ascii().data());
+            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: ", error)));
+        });
+        return;
+    }
+    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
-            if (!error.isEmpty()) {
-                GST_WARNING("Error creating encoder: %s", error.ascii().data());
-                callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: ", error)));
-                return;
-            }
-
+        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
             GST_DEBUG("Encoder created");
             callback(UniqueRef<AudioEncoder> { WTFMove(encoder) });
         });
