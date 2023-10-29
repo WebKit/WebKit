@@ -112,6 +112,11 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 fast/images/animated-heics-draw.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
+# On open source builds, JPEG XL images are only supported on macOS post Sonoma
+[ Sonoma+ ] fast/images/jpegxl-image-decoding.html [ Pass ]
+[ Sonoma+ ] fast/images/jpegxl-as-image.html [ Pass ]
+[ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ Pass ]
+
 # Enabled in rdar://102830993
 fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
 

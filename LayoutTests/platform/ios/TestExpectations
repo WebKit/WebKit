@@ -89,6 +89,10 @@ fast/images/heic-as-background-image.html [ Pass ]
 fast/images/animated-heics-verify.html [ Pass ]
 fast/images/animated-heics-draw.html [ Pass ]
 
+fast/images/jpegxl-image-decoding.html [ Pass ]
+fast/images/jpegxl-as-image.html [ Pass ]
+fast/images/jpegxl-with-color-profile.html [ Pass ]
+
 # No fullscreen API on iOS
 fullscreen
 http/tests/fullscreen

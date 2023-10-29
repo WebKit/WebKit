@@ -6,5 +6,10 @@
 	<string>WebKitSDKAdditions</string>
 	<key>IsBaseSDK</key>
 	<string>NO</string>
+	<!-- The public macOS SDK has a private frameworks directory, so we need to add a search path instead of overriding it via WK_PRIVATE_SDK_DIR. -->
+	<key>FrameworkSearchPaths</key>
+	<array>
+		<string>System/Library/PrivateFrameworks</string>
+	</array>
 </dict>
 </plist>
