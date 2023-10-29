@@ -1103,7 +1103,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
                 isHorizontalWritingMode ? boxes[index].moveHorizontally(LayoutUnit { -shiftValue }) : boxes[index].moveVertically(LayoutUnit { -shiftValue });
                 auto updateAnnotationGeometryIfNeeded = [&] {
                     auto& layoutBox = boxes[index].layoutBox();
-                    if (!layoutBox.isRubyBase() || !rubyBaseLayoutBox.associatedRubyAnnotationBox())
+                    if (!layoutBox.isRubyBase() || !layoutBox.associatedRubyAnnotationBox())
                         return;
                     auto& annotationBoxGeometry = formattingContext().geometryForBox(*layoutBox.associatedRubyAnnotationBox());
                     isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -shiftValue }) : annotationBoxGeometry.moveVertically(LayoutUnit { -shiftValue });
