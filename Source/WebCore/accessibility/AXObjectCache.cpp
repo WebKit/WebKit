@@ -2450,8 +2450,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
     else if (attrName == placeholderAttr)
         postNotification(element, AXPlaceholderChanged);
-    else if (attrName == hrefAttr)
-        updateIsolatedTree(get(element), AXURLChanged);
+    else if (attrName == hrefAttr || attrName == srcAttr)
+        postNotification(element, AXURLChanged);
     else if (attrName == idAttr) {
 #if !LOG_DISABLED
         updateIsolatedTree(get(element), AXIdAttributeChanged);
