@@ -503,18 +503,23 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         // to the paragraph embedding level
         m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
 
-        auto runsExpandHorizontally = [&] {
-            if (isInIntrinsicWidthMode())
-                return false;
-            if (root().isRubyAnnotationBox()) {
-                // FIXME: This is a workaround until after we generate inline boxes for annotation content.
-                return true;
-            }
-            return isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
-        };
-        if (runsExpandHorizontally())
-            m_line.applyRunExpansion(horizontalAvailableSpace);
         if (m_line.hasContent()) {
+            auto runsExpandHorizontally = [&] {
+                if (isInIntrinsicWidthMode())
+                    return false;
+                if (root().isRubyAnnotationBox()) {
+                    // FIXME: This is a workaround until after we generate inline boxes for annotation content.
+                    return true;
+                }
+                // Text is justified according to the method specified by the text-justify property,
+                // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
+                // the last line before a forced break or the end of the block is start-aligned.
+                if (isLastLine || m_line.runs().last().isLineBreak())
+                    return rootStyle.textAlignLast() == TextAlignLast::Justify;
+                return rootStyle.textAlign() == TextAlignMode::Justify;
+            };
+            if (runsExpandHorizontally())
+                m_line.applyRunExpansion(horizontalAvailableSpace);
             auto& lastTextContent = m_line.runs().last().textContent();
             lineContent.endsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
         }
