@@ -1546,6 +1546,7 @@ public:
     void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
 #endif
 
+    const PageLoadState& pageLoadState() const;
     PageLoadState& pageLoadState();
 
 #if PLATFORM(COCOA)
@@ -2289,6 +2290,10 @@ public:
 #endif
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration();
+
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+    bool shouldAllowAutoFillForCellularIdentifiers() const;
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

@@ -13071,6 +13071,11 @@ WebPopupMenuProxyClient& WebPageProxy::popupMenuClient()
     return internals();
 }
 
+const PageLoadState& WebPageProxy::pageLoadState() const
+{
+    return internals().pageLoadState;
+}
+
 PageLoadState& WebPageProxy::pageLoadState()
 {
     return internals().pageLoadState;

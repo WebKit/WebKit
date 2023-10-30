@@ -69,6 +69,8 @@ static constexpr std::pair<ComparableLettersLiteral, AutofillFieldNameMapping> f
     { "country", { AutofillFieldName::Country, AutofillCategory::Normal } },
     { "country-name", { AutofillFieldName::CountryName, AutofillCategory::Normal } },
     { "current-password", { AutofillFieldName::CurrentPassword, AutofillCategory::Normal } },
+    { "device-eid", { AutofillFieldName::DeviceEID, AutofillCategory::Normal } },
+    { "device-imei", { AutofillFieldName::DeviceIMEI, AutofillCategory::Normal } },
     { "email", { AutofillFieldName::Email, AutofillCategory::Contact } },
     { "family-name", { AutofillFieldName::FamilyName, AutofillCategory::Normal } },
     { "given-name", { AutofillFieldName::GivenName, AutofillCategory::Normal } },

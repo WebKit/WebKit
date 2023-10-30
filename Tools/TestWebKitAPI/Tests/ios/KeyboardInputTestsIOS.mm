@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "CGImagePixelReader.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
@@ -43,6 +44,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
+#import <pal/cocoa/CoreTelephonySoftLink.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 
 namespace TestWebKitAPI {
@@ -1117,6 +1119,77 @@ TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)
 }
 
 #endif // HAVE(REDESIGNED_TEXT_CURSOR)
+
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+
+static BOOL allowESIMAutoFillForWebKitDomains(id, SEL, NSString *domain, NSError **)
+{
+    return [domain isEqualToString:@"webkit.org"];
+}
+
+TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
+{
+    auto clientClass = PAL::getCoreTelephonyClientClass();
+    auto autoFillAllowedSelector = @selector(isAutofilleSIMIdAllowedForDomain:error:);
+    if (![clientClass instancesRespondToSelector:autoFillAllowedSelector]) {
+        // Skip this test altogether if system support is missing.
+        return;
+    }
+
+    InstanceMethodSwizzler swizzler { clientClass, autoFillAllowedSelector, reinterpret_cast<IMP>(allowESIMAutoFillForWebKitDomains) };
+    [WKWebView _setApplicationBundleIdentifier:@"org.webkit.SomeTelephonyApp"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    __block bool didStartInputSession = false;
+    [inputDelegate setDidStartInputSessionHandler:^(WKWebView *, id<_WKFormInputSession>) {
+        didStartInputSession = true;
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    auto loadSimulatedRequest = ^(NSString *urlString) {
+        [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] responseHTMLString:@"<body>"
+            "<input id='imei' type='number' placeholder='imei' autocomplete='device-imei' />"
+            "<input id='eid' type='number' placeholder='eid' autocomplete='device-eid' />"
+            "</body>"];
+        [navigationDelegate waitForDidFinishNavigation];
+    };
+
+    auto focusElementWithID = ^(NSString *identifier) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').focus()", identifier]];
+        Util::run(&didStartInputSession);
+    };
+
+    auto blurActiveElement = ^{
+        [webView objectByEvaluatingJavaScript:@"document.activeElement.blur()"];
+        [webView waitForNextPresentationUpdate];
+        didStartInputSession = false;
+    };
+
+    loadSimulatedRequest(@"https://webkit.org"); // AutoFill is allowed here.
+    focusElementWithID(@"imei");
+    EXPECT_WK_STREQ(UITextContentTypeCellularIMEI, [webView _textInputTraits].textContentType);
+
+    blurActiveElement();
+    focusElementWithID(@"eid");
+    EXPECT_WK_STREQ(UITextContentTypeCellularEID, [webView _textInputTraits].textContentType);
+
+    loadSimulatedRequest(@"https://apple.com"); // AutoFill is not allowed here.
+    focusElementWithID(@"imei");
+    EXPECT_NULL([webView _textInputTraits].textContentType);
+
+    blurActiveElement();
+    focusElementWithID(@"eid");
+    EXPECT_NULL([webView _textInputTraits].textContentType);
+}
+
+#endif // HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 
 } // namespace TestWebKitAPI
 

@@ -32,6 +32,7 @@
 #import "AppleMediaServicesUISPI.h"
 #import "CocoaImage.h"
 #import "Connection.h"
+#import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
@@ -977,6 +978,15 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     WEBPAGEPROXY_RELEASE_LOG(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
     return canTakeForegroundAssertions;
 }
+
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+
+bool WebPageProxy::shouldAllowAutoFillForCellularIdentifiers() const
+{
+    return WebKit::shouldAllowAutoFillForCellularIdentifiers(URL { pageLoadState().activeURL() });
+}
+
+#endif
 
 } // namespace WebKit
 

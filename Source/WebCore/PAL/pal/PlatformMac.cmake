@@ -14,6 +14,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
     cocoa/CoreMLSoftLink.h
+    cocoa/CoreTelephonySoftLink.h
     cocoa/CryptoKitPrivateSoftLink.h
     cocoa/DataDetectorsCoreSoftLink.h
     cocoa/LinkPresentationSoftLink.h
@@ -60,6 +61,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CommonCryptoSPI.h
     spi/cocoa/CoreServicesSPI.h
+    spi/cocoa/CoreTelephonySPI.h
     spi/cocoa/CryptoKitPrivateSPI.h
     spi/cocoa/DataDetectorsCoreSPI.h
     spi/cocoa/FeatureFlagsSPI.h
@@ -173,6 +175,7 @@ list(APPEND PAL_SOURCES
     cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
     cocoa/CoreMLSoftLink.mm
+    cocoa/CoreTelephonySoftLink.mm
     cocoa/CryptoKitPrivateSoftLink.mm
     cocoa/DataDetectorsCoreSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
