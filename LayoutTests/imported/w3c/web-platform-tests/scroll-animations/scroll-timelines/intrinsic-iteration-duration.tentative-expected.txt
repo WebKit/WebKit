@@ -1,0 +1,8 @@
+
+FAIL Computed duration in percent even when specified in ms Can't find variable: ScrollTimeline
+FAIL Time-based duration normalized to fill animation range. Can't find variable: ScrollTimeline
+FAIL Time-based duration normalized to preserve proportional delays. Can't find variable: ScrollTimeline
+FAIL Intrinsic iteration duration fills timeline. Can't find variable: ScrollTimeline
+FAIL Intrinsic iteration duration accounts for animation range. Can't find variable: ScrollTimeline
+FAIL Intrinsic iteration duration accounts for number of iterations Can't find variable: ScrollTimeline
+

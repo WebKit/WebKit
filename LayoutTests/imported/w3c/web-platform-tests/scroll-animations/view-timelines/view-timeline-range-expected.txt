@@ -1,0 +1,7 @@
+
+FAIL View timeline with range as <name> <percent> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with range and inferred name or offset. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with range as <name> <px> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with range as <name> <percent+px> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with range as strings. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+

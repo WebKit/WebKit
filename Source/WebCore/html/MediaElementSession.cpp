@@ -78,6 +78,7 @@ static const Seconds elementMainContentCheckInterval { 250_ms };
 static bool isElementRectMostlyInMainFrame(const HTMLMediaElement&);
 static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&, MediaSessionMainContentPurpose);
 static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement&, bool shouldHitTestMainFrame);
+static bool isElementLongEnoughForMainContent(const HTMLMediaElement&);
 
 #if !RELEASE_LOG_DISABLED
 
@@ -570,6 +571,13 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
+    if (client().presentationType() == MediaType::Audio
+        && purpose == PlaybackControlsPurpose::NowPlaying
+        && !isLongEnoughForMainContent()) {
+        INFO_LOG(LOGIDENTIFIER, "returning FALSE: audio too short for NowPlaying");
+        return false;
+    }
+
     if (client().presentationType() == MediaType::Audio && (purpose == PlaybackControlsPurpose::ControlsManager || purpose == PlaybackControlsPurpose::MediaSession)) {
         if (!hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || m_element.document().processingUserGestureForMedia()) {
             INFO_LOG(LOGIDENTIFIER, "returning TRUE: audio element with user gesture");
@@ -654,6 +662,11 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 bool MediaElementSession::isLargeEnoughForMainContent(MediaSessionMainContentPurpose purpose) const
 {
     return isElementLargeEnoughForMainContent(m_element, purpose);
+}
+
+bool MediaElementSession::isLongEnoughForMainContent() const
+{
+    return isElementLongEnoughForMainContent(m_element);
 }
 
 bool MediaElementSession::isMainContentForPurposesOfAutoplayEvents() const
@@ -1099,6 +1112,17 @@ static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, 
         return true;
 
     return isElementLargeRelativeToMainFrame(element);
+}
+
+static bool isElementLongEnoughForMainContent(const HTMLMediaElement& element)
+{
+    // Derived from the duration of the "You've got mail!" AOL sound:
+    static constexpr MediaTime YouveGotMailDuration = MediaTime(95, 100);
+
+    if (element.readyState() < HTMLMediaElementEnums::ReadyState::HAVE_METADATA)
+        return false;
+
+    return element.durationMediaTime() > YouveGotMailDuration;
 }
 
 void MediaElementSession::mainContentCheckTimerFired()

@@ -1,0 +1,10 @@
+
+FAIL Scroll timeline with percentage range [JavaScript API] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Scroll timeline with px range [JavaScript API] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Scroll timeline with calculated range [JavaScript API] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Scroll timeline with EM range [JavaScript API] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Scroll timeline with percentage range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with px range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with calculated range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with EM range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+

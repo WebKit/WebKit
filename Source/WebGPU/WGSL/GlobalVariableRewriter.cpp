@@ -701,7 +701,7 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
         if (packType(member.type().inferredType()))
             packedAnyMember = true;
     }
-    if (!packedAnyMember)
+    if (!packedAnyMember && !structType->structure.hasSizeOrAlignmentAttributes())
         return nullptr;
 
     ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
@@ -1213,8 +1213,10 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
             }
         }
 
-        if (entries.isEmpty())
+        if (entries.isEmpty()) {
+            ++group;
             continue;
+        }
 
         groups.append(group);
         finalizeArgumentBufferStruct(group++, entries);

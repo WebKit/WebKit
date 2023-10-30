@@ -123,12 +123,6 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
             appendInlineLevelItem(rubyItem, logicalRightSpacingForBase);
             continue;
         }
-        if (rubyLayoutBox.isRubyAnnotationBox()) {
-            ASSERT(!rubyLayoutBox.isInterlinearRubyAnnotationBox());
-            appendInlineLevelItem(rubyItem);
-            ++index;
-            continue;
-        }
         ASSERT_NOT_REACHED();
     }
 }
@@ -459,12 +453,6 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
         if (rubyLayoutBox.isRubyBase()) {
             ASSERT(rubyItem.isInlineBoxStart());
 
-            auto interlinearAnnotationMarginBoxWidth = [&]() -> InlineLayoutUnit {
-                if (auto* annotationBox = rubyLayoutBox.associatedRubyAnnotationBox(); isInterlinearAnnotation(annotationBox))
-                    return InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
-                return { };
-            };
-
             auto baseLogicalWidth = [&] {
                 // Base content needs special handling with taking annotation box into account.
                 auto logicalWidth = InlineLayoutUnit { };
@@ -480,17 +468,13 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
                 ASSERT_NOT_REACHED();
                 return InlineLayoutUnit { };
             };
-            candidateContentLogicalWidth += std::max(baseLogicalWidth(), interlinearAnnotationMarginBoxWidth());
+            if (auto* annotationBox = rubyLayoutBox.associatedRubyAnnotationBox()) {
+                auto annotationMarginBoxWidth = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
+                candidateContentLogicalWidth += isInterlinearAnnotation(annotationBox) ? std::max(baseLogicalWidth(), annotationMarginBoxWidth) : (baseLogicalWidth() + annotationMarginBoxWidth);
+            } else
+                candidateContentLogicalWidth += baseLogicalWidth();
             continue;
         }
-
-        if (rubyLayoutBox.isRubyAnnotationBox()) {
-            ASSERT(!rubyLayoutBox.isInterlinearRubyAnnotationBox());
-            candidateContentLogicalWidth += InlineLayoutUnit { parentFormattingContext().geometryForBox(rubyLayoutBox).marginBoxWidth() };
-            ++index;
-            continue;
-        }
-
         ASSERT_NOT_REACHED();
     }
     return candidateContentLogicalWidth;

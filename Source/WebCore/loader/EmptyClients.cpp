@@ -610,6 +610,10 @@ void EmptyFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
 {
 }
 
+void EmptyFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL&)
+{
+}
+
 void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&&)
 {
 }

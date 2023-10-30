@@ -122,6 +122,7 @@ struct ObjCHolderForTesting {
     }
 
     typedef std::variant<
+        RetainPtr<NSDate>,
         RetainPtr<NSString>,
         RetainPtr<NSURL>,
         RetainPtr<NSData>
@@ -246,4 +247,14 @@ TEST(IPCSerialization, Basic)
     runTestNS({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
     auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)"Data test", strlen("Data test")));
     runTestCF({ cfData.get() });
+
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setYear:2007];
+    [dateComponents setMonth:1];
+    [dateComponents setDay:9];
+    [dateComponents setHour:10];
+    [dateComponents setMinute:00];
+    [dateComponents setSecond:0];
+
+    runTestNS({ [[NSCalendar currentCalendar] dateFromComponents:dateComponents] });
 }

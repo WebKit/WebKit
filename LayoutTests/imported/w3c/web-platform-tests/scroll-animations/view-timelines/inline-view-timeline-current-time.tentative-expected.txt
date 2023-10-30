@@ -1,0 +1,6 @@
+
+FAIL View timeline with start and end scroll offsets that do not align with the scroll boundaries promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline does not clamp starting scroll offset at 0 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline does not clamp end scroll offset at max scroll promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with container having RTL layout promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+

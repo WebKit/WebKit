@@ -1,0 +1,13 @@
+
+FAIL Setting animation current time to null throws TypeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Setting the current time to an absolute time value throws exception promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Set animation current time to a valid value without playing. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Set animation current time to a valid value while playing. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Set animation current time to a value beyond effect end. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Set animation current time to a negative value. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Setting current time while play pending overrides the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Setting animation.currentTime then restarting the animation should reset the current time. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Set Animation current time then scroll. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation current time and play state are correct when current time is set while the timeline is inactive. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation current time set while the timeline is inactive holds when the timeline becomes active again. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

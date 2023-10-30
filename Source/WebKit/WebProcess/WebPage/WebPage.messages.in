@@ -201,6 +201,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
+    MainFrameURLChangedInAnotherProcess(URL newURL)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)

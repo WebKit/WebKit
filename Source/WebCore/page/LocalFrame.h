@@ -299,6 +299,8 @@ public:
 
     WEBCORE_EXPORT bool arePluginsEnabled();
 
+    void documentURLDidChange(const URL&);
+
 private:
     friend class NavigationDisabler;
 

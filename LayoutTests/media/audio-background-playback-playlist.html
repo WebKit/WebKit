@@ -6,7 +6,7 @@
     window.addEventListener('load', async event => {
         window.audio = document.querySelector('audio');
         run('internals.setMediaElementRestrictions(audio, "RequireUserGestureForAudioRateChange,RequireUserGestureToControlControlsManager")');
-        run('audio.src = findMediaFile("audio", "content/test")');
+        run('audio.src = findMediaFile("audio", "content/silence")');
 
         await waitFor(audio, 'canplaythrough');
         runWithKeyDown('audio.play()');
@@ -17,7 +17,7 @@
         await waitFor(audio, 'ended');
         run('audio.src = ""');
         run('audio.load()');
-        testExpected('internals.bestMediaElementForRemoteControls("NowPlaying")', audio);
+        testExpected('internals.bestMediaElementForRemoteControls("NowPlaying")', null);
         run('audio.src = findMediaFile("audio", "content/test")');
         run('audio.load()');
         await waitFor(audio, 'canplaythrough');

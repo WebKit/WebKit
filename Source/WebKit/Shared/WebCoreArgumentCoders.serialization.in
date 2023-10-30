@@ -3699,7 +3699,9 @@ header: <WebCore/ScrollingStateNode.h>
     ScrollPosition
     ScrollOrigin
     ScrollableAreaParams
+#if ENABLE(SCROLLING_THREAD)
     ReasonsForSynchronousScrolling
+#endif
     RequestedScrollPosition
     SnapOffsetsInfo
     CurrentHorizontalSnapOffsetIndex

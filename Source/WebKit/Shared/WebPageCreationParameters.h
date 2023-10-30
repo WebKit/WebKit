@@ -293,7 +293,11 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    std::optional<FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    struct SubframeProcessPageParameters {
+        URL initialMainDocumentURL;
+        FrameTreeCreationParameters frameTreeParameters;
+    };
+    std::optional<SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 

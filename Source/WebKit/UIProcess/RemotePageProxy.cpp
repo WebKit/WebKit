@@ -68,6 +68,10 @@ void RemotePageProxy::injectPageIntoNewProcess()
         ASSERT_NOT_REACHED();
         return;
     }
+    if (!page->mainFrame()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     auto* drawingArea = page->drawingArea();
     RELEASE_ASSERT(drawingArea);
@@ -76,7 +80,10 @@ void RemotePageProxy::injectPageIntoNewProcess()
     m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
 
     auto parameters = page->creationParameters(m_process, *drawingArea);
-    parameters.subframeProcessFrameTreeCreationParameters = page->frameTreeCreationParameters();
+    parameters.subframeProcessPageParameters = WebPageCreationParameters::SubframeProcessPageParameters {
+        URL(page->currentURL()),
+        page->mainFrame()->frameTreeCreationParameters()
+    };
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards. <rdar://116201784>
     parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);

@@ -97,6 +97,7 @@ private:
     void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, PolicyCheckIdentifier, FramePolicyFunction&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
     void cancelPolicyCheck() final;
 
     void dispatchUnableToImplementPolicy(const ResourceError&) final;

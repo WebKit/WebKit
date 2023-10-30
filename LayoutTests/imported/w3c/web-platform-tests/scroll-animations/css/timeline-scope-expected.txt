@@ -1,0 +1,12 @@
+
+FAIL Descendant can attach to deferred timeline promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Deferred timeline with no attachments promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Inner timeline does not interfere with outer timeline promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Deferred timeline with two attachments promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Dynamically re-attaching promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Dynamically detaching promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Removing/inserting element with attaching timeline promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Ancestor attached element becoming display:none/block promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL A deferred timeline appearing dynamically in the ancestor chain promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Animations prefer non-deferred timelines promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+

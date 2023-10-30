@@ -528,6 +528,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
 	Shared/Cocoa/CoreIPCData.serialization.in \
+	Shared/Cocoa/CoreIPCDate.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
@@ -609,6 +610,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \
 	Shared/RemoteLayerTree/RemoteLayerTree.serialization.in \
 	Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in \
+	Shared/cf/CFTypes.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \

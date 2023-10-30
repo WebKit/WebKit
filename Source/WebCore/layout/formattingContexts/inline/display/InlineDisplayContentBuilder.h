@@ -61,8 +61,7 @@ private:
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void appendInterlinearRubyAnnotationBox(const Box&, InlineDisplay::Boxes&);
-    void appendIntercharacterRubyAnnotationBox(const Line::Run&, InlineDisplay::Boxes&);
+    void appendRubyAnnotationBox(const Box& rubyBaseLayoutBox, InlineDisplay::Boxes&);
     void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
     void applyRubyOverhang(InlineDisplay::Boxes&);
 
@@ -96,7 +95,6 @@ private:
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
     Vector<WTF::Range<size_t>> m_interlinearRubyColumnRangeList;
-    CheckedPtr<const Box> m_interCharacterRubyBase;
 };
 
 }

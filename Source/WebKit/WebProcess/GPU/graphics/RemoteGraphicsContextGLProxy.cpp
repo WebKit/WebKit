@@ -132,15 +132,12 @@ void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
 
 void RemoteGraphicsContextGLProxy::markContextChanged()
 {
-    // FIXME: The caller should track this state.
-    if (m_layerComposited) {
-        GraphicsContextGL::markContextChanged();
-        if (isContextLost())
-            return;
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MarkContextChanged());
-        if (sendResult != IPC::Error::NoError)
-            markContextLost();
-    }
+    GraphicsContextGL::markContextChanged();
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::MarkContextChanged());
+    if (sendResult != IPC::Error::NoError)
+        markContextLost();
 }
 
 bool RemoteGraphicsContextGLProxy::supportsExtension(const String& name)

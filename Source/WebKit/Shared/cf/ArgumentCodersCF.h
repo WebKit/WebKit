@@ -77,13 +77,6 @@ template<> struct ArgumentCoder<RetainPtr<CFCharacterSetRef>> : CFRetainPtrArgum
     static std::optional<RetainPtr<CFCharacterSetRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CFDataRef> {
-    template<typename Encoder> static void encode(Encoder&, CFDataRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFDataRef>> : CFRetainPtrArgumentCoder<CFDataRef> {
-    template<typename Decoder> static std::optional<RetainPtr<CFDataRef>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<CFDateRef> {
     template<typename Encoder> static void encode(Encoder&, CFDateRef);
 };
@@ -103,13 +96,6 @@ template<> struct ArgumentCoder<CFNumberRef> {
 };
 template<> struct ArgumentCoder<RetainPtr<CFNumberRef>> : CFRetainPtrArgumentCoder<CFNumberRef> {
     static std::optional<RetainPtr<CFNumberRef>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<CFStringRef> {
-    template<typename Encoder> static void encode(Encoder&, CFStringRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFStringRef>> : CFRetainPtrArgumentCoder<CFStringRef> {
-    static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<CFURLRef> {

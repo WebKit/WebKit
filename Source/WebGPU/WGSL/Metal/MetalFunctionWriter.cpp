@@ -305,8 +305,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
     {
         IndentationScope scope(m_indent);
-        unsigned alignment = 0;
-        unsigned size = 0;
         unsigned paddingID = 0;
         bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
@@ -330,19 +328,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 continue;
             }
 
-            unsigned fieldSize = 0;
-            unsigned explicitSize = 0;
-            unsigned fieldAlignment = 0;
-            unsigned offset = 0;
-            if (shouldPack) {
-                fieldSize = type->size();
-                fieldAlignment = member.alignment().value_or(type->alignment());
-                explicitSize = member.size().value_or(fieldSize);
-                offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
-                if (offset != size)
-                    addPadding(offset - size);
-            }
-
             m_stringBuilder.append(m_indent);
             visit(member.type().inferredType());
             m_stringBuilder.append(" ", name);
@@ -352,19 +337,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             }
             m_stringBuilder.append(";\n");
 
-            if (shouldPack) {
-                if (explicitSize != fieldSize)
-                    addPadding(explicitSize - fieldSize);
-
-                alignment = std::max(alignment, fieldAlignment);
-                size = offset + explicitSize;
-            }
-        }
-
-        if (shouldPack) {
-            auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
-            if (finalSize != size)
-                addPadding(finalSize - size);
+            if (shouldPack && member.padding())
+                addPadding(member.padding());
         }
 
         if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {
@@ -379,6 +353,18 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                     m_stringBuilder.append(m_indent, prefix, " ", name, "(other.", name, ")\n");
                     prefix = ',';
                 }
+            }
+            m_stringBuilder.append(m_indent, "{ }\n");
+        } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper) {
+            ASSERT(structDecl.members().size() == 1);
+            auto& member = structDecl.members()[0];
+
+            m_stringBuilder.append("\n");
+            m_stringBuilder.append(m_indent, "template<typename T>\n");
+            m_stringBuilder.append(m_indent, structDecl.name(), "(T value)\n");
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, ": ", member.name(), "(value)\n");
             }
             m_stringBuilder.append(m_indent, "{ }\n");
         }
@@ -531,10 +517,9 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     // Built-in attributes are only valid for parameters. If a struct member originally
     // had a built-in attribute it must have already been hoisted into a parameter, but
     // we keep the original struct so we can reconstruct it.
-    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput)
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::FragmentOutput && *m_structRole != AST::StructureRole::FragmentOutputWrapper)
         return;
 
-    // FIXME: we should replace this with something more efficient, like a trie
     switch (builtin.builtin()) {
     case Builtin::FragDepth:
         m_stringBuilder.append("[[depth(any)]]");
@@ -622,6 +607,8 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::UserDefinedResource:
         case AST::StructureRole::PackedResource:
             return;
+        case AST::StructureRole::FragmentOutputWrapper:
+            RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
             m_stringBuilder.append("[[color(", location.location().constantValue()->toInt(), ")]]");
             return;
@@ -960,10 +947,11 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
     if (!isExternalTexture) {
         writer->visit(call.arguments()[0]);
         writer->stringBuilder().append(".read");
-        bool first = true;
         writer->stringBuilder().append("(");
+        bool is1d = true;
         const char* cast = "uint";
         if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+            is1d = false;
             switch (vector->size) {
             case 2:
                 cast = "uint2";
@@ -975,11 +963,17 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-        for (unsigned i = 1; i < call.arguments().size(); ++i) {
+        bool first = true;
+        auto argumentCount = call.arguments().size();
+        for (unsigned i = 1; i < argumentCount; ++i) {
             if (first) {
                 writer->stringBuilder().append(cast, "(");
                 writer->visit(call.arguments()[i]);
                 writer->stringBuilder().append(")");
+            } else if (is1d && i == argumentCount - 1) {
+                // From the MSL spec for texture1d::read:
+                // > Since mipmaps are not supported for 1D textures, lod must be 0.
+                continue;
             } else {
                 writer->stringBuilder().append(", ");
                 writer->visit(call.arguments()[i]);

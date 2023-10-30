@@ -1338,6 +1338,14 @@ set(WebCore_NON_SVG_IDL_FILES
     page/LocalDOMWindow+VisualViewport.idl
     page/LocalDOMWindow.idl
     page/Location.idl
+    page/NavigateEvent.idl
+    page/Navigation.idl
+    page/NavigationCurrentEntryChangeEvent.idl
+    page/NavigationDestination.idl
+    page/NavigationHistoryEntry.idl
+    page/NavigationInterceptHandler.idl
+    page/NavigationNavigationType.idl
+    page/NavigationTransition.idl
     page/Navigator+UserActivation.idl
     page/Navigator.idl
     page/NavigatorCookies.idl

@@ -33,6 +33,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
+#include "FooWrapper.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #include "PlatformClass.h"

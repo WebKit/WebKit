@@ -1,0 +1,13 @@
+
+FAIL Setting current time while reverse-pending preserves currentTime promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation inverts the playback rate promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation resets a sticky start time. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation does not cause it to leave the pending state promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation does not cause it to resolve the ready promise promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation with a negative playback rate should cause the animation to play in a forward direction promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing when when playbackRate == 0 should preserve the playback rate promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an idle animation aligns startTime with the rangeEnd boundary promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation without an active timeline throws an InvalidStateError promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing an animation plays a pausing animation promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Reversing should use the negative pending playback rate promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

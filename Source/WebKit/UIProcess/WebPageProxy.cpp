@@ -5327,13 +5327,6 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
     }
 }
 
-std::optional<FrameTreeCreationParameters> WebPageProxy::frameTreeCreationParameters() const
-{
-    if (!m_mainFrame)
-        return std::nullopt;
-    return m_mainFrame->frameTreeCreationParameters();
-}
-
 void WebPageProxy::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::GetBytecodeProfile(), WTFMove(callback));
@@ -6139,6 +6132,15 @@ void WebPageProxy::broadcastFrameRemovalToOtherProcesses(IPC::Connection& connec
         if (!webProcess.hasConnection() || webProcess.connection() == &connection)
             return;
         webProcess.send(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), webPageID());
+    });
+}
+
+void WebPageProxy::broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection& connection, const URL& newURL)
+{
+    forEachWebContentProcess([&](auto& webProcess) {
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
+            return;
+        webProcess.send(Messages::WebPage::MainFrameURLChangedInAnotherProcess(newURL), webPageID());
     });
 }
 

@@ -324,6 +324,8 @@ public:
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
+    const URL& mainFrameURL() const { return m_mainFrameURL; }
+    WEBCORE_EXPORT void setMainFrameURL(const URL&);
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -1153,6 +1155,7 @@ private:
     HashSet<CheckedRef<LocalFrame>> m_rootFrames;
     UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
+    URL m_mainFrameURL;
 
     RefPtr<PluginData> m_pluginData;
 

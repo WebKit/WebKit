@@ -30,6 +30,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "CoreIPCData.h"
+#import "CoreIPCDate.h"
 #import "CoreTextHelpers.h"
 #import "DataReference.h"
 #import "LegacyGlobalSettings.h"
@@ -412,15 +413,17 @@ static inline std::optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
 
 static inline void encodeDateInternal(Encoder& encoder, NSDate *date)
 {
-    encoder << bridge_cast(date);
+    encoder << WebKit::CoreIPCDate(bridge_cast(date));
 }
 
 static inline std::optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
 {
-    RetainPtr<CFDateRef> date;
-    if (!decoder.decode(date))
+    std::optional<WebKit::CoreIPCDate> date;
+    decoder >> date;
+    if (!date)
         return std::nullopt;
-    return { bridge_cast(WTFMove(date)) };
+    auto cfDate = date->createDate();
+    return { bridge_cast(WTFMove(cfDate)) };
 }
 
 #pragma mark - NSDictionary

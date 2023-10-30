@@ -36,6 +36,12 @@ namespace WebKit {
 
 class CoreIPCData {
 public:
+    CoreIPCData(CFDataRef cfData)
+        : m_cfData(cfData)
+        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
+    {
+    }
+
     CoreIPCData(const IPC::DataReference& data)
         : m_reference(data)
     {
@@ -52,6 +58,7 @@ public:
     }
 
 private:
+    RetainPtr<CFDataRef> m_cfData;
     IPC::DataReference m_reference;
 };
 

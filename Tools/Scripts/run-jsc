@@ -34,6 +34,7 @@ use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use Getopt::Long;
+use POSIX qw( WEXITSTATUS WIFSIGNALED WTERMSIG );
 use webkitdirs;
 Getopt::Long::Configure("no_auto_abbrev", "pass_through");
 
@@ -47,6 +48,7 @@ my $debugger = 0;
 GetOptions("count|c=i" => \$count);
 GetOptions("debugger" => \$debugger);
 
+prohibitUnknownPort(); # To avoid confusing errors on Unix systems.
 setConfiguration();
 
 my $dyld = jscProductDir();
@@ -68,13 +70,16 @@ if (isWindows()) {
 
 while ($count--) {
     system("$jsc");
-    my $signal = $? & 0x7f;
-    my $status = ($? >> 8) & 0xff;
-    if ($signal != 0) {
-        system("kill -" . $signal . " " . $PID); # We kill ourselves with the same signal that the `jsc` process was killed with to make it look like `jsc` was directly invoked.
-    }
-    if ($status != 0) {
-        print STDERR "\njsc exited with non-zero status: $status\n";
-        exit $status;
+    if ($? == -1) {
+        print STDERR "\njsc failed to execute: $!\n";
+        exit 1;
+    } elsif (WIFSIGNALED($?)) {
+        kill(WTERMSIG($?), $PID); # We kill ourselves with the same signal that the `jsc` process was killed with to make it look like `jsc` was directly invoked.
+    } else {
+        my $status = WEXITSTATUS($?);
+        if ($status) {
+            print STDERR "\njsc exited with non-zero status: $status\n";
+            exit $status;
+        }
     }
 }

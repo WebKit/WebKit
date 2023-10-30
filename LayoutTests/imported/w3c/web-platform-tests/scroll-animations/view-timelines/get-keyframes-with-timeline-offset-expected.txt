@@ -1,0 +1,7 @@
+
+FAIL Report specified timeline offsets promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL Computed offsets can be outside [0,1] for keyframes with timeline offsets promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL Retain specified ordering of keyframes with timeline offsets promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL Include unreachable keyframes promise_test: Unhandled rejection with value: object "TypeError: The provided value is non-finite"
+FAIL Mix of computed and timeline offsets. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+

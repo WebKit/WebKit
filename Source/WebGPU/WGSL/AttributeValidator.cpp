@@ -42,6 +42,7 @@ public:
     void visit(AST::Function&) override;
     void visit(AST::Parameter&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::Structure&) override;
     void visit(AST::StructureMember&) override;
 
 private:
@@ -63,6 +64,7 @@ private:
     AST::Function* m_currentFunction { nullptr };
     ShaderModule& m_shaderModule;
     Vector<Error> m_errors;
+    bool m_hasSizeOrAlignmentAttributes { false };
 };
 
 AttributeValidator::AttributeValidator(ShaderModule& shaderModule)
@@ -222,6 +224,55 @@ void AttributeValidator::visit(AST::Variable& variable)
     }
 }
 
+void AttributeValidator::visit(AST::Structure& structure)
+{
+    AST::Visitor::visit(structure);
+
+    // Bail as we will stop the compilation after this pass, so the computed
+    // properties of the struct will never be read, and the size and alignment
+    // for the struct members might be invalid.
+    if (m_errors.size())
+        return;
+
+    structure.m_hasSizeOrAlignmentAttributes = std::exchange(m_hasSizeOrAlignmentAttributes, false);
+
+    unsigned previousSize = 0;
+    unsigned alignment = 0;
+    unsigned size = 0;
+    AST::StructureMember* previousMember = nullptr;
+    for (auto& member : structure.members()) {
+        auto* type = member.type().inferredType();
+        auto fieldAlignment = member.m_alignment;
+        if (!fieldAlignment) {
+            fieldAlignment = type->alignment();
+            member.m_alignment = fieldAlignment;
+        }
+
+        auto typeSize = type->size();
+        auto fieldSize = member.m_size;
+        if (!fieldSize) {
+            fieldSize = typeSize;
+            member.m_size = fieldSize;
+        }
+
+        auto offset = WTF::roundUpToMultipleOf(*fieldAlignment, size);
+        member.m_offset = offset;
+
+        alignment = std::max(alignment, *fieldAlignment);
+        size = offset + *fieldSize;
+
+        if (previousMember)
+            previousMember->m_padding = offset - previousSize;
+
+        previousMember = &member;
+        previousSize = offset + typeSize;
+    }
+    auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
+    previousMember->m_padding = finalSize - previousSize;
+    structure.m_alignment = alignment;
+    structure.m_size = finalSize;
+}
+
 void AttributeValidator::visit(AST::StructureMember& member)
 {
     for (auto& attribute : member.attributes()) {
@@ -239,6 +290,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
         if (is<AST::SizeAttribute>(attribute)) {
             // FIXME: check that the member type must have creation-fixed footprint.
+            m_hasSizeOrAlignmentAttributes = true;
             auto sizeValue = downcast<AST::SizeAttribute>(attribute).size().constantValue()->toInt();
             if (sizeValue < 0)
                 error(attribute.span(), "@size value must be non-negative");
@@ -249,6 +301,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
         }
 
         if (is<AST::AlignAttribute>(attribute)) {
+            m_hasSizeOrAlignmentAttributes = true;
             auto alignmentValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->toInt();
             auto isPowerOf2 = !(alignmentValue & (alignmentValue - 1));
             if (alignmentValue < 0)

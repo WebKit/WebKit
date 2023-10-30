@@ -37,6 +37,8 @@ MouseEvent
 MouseEvents interfaceName=MouseEvent
 MutationEvent
 MutationEvents interfaceName=MutationEvent
+NavigateEvent
+NavigationCurrentEntryChangeEvent
 OverflowEvent
 PageTransitionEvent
 PopStateEvent

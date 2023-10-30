@@ -862,7 +862,7 @@ http/tests/webrtc [ Skip ]
 http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
-http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Timeout ]
+http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ] # Timeout
 
 # Timeout on local PC
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
@@ -963,9 +963,9 @@ http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 http/tests/misc/webtiming-one-redirect.py [ Failure Pass ]
 http/tests/misc/webtiming-two-redirects.py [ Failure Pass ]
 
-http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Timeout ]
-http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
-http/wpt/service-workers/navigation-timing.https.html [ Timeout ]
+http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Skip ] # Timeout
+http/tests/workers/service/service-worker-resource-timing.https.html [ Skip ] # Timeout
+http/wpt/service-workers/navigation-timing.https.html [ Skip ] # Timeout
 
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
@@ -1217,7 +1217,7 @@ storage/indexeddb/cursor-request-cycle.html [ Skip ] # Slow
 storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion failure
 storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
 
-storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
+storage/indexeddb/shared-memory-structured-clone.html [ Skip ] # Timeout
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 
 webkit.org/b/210046 storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
@@ -1887,7 +1887,7 @@ editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
+fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Skip ] # Timeout
 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 fast/canvas/canvas-blend-image.html [ Failure ]
@@ -1901,6 +1901,7 @@ fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 fast/canvas/canvas-measureText-2.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
+fast/canvas/font-family-system-ui-canvas.html [ Skip ] # ImageOnlyFailure
 fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
 fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Crash
 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
@@ -1960,7 +1961,7 @@ fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failu
 fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
-fast/events/wheel/redispatched-wheel-event.html [ Timeout ]
+fast/events/wheel/redispatched-wheel-event.html [ Skip ] # Timeout
 fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Crash
 fast/events/wheel/wheel-event-outside-body.html [ Skip ] # Crash
 fast/events/wheel/wheelevent-basic.html [ Failure ]
@@ -2523,10 +2524,10 @@ webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
 
-fast/events/only-valid-drop-targets-receive-file-drop.html [ Timeout ]
+fast/events/only-valid-drop-targets-receive-file-drop.html [ Skip ] # Timeout
 
-fast/events/wheel/wheel-event-destroys-frame.html [ Timeout ]
-fast/text/install-font-style-recalc.html [ Timeout ]
+fast/events/wheel/wheel-event-destroys-frame.html [ Skip ] # Timeout
+fast/text/install-font-style-recalc.html [ Skip ] # Timeout
 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
 webgl/many-contexts.html [ Skip ] # Timeout
 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
@@ -2668,3 +2669,5 @@ imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
 
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure Pass ]
+
+webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]

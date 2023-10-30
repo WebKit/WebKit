@@ -215,3 +215,9 @@ class WebKit::TemplateTest {
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Other] bool otherMember
     int memberAfterTuple
 }
+
+CFFooRef wrapped by WebKit::FooWrapper {
+}
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=createCFBar] CFBarRef wrapped by WebKit::BarWrapper {
+}

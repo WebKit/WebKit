@@ -617,6 +617,7 @@ public:
     void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
     void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
+    void mainFrameURLChangedInAnotherProcess(const URL&);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 

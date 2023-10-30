@@ -1,0 +1,4 @@
+
+FAIL Animation does not apply when the timeline is inactive because there is not scroll range assert_equals: expected "0px" but got "100px"
+FAIL Animation does not apply when timeline is initially inactive assert_equals: expected "0px" but got "100px"
+

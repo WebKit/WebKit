@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ArgumentCodersCF.h"
 
-#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -451,28 +450,6 @@ std::optional<RetainPtr<CFCharacterSetRef>> ArgumentCoder<RetainPtr<CFCharacterS
 }
 
 template<typename Encoder>
-void ArgumentCoder<CFDataRef>::encode(Encoder& encoder, CFDataRef data)
-{
-    encoder << IPC::DataReference(CFDataGetBytePtr(data), CFDataGetLength(data));
-}
-
-template void ArgumentCoder<CFDataRef>::encode<Encoder>(Encoder&, CFDataRef);
-template void ArgumentCoder<CFDataRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDataRef);
-
-template<typename Decoder>
-std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(Decoder& decoder)
-{
-    std::optional<IPC::DataReference> dataReference;
-    decoder >> dataReference;
-    if (!dataReference)
-        return std::nullopt;
-
-    return adoptCF(CFDataCreate(0, dataReference->data(), dataReference->size()));
-}
-
-template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<Decoder>(Decoder&);
-
-template<typename Encoder>
 void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
 {
     encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
@@ -639,65 +616,6 @@ std::optional<RetainPtr<CFNumberRef>> ArgumentCoder<RetainPtr<CFNumberRef>>::dec
 
     ASSERT(dataReference->data());
     return adoptCF(CFNumberCreate(0, numberType, dataReference->data()));
-}
-
-template<typename Encoder>
-void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef string)
-{
-    if (!string) {
-        encoder << true;
-        return;
-    }
-    encoder << false;
-
-    CFIndex length = CFStringGetLength(string);
-    CFStringEncoding encoding = CFStringGetFastestEncoding(string);
-
-    CFRange range = CFRangeMake(0, length);
-    CFIndex bufferLength = 0;
-
-    CFIndex numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, 0, 0, &bufferLength);
-    ASSERT_UNUSED(numConvertedBytes, numConvertedBytes == length);
-
-    Vector<UInt8, 128> buffer(bufferLength);
-    numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, buffer.data(), buffer.size(), &bufferLength);
-    ASSERT(numConvertedBytes == length);
-
-    encoder << static_cast<uint32_t>(encoding) << IPC::DataReference(buffer);
-}
-
-template void ArgumentCoder<CFStringRef>::encode<Encoder>(Encoder&, CFStringRef);
-template void ArgumentCoder<CFStringRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFStringRef);
-
-std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return std::nullopt;
-
-    if (*isNull)
-        return { { nullptr } };
-
-    std::optional<uint32_t> encodingFromIPC;
-    decoder >> encodingFromIPC;
-    if (!encodingFromIPC)
-        return std::nullopt;
-    auto encoding = static_cast<CFStringEncoding>(*encodingFromIPC);
-
-    if (!CFStringIsEncodingAvailable(encoding))
-        return std::nullopt;
-    
-    std::optional<IPC::DataReference> dataReference;
-    decoder >> dataReference;
-    if (!dataReference)
-        return std::nullopt;
-
-    auto string = adoptCF(CFStringCreateWithBytes(0, dataReference->data(), dataReference->size(), encoding, false));
-    if (!string)
-        return std::nullopt;
-
-    return WTFMove(string);
 }
 
 template<typename Encoder>

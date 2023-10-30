@@ -231,7 +231,7 @@ struct WebKit::WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
-    std::optional<WebKit::FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebKit::WebPageCreationParameters::SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
@@ -247,4 +247,9 @@ struct WebKit::WebPageCreationParameters {
 #if PLATFORM(GTK) && USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
+}
+
+[Nested] struct WebKit::WebPageCreationParameters::SubframeProcessPageParameters {
+    URL initialMainDocumentURL;
+    WebKit::FrameTreeCreationParameters frameTreeParameters;
 }

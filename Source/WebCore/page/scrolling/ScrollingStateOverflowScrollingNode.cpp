@@ -33,20 +33,63 @@
 
 namespace WebCore {
 
-Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
-}
-
-Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(nodeID));
-}
-
-ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingNodeID nodeID)
-    : ScrollingStateScrollingNode(ScrollingNodeType::Overflow, nodeID)
-{
-}
+ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
+    ScrollingNodeID scrollingNodeID,
+    Vector<Ref<WebCore::ScrollingStateNode>>&& children,
+    OptionSet<ScrollingStateNodeProperty> changedProperties,
+    std::optional<WebCore::PlatformLayerIdentifier> layerID,
+    FloatSize scrollableAreaSize,
+    FloatSize totalContentsSize,
+    FloatSize reachableContentsSize,
+    FloatPoint scrollPosition,
+    IntPoint scrollOrigin,
+    ScrollableAreaParameters&& scrollableAreaParameters,
+#if ENABLE(SCROLLING_THREAD)
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
+#endif
+    RequestedScrollData&& requestedScrollData,
+    FloatScrollSnapOffsetsInfo&& snapOffsetsInfo,
+    std::optional<unsigned> currentHorizontalSnapPointIndex,
+    std::optional<unsigned> currentVerticalSnapPointIndex,
+    bool isMonitoringWheelEvents,
+    std::optional<PlatformLayerIdentifier> scrollContainerLayer,
+    std::optional<PlatformLayerIdentifier> scrolledContentsLayer,
+    std::optional<PlatformLayerIdentifier> horizontalScrollbarLayer,
+    std::optional<PlatformLayerIdentifier> verticalScrollbarLayer,
+    bool mouseIsOverContentArea,
+    MouseLocationState&& mouseLocationState,
+    ScrollbarHoverState&& scrollbarHoverState,
+    ScrollbarEnabledState&& scrollbarEnabledState
+) : ScrollingStateScrollingNode(
+    ScrollingNodeType::Overflow,
+    scrollingNodeID,
+    WTFMove(children),
+    changedProperties,
+    layerID,
+    scrollableAreaSize,
+    totalContentsSize,
+    reachableContentsSize,
+    scrollPosition,
+    scrollOrigin,
+    WTFMove(scrollableAreaParameters),
+#if ENABLE(SCROLLING_THREAD)
+    synchronousScrollingReasons,
+#endif
+    WTFMove(requestedScrollData),
+    WTFMove(snapOffsetsInfo),
+    currentHorizontalSnapPointIndex,
+    currentVerticalSnapPointIndex,
+    isMonitoringWheelEvents,
+    scrollContainerLayer,
+    scrolledContentsLayer,
+    horizontalScrollbarLayer,
+    verticalScrollbarLayer,
+    mouseIsOverContentArea,
+    WTFMove(mouseLocationState),
+    WTFMove(scrollbarHoverState),
+    WTFMove(scrollbarEnabledState),
+    RequestedKeyboardScrollData { } // FIXME: This probably needs to be refactored so that this is a member of ScrollingStateFrameScrollingNode instead of ScrollingStateScrollingNode.
+) { }
 
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
     : ScrollingStateScrollingNode(stateTree, ScrollingNodeType::Overflow, nodeID)

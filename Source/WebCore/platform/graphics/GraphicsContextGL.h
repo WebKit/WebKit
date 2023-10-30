@@ -1640,7 +1640,6 @@ public:
     // FIXME: these should be removed, caller is interested in buffer clear status and
     // should track that in a variable that the caller holds. Caller should receive
     // the value from reshape().
-    bool layerComposited() const;
     void setBuffersToAutoClear(GCGLbitfield);
     GCGLbitfield getBuffersToAutoClear() const;
 
@@ -1734,7 +1733,6 @@ protected:
     // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
     // auto-cleared.
     GCGLbitfield m_buffersToAutoClear { 0 };
-    bool m_layerComposited { false };
     bool m_contextLost { false };
 
 private:

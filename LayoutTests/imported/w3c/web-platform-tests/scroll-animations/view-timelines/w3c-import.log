@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-current-time-vertical-rl.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-current-time.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-nested-subject.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/change-animation-range-updates-play-state.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/contain-alignment.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/get-keyframes-with-timeline-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-subject.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-view-timeline-current-time.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/subject-br-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-001.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-002.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-003.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/timeline-offset-in-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/unattached-subject-inset.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-current-time-range-name.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-set-range.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-inset.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-missing-subject.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-on-display-none-element.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-range-large-subject.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-range.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-root-source.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-snapport.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-source.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-block.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-subject-size-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/zero-intrinsic-iteration-duration.tentative.html

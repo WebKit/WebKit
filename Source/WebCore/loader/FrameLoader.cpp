@@ -131,6 +131,7 @@
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <dom/ScriptDisallowedScope.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 #include <wtf/Ref.h>
@@ -3597,7 +3598,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
 
     {
         SetForScope change(m_pageDismissalEventBeingDispatched, PageDismissalType::BeforeUnload);
-        ForbidPromptsScope forbidPrompts(CheckedPtr { m_frame->page() }.get());
+        ForbidPromptsScope forbidPrompts(m_frame->checkedPage().get());
         ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame->page());
         domWindow->dispatchEvent(beforeUnloadEvent, domWindow->protectedDocument().get());
     }

@@ -1,0 +1,85 @@
+
+FAIL e.style['view-timeline'] = "--abcd" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "none block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "none inline" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--inline block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--block block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--y block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--x block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--a, --b, --c" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--a inline, --b block, --c y" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd block auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd block auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd block 1px 2px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd inline 1px 2px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd 1px 2px inline" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd 1px 2px block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd auto auto block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd auto block" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-timeline'] = "--abcd block 1px 1px" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['view-timeline'] = "--abc --abc" should not set the property value
+PASS e.style['view-timeline'] = "block none" should not set the property value
+PASS e.style['view-timeline'] = "none none" should not set the property value
+PASS e.style['view-timeline'] = "default" should not set the property value
+PASS e.style['view-timeline'] = "," should not set the property value
+PASS e.style['view-timeline'] = ",,--block,," should not set the property value
+PASS e.style['view-timeline'] = "auto" should not set the property value
+PASS e.style['view-timeline'] = "auto auto" should not set the property value
+PASS e.style['view-timeline'] = "--abc 500kg" should not set the property value
+PASS e.style['view-timeline'] = "--abc #ff0000" should not set the property value
+PASS e.style['view-timeline'] = "--abc red red" should not set the property value
+FAIL Property view-timeline value '--abcd' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value 'none block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value 'none inline' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--inline block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--block block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--y block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--x block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--a, --b, --c' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--a inline, --b block, --c y' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd block auto' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd block auto auto' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd block 1px 2px' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd inline 1px 2px' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd 1px 2px inline' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd 1px 2px block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd auto auto block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd auto block' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-timeline value '--abcd block 1px 1px' assert_true: view-timeline doesn't seem to be supported in the computed style expected true got false
+FAIL e.style['view-timeline'] = "--abc y" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "y" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--abc y, --def" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "y, block" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y, --def" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "auto, auto" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y, --def" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc, --def" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc y, --def" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--abc, --def" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "block, block" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc, --def" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "auto, auto" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc, --def" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc, --def" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc, --def" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--inline x" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "x" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--inline x" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--inline x" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--inline" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--inline x" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--abc 1px 2px" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "block" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px 2px" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "1px 2px" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px 2px" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px 2px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--abc 1px" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "block" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "1px" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-axis assert_equals: view-timeline-axis should be canonical expected (string) "inline" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-inset assert_equals: view-timeline-inset should be canonical expected (string) "1px" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px inline" should set view-timeline-name assert_equals: view-timeline-name should be canonical expected (string) "--abc" but got (undefined) undefined
+FAIL e.style['view-timeline'] = "--abc 1px inline" should not set unrelated longhands assert_true: expected true got false
+FAIL Shorthand contraction of view-timeline-name:--abc:undefined;view-timeline-axis:inline:undefined;view-timeline-inset:auto:undefined assert_equals: Declared value expected "--abc inline" but got ""
+FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:auto, auto:undefined assert_equals: Declared value expected "--a inline, --b" but got ""
+FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:1px 2px, 3px 3px:undefined assert_equals: Declared value expected "--a inline 1px 2px, --b 3px" but got ""
+FAIL Shorthand contraction of view-timeline-name:none, none:undefined;view-timeline-axis:block, block:undefined;view-timeline-inset:auto auto, auto:undefined assert_equals: Declared value expected "none, none" but got ""
+PASS Shorthand contraction of view-timeline-name:--a, --b, --c:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto:undefined
+PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
+PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
+
