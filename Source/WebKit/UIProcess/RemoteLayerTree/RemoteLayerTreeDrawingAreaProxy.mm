@@ -259,7 +259,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
             ++m_countOfTransactionsWithNonEmptyLayerChanges;
 
         if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
-            if (layerTreeTransaction.transactionID() >= state.transactionIDForUnhidingContent)
+            if (!m_replyForUnhidingContent)
                 m_webPageProxy.setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
             else
                 m_remoteLayerTreeHost->detachRootLayer();
@@ -556,7 +556,17 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    m_webPageProxyProcessState.transactionIDForUnhidingContent = nextLayerTreeTransactionID();
+    if (m_replyForUnhidingContent && m_webPageProxy.process().hasConnection()) {
+        if (auto replyHandlerToCancel = m_webPageProxy.process().connection()->takeAsyncReplyHandler(m_replyForUnhidingContent))
+            replyHandlerToCancel(nullptr);
+    }
+
+    m_replyForUnhidingContent = m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [weakThis = WeakPtr { this }] {
+        if (weakThis) {
+            weakThis->m_webPageProxy.setRemoteLayerTreeRootNode(weakThis->m_remoteLayerTreeHost->rootNode());
+            weakThis->m_replyForUnhidingContent = AsyncReplyID { };
+        }
+    }, identifier());
     m_remoteLayerTreeHost->detachRootLayer();
 }
 

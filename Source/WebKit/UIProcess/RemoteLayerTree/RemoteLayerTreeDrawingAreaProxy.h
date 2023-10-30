@@ -153,7 +153,6 @@ private:
         TransactionID lastVisibleTransactionID;
 #endif
         TransactionID transactionIDForPendingCACommit;
-        TransactionID transactionIDForUnhidingContent;
         ActivityStateChangeID activityStateChangeID { ActivityStateChangeAsynchronous };
     };
 
@@ -172,7 +171,9 @@ private:
     std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
-    
+
+    IPC::AsyncReplyID m_replyForUnhidingContent;
+
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 };
 
