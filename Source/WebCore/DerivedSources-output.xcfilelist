@@ -1907,6 +1907,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNVShaderNoperspectiveInterpolatio
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNVShaderNoperspectiveInterpolation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigateEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigateEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationCurrentEntryChangeEvent.cpp
@@ -1917,13 +1919,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationHistoryEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationHistoryEntry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationInterceptHandler.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationInterceptHandler.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationNavigationType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationNavigationType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationTransition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationTransition.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationNavigationType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.h
