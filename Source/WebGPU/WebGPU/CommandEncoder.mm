@@ -264,6 +264,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
+        if (!attachment.view)
+            continue;
+
         const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
 
         mtlAttachment.clearColor = MTLClearColorMake(attachment.clearValue.r,
