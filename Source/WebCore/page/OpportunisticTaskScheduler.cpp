@@ -37,7 +37,6 @@ OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
             strongThis->runLoopObserverFired();
     }, RunLoopObserver::Type::Repeating))
 {
-    m_runLoopObserver->schedule();
 }
 
 OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
@@ -46,6 +45,9 @@ void OpportunisticTaskScheduler::reschedule(MonotonicTime deadline)
 {
     m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
+
+    if (!m_runLoopObserver->isScheduled())
+        m_runLoopObserver->schedule();
 }
 
 Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
@@ -57,6 +59,11 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
 {
     if (!m_currentDeadline)
         return;
+
+#if USE(WEB_THREAD)
+    if (WebThreadIsEnabled())
+        return;
+#endif
 
     auto page = m_page;
     if (UNLIKELY(!page))
