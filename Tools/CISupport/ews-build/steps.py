@@ -114,6 +114,12 @@ class GitHub(object):
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     BLOCKED_LABEL = 'merging-blocked'
     SKIP_EWS_LABEL = 'skip-ews'
+    NO_FAILURE_LIMITS_LABEL = 'no-failure-limits'
+    LABELS = [
+        MERGE_QUEUE_LABEL, UNSAFE_MERGE_QUEUE_LABEL, SAFE_MERGE_QUEUE_LABEL,
+        REQUEST_MERGE_QUEUE_LABEL, BLOCKED_LABEL,
+        SKIP_EWS_LABEL, NO_FAILURE_LIMITS_LABEL,
+    ]
 
     @classmethod
     def repository_urls(cls):
@@ -1854,6 +1860,14 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         repository_url = self.getProperty('repository', '')
         pr_json = yield self.get_pr_json(pr_number, repository_url, retry=3)
+
+        if pr_json:
+            # Only track acionable labels, since bug category labels may reveal information about security bugs
+            self.setProperty('github_labels', [
+                data.get('name')
+                for data in pr_json.get('labels', [])
+                if data.get('name') in GitHub.LABELS
+            ])
 
         pr_closed = yield self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
@@ -3801,8 +3815,12 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         self.setCommand(self.command + ['--debug-rwt-logging'])
 
         patch_author = self.getProperty('patch_author')
+        self.maxTime = None
         if patch_author in ['webkit-wpt-import-bot@igalia.com']:
             self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+        elif GitHub.NO_FAILURE_LIMITS_LABEL in self.getProperty('github_labels', []):
+            self.setCommand(self.command + ['--no-retry'])
+            self.maxTime = 60 * 90
         else:
             if self.EXIT_AFTER_FAILURES is not None:
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
@@ -3817,6 +3835,12 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
         if self.ENABLE_GUARD_MALLOC:
             self.setCommand(self.command + ['--guard-malloc'])
+
+    def buildCommandKwargs(self, warnings):
+        result = super().buildCommandKwargs(warnings)
+        if self.maxTime:
+            result['maxTime'] = self.maxTime
+        return result
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         self.log_observer = BufferLogObserverClass(wantStderr=True)
@@ -3968,14 +3992,19 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                                                 ExtractTestResults()])
             self.finished(WARNINGS)
         else:
-            self.build.addStepsAfterCurrentStep([
+            steps_to_add = [
                 ArchiveTestResults(),
                 UploadTestResults(),
                 ExtractTestResults(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                KillOldProcesses(),
-                ReRunWebKitTests(),
-            ])
+            ]
+            if GitHub.NO_FAILURE_LIMITS_LABEL not in self.getProperty('github_labels', []):
+                steps_to_add += [
+                    KillOldProcesses(),
+                    ReRunWebKitTests(),
+                ]
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+
         return rc
 
     def getResultSummary(self):

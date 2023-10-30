@@ -543,6 +543,10 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         for message in messages:
             classification = yield self.classifiy(message, raw_files)
             classes.add(classification or 'Unclassified')
-        change['properties'].update({'classification': list(classes)})
+        change['properties'].update({
+            'classification': list(classes),
+            # Only track acionable labels, since bug category labels may reveal information about security bugs
+            'github_labels': [label for label in labels if label in GitHub.LABELS],
+        })
 
         return defer.returnValue(([change], result[1]))
