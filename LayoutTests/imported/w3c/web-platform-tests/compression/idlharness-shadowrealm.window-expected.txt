@@ -1,5 +1,4 @@
 
-PASS setup
 PASS CompressionStream includes GenericTransformStream: member names are unique
 PASS DecompressionStream includes GenericTransformStream: member names are unique
 PASS CompressionStream interface: existence and properties of interface object
