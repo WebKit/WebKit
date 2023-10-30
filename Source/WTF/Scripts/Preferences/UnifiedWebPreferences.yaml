@@ -3298,20 +3298,6 @@ IndexedDBAPIEnabled:
     WebCore:
       default: true
 
-InertAttributeEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML inert attribute"
-  humanReadableDescription: "Enable inert attribute support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 InlineFormattingContextIntegrationEnabled:
   type: bool
   status: stable

@@ -406,8 +406,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
             setTabIndexExplicitly(std::nullopt);
         return;
     case AttributeNames::inertAttr:
-        if (document().settings().inertAttributeEnabled())
-            invalidateStyleInternal();
+        invalidateStyleInternal();
         return;
     case AttributeNames::inputmodeAttr:
         if (Ref document = this->document(); this == document->focusedElement()) {

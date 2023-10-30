@@ -280,7 +280,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         }
 
         // Elements that may get StyleAdjuster's inert attribute adjustment.
-        if (m_document.settings().inertAttributeEnabled() && candidateElement.hasAttributeWithoutSynchronization(HTMLNames::inertAttr) != element.hasAttributeWithoutSynchronization(HTMLNames::inertAttr))
+        if (candidateElement.hasAttributeWithoutSynchronization(HTMLNames::inertAttr) != element.hasAttributeWithoutSynchronization(HTMLNames::inertAttr))
             return false;
     }
 

@@ -52,7 +52,7 @@
 
     [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
 
-    [CEReactions=Needed, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
+    [CEReactions=Needed, Reflect] attribute boolean inert;
 
     // The popover API
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined showPopover();
