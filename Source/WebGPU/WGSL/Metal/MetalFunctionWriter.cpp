@@ -305,8 +305,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
     {
         IndentationScope scope(m_indent);
-        unsigned alignment = 0;
-        unsigned size = 0;
         unsigned paddingID = 0;
         bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
@@ -330,19 +328,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 continue;
             }
 
-            unsigned fieldSize = 0;
-            unsigned explicitSize = 0;
-            unsigned fieldAlignment = 0;
-            unsigned offset = 0;
-            if (shouldPack) {
-                fieldSize = type->size();
-                fieldAlignment = member.alignment().value_or(type->alignment());
-                explicitSize = member.size().value_or(fieldSize);
-                offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
-                if (offset != size)
-                    addPadding(offset - size);
-            }
-
             m_stringBuilder.append(m_indent);
             visit(member.type().inferredType());
             m_stringBuilder.append(" ", name);
@@ -352,19 +337,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             }
             m_stringBuilder.append(";\n");
 
-            if (shouldPack) {
-                if (explicitSize != fieldSize)
-                    addPadding(explicitSize - fieldSize);
-
-                alignment = std::max(alignment, fieldAlignment);
-                size = offset + explicitSize;
-            }
-        }
-
-        if (shouldPack) {
-            auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
-            if (finalSize != size)
-                addPadding(finalSize - size);
+            if (shouldPack && member.padding())
+                addPadding(member.padding());
         }
 
         if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {

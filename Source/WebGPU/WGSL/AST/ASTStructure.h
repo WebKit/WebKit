@@ -30,7 +30,11 @@
 #include "ASTIdentifier.h"
 #include "ASTStructureMember.h"
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class AttributeValidator;
+
+namespace AST {
 
 enum class StructureRole : uint8_t {
     UserDefined,
@@ -46,6 +50,8 @@ enum class StructureRole : uint8_t {
 
 class Structure final : public Declaration {
     WGSL_AST_BUILDER_NODE(Structure);
+    friend AttributeValidator;
+
 public:
     using Ref = std::reference_wrapper<Structure>;
     using List = ReferenceWrapperVector<Structure>;
@@ -61,6 +67,10 @@ public:
 
     void setRole(StructureRole role) { m_role = role; }
 
+    bool hasSizeOrAlignmentAttributes() const { return m_hasSizeOrAlignmentAttributes; }
+    unsigned size() const { return *m_size; }
+    unsigned alignment() const { return *m_alignment; }
+
 private:
     Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role, Structure* original = nullptr)
         : Declaration(span)
@@ -73,6 +83,8 @@ private:
         if (m_original) {
             ASSERT(m_role == StructureRole::PackedResource);
             m_original->m_packed = this;
+            m_size = original->m_size;
+            m_alignment = original->m_alignment;
         }
     }
 
@@ -82,8 +94,14 @@ private:
     StructureRole m_role;
     Structure* m_original;
     Structure* m_packed { nullptr };
+
+    // Computed properties
+    bool m_hasSizeOrAlignmentAttributes { false };
+    std::optional<unsigned> m_size;
+    std::optional<unsigned> m_alignment;
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(Structure)

@@ -701,7 +701,7 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
         if (packType(member.type().inferredType()))
             packedAnyMember = true;
     }
-    if (!packedAnyMember)
+    if (!packedAnyMember && !structType->structure.hasSizeOrAlignmentAttributes())
         return nullptr;
 
     ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);

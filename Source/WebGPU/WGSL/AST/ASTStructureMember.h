@@ -51,11 +51,15 @@ public:
     Attribute::List& attributes() { return m_attributes; }
 
     bool invariant() const { return m_invariant; }
-    std::optional<unsigned> alignment() const { return m_alignment; }
-    std::optional<unsigned> size() const { return m_size; }
     std::optional<Builtin> builtin() const { return m_builtin; }
     std::optional<unsigned> location() const { return m_location; }
     std::optional<Interpolation> interpolation() const { return m_interpolation; }
+
+    unsigned offset() const { return m_offset; }
+    unsigned padding() const { return m_padding; }
+
+    unsigned alignment() const { return *m_alignment; }
+    unsigned size() const { return *m_size; }
 
 private:
     StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
@@ -68,6 +72,10 @@ private:
     Identifier m_name;
     Attribute::List m_attributes;
     Expression::Ref m_type;
+
+    // Compute
+    unsigned m_offset { 0 };
+    unsigned m_padding { 0 };
 
     // Attributes
     bool m_invariant { false };

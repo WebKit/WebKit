@@ -283,16 +283,7 @@ unsigned Type::size() const
             return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
-            unsigned alignment = 0;
-            unsigned size = 0;
-            for (auto& member : structure.structure.members()) {
-                auto* type = member.type().inferredType();
-                auto fieldAlignment = type->alignment();
-                alignment = std::max(alignment, fieldAlignment);
-                size = WTF::roundUpToMultipleOf(fieldAlignment, size);
-                size += type->size();
-            }
-            return WTF::roundUpToMultipleOf(alignment, size);
+            return structure.structure.size();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -362,10 +353,7 @@ unsigned Type::alignment() const
             return array.element->alignment();
         },
         [&](const Struct& structure) -> unsigned {
-            unsigned alignment = 0;
-            for (auto& [_, field] : structure.fields)
-                alignment = std::max(alignment, field->alignment());
-            return alignment;
+            return structure.structure.alignment();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
