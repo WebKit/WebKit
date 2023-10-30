@@ -2034,7 +2034,6 @@ $(PROJECT_DIR)/worklets/WorkletGlobalScope.idl
 $(PROJECT_DIR)/worklets/WorkletOptions.idl
 $(PROJECT_DIR)/xml/CustomXPathNSResolver.idl
 $(PROJECT_DIR)/xml/DOMParser.idl
-$(PROJECT_DIR)/xml/ParseFromStringOptions.idl
 $(PROJECT_DIR)/xml/XMLHttpRequest.idl
 $(PROJECT_DIR)/xml/XMLHttpRequestEventTarget.idl
 $(PROJECT_DIR)/xml/XMLHttpRequestProgressEvent.idl

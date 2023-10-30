@@ -2176,20 +2176,6 @@ DeclarativeShadowDOMEnabled:
     WebCore:
       default: true
 
-DeclarativeShadowDOMInDOMParserEnabled:
-  type: bool
-  status: testable
-  category: dom
-  humanReadableName: "DOMParser support for Declarative Shadow DOM"
-  humanReadableDescription: "Enable Declarative Shadow DOM in DOMParser"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 DeclarativeWebPush:
   type: bool
   status: unstable

@@ -2084,8 +2084,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPanningModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPanningModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSParentNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSParentNode.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSParseFromStringOptions.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSParseFromStringOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPath2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPath2D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPayerErrorFields.cpp

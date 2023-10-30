@@ -1,5 +1,0 @@
-
-PASS Moving the template node during parsing should attach to initial parent (content before observer)
-PASS Moving the template node during parsing should attach to initial parent (content after observer)
-PASS Moving the template node from invalid parent to valid parent should still not attach
-
