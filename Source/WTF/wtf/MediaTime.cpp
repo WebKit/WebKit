@@ -68,11 +68,6 @@ static int64_t signum(int64_t val)
 
 const uint32_t MediaTime::MaximumTimeScale = 1000000000;
 
-MediaTime::MediaTime(const MediaTime& rhs)
-{
-    *this = rhs;
-}
-
 MediaTime MediaTime::createWithFloat(float floatTime)
 {
     if (floatTime != floatTime)
@@ -157,14 +152,6 @@ double MediaTime::toDouble() const
     if (hasDoubleValue())
         return m_timeValueAsDouble;
     return static_cast<double>(m_timeValue) / m_timeScale;
-}
-
-MediaTime& MediaTime::operator=(const MediaTime& rhs)
-{
-    m_timeValue = rhs.m_timeValue;
-    m_timeScale = rhs.m_timeScale;
-    m_timeFlags = rhs.m_timeFlags;
-    return *this;
 }
 
 MediaTime MediaTime::operator+(const MediaTime& rhs) const
