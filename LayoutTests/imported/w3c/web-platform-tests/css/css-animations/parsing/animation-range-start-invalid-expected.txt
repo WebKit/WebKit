@@ -1,0 +1,11 @@
+
+PASS e.style['animation-range-start'] = "peek 50%" should not set the property value
+PASS e.style['animation-range-start'] = "50% contain" should not set the property value
+PASS e.style['animation-range-start'] = "50% cover" should not set the property value
+PASS e.style['animation-range-start'] = "50% entry" should not set the property value
+PASS e.style['animation-range-start'] = "50% enter" should not set the property value
+PASS e.style['animation-range-start'] = "50% exit" should not set the property value
+PASS e.style['animation-range-start'] = "contain contain" should not set the property value
+PASS e.style['animation-range-start'] = "none" should not set the property value
+PASS e.style['animation-range-start'] = "cover 50% enter 50%" should not set the property value
+

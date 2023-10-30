@@ -1,5 +1,5 @@
 
-PASS KeyframeEffect.getKeyframes() returns no frames for various kinds of empty enimations
+PASS KeyframeEffect.getKeyframes() returns no frames for various kinds of empty animations
 PASS KeyframeEffect.getKeyframes() returns expected frames for a simple animation
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing comes from animation-timing-function on the element
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing is specified on each keyframe
