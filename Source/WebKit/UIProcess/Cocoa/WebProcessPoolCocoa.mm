@@ -1012,7 +1012,7 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
         if (!m_processesShouldSuspend) {
-            for (Ref&& page : process->pages())
+            for (Ref page : process->pages())
                 page->restartXRSessionActivityOnProcessResumeIfNeeded();
         }
 #endif
