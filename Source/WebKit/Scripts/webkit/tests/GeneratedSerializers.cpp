@@ -988,7 +988,7 @@ void ArgumentCoder<WebCore::ScrollingStateFrameHostingNode>::encode(Encoder& enc
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.layer().layerIDForEncoding())>, std::optional<WebCore::PlatformLayerIdentifier>>);
     static_assert(static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer) == 1);
     static_assert(BitsInIncreasingOrder<
-        , static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
+        static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
     >::value);
 
     encoder << instance.scrollingNodeID();
@@ -1009,7 +1009,7 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> ArgumentCoder<WebCor
     std::optional<WebCore::PlatformLayerIdentifier> layerlayerIDForEncoding { };
     if (*changedProperties & WebCore::ScrollingStateNode::Property::Layer) {
         if (auto deserialized = decoder.decode<std::optional<WebCore::PlatformLayerIdentifier>>())
-            changedProperties = WTFMove(*deserialized);
+            layerlayerIDForEncoding = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
@@ -1020,7 +1020,7 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> ArgumentCoder<WebCor
             WTFMove(*scrollingNodeID),
             WTFMove(*children),
             WTFMove(*changedProperties),
-            WTFMove(*layerlayerIDForEncoding)
+            WTFMove(layerlayerIDForEncoding)
         )
     };
 }
@@ -1035,7 +1035,7 @@ void ArgumentCoder<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>::
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.memberAfterTuple)>, int>);
     static_assert(static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer) == 1);
     static_assert(BitsInIncreasingOrder<
-        , static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
+        static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
         , static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Other)
     >::value);
 
@@ -1060,7 +1060,7 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> A
     std::optional<WebCore::PlatformLayerIdentifier> layerlayerIDForEncoding { };
     if (*changedProperties & WebCore::ScrollingStateNode::Property::Layer) {
         if (auto deserialized = decoder.decode<std::optional<WebCore::PlatformLayerIdentifier>>())
-            changedProperties = WTFMove(*deserialized);
+            layerlayerIDForEncoding = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
@@ -1068,7 +1068,7 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> A
     bool otherMember { };
     if (*changedProperties & WebCore::ScrollingStateNode::Property::Other) {
         if (auto deserialized = decoder.decode<bool>())
-            changedProperties = WTFMove(*deserialized);
+            otherMember = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
@@ -1080,8 +1080,8 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> A
             WTFMove(*scrollingNodeID),
             WTFMove(*children),
             WTFMove(*changedProperties),
-            WTFMove(*layerlayerIDForEncoding),
-            WTFMove(*otherMember),
+            WTFMove(layerlayerIDForEncoding),
+            WTFMove(otherMember),
             WTFMove(*memberAfterTuple)
         )
     };

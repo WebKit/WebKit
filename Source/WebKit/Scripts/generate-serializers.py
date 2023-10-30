@@ -464,7 +464,7 @@ def check_type_members(type, checking_parent_class):
             elif member.optional_tuple_bit():
                 if member.condition is not None:
                     result.append('#if ' + member.condition)
-                result.append('        ' + (', ' if i > 1 else '') + 'static_cast<uint64_t>(' + member.optional_tuple_bit() + ')')
+                result.append('        ' + (', ' if optional_tuple_state == 'middle' else '') + 'static_cast<uint64_t>(' + member.optional_tuple_bit() + ')')
                 if member.condition is not None:
                     result.append('#endif')
                 optional_tuple_state = 'middle'
@@ -562,7 +562,7 @@ def decode_type(type):
                 result.append('    ' + member.type + ' ' + sanitized_variable_name + ' { };')
                 result.append('    if (*' + bits_name + ' & ' + member.optional_tuple_bit() + ') {')
                 result.append('        if (auto deserialized = decoder.decode<' + member.type + '>())')
-                result.append('            ' + bits_name + ' = WTFMove(*deserialized);')
+                result.append('            ' + sanitized_variable_name + ' = WTFMove(*deserialized);')
                 result.append('        else')
                 result.append('            return std::nullopt;')
                 result.append('    }')
@@ -611,7 +611,7 @@ def construct_type(type, specialization, indentation):
         member = serialized_members[i]
         if member.condition is not None:
             result.append('#if ' + member.condition)
-        result.append(indent(indentation + 1) + 'WTFMove(*' + sanitize_string_for_variable_name(member.name) + ')' + ('' if i == len(serialized_members) - 1 else ','))
+        result.append(indent(indentation + 1) + 'WTFMove(' + ('' if member.optional_tuple_bit() else '*') + sanitize_string_for_variable_name(member.name) + ')' + ('' if i == len(serialized_members) - 1 else ','))
         if member.condition is not None:
             result.append('#endif')
     if type.create_using or type.return_ref:

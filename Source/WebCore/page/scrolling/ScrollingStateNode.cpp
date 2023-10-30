@@ -57,7 +57,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     scrollingStateTree().addNode(*this);
 }
 
-ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, Vector<Ref<ScrollingStateNode>>&& children)
+ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
     , m_changedProperties(changedProperties)

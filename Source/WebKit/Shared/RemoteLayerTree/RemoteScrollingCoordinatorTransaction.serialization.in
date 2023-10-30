@@ -52,8 +52,104 @@ header: <WebCore/ScrollingStatePositionedNode.h>
 
 [RefCounted] class WebCore::ScrollingStateFrameHostingNode {
     WebCore::ScrollingNodeID scrollingNodeID()
-    OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
-    std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
     Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
 }
 
+[RefCounted] class WebCore::ScrollingStateFrameScrollingNode {
+    bool isMainFrame()
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollableAreaSize] WebCore::FloatSize scrollableAreaSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::TotalContentsSize] WebCore::FloatSize totalContentsSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReachableContentsSize] WebCore::FloatSize reachableContentsSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollPosition] WebCore::FloatPoint scrollPosition()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollOrigin] WebCore::IntPoint scrollOrigin()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollableAreaParams] WebCore::ScrollableAreaParameters scrollableAreaParameters()
+#if ENABLE(SCROLLING_THREAD)
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReasonsForSynchronousScrolling] OptionSet<WebCore::SynchronousScrollingReason> synchronousScrollingReasons()
+#endif
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::RequestedScrollData requestedScrollData()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::SnapOffsetsInfo] WebCore::FloatScrollSnapOffsetsInfo snapOffsetsInfo()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex] std::optional<unsigned> currentHorizontalSnapPointIndex()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex] std::optional<unsigned> currentVerticalSnapPointIndex()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::IsMonitoringWheelEvents] bool isMonitoringWheelEvents()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollContainerLayer] std::optional<WebCore::PlatformLayerIdentifier> scrollContainerLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrolledContentsLayer] std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::HorizontalScrollbarLayer] std::optional<WebCore::PlatformLayerIdentifier> horizontalScrollbarLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::VerticalScrollbarLayer] std::optional<WebCore::PlatformLayerIdentifier> verticalScrollbarLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ContentAreaHoverState] bool mouseIsOverContentArea()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FrameScaleFactor] float frameScaleFactor()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::EventTrackingRegion] WebCore::EventTrackingRegions eventTrackingRegions()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RootContentsLayer] std::optional<WebCore::PlatformLayerIdentifier> rootContentsLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CounterScrollingLayer] std::optional<WebCore::PlatformLayerIdentifier> counterScrollingLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::InsetClipLayer] std::optional<WebCore::PlatformLayerIdentifier> insetClipLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ContentShadowLayer] std::optional<WebCore::PlatformLayerIdentifier> contentShadowLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::HeaderHeight] int headerHeight()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FooterHeight] int footerHeight()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::BehaviorForFixedElements] WebCore::ScrollBehaviorForFixedElements scrollBehaviorForFixedElements()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::TopContentInset] float topContentInset()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame] bool fixedElementsLayoutRelativeToFrame()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport] bool visualViewportIsSmallerThanLayoutViewport()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled] bool asyncFrameOrOverflowScrollingEnabled()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking] bool wheelEventGesturesBecomeNonBlocking();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled] bool scrollingPerformanceTestingEnabled();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::LayoutViewport] WebCore::FloatRect layoutViewport();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MinLayoutViewportOrigin] WebCore::FloatPoint minLayoutViewportOrigin();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MaxLayoutViewportOrigin] WebCore::FloatPoint maxLayoutViewportOrigin();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::OverrideVisualViewportSize] std::optional<WebCore::FloatSize> overrideVisualViewportSize();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::OverlayScrollbarsEnabled] bool overlayScrollbarsEnabled();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::KeyboardScrollData] WebCore::RequestedKeyboardScrollData keyboardScrollData()
+}
+
+[RefCounted] class WebCore::ScrollingStateOverflowScrollingNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollableAreaSize] WebCore::FloatSize scrollableAreaSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::TotalContentsSize] WebCore::FloatSize totalContentsSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReachableContentsSize] WebCore::FloatSize reachableContentsSize()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollPosition] WebCore::FloatPoint scrollPosition()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollOrigin] WebCore::IntPoint scrollOrigin()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollableAreaParams] WebCore::ScrollableAreaParameters scrollableAreaParameters()
+#if ENABLE(SCROLLING_THREAD)
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ReasonsForSynchronousScrolling] OptionSet<WebCore::SynchronousScrollingReason> synchronousScrollingReasons()
+#endif
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RequestedScrollPosition] WebCore::RequestedScrollData requestedScrollData()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::SnapOffsetsInfo] WebCore::FloatScrollSnapOffsetsInfo snapOffsetsInfo()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex] std::optional<unsigned> currentHorizontalSnapPointIndex()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex] std::optional<unsigned> currentVerticalSnapPointIndex()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::IsMonitoringWheelEvents] bool isMonitoringWheelEvents()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollContainerLayer] std::optional<WebCore::PlatformLayerIdentifier> scrollContainerLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrolledContentsLayer] std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::HorizontalScrollbarLayer] std::optional<WebCore::PlatformLayerIdentifier> horizontalScrollbarLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::VerticalScrollbarLayer] std::optional<WebCore::PlatformLayerIdentifier> verticalScrollbarLayer().layerIDForEncoding();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ContentAreaHoverState] bool mouseIsOverContentArea()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+};
+
+[CustomHeader] struct WebCore::ScrollbarHoverState {
+    bool mouseIsOverHorizontalScrollbar;
+    bool mouseIsOverVerticalScrollbar;
+};
+
+[CustomHeader] struct WebCore::MouseLocationState {
+    WebCore::IntPoint locationInHorizontalScrollbar;
+    WebCore::IntPoint locationInVerticalScrollbar;
+};
+
+[CustomHeader] struct WebCore::ScrollbarEnabledState {
+    bool horizontalScrollbarIsEnabled;
+    bool verticalScrollbarIsEnabled;
+};
