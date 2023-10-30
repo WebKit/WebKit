@@ -1981,8 +1981,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 
 webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
 
-webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
-
 webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
 # webkit.org/b/263027 REGRESSION ( Sonoma ): [ Sonoma wk2 ] 3 tests in webrtc are consistent failure
