@@ -336,6 +336,21 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
             updateNowPlayingInfo();
         });
     }
+
+#if USE(AUDIO_SESSION)
+    // De-activate the audio session if the last playing session is:
+    // * An audio presentation
+    // * Is in the ended state
+    // * Has a short duration
+    // This allows other applications to resume playback after an "alert-like" audio
+    // is played by web content.
+
+    if (!anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::Playing; })
+        && session.presentationType() == PlatformMediaSession::MediaType::Audio
+        && session.isEnded()
+        && session.isLongEnoughForMainContent())
+        maybeDeactivateAudioSession();
+#endif
 }
 
 void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session, bool)

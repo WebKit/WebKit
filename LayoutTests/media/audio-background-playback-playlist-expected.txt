@@ -1,6 +1,6 @@
 
 RUN(internals.setMediaElementRestrictions(audio, "RequireUserGestureForAudioRateChange,RequireUserGestureToControlControlsManager"))
-RUN(audio.src = findMediaFile("audio", "content/test"))
+RUN(audio.src = findMediaFile("audio", "content/silence"))
 EVENT(canplaythrough)
 RUN(audio.play())
 EVENT(playing)
@@ -10,7 +10,7 @@ RUN(audio.currentTime = audio.duration - 0.1)
 EVENT(ended)
 RUN(audio.src = "")
 RUN(audio.load())
-EXPECTED (internals.bestMediaElementForRemoteControls("NowPlaying") == '[object HTMLAudioElement]') OK
+EXPECTED (internals.bestMediaElementForRemoteControls("NowPlaying") == 'null') OK
 RUN(audio.src = findMediaFile("audio", "content/test"))
 RUN(audio.load())
 EVENT(canplaythrough)

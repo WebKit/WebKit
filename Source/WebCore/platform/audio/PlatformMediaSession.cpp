@@ -32,6 +32,7 @@
 #include "MediaPlayer.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/MediaTime.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -335,6 +336,16 @@ bool PlatformMediaSession::isAudible() const
     return m_client.isAudible();
 }
 
+bool PlatformMediaSession::isEnded() const
+{
+    return m_client.isEnded();
+}
+
+MediaTime PlatformMediaSession::duration() const
+{
+    return m_client.mediaSessionDuration();
+}
+
 bool PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction() const
 {
     return m_client.shouldOverrideBackgroundLoadingRestriction();
@@ -429,6 +440,11 @@ WTFLogChannel& PlatformMediaSession::logChannel() const
     return LogMedia;
 }
 #endif
+
+MediaTime PlatformMediaSessionClient::mediaSessionDuration() const
+{
+    return MediaTime::invalidTime();
+}
 
 }
 
