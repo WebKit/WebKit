@@ -1009,11 +1009,11 @@ CSSContentVisibilityEnabled:
   humanReadableDescription: "Enable CSS content-visibility"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
