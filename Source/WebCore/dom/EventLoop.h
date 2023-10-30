@@ -28,6 +28,7 @@
 #include "TaskSource.h"
 #include <optional>
 #include <wtf/ApproximateTime.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
@@ -152,7 +153,7 @@ private:
     mutable Markable<MonotonicTime> m_nextTimerFireTimeCache;
 };
 
-class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {
+class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
     WTF_MAKE_FAST_ALLOCATED;
 

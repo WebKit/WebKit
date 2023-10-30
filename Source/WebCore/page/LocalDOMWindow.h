@@ -143,6 +143,7 @@ public:
     void resumeFromBackForwardCache();
 
     WEBCORE_EXPORT LocalFrame* frame() const final;
+    RefPtr<LocalFrame> protectedFrame() const;
 
     RefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -257,6 +258,7 @@ public:
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
     PageConsoleClient* console() const;
+    CheckedPtr<PageConsoleClient> checkedConsole() const;
 
     void printErrorMessage(const String&) const;
 
@@ -405,6 +407,8 @@ public:
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
     Page* page() const;
+    CheckedPtr<Page> checkedPage() const;
+
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
 
     CookieStore& cookieStore();

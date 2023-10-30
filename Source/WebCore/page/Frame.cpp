@@ -121,4 +121,9 @@ Ref<WindowProxy> Frame::protectedWindowProxy() const
     return m_windowProxy;
 }
 
+CheckedRef<NavigationScheduler> Frame::checkedNavigationScheduler() const
+{
+    return m_navigationScheduler.get();
+}
+
 } // namespace WebCore

@@ -49,6 +49,7 @@ public:
 
     const GlobalWindowIdentifier& identifier() const { return m_identifier; }
     virtual Frame* frame() const = 0;
+    RefPtr<Frame> protectedFrame() const;
 
     virtual bool isLocalDOMWindow() const = 0;
     virtual bool isRemoteDOMWindow() const = 0;

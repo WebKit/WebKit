@@ -842,6 +842,11 @@ RefPtr<DeferredPromise> ScriptExecutionContext::takeDeferredPromise(DeferredProm
     return m_deferredPromises.take(promise);
 }
 
+CheckedRef<EventLoopTaskGroup> ScriptExecutionContext::checkedEventLoop()
+{
+    return eventLoop();
+}
+
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)
 {
     return WebCoreOpaqueRoot { context };

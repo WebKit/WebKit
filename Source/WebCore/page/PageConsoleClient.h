@@ -30,6 +30,7 @@
 
 #include <JavaScriptCore/ConsoleClient.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 
 namespace Inspector {
@@ -47,7 +48,7 @@ namespace WebCore {
 class Document;
 class Page;
 
-class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient {
+class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageConsoleClient(Page&);

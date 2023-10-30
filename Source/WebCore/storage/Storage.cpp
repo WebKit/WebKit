@@ -125,4 +125,9 @@ Vector<AtomString> Storage::supportedPropertyNames() const
     });
 }
 
+Ref<StorageArea> Storage::protectedArea() const
+{
+    return m_storageArea;
+}
+
 } // namespace WebCore
