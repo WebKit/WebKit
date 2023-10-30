@@ -152,6 +152,7 @@ public:
     virtual ~WebProcessPool();
 
     API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
+    Ref<API::ProcessPoolConfiguration> protectedConfiguration() { return m_configuration; }
 
     static Vector<Ref<WebProcessPool>> allProcessPools();
 
@@ -365,6 +366,7 @@ public:
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
 
     GPUProcessProxy& ensureGPUProcess();
+    Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
     // Network Process Management

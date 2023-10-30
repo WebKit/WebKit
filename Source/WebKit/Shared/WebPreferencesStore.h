@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringHash.h>
@@ -34,7 +35,7 @@
 
 namespace WebKit {
 
-struct WebPreferencesStore {
+struct WebPreferencesStore : public CanMakeCheckedPtr {
     WebPreferencesStore();
 
     using Value = std::variant<String, bool, uint32_t, double>;

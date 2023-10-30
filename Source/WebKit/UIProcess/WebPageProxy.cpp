@@ -3678,7 +3678,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     return true;
 }
 
-WebPreferencesStore WebPageProxy::preferencesStore() const
+const WebPreferencesStore& WebPageProxy::preferencesStore() const
 {
     return m_preferences->store();
 }

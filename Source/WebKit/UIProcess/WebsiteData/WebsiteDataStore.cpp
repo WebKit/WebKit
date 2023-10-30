@@ -108,10 +108,10 @@ static HashMap<String, PAL::SessionID>& activeGeneralStorageDirectories()
     return directoryToSessionMap;
 }
 
-static HashMap<PAL::SessionID, CheckedPtr<WebsiteDataStore>>& allDataStores()
+static HashMap<PAL::SessionID, CheckedRef<WebsiteDataStore>>& allDataStores()
 {
     RELEASE_ASSERT(isUIThread());
-    static NeverDestroyed<HashMap<PAL::SessionID, CheckedPtr<WebsiteDataStore>>> map;
+    static NeverDestroyed<HashMap<PAL::SessionID, CheckedRef<WebsiteDataStore>>> map;
     return map;
 }
 
@@ -129,7 +129,7 @@ WorkQueue& WebsiteDataStore::websiteDataStoreIOQueue()
 void WebsiteDataStore::forEachWebsiteDataStore(Function<void(WebsiteDataStore&)>&& function)
 {
     for (auto& dataStore : allDataStores().values())
-        function(*dataStore);
+        function(Ref { dataStore.get() });
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
@@ -253,8 +253,8 @@ bool WebsiteDataStore::defaultDataStoreExists()
 RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const WTF::UUID& identifier)
 {
     for (auto& dataStore : allDataStores().values()) {
-        if (dataStore && dataStore->configuration().identifier() == identifier)
-            return dataStore.get();
+        if (dataStore->configuration().identifier() == identifier)
+            return dataStore.ptr();
     }
 
     return nullptr;
@@ -267,8 +267,8 @@ Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const WTF::UUID& 
 
     InitializeWebKit2();
     for (auto& dataStore : allDataStores().values()) {
-        if (dataStore && dataStore->configuration().identifier() == uuid)
-            return Ref { *dataStore };
+        if (dataStore->configuration().identifier() == uuid)
+            return Ref { dataStore.get() };
     }
 
     auto configuration = WebsiteDataStoreConfiguration::create(uuid);
@@ -278,7 +278,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const WTF::UUID& 
 
 void WebsiteDataStore::registerWithSessionIDMap()
 {
-    auto result = allDataStores().add(m_sessionID, this);
+    auto result = allDataStores().add(m_sessionID, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -2289,7 +2289,7 @@ void WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized(CompletionHandle
     propagateAppBoundDomains(globalDefaultDataStore().get(), *appBoundDomains);
 
     for (auto& store : allDataStores().values())
-        propagateAppBoundDomains(store.get(), *appBoundDomains);
+        propagateAppBoundDomains(Ref { store.get() }.ptr(), *appBoundDomains);
 }
 
 void WebsiteDataStore::setAppBoundDomainsForITP(const HashSet<WebCore::RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
@@ -2320,7 +2320,7 @@ void WebsiteDataStore::forwardManagedDomainsToITPIfInitialized(CompletionHandler
     propagateManagedDomains(globalDefaultDataStore().get(), *managedDomains);
 
     for (auto& store : allDataStores().values())
-        propagateManagedDomains(store.get(), *managedDomains);
+        propagateManagedDomains(Ref { store.get() }.ptr(), *managedDomains);
 }
 
 void WebsiteDataStore::setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)

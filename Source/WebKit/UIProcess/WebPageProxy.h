@@ -1882,7 +1882,7 @@ public:
 
     void getTextFragmentMatch(CompletionHandler<void(const String&)>&&);
 
-    WebPreferencesStore preferencesStore() const;
+    const WebPreferencesStore& preferencesStore() const;
 
     void setDefersLoadingForTesting(bool);
 
