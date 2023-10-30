@@ -1213,8 +1213,10 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
             }
         }
 
-        if (entries.isEmpty())
+        if (entries.isEmpty()) {
+            ++group;
             continue;
+        }
 
         groups.append(group);
         finalizeArgumentBufferStruct(group++, entries);
