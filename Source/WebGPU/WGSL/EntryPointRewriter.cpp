@@ -142,39 +142,71 @@ void EntryPointRewriter::checkReturnType()
     if (m_stage == ShaderStage::Compute)
         return;
 
-    if (auto* maybeReturnType = m_function.maybeReturnType()) {
-        if (!is<AST::IdentifierExpression>(*maybeReturnType))
+    auto* maybeReturnType = m_function.maybeReturnType();
+    if (!maybeReturnType)
+        return;
+    if (!is<AST::IdentifierExpression>(*maybeReturnType))
+        return;
+
+    auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
+    if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
+        const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
+            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+            String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
+            auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName),
+                AST::StructureMember::List(structType->structure.members()),
+                AST::Attribute::List { },
+                role
+            );
+            m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+            auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName)
+            );
+            returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
+            m_shaderModule.replace(namedTypeName, returnType);
+        };
+
+        if (m_stage == ShaderStage::Fragment) {
+            duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
             return;
-
-        auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
-        if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
-            const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
-                ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
-                String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
-                auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
-                    SourceSpan::empty(),
-                    AST::Identifier::make(returnStructName),
-                    AST::StructureMember::List(structType->structure.members()),
-                    AST::Attribute::List { },
-                    role
-                );
-                m_shaderModule.append(m_shaderModule.structures(), returnStruct);
-                auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
-                    SourceSpan::empty(),
-                    AST::Identifier::make(returnStructName)
-                );
-                returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-                m_shaderModule.replace(namedTypeName, returnType);
-            };
-
-            if (m_stage == ShaderStage::Fragment) {
-                duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
-                return;
-            }
-
-            duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
         }
+
+        duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
+        return;
     }
+
+    if (m_stage != ShaderStage::Fragment || !m_function.returnTypeBuiltin().has_value())
+        return;
+
+    String returnStructName = makeString("__", m_function.name(), "_FragmentOutput");
+    auto& fieldType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make(namedTypeName.identifier())
+    );
+    fieldType.m_inferredType = namedTypeName.inferredType();
+    auto& member = m_shaderModule.astBuilder().construct<AST::StructureMember>(
+        SourceSpan::empty(),
+        AST::Identifier::make("__value"_s),
+        fieldType,
+        AST::Attribute::List(m_function.returnAttributes())
+    );
+    auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+        SourceSpan::empty(),
+        AST::Identifier::make(returnStructName),
+        AST::StructureMember::List({ member }),
+        AST::Attribute::List { },
+        AST::StructureRole::FragmentOutputWrapper
+    );
+    m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+    auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make(returnStructName)
+    );
+    returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
+    m_shaderModule.replace(namedTypeName, returnType);
 }
 
 void EntryPointRewriter::constructInputStruct()

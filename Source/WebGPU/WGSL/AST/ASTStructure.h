@@ -46,6 +46,7 @@ enum class StructureRole : uint8_t {
     UserDefinedResource,
     PackedResource,
     FragmentOutput,
+    FragmentOutputWrapper,
 };
 
 class Structure final : public Declaration {

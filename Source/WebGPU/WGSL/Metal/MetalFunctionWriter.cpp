@@ -355,6 +355,18 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 }
             }
             m_stringBuilder.append(m_indent, "{ }\n");
+        } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper) {
+            ASSERT(structDecl.members().size() == 1);
+            auto& member = structDecl.members()[0];
+
+            m_stringBuilder.append("\n");
+            m_stringBuilder.append(m_indent, "template<typename T>\n");
+            m_stringBuilder.append(m_indent, structDecl.name(), "(T value)\n");
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, ": ", member.name(), "(value)\n");
+            }
+            m_stringBuilder.append(m_indent, "{ }\n");
         }
     }
     m_stringBuilder.append(m_indent, "};\n\n");
@@ -505,7 +517,7 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     // Built-in attributes are only valid for parameters. If a struct member originally
     // had a built-in attribute it must have already been hoisted into a parameter, but
     // we keep the original struct so we can reconstruct it.
-    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::FragmentOutput)
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::FragmentOutput && *m_structRole != AST::StructureRole::FragmentOutputWrapper)
         return;
 
     switch (builtin.builtin()) {
@@ -595,6 +607,8 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::UserDefinedResource:
         case AST::StructureRole::PackedResource:
             return;
+        case AST::StructureRole::FragmentOutputWrapper:
+            RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
             m_stringBuilder.append("[[color(", location.location().constantValue()->toInt(), ")]]");
             return;

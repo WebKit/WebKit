@@ -15,3 +15,11 @@ fn main() -> S {
   output.depth = 1;
   return output;
 }
+
+// RUN: %metal-compile main2
+@group(0) @binding(1) var inputTexture: texture_2d<f32>;
+@fragment fn main2(@builtin(position) fragcoord : vec4<f32>) -> @builtin(frag_depth) f32
+{
+    var depthValue : vec4<f32> = textureLoad(inputTexture, vec2<i32>(fragcoord.xy), 0);
+    return depthValue.x;
+}
