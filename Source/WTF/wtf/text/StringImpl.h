@@ -1165,7 +1165,7 @@ inline void StringImpl::deref()
 
 inline UChar StringImpl::at(unsigned i) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
+    RELEASE_ASSERT(i < m_length);
     return is8Bit() ? m_data8[i] : m_data16[i];
 }
 
