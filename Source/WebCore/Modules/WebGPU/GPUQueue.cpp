@@ -246,10 +246,236 @@ static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
     return PixelFormat::RGBA8;
 }
 
-void GPUQueue::copyExternalImageToTexture(
-    const GPUImageCopyExternalImage& source,
-    const GPUImageCopyTextureTagged& destination,
-    const GPUExtent3D& copySize)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed, it is to unblock
+// compiler <-> pipeline dependencies
+static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format, size_t& sizeInBytes, bool& freeData)
+{
+    freeData = false;
+
+#if PLATFORM(COCOA)
+    switch (format) {
+    case GPUTextureFormat::R8unorm:
+    case GPUTextureFormat::R8snorm:
+    case GPUTextureFormat::R8uint:
+    case GPUTextureFormat::R8sint: {
+        freeData = true;
+        uint8_t* data = (uint8_t*)malloc(sizeInBytes / 4);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = rgbaBytes[i];
+
+        sizeInBytes = sizeInBytes / 4;
+        return data;
+    }
+
+    // 16-bit formats
+    case GPUTextureFormat::R16uint:
+    case GPUTextureFormat::R16sint: {
+        freeData = true;
+        uint16_t* data = (uint16_t*)malloc(sizeInBytes / 2);
+        for (size_t i = 0; i < sizeInBytes; i += 4)
+            data[i] = rgbaBytes[i];
+
+        sizeInBytes = sizeInBytes / 2;
+        return data;
+    }
+
+    case GPUTextureFormat::R16float: {
+        freeData = true;
+        __fp16* data = (__fp16*)malloc(sizeInBytes / 2);
+        for (size_t i = 0; i < sizeInBytes; i += 4)
+            data[i] = rgbaBytes[i];
+
+        sizeInBytes = sizeInBytes / 2;
+        return data;
+    }
+
+    case GPUTextureFormat::Rg8unorm:
+    case GPUTextureFormat::Rg8snorm:
+    case GPUTextureFormat::Rg8uint:
+    case GPUTextureFormat::Rg8sint: {
+        freeData = true;
+        uint8_t* data = (uint8_t*)malloc(sizeInBytes / 2);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 2, ++i0) {
+            data[i0] = rgbaBytes[i];
+            data[i0 + 1] = rgbaBytes[i + 1];
+        }
+
+        sizeInBytes = sizeInBytes / 2;
+        return data;
+    }
+
+    // 32-bit formats
+    case GPUTextureFormat::R32uint:
+    case GPUTextureFormat::R32sint:
+    case GPUTextureFormat::R32float:
+    case GPUTextureFormat::Rg16uint:
+    case GPUTextureFormat::Rg16sint:
+    case GPUTextureFormat::Rg16float:
+    case GPUTextureFormat::Rgba8unorm:
+    case GPUTextureFormat::Rgba8unormSRGB:
+    case GPUTextureFormat::Rgba8snorm:
+    case GPUTextureFormat::Rgba8uint:
+    case GPUTextureFormat::Rgba8sint:
+    case GPUTextureFormat::Bgra8unorm:
+    case GPUTextureFormat::Bgra8unormSRGB:
+    case GPUTextureFormat::Rgb9e5ufloat:
+    case GPUTextureFormat::Rgb10a2uint:
+    case GPUTextureFormat::Rgb10a2unorm:
+    case GPUTextureFormat::Rg11b10ufloat:
+        return rgbaBytes;
+
+    // 64-bit formats
+    case GPUTextureFormat::Rg32uint:
+    case GPUTextureFormat::Rg32sint: {
+        freeData = true;
+        uint32_t* data = (uint32_t*)malloc((sizeInBytes / 2) * sizeof(uint32_t));
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
+            data[i0] = rgbaBytes[i];
+            data[i0 + 1] = rgbaBytes[i + 1];
+        }
+
+        sizeInBytes = sizeInBytes * sizeof(uint32_t);
+        return data;
+    }
+
+    case GPUTextureFormat::Rg32float: {
+        freeData = true;
+        float* data = (float*)malloc((sizeInBytes / 2) * sizeof(float));
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
+            data[i0] = rgbaBytes[i];
+            data[i0 + 1] = rgbaBytes[i + 1];
+        }
+
+        sizeInBytes = sizeInBytes * sizeof(float);
+        return data;
+    }
+
+    case GPUTextureFormat::Rgba16uint:
+    case GPUTextureFormat::Rgba16sint: {
+        freeData = true;
+        uint16_t* data = (uint16_t*)malloc(sizeInBytes * sizeof(uint16_t));
+        for (size_t i = 0; i < sizeInBytes; ++i)
+            data[i] = rgbaBytes[i];
+
+        sizeInBytes = sizeInBytes * sizeof(uint16_t);
+        return data;
+    }
+
+    case GPUTextureFormat::Rgba16float: {
+        freeData = true;
+        __fp16* data = (__fp16*)malloc(sizeInBytes * sizeof(__fp16));
+        for (size_t i = 0; i < sizeInBytes; ++i)
+            data[i] = rgbaBytes[i] / 255.f;
+
+        sizeInBytes = sizeInBytes * sizeof(__fp16);
+        return data;
+    }
+
+    // 128-bit formats
+    case GPUTextureFormat::Rgba32uint:
+    case GPUTextureFormat::Rgba32sint: {
+        freeData = true;
+        uint32_t* data = (uint32_t*)malloc(sizeInBytes * sizeof(uint32_t));
+        for (size_t i = 0; i < sizeInBytes; ++i)
+            data[i] = rgbaBytes[i];
+
+        sizeInBytes = sizeInBytes * sizeof(uint32_t);
+        return data;
+    }
+
+    case GPUTextureFormat::Rgba32float: {
+        freeData = true;
+        float* data = (float*)malloc(sizeInBytes * sizeof(float));
+        for (size_t i = 0; i < sizeInBytes; ++i)
+            data[i] = rgbaBytes[i] / 255.f;
+
+        sizeInBytes = sizeInBytes * sizeof(float);
+        return data;
+    }
+
+    // Depth/stencil formats
+    case GPUTextureFormat::Stencil8:
+    case GPUTextureFormat::Depth16unorm:
+    case GPUTextureFormat::Depth24plus:
+    case GPUTextureFormat::Depth24plusStencil8:
+    case GPUTextureFormat::Depth32float:
+
+        // depth32float-stencil8 feature
+    case GPUTextureFormat::Depth32floatStencil8:
+
+    // BC compressed formats usable if texture-compression-bc is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case GPUTextureFormat::Bc1RgbaUnorm:
+    case GPUTextureFormat::Bc1RgbaUnormSRGB:
+    case GPUTextureFormat::Bc2RgbaUnorm:
+    case GPUTextureFormat::Bc2RgbaUnormSRGB:
+    case GPUTextureFormat::Bc3RgbaUnorm:
+    case GPUTextureFormat::Bc3RgbaUnormSRGB:
+    case GPUTextureFormat::Bc4RUnorm:
+    case GPUTextureFormat::Bc4RSnorm:
+    case GPUTextureFormat::Bc5RgUnorm:
+    case GPUTextureFormat::Bc5RgSnorm:
+    case GPUTextureFormat::Bc6hRgbUfloat:
+    case GPUTextureFormat::Bc6hRgbFloat:
+    case GPUTextureFormat::Bc7RgbaUnorm:
+    case GPUTextureFormat::Bc7RgbaUnormSRGB:
+
+    // ETC2 compressed formats usable if texture-compression-etc2 is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case GPUTextureFormat::Etc2Rgb8unorm:
+    case GPUTextureFormat::Etc2Rgb8unormSRGB:
+    case GPUTextureFormat::Etc2Rgb8a1unorm:
+    case GPUTextureFormat::Etc2Rgb8a1unormSRGB:
+    case GPUTextureFormat::Etc2Rgba8unorm:
+    case GPUTextureFormat::Etc2Rgba8unormSRGB:
+    case GPUTextureFormat::EacR11unorm:
+    case GPUTextureFormat::EacR11snorm:
+    case GPUTextureFormat::EacRg11unorm:
+    case GPUTextureFormat::EacRg11snorm:
+
+    // ASTC compressed formats usable if texture-compression-astc is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case GPUTextureFormat::Astc4x4Unorm:
+    case GPUTextureFormat::Astc4x4UnormSRGB:
+    case GPUTextureFormat::Astc5x4Unorm:
+    case GPUTextureFormat::Astc5x4UnormSRGB:
+    case GPUTextureFormat::Astc5x5Unorm:
+    case GPUTextureFormat::Astc5x5UnormSRGB:
+    case GPUTextureFormat::Astc6x5Unorm:
+    case GPUTextureFormat::Astc6x5UnormSRGB:
+    case GPUTextureFormat::Astc6x6Unorm:
+    case GPUTextureFormat::Astc6x6UnormSRGB:
+    case GPUTextureFormat::Astc8x5Unorm:
+    case GPUTextureFormat::Astc8x5UnormSRGB:
+    case GPUTextureFormat::Astc8x6Unorm:
+    case GPUTextureFormat::Astc8x6UnormSRGB:
+    case GPUTextureFormat::Astc8x8Unorm:
+    case GPUTextureFormat::Astc8x8UnormSRGB:
+    case GPUTextureFormat::Astc10x5Unorm:
+    case GPUTextureFormat::Astc10x5UnormSRGB:
+    case GPUTextureFormat::Astc10x6Unorm:
+    case GPUTextureFormat::Astc10x6UnormSRGB:
+    case GPUTextureFormat::Astc10x8Unorm:
+    case GPUTextureFormat::Astc10x8UnormSRGB:
+    case GPUTextureFormat::Astc10x10Unorm:
+    case GPUTextureFormat::Astc10x10UnormSRGB:
+    case GPUTextureFormat::Astc12x10Unorm:
+    case GPUTextureFormat::Astc12x10UnormSRGB:
+    case GPUTextureFormat::Astc12x12Unorm:
+    case GPUTextureFormat::Astc12x12UnormSRGB:
+        return rgbaBytes;
+    }
+
+    return rgbaBytes;
+#else
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(sizeInBytes);
+
+    return rgbaBytes;
+#endif
+}
+
+void GPUQueue::copyExternalImageToTexture(const GPUImageCopyExternalImage& source, const GPUImageCopyTextureTagged& destination, const GPUExtent3D& copySize)
 {
     RefPtr imageBuffer = imageBufferForSource(source.source);
     if (!imageBuffer || !destination.texture)
@@ -264,8 +490,12 @@ void GPUQueue::copyExternalImageToTexture(
 
     auto sizeInBytes = pixelBuffer->sizeInBytes();
     auto rows = size.height();
+    bool shouldFreeData;
+    void* pixelBufferData = copyToDestinationFormat(pixelBuffer->bytes(), destination.texture->format(), sizeInBytes, shouldFreeData);
     GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
-    m_backing->writeTexture(destination.convertToBacking(), pixelBuffer->bytes(), sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+    m_backing->writeTexture(destination.convertToBacking(), pixelBufferData, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+    if (shouldFreeData)
+        free(pixelBufferData);
 }
 
 } // namespace WebCore
