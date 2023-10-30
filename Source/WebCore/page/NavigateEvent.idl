@@ -1,0 +1,49 @@
+[
+  EnabledBySetting=NavigationAPIEnabled,
+  Exposed=Window
+] interface NavigateEvent : Event {
+  constructor([AtomString] DOMString type, NavigateEventInit eventInitDict);
+
+  readonly attribute NavigationNavigationType navigationType;
+  readonly attribute NavigationDestination destination;
+  readonly attribute boolean canIntercept;
+  readonly attribute boolean userInitiated;
+  readonly attribute boolean hashChange;
+  readonly attribute AbortSignal signal;
+  readonly attribute DOMFormData? formData;
+  readonly attribute DOMString? downloadRequest;
+  readonly attribute any info;
+  readonly attribute boolean hasUAVisualTransition;
+
+  undefined intercept(optional NavigationInterceptOptions options = {});
+  undefined scroll();
+};
+
+dictionary NavigateEventInit : EventInit {
+  NavigationNavigationType navigationType = "push";
+  required NavigationDestination destination;
+  boolean canIntercept = false;
+  boolean userInitiated = false;
+  boolean hashChange = false;
+  required AbortSignal signal;
+  DOMFormData? formData = null;
+  DOMString? downloadRequest = null;
+  any info;
+  boolean hasUAVisualTransition = false;
+};
+
+dictionary NavigationInterceptOptions {
+  NavigationInterceptHandler handler;
+  NavigationFocusReset focusReset;
+  NavigationScrollBehavior scroll;
+};
+
+enum NavigationFocusReset {
+  "after-transition",
+  "manual"
+};
+
+enum NavigationScrollBehavior {
+  "after-transition",
+  "manual"
+};

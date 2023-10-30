@@ -59,6 +59,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+#include "Logging.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
