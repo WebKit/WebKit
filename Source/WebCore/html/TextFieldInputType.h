@@ -132,6 +132,8 @@ private:
     void displaySuggestions(DataListSuggestionActivationType);
     void closeSuggestions();
 
+    void showPicker() override;
+
     // DataListSuggestionsClient
     IntRect elementRectInRootViewCoordinates() const final;
     Vector<DataListSuggestion> suggestions() final;

@@ -187,6 +187,14 @@ void TextFieldInputType::handleClickEvent(MouseEvent&)
     if (element()->focused() && element()->list())
         displaySuggestions(DataListSuggestionActivationType::ControlClicked);
 }
+
+void TextFieldInputType::showPicker()
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (element()->list())
+        displaySuggestions(DataListSuggestionActivationType::ControlClicked);
+#endif
+}
 #endif
 
 auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler

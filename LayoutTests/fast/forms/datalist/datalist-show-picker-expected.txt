@@ -1,0 +1,4 @@
+
+Is showing suggestions? true
+
+This test verifies that datalist suggestions UI is shown when calling showPicker.
