@@ -1338,7 +1338,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
     return true;
 }
 
-MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage)
+MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage, WGPUTextureFormat format)
 {
     MTLTextureUsage result = MTLTextureUsageUnknown;
     if (usage & WGPUTextureUsage_TextureBinding)
@@ -1347,8 +1347,8 @@ MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage)
         result |= MTLTextureUsageShaderWrite;
     if (usage & WGPUTextureUsage_RenderAttachment)
         result |= MTLTextureUsageRenderTarget;
-    // FIXME(PERFORMANCE): Consider setting MTLTextureUsagePixelFormatView on all depth/stencil textures,
-    // because supposedly it's free and it could be useful in writeBuffer().
+    if (Texture::isDepthOrStencilFormat(format))
+        result |= MTLTextureUsagePixelFormatView;
     return result;
 }
 
@@ -1991,7 +1991,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
 
-    textureDescriptor.usage = Texture::usage(descriptor.usage);
+    textureDescriptor.usage = Texture::usage(descriptor.usage, descriptor.format);
 
     switch (descriptor.dimension) {
     case WGPUTextureDimension_1D:
@@ -2291,6 +2291,18 @@ static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t m
     return extent;
 }
 
+static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPixelFormat sourcePixelFormat)
+{
+    switch (viewPixelFormat) {
+    case MTLPixelFormatStencil8:
+        return sourcePixelFormat == MTLPixelFormatDepth32Float_Stencil8 ? MTLPixelFormatX32_Stencil8 : sourcePixelFormat;
+    case MTLPixelFormatDepth32Float:
+        return sourcePixelFormat;
+    default:
+        return viewPixelFormat;
+    }
+}
+
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
     if (inputDescriptor.nextInChain)
@@ -2353,7 +2365,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
 
-    id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:pixelFormat textureType:textureType levels:levels slices:slices];
+    id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:resolvedPixelFormat(pixelFormat, m_texture.pixelFormat) textureType:textureType levels:levels slices:slices];
     if (!texture)
         return TextureView::createInvalid(m_device);
 

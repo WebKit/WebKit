@@ -110,7 +110,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         WGPUTextureAspect_All,
     };
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:descriptor.width height:descriptor.height mipmapped:NO];
-    textureDescriptor.usage = Texture::usage(descriptor.usage);
+    textureDescriptor.usage = Texture::usage(descriptor.usage, descriptor.format);
     for (IOSurface *iosurface in m_ioSurfaces) {
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);

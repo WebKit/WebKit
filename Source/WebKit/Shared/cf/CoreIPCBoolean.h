@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#dictdef-gpupipelinedescriptorbase
+#pragma once
 
-[
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUPipelineDescriptorBase : GPUObjectDescriptorBase {
-    required (GPUPipelineLayout or GPUAutoLayoutMode) layout;
+#if USE(CF)
+
+#import "DataReference.h"
+
+#import <CoreFoundation/CoreFoundation.h>
+#import <wtf/RetainPtr.h>
+
+namespace WebKit {
+
+class CoreIPCBoolean {
+public:
+    CoreIPCBoolean(CFBooleanRef cfBoolean)
+        : value(CFBooleanGetValue(cfBoolean))
+    {
+    }
+
+    CoreIPCBoolean(bool value)
+        : value(value)
+    {
+    }
+
+    RetainPtr<CFBooleanRef> createBoolean() const
+    {
+        return value ? kCFBooleanTrue : kCFBooleanFalse;
+    }
+
+    bool value;
 };
+
+} // namespace WebKit
+
+#endif // USE(CF)

@@ -53,7 +53,7 @@ Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescript
     WGPUTextureViewDescriptor backingDescriptor {
         .nextInChain = nullptr,
         .label = label.data(),
-        .format = descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : m_convertToBackingContext->convertToBacking(m_format),
+        .format = descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : WGPUTextureFormat_Undefined,
         .dimension = descriptor && descriptor->dimension ? m_convertToBackingContext->convertToBacking(*descriptor->dimension) : WGPUTextureViewDimension_Undefined,
         .baseMipLevel = descriptor ? descriptor->baseMipLevel : 0,
         .mipLevelCount = descriptor && descriptor->mipLevelCount ? *descriptor->mipLevelCount : static_cast<uint32_t>(WGPU_MIP_LEVEL_COUNT_UNDEFINED),

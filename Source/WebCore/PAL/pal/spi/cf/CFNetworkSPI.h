@@ -551,4 +551,10 @@ WTF_EXTERN_C_END
 @property (setter=_setWebSearchContent:) BOOL _isWebSearchContent;
 @end
 
+#if HAVE(ALTERNATIVE_SERVICE)
+@interface _NSHTTPAlternativeServicesStorage (Staging_116927813)
+@property BOOL canSuspendLocked;
+@end
+#endif
+
 #endif // defined(__OBJC__)

@@ -52,6 +52,7 @@ public:
     Vector<AtomString> supportedPropertyNames() const;
 
     StorageArea& area() const { return m_storageArea.get(); }
+    Ref<StorageArea> protectedArea() const;
 
 private:
     Storage(LocalDOMWindow&, Ref<StorageArea>&&);

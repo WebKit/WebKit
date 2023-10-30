@@ -320,7 +320,7 @@ void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, u
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
-    [m_renderCommandEncoder setStencilReferenceValue:reference];
+    [m_renderCommandEncoder setStencilReferenceValue:(reference & 0xFF)];
 }
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)

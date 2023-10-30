@@ -80,6 +80,11 @@ Location& DOMWindow::location()
     return *m_location;
 }
 
+RefPtr<Frame> DOMWindow::protectedFrame() const
+{
+    return frame();
+}
+
 WebCoreOpaqueRoot root(DOMWindow* window)
 {
     return WebCoreOpaqueRoot { window };

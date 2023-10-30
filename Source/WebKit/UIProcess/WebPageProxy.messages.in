@@ -303,20 +303,12 @@ messages -> WebPageProxy {
     RequestCheckingOfString(WebKit::TextCheckerRequestID requestID, WebCore::TextCheckingRequestData request, int32_t insertionPoint)
 
     # Drag and drop messages
-#if ENABLE(DRAG_SUPPORT)
-    DidPerformDragControllerAction(std::optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect)
-    DidEndDragging();
-#endif
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
     StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, std::optional<WebKit::ShareableBitmap::Handle> dragImage, WebCore::IntPoint dragImageHotspot)
-#endif
-
-#if ENABLE(DRAG_SUPPORT)
-    DidPerformDragOperation(bool handled)
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)

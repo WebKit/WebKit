@@ -5018,85 +5018,78 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
 #if ENABLE(DRAG_SUPPORT)
 
 #if PLATFORM(GTK)
-void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, OptionSet<DragApplicationFlags> flags)
+void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, OptionSet<DragApplicationFlags> flags, CompletionHandler<void(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool, unsigned, WebCore::IntRect, WebCore::IntRect)>&& completionHandler)
 {
-    if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
-        return;
-    }
+    if (!m_page)
+        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { });
 
     DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags, anyDragDestinationAction(), m_identifier);
     switch (action) {
     case DragControllerAction::Entered: {
         auto resolvedDragOperation = m_page->dragController().dragEntered(WTFMove(dragData));
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }, { }));
-        return;
+        return completionHandler(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }, { });
     }
     case DragControllerAction::Updated: {
         auto resolvedDragOperation = m_page->dragController().dragUpdated(WTFMove(dragData));
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }, { }));
-        return;
+        return completionHandler(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }, { });
     }
     case DragControllerAction::Exited:
         m_page->dragController().dragExited(WTFMove(dragData));
-        return;
+        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { });
 
     case DragControllerAction::PerformDragOperation: {
         m_page->dragController().performDragOperation(WTFMove(dragData));
-        return;
+        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { });
     }
     }
     ASSERT_NOT_REACHED();
 }
 #else
-void WebPage::performDragControllerAction(DragControllerAction action, WebCore::DragData&& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsHandleArray)
+void WebPage::performDragControllerAction(DragControllerAction action, WebCore::DragData&& dragData, CompletionHandler<void(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool, unsigned, WebCore::IntRect, WebCore::IntRect)>&& completionHandler)
 {
-    if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
-        return;
-    }
+    if (!m_page)
+        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { });
 
     switch (action) {
     case DragControllerAction::Entered: {
         auto resolvedDragOperation = m_page->dragController().dragEntered(WTFMove(dragData));
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates(), m_page->dragCaretController().editableElementRectInRootViewCoordinates()));
-        return;
+        return completionHandler(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates(), m_page->dragCaretController().editableElementRectInRootViewCoordinates());
     }
     case DragControllerAction::Updated: {
         auto resolvedDragOperation = m_page->dragController().dragUpdated(WTFMove(dragData));
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates(), m_page->dragCaretController().editableElementRectInRootViewCoordinates()));
-        return;
+        return completionHandler(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates(), m_page->dragCaretController().editableElementRectInRootViewCoordinates());
     }
     case DragControllerAction::Exited:
         m_page->dragController().dragExited(WTFMove(dragData));
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
-        return;
-        
-    case DragControllerAction::PerformDragOperation: {
-        ASSERT(!m_pendingDropSandboxExtension);
-
-        m_pendingDropSandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
-        for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
-            if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
-                m_pendingDropExtensionsForFileUpload.append(extension);
-        }
-
-        bool handled = m_page->dragController().performDragOperation(WTFMove(dragData));
-
-        // If we started loading a local file, the sandbox extension tracker would have adopted this
-        // pending drop sandbox extension. If not, we'll play it safe and clear it.
-        m_pendingDropSandboxExtension = nullptr;
-
-        m_pendingDropExtensionsForFileUpload.clear();
-        send(Messages::WebPageProxy::DidPerformDragOperation(handled));
-        return;
-    }
+        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { });
+    case DragControllerAction::PerformDragOperation:
+        break;
     }
     ASSERT_NOT_REACHED();
 }
+
+void WebPage::performDragOperation(WebCore::DragData&& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsHandleArray, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(!m_pendingDropSandboxExtension);
+
+    m_pendingDropSandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+    for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
+        if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
+            m_pendingDropExtensionsForFileUpload.append(extension);
+    }
+
+    bool handled = m_page->dragController().performDragOperation(WTFMove(dragData));
+
+    // If we started loading a local file, the sandbox extension tracker would have adopted this
+    // pending drop sandbox extension. If not, we'll play it safe and clear it.
+    m_pendingDropSandboxExtension = nullptr;
+
+    m_pendingDropExtensionsForFileUpload.clear();
+    completionHandler(handled);
+}
 #endif
 
-void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
+void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask, CompletionHandler<void()>&& completionHandler)
 {
     IntPoint adjustedClientPosition(clientPosition.x() + m_page->dragController().dragOffset().x(), clientPosition.y() + m_page->dragController().dragOffset().y());
     IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController().dragOffset().x(), globalPosition.y() + m_page->dragController().dragOffset().y());
@@ -5105,12 +5098,12 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     RefPtr view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view)
-        return;
+        return completionHandler();
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap);
     localMainFrame->eventHandler().dragSourceEndedAt(event, dragOperationMask);
 
-    send(Messages::WebPageProxy::DidEndDragging());
+    completionHandler();
 
     m_isStartingDrag = false;
 }

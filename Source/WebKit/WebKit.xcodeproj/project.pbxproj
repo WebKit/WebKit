@@ -5194,6 +5194,8 @@
 		51D130521382EAC000351EDD /* SecItemResponseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemResponseData.h; sourceTree = "<group>"; };
 		51D130571382F10500351EDD /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		51D194352AEC1C8200E8E475 /* CFTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CFTypes.serialization.in; sourceTree = "<group>"; };
+		51D194392AEC9BC900E8E475 /* CoreIPCBoolean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCBoolean.h; sourceTree = "<group>"; };
+		51D1943A2AEC9BC900E8E475 /* CoreIPCBoolean.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCBoolean.serialization.in; sourceTree = "<group>"; };
 		51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPDFConfiguration.h; sourceTree = "<group>"; };
 		51D7E0AE2356616300A67D3A /* WKPDFConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFConfiguration.mm; sourceTree = "<group>"; };
 		51DAAEBF2AA198DE00DB2AA4 /* com.apple.WebKit.webpushd.relocatable.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.relocatable.mac.sb; sourceTree = "<group>"; };
@@ -8518,6 +8520,8 @@
 				51D194352AEC1C8200E8E475 /* CFTypes.serialization.in */,
 				5194B3861F192FB900FA4708 /* CookieStorageUtilsCF.h */,
 				5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */,
+				51D194392AEC9BC900E8E475 /* CoreIPCBoolean.h */,
+				51D1943A2AEC9BC900E8E475 /* CoreIPCBoolean.serialization.in */,
 			);
 			path = cf;
 			sourceTree = "<group>";

@@ -1799,7 +1799,6 @@ public:
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
     static constexpr Visibility initialVisibility();
-    static constexpr WhiteSpace initialWhiteSpace();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static float initialHorizontalBorderSpacing() { return 0; }
     static float initialVerticalBorderSpacing() { return 0; }

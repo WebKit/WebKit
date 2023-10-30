@@ -1393,9 +1393,8 @@ public:
     // Drag and drop support.
     void dragEntered(WebCore::DragData&, const String& dragStorageName = String());
     void dragUpdated(WebCore::DragData&, const String& dragStorageName = String());
-    void dragExited(WebCore::DragData&, const String& dragStorageName = String());
+    void dragExited(WebCore::DragData&);
     void performDragOperation(WebCore::DragData&, const String& dragStorageName, SandboxExtensionHandle&&, Vector<SandboxExtensionHandle>&&);
-    void didPerformDragOperation(bool handled);
 
     void didPerformDragControllerAction(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const WebCore::IntRect& insertionRect, const WebCore::IntRect& editableElementRect);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>);
@@ -1485,7 +1484,6 @@ public:
     WebCore::IntRect currentDragCaretRect() const;
     WebCore::IntRect currentDragCaretEditableElementRect() const;
     void resetCurrentDragInformation();
-    void didEndDragging();
 #endif
 
     void preferencesDidChange();
@@ -2675,7 +2673,7 @@ private:
     void didReleaseAllTouchPoints() { }
 #endif // PLATFORM(IOS_FAMILY)
 
-    void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtensionHandle&&, Vector<SandboxExtensionHandle>&&);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData&);
 
     void updateBackingStoreDiscardableState();
 

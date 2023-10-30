@@ -394,25 +394,6 @@ std::optional<RetainPtr<CFArrayRef>> ArgumentCoder<RetainPtr<CFArrayRef>>::decod
 }
 
 template<typename Encoder>
-void ArgumentCoder<CFBooleanRef>::encode(Encoder& encoder, CFBooleanRef boolean)
-{
-    encoder << static_cast<bool>(CFBooleanGetValue(boolean));
-}
-
-template void ArgumentCoder<CFBooleanRef>::encode<Encoder>(Encoder&, CFBooleanRef);
-template void ArgumentCoder<CFBooleanRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFBooleanRef);
-
-std::optional<RetainPtr<CFBooleanRef>> ArgumentCoder<RetainPtr<CFBooleanRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> boolean;
-    decoder >> boolean;
-    if (!boolean)
-        return std::nullopt;
-
-    return adoptCF(*boolean ? kCFBooleanTrue : kCFBooleanFalse);
-}
-
-template<typename Encoder>
 void ArgumentCoder<CFCharacterSetRef>::encode(Encoder& encoder, CFCharacterSetRef characterSet)
 {
     auto data = adoptCF(CFCharacterSetCreateBitmapRepresentation(nullptr, characterSet));

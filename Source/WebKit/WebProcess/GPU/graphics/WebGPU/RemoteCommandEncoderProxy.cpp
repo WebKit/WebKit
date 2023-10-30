@@ -231,7 +231,9 @@ Ref<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const WebC
     auto sendResult = send(Messages::RemoteCommandEncoder::Finish(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, identifier);
+    auto result = RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, identifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    return result;
 }
 
 void RemoteCommandEncoderProxy::setLabelInternal(const String& label)

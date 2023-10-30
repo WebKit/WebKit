@@ -74,6 +74,7 @@ public:
 
     WEBCORE_EXPORT void disconnectOwnerElement();
     NavigationScheduler& navigationScheduler() const { return m_navigationScheduler.get(); }
+    CheckedRef<NavigationScheduler> checkedNavigationScheduler() const;
     WEBCORE_EXPORT void takeWindowProxyFrom(Frame&);
 
     virtual void frameDetached() = 0;

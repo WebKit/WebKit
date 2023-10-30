@@ -1095,15 +1095,16 @@ public:
     void restoreSelectionInFocusedEditableElement();
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, OptionSet<WebCore::DragApplicationFlags>);
+    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, OptionSet<WebCore::DragApplicationFlags>, CompletionHandler<void(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool, unsigned, WebCore::IntRect, WebCore::IntRect)>&&);
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, WebCore::DragData&&, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData&&, CompletionHandler<void(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool, unsigned, WebCore::IntRect, WebCore::IntRect)>&&);
+    void performDragOperation(WebCore::DragData&&, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>);
+    void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void()>&&);
 
     void willPerformLoadDragDestinationAction();
     void mayPerformUploadDragDestinationAction();

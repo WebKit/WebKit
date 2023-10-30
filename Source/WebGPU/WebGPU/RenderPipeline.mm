@@ -603,6 +603,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {
             const auto& targetDescriptor = fragmentDescriptor.targets[i];
+            if (targetDescriptor.format == WGPUTextureFormat_Undefined)
+                continue;
+
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
 
             mtlColorAttachment.pixelFormat = Texture::pixelFormat(targetDescriptor.format);
