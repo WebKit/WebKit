@@ -505,10 +505,9 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     // Built-in attributes are only valid for parameters. If a struct member originally
     // had a built-in attribute it must have already been hoisted into a parameter, but
     // we keep the original struct so we can reconstruct it.
-    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput)
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::FragmentOutput)
         return;
 
-    // FIXME: we should replace this with something more efficient, like a trie
     switch (builtin.builtin()) {
     case Builtin::FragDepth:
         m_stringBuilder.append("[[depth(any)]]");
