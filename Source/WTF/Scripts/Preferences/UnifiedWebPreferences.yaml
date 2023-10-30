@@ -4541,7 +4541,7 @@ MediaSourceEnabled:
 
 MediaSourceInlinePaintingEnabled:
   type: bool
-  status: unstable
+  status: mature
   category: media
   humanReadableName: "Experimental MediaSource Inline Painting"
   humanReadableDescription: "Experimental MediaSource Inline Painting"
