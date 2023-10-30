@@ -2024,3 +2024,7 @@ http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Pass ]
 
 webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+
+# rdar://117706782 (REGRESSION (269897@main): [ Sonoma wk2 ] 2 tests in imported/w3c/web-platform-t ests/css/cssom-view/ are a constant failure
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Failure ]
