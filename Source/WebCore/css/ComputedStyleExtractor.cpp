@@ -856,7 +856,7 @@ RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& 
 
 static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
-    if (!style.hasTransform() || is<RenderInline>(renderer))
+    if (!style.hasTransform())
         return CSSPrimitiveValue::create(CSSValueNone);
 
     if (renderer) {
