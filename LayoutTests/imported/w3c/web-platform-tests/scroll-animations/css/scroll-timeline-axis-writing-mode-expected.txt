@@ -1,0 +1,9 @@
+
+FAIL Initial axis promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Vertical axis promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Horizontal axis promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Block axis in horizontal writing-mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Inline axis in horizontal writing-mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Block axis in vertical writing-mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL Inline axis in vertical writing-mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+

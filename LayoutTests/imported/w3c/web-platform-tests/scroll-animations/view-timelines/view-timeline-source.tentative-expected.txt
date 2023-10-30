@@ -1,0 +1,5 @@
+
+FAIL Default source for a View timeline is the nearest scroll ancestor to the subject promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline ignores explicitly set source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline source is null when display:none promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+

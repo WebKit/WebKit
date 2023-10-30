@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ViewTimeline
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: ViewTimeline
+
+

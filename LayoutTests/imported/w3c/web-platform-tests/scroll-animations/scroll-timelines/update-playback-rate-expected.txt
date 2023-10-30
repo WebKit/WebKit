@@ -1,0 +1,11 @@
+
+FAIL Updating the playback rate maintains the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Updating the playback rate while running makes the animation pending promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Updating the playback rate on a play-pending animation maintains the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Updating the playback rate on a pause-pending animation maintains the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL If a pending playback rate is set multiple times, the latest wins promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL In the idle state, the playback rate is applied immediately promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL In the paused state, the playback rate is applied immediately promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Updating the playback rate on a finished animation maintains the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Updating the playback rate to zero on a finished animation maintains the current time promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

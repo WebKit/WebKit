@@ -1,0 +1,6 @@
+
+FAIL Play pending task doesn't run when the timeline is inactive. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation start and current times are correct if scroll timeline is activated after animation.play call. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation start and current times are correct if scroll timeline is activated after setting start time. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation current time is correct when the timeline becomes newly inactive and then active again. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

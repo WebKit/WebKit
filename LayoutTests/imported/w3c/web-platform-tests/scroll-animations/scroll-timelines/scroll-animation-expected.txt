@@ -1,0 +1,6 @@
+
+FAIL Animation start and current times are correct for each animation state. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Animation start and current times are correct for each animation state when the animation starts playing with advanced scroller. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Finished animation plays on reverse scrolling. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Sending animation finished events by finished animation on reverse scrolling. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

@@ -1,0 +1,4 @@
+
+FAIL Animation API call rangeStart overrides animation-range-start promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Animation API call rangeEnd overrides animation-range-end promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+

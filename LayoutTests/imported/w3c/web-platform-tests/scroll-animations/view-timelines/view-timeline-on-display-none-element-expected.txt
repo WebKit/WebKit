@@ -1,0 +1,3 @@
+
+FAIL element with display: none should have inactive viewtimeline promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+

@@ -1,0 +1,16 @@
+
+FAIL View timeline with px based inset. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL View timeline with percent based inset. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL view timeline with inset auto. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL view timeline with font relative inset. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL view timeline with viewport relative insets. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL view timeline inset as string promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL view timeline with invalid inset assert_throws_js: function "() => {
+    new ViewTimeline({
+      subject: target,
+      inset: [ CSS.rad(1) ]
+    });
+  }" threw object "ReferenceError: Can't find variable: ViewTimeline" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

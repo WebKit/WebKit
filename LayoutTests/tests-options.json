@@ -5297,6 +5297,12 @@
     "imported/w3c/web-platform-tests/screen-orientation/hidden_document.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-fill-modes.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-phases.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
         "slow"
     ],

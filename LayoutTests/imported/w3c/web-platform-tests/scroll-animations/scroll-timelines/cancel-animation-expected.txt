@@ -1,0 +1,12 @@
+
+FAIL Canceling an animation should cause its start time and hold time to be unresolved promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL A play-pending ready promise should be rejected when the animation is canceled promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL A pause-pending ready promise should be rejected when the animation is canceled promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL When an animation is canceled, it should create a resolved Promise promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL The ready promise should be replaced when the animation is canceled promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL The finished promise should NOT be rejected if the animation is already idle promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL The cancel event should NOT be fired if the animation is already idle promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Canceling an animation should fire cancel event on orphaned element promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL Canceling an animation with inactive timeline should cause its start time and hold time to be unresolved promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+FAIL oncancel event is fired when the timeline is inactive. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+

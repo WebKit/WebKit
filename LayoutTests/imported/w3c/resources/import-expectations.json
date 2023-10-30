@@ -177,6 +177,7 @@
     "web-platform-tests/resources/chromium": "skip",
     "web-platform-tests/screen-orientation": "import",
     "web-platform-tests/screen-wake-lock": "import",
+    "web-platform-tests/scroll-animations": "import",
     "web-platform-tests/scroll-to-text-fragment": "import",
     "web-platform-tests/secure-contexts": "import",
     "web-platform-tests/selection": "import",

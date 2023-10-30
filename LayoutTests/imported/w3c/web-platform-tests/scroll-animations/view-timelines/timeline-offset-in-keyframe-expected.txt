@@ -1,0 +1,13 @@
+
+FAIL Timeline offsets in programmatic keyframes promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL String offsets in programmatic keyframes promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+FAIL Invalid timeline offset in programmatic keyframe throws assert_throws_js: Invalid keyframes test case "[{"offset":{"rangeName":"somewhere","offset":{}}}]" function "() => {
+        target.animate(keyframes, {
+          timeline: new ViewTimeline( { subject: target }),
+        });
+      }" threw object "ReferenceError: Can't find variable: ViewTimeline" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Timeline offsets in programmatic keyframes adjust for change in timeline promise_test: Unhandled rejection with value: object "TypeError: The provided value is non-finite"
+FAIL Timeline offsets in programmatic keyframes resolved when updating the animation effect promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+
