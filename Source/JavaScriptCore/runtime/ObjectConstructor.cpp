@@ -585,7 +585,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
             Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
             MarkedArgumentBuffer indexedPropertyValues;
             if (target->canHaveExistingOwnIndexedProperties()) {
-                target->forEachOwnIndexedProperty(globalObject, [&](unsigned, JSValue value) {
+                target->forEachOwnIndexedProperty<JSObject::SortMode::Ascending>(globalObject, [&](unsigned, JSValue value) {
                     indexedPropertyValues.appendWithCrashOnOverflow(value);
                     return IterationStatus::Continue;
                 });
