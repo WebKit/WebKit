@@ -1,1 +1,36 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :stored:
+PASS :loaded:
+PASS :srgb:
+PASS :layout:
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth24plus-stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=255;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=258;applyStencilClearValueAsStencilReferenceValue=false
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=true
+PASS :stencil_clear_value:stencilFormat="depth32float-stencil8";stencilClearValue=65539;applyStencilClearValueAsStencilReferenceValue=false
+
