@@ -97,7 +97,7 @@
     </branch>
   </meson>
 
-  <meson id="gst-plugins-good" mesonargs="-Dexamples=disabled -Dgtk3=disabled">
+  <meson id="gst-plugins-good" mesonargs="-Dexamples=disabled -Dgtk3=disabled -Dqt5=disabled">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
