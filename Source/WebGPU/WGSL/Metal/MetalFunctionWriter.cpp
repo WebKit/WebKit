@@ -933,10 +933,11 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
     if (!isExternalTexture) {
         writer->visit(call.arguments()[0]);
         writer->stringBuilder().append(".read");
-        bool first = true;
         writer->stringBuilder().append("(");
+        bool is1d = true;
         const char* cast = "uint";
         if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+            is1d = false;
             switch (vector->size) {
             case 2:
                 cast = "uint2";
@@ -948,11 +949,17 @@ static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpressio
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-        for (unsigned i = 1; i < call.arguments().size(); ++i) {
+        bool first = true;
+        auto argumentCount = call.arguments().size();
+        for (unsigned i = 1; i < argumentCount; ++i) {
             if (first) {
                 writer->stringBuilder().append(cast, "(");
                 writer->visit(call.arguments()[i]);
                 writer->stringBuilder().append(")");
+            } else if (is1d && i == argumentCount - 1) {
+                // From the MSL spec for texture1d::read:
+                // > Since mipmaps are not supported for 1D textures, lod must be 0.
+                continue;
             } else {
                 writer->stringBuilder().append(", ");
                 writer->visit(call.arguments()[i]);
