@@ -1776,9 +1776,6 @@ webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-time
 # Fails when using two textures.
 webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
 
-# Likely a Mesa failure, likely will be fixed by next ANGLE import.
-webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
