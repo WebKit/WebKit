@@ -1640,7 +1640,7 @@ TEST_P(VertexAttributeTest, DrawWithLargeBufferOffset)
     std::array<GLbyte, kQuadVertexCount> validInputData = {{0, 1, 2, 3}};
 
     // 4 components
-    std::array<GLbyte, 4 *kQuadVertexCount + kBufferOffset> inputData = {};
+    std::array<GLbyte, 4 * kQuadVertexCount + kBufferOffset> inputData = {};
 
     std::array<GLfloat, 4 * kQuadVertexCount> expectedData;
     for (size_t i = 0; i < kQuadVertexCount; i++)
@@ -4317,6 +4317,82 @@ void main(void) {
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that pipeline is recreated properly when switching from ARRAY buffer to client buffer,
+// while removing client buffer. Bug observed in Dragonmania game.
+TEST_P(VertexAttributeTestES31, ArrayToClientBufferStride)
+{
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+in vec4 in_pos;
+in vec4 in_color;
+out vec4 color;
+void main(void) {
+   gl_Position = in_pos;
+   color = in_color;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+in vec4 color;
+out vec4 frag_color;
+void main(void) {
+   frag_color = color;
+})";
+    swapBuffers();
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint posLoc   = glGetAttribLocation(program, "in_pos");
+    GLint colorLoc = glGetAttribLocation(program, "in_color");
+    ASSERT_NE(posLoc, -1);
+    ASSERT_NE(colorLoc, -1);
+
+    const std::array<Vector3, 6> &quadVerts = GetQuadVertices();
+    // Data for packed attributes.
+    std::array<float, ((3 + 4) * 6)> data;
+
+    float kYellow[4] = {1.0f, 1.0f, 0.0f, 1.0f};
+    float kGreen[4]  = {0.0f, 1.0f, 0.0f, 1.0f};
+
+    for (int i = 0; i < 6; i++)
+    {
+        memcpy(&data[i * (3 + 4)], &quadVerts[i], sizeof(Vector3));
+        memcpy(&data[i * (3 + 4) + 3], &kYellow, 4 * sizeof(float));
+    }
+
+    {
+        GLBuffer buffer;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(data[0]), data.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(posLoc);
+        glEnableVertexAttribArray(colorLoc);
+
+        glVertexAttribPointer(posLoc, 3, GL_FLOAT, false, 28, reinterpret_cast<void *>(0));
+        glVertexAttribPointer(colorLoc, 4, GL_FLOAT, false, 28, reinterpret_cast<void *>(12));
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+        EXPECT_GL_NO_ERROR();
+        // Unbind before destroy.
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    // Modify color to green.
+    for (int i = 0; i < 6; i++)
+    {
+        memcpy(&data[i * (3 + 4) + 3], &kGreen, 4 * sizeof(float));
+    }
+
+    // Provide client pointer.
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, false, 28, data.data());
+    glVertexAttribPointer(colorLoc, 4, GL_FLOAT, false, 28, &data[3]);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Create a vertex array with an empty array buffer and attribute offsets.
 // This succeded in the end2end and capture/replay tests, but resulted in a trace
 // producing a GL error when using MEC.
@@ -4550,12 +4626,18 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
-    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),
+    ES3_VULKAN()
+        .disable(Feature::UseVertexInputBindingStrideDynamicState)
+        .disable(Feature::SupportsGraphicsPipelineLibrary));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(VertexAttributeTestES31,
                                 ES31_VULKAN().enable(Feature::ForceFallbackFormat),
-                                ES31_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
+                                ES31_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+                                ES31_VULKAN()
+                                    .disable(Feature::UseVertexInputBindingStrideDynamicState)
+                                    .disable(Feature::SupportsGraphicsPipelineLibrary));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeCachingTest,

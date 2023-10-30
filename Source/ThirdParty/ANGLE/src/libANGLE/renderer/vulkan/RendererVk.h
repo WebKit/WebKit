@@ -119,16 +119,7 @@ void CollectGarbage(std::vector<vk::GarbageObject> *garbageOut, ArgT object, Arg
 }
 
 // Recursive function to process variable arguments for garbage destroy
-inline void DestroyGarbage(VkDevice device) {}
-template <typename ArgT, typename... ArgsT>
-void DestroyGarbage(VkDevice device, ArgT object, ArgsT... objectsIn)
-{
-    if (object->valid())
-    {
-        object->destroy(device);
-    }
-    DestroyGarbage(device, objectsIn...);
-}
+inline void DestroyGarbage(RendererVk *renderer) {}
 
 class WaitableCompressEvent
 {
@@ -323,34 +314,12 @@ class RendererVk : angle::NonCopyable
     {
         if (hasResourceUseFinished(use))
         {
-            DestroyGarbage(mDevice, garbageIn...);
+            DestroyGarbage(this, garbageIn...);
         }
         else
         {
             std::vector<vk::GarbageObject> sharedGarbage;
             CollectGarbage(&sharedGarbage, garbageIn...);
-            if (!sharedGarbage.empty())
-            {
-                collectGarbage(use, std::move(sharedGarbage));
-            }
-        }
-    }
-
-    void collectAllocationGarbage(const vk::ResourceUse &use, vk::Allocation &allocationGarbageIn)
-    {
-        if (!allocationGarbageIn.valid())
-        {
-            return;
-        }
-
-        if (hasResourceUseFinished(use))
-        {
-            allocationGarbageIn.destroy(getAllocator());
-        }
-        else
-        {
-            std::vector<vk::GarbageObject> sharedGarbage;
-            CollectGarbage(&sharedGarbage, &allocationGarbageIn);
             if (!sharedGarbage.empty())
             {
                 collectGarbage(use, std::move(sharedGarbage));
@@ -1147,6 +1116,26 @@ ANGLE_INLINE angle::Result RendererVk::checkCompletedCommands(vk::Context *conte
 ANGLE_INLINE angle::Result RendererVk::retireFinishedCommands(vk::Context *context)
 {
     return mCommandQueue.retireFinishedCommands(context);
+}
+
+template <typename ArgT, typename... ArgsT>
+void DestroyGarbage(RendererVk *renderer, ArgT object, ArgsT... objectsIn)
+{
+    if (object->valid())
+    {
+        object->destroy(renderer->getDevice());
+    }
+    DestroyGarbage(renderer, objectsIn...);
+}
+
+template <typename... ArgsT>
+void DestroyGarbage(RendererVk *renderer, vk::Allocation *object, ArgsT... objectsIn)
+{
+    if (object->valid())
+    {
+        object->destroy(renderer->getAllocator());
+    }
+    DestroyGarbage(renderer, objectsIn...);
 }
 }  // namespace rx
 

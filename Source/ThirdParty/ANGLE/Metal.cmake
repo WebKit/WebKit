@@ -10,6 +10,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+set(metal_internal_shaders_header
+)
+
 set(metal_backend_sources
     "src/libANGLE/renderer/metal/BufferMtl.h"
     "src/libANGLE/renderer/metal/BufferMtl.mm"
@@ -91,9 +94,13 @@ set(metal_backend_sources
     "src/libANGLE/renderer/metal/renderermtl_utils.cpp"
     "src/libANGLE/renderer/metal/renderermtl_utils.h"
     "src/libANGLE/renderer/metal/shaders/constants.h"
-    "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_ios_autogen.h"
-    "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_macos_autogen.h"
-    "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_metallib.h"
     "src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h"
     "src/libANGLE/renderer/metal/shaders/rewrite_indices_shared.h"
+    metal_internal_shaders_header
+)
+
+set(_metal_internal_shaders_air_file
+)
+
+set(_metal_internal_shaders_metallib_file
 )

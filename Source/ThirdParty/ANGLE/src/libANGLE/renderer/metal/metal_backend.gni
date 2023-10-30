@@ -4,9 +4,6 @@
 
 import("../../../../gni/angle.gni")
 
-metal_internal_shaders_header =
-    "$root_gen_dir/angle/mtl_internal_shaders_metallib.h"
-
 metal_backend_sources = [
   "BufferMtl.h",
   "BufferMtl.mm",
@@ -90,5 +87,14 @@ metal_backend_sources = [
   "shaders/constants.h",
   "shaders/mtl_internal_shaders_src_autogen.h",
   "shaders/rewrite_indices_shared.h",
-  metal_internal_shaders_header,
 ]
+
+# We can build the ANGLE internal shaders at build-time if we have access to the Mac SDK in the "build" dir.
+# Building internal shaders for iOS is not supported. The Chromium Mac SDK does not have all the required files.
+metal_internal_shader_compilation_supported = angle_has_build && !is_ios
+
+metal_internal_shaders_header =
+    "$root_gen_dir/angle/mtl_internal_shaders_metallib.h"
+if (metal_internal_shader_compilation_supported) {
+  metal_backend_sources += [ metal_internal_shaders_header ]
+}

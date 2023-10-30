@@ -168,10 +168,10 @@ index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e2091598714921
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index eaa9bc8bb13bdbb95bf2956dcf3da89ff4c042cc..0d60a01000a2a97d5fe5c0fe4dcf07eaafcf9745 100644
+index 3fe659430421b3b9f90aa6d4eae726ac445a9c6f..57f5271d6a5793b49b5cc1ef24b85b3914df2527 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -185,12 +185,22 @@ void DisplayMtl::terminate()
+@@ -184,12 +184,22 @@ void DisplayMtl::terminate()
  
  bool DisplayMtl::testDeviceLost()
  {
@@ -194,7 +194,7 @@ index eaa9bc8bb13bdbb95bf2956dcf3da89ff4c042cc..0d60a01000a2a97d5fe5c0fe4dcf07ea
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1432,8 +1442,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1430,8 +1440,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -352,7 +352,7 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb
      {
          // Record this command buffer's elapsed time.
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index e434d1d49ae661acc0ed491cfe4b843dbcc6a40d..53f20497fc6901dd4d3353329324cb9eeb64e07f 100644
+index 29a85687c003abfc9c4ef7aa731541acd6990975..564e12e03a8e024f62b8f2d593c32bfababa7fce 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -603,7 +603,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -478,10 +478,10 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0
  {
  namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 77887e0639c7884908da04e76bd139805a5df632..ba325c85acc980f0969daee23a57026855f94437 100644
+index cade7cb2e42314bdc5da5016a702ad4fed1cf045..61cc99a82b84bd4d2aa93615e289cc946d3b9860 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1562,6 +1562,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1555,6 +1555,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -506,7 +506,7 @@ index 77887e0639c7884908da04e76bd139805a5df632..ba325c85acc980f0969daee23a570268
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1576,10 +1594,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1569,10 +1587,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -519,7 +519,7 @@ index 77887e0639c7884908da04e76bd139805a5df632..ba325c85acc980f0969daee23a570268
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1602,7 +1620,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1595,7 +1613,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

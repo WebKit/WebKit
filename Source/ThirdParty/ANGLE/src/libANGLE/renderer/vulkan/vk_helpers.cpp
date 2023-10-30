@@ -3029,6 +3029,11 @@ void DynamicBuffer::init(RendererVk *renderer,
     mMemoryPropertyFlags =
         (hostVisible) ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 
+    if (hostVisible && renderer->getFeatures().preferHostCachedForNonStaticBufferUsage.enabled)
+    {
+        mMemoryPropertyFlags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    }
+
     // Check that we haven't overridden the initial size of the buffer in setMinimumSizeForTesting.
     if (mInitialSize == 0)
     {
@@ -4827,16 +4832,17 @@ angle::Result BufferHelper::init(Context *context,
 
     ANGLE_VK_CHECK(context, createInfo->size <= heapSize, VK_ERROR_OUT_OF_DEVICE_MEMORY);
 
+    VkMemoryPropertyFlags memoryPropertyFlagsOut;
+    allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlagsOut);
     // Allocate buffer object
     DeviceScoped<Buffer> buffer(renderer->getDevice());
     ANGLE_VK_TRY(context, buffer.get().init(context->getDevice(), *createInfo));
 
     DeviceScoped<DeviceMemory> deviceMemory(renderer->getDevice());
-    VkMemoryPropertyFlags memoryPropertyFlagsOut;
     VkDeviceSize sizeOut;
     uint32_t bufferMemoryTypeIndex;
     ANGLE_VK_TRY(context,
-                 AllocateBufferMemory(context, MemoryAllocationType::Buffer, requiredFlags,
+                 AllocateBufferMemory(context, MemoryAllocationType::Buffer, memoryPropertyFlagsOut,
                                       &memoryPropertyFlagsOut, nullptr, &buffer.get(),
                                       &bufferMemoryTypeIndex, &deviceMemory.get(), &sizeOut));
     ASSERT(sizeOut >= createInfo->size);
@@ -5797,8 +5803,7 @@ void ImageHelper::releaseImage(RendererVk *renderer)
                                   mVmaAllocation.getHandle());
     }
 
-    renderer->collectAllocationGarbage(mUse, mVmaAllocation);
-    renderer->collectGarbage(mUse, &mImage, &mDeviceMemory);
+    renderer->collectGarbage(mUse, &mImage, &mDeviceMemory, &mVmaAllocation);
     mUse.reset();
     mImageSerial = kInvalidImageSerial;
     setEntireContentUndefined();

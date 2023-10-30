@@ -569,7 +569,7 @@ if __name__ == '__main__':
         print(f'{path.fullname}: Not found')
 
     # TODO:
-    ast = load_gn(path, exclude=[r'.*/angle\.gni$', r'.*/pkg_config\.gni$'])
+    ast = load_gn(path, exclude=[r'.*/angle\.gni$', r'//build/.*'])
     ast = exclude_stmts(ast, exclude=['assert', 'config', 'angle_source_set', 'pkg_config', 'declare_args'])
     ast = convert_to_cmake_ops(ast)
     write_cmake(args.cmake, ast, prepend=args.prepend)
