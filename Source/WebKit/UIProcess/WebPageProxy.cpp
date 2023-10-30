@@ -3124,7 +3124,7 @@ void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName
     WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_process.get(), dragStorageName);
 #endif
     launchInitialProcessIfNecessary();
-    performDragControllerAction(DragControllerAction::Entered, dragData, dragStorageName, { }, { });
+    performDragControllerAction(DragControllerAction::Entered, dragData);
 }
 
 void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
@@ -3132,12 +3132,12 @@ void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName
 #if PLATFORM(COCOA)
     WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_process.get(), dragStorageName);
 #endif
-    performDragControllerAction(DragControllerAction::Updated, dragData, dragStorageName, { }, { });
+    performDragControllerAction(DragControllerAction::Updated, dragData);
 }
 
-void WebPageProxy::dragExited(DragData& dragData, const String& dragStorageName)
+void WebPageProxy::dragExited(DragData& dragData)
 {
-    performDragControllerAction(DragControllerAction::Exited, dragData, dragStorageName, { }, { });
+    performDragControllerAction(DragControllerAction::Exited, dragData);
 }
 
 void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
@@ -3145,26 +3145,37 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
 #if PLATFORM(COCOA)
     grantAccessToCurrentPasteboardData(dragStorageName);
 #endif
-    performDragControllerAction(DragControllerAction::PerformDragOperation, dragData, dragStorageName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload));
+
+#if PLATFORM(GTK)
+    performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
+#else
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
+        pageClient().didPerformDragOperation(handled);
+    });
+#endif
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData)
 {
     if (!hasRunningProcess())
         return;
-#if PLATFORM(GTK)
-    UNUSED_PARAM(dragStorageName);
-    UNUSED_PARAM(sandboxExtensionHandle);
-    UNUSED_PARAM(sandboxExtensionsForUpload);
 
+    auto completionHandler = [this, protectedThis = Ref { *this }] (auto... args) {
+        didPerformDragControllerAction(args...);
+    };
+
+#if PLATFORM(GTK)
     String url = dragData.asURL();
     if (!url.isEmpty())
         protectedProcess()->assumeReadAccessToBaseURL(*this, url);
 
     ASSERT(dragData.platformData());
-    send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()));
+    sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
 #else
-    send(Messages::WebPage::PerformDragControllerAction(action, dragData, sandboxExtensionHandle, sandboxExtensionsForUpload));
+    sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(action, dragData), WTFMove(completionHandler));
 #endif
 }
 
@@ -3193,13 +3204,10 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
 {
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::DragEnded(clientPosition, globalPosition, dragOperationMask));
+    sendWithAsyncReply(Messages::WebPage::DragEnded(clientPosition, globalPosition, dragOperationMask), [this, protectedThis = Ref { *this }] {
+        resetCurrentDragInformation();
+    });
     setDragCaretRect({ });
-}
-
-void WebPageProxy::didPerformDragOperation(bool handled)
-{
-    pageClient().didPerformDragOperation(handled);
 }
 
 void WebPageProxy::didStartDrag()
@@ -3215,11 +3223,6 @@ void WebPageProxy::dragCancelled()
 {
     if (hasRunningProcess())
         send(Messages::WebPage::DragCancelled());
-}
-
-void WebPageProxy::didEndDragging()
-{
-    resetCurrentDragInformation();
 }
 
 void WebPageProxy::resetCurrentDragInformation()

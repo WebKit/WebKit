@@ -10264,7 +10264,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
-    _page->dragExited(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
+    _page->dragExited(dragData);
     _page->resetCurrentDragInformation();
 
     _dragDropInteractionState.dropSessionDidExit();
