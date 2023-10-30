@@ -163,6 +163,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     uint32_t bufferCounts[stageCount] = { 0, 0, 0 };
     HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> slotForEntry;
     bool hasCompilerGeneratedArrayLengths = false;
+    const auto maxBindingIndex = limits().maxBindingsPerBindGroup;
     for (auto& entry : descriptorEntries) {
         if (entry.nextInChain) {
             if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
@@ -170,6 +171,9 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             if (entry.nextInChain->next)
                 return BindGroupLayout::createInvalid(*this);
         }
+
+        if (entry.binding >= maxBindingIndex)
+            return BindGroupLayout::createInvalid(*this);
 
         bool isExternalTexture = false;
         constexpr int maxGeneratedDescriptors = 4;
