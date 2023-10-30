@@ -44,6 +44,10 @@ WebViewRenderingUpdateScheduler::WebViewRenderingUpdateScheduler(WebView* webVie
         this->renderingUpdateRunLoopObserverCallback();
     });
 
+    m_postCommitRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::PostGraphicsCommit, [this] {
+        this->postCommitCallback();
+    });
+
     m_postRenderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(WebCore::RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
         this->postRenderingUpdateCallback();
     });
@@ -68,7 +72,7 @@ void WebViewRenderingUpdateScheduler::invalidate()
 
 void WebViewRenderingUpdateScheduler::didCompleteRenderingUpdateDisplay()
 {
-    m_haveRegisteredCommitHandlers = false;
+    m_haveRegisteredCommitObserver = false;
     schedulePostRenderingUpdate();
 }
 
@@ -77,21 +81,18 @@ void WebViewRenderingUpdateScheduler::schedulePostRenderingUpdate()
     m_postRenderingUpdateRunLoopObserver->schedule();
 }
 
-void WebViewRenderingUpdateScheduler::registerCACommitHandlers()
+void WebViewRenderingUpdateScheduler::registerPostCommitObserver()
 {
-    if (m_haveRegisteredCommitHandlers)
+    if (m_haveRegisteredCommitObserver)
         return;
 
-    WebView* webView = m_webView;
-    [CATransaction addCommitHandler:^{
-        [webView _willStartRenderingUpdateDisplay];
-    } forPhase:kCATransactionPhasePreLayout];
+    m_postCommitRunLoopObserver->schedule();
+    m_haveRegisteredCommitObserver = true;
+}
 
-    [CATransaction addCommitHandler:^{
-        [webView _didCompleteRenderingUpdateDisplay];
-    } forPhase:kCATransactionPhasePostCommit];
-    
-    m_haveRegisteredCommitHandlers = true;
+void WebViewRenderingUpdateScheduler::postCommitCallback()
+{
+    [m_webView _didCompleteRenderingUpdateDisplay];
 }
 
 void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
@@ -106,7 +107,9 @@ void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
     m_rescheduledInsideCallback = false;
 
     updateRendering();
-    registerCACommitHandlers();
+
+    [m_webView _willStartRenderingUpdateDisplay];
+    registerPostCommitObserver();
 
     if (!m_rescheduledInsideCallback)
         m_renderingUpdateRunLoopObserver->invalidate();
