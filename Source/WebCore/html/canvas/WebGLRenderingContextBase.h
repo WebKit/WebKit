@@ -652,7 +652,6 @@ protected:
 
     PredefinedColorSpace m_drawingBufferColorSpace { PredefinedColorSpace::SRGB };
 
-    bool m_layerCleared;
     GCGLfloat m_clearColor[4];
     bool m_scissorEnabled;
     GCGLfloat m_clearDepth;

@@ -744,7 +744,6 @@ void WebGLRenderingContextBase::initializeContextState()
     m_stencilFuncRefBack = 0;
     m_stencilFuncMask = 0xFFFFFFFF;
     m_stencilFuncMaskBack = 0xFFFFFFFF;
-    m_layerCleared = false;
 
     m_rasterizerDiscardEnabled = false;
 
@@ -886,7 +885,6 @@ void WebGLRenderingContextBase::markContextChanged()
 
     m_context->markContextChanged();
 
-    m_layerCleared = false;
     m_compositingResultsNeedUpdating = true;
 
     if (auto* canvas = htmlCanvas()) {
@@ -934,7 +932,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
     updateActiveOrdinal();
 
-    if (!m_context->layerComposited() || m_layerCleared || m_preventBufferClearForInspector)
+    if (!m_context->layerComposited() || m_preventBufferClearForInspector)
         return false;
 
     GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
@@ -993,8 +991,6 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     restoreStateAfterClear();
     if (m_framebufferBinding)
         m_context->bindFramebuffer(bindingPoint, m_framebufferBinding->object());
-    m_layerCleared = true;
-
     return combinedClear;
 }
 
@@ -1046,7 +1042,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
 
     clearIfComposited(CallerTypeOther);
 
-    if (!m_markedCanvasDirty && !m_layerCleared)
+    if (!m_markedCanvasDirty && m_context->getBuffersToAutoClear())
         return;
 
     auto& base = canvasBase();
