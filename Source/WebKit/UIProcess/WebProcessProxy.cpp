@@ -604,7 +604,8 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 #if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(nullptr);
-    protectedProcessPool()->displayLinks().stopDisplayLinks(m_displayLinkClient);
+    // Unable to protect the process pool as it may have started destruction.
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 }
 
@@ -673,7 +674,8 @@ void WebProcessProxy::shutDown()
     m_routingArbitrator->processDidTerminate();
 #endif
 
-    protectedProcessPool()->disconnectProcess(*this);
+    // Unable to protect the process pool as it may have started destruction.
+    processPool().disconnectProcess(*this);
 }
 
 RefPtr<WebPageProxy> WebProcessProxy::webPage(WebPageProxyIdentifier pageID)

@@ -2448,6 +2448,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         updateIsolatedTree(get(element), AXTableHeadersChanged);
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXLanguageChanged);
+    else if (attrName == nameAttr)
+        postNotification(get(element), nullptr, AXNameChanged);
     else if (attrName == placeholderAttr)
         postNotification(element, AXPlaceholderChanged);
     else if (attrName == hrefAttr || attrName == srcAttr)
@@ -4183,6 +4185,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         }
         case AXMinimumValueChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::MinValueForRange, AXPropertyName::ValueForRange });
+            break;
+        case AXNameChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::NameAttribute);
             break;
         case AXOrientationChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::Orientation);

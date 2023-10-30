@@ -1,20 +1,21 @@
 This test ensures WebKit can search for ad-hoc radiogroups. An ad-hoc radiogroup is a set of radiobuttons connected by `name` attribute alone, without an appropriate `role="radiogroup"` container.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'circle'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'red'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'small'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'green'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'triangle'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'red'
+PASS: resultElement.domIdentifier === 'medium'
+PASS: resultElement.domIdentifier === 'small'
+PASS: resultElement.domIdentifier === 'green'
 
-
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'circle'
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'red'
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'small'
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'green'
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'triangle'
-PASS resultElement.role is 'AXRole: AXRadioButton'
-PASS resultElement.domIdentifier is 'red'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -28,6 +28,7 @@
 #include "CustomElementFormValue.h"
 #include "GCReachableRef.h"
 #include "QualifiedName.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -113,7 +114,7 @@ private:
     bool m_invoking { false };
 };
 
-class CustomElementReactionQueue {
+class CustomElementReactionQueue : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:

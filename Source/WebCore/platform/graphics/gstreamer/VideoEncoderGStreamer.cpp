@@ -90,7 +90,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     registerWebKitGStreamerVideoEncoder();
     auto& scanner = GStreamerRegistryScanner::singleton();
     if (!scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName)) {
-        gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
+        postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
             callback(makeUnexpected(makeString("No GStreamer encoder found for codec "_s, codecName)));
         });
         return;
@@ -98,15 +98,16 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
 
     auto encoder = makeUniqueRef<GStreamerVideoEncoder>(codecName, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
     auto error = encoder->initialize(config);
-    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
+    if (!error.isEmpty()) {
+        encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
+            GST_WARNING("Error creating encoder: %s", error.ascii().data());
+            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
+        });
+        return;
+    }
+    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
-            if (!error.isEmpty()) {
-                GST_WARNING("Error creating encoder: %s", error.ascii().data());
-                callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
-                return;
-            }
-
+        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
             GST_DEBUG("Encoder created");
             callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
         });

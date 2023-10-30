@@ -1,0 +1,20 @@
+
+
+FAIL invoking (as auto) closed popover opens assert_true: expected true got false
+PASS invoking (as auto) closed popover with preventDefault does not open
+FAIL invoking (as auto) open popover closes assert_false: expected false got true
+PASS invoking (as auto) open popover with preventDefault does not close
+FAIL invoking (as togglepopover) closed popover opens assert_true: expected true got false
+FAIL invoking (as togglepopover - case insensitive) closed popover opens assert_true: expected true got false
+PASS invoking (as togglepopover) closed popover with preventDefault does not open
+FAIL invoking (as togglepopover) open popover closes assert_false: expected false got true
+PASS invoking (as togglepopover) open popover with preventDefault does not close
+FAIL invoking (as showpopover) closed popover opens assert_true: expected true got false
+FAIL invoking (as showpopover - case insensitive) closed popover opens assert_true: expected true got false
+FAIL invoking (as showpopover) open popover is noop assert_true: expected true got false
+PASS invoking (as showpopover) closed popover with preventDefault does not open
+PASS invoking (as hidepopover) closed popover is noop
+FAIL invoking (as hidepopover) open popover closes assert_false: expected false got true
+FAIL invoking (as hidepopover - case insensitive) open popover closes assert_false: expected false got true
+PASS invoking (as hidepopover) open popover with preventDefault does not close
+

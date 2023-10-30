@@ -176,7 +176,9 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
         auto topOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxHeight();
         switch (writingModeToBlockFlowDirection(rubyBaseLayoutBox.style().writingMode())) {
         case BlockFlowDirection::TopToBottom:
+            break;
         case BlockFlowDirection::BottomToTop:
+            topOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ?  rubyBaseGeometry.marginBoxHeight() : -annotationBoxGeometry.marginBoxHeight();
             break;
         case BlockFlowDirection::RightToLeft:
             topOffset = leftOffset;
@@ -400,12 +402,12 @@ InlineLayoutUnit RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<si
 
 InlineLayoutRect RubyFormattingContext::visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection) const
 {
-    if (!parentFormattingContext().root().style().isFlippedLinesWritingMode())
+    auto& rootStyle = parentFormattingContext().root().style();
+    if (!rootStyle.isFlippedLinesWritingMode())
         return visualRectIgnoringBlockDirection;
 
-    ASSERT(parentFormattingContext().root().style().isVerticalWritingMode());
     auto flippedRect = visualRectIgnoringBlockDirection;
-    flippedRect.setX(flippedRect.x() - flippedRect.width());
+    rootStyle.isVerticalWritingMode() ? flippedRect.setX(flippedRect.x() - flippedRect.width()) : flippedRect.setY(flippedRect.y() - flippedRect.height());
     return flippedRect;
 }
 

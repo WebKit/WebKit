@@ -81,53 +81,32 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
 };
 
-static bool validateCodecString(const StringView& codecString)
-{
-    if (codecString.startsWith("avc1"_s)) {
-        auto parameters = parseAVCCodecParameters(codecString);
-        // Limit to High Profile, level 5.2.
-        return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
-    }
-    if (codecString.startsWith("vp09"_s)) {
-        auto parameters = parseVPCodecParameters(codecString);
-        return parameters.has_value();
-    }
-    if (codecString.startsWith("hvc1"_s) || codecString.startsWith("hev1"_s))
-        return GStreamerCodecUtilities::parseHEVCProfile(codecString.toString());
-    if (codecString.startsWith("av01."_s)) {
-        auto components = codecString.split('.');
-        auto nextElement = components.begin();
-        ++nextElement;
-
-        auto profile = *nextElement;
-        return profile == "0"_s || profile == "1"_s || profile == "2"_s;
-    }
-
-    return true;
-}
-
-bool GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+void GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_video_decoder_debug, "webkitvideodecoder", 0, "WebKit WebCodecs Video Decoder");
     });
 
-    if (!validateCodecString(codecName))
-        return false;
-
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
     if (!lookupResult) {
-        GST_WARNING("No decoder found for codec %s", codecName.ascii().data());
-        return false;
+        GST_WARNING("No decoder found for codec %s", codecName.utf8().data());
+        postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
+            callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
+        });
+        return;
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     auto decoder = makeUniqueRef<GStreamerVideoDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
-    if (!decoder->m_internalDecoder->isConfigured()) {
-        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.ascii().data());
-        return false;
+    auto internalDecoder = decoder->m_internalDecoder;
+    if (!internalDecoder->isConfigured()) {
+        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8().data());
+        internalDecoder->postTask([callback = WTFMove(callback), codecName]() mutable {
+            callback(makeUnexpected(makeString("Internal video decoder failed to configure for codec "_s, codecName)));
+        });
+        return;
     }
 
     gstDecoderWorkQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
@@ -137,8 +116,6 @@ bool GStreamerVideoDecoder::create(const String& codecName, const Config& config
             callback(UniqueRef<VideoDecoder> { WTFMove(decoder) });
         });
     });
-
-    return true;
 }
 
 GStreamerVideoDecoder::GStreamerVideoDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)

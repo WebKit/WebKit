@@ -75,8 +75,8 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config& con
         return;
     }
 #elif USE(GSTREAMER)
-    if (GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback)))
-        return;
+    GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+    return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);

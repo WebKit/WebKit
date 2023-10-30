@@ -101,13 +101,10 @@ Line::Result Line::close()
 
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
+    if (m_runs.isEmpty())
+        return;
     auto& rootBox = formattingContext().root();
     ASSERT(rootBox.isRubyAnnotationBox() || rootBox.style().textAlign() == TextAlignMode::Justify || rootBox.style().textAlignLast() == TextAlignLast::Justify);
-    // Text is justified according to the method specified by the text-justify property,
-    // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
-    // the last line before a forced break or the end of the block is start-aligned.
-    if (m_runs.isEmpty() || m_runs.last().isLineBreak())
-        return;
     auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingContent.trailingWhitespaceWidth();
     if (spaceToDistribute <= 0)
         return;
