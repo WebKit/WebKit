@@ -770,15 +770,10 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
         finishedSignal();
         return;
     }
-    if (m_layerComposited) {
-        // FIXME: It makes no sense that this happens. Tracking this state should be moved to caller, WebGLRendenderingContextBase.
-        // https://bugs.webkit.org/show_bug.cgi?id=219342
-        insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
-        waitUntilWorkScheduled();
+    if (!drawingBuffer()) {
+        finishedSignal();
         return;
     }
-    if (!drawingBuffer())
-        return;
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
     insertFinishedSignalOrInvoke(WTFMove(finishedSignal));

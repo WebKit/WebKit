@@ -577,12 +577,6 @@ void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)
 
 void GraphicsContextGL::markContextChanged()
 {
-    m_layerComposited = false;
-}
-
-bool GraphicsContextGL::layerComposited() const
-{
-    return m_layerComposited;
 }
 
 void GraphicsContextGL::setBuffersToAutoClear(GCGLbitfield buffers)
@@ -598,7 +592,6 @@ GCGLbitfield GraphicsContextGL::getBuffersToAutoClear() const
 
 void GraphicsContextGL::markLayerComposited()
 {
-    m_layerComposited = true;
     auto attrs = contextAttributes();
     if (!attrs.preserveDrawingBuffer) {
         m_buffersToAutoClear = GraphicsContextGL::COLOR_BUFFER_BIT;

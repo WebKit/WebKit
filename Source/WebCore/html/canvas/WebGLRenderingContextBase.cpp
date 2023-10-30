@@ -932,7 +932,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
     updateActiveOrdinal();
 
-    if (!m_context->layerComposited() || m_preventBufferClearForInspector)
+    if (m_preventBufferClearForInspector)
         return false;
 
     GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
@@ -5971,6 +5971,7 @@ void WebGLRenderingContextBase::prepareForDisplay()
 {
     if (!m_context)
         return;
+    ASSERT(m_compositingResultsNeedUpdating);
 
     m_context->prepareForDisplay();
 

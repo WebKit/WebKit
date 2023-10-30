@@ -99,7 +99,7 @@ void GraphicsContextGLGBM::setContextVisibility(bool)
 
 void GraphicsContextGLGBM::prepareForDisplay()
 {
-    if (m_layerComposited || !makeContextCurrent())
+    if (!makeContextCurrent())
         return;
 
     prepareTexture();
