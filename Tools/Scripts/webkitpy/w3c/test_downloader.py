@@ -109,7 +109,20 @@ class TestDownloader(object):
     def update_import_expectations(self, test_paths):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path in test_paths:
-            import_lines[path.rstrip(self._filesystem.sep)] = 'import'
+            stripped_path = path.rstrip(self._filesystem.sep)
+            path_segs = stripped_path.split("/")
+
+            already_imported = False
+            for i in range(len(path_segs) - 1, 1, -1):
+                parent = path_segs[:i]
+                parent_expectation = import_lines.get("/".join(parent))
+                if parent_expectation == "import":
+                    already_imported = True
+                if parent_expectation:
+                    break
+            if not already_imported:
+                import_lines[stripped_path] = "import"
+
         self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')))
 
     def _git_submodules_description(self, test_repository):
