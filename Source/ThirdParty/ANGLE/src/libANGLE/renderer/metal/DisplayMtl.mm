@@ -30,11 +30,10 @@
 
 #if ANGLE_METAL_XCODE_BUILDS_SHADERS
 #    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_metallib.h"
-#elif TARGET_OS_SIMULATOR
-#    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h"
-#else
-// Build-time generated metallib
+#elif ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
 #    include "mtl_internal_shaders_metallib.h"
+#else
+#    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h"
 #endif
 
 #include "EGL/eglext.h"
@@ -1378,13 +1377,12 @@ void DisplayMtl::initializeFeatures()
 angle::Result DisplayMtl::initializeShaderLibrary()
 {
     mtl::AutoObjCPtr<NSError *> err = nil;
-#if TARGET_OS_SIMULATOR && !ANGLE_METAL_XCODE_BUILDS_SHADERS
-    mDefaultShaders = mtl::CreateShaderLibrary(getMetalDevice(),
-                                               reinterpret_cast<const char *>(gDefaultMetallibSrc),
-                                               std::size(gDefaultMetallibSrc), &err);
-#else
+#if ANGLE_METAL_XCODE_BUILDS_SHADERS || ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
     mDefaultShaders = mtl::CreateShaderLibraryFromBinary(getMetalDevice(), gDefaultMetallib,
                                                          std::size(gDefaultMetallib), &err);
+#else
+    mDefaultShaders = mtl::CreateShaderLibrary(getMetalDevice(), gDefaultMetallibSrc,
+                                               std::size(gDefaultMetallibSrc), &err);
 #endif
 
     if (err)

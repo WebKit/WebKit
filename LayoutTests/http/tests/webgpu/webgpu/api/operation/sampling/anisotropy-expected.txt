@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :anisotropic_filter_checkerboard:
+PASS :anisotropic_filter_mipmap_color:maxAnisotropy=1
+PASS :anisotropic_filter_mipmap_color:maxAnisotropy=4
+

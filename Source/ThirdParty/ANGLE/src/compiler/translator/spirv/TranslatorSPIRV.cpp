@@ -36,6 +36,7 @@
 #include "compiler/translator/tree_ops/spirv/EmulateFramebufferFetch.h"
 #include "compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
 #include "compiler/translator/tree_ops/spirv/FlagSamplersWithTexelFetch.h"
+#include "compiler/translator/tree_ops/spirv/ReswizzleYUVOps.h"
 #include "compiler/translator/tree_ops/spirv/RewriteInterpolateAtOffset.h"
 #include "compiler/translator/tree_ops/spirv/RewriteR32fImages.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
@@ -1161,6 +1162,11 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
             if (IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_YUV_target))
             {
                 if (!EmulateYUVBuiltIns(this, root, &getSymbolTable()))
+                {
+                    return false;
+                }
+
+                if (!ReswizzleYUVOps(this, root, &getSymbolTable()))
                 {
                     return false;
                 }

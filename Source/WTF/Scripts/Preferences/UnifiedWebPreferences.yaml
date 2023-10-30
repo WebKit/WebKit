@@ -7504,7 +7504,7 @@ WebCodecsAudioEnabled:
 
 WebCodecsHEVCEnabled:
   type: bool
-  status: preview
+  status: stable
   category: media
   humanReadableName: "WebCodecs HEVC codec"
   humanReadableDescription: "Enable WebCodecs HEVC codec"
@@ -7514,9 +7514,11 @@ WebCodecsHEVCEnabled:
       default: false
     WebKit:
       "USE(GSTREAMER)": true
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       "USE(GSTREAMER)": true
+      "PLATFORM(COCOA)": true
       default: false
 
 WebCodecsVideoEnabled:

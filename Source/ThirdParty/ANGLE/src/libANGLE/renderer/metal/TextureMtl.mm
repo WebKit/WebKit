@@ -1881,12 +1881,10 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
         ANGLE_CHECK_GL_MATH(contextMtl, internalFormat.computeRowPitch(
                                             type, static_cast<GLint>(mtlArea.size.width),
                                             /** aligment */ 1, /** rowLength */ 0, &minRowPitch));
-        if (offset % mFormat.actualAngleFormat().pixelBytes || pixelsRowPitch < minRowPitch ||
-            mFormat.isPVRTC())
+        if (offset % mFormat.actualAngleFormat().pixelBytes || pixelsRowPitch < minRowPitch)
         {
             // offset is not divisible by pixelByte or the source row pitch is smaller than minimum
             // row pitch, use convertAndSetPerSliceSubImage() function.
-            // Enforce CPU path for PVRTC formats until GPU block linearization is implemented.
             return convertAndSetPerSliceSubImage(context, slice, mtlArea, internalFormat, type,
                                                  pixelsAngleFormat, pixelsRowPitch,
                                                  pixelsDepthPitch, unpackBuffer, pixels, image);
@@ -1906,11 +1904,51 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
         }
         else
         {
+            mtl::BufferRef sourceBuffer = unpackBufferMtl->getCurrentBuffer();
+            // PVRTC1 blocks are stored in a reflected Morton order
+            // and need to be linearized for buffer uploads in Metal.
+            // This step is skipped for textures that have only one block.
+            if (mFormat.isPVRTC() && mtlArea.size.height > 4)
+            {
+                // PVRTC1 inherent requirement.
+                ASSERT(gl::isPow2(mtlArea.size.width) && gl::isPow2(mtlArea.size.height));
+                // Metal-specific limitation enforced by ANGLE validation.
+                ASSERT(mtlArea.size.width == mtlArea.size.height);
+                static_assert(gl::IMPLEMENTATION_MAX_2D_TEXTURE_SIZE <= 262144,
+                              "The current kernel can handle up to 65536 blocks per dimension.");
+
+                // Current command buffer implementation does not support 64-bit offsets.
+                ANGLE_MTL_CHECK(contextMtl, offset <= std::numeric_limits<uint32_t>::max(),
+                                GL_INVALID_OPERATION);
+
+                mtl::BufferRef stagingBuffer;
+                ANGLE_TRY(
+                    mtl::Buffer::MakeBuffer(contextMtl, pixelsDepthPitch, nullptr, &stagingBuffer));
+
+                mtl::BlockLinearizationParams params;
+                params.srcBuffer       = sourceBuffer;
+                params.dstBuffer       = stagingBuffer;
+                params.srcBufferOffset = static_cast<uint32_t>(offset);
+                params.blocksWide =
+                    static_cast<GLuint>(mtlArea.size.width) / internalFormat.compressedBlockWidth;
+                params.blocksHigh =
+                    static_cast<GLuint>(mtlArea.size.height) / internalFormat.compressedBlockHeight;
+
+                // PVRTC1 textures always have at least 2 blocks in each dimension.
+                // Enforce correct block layout for 8x8 textures that use 8x4 blocks.
+                params.blocksWide = std::max(params.blocksWide, 2u);
+
+                ANGLE_TRY(contextMtl->getDisplay()->getUtils().linearizeBlocks(contextMtl, params));
+
+                sourceBuffer = stagingBuffer;
+                offset       = 0;
+            }
+
             // Use blit encoder to copy
             mtl::BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
             blitEncoder->copyBufferToTexture(
-                unpackBufferMtl->getCurrentBuffer(), offset, pixelsRowPitch, pixelsDepthPitch,
-                mtlArea.size, image, slice, mtl::kZeroNativeMipLevel, mtlArea.origin,
+                sourceBuffer, offset, pixelsRowPitch, pixelsDepthPitch, mtlArea.size, image, slice,
+                mtl::kZeroNativeMipLevel, mtlArea.origin,
                 mFormat.isPVRTC() ? mtl::kBlitOptionRowLinearPVRTC : MTLBlitOptionNone);
         }
     }

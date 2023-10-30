@@ -1047,6 +1047,12 @@ angle::Result RenderUtils::expandVertexFormatComponentsVS(const gl::Context *con
                                                              params);
 }
 
+angle::Result RenderUtils::linearizeBlocks(ContextMtl *contextMtl,
+                                           const BlockLinearizationParams &params)
+{
+    return mBlockLinearizationUtils.linearizeBlocks(contextMtl, params);
+}
+
 // ClearUtils implementation
 ClearUtils::ClearUtils(const std::string &fragmentShaderName)
     : mFragmentShaderName(fragmentShaderName)
@@ -2926,6 +2932,46 @@ angle::Result VertexFormatConversionUtils::getFloatConverstionRenderPipeline(
             contextMtl, mConvertToFloatVertexShaders[formatIDValue], nullptr, pipelineDesc,
             outPipelineState);
     }
+}
+
+angle::Result BlockLinearizationUtils::linearizeBlocks(ContextMtl *contextMtl,
+                                                       const BlockLinearizationParams &params)
+{
+    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    ASSERT(cmdEncoder);
+
+    AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
+    ANGLE_TRY(getBlockLinearizationComputePipeline(contextMtl, &pipeline));
+    cmdEncoder->setComputePipelineState(pipeline);
+
+    // Block layout
+    ASSERT(params.blocksWide >= 2 && params.blocksHigh >= 2);
+    const uint32_t dimensions[2] = {params.blocksWide, params.blocksHigh};
+    cmdEncoder->setData(dimensions, 0);
+
+    // Buffer with original PVRTC1 blocks
+    cmdEncoder->setBuffer(params.srcBuffer, params.srcBufferOffset, 1);
+
+    // Buffer to hold linearized PVRTC1 blocks
+    cmdEncoder->setBufferForWrite(params.dstBuffer, 0, 2);
+
+    NSUInteger w                  = pipeline.get().threadExecutionWidth;
+    NSUInteger h                  = pipeline.get().maxTotalThreadsPerThreadgroup / w;
+    MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
+    MTLSize threads               = MTLSizeMake(params.blocksWide, params.blocksHigh, 1);
+    DispatchCompute(contextMtl, cmdEncoder,
+                    /** allowNonUniform */ true, threads, threadsPerThreadgroup);
+    return angle::Result::Continue;
+}
+
+angle::Result BlockLinearizationUtils::getBlockLinearizationComputePipeline(
+    ContextMtl *contextMtl,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outPipelineState)
+{
+    ANGLE_TRY(EnsureComputeShaderInitialized(contextMtl, @"linearizeBlocks",
+                                             &mLinearizeBlocksComputeShader));
+    return contextMtl->getPipelineCache().getComputePipeline(
+        contextMtl, mLinearizeBlocksComputeShader, outPipelineState);
 }
 
 }  // namespace mtl

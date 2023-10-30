@@ -1033,15 +1033,8 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                  freeWhenDone:NO];
         auto options  = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
 
-        auto *platform   = ANGLEPlatformCurrent();
-        double startTime = platform->currentTime(platform);
-
         NSError *nsError = nil;
         auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
-
-        double endTime = platform->currentTime(platform);
-        ERR() << "CreateShaderLibrary newLibraryWithSource duration: "
-              << (endTime - startTime) * 1000.0 << "ms";
 
         [nsSource ANGLE_MTL_AUTORELEASE];
 

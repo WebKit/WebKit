@@ -6556,6 +6556,9 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
             context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
         {
             colorAttachmentRefs.push_back(kUnusedAttachment);
+            // temporary workaround for ARM driver assertion. Will remove once driver fix lands
+            colorAttachmentRefs.back().layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            colorAttachmentRefs.back().aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
             continue;
         }
 

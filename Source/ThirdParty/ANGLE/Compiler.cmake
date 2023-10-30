@@ -361,6 +361,8 @@ set(angle_translator_lib_spirv_sources
     "src/compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
     "src/compiler/translator/tree_ops/spirv/FlagSamplersWithTexelFetch.cpp"
     "src/compiler/translator/tree_ops/spirv/FlagSamplersWithTexelFetch.h"
+    "src/compiler/translator/tree_ops/spirv/ReswizzleYUVOps.cpp"
+    "src/compiler/translator/tree_ops/spirv/ReswizzleYUVOps.h"
     "src/compiler/translator/tree_ops/spirv/RewriteInterpolateAtOffset.cpp"
     "src/compiler/translator/tree_ops/spirv/RewriteInterpolateAtOffset.h"
     "src/compiler/translator/tree_ops/spirv/RewriteR32fImages.cpp"

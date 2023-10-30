@@ -73,8 +73,10 @@ if (angle_enable_metal) {
   metal_backend_dir = "libANGLE/renderer/metal/"
   angle_code_affecting_program_serialize +=
       rebase_path(metal_backend_sources, angle_root, metal_backend_dir)
-  angle_dependencies_affecting_program_serialize +=
-      [ "src/libANGLE/renderer/metal:angle_metal_internal_shaders" ]
+  if (metal_internal_shader_compilation_supported) {
+    angle_dependencies_affecting_program_serialize +=
+        [ "src/libANGLE/renderer/metal:angle_metal_internal_shaders" ]
+  }
 }
 
 if (angle_has_frame_capture) {

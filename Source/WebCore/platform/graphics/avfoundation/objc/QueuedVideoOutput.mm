@@ -257,7 +257,7 @@ void QueuedVideoOutput::configureNextImageTimeObserver()
 
     auto nextImageTime = iter->first;
 
-    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(currentTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput] () mutable {
+    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput] () mutable {
         callOnMainRunLoop([weakThis = WTFMove(weakThis)] {
             if (weakThis)
                 weakThis->nextImageTimeReached();

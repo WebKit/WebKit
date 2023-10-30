@@ -142,21 +142,19 @@ ExceptionOr<void> CanvasPath::arcTo(float x1, float y1, float x2, float y2, floa
 
 static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwise)
 {
-    float newStartAngle = startAngle;
+    constexpr auto twoPiFloat = 2 * piFloat;
+    float newStartAngle = fmodf(startAngle, twoPiFloat);
     if (newStartAngle < 0)
-        newStartAngle = (2 * piFloat) + fmodf(newStartAngle, -(2 * piFloat));
-    else
-        newStartAngle = fmodf(newStartAngle, 2 * piFloat);
+        newStartAngle += twoPiFloat;
 
     float delta = newStartAngle - startAngle;
     startAngle = newStartAngle;
     endAngle = endAngle + delta;
-    ASSERT(newStartAngle >= 0 && (newStartAngle < 2 * piFloat || WTF::areEssentiallyEqual<float>(newStartAngle, 2 * piFloat)));
-
-    if (anticlockwise && startAngle - endAngle >= 2 * piFloat)
-        endAngle = startAngle - 2 * piFloat;
-    else if (!anticlockwise && endAngle - startAngle >= 2 * piFloat)
-        endAngle = startAngle + 2 * piFloat;
+    ASSERT(newStartAngle >= 0 && (newStartAngle < twoPiFloat || WTF::areEssentiallyEqual<float>(newStartAngle, twoPiFloat)));
+    if (anticlockwise && startAngle - endAngle >= twoPiFloat)
+        endAngle = startAngle - twoPiFloat;
+    else if (!anticlockwise && endAngle - startAngle >= twoPiFloat)
+        endAngle = startAngle + twoPiFloat;
 }
 
 ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise)
