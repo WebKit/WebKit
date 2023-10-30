@@ -607,7 +607,6 @@ public:
 
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&&);
-    std::optional<FrameTreeCreationParameters> frameTreeCreationParameters() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);
@@ -2195,6 +2194,7 @@ public:
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
     void broadcastFrameRemovalToOtherProcesses(IPC::Connection&, WebCore::FrameIdentifier);
+    void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
 
     void addOpenedPage(WebPageProxy&);
     bool hasOpenedPage() const;

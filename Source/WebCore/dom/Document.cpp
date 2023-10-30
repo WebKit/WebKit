@@ -3657,6 +3657,8 @@ void Document::setURL(const URL& url)
     // SecurityContext::securityOrigin may not be initialized at this time if setURL() is called in the constructor, therefore calling topOrigin() is not always safe.
     auto topOrigin = isTopDocument() && !SecurityContext::securityOrigin() ? SecurityOrigin::create(url)->data() : this->topOrigin().data();
     m_url = { WTFMove(newURL), topOrigin };
+    if (m_frame)
+        m_frame->documentURLDidChange(m_url);
 
     m_documentURI = m_url.url().string();
     m_adjustedURL = adjustedURL();

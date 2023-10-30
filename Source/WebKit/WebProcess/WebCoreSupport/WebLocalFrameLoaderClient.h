@@ -277,6 +277,7 @@ private:
     inline bool hasPlugInView() const;
 
     void broadcastFrameRemovalToOtherProcesses() final;
+    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 

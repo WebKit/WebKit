@@ -528,7 +528,7 @@ static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClie
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
-    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
+    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessPageParameters ? parameters.subframeProcessPageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
     , m_viewSize(parameters.viewSize)
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
@@ -658,7 +658,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
     auto frameType { Frame::FrameType::Local };
-    if (parameters.subframeProcessFrameTreeCreationParameters && !parameters.openerFrameIdentifier)
+    if (parameters.subframeProcessPageParameters && !parameters.openerFrameIdentifier)
         frameType = Frame::FrameType::Remote;
 
     PageConfiguration pageConfiguration(
@@ -774,7 +774,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
-    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessFrameTreeCreationParameters;
+    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessPageParameters;
     
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
@@ -817,9 +817,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
     m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
-    if (auto& subframeProcessFrameTreeCreationParameters = parameters.subframeProcessFrameTreeCreationParameters) {
-        for (auto& childParameters : subframeProcessFrameTreeCreationParameters->children)
+    if (auto& subframeProcessPageParameters = parameters.subframeProcessPageParameters) {
+        for (auto& childParameters : subframeProcessPageParameters->frameTreeParameters.children)
             constructFrameTree(m_mainFrame.get(), childParameters);
+        m_page->setMainFrameURL(subframeProcessPageParameters->initialMainDocumentURL);
     }
 
     if (parameters.isProcessSwap && parameters.openerFrameIdentifier) {
@@ -1115,6 +1116,12 @@ void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
         return;
     }
     frame->removeFromTree();
+}
+
+void WebPage::mainFrameURLChangedInAnotherProcess(const URL& newURL)
+{
+    if (auto* page = corePage())
+        page->setMainFrameURL(newURL);
 }
 
 #if ENABLE(GPU_PROCESS)

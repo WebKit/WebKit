@@ -680,6 +680,11 @@ void Page::setMainFrame(Ref<Frame>&& frame)
     m_mainFrame = WTFMove(frame);
 }
 
+void Page::setMainFrameURL(const URL& url)
+{
+    m_mainFrameURL = url;
+}
+
 bool Page::openedByDOM() const
 {
     return m_openedByDOM;

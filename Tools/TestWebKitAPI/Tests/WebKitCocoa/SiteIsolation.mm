@@ -1472,4 +1472,66 @@ TEST(SiteIsolation, EvaluateJavaScriptInFrame)
     Util::run(&done);
 }
 
+TEST(SiteIsolation, MainFrameURLAfterFragmentNavigation)
+{
+    NSString *json = @"["
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"blocked_when_fragment_in_top_url\", \"if-top-url\":[\"fragment\"]}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"always_blocked\", \"if-top-url\":[\"http\"]}}"
+    "]";
+    __block bool doneRemoving { false };
+    [WKContentRuleListStore.defaultStore removeContentRuleListForIdentifier:@"Identifier" completionHandler:^(NSError *error) {
+        doneRemoving = true;
+    }];
+    Util::run(&doneRemoving);
+    __block RetainPtr<WKContentRuleList> list;
+    [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:@"Identifier" encodedContentRuleList:json completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+        list = ruleList;
+    }];
+    while (!list)
+        Util::spinRunLoop();
+
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/blocked_when_fragment_in_top_url"_s, { "loaded successfully"_s } },
+        { "/always_blocked"_s, { "loaded successfully"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView.get().configuration.userContentController addContentRuleList:list.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+    }];
+    while (!childFrameInfo)
+        Util::spinRunLoop();
+
+    auto canLoadURLInIFrame = [childFrameInfo = RetainPtr { childFrameInfo }, webView = RetainPtr { webView }] (NSString *path) -> bool {
+        __block std::optional<bool> loadedSuccessfully;
+        [webView callAsyncJavaScript:[NSString stringWithFormat:@"try { let response = await fetch('%@'); return await response.text() } catch (e) { return 'load failed' }", path] arguments:nil inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+            if ([result isEqualToString:@"loaded successfully"])
+                loadedSuccessfully = true;
+            else if ([result isEqualToString:@"load failed"])
+                loadedSuccessfully = false;
+            else
+                EXPECT_FALSE(true);
+        }];
+        while (!loadedSuccessfully)
+            Util::spinRunLoop();
+        return *loadedSuccessfully;
+    };
+    EXPECT_TRUE(canLoadURLInIFrame(@"/blocked_when_fragment_in_top_url"));
+    EXPECT_FALSE(canLoadURLInIFrame(@"/always_blocked"));
+
+    [webView evaluateJavaScript:@"window.location = '#fragment'" completionHandler:nil];
+    while (![webView.get().URL.fragment isEqualToString:@"fragment"])
+        Util::spinRunLoop();
+
+    EXPECT_FALSE(canLoadURLInIFrame(@"/blocked_when_fragment_in_top_url"));
+    EXPECT_FALSE(canLoadURLInIFrame(@"/always_blocked"));
+}
+
 }

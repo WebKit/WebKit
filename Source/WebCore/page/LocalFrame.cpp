@@ -1212,6 +1212,14 @@ CheckedRef<const EventHandler> LocalFrame::checkedEventHandler() const
     return m_eventHandler.get();
 }
 
+void LocalFrame::documentURLDidChange(const URL& url)
+{
+    if (auto* page = this->page(); page && isMainFrame()) {
+        page->setMainFrameURL(url);
+        m_loader->client().broadcastMainFrameURLChangeToOtherProcesses(url);
+    }
+}
+
 #if ENABLE(DATA_DETECTION)
 
 DataDetectionResultsStorage& LocalFrame::dataDetectionResults()

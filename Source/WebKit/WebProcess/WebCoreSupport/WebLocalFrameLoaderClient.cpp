@@ -1893,6 +1893,14 @@ void WebLocalFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
     WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
 }
 
+void WebLocalFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL& url)
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+    webPage->send(Messages::WebPageProxy::BroadcastMainFrameURLChangeToOtherProcesses(url));
+}
+
 #if ENABLE(SERVICE_WORKER)
 void WebLocalFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)
 {

@@ -372,6 +372,7 @@ public:
 #endif
 
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
+    virtual void broadcastMainFrameURLChangeToOtherProcesses(const URL&) = 0;
 
     virtual void dispatchLoadEventToOwnerElementInAnotherProcess() = 0;
 };
