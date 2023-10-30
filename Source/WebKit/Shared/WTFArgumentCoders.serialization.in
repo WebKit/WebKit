@@ -22,7 +22,7 @@
 
 webkit_platform_headers: "StreamConnectionEncoder.h"
 
-[WebKitPlatform] class WTF::URL {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::URL {
     String string()
 }
 

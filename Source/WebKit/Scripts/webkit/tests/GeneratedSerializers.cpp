@@ -33,6 +33,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
+#include "FooWrapper.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #if ENABLE(TEST_FEATURE)
@@ -1085,6 +1086,37 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> A
             WTFMove(*memberAfterTuple)
         )
     };
+}
+
+void ArgumentCoder<CFFooRef>::encode(Encoder& encoder, CFFooRef instance)
+{
+    encoder << WebKit::FooWrapper { instance };
+}
+
+std::optional<RetainPtr<CFFooRef>> ArgumentCoder<RetainPtr<CFFooRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WebKit::FooWrapper>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return result->toCF();
+}
+
+void ArgumentCoder<CFBarRef>::encode(Encoder& encoder, CFBarRef instance)
+{
+    encoder << WebKit::BarWrapper { instance };
+}
+
+void ArgumentCoder<CFBarRef>::encode(StreamConnectionEncoder& encoder, CFBarRef instance)
+{
+    encoder << WebKit::BarWrapper { instance };
+}
+
+std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WebKit::BarWrapper>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return result->createCFBar();
 }
 
 } // namespace IPC

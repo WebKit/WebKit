@@ -350,6 +350,7 @@ $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataType.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebsitePoliciesData.serialization.in
 $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
+$(PROJECT_DIR)/Shared/cf/CFTypes.serialization.in
 $(PROJECT_DIR)/Shared/ios/DynamicViewportSizeUpdate.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationRequest.serialization.in
