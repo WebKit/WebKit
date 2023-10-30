@@ -1,3 +1,4 @@
 
 PASS Basic usage
+PASS Multicol test
 
