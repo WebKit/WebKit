@@ -46,6 +46,11 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/PlatformMediaSessionManager.cpp
 
+    platform/audio/win/AudioBusWin.cpp
+    platform/audio/win/AudioDestinationWin.cpp
+    platform/audio/win/AudioFileReaderWin.cpp
+    platform/audio/win/FFTFrameWin.cpp
+
     platform/generic/KeyedDecoderGeneric.cpp
     platform/generic/KeyedEncoderGeneric.cpp
 

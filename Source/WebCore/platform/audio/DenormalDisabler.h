@@ -74,7 +74,7 @@ public:
     // This is a nop if we can flush denormals to zero in hardware.
     static inline float flushDenormalFloatToZero(float f)
     {
-#if OS(WINDOWS) && COMPILER(MSVC) && (!_M_IX86_FP)
+#if OS(WINDOWS) && COMPILER(MSVC) && !(defined(_M_IX86_FP) && _M_IX86_FP)
         // For systems using x87 instead of sse, there's no hardware support
         // to flush denormals automatically. Hence, we need to flush
         // denormals to zero manually.

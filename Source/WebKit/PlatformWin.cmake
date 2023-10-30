@@ -15,6 +15,8 @@ list(APPEND WebKit_SOURCES
     GPUProcess/graphics/wc/WCScene.cpp
     GPUProcess/graphics/wc/WCSceneContext.cpp
 
+    GPUProcess/media/RemoteAudioDestinationManager.cpp
+
     GPUProcess/media/win/RemoteMediaPlayerProxyWin.cpp
 
     GPUProcess/win/GPUProcessMainWin.cpp
