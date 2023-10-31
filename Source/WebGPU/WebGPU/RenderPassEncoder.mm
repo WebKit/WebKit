@@ -194,6 +194,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
             [m_renderCommandEncoder setCullMode:icb.cullMode];
             [m_renderCommandEncoder setFrontFacingWinding:icb.frontFace];
             [m_renderCommandEncoder setDepthClipMode:icb.depthClipMode];
+            [m_renderCommandEncoder setDepthBias:icb.depthBias slopeScale:icb.depthBiasSlopeScale clamp:icb.depthBiasClamp];
 
             for (const auto& resource : *icb.resources) {
                 if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
@@ -310,6 +311,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
     [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
     [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
+    [m_renderCommandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
 }
 
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

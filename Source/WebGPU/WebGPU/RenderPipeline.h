@@ -44,9 +44,9 @@ class PipelineLayout;
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)
@@ -69,12 +69,15 @@ public:
     MTLCullMode cullMode() const { return m_cullMode; }
     MTLDepthClipMode depthClipMode() const { return m_clipMode; }
     MTLDepthStencilDescriptor *depthStencilDescriptor() const { return m_depthStencilDescriptor; }
+    float depthBias() const { return m_depthBias; }
+    float depthBiasSlopeScale() const { return m_depthBiasSlopeScale; }
+    float depthBiasClamp() const { return m_depthBiasClamp; }
 
     Device& device() const { return m_device; }
     PipelineLayout& pipelineLayout() const;
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
@@ -85,6 +88,9 @@ private:
     MTLWinding m_frontFace;
     MTLCullMode m_cullMode;
     MTLDepthClipMode m_clipMode;
+    float m_depthBias { 0 };
+    float m_depthBiasSlopeScale { 0 };
+    float m_depthBiasClamp { 0 };
     MTLDepthStencilDescriptor *m_depthStencilDescriptor;
     id<MTLDepthStencilState> m_depthStencilState;
     Ref<PipelineLayout> m_pipelineLayout;
