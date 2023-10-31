@@ -38,9 +38,9 @@ public:
         return adoptRef(*new GPUAdapterInfo(WTFMove(name)));
     }
 
-    String vendor() const { auto v = m_name.split(' '); return v.size() ? v[0] : ""_s; }
+    String vendor() const { auto v = m_name.split(' '); return v.size() ? v[0].convertToLowercaseWithoutLocale() : ""_s; }
     String architecture() const { return ""_s; }
-    String device() const { return m_name; }
+    String device() const { return vendor(); }
     String description() const { return ""_s; }
 
 private:
