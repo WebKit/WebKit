@@ -60,7 +60,7 @@ public:
     void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
     void setLabel(String&&);
 
-    bool isValid() const { return !std::holds_alternative<std::monostate>(m_checkResult); }
+    bool isValid() const { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
