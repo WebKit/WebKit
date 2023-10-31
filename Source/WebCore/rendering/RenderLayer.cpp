@@ -1594,16 +1594,15 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 void RenderLayer::updateAncestorDependentState()
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    m_enclosingSVGResourceContainer = nullptr;
-    m_enclosingSVGHiddenContainer = nullptr;
+    m_enclosingSVGHiddenOrResourceContainer = nullptr;
     auto determineSVGAncestors = [&] (const RenderElement& renderer) {
         for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
             if (auto* container = dynamicDowncast<RenderSVGResourceContainer>(ancestor)) {
-                m_enclosingSVGResourceContainer = container;
+                m_enclosingSVGHiddenOrResourceContainer = container;
                 return;
             }
             if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
-                m_enclosingSVGHiddenContainer = container;
+                m_enclosingSVGHiddenOrResourceContainer = container;
                 return;
             }
         }
@@ -3149,7 +3148,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Applying clip-path on <clipPath> enforces us to use mask based clipping, so return false here to disable path based clipping.
     // Furthermore if we're the child of a resource container (<clipPath> / <mask> / ...) disabled path based clipping.
-    if (m_enclosingSVGResourceContainer && is<RenderSVGResourceClipper>(m_enclosingSVGResourceContainer)) {
+    if (is<RenderSVGResourceClipper>(m_enclosingSVGHiddenOrResourceContainer)) {
         // If m_isPaintingSVGResourceLayer is true, this function was invoked via paintSVGResourceLayer() -- clipping on <clipPath> is already
         // handled in RenderSVGResourceClipper::applyMaskClipping(), so do not set paintSVGClippingMask to true here.
         paintFlags.set(PaintLayerFlag::PaintingSVGClippingMask, !m_isPaintingSVGResourceLayer);
@@ -3326,13 +3325,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
-        if (m_enclosingSVGResourceContainer) {
-            ASSERT(m_enclosingSVGResourceContainer->hasLayer());
-            return m_enclosingSVGResourceContainer->layer()->isPaintingSVGResourceLayer();
+        if (is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer)) {
+            ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
+            return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
         }
 
         // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
-        return !m_enclosingSVGHiddenContainer;
+        return !m_enclosingSVGHiddenOrResourceContainer;
 #else
         return true;
 #endif
@@ -4239,7 +4238,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     // If we're hit testing 'SVG clip content' (aka. RenderSVGResourceClipper) do not early exit.
     if (!request.svgClipContent()) {
         // SVG resource layers and their children are never hit tested.
-        if (m_enclosingSVGResourceContainer)
+        if (is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
             return { nullptr };
 
         // Hidden SVG containers (<defs> / <symbol> ...) are never hit tested directly.
