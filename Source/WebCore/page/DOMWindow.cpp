@@ -38,25 +38,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMWindow);
 
-HashMap<GlobalWindowIdentifier, DOMWindow*>& DOMWindow::allWindows()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<GlobalWindowIdentifier, DOMWindow*>> map;
-    return map;
-}
-
 DOMWindow::DOMWindow(GlobalWindowIdentifier&& identifier)
     : m_identifier(WTFMove(identifier))
 {
-    ASSERT(!allWindows().contains(m_identifier));
-    allWindows().add(m_identifier, this);
 }
 
-DOMWindow::~DOMWindow()
-{
-    ASSERT(allWindows().contains(identifier()));
-    allWindows().remove(identifier());
-}
+DOMWindow::~DOMWindow() = default;
 
 ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(const String& targetOrigin, Document& sourceDocument)
 {
