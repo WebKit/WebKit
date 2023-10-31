@@ -383,11 +383,12 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
     }
 
-    if (value.has_value())
-        convertValue(variable.span(), result, *value);
-    if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType())
-        ASSERT(value.has_value());
-    else
+    if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType()) {
+        if (value)
+            convertValue(variable.span(), result, *value);
+        else
+            typeError(InferBottom::No, variable.span(), "INTERNAL ERROR: failed to compute constant");
+    } else
         value = std::nullopt;
 
     if (variable.flavor() == AST::VariableFlavor::Var) {
