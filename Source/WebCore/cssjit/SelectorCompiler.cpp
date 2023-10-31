@@ -1009,8 +1009,6 @@ JSC_DEFINE_JIT_OPERATION(operationHasAttachment, bool, (const Element& element))
 JSC_DEFINE_JIT_OPERATION(operationMatchesDir, bool, (const Element& element, uint32_t direction))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDir);
-    if (!element.document().settings().dirPseudoEnabled())
-        return false;
     return element.effectiveTextDirection() == static_cast<TextDirection>(direction);
 }
 

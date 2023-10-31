@@ -2355,20 +2355,6 @@ DiagnosticLoggingEnabled:
     WebCore:
       default: false
 
-DirPseudoEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: ":dir pseudo-class"
-  humanReadableDescription: "Enable the directionality pseudo-class :dir"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DirectoryUploadEnabled:
   type: bool
   status: embedder
