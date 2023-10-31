@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <optional>
+#include <type_traits>
+
 namespace API {
 enum class FeatureStatus : uint8_t {
     // For customizing WebKit behavior in embedding applications.
@@ -44,6 +47,32 @@ enum class FeatureStatus : uint8_t {
     // Enabled by default and in general use for more than a year.
     Mature
 };
+
+// Helper for representing feature status as a constant type. Used by the preferences generator to
+// validate feature configuration at compile time.
+template<API::FeatureStatus Status>
+class FeatureConstant : public std::integral_constant<API::FeatureStatus, Status> { };
+
+constexpr std::optional<bool> defaultValueForFeatureStatus(FeatureStatus status)
+{
+    switch (status) {
+    case FeatureStatus::Stable:
+    case FeatureStatus::Mature:
+        return true;
+    case FeatureStatus::Unstable:
+    case FeatureStatus::Developer:
+    case FeatureStatus::Testable:
+    case FeatureStatus::Preview:
+        return false;
+    case FeatureStatus::Embedder:
+    case FeatureStatus::Internal:
+        // Embedder features vary widely between platforms, so they have no
+        // implied default.
+        // FIXME: Internal features should be off by default, but they need
+        // additional auditing.
+        return { };
+    }
+}
 
 enum class FeatureCategory : uint8_t {
     None,

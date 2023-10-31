@@ -1043,3 +1043,11 @@
 #if !defined(ENABLE_WEBPROCESS_CACHE)
 #define ENABLE_WEBPROCESS_CACHE 0
 #endif
+
+#if !defined(ENABLE_FEATURE_DEFAULT_VALIDATION) \
+    && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
+// FIXME: Check feature flag default values on other platforms once it's
+// possible to make feature status conditional.
+#define ENABLE_FEATURE_DEFAULT_VALIDATION 1
+#endif
+

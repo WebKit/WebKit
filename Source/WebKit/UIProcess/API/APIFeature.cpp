@@ -28,7 +28,7 @@
 
 namespace API {
 
-Ref<Feature> Feature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
+Ref<Feature> Feature::uncheckedCreate(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
 {
     return adoptRef(*new Feature(name, key, status, category, details, defaultValue, hidden));
 }
