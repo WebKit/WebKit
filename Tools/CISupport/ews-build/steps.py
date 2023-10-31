@@ -2449,23 +2449,26 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
     QUEUES_FOR_SAFE_MERGE_QUEUE = EMBEDDED_CHECKS + MACOS_CHECKS
+    EWS_WEBKIT_FAILED = 0
+    EWS_WEBKIT_PASSED = 1
+    EWS_WEBKIT_PENDING = 2
 
     def __init__(self, pr_number='', **kwargs):
         self.name = f'{self.name}-{pr_number}'
         self.steps_to_add = []
+        self.passed_status_check = None
         super().__init__(**kwargs)
 
     @defer.inlineCallbacks
     def run(self):
         pr_number = self.getProperty('github.number', '')
         repository = self.getProperty('repository', '')
-        checked_status = False
 
         yield self._addToLog('stdio', f'Performing status check on PR {pr_number}.\n')
         yield self._addToLog('stdio', f'Link to PR: {repository}/pull/{pr_number}\n')
 
         if pr_number not in self.getProperty('failed_status_check', []):
-            checked_status = yield self.checkPRStatus(pr_number)
+            self.passed_status_check = yield self.checkPRStatus(pr_number)
 
         if len(self.getProperty('list_of_prs')):
             self.steps_to_add += [DetermineLabelOwner()]
@@ -2473,12 +2476,16 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.steps_to_add += [AddMergeLabelsToPRs()]
         self.build.addStepsAfterCurrentStep(self.steps_to_add)
 
-        defer.returnValue(SUCCESS if checked_status else FAILURE)
+        if self.passed_status_check == self.EWS_WEBKIT_PENDING:
+            defer.returnValue(WARNINGS)
+        defer.returnValue(SUCCESS if self.passed_status_check else FAILURE)
 
     def getResultSummary(self):
         pr_number = self.getProperty('github.number', '')
-        if self.results == SUCCESS:
+        if self.results == SUCCESS and self.passed_status_check == self.EWS_WEBKIT_PASSED:
             return {'step': f"PR {pr_number} marked safe for merge-queue"}
+        elif self.results == WARNINGS and self.passed_status_check == self.EWS_WEBKIT_PENDING:
+            return {'step': f"PR {pr_number} not ready for merge-queue"}
         elif self.results == FAILURE:
             return {'step': f"PR {pr_number} unsafe for merge-queue"}
         return buildstep.BuildStep.getResultSummary(self)
@@ -2525,22 +2532,23 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             return defer.returnValue(False if response.status_code // 100 == 4 else None)
 
         for queue in self.QUEUES_FOR_SAFE_MERGE_QUEUE:
-            yield self._addToLog('stdio', f'Currently checking {queue}...\n')
             queue_data = response.json().get(queue, None)
             if queue_data:
                 status = queue_data.get('state', None)
-                if status == 0 or status == 3:  # success or N/A
-                    yield self._addToLog('stdio', f'Success\n')
+                if status == 0:  # success
+                    yield self._addToLog('stdio', f'{queue}: Success\n')
                     continue
                 elif status == 2:  # failure
                     failed_checks.append(queue)
-                    yield self._addToLog('stdio', f'Failure\n')
+                    yield self._addToLog('stdio', f'{queue}: Failure\n')
+                elif status == 3:  # skipped
+                    yield self._addToLog('stdio', f'{queue}: Skipped\n')
                 else:  # null
                     missing_checks.append(queue)
-                    yield self._addToLog('stdio', f'Pending\n')
+                    yield self._addToLog('stdio', f'{queue}: Pending\n')
             else:
                 missing_checks.append(queue)
-                yield self._addToLog('stdio', f'Pending\n')
+                yield self._addToLog('stdio', f'{queue}: Pending\n')
 
         passed_status_check = self.getProperty('passed_status_check')
         failed_status_check = self.getProperty('failed_status_check')
@@ -2551,7 +2559,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.setProperty('pending_prs', pending_prs)
             yield self._addToLog('stdio', 'Required checks are not completed. Waiting until all checks are completed before relabelling PR.\n')
             yield self._addToLog('stdio', f'Missing the following checks: {missing_checks}\n')
-            defer.returnValue(False)
+            defer.returnValue(self.EWS_WEBKIT_PENDING)
         elif len(failed_checks):
             failed_status_check.append(pr_number)
             self.setProperty('failed_status_check', failed_status_check)
@@ -2562,12 +2570,12 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             comment += f'\n\nRejecting #{pr_number} from merge queue.'
             self.setProperty('comment_text', comment)
             self.steps_to_add += [LeaveComment()]
-            defer.returnValue(False)
+            defer.returnValue(self.EWS_WEBKIT_FAILED)
         else:
             passed_status_check.append(pr_number)
             self.setProperty('passed_status_check', passed_status_check)
             yield self._addToLog('stdio', 'Passed status check.\n')
-            defer.returnValue(True)
+            defer.returnValue(self.EWS_WEBKIT_PASSED)
 
 
 class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
