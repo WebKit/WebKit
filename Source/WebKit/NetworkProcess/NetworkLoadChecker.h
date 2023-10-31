@@ -138,6 +138,8 @@ private:
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 
+    RefPtr<WebCore::SecurityOrigin> parentOrigin() const { return m_parentOrigin; }
+
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
     bool m_allowPrivacyProxy;

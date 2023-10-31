@@ -737,7 +737,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
 
     bool shouldGetBodyBlob = mayContainBlob(readOperation.key);
 
-    ioQueue().dispatch([this, &readOperation, shouldGetBodyBlob] {
+    protectedIOQueue()->dispatch([this, &readOperation, shouldGetBodyBlob] {
         auto recordPath = recordPathForKey(readOperation.key);
 
         ++readOperation.activeCount;
@@ -747,7 +747,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         readOperation.timings.recordIOStartTime = MonotonicTime::now();
 
         auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+        channel->read(0, std::numeric_limits<size_t>::max(), protectedIOQueue(), [this, &readOperation](const Data& fileData, int error) {
             readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
                 readRecord(readOperation, fileData);

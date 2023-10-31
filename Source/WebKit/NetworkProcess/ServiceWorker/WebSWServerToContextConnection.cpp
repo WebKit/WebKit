@@ -243,7 +243,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
         return;
     }
 
-    auto* worker = server->workerByID(identifier);
+    RefPtr worker = server->workerByID(identifier);
     if (!worker) {
         callback(makeUnexpected(ExceptionData { TypeError, "No remaining service worker"_s }));
         return;
@@ -270,7 +270,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
 void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     auto* server = this->server();
-    auto* worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
+    RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
     if (!worker)
         return;
     m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReportConsoleMessage { m_connection.sessionID(), worker->scriptURL(), worker->origin().clientOrigin, source, level, message, requestIdentifier }, 0);
@@ -347,7 +347,7 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
 
 void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
 {
-    auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
         callback(makeUnexpected(ExceptionData { TypeError, "no service worker"_s }));
         return;

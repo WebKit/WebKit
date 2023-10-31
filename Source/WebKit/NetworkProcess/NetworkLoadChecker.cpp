@@ -212,8 +212,8 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     }
 
     if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
-        if (m_options.mode == FetchOptions::Mode::Navigate && m_parentOrigin) {
-            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *m_parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
+        if (RefPtr parentOrigin = m_parentOrigin; parentOrigin && m_options.mode == FetchOptions::Mode::Navigate) {
+            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
                 return WTFMove(*error);
         }
         response.setTainting(ResourceResponse::Tainting::Basic);
@@ -224,7 +224,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
         response.setAsRangeRequested();
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
-        if (auto error = performCORPCheck(m_crossOriginEmbedderPolicy, *m_origin, m_url, response, ForNavigation::No, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
+        if (auto error = performCORPCheck(m_crossOriginEmbedderPolicy, *origin(), m_url, response, ForNavigation::No, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
             return WTFMove(*error);
 
         response.setTainting(ResourceResponse::Tainting::Opaque);
@@ -237,7 +237,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     if (response.httpStatusCode() == 304)
         return { };
 
-    auto result = passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, m_networkResourceLoader.get());
+    auto result = passesAccessControlCheck(response, m_storedCredentialsPolicy, *origin(), m_networkResourceLoader.get());
     if (!result)
         return ResourceError { String { }, 0, m_url, WTFMove(result.error()), ResourceError::Type::AccessControl };
 
@@ -383,7 +383,7 @@ void NetworkLoadChecker::checkCORSRequest(ResourceRequest&& request, ValidationH
         }
         FALLTHROUGH;
     case PreflightPolicy::Prevent:
-        updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
+        updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
         break;
     }
@@ -421,7 +421,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
     m_isSimpleRequest = false;
     if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, m_origin->toString(), request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
         LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - preflight can be skipped thanks to cached result");
-        updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
+        updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
         return;
     }
@@ -454,7 +454,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
             m_loadInformation.transactions.append(m_corsPreflightChecker->takeInformation());
 
         auto corsPreflightChecker = WTFMove(m_corsPreflightChecker);
-        updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
+        updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
     });
     m_corsPreflightChecker->startPreflight();
