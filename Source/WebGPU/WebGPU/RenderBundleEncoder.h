@@ -39,7 +39,7 @@ struct WGPURenderBundleEncoderImpl {
 
 @interface RenderBundleICBWithResources : NSObject
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly, nonatomic) id<MTLIndirectCommandBuffer> indirectCommandBuffer;
@@ -48,6 +48,9 @@ struct WGPURenderBundleEncoderImpl {
 @property (readonly, nonatomic) MTLCullMode cullMode;
 @property (readonly, nonatomic) MTLWinding frontFace;
 @property (readonly, nonatomic) MTLDepthClipMode depthClipMode;
+@property (readonly, nonatomic) float depthBias;
+@property (readonly, nonatomic) float depthBiasSlopeScale;
+@property (readonly, nonatomic) float depthBiasClamp;
 
 - (Vector<WebGPU::BindableResources>*)resources;
 @end
@@ -118,6 +121,9 @@ private:
     MTLCullMode m_cullMode { MTLCullModeNone };
     MTLWinding m_frontFace { MTLWindingClockwise };
     MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
+    float m_depthBias { 0 };
+    float m_depthBiasSlopeScale { 0 };
+    float m_depthBiasClamp { 0 };
 
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };

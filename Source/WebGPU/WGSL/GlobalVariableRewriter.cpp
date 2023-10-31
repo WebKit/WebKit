@@ -1013,18 +1013,6 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> UsedGlobals
         auto group = global.resource->group;
         auto result = usedGlobals.resources.add(group, IndexMap<Global*>());
         result.iterator->value.add(global.resource->binding, &global);
-
-        if (m_generatedLayout) {
-            if (m_generatedLayout->bindGroupLayouts.size() <= group)
-                m_generatedLayout->bindGroupLayouts.grow(group + 1);
-
-            m_generatedLayout->bindGroupLayouts[group].entries.append({
-                .binding = global.resource->binding,
-                .visibility = m_stage,
-                .bindingMember = bindingMemberForGlobal(global),
-                .name = global.declaration->name()
-            });
-        }
     }
     return usedGlobals;
 }
@@ -1080,6 +1068,8 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
         const IndexMap<Global*>& usedBindings = usedResource->value;
 
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
+        unsigned metalId = 0;
+        HashMap<AST::Variable*, unsigned> bufferSizeToOwnerMap;
         for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
                 continue;
@@ -1092,7 +1082,39 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
             auto& global = it->value;
             ASSERT(global.declaration->maybeTypeName());
 
-            entries.append({ binding, &createArgumentBufferEntry(binding, *global.declaration) });
+            entries.append({ metalId, &createArgumentBufferEntry(metalId, *global.declaration) });
+
+            if (m_generatedLayout->bindGroupLayouts.size() <= group)
+                m_generatedLayout->bindGroupLayouts.grow(group + 1);
+
+            BindGroupLayoutEntry entry {
+                .binding = metalId,
+                .webBinding = global.resource->binding,
+                .visibility = m_stage,
+                .bindingMember = bindingMemberForGlobal(global),
+                .name = global.declaration->name()
+            };
+
+            auto bufferSizeIt = m_bufferLengthMap.find(global.declaration);
+            if (bufferSizeIt != m_bufferLengthMap.end()) {
+                auto* variable = bufferSizeIt->value;
+                bufferSizeToOwnerMap.add(variable, m_generatedLayout->bindGroupLayouts[group].entries.size());
+            } else if (auto ownerIt = bufferSizeToOwnerMap.find(global.declaration); ownerIt != bufferSizeToOwnerMap.end()) {
+                // FIXME: since we only ever generate a layout for one shader stage
+                // at a time, we always store the indices in the vertex slot, but
+                // we should use a structs to pass information from the compiler to
+                // the API (instead of reusing the same struct the API uses to pass
+                // information to the compiler)
+                m_generatedLayout->bindGroupLayouts[group].entries[ownerIt->value].vertexArgumentBufferSizeIndex = metalId;
+            }
+
+            auto* type = global.declaration->storeType();
+            if (isPrimitive(type, Types::Primitive::TextureExternal))
+                metalId += 4;
+            else
+                ++metalId;
+
+            m_generatedLayout->bindGroupLayouts[group].entries.append(WTFMove(entry));
         }
 
         if (entries.isEmpty())

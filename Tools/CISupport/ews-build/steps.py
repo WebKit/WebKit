@@ -114,6 +114,12 @@ class GitHub(object):
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     BLOCKED_LABEL = 'merging-blocked'
     SKIP_EWS_LABEL = 'skip-ews'
+    NO_FAILURE_LIMITS_LABEL = 'no-failure-limits'
+    LABELS = [
+        MERGE_QUEUE_LABEL, UNSAFE_MERGE_QUEUE_LABEL, SAFE_MERGE_QUEUE_LABEL,
+        REQUEST_MERGE_QUEUE_LABEL, BLOCKED_LABEL,
+        SKIP_EWS_LABEL, NO_FAILURE_LIMITS_LABEL,
+    ]
 
     @classmethod
     def repository_urls(cls):
@@ -1855,6 +1861,14 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         repository_url = self.getProperty('repository', '')
         pr_json = yield self.get_pr_json(pr_number, repository_url, retry=3)
 
+        if pr_json:
+            # Only track acionable labels, since bug category labels may reveal information about security bugs
+            self.setProperty('github_labels', [
+                data.get('name')
+                for data in pr_json.get('labels', [])
+                if data.get('name') in GitHub.LABELS
+            ])
+
         pr_closed = yield self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
             rc = yield self.skip_build('Pull request {} is already closed'.format(pr_number))
@@ -2435,23 +2449,26 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
     QUEUES_FOR_SAFE_MERGE_QUEUE = EMBEDDED_CHECKS + MACOS_CHECKS
+    EWS_WEBKIT_FAILED = 0
+    EWS_WEBKIT_PASSED = 1
+    EWS_WEBKIT_PENDING = 2
 
     def __init__(self, pr_number='', **kwargs):
         self.name = f'{self.name}-{pr_number}'
         self.steps_to_add = []
+        self.passed_status_check = None
         super().__init__(**kwargs)
 
     @defer.inlineCallbacks
     def run(self):
         pr_number = self.getProperty('github.number', '')
         repository = self.getProperty('repository', '')
-        checked_status = False
 
         yield self._addToLog('stdio', f'Performing status check on PR {pr_number}.\n')
         yield self._addToLog('stdio', f'Link to PR: {repository}/pull/{pr_number}\n')
 
         if pr_number not in self.getProperty('failed_status_check', []):
-            checked_status = yield self.checkPRStatus(pr_number)
+            self.passed_status_check = yield self.checkPRStatus(pr_number)
 
         if len(self.getProperty('list_of_prs')):
             self.steps_to_add += [DetermineLabelOwner()]
@@ -2459,12 +2476,16 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.steps_to_add += [AddMergeLabelsToPRs()]
         self.build.addStepsAfterCurrentStep(self.steps_to_add)
 
-        defer.returnValue(SUCCESS if checked_status else FAILURE)
+        if self.passed_status_check == self.EWS_WEBKIT_PENDING:
+            defer.returnValue(WARNINGS)
+        defer.returnValue(SUCCESS if self.passed_status_check else FAILURE)
 
     def getResultSummary(self):
         pr_number = self.getProperty('github.number', '')
-        if self.results == SUCCESS:
+        if self.results == SUCCESS and self.passed_status_check == self.EWS_WEBKIT_PASSED:
             return {'step': f"PR {pr_number} marked safe for merge-queue"}
+        elif self.results == WARNINGS and self.passed_status_check == self.EWS_WEBKIT_PENDING:
+            return {'step': f"PR {pr_number} not ready for merge-queue"}
         elif self.results == FAILURE:
             return {'step': f"PR {pr_number} unsafe for merge-queue"}
         return buildstep.BuildStep.getResultSummary(self)
@@ -2511,22 +2532,23 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             return defer.returnValue(False if response.status_code // 100 == 4 else None)
 
         for queue in self.QUEUES_FOR_SAFE_MERGE_QUEUE:
-            yield self._addToLog('stdio', f'Currently checking {queue}...\n')
             queue_data = response.json().get(queue, None)
             if queue_data:
                 status = queue_data.get('state', None)
-                if status == 0 or status == 3:  # success or N/A
-                    yield self._addToLog('stdio', f'Success\n')
+                if status == 0:  # success
+                    yield self._addToLog('stdio', f'{queue}: Success\n')
                     continue
                 elif status == 2:  # failure
                     failed_checks.append(queue)
-                    yield self._addToLog('stdio', f'Failure\n')
+                    yield self._addToLog('stdio', f'{queue}: Failure\n')
+                elif status == 3:  # skipped
+                    yield self._addToLog('stdio', f'{queue}: Skipped\n')
                 else:  # null
                     missing_checks.append(queue)
-                    yield self._addToLog('stdio', f'Pending\n')
+                    yield self._addToLog('stdio', f'{queue}: Pending\n')
             else:
                 missing_checks.append(queue)
-                yield self._addToLog('stdio', f'Pending\n')
+                yield self._addToLog('stdio', f'{queue}: Pending\n')
 
         passed_status_check = self.getProperty('passed_status_check')
         failed_status_check = self.getProperty('failed_status_check')
@@ -2537,7 +2559,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.setProperty('pending_prs', pending_prs)
             yield self._addToLog('stdio', 'Required checks are not completed. Waiting until all checks are completed before relabelling PR.\n')
             yield self._addToLog('stdio', f'Missing the following checks: {missing_checks}\n')
-            defer.returnValue(False)
+            defer.returnValue(self.EWS_WEBKIT_PENDING)
         elif len(failed_checks):
             failed_status_check.append(pr_number)
             self.setProperty('failed_status_check', failed_status_check)
@@ -2548,12 +2570,12 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             comment += f'\n\nRejecting #{pr_number} from merge queue.'
             self.setProperty('comment_text', comment)
             self.steps_to_add += [LeaveComment()]
-            defer.returnValue(False)
+            defer.returnValue(self.EWS_WEBKIT_FAILED)
         else:
             passed_status_check.append(pr_number)
             self.setProperty('passed_status_check', passed_status_check)
             yield self._addToLog('stdio', 'Passed status check.\n')
-            defer.returnValue(True)
+            defer.returnValue(self.EWS_WEBKIT_PASSED)
 
 
 class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
@@ -3801,8 +3823,12 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         self.setCommand(self.command + ['--debug-rwt-logging'])
 
         patch_author = self.getProperty('patch_author')
+        self.maxTime = None
         if patch_author in ['webkit-wpt-import-bot@igalia.com']:
             self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+        elif GitHub.NO_FAILURE_LIMITS_LABEL in self.getProperty('github_labels', []):
+            self.setCommand(self.command + ['--no-retry'])
+            self.maxTime = 60 * 90
         else:
             if self.EXIT_AFTER_FAILURES is not None:
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
@@ -3817,6 +3843,12 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
         if self.ENABLE_GUARD_MALLOC:
             self.setCommand(self.command + ['--guard-malloc'])
+
+    def buildCommandKwargs(self, warnings):
+        result = super().buildCommandKwargs(warnings)
+        if self.maxTime:
+            result['maxTime'] = self.maxTime
+        return result
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         self.log_observer = BufferLogObserverClass(wantStderr=True)
@@ -3968,14 +4000,19 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                                                 ExtractTestResults()])
             self.finished(WARNINGS)
         else:
-            self.build.addStepsAfterCurrentStep([
+            steps_to_add = [
                 ArchiveTestResults(),
                 UploadTestResults(),
                 ExtractTestResults(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                KillOldProcesses(),
-                ReRunWebKitTests(),
-            ])
+            ]
+            if GitHub.NO_FAILURE_LIMITS_LABEL not in self.getProperty('github_labels', []):
+                steps_to_add += [
+                    KillOldProcesses(),
+                    ReRunWebKitTests(),
+                ]
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+
         return rc
 
     def getResultSummary(self):
@@ -6402,7 +6439,8 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
     @classmethod
     def escape_html(cls, message):
         message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
-        return re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
+        message = re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
+        return re.sub(r'rdar://([^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="https://rdar.apple.com/\1">rdar://\1</a>', message)
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)

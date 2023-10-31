@@ -86,39 +86,40 @@ public:
     WebKit::BrowsingContextGroup& browsingContextGroup();
 
     WebKit::WebProcessPool* processPool();
-    void setProcessPool(WebKit::WebProcessPool*);
+    void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
 
     WebKit::WebUserContentControllerProxy* userContentController();
-    void setUserContentController(WebKit::WebUserContentControllerProxy*);
+    void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     WebKit::WebExtensionController* webExtensionController();
-    void setWebExtensionController(WebKit::WebExtensionController*);
+    void setWebExtensionController(RefPtr<WebKit::WebExtensionController>&&);
 
     WebKit::WebExtensionController* weakWebExtensionController();
     void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
     WebKit::WebPageGroup* pageGroup();
-    void setPageGroup(WebKit::WebPageGroup*);
+    void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
     WebKit::WebPreferences* preferences();
-    void setPreferences(WebKit::WebPreferences*);
+    void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
-    void setRelatedPage(WebKit::WebPageProxy*);
+    void setRelatedPage(RefPtr<WebKit::WebPageProxy>&&);
 
     WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
     void setPageToCloneSessionStorageFrom(WebKit::WebPageProxy*);
 
     WebKit::VisitedLinkStore* visitedLinkStore();
-    void setVisitedLinkStore(WebKit::VisitedLinkStore*);
+    void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
 
     WebKit::WebsiteDataStore* websiteDataStore();
-    void setWebsiteDataStore(WebKit::WebsiteDataStore*);
+    RefPtr<WebKit::WebsiteDataStore> protectedWebsiteDataStore();
+    void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
 
     WebsitePolicies* defaultWebsitePolicies() const;
-    void setDefaultWebsitePolicies(WebsitePolicies*);
+    void setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&&);
 
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const { return m_data.canShowWhileLocked; }
@@ -155,7 +156,7 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     ApplicationManifest* applicationManifest() const;
-    void setApplicationManifest(ApplicationManifest*);
+    void setApplicationManifest(RefPtr<ApplicationManifest>&&);
 #endif
 
     RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);

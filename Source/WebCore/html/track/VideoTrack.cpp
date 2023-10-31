@@ -35,6 +35,7 @@
 #if ENABLE(VIDEO)
 
 #include "CommonAtomStrings.h"
+#include "ScriptExecutionContext.h"
 #include "VideoTrackClient.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"

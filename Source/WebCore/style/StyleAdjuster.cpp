@@ -656,8 +656,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, m_parentStyle.effectiveTouchActions()));
 
     // Counterparts in Element::addToTopLayer/removeFromTopLayer & SharingResolver::canShareStyleWithElement need to match!
-    auto hasInertAttribute = [this] (const Element* element) -> bool {
-        return m_document.settings().inertAttributeEnabled() && is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
+    auto hasInertAttribute = [] (const Element* element) -> bool {
+        return is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
     };
     auto isInertSubtreeRoot = [this, hasInertAttribute] (const Element* element) -> bool {
         if (m_document.activeModalDialog() && element == m_document.documentElement())

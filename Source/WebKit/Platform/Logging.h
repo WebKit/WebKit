@@ -108,6 +108,7 @@ extern "C" {
     M(Storage) \
     M(StorageAPI) \
     M(SystemPreview) \
+    M(Telephony) \
     M(TextInput) \
     M(TextInteraction) \
     M(Translation) \

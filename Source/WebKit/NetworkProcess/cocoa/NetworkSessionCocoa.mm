@@ -1922,8 +1922,8 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
 
     enableAdvancedPrivacyProtections(ensureMutableRequest(), advancedPrivacyProtections);
 
-    auto& sessionSet = sessionSetForPage(webPageProxyID);
-    RetainPtr task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
+    Ref sessionSet = sessionSetForPage(webPageProxyID);
+    RetainPtr task = [sessionSet->sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     
     // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1.
     // Use NSIntegerMax instead of 2^63 - 1 for 32-bit systems.

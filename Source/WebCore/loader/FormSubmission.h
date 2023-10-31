@@ -50,9 +50,9 @@ public:
     class Attributes {
     public:
         Method method() const { return m_method; }
-        static Method parseMethodType(const String&, bool);
-        void updateMethodType(const String&, bool);
-        static ASCIILiteral methodString(Method, bool);
+        static Method parseMethodType(const String&);
+        void updateMethodType(const String&);
+        static ASCIILiteral methodString(Method);
 
         const String& action() const { return m_action; }
         void parseAction(const String&);

@@ -1101,14 +1101,15 @@ std::optional<RetainPtr<CFFooRef>> ArgumentCoder<RetainPtr<CFFooRef>>::decode(De
     return result->toCF();
 }
 
+#if USE(CFBAR)
 void ArgumentCoder<CFBarRef>::encode(Encoder& encoder, CFBarRef instance)
 {
-    encoder << WebKit::BarWrapper { instance };
+    encoder << WebKit::BarWrapper::createFromCF(instance);
 }
 
 void ArgumentCoder<CFBarRef>::encode(StreamConnectionEncoder& encoder, CFBarRef instance)
 {
-    encoder << WebKit::BarWrapper { instance };
+    encoder << WebKit::BarWrapper::createFromCF(instance);
 }
 
 std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(Decoder& decoder)
@@ -1116,8 +1117,10 @@ std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(De
     auto result = decoder.decode<WebKit::BarWrapper>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    return result->createCFBar();
+    return createCFBar(*result);
 }
+
+#endif
 
 } // namespace IPC
 

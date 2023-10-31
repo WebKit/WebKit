@@ -170,14 +170,14 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     m_isPlayerShuttingDown.store(false);
 
 #if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
-    m_nicosiaLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this,
+    m_nicosiaLayer = Nicosia::ContentLayer::create(*this,
         [&]() -> Ref<TextureMapperPlatformLayerProxy> {
 #if USE(TEXTURE_MAPPER_DMABUF)
             if (webKitDMABufVideoSinkIsEnabled() && webKitDMABufVideoSinkProbePlatform())
                 return adoptRef(*new TextureMapperPlatformLayerProxyDMABuf);
 #endif
             return adoptRef(*new TextureMapperPlatformLayerProxyGL);
-        }()));
+        }());
 #endif
 
     ensureGStreamerInitialized();
@@ -221,7 +221,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         flushCurrentBuffer();
 #endif
 #if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
-    downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
+    m_nicosiaLayer->invalidateClient();
 #endif
 
     if (m_videoSink)
@@ -3288,7 +3288,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
         };
 
 #if USE(NICOSIA)
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    auto& proxy = m_nicosiaLayer->proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
     proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
 #else
@@ -3379,7 +3379,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
     ++m_sampleCount;
 
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    auto& proxy = m_nicosiaLayer->proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
 
     Locker locker { proxy.lock() };
@@ -3761,7 +3761,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
                 return proxy.scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); });
             };
 #if USE(NICOSIA)
-        auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+        auto& proxy = m_nicosiaLayer->proxy();
         ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
         if (!proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy)))
             return;
@@ -3773,7 +3773,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
         m_drawCondition.wait(m_drawLock);
     } else {
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER_DMABUF)
-        if (is<TextureMapperPlatformLayerProxyDMABuf>(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy())) {
+        if (is<TextureMapperPlatformLayerProxyDMABuf>(m_nicosiaLayer->proxy())) {
             pushDMABufToCompositor();
             return;
         }
@@ -3837,7 +3837,7 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     };
 
 #if USE(NICOSIA)
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    auto& proxy = m_nicosiaLayer->proxy();
     if (is<TextureMapperPlatformLayerProxyGL>(proxy))
         proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
 #else
@@ -4087,7 +4087,7 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
         };
 
 #if USE(NICOSIA)
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    auto& proxy = m_nicosiaLayer->proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
     proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
 #else

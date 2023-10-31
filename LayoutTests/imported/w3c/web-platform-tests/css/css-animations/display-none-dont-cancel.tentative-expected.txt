@@ -1,0 +1,11 @@
+hello
+hello
+hello
+hello
+
+FAIL display:none animating to display:inline should be inline for the whole animation. assert_equals: The display should be inline during the animation. expected "inline" but got "block"
+FAIL A CSS variable of display:none animating to display:inline should be inline for the whole animation. assert_equals: The display should be inline during the animation. expected "inline" but got "block"
+FAIL Animating from display:none to display:none should not cancel the animation. assert_equals: The display should be none and the animation should keep running. expected "none" but got "block"
+FAIL Animating from display:none to display:none with an intermediate variable should not cancel the animation. assert_equals: The display should be none and the animation should keep running. expected "none" but got "block"
+FAIL Animating a variable of "none" which gets set to display elsewhere should not cancel the animation. assert_equals: The display should be none and the animation should keep running. expected "none" but got "block"
+

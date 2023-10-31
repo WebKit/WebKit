@@ -26,7 +26,7 @@
 
 #include "BackgroundPainter.h"
 #include "DeprecatedGlobalSettings.h"
-#include "DocumentMarkerController.h"
+#include "DocumentInlines.h"
 #include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"

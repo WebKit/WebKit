@@ -31,7 +31,7 @@
 #include "JSDOMBinding.h"
 #include "JSFileSystemDirectoryEntry.h"
 #include "JSFileSystemFileEntry.h"
-
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 using namespace JSC;

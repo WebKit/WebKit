@@ -388,7 +388,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     }
 
     auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(parameters), connectionIdentifiers->server);
-    auto& connection = newConnection.get();
+    Ref connection = newConnection;
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
@@ -396,10 +396,10 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     auto* storage = storageSession(sessionID);
     completionHandler(WTFMove(connectionIdentifiers->client), storage ? storage->cookieAcceptPolicy() : HTTPCookieAcceptPolicy::Never);
 
-    connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
+    connection->setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     if (auto* session = networkSession(sessionID))
-        session->storageManager().startReceivingMessageFromConnection(Ref { connection.connection() });
+        session->storageManager().startReceivingMessageFromConnection(Ref { connection->connection() });
 }
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)

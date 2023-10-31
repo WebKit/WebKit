@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FULLSCREEN_API)
 #include "DocumentFullscreen.h"
 
+#if ENABLE(FULLSCREEN_API)
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "EventLoop.h"
 #include "JSDOMPromiseDeferred.h"

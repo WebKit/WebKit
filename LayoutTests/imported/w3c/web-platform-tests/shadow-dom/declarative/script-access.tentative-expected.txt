@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: TypeError: template.getInnerHTML is not a function. (In 'template.getInnerHTML({includeShadowRoots: true})', 'template.getInnerHTML' is undefined)
-
-Harness Error (FAIL), message = TypeError: template.getInnerHTML is not a function. (In 'template.getInnerHTML({includeShadowRoots: true})', 'template.getInnerHTML' is undefined)
-
-

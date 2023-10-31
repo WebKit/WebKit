@@ -27,6 +27,7 @@
 #include "LayoutRepainter.h"
 
 #include "RenderElement.h"
+#include "RenderLayerModelObject.h"
 
 namespace WebCore {
 

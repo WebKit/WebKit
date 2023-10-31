@@ -501,7 +501,6 @@ protected:
         CallerTypeOther,
     };
 
-    void markContextChanged();
     void markContextChangedAndNotifyCanvasObserver(CallerType = CallerTypeDrawOrClear);
 
     void addActivityStateChangeObserverIfNecessary();

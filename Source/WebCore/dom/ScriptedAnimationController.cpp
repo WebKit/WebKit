@@ -34,7 +34,6 @@
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
-#include <wtf/Ref.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {

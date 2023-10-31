@@ -554,7 +554,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
     Vector<id<MTLResource>> stageResources[stageCount][maxResourceUsageValue];
-
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257190 The bind group layout determines the layout of what gets put into the bind group.
     // We should probably iterate over the bind group layout here, rather than the bind group.
     // For each entry in the bind group layout, we should find the corresponding member of the bind group, and then process it.
@@ -583,12 +582,14 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             return BindGroup::createInvalid(*this);
 
         for (ShaderStage stage : stages) {
-            auto optionalAccess = bindGroupLayout.bindingAccessForBindingIndex(entry.binding, stage);
-            if (!optionalAccess)
+            auto bindingIndex = entry.binding;
+            auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(bindingIndex, stage);
+            if (index == NSNotFound)
                 continue;
 
-            auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(entry.binding, stage);
-            auto bufferSizeArgumentBufferIndex = bindGroupLayout.bufferSizeIndexForEntryIndex(entry.binding, stage);
+            auto optionalAccess = bindGroupLayout.bindingAccessForBindingIndex(bindingIndex, stage);
+            RELEASE_ASSERT(optionalAccess);
+            auto bufferSizeArgumentBufferIndex = bindGroupLayout.bufferSizeIndexForEntryIndex(bindingIndex, stage);
             MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {

@@ -219,5 +219,8 @@ class WebKit::TemplateTest {
 CFFooRef wrapped by WebKit::FooWrapper {
 }
 
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=createCFBar] CFBarRef wrapped by WebKit::BarWrapper {
+#if USE(CFBAR)
+additional_forward_declaration: typedef struct __CFBar * CFBarRef
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebKit::BarWrapper::createFromCF, ToCFMethod=createCFBar(*result)] CFBarRef wrapped by WebKit::BarWrapper {
 }
+#endif

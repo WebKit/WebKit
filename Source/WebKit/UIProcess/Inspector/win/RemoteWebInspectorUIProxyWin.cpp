@@ -33,6 +33,7 @@
 #include "WebInspectorUIProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include "WebView.h"
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/IntRect.h>

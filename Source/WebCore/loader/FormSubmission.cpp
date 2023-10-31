@@ -86,11 +86,13 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
         url.setQuery(makeString(query, '&', body));
 }
 
-ASCIILiteral FormSubmission::Attributes::methodString(Method method, bool dialogElementEnabled)
+ASCIILiteral FormSubmission::Attributes::methodString(Method method)
 {
-    if (dialogElementEnabled && method == Method::Dialog)
+    if (method == Method::Dialog)
         return "dialog"_s;
-    return method == Method::Post ? "post"_s : "get"_s;
+    if (method == Method::Post)
+        return "post"_s;
+    return "get"_s;
 }
 
 void FormSubmission::Attributes::parseAction(const String& action)
@@ -114,9 +116,9 @@ void FormSubmission::Attributes::updateEncodingType(const String& type)
     m_isMultiPartForm = (m_encodingType == "multipart/form-data"_s);
 }
 
-FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type, bool dialogElementEnabled)
+FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type)
 {
-    if (dialogElementEnabled && equalLettersIgnoringASCIICase(type, "dialog"_s))
+    if (equalLettersIgnoringASCIICase(type, "dialog"_s))
         return FormSubmission::Method::Dialog;
 
     if (equalLettersIgnoringASCIICase(type, "post"_s))
@@ -125,9 +127,9 @@ FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String&
     return FormSubmission::Method::Get;
 }
 
-void FormSubmission::Attributes::updateMethodType(const String& type, bool dialogElementEnabled)
+void FormSubmission::Attributes::updateMethodType(const String& type)
 {
-    m_method = parseMethodType(type, dialogElementEnabled);
+    m_method = parseMethodType(type);
 }
 
 inline FormSubmission::FormSubmission(Method method, const String& returnValue, const URL& action, const AtomString& target, const String& contentType, LockHistory lockHistory, Event* event)
@@ -179,7 +181,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
         if (!(attributeValue = submitter->attributeWithoutSynchronization(formenctypeAttr)).isNull())
             copiedAttributes.updateEncodingType(attributeValue);
         if (!(attributeValue = submitter->attributeWithoutSynchronization(formmethodAttr)).isNull())
-            copiedAttributes.updateMethodType(attributeValue, form.document().settings().dialogElementEnabled());
+            copiedAttributes.updateMethodType(attributeValue);
         if (!(attributeValue = submitter->attributeWithoutSynchronization(formtargetAttr)).isNull())
             copiedAttributes.setTarget(attributeValue);
     }
@@ -188,7 +190,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     auto encodingType = copiedAttributes.encodingType();
     auto actionURL = document.completeURL(copiedAttributes.action().isEmpty() ? document.url().string() : copiedAttributes.action());
 
-    if (document.settings().dialogElementEnabled() && copiedAttributes.method() == Method::Dialog) {
+    if (copiedAttributes.method() == Method::Dialog) {
         String returnValue = submitter ? submitter->resultForDialogSubmit() : emptyString();
         return adoptRef(*new FormSubmission(copiedAttributes.method(), returnValue, actionURL, form.effectiveTarget(event, submitter.get()), encodingType, lockHistory, event));
     }

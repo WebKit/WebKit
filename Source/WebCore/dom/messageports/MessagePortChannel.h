@@ -42,7 +42,7 @@ class MessagePortChannel : public RefCounted<MessagePortChannel>, public CanMake
 public:
     static Ref<MessagePortChannel> create(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
 
-    ~MessagePortChannel();
+    WEBCORE_EXPORT ~MessagePortChannel();
 
     const MessagePortIdentifier& port1() const { return m_ports[0]; }
     const MessagePortIdentifier& port2() const { return m_ports[1]; }

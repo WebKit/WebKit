@@ -3941,7 +3941,6 @@ JSPannerNode.cpp
 JSPannerOptions.cpp
 JSPanningModelType.cpp
 JSParentNode.cpp
-JSParseFromStringOptions.cpp
 JSPath2D.cpp
 JSPayerErrorFields.cpp
 JSPaymentAddress.cpp

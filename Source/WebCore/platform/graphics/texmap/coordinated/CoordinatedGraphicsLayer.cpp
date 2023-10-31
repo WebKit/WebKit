@@ -31,10 +31,9 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
-#include "NicosiaBackingStoreTextureMapperImpl.h"
-#include "NicosiaCompositionLayerTextureMapperImpl.h"
-#include "NicosiaContentLayerTextureMapperImpl.h"
-#include "NicosiaImageBackingTextureMapperImpl.h"
+#include "NicosiaBackingStore.h"
+#include "NicosiaContentLayer.h"
+#include "NicosiaImageBacking.h"
 #include "NicosiaPaintingContext.h"
 #include "NicosiaPaintingEngine.h"
 #include "ScrollableArea.h"
@@ -146,8 +145,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     static Nicosia::PlatformLayer::LayerID nextLayerID = 1;
     m_id = nextLayerID++;
 
-    m_nicosia.layer = Nicosia::CompositionLayer::create(m_id,
-        Nicosia::CompositionLayerTextureMapperImpl::createFactory());
+    m_nicosia.layer = Nicosia::CompositionLayer::create(m_id);
 
     // Enforce a complete flush on the first occasion.
     m_nicosia.delta.value = UINT_MAX;
@@ -755,7 +753,7 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
     m_shouldUpdatePlatformLayer = false;
 #if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
     if (m_nicosia.contentLayer)
-        downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosia.contentLayer->impl()).swapBuffersIfNeeded();
+        m_nicosia.contentLayer->swapBuffersIfNeeded();
 #endif
 }
 
@@ -863,11 +861,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     // Determine the backing store presence. Content is painted later, in the updateContentBuffers() traversal.
     if (shouldHaveBackingStore()) {
         if (!m_nicosia.backingStore) {
-            m_nicosia.backingStore = Nicosia::BackingStore::create(Nicosia::BackingStoreTextureMapperImpl::createFactory());
+            m_nicosia.backingStore = Nicosia::BackingStore::create();
             m_nicosia.delta.backingStoreChanged = true;
         }
     } else if (m_nicosia.backingStore) {
-        auto& layerState = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl()).layerState();
+        auto& layerState = m_nicosia.backingStore->layerState();
         layerState.isPurging = true;
         layerState.mainBackingStore = nullptr;
 
@@ -901,20 +899,18 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 
         // Respawn the ImageBacking object if the underlying image changed.
         if (m_nicosia.imageBacking) {
-            auto& impl = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl());
-            if (impl.layerState().imageID != imageID) {
-                impl.layerState().update = Nicosia::ImageBackingTextureMapperImpl::Update { };
+            if (m_nicosia.imageBacking->layerState().imageID != imageID) {
+                m_nicosia.imageBacking->layerState().update = { };
                 m_nicosia.imageBacking = nullptr;
             }
         }
         if (!m_nicosia.imageBacking) {
-            m_nicosia.imageBacking = Nicosia::ImageBacking::create(Nicosia::ImageBackingTextureMapperImpl::createFactory());
+            m_nicosia.imageBacking = Nicosia::ImageBacking::create();
             m_nicosia.delta.imageBackingChanged = true;
         }
 
         // Update the image contents only when the image layer is visible and the native image changed.
-        auto& impl = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl());
-        auto& layerState = impl.layerState();
+        auto& layerState = m_nicosia.imageBacking->layerState();
         layerState.imageID = imageID;
         layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
         if (layerState.update.isVisible && layerState.update.nativeImageID != nativeImageID) {
@@ -934,10 +930,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
             m_nicosia.delta.imageBackingChanged = true;
         }
     } else if (m_nicosia.imageBacking) {
-        auto& layerState = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl()).layerState();
-        layerState.update = Nicosia::ImageBackingTextureMapperImpl::Update { };
+        m_nicosia.imageBacking->layerState().update = { };
         m_nicosia.imageBacking = nullptr;
-        m_nicosia.delta.imageBackingChanged = true;
     }
 
     {
@@ -1128,8 +1122,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     // Prepare for painting on the impl-contained backing store. isFlushing is used there
     // for internal sanity checks.
-    auto& impl = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl());
-    auto& layerState = impl.layerState();
+    auto& layerState = m_nicosia.backingStore->layerState();
     layerState.isFlushing = true;
 
     // Helper lambda that finished the flush update and determines layer sync necessity.
@@ -1152,7 +1145,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     // Ensure the TiledBackingStore object, and enforce a complete repaint if it's not been present yet.
     if (!layerState.mainBackingStore) {
-        layerState.mainBackingStore = makeUnique<TiledBackingStore>(impl, effectiveContentsScale());
+        layerState.mainBackingStore = makeUnique<TiledBackingStore>(*m_nicosia.backingStore, effectiveContentsScale());
         m_pendingVisibleRectAdjustment = true;
     }
 
@@ -1206,7 +1199,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
                 IntRect { { 0, 0 }, dirtyRect.size() }, layerState.mainBackingStore->contentsScale()))
                 continue;
 
-            impl.updateTile(tile.tileID(), updateInfo, tileRect);
+            m_nicosia.backingStore->updateTile(tile.tileID(), updateInfo, tileRect);
 
             tile.markClean();
             didUpdateTiles |= true;
@@ -1232,7 +1225,7 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     SetForScope updateModeProtector(m_isPurging, true);
 #endif
     if (m_nicosia.backingStore) {
-        auto& layerState = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl()).layerState();
+        auto& layerState = m_nicosia.backingStore->layerState();
         layerState.isPurging = true;
         layerState.mainBackingStore = nullptr;
 
@@ -1240,7 +1233,7 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     }
 
     if (m_nicosia.imageBacking) {
-        auto& layerState = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl()).layerState();
+        auto& layerState = m_nicosia.imageBacking->layerState();
         layerState.imageID = 0;
         layerState.update = { };
 

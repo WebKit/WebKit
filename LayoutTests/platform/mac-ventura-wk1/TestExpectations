@@ -1,9 +1,0 @@
-# webkit.org/b/261306 Batch mark expectations for constant failures following Sonoma OpenSource expectations migration.
-editing/inserting/caret-position.html [ Failure ]
-editing/mac/input/caret-primary-bidi.html [ Failure ]
-editing/mac/input/firstrectforcharacterrange-plain.html [ Failure ]
-editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
-editing/selection/mixed-editability-10.html [ Failure ]
-editing/selection/5825350-2.html [ Failure ]
-media/media-can-play-mpeg4-video.html [ Failure ]
-media/video-source-type-params.html [ Failure ]

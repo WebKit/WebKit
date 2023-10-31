@@ -281,6 +281,9 @@
 		E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E57B44B329AB45F4006069DE /* VisionSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E57B44B429AB45F4006069DE /* VisionSoftLink.mm */; };
 		F410F1552ACA2EBA00A79859 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F43E89342AEDB71C00097D2D /* CoreTelephonySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F43E89372AEDB8C800097D2D /* CoreTelephonySoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E89362AEDB8C800097D2D /* CoreTelephonySoftLink.mm */; };
+		F43E89382AEDB8C800097D2D /* CoreTelephonySoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E89352AEDB8C800097D2D /* CoreTelephonySoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
 		F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */; };
 		F44C007B29A06B1C00211F33 /* TranslationUIServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F44C007929A06B1C00211F33 /* TranslationUIServicesSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -665,6 +668,9 @@
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSPI.h; sourceTree = "<group>"; };
 		F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
+		F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonySPI.h; sourceTree = "<group>"; };
+		F43E89352AEDB8C800097D2D /* CoreTelephonySoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonySoftLink.h; sourceTree = "<group>"; };
+		F43E89362AEDB8C800097D2D /* CoreTelephonySoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreTelephonySoftLink.mm; sourceTree = "<group>"; };
 		F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFileSizeFormatterSPI.h; sourceTree = "<group>"; };
 		F442915F1FA5261E002CC93E /* FileSizeFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSizeFormatter.h; sourceTree = "<group>"; };
 		F44291621FA52670002CC93E /* FileSizeFormatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileSizeFormatter.cpp; sourceTree = "<group>"; };
@@ -778,6 +784,7 @@
 				4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */,
 				ABCA536724895DB900361BFF /* CoreMotionSPI.h */,
 				C138EA1A2436447200656DF1 /* CoreServicesSPI.h */,
+				F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */,
 				DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */,
 				0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */,
 				1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */,
@@ -1023,6 +1030,8 @@
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
 				F47221F1276FC2EB00B984C7 /* CoreMLSoftLink.h */,
 				F47221F2276FC2EB00B984C7 /* CoreMLSoftLink.mm */,
+				F43E89352AEDB8C800097D2D /* CoreTelephonySoftLink.h */,
+				F43E89362AEDB8C800097D2D /* CoreTelephonySoftLink.mm */,
 				57F1C90725DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.h */,
 				57F1C90825DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm */,
 				F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */,
@@ -1294,6 +1303,8 @@
 				DD20DD1C27BC90D60093D175 /* CoreMLSoftLink.h in Headers */,
 				DD20DDE127BC90D70093D175 /* CoreMotionSPI.h in Headers */,
 				DD20DDE227BC90D70093D175 /* CoreServicesSPI.h in Headers */,
+				F43E89382AEDB8C800097D2D /* CoreTelephonySoftLink.h in Headers */,
+				F43E89342AEDB71C00097D2D /* CoreTelephonySPI.h in Headers */,
 				DD20DD1727BC90D60093D175 /* CoreTextSoftLink.h in Headers */,
 				DD20DDD027BC90D70093D175 /* CoreTextSPI.h in Headers */,
 				DD20DE1027BC90D80093D175 /* CoreUISPI.h in Headers */,
@@ -1567,6 +1578,7 @@
 				7B47F2A428587B9700E793C8 /* CoreGraphicsSoftLink.cpp in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
 				F47221F4276FC2EB00B984C7 /* CoreMLSoftLink.mm in Sources */,
+				F43E89372AEDB8C800097D2D /* CoreTelephonySoftLink.mm in Sources */,
 				1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				57F1C90A25DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm in Sources */,

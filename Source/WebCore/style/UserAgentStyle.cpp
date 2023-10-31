@@ -193,7 +193,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
             }
-        } else if (is<HTMLDialogElement>(element) && element.document().settings().dialogElementEnabled()) {
+        } else if (is<HTMLDialogElement>(element)) {
             if (!dialogStyleSheet) {
                 dialogStyleSheet = parseUASheet(StringImpl::createWithoutCopying(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet)));
                 addToDefaultStyle(*dialogStyleSheet);

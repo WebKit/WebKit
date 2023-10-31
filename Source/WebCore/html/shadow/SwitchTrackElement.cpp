@@ -25,7 +25,9 @@
 #include "config.h"
 #include "SwitchTrackElement.h"
 
+#include "RenderStyleInlines.h"
 #include "ResolvedStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

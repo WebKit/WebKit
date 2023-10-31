@@ -44,18 +44,14 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
     return adoptRef(*new DOMParser(contextDocument));
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType, ParseFromStringOptions options)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
 {
     if (contentType != "text/html"_s && contentType != "text/xml"_s && contentType != "application/xml"_s && contentType != "application/xhtml+xml"_s && contentType != "image/svg+xml"_s)
         return Exception { TypeError };
     auto document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
-    OptionSet<ParserContentPolicy> parsingOptions;
-    if (options.includeShadowRoots && document->settings().declarativeShadowDOMInDOMParserEnabled())
-        parsingOptions = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowDOM };
-    else
-        parsingOptions = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent };
+    OptionSet<ParserContentPolicy> parsingOptions = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent };
     document->setParserContentPolicy(parsingOptions);
     bool usedFastPath = false;
     if (contentType == "text/html"_s) {

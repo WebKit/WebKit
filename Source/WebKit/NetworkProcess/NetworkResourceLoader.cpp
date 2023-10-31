@@ -1543,8 +1543,8 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
 #if ENABLE(WEB_ARCHIVE)
     if (equalIgnoringASCIICase(response.mimeType(), "application/x-webarchive"_s)
         && LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(response.url().protocol())) {
-        auto& connection = connectionToWebProcess();
-        connection.networkProcess().webProcessWillLoadWebArchive(connection.webProcessIdentifier());
+        Ref connection = connectionToWebProcess();
+        connection->networkProcess().webProcessWillLoadWebArchive(connection->webProcessIdentifier());
     }
 #endif
 }
@@ -1595,7 +1595,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
         m_synchronousLoadData->response = WTFMove(response);
-        sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer(), { });
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->protectedBuffer().get(), { });
         cleanup(LoadResult::Success);
         return;
     }
@@ -1652,7 +1652,8 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
         logCookieInformation();
 #endif
 
-    sendBuffer(*entry->buffer(), entry->buffer()->size());
+    RefPtr buffer = entry->protectedBuffer();
+    sendBuffer(*buffer, buffer->size());
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter) {
         m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());

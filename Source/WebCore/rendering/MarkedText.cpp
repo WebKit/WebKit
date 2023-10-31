@@ -27,8 +27,7 @@
 #include "MarkedText.h"
 
 #include "DeprecatedGlobalSettings.h"
-#include "Document.h"
-#include "DocumentMarkerController.h"
+#include "DocumentInlines.h"
 #include "Editor.h"
 #include "ElementRuleCollector.h"
 #include "HighlightRegistry.h"

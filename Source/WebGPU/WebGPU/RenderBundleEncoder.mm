@@ -39,7 +39,7 @@
     Vector<WebGPU::BindableResources> _resources;
 }
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp
 {
     if (!(self = [super init]))
         return nil;
@@ -50,6 +50,9 @@
     _cullMode = cullMode;
     _frontFace = frontFace;
     _depthClipMode = depthClipMode;
+    _depthBias = depthBias;
+    _depthBiasSlopeScale = depthBiasSlopeScale;
+    _depthBiasClamp = depthBiasClamp;
 
     return self;
 }
@@ -63,7 +66,7 @@
 
 namespace WebGPU {
 
-static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode)
+static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp)
 {
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     constexpr auto maxStageValue = MTLRenderStageVertex | MTLRenderStageFragment;
@@ -75,7 +78,7 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
         stageResources[usageAndStage.renderStages - 1][usageAndStage.renderStages - 1].append(r);
     }
 
-    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode];
+    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp];
 
     for (size_t stage = 0; stage < maxStageValue; ++stage) {
         for (size_t i = 0; i < maxResourceUsageValue; ++i) {
@@ -349,7 +352,7 @@ void RenderBundleEncoder::endCurrentICB()
     else
         m_recordedCommands.remove(0, lastIndexOfRecordedCommand);
 
-    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode)];
+    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp)];
     m_icbDescriptor.maxVertexBufferBindCount = 0;
     m_icbDescriptor.maxFragmentBufferBindCount = 0;
     m_indirectCommandBuffer = nil;
@@ -508,6 +511,15 @@ static bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
     if (![a.depthStencilDescriptor() isEqual:b.depthStencilDescriptor()])
         return true;
 
+    if (a.depthBias() != b.depthBias())
+        return true;
+
+    if (a.depthBiasSlopeScale() != b.depthBiasSlopeScale())
+        return true;
+
+    if (a.depthBiasClamp() != b.depthBiasClamp())
+        return true;
+
     return false;
 #endif
 }
@@ -524,6 +536,9 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         auto previous_cullMode = m_cullMode;
         auto previous_frontFace = m_frontFace;
         auto previous_depthClipmpde = m_depthClipMode;
+        auto previous_depthBias = m_depthBias;
+        auto previous_depthBiasSlopeScale = m_depthBiasSlopeScale;
+        auto previous_depthBiasClamp = m_depthBiasClamp;
 
         m_currentPipelineState = pipeline.renderPipelineState();
         m_depthStencilState = pipeline.depthStencilState();
@@ -531,6 +546,9 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         m_frontFace = pipeline.frontFace();
         m_depthClipMode = pipeline.depthClipMode();
         m_primitiveType = pipeline.primitiveType();
+        m_depthBias = pipeline.depthBias();
+        m_depthBiasSlopeScale = pipeline.depthBiasSlopeScale();
+        m_depthBiasClamp = pipeline.depthBiasClamp();
 
         if (m_commandEncoder) {
             id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
@@ -546,6 +564,8 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
                 [m_commandEncoder setFrontFacingWinding:m_frontFace];
             if (previous_depthClipmpde != m_depthClipMode)
                 [m_commandEncoder setDepthClipMode:m_depthClipMode];
+            if (previous_depthBias != m_depthBias || previous_depthBiasSlopeScale != m_depthBiasSlopeScale || previous_depthBiasClamp != m_depthBiasClamp)
+                [m_commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
         }
     } else {
         if (m_pipeline && icbNeedsToBeSplit(*m_pipeline, pipeline))

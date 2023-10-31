@@ -311,7 +311,9 @@ enum class WebCore::AutofillFieldName : uint8_t {
     Email,
     Impp,
     WebAuthn,
-    OneTimeCode
+    OneTimeCode,
+    DeviceEID,
+    DeviceIMEI,
 };
 
 enum class WebCore::NonAutofillCredentialType : bool;

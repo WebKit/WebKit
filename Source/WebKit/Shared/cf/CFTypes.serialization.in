@@ -22,13 +22,21 @@
 
 #if USE(CF)
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=createData] CFDataRef wrapped by WebKit::CoreIPCData {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createData()] CFDataRef wrapped by WebKit::CoreIPCData {
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=createCFString] CFStringRef wrapped by WTF::String {
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=createBoolean] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
+}
+
+#endif
+
+#if USE(CG)
+
+additional_forward_declaration: typedef struct CGColor *CGColorRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebCore::Color::createAndPreserveColorSpace, ToCFMethod=WebCore::cachedCGColor(*result)] CGColorRef wrapped by WebCore::Color {
 }
 
 #endif

@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+#include "VideoTrackList.h"
 
 #if ENABLE(VIDEO)
 
-#include "VideoTrackList.h"
-
+#include "ScriptExecutionContext.h"
 #include "VideoTrack.h"
 
 namespace WebCore {

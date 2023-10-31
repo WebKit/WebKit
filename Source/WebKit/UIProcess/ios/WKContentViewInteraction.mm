@@ -6225,7 +6225,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     return UITextAutocapitalizationTypeSentences;
 }
 
-static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
+- (NSString *)contentTypeFromFieldName:(WebCore::AutofillFieldName)fieldName
 {
     switch (fieldName) {
     case WebCore::AutofillFieldName::Name:
@@ -6273,6 +6273,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return UITextContentTypeUsername;
     case WebCore::AutofillFieldName::OneTimeCode:
         return UITextContentTypeOneTimeCode;
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+    case WebCore::AutofillFieldName::DeviceEID:
+        return _page->shouldAllowAutoFillForCellularIdentifiers() ? UITextContentTypeCellularEID : nil;
+    case WebCore::AutofillFieldName::DeviceIMEI:
+        return _page->shouldAllowAutoFillForCellularIdentifiers() ? UITextContentTypeCellularIMEI : nil;
+#else
+    case WebCore::AutofillFieldName::DeviceEID:
+    case WebCore::AutofillFieldName::DeviceIMEI:
+#endif
     case WebCore::AutofillFieldName::None:
     case WebCore::AutofillFieldName::NewPassword:
     case WebCore::AutofillFieldName::CurrentPassword:
@@ -6442,7 +6451,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 #if HAVE(PEPPER_UI_CORE)
     traits.textContentType = self.textContentTypeForQuickboard;
 #else
-    traits.textContentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName);
+    traits.textContentType = [self contentTypeFromFieldName:_focusedElementInformation.autofillFieldName];
 #endif
 
     auto privateTraits = (id <UITextInputTraits_Private>)traits;
@@ -10429,7 +10438,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         return UITextContentTypeTelephoneNumber;
     default:
         // The element type alone is insufficient to infer content type; fall back to autofill data.
-        if (auto contentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName))
+        if (auto contentType = [self contentTypeFromFieldName:_focusedElementInformation.autofillFieldName])
             return contentType;
 
         if (_focusedElementInformation.isAutofillableUsernameField)

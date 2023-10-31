@@ -1,0 +1,23 @@
+
+PASS e.style['animation-delay-start'] = "infinite" should not set the property value
+PASS e.style['animation-delay-start'] = "0" should not set the property value
+PASS e.style['animation-delay-start'] = "1s 2s" should not set the property value
+PASS e.style['animation-delay-start'] = "1s / 2s" should not set the property value
+PASS e.style['animation-delay-start'] = "100px" should not set the property value
+PASS e.style['animation-delay-start'] = "100%" should not set the property value
+PASS e.style['animation-delay-start'] = "peek 50%" should not set the property value
+PASS e.style['animation-delay-start'] = "50% contain" should not set the property value
+PASS e.style['animation-delay-start'] = "50% cover" should not set the property value
+PASS e.style['animation-delay-start'] = "50% entry" should not set the property value
+PASS e.style['animation-delay-start'] = "50% enter" should not set the property value
+PASS e.style['animation-delay-start'] = "50% exit" should not set the property value
+PASS e.style['animation-delay-start'] = "contain contain" should not set the property value
+PASS e.style['animation-delay-start'] = "auto" should not set the property value
+PASS e.style['animation-delay-start'] = "none" should not set the property value
+PASS e.style['animation-delay-start'] = "cover 50% enter 50%" should not set the property value
+PASS e.style['animation-delay-start'] = "cover 100px" should not set the property value
+PASS e.style['animation-delay-start'] = "cover" should not set the property value
+PASS e.style['animation-delay-start'] = "contain" should not set the property value
+PASS e.style['animation-delay-start'] = "enter" should not set the property value
+PASS e.style['animation-delay-start'] = "exit" should not set the property value
+

@@ -71,6 +71,8 @@ class SerializedType(object):
         self.struct_or_class = struct_or_class
         self.cf_type = cf_type
         self.to_cf_method = None
+        self.from_cf_method = None
+        self.forward_declaration = None
         self.namespace = namespace
         self.name = name
         self.parent_class_name = parent_class_name
@@ -100,6 +102,10 @@ class SerializedType(object):
                         self.alias = value
                     if key == 'ToCFMethod':
                         self.to_cf_method = value
+                    if key == 'FromCFMethod':
+                        self.from_cf_method = value
+                    if key == 'ForwardDeclaration':
+                        self.forward_declaration = value
                 else:
                     if attribute == 'Nested':
                         self.nested = True
@@ -233,6 +239,25 @@ class EnumMember(object):
     def __init__(self, name, condition):
         self.name = name
         self.condition = condition
+
+
+class ConditionalForwardDeclaration(object):
+    def __init__(self, declaration, condition):
+        self.declaration = declaration
+        self.condition = condition
+
+    def __lt__(self, other):
+        if self.declaration != other.declaration:
+            return self.declaration < other.declaration
+        def condition_str(condition):
+            return "" if condition is None else condition
+        return condition_str(self.condition) < condition_str(other.condition)
+
+    def __eq__(self, other):
+        return other and self.declaration == other.declaration and self.condition == other.condition
+
+    def __hash__(self):
+        return hash((self.declaration, self.condition))
 
 
 class ConditionalHeader(object):
@@ -383,7 +408,7 @@ def alias_struct_or_class(alias):
     return match.groups()[0]
 
 
-def generate_header(serialized_types, serialized_enums):
+def generate_header(serialized_types, serialized_enums, additional_forward_declarations):
     result = []
     result.append(_license_header)
     result.append('#pragma once')
@@ -421,6 +446,12 @@ def generate_header(serialized_types, serialized_enums):
         for template in type.templates:
             result.append(template.forward_declaration())
         if type.condition is not None:
+            result.append('#endif')
+    for declaration in additional_forward_declarations:
+        if declaration.condition is not None:
+            result.append('#if ' + declaration.condition)
+        result.append(declaration.declaration + ';')
+        if declaration.condition is not None:
             result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
@@ -522,8 +553,12 @@ def check_type_members(type, checking_parent_class):
 
 def encode_cf_type(type):
     result = []
-    result.append('    encoder << ' + type.cf_wrapper_type() + ' { instance };')
+    if type.from_cf_method is not None:
+        result.append('    encoder << ' + type.from_cf_method + '(instance);')
+    else:
+        result.append('    encoder << ' + type.cf_wrapper_type() + ' { instance };')
     return result
+
 
 def encode_type(type):
     if type.cf_type is not None:
@@ -567,9 +602,9 @@ def decode_cf_type(type):
     result.append('        return std::nullopt;')
     cf_method = 'toCF'
     if type.to_cf_method is not None:
-        cf_method = type.to_cf_method
-
-    result.append('    return result->' + cf_method + '();')
+        result.append('    return ' + type.to_cf_method + ';')
+    else:
+        result.append('    return result->toCF();')
     return result
 
 def decode_type(type):
@@ -1018,6 +1053,7 @@ def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
     using_statements = []
+    additional_forward_declarations = []
     headers = []
 
     attributes = None
@@ -1156,7 +1192,11 @@ def parse_serialized_types(file):
         if match:
             using_statements.append(UsingStatement(match.groups()[0], match.groups()[1], type_condition))
             continue
-
+        match = re.search(r'additional_forward_declaration: (.*)', line)
+        if match:
+            declaration = match.groups()[0]
+            additional_forward_declarations.append(ConditionalForwardDeclaration(declaration, type_condition))
+            continue
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
             continue
@@ -1189,7 +1229,7 @@ def parse_serialized_types(file):
             if match:
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return [serialized_types, serialized_enums, headers, using_statements]
+    return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations]
 
 
 def main(argv):
@@ -1198,6 +1238,7 @@ def main(argv):
     using_statements = []
     headers = []
     header_set = set()
+    additional_forward_declarations_set = set()
     file_extension = argv[1]
     skip = False
     directory = None
@@ -1211,7 +1252,7 @@ def main(argv):
             continue
         path = os.path.sep.join([directory, argv[i]])
         with open(path) as file:
-            new_types, new_enums, new_headers, new_using_statements = parse_serialized_types(file)
+            new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:
@@ -1220,10 +1261,12 @@ def main(argv):
                 using_statements.append(using_statement)
             for header in new_headers:
                 header_set.add(header)
+            for declaration in new_additional_forward_declarations:
+                additional_forward_declarations_set.add(declaration)
     headers = sorted(header_set)
 
     with open('GeneratedSerializers.h', "w+") as output:
-        output.write(generate_header(serialized_types, serialized_enums))
+        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_set))
     with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers, False))
     with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:

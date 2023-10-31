@@ -77,6 +77,7 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "ProcessWarming.h"
+#include "RemoteFrame.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"

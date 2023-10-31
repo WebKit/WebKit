@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "PushManager.h"
+#include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/StdLibExtras.h>
 

@@ -2176,20 +2176,6 @@ DeclarativeShadowDOMEnabled:
     WebCore:
       default: true
 
-DeclarativeShadowDOMInDOMParserEnabled:
-  type: bool
-  status: testable
-  category: dom
-  humanReadableName: "DOMParser support for Declarative Shadow DOM"
-  humanReadableDescription: "Enable Declarative Shadow DOM in DOMParser"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 DeclarativeWebPush:
   type: bool
   status: unstable
@@ -2368,20 +2354,6 @@ DiagnosticLoggingEnabled:
       default: false
     WebCore:
       default: false
-
-DialogElementEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML <dialog> element"
-  humanReadableDescription: "Enable HTML <dialog> element"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 DirPseudoEnabled:
   type: bool
@@ -3304,20 +3276,6 @@ IndexedDBAPIEnabled:
   status: embedder
   humanReadableName: "IndexedDB API"
   humanReadableDescription: "IndexedDB API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-InertAttributeEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML inert attribute"
-  humanReadableDescription: "Enable inert attribute support"
   defaultValue:
     WebKitLegacy:
       default: true
@@ -4541,7 +4499,7 @@ MediaSourceEnabled:
 
 MediaSourceInlinePaintingEnabled:
   type: bool
-  status: unstable
+  status: mature
   category: media
   humanReadableName: "Experimental MediaSource Inline Painting"
   humanReadableDescription: "Experimental MediaSource Inline Painting"

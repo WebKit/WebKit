@@ -30,7 +30,6 @@
 
 #include "GeolocationPermissionRequestManager.h"
 #include "WebGeolocationManager.h"
-#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationPositionData.h>

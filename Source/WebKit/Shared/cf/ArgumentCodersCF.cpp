@@ -699,24 +699,6 @@ std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRe
 }
 
 template<typename Encoder>
-void ArgumentCoder<CGColorRef>::encode(Encoder& encoder, CGColorRef color)
-{
-    encoder << WebCore::Color::createAndPreserveColorSpace(color);
-}
-
-template void ArgumentCoder<CGColorRef>::encode<Encoder>(Encoder&, CGColorRef);
-template void ArgumentCoder<CGColorRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CGColorRef);
-
-std::optional<RetainPtr<CGColorRef>> ArgumentCoder<RetainPtr<CGColorRef>>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-    return cachedCGColor(*color);
-}
-
-template<typename Encoder>
 void ArgumentCoder<SecCertificateRef>::encode(Encoder& encoder, SecCertificateRef certificate)
 {
     encoder << adoptCF(SecCertificateCopyData(certificate));

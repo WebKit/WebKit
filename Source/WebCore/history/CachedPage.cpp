@@ -27,6 +27,7 @@
 #include "CachedPage.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "FocusController.h"
 #include "FrameLoader.h"

@@ -1,14 +1,2 @@
-# webkit.org/b/261306 Batch mark expectations for constant failures following Sonoma OpenSource expectations migration.
-editing/caret/insert-paragraph-does-not-paint-stale-carets.html [ Failure ]
-editing/input/editable-container-with-word-wrap-normal.html [ Failure ]
-editing/pasteboard/interchange-newline-2.html [ Failure ]
-editing/selection/block-cursor-overtype-mode.html [ Failure ]
-editing/selection/caret-in-empty-inline-1.html [ Failure ]
-editing/selection/caret-in-empty-inline-2.html [ Failure ]
-editing/selection/internal-caret-rect.html [ Failure ]
-editing/selection/simple-line-layout-caret-is-gone.html [ Failure ]
-imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
-
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Timeout Failure ]

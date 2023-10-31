@@ -26,7 +26,7 @@
 #include "config.h"
 #include "VisibleSelection.h"
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Element.h"
 #include "HTMLInputElement.h"

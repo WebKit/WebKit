@@ -73,6 +73,11 @@ namespace JSC { enum class Incredible; }
 namespace Testing { enum class StorageSize : uint8_t; }
 namespace WebCore { class ScrollingStateFrameHostingNode; }
 namespace WebCore { class ScrollingStateFrameHostingNodeWithStuffAfterTuple; }
+#if USE(CFBAR)
+#endif
+#if USE(CFBAR)
+typedef struct __CFBar * CFBarRef;
+#endif
 
 namespace IPC {
 
@@ -232,6 +237,7 @@ template<> struct ArgumentCoder<RetainPtr<CFFooRef>> {
     static std::optional<RetainPtr<CFFooRef>> decode(Decoder&);
 };
 
+#if USE(CFBAR)
 template<> struct ArgumentCoder<CFBarRef> {
     static void encode(Encoder&, CFBarRef);
     static void encode(StreamConnectionEncoder&, CFBarRef);
@@ -247,6 +253,7 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
     }
     static std::optional<RetainPtr<CFBarRef>> decode(Decoder&);
 };
+#endif
 
 } // namespace IPC
 

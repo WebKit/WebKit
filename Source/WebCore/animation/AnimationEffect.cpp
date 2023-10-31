@@ -30,6 +30,7 @@
 #include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
+#include "ScriptExecutionContext.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>

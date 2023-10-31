@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ContextDestructionObserver.h"
+#include "EventTarget.h"
 #include "QualifiedName.h"
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>

@@ -1,0 +1,126 @@
+
+FAIL CSS Transitions: property <display> from [block] to [none] at (-1) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions: property <display> from [block] to [none] at (0) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions: property <display> from [block] to [none] at (0.1) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions: property <display> from [block] to [none] at (0.9) should be [block] assert_equals: expected "block " but got "none "
+PASS CSS Transitions: property <display> from [block] to [none] at (1) should be [none]
+PASS CSS Transitions: property <display> from [block] to [none] at (1.5) should be [none]
+FAIL CSS Transitions with transition: all: property <display> from [block] to [none] at (-1) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions with transition: all: property <display> from [block] to [none] at (0) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions with transition: all: property <display> from [block] to [none] at (0.1) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Transitions with transition: all: property <display> from [block] to [none] at (0.9) should be [block] assert_equals: expected "block " but got "none "
+PASS CSS Transitions with transition: all: property <display> from [block] to [none] at (1) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [block] to [none] at (1.5) should be [none]
+PASS CSS Animations: property <display> from [block] to [none] at (-1) should be [block]
+PASS CSS Animations: property <display> from [block] to [none] at (0) should be [block]
+PASS CSS Animations: property <display> from [block] to [none] at (0.1) should be [block]
+PASS CSS Animations: property <display> from [block] to [none] at (0.9) should be [block]
+FAIL CSS Animations: property <display> from [block] to [none] at (1) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [block] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "block "
+PASS Web Animations: property <display> from [block] to [none] at (-1) should be [block]
+PASS Web Animations: property <display> from [block] to [none] at (0) should be [block]
+PASS Web Animations: property <display> from [block] to [none] at (0.1) should be [block]
+PASS Web Animations: property <display> from [block] to [none] at (0.9) should be [block]
+FAIL Web Animations: property <display> from [block] to [none] at (1) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [block] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "block "
+PASS CSS Transitions: property <display> from [none] to [block] at (-1) should be [block]
+PASS CSS Transitions: property <display> from [none] to [block] at (0) should be [block]
+PASS CSS Transitions: property <display> from [none] to [block] at (0.1) should be [block]
+PASS CSS Transitions: property <display> from [none] to [block] at (0.9) should be [block]
+PASS CSS Transitions: property <display> from [none] to [block] at (1) should be [block]
+PASS CSS Transitions: property <display> from [none] to [block] at (1.5) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (-1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (0) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (0.1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (0.9) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [none] to [block] at (1.5) should be [block]
+FAIL CSS Animations: property <display> from [none] to [block] at (-1) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [block] at (0) should be [none] assert_equals: expected "none " but got "block "
+PASS CSS Animations: property <display> from [none] to [block] at (0.1) should be [block]
+PASS CSS Animations: property <display> from [none] to [block] at (0.9) should be [block]
+PASS CSS Animations: property <display> from [none] to [block] at (1) should be [block]
+PASS CSS Animations: property <display> from [none] to [block] at (1.5) should be [block]
+FAIL Web Animations: property <display> from [none] to [block] at (-1) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [block] at (0) should be [none] assert_equals: expected "none " but got "block "
+PASS Web Animations: property <display> from [none] to [block] at (0.1) should be [block]
+PASS Web Animations: property <display> from [none] to [block] at (0.9) should be [block]
+PASS Web Animations: property <display> from [none] to [block] at (1) should be [block]
+PASS Web Animations: property <display> from [none] to [block] at (1.5) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (-0.3) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (0) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (0.3) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (0.5) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (0.6) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (1) should be [block]
+PASS CSS Transitions: property <display> from [inline] to [block] at (1.5) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (-0.3) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (0) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (0.3) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (0.5) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (0.6) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [inline] to [block] at (1.5) should be [block]
+FAIL CSS Animations: property <display> from [inline] to [block] at (-0.3) should be [inline] assert_equals: expected "inline " but got "block "
+FAIL CSS Animations: property <display> from [inline] to [block] at (0) should be [inline] assert_equals: expected "inline " but got "block "
+FAIL CSS Animations: property <display> from [inline] to [block] at (0.3) should be [inline] assert_equals: expected "inline " but got "block "
+PASS CSS Animations: property <display> from [inline] to [block] at (0.5) should be [block]
+PASS CSS Animations: property <display> from [inline] to [block] at (0.6) should be [block]
+PASS CSS Animations: property <display> from [inline] to [block] at (1) should be [block]
+PASS CSS Animations: property <display> from [inline] to [block] at (1.5) should be [block]
+FAIL Web Animations: property <display> from [inline] to [block] at (-0.3) should be [inline] assert_equals: expected "inline " but got "block "
+FAIL Web Animations: property <display> from [inline] to [block] at (0) should be [inline] assert_equals: expected "inline " but got "block "
+FAIL Web Animations: property <display> from [inline] to [block] at (0.3) should be [inline] assert_equals: expected "inline " but got "block "
+PASS Web Animations: property <display> from [inline] to [block] at (0.5) should be [block]
+PASS Web Animations: property <display> from [inline] to [block] at (0.6) should be [block]
+PASS Web Animations: property <display> from [inline] to [block] at (1) should be [block]
+PASS Web Animations: property <display> from [inline] to [block] at (1.5) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (-1) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (0) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (0.1) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (0.9) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (1) should be [block]
+PASS CSS Transitions: property <display> from [block] to [block] at (1.5) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (-1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (0) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (0.1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (0.9) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (1) should be [block]
+PASS CSS Transitions with transition: all: property <display> from [block] to [block] at (1.5) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (-1) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (0) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (0.1) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (0.9) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (1) should be [block]
+PASS CSS Animations: property <display> from [block] to [block] at (1.5) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (-1) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (0) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (0.1) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (0.9) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (1) should be [block]
+PASS Web Animations: property <display> from [block] to [block] at (1.5) should be [block]
+PASS CSS Transitions: property <display> from [none] to [none] at (-1) should be [none]
+PASS CSS Transitions: property <display> from [none] to [none] at (0) should be [none]
+PASS CSS Transitions: property <display> from [none] to [none] at (0.1) should be [none]
+PASS CSS Transitions: property <display> from [none] to [none] at (0.9) should be [none]
+PASS CSS Transitions: property <display> from [none] to [none] at (1) should be [none]
+PASS CSS Transitions: property <display> from [none] to [none] at (1.5) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (-1) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (0) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (0.1) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (0.9) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (1) should be [none]
+PASS CSS Transitions with transition: all: property <display> from [none] to [none] at (1.5) should be [none]
+FAIL CSS Animations: property <display> from [none] to [none] at (-1) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [none] at (0) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [none] at (0.1) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [none] at (0.9) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [none] at (1) should be [none] assert_equals: expected "none " but got "block "
+FAIL CSS Animations: property <display> from [none] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (-1) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (0) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (0.1) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (0.9) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (1) should be [none] assert_equals: expected "none " but got "block "
+FAIL Web Animations: property <display> from [none] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "block "
+

@@ -363,7 +363,7 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         ASSERT(!m_pendingFrameLoads.contains(frameID));
 
         // Start tracking loads in this frame.
-        auto pendingFrameLoad = PendingFrameLoad::create(m_storage, resourceKey, [this, frameID] {
+        auto pendingFrameLoad = PendingFrameLoad::create(Ref { m_storage }, resourceKey, [this, frameID] {
             bool wasRemoved = m_pendingFrameLoads.remove(frameID);
             ASSERT_UNUSED(wasRemoved, wasRemoved);
         });
@@ -488,7 +488,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
     if (!key.range().isEmpty())
         return;
 
-    auto* pendingLoad = m_pendingFrameLoads.get(frameID);
+    RefPtr pendingLoad = m_pendingFrameLoads.get(frameID);
 
     // Delay first-party speculative loads until we've received the response for the main resource, in case the main resource
     // response sets cookies that are needed for subsequent loads.

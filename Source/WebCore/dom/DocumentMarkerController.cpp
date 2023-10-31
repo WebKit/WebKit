@@ -29,6 +29,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DocumentInlines.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Page.h"

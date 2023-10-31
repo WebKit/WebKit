@@ -362,7 +362,7 @@ void NetworkConnectionToWebProcess::createRTCProvider(CompletionHandler<void()>&
 #if ENABLE(WEB_RTC)
 void NetworkConnectionToWebProcess::connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier, CompletionHandler<void(std::optional<bool>)>&& callback)
 {
-    auto* connectionToWebProcess = m_networkProcess->webProcessConnection(remoteIdentifier.processIdentifier);
+    RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(remoteIdentifier.processIdentifier);
     if (!connectionToWebProcess) {
         callback(false);
         return;
@@ -1360,7 +1360,7 @@ void NetworkConnectionToWebProcess::entangleLocalPortInThisProcessToRemote(const
     m_processEntangledPorts.add(local);
     networkProcess().messagePortChannelRegistry().didEntangleLocalToRemote(local, remote, m_webProcessIdentifier);
 
-    auto* channel = networkProcess().messagePortChannelRegistry().existingChannelContainingPort(local);
+    RefPtr channel = networkProcess().messagePortChannelRegistry().existingChannelContainingPort(local);
     if (channel && channel->hasAnyMessagesPendingOrInFlight())
         connection().send(Messages::NetworkProcessConnection::MessagesAvailableForPort(local), 0);
 }
@@ -1404,7 +1404,7 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
 {
     if (networkProcess().messagePortChannelRegistry().didPostMessageToRemote(WTFMove(message), port)) {
         // Look up the process for that port
-        auto* channel = networkProcess().messagePortChannelRegistry().existingChannelContainingPort(port);
+        RefPtr channel = networkProcess().messagePortChannelRegistry().existingChannelContainingPort(port);
         ASSERT(channel);
         auto processIdentifier = channel->processForPort(port);
         if (processIdentifier) {

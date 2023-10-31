@@ -29,6 +29,7 @@
 #include "AnimationFrameRate.h"
 #include "ReducedResolutionSeconds.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

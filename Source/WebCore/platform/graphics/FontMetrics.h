@@ -21,6 +21,7 @@
 #define FontMetrics_h
 
 #include "FontBaseline.h"
+#include <optional>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

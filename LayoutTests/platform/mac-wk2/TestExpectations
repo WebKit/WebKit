@@ -1831,13 +1831,8 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html [ Failure ]
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure ]
 
-# rdar://107459829 ([UI Side Compositing] REGRESSION(262176@main-262166@main): fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html and fast/scrolling/mac/scrollbars/scrollbar-state.html fail)
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Failure ]
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
-
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
-
 
 # rdar://104152683 (REGRESSION (Sonoma): [ Sonoma ] compositing/video/video-border-radius-clipping.html is a consistent image failure)
 [ Sonoma+ ] compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
@@ -1981,8 +1976,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 
 webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
 
-webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
-
 webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
 # webkit.org/b/263027 REGRESSION ( Sonoma ): [ Sonoma wk2 ] 3 tests in webrtc are consistent failure
@@ -2022,3 +2015,11 @@ http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Pass ]
+
+webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+
+# rdar://117706782 (REGRESSION (269897@main): [ Sonoma wk2 ] 2 tests in imported/w3c/web-platform-t ests/css/cssom-view/ are a constant failure
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Failure ]

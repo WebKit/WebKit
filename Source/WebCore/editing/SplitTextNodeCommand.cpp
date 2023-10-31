@@ -27,8 +27,7 @@
 #include "SplitTextNodeCommand.h"
 
 #include "CompositeEditCommand.h"
-#include "Document.h"
-#include "DocumentMarkerController.h"
+#include "DocumentInlines.h"
 #include "Text.h"
 #include <wtf/Assertions.h>
 

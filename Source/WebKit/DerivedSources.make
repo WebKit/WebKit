@@ -364,6 +364,8 @@ GENERATED_MESSAGES_FILES_AS_PATTERNS := $(subst .,%,$(GENERATED_MESSAGES_FILES))
 
 MESSAGES_IN_FILES := $(addsuffix .messages.in,$(MESSAGE_RECEIVERS))
 
+SANDBOX_IMPORT_DIR=$(SDKROOT)/usr/local/share/sandbox/profiles/embedded/imports
+
 .PHONY : all
 
 all : $(GENERATED_MESSAGES_FILES)
@@ -404,16 +406,20 @@ all : $(SANDBOX_PROFILES_WITHOUT_WEBPUSHD) $(WEBPUSHD_SANDBOX_PROFILE) $(SANDBOX
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
 	grep -o '^[^;]*' $< | $(CC) $(SANITIZE_FLAGS) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(SANDBOX_DEFINES) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(EXTERNAL_FLAGS) -include "wtf/Platform.h" - > $@
-	if [ -e "/usr/local/bin/sbutil" ]; then \
-		if [[ $(SDK_NAME) =~ "iphoneos" ]]; then \
+	xcrun --sdk $(SDK_NAME) -f sbutil; \
+	if [[ $$? == 0 ]]; then \
+		if [[ $(SDK_NAME) =~ "iphone" || $(SDK_NAME) =~ "watch" || $(SDK_NAME) =~ "appletv" ]]; then \
 			if [[ $* == "com.apple.WebKit.adattributiond" || $* == "com.apple.WebKit.webpushd" ]]; then \
-				sbutil compile -D IMPORT_DIR=$(SDKROOT)/usr/local/share/sandbox/profiles/embedded/imports $@ > /dev/null; \
+				if [ ! -e $(SANDBOX_IMPORT_DIR) ]; then \
+					exit 0; \
+				fi; \
+				xcrun --sdk $(SDK_NAME) sbutil compile -D IMPORT_DIR=$(SANDBOX_IMPORT_DIR) $@ > /dev/null; \
 				if [[ $$? != 0 ]]; then \
 					exit 1; \
 				fi \
 			fi; \
 			if [[ $* == "com.apple.WebKit.GPU" || $* == "com.apple.WebKit.Networking" || $* == "com.apple.WebKit.WebContent" ]]; then \
-				sbutil compile $@ > /dev/null; \
+				xcrun --sdk $(SDK_NAME) sbutil compile $@ > /dev/null; \
 				if [[ $$? != 0 ]]; then \
 					exit 1; \
 				fi \
@@ -421,7 +427,7 @@ all : $(SANDBOX_PROFILES_WITHOUT_WEBPUSHD) $(WEBPUSHD_SANDBOX_PROFILE) $(SANDBOX
 		fi; \
 		if [[ $(SDK_NAME) =~ "mac" ]]; then \
 			if [[ $* == "com.apple.WebKit.GPUProcess" || $* == "com.apple.WebKit.NetworkProcess" || $* == "com.apple.WebProcess" ]]; then \
-				sbutil compile -D ENABLE_SANDBOX_MESSAGE_FILTER=YES -D WEBKIT2_FRAMEWORK_DIR=dir -D HOME_DIR=dir -D HOME_LIBRARY_PREFERENCES_DIR=dir -D DARWIN_USER_CACHE_DIR=dir -D DARWIN_USER_TEMP_DIR=dir $@ > /dev/null; \
+				xcrun --sdk $(SDK_NAME) sbutil compile -D ENABLE_SANDBOX_MESSAGE_FILTER=YES -D WEBKIT2_FRAMEWORK_DIR=dir -D HOME_DIR=dir -D HOME_LIBRARY_PREFERENCES_DIR=dir -D DARWIN_USER_CACHE_DIR=dir -D DARWIN_USER_TEMP_DIR=dir $@ > /dev/null; \
 				if [[ $$? != 0 ]]; then \
 					exit 1; \
 				fi \

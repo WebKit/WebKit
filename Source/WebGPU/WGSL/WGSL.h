@@ -142,6 +142,7 @@ struct ExternalTextureBindingLayout {
 
 struct BindGroupLayoutEntry {
     uint32_t binding;
+    uint32_t webBinding;
     OptionSet<ShaderStage> visibility;
     using BindingMember = std::variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
     BindingMember bindingMember;

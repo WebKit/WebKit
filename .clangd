@@ -7,3 +7,13 @@ If:
     PathMatch: [.*\.cpp]
 CompileFlags:
     Add: [--include=config.h]
+---
+If:
+    PathMatch: [.*\.mm]
+CompileFlags:
+    Add: [-xobjective-c++, --include=config.h, -std=c++2a]
+---
+If:
+    PathMatch: [.*\.m]
+CompileFlags:
+    Add: [-xobjective-c, --include=config.h]

@@ -200,6 +200,11 @@ WebCore::FragmentedSharedBuffer* Entry::buffer() const
     return m_buffer.get();
 }
 
+RefPtr<WebCore::FragmentedSharedBuffer> Entry::protectedBuffer() const
+{
+    return buffer();
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 std::optional<ShareableResource::Handle> Entry::shareableResourceHandle() const
 {
