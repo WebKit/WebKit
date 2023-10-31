@@ -382,7 +382,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         return;
 
     const GlyphData& glyphData = m_font.glyphDataForCharacter(character, false, FontVariant::NormalVariant);
-    advanceInternalState.updateFont(glyphData.font ? glyphData.font : primaryFont.ptr());
+    advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
     auto capitalizedCharacter = capitalized(character);
     if (shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing))
         smallCapsState.setSmallCapsData(advanceInternalState.font.get(), fontDescription);
@@ -411,7 +411,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
 #endif
         const GlyphData& glyphData = m_font.glyphDataForCharacter(character, false, FontVariant::NormalVariant);
-        advanceInternalState.updateFont(glyphData.font ? glyphData.font : primaryFont.ptr());
+        advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);
 
@@ -424,7 +424,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             characterToWrite = u_charMirror(characterToWrite);
 
         Glyph glyph = glyphData.glyph;
-        if (glyphData.font != advanceInternalState.nextRangeFont || character != characterToWrite)
+        if (glyphData.font.get() != advanceInternalState.nextRangeFont || character != characterToWrite)
             glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);
 
         if (!glyph && !characterMustDrawSomething) {

@@ -110,7 +110,7 @@ private:
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 
-    const Font* m_cachedPrimaryFont;
+    WeakPtr<const Font> m_cachedPrimaryFont;
     RefPtr<FontSelector> m_fontSelector;
 
     WidthCache m_widthCache;
@@ -136,7 +136,7 @@ inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& descrip
     ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     if (!m_cachedPrimaryFont) {
         auto& primaryRanges = realizeFallbackRangesAt(description, 0);
-        m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font;
+        m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font.get();
         if (!m_cachedPrimaryFont)
             m_cachedPrimaryFont = primaryRanges.rangeAt(0).font(ExternalResourceDownloadPolicy::Allow);
         else if (m_cachedPrimaryFont->isInterstitial()) {
@@ -144,9 +144,9 @@ inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& descrip
                 auto& localRanges = realizeFallbackRangesAt(description, index);
                 if (localRanges.isNull())
                     break;
-                auto* font = localRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Forbid).font;
+                WeakPtr font = localRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Forbid).font.get();
                 if (font && !font->isInterstitial()) {
-                    m_cachedPrimaryFont = font;
+                    m_cachedPrimaryFont = WTFMove(font);
                     break;
                 }
             }

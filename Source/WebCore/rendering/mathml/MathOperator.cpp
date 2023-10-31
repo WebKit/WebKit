@@ -251,7 +251,7 @@ void MathOperator::calculateDisplayStyleLargeOperator(const RenderStyle& style)
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
     for (auto& sizeVariant : sizeVariants) {
-        GlyphData glyphData(sizeVariant, baseGlyph.font);
+        GlyphData glyphData(sizeVariant, baseGlyph.font.get());
         setSizeVariant(glyphData);
         m_maxPreferredWidth = m_width;
         m_italicCorrection = glyphData.font->mathData()->getItalicCorrection(*glyphData.font, glyphData.glyph);
@@ -385,7 +385,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
         getMathVariantsWithFallback(style, isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& sizeVariant : sizeVariants) {
-            GlyphData glyphData(sizeVariant, baseGlyph.font);
+            GlyphData glyphData(sizeVariant, baseGlyph.font.get());
             if (calculateMaxPreferredWidth)
                 m_maxPreferredWidth = std::max(m_maxPreferredWidth, LayoutUnit(advanceWidthForGlyph(glyphData)));
             else {
