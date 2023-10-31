@@ -6848,3 +6848,5 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.
 webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Failure ]
 webkit.org/b/263872 imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/263873 imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-iframe-print.html [ ImageOnlyFailure ]
+
+webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
