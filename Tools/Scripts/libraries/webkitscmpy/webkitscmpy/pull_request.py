@@ -82,11 +82,12 @@ class PullRequest(object):
     @classmethod
     def escape_html(cls, message):
         message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
-        return re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
+        message = re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
+        return re.sub(r'rdar://([^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="https://rdar.apple.com/\1">rdar://\1</a>', message)
 
     @classmethod
     def unescape_html(cls, message):
-        message = re.sub(r'<a href=".+">(https?://[^\s<>,:;]+)</a>', r'\1', message)
+        message = re.sub(r'<a href="https?://.+">([^\s<>,:;/]+://[^\s<>,:;]+)</a>', r'\1', message)
         for c, escaped in cls.ESCAPE_TABLE.items():
             message = message.replace(escaped, c)
         return message

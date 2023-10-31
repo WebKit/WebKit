@@ -41,10 +41,12 @@ class TestPullRequest(unittest.TestCase):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
-                message='[scoping] Bug to fix\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\nrdar://1234\n\nReviewed by Tim Contributor.\n',
             )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 <pre>
 [scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+<a href="https://rdar.apple.com/1234">rdar://1234</a>
 
 Reviewed by Tim Contributor.
 </pre>''',
@@ -75,7 +77,7 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
-    def test_parse_body_single(self):
+    def test_parse_body_single_ews(self):
         body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 ```
 [scoping] Bug to fix
@@ -120,7 +122,7 @@ Reviewed by Tim Contributor.
 #### ccc39e76f938a1685e388991fc3127a85d0be0f0
 <pre>
 [scoping] Bug to fix (Part 1)
-&lt;rdar:///1234&gt;
+&lt;<a href="https://rdar.apple.com//1234">rdar:///1234</a>&gt;
 
 Reviewed by Tim Contributor.
 </pre>''',
@@ -273,6 +275,23 @@ Reviewed by Tim Contributor.
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+    def test_parse_html_body_single_links(self):
+        body, commits = PullRequest.parse_body('''Comment body
+
+----------------------------------------------------------------------
+#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+<a href="https://rdar.apple.com/1234">rdar://1234</a>
+
+Reviewed by Tim Contributor.
+</pre>''')
+        self.assertEqual(body, 'Comment body')
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\nrdar://1234\n\nReviewed by Tim Contributor.')
 
     def test_parse_html_body_single_ews(self):
         body, commits = PullRequest.parse_body('''Comment body
@@ -864,7 +883,6 @@ No pre-PR checks to run""")
         )
 
     def test_github_number_reentrance(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
                 projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
                 self.BUGZILLA.split('://')[-1],
@@ -1174,7 +1192,6 @@ No pre-PR checks to run""")
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Scrolling')
 
-        self.maxDiff = None
         self.assertEqual(
             captured.stdout.getvalue(),
             "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
