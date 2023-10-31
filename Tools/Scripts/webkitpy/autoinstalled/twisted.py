@@ -30,9 +30,14 @@ AutoInstall.install(Package('constantly', Version(15, 1, 0), pypi_name='constant
 if sys.version_info >= (3, 0):
     AutoInstall.install(Package('hyperlink', Version(21, 0, 0), pypi_name='hyperlink'))
     AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
-    AutoInstall.install(Package('twisted', Version(23, 8, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
 
-    AutoInstall.install(Package('pyOpenSSL', Version(23, 2, 0)))
+    if sys.version_info >= (3, 11):
+        AutoInstall.install(Package('twisted', Version(23, 8, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
+        AutoInstall.install(Package('pyOpenSSL', Version(23, 2, 0)))
+    else:
+        AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
+        AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
+
     # There are no prebuilt binaries for arm-32 of 'bcrypt' and building it requires cargo/rust
     # Since this dep is not really needed for the current arm-32 bots we skip it instead of
     # adding the overhead of a cargo/rust toolchain into the yocto-based image the bots run.
