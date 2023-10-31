@@ -43,9 +43,9 @@
       This can also be overridden by a -n or --no-overwrite flag
 
     - If no import_directory is provided, the script will download the tests from the W3C github repositories.
-      The selection of tests and folders to import will be based on the following files:
-         1. LayoutTests/imported/w3c/resources/TestRepositories lists the repositories to clone, the corresponding revision to checkout and the infrastructure folders that need to be imported/skipped.
-         2. LayoutTests/imported/w3c/resources/ImportExpectations list the test suites or tests to NOT import.
+      The selection of tests and folders to import will be based on
+      LayoutTests/imported/w3c/resources/import-expectations.json which lists the test suites or tests to
+      import or not.
 
     - All files are converted to work in WebKit:
          1. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
@@ -249,11 +249,6 @@ class TestImporter(object):
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
-            if 'generate_git_submodules_description' in test_repository['import_options']:
-                self.filesystem.maybe_make_directory(self.filesystem.join(self.destination_directory, 'resources'))
-                self._test_downloader.generate_git_submodules_description(test_repository, self.filesystem.join(self.destination_directory, 'resources', test_repository['name'] + '-modules.json'))
-            if 'generate_gitignore' in test_repository['import_options']:
-                self._test_downloader.generate_gitignore(test_repository, self.destination_directory)
             if 'generate_init_py' in test_repository['import_options']:
                 self.write_init_py(self.filesystem.join(self.destination_directory, test_repository['name'], '__init__.py'))
 

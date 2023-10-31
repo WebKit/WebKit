@@ -46,7 +46,7 @@ using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
 @implementation WebEvent {
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
     RetainPtr<UIKeyEvent> _originalUIKeyEvent;
 #endif
 }
@@ -493,7 +493,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 @end
 
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 @implementation WebEvent (UIAsyncTextInputSupport)
 
@@ -553,6 +553,6 @@ static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
 
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #endif // PLATFORM(IOS_FAMILY)

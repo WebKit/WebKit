@@ -416,7 +416,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
         return nullptr;
 
     if (isOnlySingleCodePoint)
-        return baseCharacterGlyphData.font;
+        return baseCharacterGlyphData.font.get();
 
     bool triedBaseCharacterFont = false;
 
@@ -456,7 +456,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     }
 
     if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
-        return baseCharacterGlyphData.font;
+        return baseCharacterGlyphData.font.get();
 
     return Font::systemFallback();
 }

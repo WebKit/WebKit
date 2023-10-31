@@ -50,7 +50,7 @@ public:
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
         ASSERT_WITH_SECURITY_IMPLICATION(index < GlyphPage::size);
-        return { m_glyphs[index], m_fonts[index] };
+        return { m_glyphs[index], m_fonts[index].get() };
     }
 
     void setGlyphDataForCharacter(UChar32 c, GlyphData glyphData)
@@ -67,7 +67,7 @@ private:
     }
 
     Glyph m_glyphs[GlyphPage::size] { };
-    const Font* m_fonts[GlyphPage::size] { };
+    CheckedPtr<const Font> m_fonts[GlyphPage::size] { };
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
@@ -338,12 +338,12 @@ static const Font* findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, cons
         auto& fontRanges = fontCascadeFonts.realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())
             break;
-        auto* currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font;
+        CheckedPtr currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font;
         if (!currentFont)
             currentFont = &fontRanges.fontForFirstRange();
 
         if (!currentFont->isInterstitial())
-            return currentFont;
+            return currentFont.get();
     }
 
     return nullptr;

@@ -1,0 +1,11 @@
+pointerrawupdate
+
+Test Description: This test checks if pointerrawupdate is dispatched correctly.
+
+Move your mouse within the black box.
+
+Press left button down and then press middle button while holding down left button. Then release the buttons
+
+
+FAIL pointerrawupdate event received assert_true: Pointerrawupdate event should have been received before pointermove. expected true got false
+

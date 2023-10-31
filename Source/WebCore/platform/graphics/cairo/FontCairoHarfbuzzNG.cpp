@@ -123,19 +123,19 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     else if (characters[length - 1] == 0xFE0F)
         preferColoredFont = true;
 
-    const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
+    CheckedPtr baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
     if (baseFont
         && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(normalizedString.view))
         && (!preferColoredFont || baseFont->platformData().isColorBitmapFont()))
-        return baseFont;
+        return baseFont.get();
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        const Font* fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
+        CheckedPtr fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 
         if (fallbackFont->canRenderCombiningCharacterSequence(normalizedString.view) && (!preferColoredFont || fallbackFont->platformData().isColorBitmapFont()))
-            return fallbackFont;
+            return fallbackFont.get();
     }
 
     const auto& originalFont = fallbackRangesAt(0).fontForFirstRange();
@@ -148,7 +148,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
             return systemFallback.get();
     }
 
-    return baseFont;
+    return baseFont.get();
 }
 
 } // namespace WebCore

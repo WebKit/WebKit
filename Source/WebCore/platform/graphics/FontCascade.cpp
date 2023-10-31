@@ -1223,7 +1223,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1237,7 +1237,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1252,7 +1252,7 @@ const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
         return { };
 
     ASSERT(markGlyphData->font);
-    return markGlyphData->font;
+    return markGlyphData->font.get();
 }
 
 int FontCascade::emphasisMarkHeight(const AtomString& mark) const
@@ -1401,7 +1401,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     if (!markGlyphData)
         return;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return;
@@ -1557,7 +1557,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
 
     if (!baseCharacterGlyphData.glyph)
         return nullptr;
-    return baseCharacterGlyphData.font;
+    return baseCharacterGlyphData.font.get();
 }
 #endif
 

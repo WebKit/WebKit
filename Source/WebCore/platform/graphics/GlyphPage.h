@@ -30,16 +30,16 @@
 #ifndef GlyphPage_h
 #define GlyphPage_h
 
+#include "Font.h"
 #include "Glyph.h"
 #include "TextFlags.h"
 #include <unicode/utypes.h>
 #include <wtf/BitSet.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
-
-class Font;
 
 // Holds the glyph index and the corresponding Font information for a given
 // character.
@@ -55,7 +55,7 @@ struct GlyphData {
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
-    const Font* font;
+    CheckedPtr<const Font> font;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
@@ -97,7 +97,7 @@ public:
     {
         Glyph glyph = glyphForIndex(index);
         auto colorGlyphType = colorGlyphTypeForIndex(index);
-        return GlyphData(glyph, glyph ? &m_font : nullptr, colorGlyphType);
+        return GlyphData(glyph, glyph ? m_font.ptr() : nullptr, colorGlyphType);
     }
 
     Glyph glyphForIndex(unsigned index) const
@@ -122,7 +122,7 @@ public:
 
     const Font& font() const
     {
-        return m_font;
+        return m_font.get();
     }
 
     // Implemented by the platform.
@@ -135,7 +135,7 @@ private:
         ++s_count;
     }
 
-    const Font& m_font;
+    CheckedRef<const Font> m_font;
     Glyph m_glyphs[size] { };
     WTF::BitSet<size> m_isColor;
 

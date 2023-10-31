@@ -8626,9 +8626,11 @@ const std::array<UChar, 23940>& gb18030()
             (*array)[pointer] = icuOutput;
         }
         
+#if U_ICU_VERSION_MAJOR_NUM < 74
         // This is a difference between ICU and the encoding specification.
         ASSERT((*array)[6555] == 0xe5e5);
         (*array)[6555] = 0x3000;
+#endif
 
 #if !HAVE(GB_18030_2022)
         static std::array<std::pair<size_t, UChar>, 18> gb18030_2022Differences { {

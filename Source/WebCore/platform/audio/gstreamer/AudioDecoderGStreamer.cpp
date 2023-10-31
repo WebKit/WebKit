@@ -72,7 +72,7 @@ private:
     bool m_isClosed { false };
 };
 
-bool GStreamerAudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+void GStreamerAudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -83,23 +83,33 @@ bool GStreamerAudioDecoder::create(const String& codecName, const Config& config
     if (codecName.startsWith("pcm-"_s)) {
         auto components = codecName.split('-');
         if (components.size() != 2) {
-            GST_WARNING("Invalid LPCM codec string: %s", codecName.ascii().data());
-            return false;
+            GST_WARNING("Invalid LPCM codec string: %s", codecName.utf8().data());
+            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
+                callback(makeUnexpected(makeString("Invalid LPCM codec string: "_s, codecName)));
+            });
+            return;
         }
     } else {
         auto& scanner = GStreamerRegistryScanner::singleton();
         auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
         if (!lookupResult) {
-            GST_WARNING("No decoder found for codec %s", codecName.ascii().data());
-            return false;
+            GST_WARNING("No decoder found for codec %s", codecName.utf8().data());
+            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
+                callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
+            });
+            return;
         }
         element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     }
 
     auto decoder = makeUniqueRef<GStreamerAudioDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
-    if (!decoder->m_internalDecoder->isConfigured()) {
-        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.ascii().data());
-        return false;
+    auto internalDecoder = decoder->m_internalDecoder;
+    if (!internalDecoder->isConfigured()) {
+        GST_WARNING("Internal audio decoder failed to configure for codec %s", codecName.utf8().data());
+        internalDecoder->postTask([callback = WTFMove(callback), codecName]() mutable {
+            callback(makeUnexpected(makeString("Internal audio decoder failed to configure for codec "_s, codecName)));
+        });
+        return;
     }
 
     gstDecoderWorkQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
@@ -109,8 +119,6 @@ bool GStreamerAudioDecoder::create(const String& codecName, const Config& config
             callback(UniqueRef<AudioDecoder> { WTFMove(decoder) });
         });
     });
-
-    return true;
 }
 
 GStreamerAudioDecoder::GStreamerAudioDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)

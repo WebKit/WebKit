@@ -1667,3 +1667,7 @@
 #if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/_UITextCursorDragAnimator.h>)
 #define HAVE_UI_TEXT_CURSOR_DRAG_ANIMATOR 1
 #endif
+
+#if __has_include(<UIKit/UIAsyncTextInteraction.h>)
+#define HAVE_UI_ASYNC_TEXT_INTERACTION 1
+#endif

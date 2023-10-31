@@ -259,9 +259,6 @@ ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomStrin
     if (!is<HTMLElement>(element))
         return false;
 
-    if (!element.document().settings().dirPseudoEnabled())
-        return false;
-
     switch (element.effectiveTextDirection()) {
     case TextDirection::LTR:
         return equalIgnoringASCIICase(argument, "ltr"_s);

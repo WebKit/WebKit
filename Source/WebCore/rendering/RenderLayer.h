@@ -1339,11 +1339,8 @@ private:
     WeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // Pointer to the enclosing RenderSVGResourceContainer, if present.
-    WeakPtr<RenderSVGResourceContainer> m_enclosingSVGResourceContainer;
-
-    // Pointer to the enclosing RenderSVGHiddenContainer, if present.
-    WeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenContainer;
+    // Pointer to the enclosing RenderSVGHiddenContainer or RenderSVGResourceContainer, if present.
+    WeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
 #endif
 
     IntRect m_blockSelectionGapsBounds;

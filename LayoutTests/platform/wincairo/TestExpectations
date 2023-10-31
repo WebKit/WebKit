@@ -973,9 +973,6 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
 
-webkit.org/b/263423 http/tests/multipart/invalid-image-data.html [ Skip ]
-webkit.org/b/263423 http/tests/multipart/multipart-async-image.html [ Skip ]
-  
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////

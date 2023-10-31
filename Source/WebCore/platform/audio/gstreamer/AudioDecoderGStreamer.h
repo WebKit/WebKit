@@ -34,7 +34,7 @@ class GStreamerAudioDecoder : public ThreadSafeRefCounted<GStreamerAudioDecoder>
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static bool create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
 
     GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerAudioDecoder();

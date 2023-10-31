@@ -95,7 +95,7 @@ GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceD
                 } else {
                     auto glyphData = font->glyphDataForCharacter(character);
                     if (glyphData.font) {
-                        auto* glyphDataFont = glyphData.font;
+                        CheckedPtr glyphDataFont = glyphData.font;
                         if (glyphDataFont && glyphDataFont->visibility() == Font::Visibility::Visible && resultFont && resultFont->visibility() == Font::Visibility::Invisible)
                             return GlyphData(glyphData.glyph, &glyphDataFont->invisibleFont());
                         return glyphData;
@@ -118,7 +118,7 @@ GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceD
 
 const Font* FontRanges::fontForCharacter(UChar32 character) const
 {
-    return glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Allow).font;
+    return glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Allow).font.get();
 }
 
 const Font& FontRanges::fontForFirstRange() const

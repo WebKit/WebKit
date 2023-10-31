@@ -313,8 +313,11 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
     }
 }
 
-static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode)
+static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode, auto arrayStride)
 {
+    if (!arrayStride)
+        return MTLVertexStepFunctionConstant;
+
     switch (stepMode) {
     case WGPUVertexStepMode_Vertex:
         return MTLVertexStepFunctionPerVertex;
@@ -337,9 +340,10 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
             continue;
 
-        vertexDescriptor.layouts[bufferIndex].stride = buffer.arrayStride;
-        vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode);
-        // FIXME: need to assign stepRate with per-instance data?
+        vertexDescriptor.layouts[bufferIndex].stride = std::max<NSUInteger>(sizeof(int), buffer.arrayStride);
+        vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode, buffer.arrayStride);
+        if (vertexDescriptor.layouts[bufferIndex].stepFunction == MTLVertexStepFunctionConstant)
+            vertexDescriptor.layouts[bufferIndex].stepRate = 0;
         for (size_t i = 0; i < buffer.attributeCount; ++i) {
             auto& attribute = buffer.attributes[i];
             const auto& mtlAttribute = vertexDescriptor.attributes[attribute.shaderLocation];

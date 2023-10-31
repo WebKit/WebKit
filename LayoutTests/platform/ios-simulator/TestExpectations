@@ -69,7 +69,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]
 
 # Missing required low latency H264 support.
@@ -87,7 +86,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
 
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html [ ImageOnlyFailure ]
 
@@ -127,8 +125,6 @@ webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-fftsize-reset.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data-smoothing.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
-[ arm64 ] webaudio/OfflineAudioContext-bad-buffer-crash.html [ Failure ]
-[ arm64 ] webaudio/OfflineAudioContext/bad-buffer-length.html [ Failure ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
 
@@ -145,4 +141,3 @@ webkit.org/b/261270 webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.
 # Failure for CSS tables
 imported/w3c/web-platform-tests/css/css-tables/subpixel-collapsed-borders-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/259506 imported/blink/fast/text/international/inline-block-with-mixed-direction-words.html [ ImageOnlyFailure ]

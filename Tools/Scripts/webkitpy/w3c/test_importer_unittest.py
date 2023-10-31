@@ -47,18 +47,6 @@ FAKE_FILES = {
 }
 
 FAKE_REPOSITORY = {
-    '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
-[
-    {
-        "name": "web-platform-tests",
-        "url": "https://github.com/w3c/web-platform-tests.git",
-        "revision": "dd553279c3",
-        "paths_to_skip": [],
-        "paths_to_import": [],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
-    }
-]
-''',
     '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
 {
     "test1": "import",
@@ -68,26 +56,6 @@ FAKE_REPOSITORY = {
 
 
 FAKE_REPOSITORIES = {
-    '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
-[
-    {
-        "name": "csswg-tests",
-        "url": "https://github.com/w3c/csswg-test.git",
-        "revision": "9f45f89",
-        "paths_to_skip": [],
-        "paths_to_import": [],
-        "import_options": ["convert_test_harness_links"]
-    },
-    {
-        "name": "web-platform-tests",
-        "url": "https://github.com/w3c/web-platform-tests.git",
-        "revision": "dd553279c3",
-        "paths_to_skip": [],
-        "paths_to_import": [],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
-    }
-]
-''',
     '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
 {
     "test1": "import",
@@ -196,34 +164,9 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
 
-    def test_submodules_generation(self):
-        FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-        }
-        FAKE_FILES.update(FAKE_REPOSITORIES)
-
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
-
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/csswg-tests-modules.json'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
-        # FIXME: Mock-up of git cannot use submodule command, hence the json file is empty, but still it should be created
-        #self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
-
     def test_skip_test_import_download(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
-[
-    {
-        "name": "web-platform-tests",
-        "url": "https://github.com/myrepo",
-        "revision": "7cc96dd",
-        "paths_to_skip": [],
-        "paths_to_import": [],
-        "import_options": []
-     }
-]''',
             '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
 {
 "web-platform-tests/dir-to-skip": "skip",
@@ -246,17 +189,6 @@ class TestImporterTest(unittest.TestCase):
     def test_skip_test_import_source(self):
         FAKE_FILES = {
             '/home/user/wpt/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
-[
-    {
-        "name": "web-platform-tests",
-        "url": "https://github.com/myrepo",
-        "revision": "7cc96dd",
-        "paths_to_skip": [],
-        "paths_to_import": [],
-        "import_options": []
-     }
-]''',
             '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
 {
 "web-platform-tests/dir-to-skip": "skip",
@@ -468,22 +400,6 @@ class TestImporterTest(unittest.TestCase):
         self.assertIn("imported/w3c/web-platform-tests/cssom-view/old-test.html", tests_options)
         self.assertNotIn("imported/w3c/web-platform-tests/cssom/old-test.html", tests_options)
 
-    def test_git_ignore_generation(self):
-        FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-        }
-
-        FAKE_FILES.update(FAKE_REPOSITORIES)
-
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
-
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/.gitignore'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
-        # We should activate these lines but this is not working in mock systems.
-        #self.assertTrue('/tools/.resources.url' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
-        #self.assertTrue('/tools/resources/' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
-
     def test_initpy_generation(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
@@ -589,10 +505,6 @@ class TestImporterTest(unittest.TestCase):
 
     def test_webkit_test_runner_import_reftests_with_absolute_paths_download(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test1.html': '<html><head><link rel=match href=/t/test1-ref.html></head></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test1-ref.html': '<html></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test2.html': '<html><head><link rel=match href=/some/directory/in/csswg-root/test2-ref.html></head></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/some/directory/in/csswg-root/test2-ref.html': '<html></html>',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test3.html': '<html><head><link rel=match href=/css/css-images/test3-ref.html></head></html>',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test3-ref.html': '<html></html>',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test4.html': '<html><head><link rel=match href=/some/directory/in/wpt-root/test4-ref.html></head></html>',
@@ -603,12 +515,6 @@ class TestImporterTest(unittest.TestCase):
         FAKE_FILES.update(FAKE_REPOSITORIES)
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
-        # test1
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test1.html'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test1-expected.html'))
-        # test2
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test2.html'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test2-expected.html'))
         # test3
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3-expected.html'))

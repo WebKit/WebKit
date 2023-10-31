@@ -242,6 +242,15 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point;
 - (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
+
+- (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input shouldUnderline:(BOOL)shouldUnderline withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler;
+
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+- (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
+- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
+- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
+#endif
+
 @property (nonatomic, readonly) NSString *selectedText;
 
 @optional
