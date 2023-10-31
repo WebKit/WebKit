@@ -24,6 +24,7 @@ import calendar
 import os
 import re
 import sys
+import time
 
 from datetime import datetime
 from webkitbugspy import User
@@ -349,7 +350,7 @@ class GitHub(Scm):
             if comment and pull_request._comments:
                 pull_request._comments.append(PullRequest.Comment(
                     author=me,
-                    timestamp=time.time(),
+                    timestamp=int(time.time()),
                     content=comment,
                 ))
 

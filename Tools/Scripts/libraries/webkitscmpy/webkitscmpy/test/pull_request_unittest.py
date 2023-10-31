@@ -2047,6 +2047,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.comments, [])
             pr.comment('Commenting!')
             self.assertEqual([c.content for c in pr.comments], ['Commenting!'])
+            self.assertTrue(all([isinstance(c.timestamp, int) for c in pr.comments]))
 
     def test_open_close(self):
         with self.webserver():
