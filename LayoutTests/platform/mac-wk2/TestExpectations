@@ -1831,13 +1831,8 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html [ Failure ]
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure ]
 
-# rdar://107459829 ([UI Side Compositing] REGRESSION(262176@main-262166@main): fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html and fast/scrolling/mac/scrollbars/scrollbar-state.html fail)
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Failure ]
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
-
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
-
 
 # rdar://104152683 (REGRESSION (Sonoma): [ Sonoma ] compositing/video/video-border-radius-clipping.html is a consistent image failure)
 [ Sonoma+ ] compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
