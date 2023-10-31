@@ -4383,7 +4383,7 @@ bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByVariant& vari
     addToGraph(CheckJSCast, OpInfo(domAttribute->classInfo), thisNode);
     
     bool wasSeenInJIT = true;
-    GetByStatus* status = m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), GetByStatus(GetByStatus::Custom, wasSeenInJIT));
+    GetByStatus* status = m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), GetByStatus(GetByStatus::CustomAccessor, wasSeenInJIT));
     bool success = status->appendVariant(variant);
     RELEASE_ASSERT(success);
     addToGraph(FilterGetByStatus, OpInfo(status), thisNode);
@@ -4756,6 +4756,9 @@ bool ByteCodeParser::check(const ObjectPropertyCondition& condition)
     
     if (m_graph.watchCondition(condition))
         return true;
+
+    if (condition.kind() == PropertyCondition::Equivalence)
+        return false;
     
     Structure* structure = condition.object()->structure();
     if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
@@ -5191,15 +5194,39 @@ void ByteCodeParser::handleGetById(
 
     // Special path for custom accessors since custom's offset does not have any meanings.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.
-    if (Options::useDOMJIT() && getByStatus.isCustom()) {
-        ASSERT(getByStatus.numVariants() == 1);
-        ASSERT(!getByStatus.makesCalls());
-        GetByVariant variant = getByStatus[0];
-        ASSERT(variant.domAttribute());
-        if (handleDOMJITGetter(destination, variant, base, identifierNumber, prediction)) {
-            if (UNLIKELY(m_graph.compilation()))
-                m_graph.compilation()->noticeInlinedGetById();
-            return;
+    if (is64Bit()) {
+        if (getByStatus.numVariants() == 1) {
+            GetByVariant variant = getByStatus[0];
+            if (getByStatus.isCustomAccessor()) {
+                // DOMGetter does not perform type check for base. So if we found variant.domAttribute(), we must use CallDOMGetter.
+                if (Options::useDOMJIT() && variant.domAttribute()) {
+                    ASSERT(!getByStatus.makesCalls());
+                    if (handleDOMJITGetter(destination, variant, base, identifierNumber, prediction)) {
+                        if (UNLIKELY(m_graph.compilation()))
+                            m_graph.compilation()->noticeInlinedGetById();
+                        return;
+                    }
+                    set(destination, addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    return;
+                }
+
+                if (!check(variant.conditionSet())) {
+                    set(destination, addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    return;
+                }
+
+                if (UNLIKELY(m_graph.compilation()))
+                    m_graph.compilation()->noticeInlinedGetById();
+
+                addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
+                auto* data = m_graph.m_callCustomAccessorData.add();
+                data->m_customAccessor = variant.customAccessorGetter();
+                data->m_identifier = identifier;
+                set(destination, addToGraph(CallCustomAccessorGetter, OpInfo(data), OpInfo(prediction), base));
+                return;
+
+            }
         }
     }
 
@@ -5364,7 +5391,7 @@ void ByteCodeParser::handleGetPrivateNameById(
 {
     simplifyGetByStatus(base, getByStatus);
 
-    ASSERT(!getByStatus.isCustom());
+    ASSERT(!getByStatus.isCustomAccessor());
     ASSERT(!getByStatus.makesCalls());
     if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
         set(destination,
@@ -5592,6 +5619,29 @@ void ByteCodeParser::handlePutById(
     Node* base, CacheableIdentifier identifier, unsigned identifierNumber, Node* value,
     const PutByStatus& putByStatus, bool isDirect, BytecodeIndex osrExitIndex, ECMAMode ecmaMode)
 {
+    if (is64Bit()) {
+        if (putByStatus.isCustomAccessor()) {
+            if (putByStatus.numVariants() == 1) {
+                // Special path for custom accessors since custom's offset does not have any meanings.
+                // So, this is completely different from Simple one. But we have a chance to optimize it.
+                auto variant = putByStatus[0];
+                if (UNLIKELY(m_graph.compilation()))
+                    m_graph.compilation()->noticeInlinedPutById();
+                addToGraph(FilterPutByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByStatus(currentCodeOrigin(), putByStatus)), base);
+                if (!check(variant.conditionSet())) {
+                    emitPutById(base, identifier, value, putByStatus, isDirect, ecmaMode);
+                    return;
+                }
+                auto* data = m_graph.m_callCustomAccessorData.add();
+                data->m_customAccessor = variant.customAccessorSetter();
+                data->m_identifier = identifier;
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+                addToGraph(CallCustomAccessorSetter, OpInfo(data), OpInfo(SpecNone), base, value);
+                return;
+            }
+        }
+    }
+
     if (!putByStatus.isSimple() || !putByStatus.numVariants() || !Options::useAccessInlining()) {
         if (!putByStatus.isSet())
             addToGraph(ForceOSRExit);

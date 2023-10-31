@@ -1016,6 +1016,7 @@ private:
         case ConstructForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
         case CallWasm:
+        case CallCustomAccessorGetter:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
@@ -1586,6 +1587,7 @@ private:
         case PutSetterByVal:
         case DefineDataProperty:
         case DefineAccessorProperty:
+        case CallCustomAccessorSetter:
         case DFG::Jump:
         case Branch:
         case Switch:

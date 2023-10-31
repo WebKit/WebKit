@@ -1346,6 +1346,8 @@ public:
     void compileCallDOMGetter(Node*);
     void compileCallDOM(Node*);
     void compileCheckJSCast(Node*);
+    void compileCallCustomAccessorGetter(Node*);
+    void compileCallCustomAccessorSetter(Node*);
     void compileNormalizeMapKey(Node*);
     void compileGetMapBucketHead(Node*);
     void compileGetMapBucketNext(Node*);

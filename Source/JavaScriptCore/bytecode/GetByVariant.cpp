@@ -130,16 +130,15 @@ bool GetByVariant::attemptToMerge(const GetByVariant& other)
     if (m_conditionSet.isEmpty() != other.m_conditionSet.isEmpty())
         return false;
     
-    ObjectPropertyConditionSet mergedConditionSet;
     if (!m_conditionSet.isEmpty()) {
-        mergedConditionSet = m_conditionSet.mergedWith(other.m_conditionSet);
+        auto mergedConditionSet = m_conditionSet.mergedWith(other.m_conditionSet);
         if (!mergedConditionSet.isValid())
             return false;
         // If this is a hit variant, one slot base should exist. If this is not a hit variant, the slot base is not necessary.
         if (!isPropertyUnset() && !mergedConditionSet.hasOneSlotBaseCondition())
             return false;
+        m_conditionSet = mergedConditionSet;
     }
-    m_conditionSet = mergedConditionSet;
     
     m_structureSet.merge(other.m_structureSet);
     

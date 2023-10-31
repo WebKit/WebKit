@@ -3136,6 +3136,8 @@ private:
         case GetWebAssemblyInstanceExports:
         case NewBoundFunction:
         case MakeAtomString:
+        case CallCustomAccessorGetter:
+        case CallCustomAccessorSetter:
             break;
 #else // not ASSERT_ENABLED
         default:

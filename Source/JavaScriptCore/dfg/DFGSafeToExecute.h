@@ -591,6 +591,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case TailCallForwardVarargsInlinedCaller:
     case ConstructVarargs:
     case CallWasm:
+    case CallCustomAccessorGetter:
+    case CallCustomAccessorSetter:
     case VarargsLength:
     case LoadVarargs:
     case CallForwardVarargs:

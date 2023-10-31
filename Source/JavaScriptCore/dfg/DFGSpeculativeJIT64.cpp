@@ -4414,6 +4414,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CallCustomAccessorGetter: {
+        compileCallCustomAccessorGetter(node);
+        break;
+    }
+
+    case CallCustomAccessorSetter: {
+        compileCallCustomAccessorSetter(node);
+        break;
+    }
+
     case TryGetById: {
         compileGetById(node, AccessType::TryGetById);
         break;
