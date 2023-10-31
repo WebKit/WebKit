@@ -8261,7 +8261,7 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
 <pre>
 [Merge-Queue] Add http credential helper
 <a href="https://bugs.webkit.org/show_bug.cgi?id=238553">https://bugs.webkit.org/show_bug.cgi?id=238553</a>
-&lt;rdar://problem/91044821&gt;
+&lt;<a href="https://rdar.apple.com/problem/91044821">rdar://problem/91044821</a>&gt;
 
 Reviewed by NOBODY (OOPS!).
 
@@ -8427,11 +8427,11 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
                 description,
                 '''#### 9140b95e718e7342366bbcdc29cb1ba0f9328422
 <pre>
-Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
+Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). <a href="https://rdar.apple.com/107367418">rdar://107367418</a>
 
     Remove inheritance of designMode attribute
     <a href="https://bugs.webkit.org/show_bug.cgi?id=248615">https://bugs.webkit.org/show_bug.cgi?id=248615</a>
-    rdar://102868995
+    <a href="https://rdar.apple.com/102868995">rdar://102868995</a>
 
     Reviewed by Wenson Hsieh and Jonathan Bedard.
 
@@ -8457,11 +8457,11 @@ Canonical link: <a href="https://commits.webkit.org/262299@main">https://commits
 ----------------------------------------------------------------------
 #### 6ec5319be307db36a27ea61d208cf68ce84abd67
 <pre>
-Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). <a href="https://rdar.apple.com/107367090">rdar://107367090</a>
 
     Use-after-free in ContactsManager::select
     <a href="https://bugs.webkit.org/show_bug.cgi?id=250351">https://bugs.webkit.org/show_bug.cgi?id=250351</a>
-    rdar://101241436
+    <a href="https://rdar.apple.com/101241436">rdar://101241436</a>
 
     Reviewed by Wenson Hsieh and Jonathan Bedard.
 
