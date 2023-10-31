@@ -800,7 +800,6 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldse
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-block-margins-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-block-margins.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-display-rendering.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item-numbering.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-position-relative-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-tall.html [ ImageOnlyFailure ]
@@ -844,7 +843,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false.html [ ImageOnlyFailure ]
@@ -1661,7 +1659,6 @@ webkit.org/b/234139 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/xml-class-selector.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/case-insensitive-parent.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/focus-within-004.html [ ImageOnlyFailure ]
 
 # This test is bit heavy for debug
 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html [ Skip ]
@@ -1791,7 +1788,6 @@ webkit.org/b/260895 [ Debug ] imported/w3c/web-platform-tests/webmessaging/broad
 
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
-webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-trailing-collapsable-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/percentage-height-quirk-excludes-flex-grid-001.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/text-decoration-doesnt-propagate-into-tables/quirks.html [ ImageOnlyFailure ]
@@ -2086,7 +2082,6 @@ webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ S
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Failure ]
@@ -2144,7 +2139,6 @@ webkit.org/b/139184 imported/mozilla/svg/text/simple-multiline-number.svg [ Imag
 webkit.org/b/139184 imported/mozilla/svg/text/simple-multiline-pc.svg [ ImageOnlyFailure ]
 webkit.org/b/139184 imported/mozilla/svg/text/simple-multiline.svg [ ImageOnlyFailure ]
 webkit.org/b/139186 imported/mozilla/svg/text/pseudo-first-line-2.svg [ ImageOnlyFailure ]
-webkit.org/b/139186 imported/mozilla/svg/text/textpath-multiline.svg [ ImageOnlyFailure ]
 webkit.org/b/139186 imported/mozilla/svg/text/textpath-multiline-2.svg [ ImageOnlyFailure ]
 webkit.org/b/139186 imported/mozilla/svg/text/ignore-text-align-2.svg [ ImageOnlyFailure ]
 webkit.org/b/139192 imported/mozilla/svg/smil/transform/rotate-angle-4.svg [ ImageOnlyFailure ]
@@ -2273,7 +2267,6 @@ webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure 
 
 # DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure ]
-fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 
 # HEIF images are only supported on macOS and iOS post Mojave
 fast/images/animated-heics-draw.html [ Skip ]
@@ -2390,7 +2383,6 @@ webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/an
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-css.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
@@ -2599,7 +2591,6 @@ fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Failure ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-positioning.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure ]
-fast/scrolling/rtl-scrollbars-listbox-select-left.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-listbox-select-right.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-listbox-simple.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-listbox.html [ ImageOnlyFailure ]
@@ -4965,7 +4956,6 @@ media/track/track-description-cue.html [ Skip ]
 media/track/track-extended-descriptions.html [ Skip ]
 
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
-editing/selection/expando.html [ Failure ]
 
 # These tests are for iOS port.
 fast/shadow-dom/ios/ [ Skip ]
@@ -5187,7 +5177,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]
 
 # HEVC support may not be available to all platforms.
@@ -5960,10 +5949,8 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-end-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-end-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-end-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-start-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-start-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-start-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-width-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-image-outset-001.html [ ImageOnlyFailure ]
@@ -5974,16 +5961,12 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-end-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-end-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-end-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-start-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-start-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-start-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-left-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-left-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-left-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-right-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-right-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-right-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-top-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-top-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-top-width-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-listbox-background-attachment-001.html [ ImageOnlyFailure ]
@@ -6030,14 +6013,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-listbox-border-top-right-radius-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-listbox-border-top-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-listbox-border-top-width-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-block-end-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-block-start-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-bottom-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-inline-end-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-inline-start-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-left-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-right-color-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-top-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-background-attachment-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-background-clip-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-background-color-001.html [ ImageOnlyFailure ]
@@ -6352,13 +6327,7 @@ imported/w3c/web-platform-tests/webcodecs/audio-data.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Failure ]
 
 webkit.org/b/258192 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Pass Failure ]
@@ -6591,7 +6560,6 @@ imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-fixed-layo
 # This test started failing when we started supporting passing a Range to the Highlight constructor.
 # We used to only support StaticRange objects and thus ignore the passed in parameter, which
 # caused the test to pass by luck.
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-currentcolor-005.html [ ImageOnlyFailure ]
 
 # New failures after re-importing css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/margin-block-end-scroll-area-001.html [ Skip ]
@@ -6699,7 +6667,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/text/direction-inherit-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/text/direction-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]

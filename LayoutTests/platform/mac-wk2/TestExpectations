@@ -1965,9 +1965,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
 
-# rdar://114328372 (REGRESSION (262629@main): [ Sonoma wk2 ] fast/box-shadow/inset-spread-box-shadow-split-inline.html is a constant failure)
-[ Sonoma+ ] fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
-
 # rdar://114452082 (REGRESSION (262124@main?): [ Sonoma wk2 ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html is a consistent failure)
 [ Sonoma+ ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
 

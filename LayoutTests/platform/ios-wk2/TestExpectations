@@ -119,7 +119,6 @@ imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.htt
 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ WontFix ]
 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ WontFix ]
 
-webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
@@ -531,7 +530,6 @@ fast/parser/open-comment-in-style.html [ Failure ]
 fast/parser/tabs-in-scripts.html [ Failure ]
 fast/parser/title-error-test.html [ Failure ]
 fast/parser/xhtml-alternate-entities.xml [ Failure ]
-fast/replaced/inline-box-wrapper-handover.html [ Failure ]
 fast/ruby/ruby-beforeafter.html [ Failure ]
 fast/ruby/ruby-length.html [ Failure ]
 fast/ruby/ruby-run-break.html [ Failure ]
@@ -664,7 +662,6 @@ fast/dom/frame-loading-via-document-write.html # Timeout
 # CSS transform tests that fail:
 transforms/2d/transform-fixed-container.html [ Failure ]
 
-webkit.org/b/260555 editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
 
 # Editing tests that fail:
 editing/inserting/caret-position.html [ Failure ]
@@ -672,7 +669,6 @@ editing/inserting/insert-3654864-fix.html [ Failure ]
 editing/inserting/insert-3775316-fix.html [ Failure ]
 editing/inserting/insert-3800346-fix.html [ Failure ]
 editing/inserting/insert-after-delete-001.html [ Failure ]
-editing/inserting/insert-at-end-02.html [ Failure ]
 editing/inserting/insert-before-link-1.html [ Failure ]
 editing/inserting/insert-br-001.html [ Failure ]
 editing/inserting/insert-br-002.html [ Failure ]
@@ -697,9 +693,7 @@ editing/inserting/insert-tab-002.html [ Failure ]
 editing/inserting/insert-tab-004.html [ Failure ]
 editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
 editing/inserting/typing-001.html [ Failure ]
-editing/inserting/typing-003.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
-editing/inserting/typing-around-image-001.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
 editing/secure-input/removed-password-input.html [ Failure ]
@@ -778,8 +772,6 @@ editing/selection/move-by-character-brute-force.html
 editing/spelling/delete-into-misspelled-word.html
 editing/spelling/grammar-edit-word.html
 editing/spelling/grammar.html
-editing/spelling/inline-spelling-markers-hidpi.html
-editing/spelling/inline-spelling-markers.html
 editing/spelling/markers.html
 editing/spelling/move-cursor-around-misspelled-word.html
 editing/spelling/spellcheck-attribute.html
@@ -993,7 +985,6 @@ fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html [ Failure ]
 fast/forms/listbox-visible-size.html [ Failure ]
 fast/text/international/bold-bengali.html [ Failure ]
 fast/text/international/danda-space.html [ Failure ]
-fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 http/tests/loading/preload-img-srcset-sizes.html [ Failure ]
 http/tests/navigation/postredirect-basic.html [ Failure ]
 http/tests/navigation/postredirect-goback1.html [ Failure ]
@@ -1364,7 +1355,6 @@ webkit.org/b/228171 media/media-usage-state-private-browsing.html [ Pass Crash ]
 # <rdar://problem/56761171> [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637)
 webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 
 webkit.org/b/206630 [ Debug ] fast/forms/validationMessage.html [ Pass Timeout ]
 
@@ -1414,9 +1404,7 @@ webkit.org/b/208081 http/tests/workers/service/Client-properties-auxiliary.html 
 # webkit.org/b/208078 Continue to skip 2.0.0 on iOS WK2 until discrepancies can be addressed
 webgl/2.0.0 [ Skip ]
 
-webkit.org/b/208355 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure Slow ]
 webkit.org/b/225469 [ Release ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure ]
-
 webkit.org/b/208401 compositing/absolute-inside-out-of-view-fixed.html [ Pass Crash Timeout ]
 
 webkit.org/b/208467 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
@@ -1840,12 +1828,10 @@ webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remov
 
 webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-dpi-rendering-2.html [ ImageOnlyFailure ]
 webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-empty-url-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-first-match-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering-2.html [ ImageOnlyFailure ]
 webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-unordered-res-rendering.html [ ImageOnlyFailure ]
 
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
-webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-multicol/equal-gap-and-rule.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-multicol/fixed-size-child-with-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-pseudo/textpath-selection-011.html [ ImageOnlyFailure ]
@@ -2184,7 +2170,6 @@ webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Tim
 
 webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
-webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ ImageOnlyFailure ]
 
 #rdar://91780899
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events.html [ Skip ]
@@ -2204,12 +2189,7 @@ http/tests/workers/service/shownotification-denied.html [ Skip ]
 http/tests/workers/service/shownotification-invalid-data.html [ Skip ]
 
 # Tests that fail due to antialiasing differences between scaling layers vs scaling during painting
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
@@ -2255,7 +2235,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-top-left-radius-001.html [ ImageOnlyFailure ]
 
 # rdar://96912160 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
-imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
@@ -2272,9 +2251,6 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Skip ]
 
 
-# rdar://97228542 ([ iOS16 ] imported/w3c/web-platform-tests/speech-api/idlharness.window.html is a constant text failure)
-imported/w3c/web-platform-tests/speech-api/idlharness.window.html [ Failure ]
-
 # rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
 fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
 
@@ -2289,7 +2265,6 @@ webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transforme
 webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/261849 imported/w3c/web-platform-tests/css/cssom-view/position-sticky-root-scroller-with-scroll-behavior.html [ Failure ]
 
 webkit.org/b/243589 [ Debug ] http/wpt/service-workers/update-with-importScripts.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Pass Crash ]
@@ -2320,14 +2295,12 @@ webkit.org/b/245091 http/wpt/shared-workers/connect-event-ordering.html [ Pass F
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
 # webkit.org/b/245586 [ iOS16 ] 3X imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/(Layout tests) are constant failures
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
 
 webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
 webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
-webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
 
@@ -2458,7 +2431,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 # Requires grammar checking to be enabled (rdar://103646683)
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Skip ]
 
-webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
 
 webkit.org/b/259524 media/audioSession/audioSessionState.html [ Pass Failure ]
 

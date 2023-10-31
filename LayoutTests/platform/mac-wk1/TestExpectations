@@ -1411,14 +1411,11 @@ webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 storage/indexeddb/modern/exceed-open-file-limit.html
 
 # Only fails in WK1
-imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
 webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
 # WebKit1 frames use native scrollbars causing these tests to fail.
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html [ Failure ]
 
 # Lack of ways to control the cross-frame scroll chaining in WK1.
 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
@@ -1576,8 +1573,6 @@ webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-fr
 webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html [ Pass Failure ]
 
 # Resource Metrics data not available in WebKit1.
-http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
-http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 http/tests/inspector/network/resource-request-headers.html [ Failure ]
 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
@@ -1701,7 +1696,6 @@ webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass 
 webkit.org/b/214760 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating.svg [ Pass Failure ]
 
 # <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
@@ -1847,8 +1841,6 @@ webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Pass Failure ]
 
 # No support for reftest-wait in DRT.
-imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Skip ]
 
@@ -1866,8 +1858,6 @@ http/tests/is-logged-in/ [ Skip ]
 webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 
 # wpt css-position failures
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top.html [ ImageOnlyFailure ]
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
@@ -2024,13 +2014,10 @@ fast/forms/ua-shadow-select-all-crash.html
 # New failure after update of WPT tests in bug 214278
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
 
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-change-margin.html [ ImageOnlyFailure ]
 
 webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html [ Pass Failure ]
 
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-overflow/overflow-ellipsis-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition.html [ ImageOnlyFailure ]
@@ -2080,11 +2067,7 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # <rdar://problem/63022026> REGRESSION: [ 20A267-20A279 ]: multiple fast tests are failing with scrolling related diffs.
 [ Monterey+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
-[ Monterey+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
-[ Monterey+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
 
-# rdar://66868787 ([ Layout Tests ] REGRESSION: fast/images/image-copy-memory-usage.html is a flaky failure)
-[ Monterey+ ] fast/images/image-copy-memory-usage.html [ Failure ]
 
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
@@ -2374,7 +2357,6 @@ fast/text/glyph-display-lists [ Skip ]
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
 
-webkit.org/b/231298 accessibility/mac/selection-boundary-userinfo.html [ Failure ]
 webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]
 
 webkit.org/b/240841 fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
@@ -2434,7 +2416,6 @@ webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.ht
 
 webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
 
-webkit.org/b/244404 js/dom/modules/missing-exception-check-for-import.html [ Crash ]
 
 webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
 
@@ -2630,16 +2611,12 @@ css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailur
 # rdar://105178122 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/filter-mask-clip-order.html is a consistent image failure)
 css3/filters/filter-mask-clip-order.html [ ImageOnlyFailure ]
 
-# rdar://105178880 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/masking/mask-base64.html is a consistent image failure)
-css3/masking/mask-base64.html [ ImageOnlyFailure ]
-
 # rdar://105179850 (REGRESSION ( Sonoma ): [  Sonoma wk1 ] css3/masking/mask-repeat-space-content.html is a consistent image failure)
 css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
 
 # rdar://105915702 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Nine imported/w3c/web-platform-tests/css/css tests are a consistent failure)
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-002.html [ ImageOnlyFailure ]
 

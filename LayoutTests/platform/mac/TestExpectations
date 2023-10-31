@@ -773,10 +773,6 @@ mathml/presentation/fenced-mi.html [ Pass ImageOnlyFailure ]
 media/accessiblity-describes-video.html [ Timeout ]
 
 # rdar://92286809 ([ Ventura ] 4x editing/spelling (layout-tests) Are constant timeouts)
-editing/spelling/inline-spelling-markers-hidpi.html [ Timeout ]
-editing/spelling/grammar-markers-hidpi.html [ Timeout ]
-editing/spelling/grammar-markers.html [ Timeout ]
-editing/spelling/inline-spelling-markers.html [ Timeout ]
 
 #rdar://92833592 ([ Ventura ] 4x imported/w3c/web-platform-tests/webrtc-encoded-transform/ are flaky text failures)
 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Pass Failure ]
@@ -805,7 +801,6 @@ editing/secure-input/removed-password-input.html [ Pass Failure ]
 editing/secure-input/reset-state-on-navigation.html [ Pass Failure ]
 
 #rdar://96912160 (REGRESSION): [ Ventura ] 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
-imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
@@ -913,7 +908,6 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 webkit.org/b/230313 [ Monterey+ ] fast/canvas/canvas-draw-canvas-on-canvas-flushing-order.html [ Pass ImageOnlyFailure ]
 
 # Underlines' starting and ending positions need to be pixel-snapped
-webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140588 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
@@ -1334,7 +1328,6 @@ media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 # Tests which pass on Ventura.
 webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
 webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
-webkit.org/b/247705 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
 
 # Tests timing out on BigSur but not timing out on Ventura
 webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
@@ -1440,7 +1433,6 @@ webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-imag
 
 webkit.org/b/190724 [ Debug ] http/tests/misc/large-js-program.py [ Pass Timeout ]
 
-webkit.org/b/191565 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Slow ]
 
 webkit.org/b/239405 fast/css/counters/element-removal-crash.xhtml [ Pass Failure ]
 
@@ -2395,7 +2387,6 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 
 # webkit.org/b/255178 [ Ventura iOS arm64 ] 3X imported/w3c/web-platform-tests/css/css-color/parsing (layout-tests) are constant text failures
 [ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
-[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
 [ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
@@ -2461,8 +2452,6 @@ webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-even
 # rdar://102494267 ([ New Test ] (248203@main): [ Sonoma ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html is a consistent failure)
 [ Ventura+ ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Failure ]
 
-# rdar://103047570 (REGRESSION (Sonoma): fast/speechsynthesis/speech-synthesis-real-client-version.html is a consistent timeout)
-fast/speechsynthesis/speech-synthesis-real-client-version.html [ Timeout ]
 
 # rdar://100422705 ([ macOS iOS16 ] fast/text/system-font-fallb ack.html is a constant failure (245686))
 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
@@ -2476,7 +2465,6 @@ svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
 # rdar://111077813 (REGRESSION ( Sonoma ): [ Sonoma ] css3/color-filters/color-filter-caret-color.html is a consistent image failure)
 css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
 fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure ]
-fast/history/visited-link-caret-color.html [ ImageOnlyFailure ]
 fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure ]
 
 # rdar://111079967 (REGRESSION ( Sonoma ): [ Sonoma ] Two editing/caret/color-span-inside-editabl tests are constant image failures)
