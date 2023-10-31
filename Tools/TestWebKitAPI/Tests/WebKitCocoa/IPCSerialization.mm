@@ -74,7 +74,9 @@ struct CFHolderForTesting {
     typedef std::variant<
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
-        RetainPtr<CFDataRef>
+        RetainPtr<CFDataRef>,
+        RetainPtr<CFBooleanRef>,
+        RetainPtr<CGColorRef>
     > ValueType;
 
     ValueType value;
@@ -257,4 +259,12 @@ TEST(IPCSerialization, Basic)
     [dateComponents setSecond:0];
 
     runTestNS({ [[NSCalendar currentCalendar] dateFromComponents:dateComponents] });
+
+    runTestCF({ kCFBooleanTrue });
+    runTestCF({ kCFBooleanFalse });
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    constexpr CGFloat testComponents[4] = { 1, .75, .5, .25 };
+    auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
+    runTestCF({ cgColor.get() });
 }

@@ -105,13 +105,6 @@ template<> struct ArgumentCoder<RetainPtr<CGColorSpaceRef>> : CFRetainPtrArgumen
     static std::optional<RetainPtr<CGColorSpaceRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CGColorRef> {
-    template<typename Encoder> static void encode(Encoder&, CGColorRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CGColorRef>> : CFRetainPtrArgumentCoder<CGColorRef> {
-    static std::optional<RetainPtr<CGColorRef>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<SecCertificateRef> {
     template<typename Encoder> static void encode(Encoder&, SecCertificateRef);
 };
