@@ -21,8 +21,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Base-libvpx.xcconfig"
+#include "Base-libwebrtc.xcconfig"
 
-PRODUCT_NAME = vp9_dec_fuzzer;
+PRODUCT_NAME = vp9_replay_fuzzer;
 
-OTHER_CFLAGS = $(inherited) -DDECODER=vp9;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+
+HEADER_SEARCH_PATHS = $(inherited) Source/third_party/json/include;
