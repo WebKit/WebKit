@@ -28,26 +28,21 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
-
 #include "CoordinatedBackingStore.h"
-#include "NicosiaPlatformLayer.h"
 #include "SurfaceUpdateInfo.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
-#include <memory>
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace Nicosia {
 
-class BackingStoreTextureMapperImpl final : public BackingStore::Impl, public WebCore::TiledBackingStoreClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class BackingStore final : public ThreadSafeRefCounted<BackingStore>, public WebCore::TiledBackingStoreClient {
 public:
-    static Factory createFactory();
-
-    BackingStoreTextureMapperImpl();
-    virtual ~BackingStoreTextureMapperImpl();
-    bool isTextureMapperImpl() const override { return true; }
+    static Ref<BackingStore> create()
+    {
+        return adoptRef(*new BackingStore());
+    }
 
     // A move-only tile update container.
     struct TileUpdate {
@@ -124,12 +119,8 @@ private:
 
     struct {
         Lock lock;
-        TileUpdate pending;
+        TileUpdate pending WTF_GUARDED_BY_LOCK(lock);
     } m_update;
 };
 
 } // namespace Nicosia
-
-SPECIALIZE_TYPE_TRAITS_NICOSIA_BACKINGSTORE_IMPL(BackingStoreTextureMapperImpl, isTextureMapperImpl());
-
-#endif // USE(TEXTURE_MAPPER)

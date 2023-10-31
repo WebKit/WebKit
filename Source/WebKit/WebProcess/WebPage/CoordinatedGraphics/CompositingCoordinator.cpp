@@ -38,10 +38,9 @@
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
-#include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
-#include <WebCore/NicosiaImageBackingStore.h>
-#include <WebCore/NicosiaImageBackingTextureMapperImpl.h>
+#include <WebCore/NicosiaBackingStore.h>
+#include <WebCore/NicosiaContentLayer.h>
+#include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -152,20 +151,14 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                         [&platformLayerUpdated]
                         (const Nicosia::CompositionLayer::LayerState& state)
                         {
-                            if (state.backingStore) {
-                                auto& impl = downcast<Nicosia::BackingStoreTextureMapperImpl>(state.backingStore->impl());
-                                impl.flushUpdate();
-                            }
+                            if (state.backingStore)
+                                state.backingStore->flushUpdate();
 
-                            if (state.imageBacking) {
-                                auto& impl = downcast<Nicosia::ImageBackingTextureMapperImpl>(state.imageBacking->impl());
-                                impl.flushUpdate();
-                            }
+                            if (state.imageBacking)
+                                state.imageBacking->flushUpdate();
 
-                            if (state.contentLayer) {
-                                auto& impl = downcast<Nicosia::ContentLayerTextureMapperImpl>(state.contentLayer->impl());
-                                platformLayerUpdated |= impl.flushUpdate();
-                            }
+                            if (state.contentLayer)
+                                platformLayerUpdated |= state.contentLayer->flushUpdate();
                         });
                 }
 

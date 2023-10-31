@@ -28,28 +28,18 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
-
-#include "CoordinatedBackingStore.h"
-#include "NicosiaBuffer.h"
 #include "NicosiaImageBackingStore.h"
-#include "NicosiaPlatformLayer.h"
 #include <wtf/Lock.h>
-
-namespace WebCore {
-class Image;
-}
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace Nicosia {
 
-class ImageBackingTextureMapperImpl final : public ImageBacking::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
+class ImageBacking : public ThreadSafeRefCounted<ImageBacking> {
 public:
-    static Factory createFactory();
-
-    ImageBackingTextureMapperImpl();
-    virtual ~ImageBackingTextureMapperImpl();
-    bool isTextureMapperImpl() const override { return true; }
+    static Ref<ImageBacking> create()
+    {
+        return adoptRef(*new ImageBacking());
+    }
 
     // A move-only update container.
     struct Update {
@@ -89,7 +79,7 @@ public:
         CompositionState(CompositionState&&) = delete;
         CompositionState& operator=(CompositionState&&) = delete;
 
-        RefPtr<Nicosia::ImageBackingStore> imageBackingStore;
+        RefPtr<ImageBackingStore> imageBackingStore;
     };
     CompositionState& compositionState() { return m_compositionState; }
 
@@ -101,12 +91,8 @@ private:
 
     struct {
         Lock lock;
-        Update update;
+        Update update WTF_GUARDED_BY_LOCK(lock);
     } m_update;
 };
 
 } // namespace Nicosia
-
-SPECIALIZE_TYPE_TRAITS_NICOSIA_IMAGEBACKING_IMPL(ImageBackingTextureMapperImpl, isTextureMapperImpl());
-
-#endif // USE(TEXTURE_MAPPER)

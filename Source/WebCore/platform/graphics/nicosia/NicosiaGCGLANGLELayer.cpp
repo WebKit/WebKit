@@ -47,7 +47,7 @@ using namespace WebCore;
 
 void GCGLANGLELayer::swapBuffersIfNeeded()
 {
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(contentLayer().impl()).proxy();
+    auto& proxy = m_contentLayer->proxy();
 
 #if USE(ANGLE_GBM)
     if (is<TextureMapperPlatformLayerProxyDMABuf>(proxy)) {
@@ -87,21 +87,21 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
 
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLTextureMapperANGLE& context)
     : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL))))
+    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL)))
 {
 }
 
 #if USE(ANGLE_GBM)
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLGBM& context)
     : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new TextureMapperPlatformLayerProxyDMABuf))))
+    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyDMABuf)))
 {
 }
 #endif
 
 GCGLANGLELayer::~GCGLANGLELayer()
 {
-    downcast<ContentLayerTextureMapperImpl>(m_contentLayer->impl()).invalidateClient();
+    m_contentLayer->invalidateClient();
 }
 
 } // namespace Nicosia

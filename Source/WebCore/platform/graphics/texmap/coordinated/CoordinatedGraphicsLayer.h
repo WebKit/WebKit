@@ -30,6 +30,7 @@
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
 #include "NicosiaBuffer.h"
+#include "NicosiaCompositionLayer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TransformationMatrix.h"
 #include <wtf/Function.h>

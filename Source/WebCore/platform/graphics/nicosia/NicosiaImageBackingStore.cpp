@@ -29,13 +29,9 @@
 #include "config.h"
 #include "NicosiaImageBackingStore.h"
 
-#if USE(TEXTURE_MAPPER)
-
 namespace Nicosia {
 
 ImageBackingStore::ImageBackingStore() = default;
 ImageBackingStore::~ImageBackingStore() = default;
 
 } // namespace Nicosia
-
-#endif // USE(TEXTURE_MAPPER)

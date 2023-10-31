@@ -45,12 +45,12 @@ using namespace WebCore;
 
 NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource()
 {
-    m_nicosiaLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this));
+    m_nicosiaLayer = Nicosia::ContentLayer::create(*this);
 }
 
 NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()
 {
-    downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
+    m_nicosiaLayer->invalidateClient();
 }
 
 void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
@@ -64,7 +64,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
     if (!m_imageBuffer) {
         auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
             return downcast<TextureMapperPlatformLayerProxyGL>(proxy).scheduleUpdateOnCompositorThread([this] () mutable {
-                auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+                auto& proxy = m_nicosiaLayer->proxy();
                 Locker locker { proxy.lock() };
 
                 if (!proxy.isActive())
@@ -99,7 +99,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
             });
         };
-        proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+        proxyOperation(m_nicosiaLayer->proxy());
     }
 
     m_imageBuffer = WTFMove(clone);

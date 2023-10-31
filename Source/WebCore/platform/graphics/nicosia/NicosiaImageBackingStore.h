@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2022 Metrological Group B.V.
+ * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NicosiaCompositionLayerTextureMapperImpl.h"
+#pragma once
 
-#if USE(TEXTURE_MAPPER)
-
-#include "TextureMapperLayer.h"
+#include "CoordinatedBackingStore.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace Nicosia {
 
-auto CompositionLayerTextureMapperImpl::createFactory() -> Factory
-{
-    return Factory(
-        [](uint64_t, CompositionLayer&) {
-            return makeUnique<CompositionLayerTextureMapperImpl>();
-        });
-}
+class Buffer;
 
-CompositionLayerTextureMapperImpl::CompositionLayerTextureMapperImpl() = default;
-CompositionLayerTextureMapperImpl::~CompositionLayerTextureMapperImpl() = default;
+class ImageBackingStore : public ThreadSafeRefCounted<ImageBackingStore> {
+public:
+    ImageBackingStore();
+    ~ImageBackingStore();
+
+    struct BackingStoreState {
+        RefPtr<Nicosia::Buffer> buffer;
+    };
+    BackingStoreState& backingStoreState() { return m_backingStoreState; }
+
+    struct BackingStoreContainer : public ThreadSafeRefCounted<BackingStoreContainer> {
+        RefPtr<WebCore::CoordinatedBackingStore> backingStore;
+    };
+
+    struct CompositionState {
+        CompositionState()
+            : backingStoreContainer(adoptRef(*new BackingStoreContainer))
+        { }
+
+        Ref<BackingStoreContainer> backingStoreContainer;
+    };
+    CompositionState& compositionState() { return m_compositionState; }
+
+private:
+    BackingStoreState m_backingStoreState;
+    CompositionState m_compositionState;
+};
 
 } // namespace Nicosia
-
-#endif // USE(TEXTURE_MAPPER)

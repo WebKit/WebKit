@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2018, 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,52 +28,38 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "NicosiaPlatformLayer.h"
-#include <wtf/Lock.h>
-#include <wtf/Ref.h>
+#include "NicosiaContentLayer.h"
 
 namespace WebCore {
-class TextureMapperPlatformLayerProxy;
+class GraphicsContextGLANGLE;
+class GraphicsContextGLTextureMapperANGLE;
+#if USE(ANGLE_GBM)
+class GraphicsContextGLGBM;
+#endif
 }
 
 namespace Nicosia {
 
-class ContentLayerTextureMapperImpl final : public ContentLayer::Impl {
+class GCGLANGLELayer final : public ContentLayer::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client {
-    public:
-        virtual ~Client();
-        virtual void swapBuffersIfNeeded() = 0;
-    };
+    GCGLANGLELayer(WebCore::GraphicsContextGLTextureMapperANGLE&);
+#if USE(ANGLE_GBM)
+    GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
+#endif
 
-    static Factory createFactory(Client&);
-    static Factory createFactory(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
+    virtual ~GCGLANGLELayer();
 
-    explicit ContentLayerTextureMapperImpl(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
-    virtual ~ContentLayerTextureMapperImpl();
-    bool isTextureMapperImpl() const override { return true; }
-
-    void invalidateClient();
-
-    bool flushUpdate();
-
-    WebCore::TextureMapperPlatformLayerProxy& proxy() const { return m_proxy; }
-    void swapBuffersIfNeeded();
+    ContentLayer& contentLayer() const { return m_contentLayer; }
+    void swapBuffersIfNeeded() final;
 
 private:
-    Ref<WebCore::TextureMapperPlatformLayerProxy> m_proxy;
-    struct {
-        Lock lock;
-        Client* client { nullptr };
-        bool pendingUpdate { true }; // Starts off with a pending update.
-    } m_client;
+    WebCore::GraphicsContextGLANGLE& m_context;
+    Ref<ContentLayer> m_contentLayer;
 };
 
 } // namespace Nicosia
 
-SPECIALIZE_TYPE_TRAITS_NICOSIA_CONTENTLAYER_IMPL(ContentLayerTextureMapperImpl, isTextureMapperImpl());
-
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)

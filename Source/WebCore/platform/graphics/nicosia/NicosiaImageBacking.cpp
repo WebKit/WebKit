@@ -27,24 +27,11 @@
  */
 
 #include "config.h"
-#include "NicosiaImageBackingTextureMapperImpl.h"
-
-#if USE(TEXTURE_MAPPER)
+#include "NicosiaImageBacking.h"
 
 namespace Nicosia {
 
-auto ImageBackingTextureMapperImpl::createFactory() -> Factory
-{
-    return Factory(
-        [](ImageBacking&) {
-            return makeUnique<ImageBackingTextureMapperImpl>();
-        });
-}
-
-ImageBackingTextureMapperImpl::ImageBackingTextureMapperImpl() = default;
-ImageBackingTextureMapperImpl::~ImageBackingTextureMapperImpl() = default;
-
-void ImageBackingTextureMapperImpl::flushUpdate()
+void ImageBacking::flushUpdate()
 {
     Locker locker { m_update.lock };
 
@@ -59,12 +46,10 @@ void ImageBackingTextureMapperImpl::flushUpdate()
     m_update.update = WTFMove(m_layerState.update);
 }
 
-auto ImageBackingTextureMapperImpl::takeUpdate() -> Update
+auto ImageBacking::takeUpdate() -> Update
 {
     Locker locker { m_update.lock };
     return WTFMove(m_update.update);
 }
 
 } // namespace Nicosia
-
-#endif

@@ -27,29 +27,16 @@
  */
 
 #include "config.h"
-#include "NicosiaBackingStoreTextureMapperImpl.h"
-
-#if USE(TEXTURE_MAPPER)
+#include "NicosiaBackingStore.h"
 
 namespace Nicosia {
 
-auto BackingStoreTextureMapperImpl::createFactory() -> Factory
-{
-    return Factory(
-        [](BackingStore&) {
-            return makeUnique<BackingStoreTextureMapperImpl>();
-        });
-}
-
-BackingStoreTextureMapperImpl::BackingStoreTextureMapperImpl() = default;
-BackingStoreTextureMapperImpl::~BackingStoreTextureMapperImpl() = default;
-
-void BackingStoreTextureMapperImpl::tiledBackingStoreHasPendingTileCreation()
+void BackingStore::tiledBackingStoreHasPendingTileCreation()
 {
     m_layerState.hasPendingTileCreation = true;
 }
 
-void BackingStoreTextureMapperImpl::createTile(uint32_t tileID, float scale)
+void BackingStore::createTile(uint32_t tileID, float scale)
 {
     ASSERT(m_layerState.isFlushing);
     auto& update = m_layerState.update;
@@ -65,7 +52,7 @@ void BackingStoreTextureMapperImpl::createTile(uint32_t tileID, float scale)
     update.tilesToCreate.append({ tileID, scale });
 }
 
-void BackingStoreTextureMapperImpl::updateTile(uint32_t tileID, const WebCore::SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void BackingStore::updateTile(uint32_t tileID, const WebCore::SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     ASSERT(m_layerState.isFlushing);
     auto& update = m_layerState.update;
@@ -78,7 +65,7 @@ void BackingStoreTextureMapperImpl::updateTile(uint32_t tileID, const WebCore::S
     update.tilesToUpdate.append({ tileID, tileRect, updateInfo });
 }
 
-void BackingStoreTextureMapperImpl::removeTile(uint32_t tileID)
+void BackingStore::removeTile(uint32_t tileID)
 {
     ASSERT(m_layerState.isFlushing || m_layerState.isPurging);
     auto& update = m_layerState.update;
@@ -94,7 +81,7 @@ void BackingStoreTextureMapperImpl::removeTile(uint32_t tileID)
     update.tilesToRemove.append(TileUpdate::RemovalData { tileID });
 }
 
-void BackingStoreTextureMapperImpl::flushUpdate()
+void BackingStore::flushUpdate()
 {
     ASSERT(!m_layerState.isFlushing);
     m_layerState.hasPendingTileCreation = false;
@@ -110,12 +97,10 @@ void BackingStoreTextureMapperImpl::flushUpdate()
     m_layerState.update = { };
 }
 
-auto BackingStoreTextureMapperImpl::takeUpdate() -> TileUpdate
+auto BackingStore::takeUpdate() -> TileUpdate
 {
     Locker locker { m_update.lock };
     return WTFMove(m_update.pending);
 }
 
 } // namespace Nicosia
-
-#endif // USE(TEXTURE_MAPPER)

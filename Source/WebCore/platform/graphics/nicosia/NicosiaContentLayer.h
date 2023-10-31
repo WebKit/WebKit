@@ -28,37 +28,48 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
-
 #include "NicosiaPlatformLayer.h"
-#include <memory>
+#include <wtf/Lock.h>
 
 namespace WebCore {
-class TextureMapperLayer;
+class TextureMapperPlatformLayerProxy;
 }
 
 namespace Nicosia {
 
-class CompositionLayerTextureMapperImpl final : public CompositionLayer::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
+class ContentLayer final : public PlatformLayer {
 public:
-    static Factory createFactory();
-
-    CompositionLayerTextureMapperImpl();
-    virtual ~CompositionLayerTextureMapperImpl();
-    bool isTextureMapperImpl() const override { return true; }
-
-    struct CompositionState {
-        std::unique_ptr<WebCore::TextureMapperLayer> layer;
+    class Client {
+    public:
+        virtual ~Client();
+        virtual void swapBuffersIfNeeded() = 0;
     };
-    CompositionState& compositionState() { return m_compositionState; }
+
+    static Ref<ContentLayer> create(Client&);
+    static Ref<ContentLayer> create(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
+
+    virtual ~ContentLayer();
+
+    void invalidateClient();
+
+    bool flushUpdate();
+
+    WebCore::TextureMapperPlatformLayerProxy& proxy() const { return m_proxy; }
+    void swapBuffersIfNeeded();
 
 private:
-    CompositionState m_compositionState;
+    ContentLayer(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
+
+    bool isContentLayer() const override { return true; }
+
+    Ref<WebCore::TextureMapperPlatformLayerProxy> m_proxy;
+    struct {
+        Lock lock;
+        Client* client WTF_GUARDED_BY_LOCK(lock) { nullptr };
+        bool pendingUpdate WTF_GUARDED_BY_LOCK(lock) { true }; // Starts off with a pending update.
+    } m_client;
 };
 
 } // namespace Nicosia
 
-SPECIALIZE_TYPE_TRAITS_NICOSIA_COMPOSITIONLAYER_IMPL(CompositionLayerTextureMapperImpl, isTextureMapperImpl());
-
-#endif // USE(TEXTURE_MAPPER)
+SPECIALIZE_TYPE_TRAITS_NICOSIA_PLATFORMLAYER(ContentLayer, isContentLayer());

@@ -62,7 +62,7 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 #if USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
 #if USE(NICOSIA)
-#include "NicosiaContentLayerTextureMapperImpl.h"
+#include "NicosiaContentLayer.h"
 #else
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #endif
@@ -112,7 +112,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
 #endif
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
-    , public Nicosia::ContentLayerTextureMapperImpl::Client
+    , public Nicosia::ContentLayer::Client
 #else
     , public PlatformLayer
 #endif
