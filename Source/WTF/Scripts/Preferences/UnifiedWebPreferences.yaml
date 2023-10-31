@@ -2355,20 +2355,6 @@ DiagnosticLoggingEnabled:
     WebCore:
       default: false
 
-DialogElementEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML <dialog> element"
-  humanReadableDescription: "Enable HTML <dialog> element"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DirPseudoEnabled:
   type: bool
   status: stable

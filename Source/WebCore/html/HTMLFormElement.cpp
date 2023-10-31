@@ -416,7 +416,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
 
     m_plannedFormSubmission = formSubmission;
 
-    if (document().settings().dialogElementEnabled() && formSubmission->method() == FormSubmission::Method::Dialog)
+    if (formSubmission->method() == FormSubmission::Method::Dialog)
         submitDialog(WTFMove(formSubmission));
     else
         frame->loader().submitForm(WTFMove(formSubmission));
@@ -483,7 +483,7 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
         m_attributes.setTarget(newValue);
         break;
     case AttributeNames::methodAttr:
-        m_attributes.updateMethodType(newValue, document().settings().dialogElementEnabled());
+        m_attributes.updateMethodType(newValue);
         break;
     case AttributeNames::enctypeAttr:
         m_attributes.updateEncodingType(newValue);
@@ -702,7 +702,7 @@ void HTMLFormElement::setEnctype(const AtomString& value)
 
 String HTMLFormElement::method() const
 {
-    return FormSubmission::Attributes::methodString(m_attributes.method(), document().settings().dialogElementEnabled());
+    return FormSubmission::Attributes::methodString(m_attributes.method());
 }
 
 void HTMLFormElement::setMethod(const AtomString& value)
