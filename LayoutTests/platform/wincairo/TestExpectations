@@ -995,8 +995,6 @@ animations/font-variations/font-style.html [ Skip ]
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
 
-webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
-
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
 ################################################################################
@@ -2671,3 +2669,5 @@ imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure Pass ]
 
 webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
+
+webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ] # Makes a subsequent test timeout
