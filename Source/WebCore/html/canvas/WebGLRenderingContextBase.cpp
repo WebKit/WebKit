@@ -878,31 +878,6 @@ void WebGLRenderingContextBase::destroyGraphicsContextGL()
     }
 }
 
-void WebGLRenderingContextBase::markContextChanged()
-{
-    if (m_framebufferBinding)
-        return;
-
-    m_context->markContextChanged();
-
-    m_compositingResultsNeedUpdating = true;
-
-    if (auto* canvas = htmlCanvas()) {
-        RenderBox* renderBox = canvas->renderBox();
-        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
-            m_markedCanvasDirty = true;
-            canvas->clearCopiedImage();
-            renderBox->contentChanged(CanvasPixelsChanged);
-            return;
-        }
-    }
-
-    if (!m_markedCanvasDirty) {
-        m_markedCanvasDirty = true;
-        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
-    }
-}
-
 void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLRenderingContextBase::CallerType caller)
 {
     // Draw and clear ops with rasterizer discard enabled do not change the canvas.
@@ -913,15 +888,26 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
     if (m_framebufferBinding)
         return;
 
-    markContextChanged();
-    if (!isAccelerated())
-        return;
+    m_context->markContextChanged();
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
+    m_compositingResultsNeedUpdating = true;
 
-    canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+    if (auto* canvas = htmlCanvas()) {
+        if (isAccelerated()) {
+            canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+            RenderBox* renderBox = canvas->renderBox();
+            if (renderBox && renderBox->hasAcceleratedCompositing()) {
+                m_markedCanvasDirty = true;
+                canvas->clearCopiedImage();
+                renderBox->contentChanged(CanvasPixelsChanged);
+            }
+        }
+    }
+
+    if (!m_markedCanvasDirty) {
+        m_markedCanvasDirty = true;
+        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+    }
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
