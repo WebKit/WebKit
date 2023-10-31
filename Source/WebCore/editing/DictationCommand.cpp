@@ -27,8 +27,7 @@
 #include "DictationCommand.h"
 
 #include "AlternativeTextController.h"
-#include "Document.h"
-#include "DocumentMarkerController.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "InsertParagraphSeparatorCommand.h"

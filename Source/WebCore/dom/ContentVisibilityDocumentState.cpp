@@ -28,8 +28,8 @@
 
 #include "ContentVisibilityAutoStateChangeEvent.h"
 #include "DeclarativeAnimation.h"
+#include "DocumentInlines.h"
 #include "DocumentTimeline.h"
-#include "Element.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
 #include "IntersectionObserverCallback.h"

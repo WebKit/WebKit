@@ -32,6 +32,7 @@
 #include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AXTextMarker.h"
+#include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"

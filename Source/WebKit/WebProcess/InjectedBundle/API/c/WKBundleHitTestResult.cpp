@@ -32,6 +32,7 @@
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
 #include "WebImage.h"
+#include <WebCore/ScriptExecutionContext.h>
 
 WKTypeID WKBundleHitTestResultGetTypeID()
 {

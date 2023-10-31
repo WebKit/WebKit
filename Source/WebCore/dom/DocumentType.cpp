@@ -24,6 +24,7 @@
 #include "DocumentType.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "NamedNodeMap.h"
 #include <wtf/IsoMallocInlines.h>
 

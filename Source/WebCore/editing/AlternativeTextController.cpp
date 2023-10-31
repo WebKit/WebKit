@@ -27,8 +27,8 @@
 #include "config.h"
 #include "AlternativeTextController.h"
 
-#include "Document.h"
-#include "DocumentMarkerController.h"
+#include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"

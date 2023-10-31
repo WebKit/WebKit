@@ -27,6 +27,7 @@
 
 #include "LoadableScript.h"
 #include "LoadableScriptClient.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>

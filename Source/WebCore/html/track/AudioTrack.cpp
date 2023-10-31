@@ -39,6 +39,7 @@
 #include "AudioTrackList.h"
 #include "AudioTrackPrivate.h"
 #include "CommonAtomStrings.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

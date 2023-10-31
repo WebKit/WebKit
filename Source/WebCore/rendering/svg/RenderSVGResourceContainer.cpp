@@ -22,6 +22,7 @@
 #include "RenderSVGResourceContainer.h"
 
 #include "RenderLayer.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGResourcesCache.h"

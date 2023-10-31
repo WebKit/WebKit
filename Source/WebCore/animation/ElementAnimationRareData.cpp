@@ -30,6 +30,7 @@
 #include "CSSTransition.h"
 #include "KeyframeEffectStack.h"
 #include "RenderStyle.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
