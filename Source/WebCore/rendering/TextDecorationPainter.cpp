@@ -67,8 +67,8 @@ namespace WebCore {
  */
 static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& rect, WavyStrokeParameters wavyStrokeParameters)
 {
-    ASSERT(!rect.isEmpty());
-    ASSERT(wavyStrokeParameters.step);
+    if (rect.isEmpty() || !wavyStrokeParameters.step)
+        return;
 
     FloatPoint p1 = rect.minXMinYCorner();
     FloatPoint p2 = rect.maxXMinYCorner();
