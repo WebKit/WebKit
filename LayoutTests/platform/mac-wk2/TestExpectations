@@ -2011,6 +2011,7 @@ webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-absp
 # WebGPU
 http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
