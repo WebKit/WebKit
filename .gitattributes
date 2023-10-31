@@ -1,7 +1,7 @@
 # To enable automatic merging of ChangeLog files, use the following command:
 # git config merge.changelog.driver "resolve-ChangeLogs --merge-driver %O %A %B"
 ChangeLog* merge=changelog
-
+limpio
 # To enable smart diffing of ObjC[++] files, run the following commands:
 # git config diff.objcpp.xfuncname "^[-+@a-zA-Z_].*$"
 # git config diff.objcppheader.xfuncname "^[@a-zA-Z_].*$"
