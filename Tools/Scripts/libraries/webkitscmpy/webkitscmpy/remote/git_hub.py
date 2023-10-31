@@ -770,7 +770,7 @@ class GitHub(Scm):
 
     def files_changed(self, argument=None):
         if not argument:
-            return self.modified()
+            raise ValueError('No argument provided')
         if not Commit.HASH_RE.match(argument):
             commit = self.find(argument, include_log=False, include_identifier=False)
             if not commit:
