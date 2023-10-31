@@ -327,7 +327,7 @@ class PullRequest(Command):
         return existing_pr
 
     @classmethod
-    def pre_pr_checks(cls, repository):
+    def pre_pr_checks(cls, repository, attempts=3, add_edits=True):
         num_checks = 0
         log.info('Running pre-PR checks...')
         for key, path in repository.config().items():
@@ -336,21 +336,42 @@ class PullRequest(Command):
             num_checks += 1
             name = key.split('.')[-1]
             log.info('    Running {}...'.format(name))
-            command_line = path.split(' ')
-            if command_line[0] == 'python3' and os.name == 'nt':
-                command_line[0] = sys.executable
-            command = run(command_line, cwd=repository.root_path)
-            if command.returncode:
-                if Terminal.choose(
+            for attempt in range(attempts):
+                command_line = path.split(' ')
+                if command_line[0] == 'python3' and os.name == 'nt':
+                    command_line[0] = sys.executable
+                command = run(command_line, cwd=repository.root_path)
+                if command.returncode == 0:
+                    log.info('    Ran {}!'.format(name))
+                    break
+                options = ['Continue', 'Re-Run', 'No']
+                response = Terminal.choose(
                     '{} failed, continue uploading pull request?'.format(name),
+                    options=(options[0], options[2]) if attempt + 1 == attempts else options,
                     default='No',
-                ) == 'No':
+                )
+                if response == 'No':
                     sys.stderr.write('Pre-PR check {} failed\n'.format(name))
                     return False
-                else:
+                if response == 'Continue':
                     log.info('    {} failed, continuing PR upload anyway'.format(name))
-            else:
-                log.info('    Ran {}!'.format(name))
+                    break
+
+                modified = [] if add_edits is False else repository.modified()
+                if add_edits:
+                    modified = list(set(modified).union(set(repository.modified(staged=False))))
+                for file in set(modified) - set(repository.modified(staged=True)):
+                    log.info('    Adding {}...'.format(file))
+                    if run([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
+                        sys.stderr.write("Failed to add '{}'\n".format(file))
+                        return False
+
+                if modified and run(
+                    [repository.executable(), 'commit', '--amend', '--date=now', '--no-edit'],
+                    cwd=repository.root_path,
+                ).returncode:
+                    sys.stderr.write('Pre-PR check {} failed, and commit amend \n'.format(name))
+                    return False
 
         if num_checks:
             log.info('All pre-PR checks run!')
@@ -408,7 +429,7 @@ class PullRequest(Command):
 
         if args.checks is None:
             args.checks = repository.config().get('webkitscmpy.auto-check', 'false') == 'true'
-        if args.checks and not cls.pre_pr_checks(repository):
+        if args.checks and not cls.pre_pr_checks(repository, add_edits=not (args.will_add is False)):
             sys.stderr.write('Checks have failed, aborting pull request.\n')
             return 1
 
