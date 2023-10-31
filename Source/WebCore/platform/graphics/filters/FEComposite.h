@@ -74,13 +74,6 @@ private:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
-#if HAVE(ARM_NEON_INTRINSICS)
-    template <int b1, int b4>
-    static inline void computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
-
-    static inline void platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
-#endif
-
     CompositeOperationType m_type;
     float m_k1;
     float m_k2;

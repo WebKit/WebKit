@@ -50,6 +50,12 @@ private:
 
     bool applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const;
     bool applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const;
+#if HAVE(ARM_NEON_INTRINSICS)
+    template <int b1, int b4>
+    static inline void computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
+
+    static inline void platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
+#endif
 };
 
 } // namespace WebCore

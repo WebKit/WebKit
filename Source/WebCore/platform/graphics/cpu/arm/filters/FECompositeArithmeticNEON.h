@@ -29,14 +29,14 @@
 
 #if HAVE(ARM_NEON_INTRINSICS)
 
-#include "FEComposite.h"
+#include "FECompositeSoftwareApplier.h"
 #include "NEONHelpers.h"
 #include <arm_neon.h>
 
 namespace WebCore {
 
 template <int b1, int b4>
-inline void FEComposite::computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareApplier::computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float32x4_t k1x4 = vdupq_n_f32(k1 / 255);
     float32x4_t k2x4 = vdupq_n_f32(k2);
@@ -67,7 +67,7 @@ inline void FEComposite::computeArithmeticPixelsNeon(const uint8_t* source, uint
     }
 }
 
-inline void FEComposite::platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareApplier::platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     if (!k4) {
         if (!k1) {
