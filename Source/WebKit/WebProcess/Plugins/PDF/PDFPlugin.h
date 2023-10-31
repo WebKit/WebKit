@@ -183,6 +183,7 @@ private:
     WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const override;
     WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const override;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+    bool hudEnabled() const;
     bool shouldPlaceVerticalScrollbarOnLeft() const override { return false; }
     String debugDescription() const override;
 
