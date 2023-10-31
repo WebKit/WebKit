@@ -78,7 +78,7 @@ void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInf
 
         for (size_t i = 0; i < compilationInfo->messageCount; ++i) {
             auto& message = compilationInfo->messages[i];
-            messages.append(CompilationMessage::create(String::fromLatin1(message.message), convertFromBacking(message.type), message.lineNum, message.linePos, message.offset, message.length));
+            messages.append(CompilationMessage::create(message.message, convertFromBacking(message.type), message.lineNum, message.linePos, message.offset, message.length));
         }
 
         callback(CompilationInfo::create(WTFMove(messages)));
