@@ -170,7 +170,7 @@ TEST(AutocorrectionTests, AutocorrectionIndicatorsDismissAfterNextWord)
 
     __block bool done = false;
 
-    [webView applyAutocorrection:@"different" toString:@"diferent" isCandidate:YES withCompletionHandler:^{
+    [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
         NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
         EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
         done = true;
@@ -212,7 +212,7 @@ TEST(AutocorrectionTests, AutocorrectionIndicatorsMultiWord)
 
     __block bool done = false;
 
-    [webView applyAutocorrection:@"tomorrow night" toString:@"tomorrownight" isCandidate:YES withCompletionHandler:^{
+    [[webView textInputContentView] applyAutocorrection:@"tomorrow night" toString:@"tomorrownight" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
         NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
         EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
         done = true;

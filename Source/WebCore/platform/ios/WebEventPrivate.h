@@ -27,7 +27,7 @@
 
 #import <WebCore/WebEvent.h>
 
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 @class UIKeyEvent;
 
@@ -38,4 +38,4 @@
 
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

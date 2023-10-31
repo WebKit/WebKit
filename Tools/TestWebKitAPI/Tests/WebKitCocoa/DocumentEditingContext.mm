@@ -150,7 +150,7 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 {
     __block bool finished = false;
     __block RetainPtr<UIWKDocumentContext> result;
-    [self _requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
+    [self.textInputContentView requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
         result = context;
         finished = true;
     }];
@@ -161,7 +161,7 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 - (void)synchronouslyAdjustSelectionWithDelta:(NSRange)range
 {
     __block bool finished = false;
-    [self _adjustSelectionWithDelta:range completionHandler:^() {
+    [self.textInputContentView adjustSelectionWithDelta:range completionHandler:^{
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
@@ -1568,7 +1568,7 @@ TEST(DocumentEditingContext, RequestAutocorrectedRanges)
     [webView waitForNextPresentationUpdate];
 
     __block bool appliedAutocorrection = false;
-    [webView applyAutocorrection:@"San Francisco" toString:@"sanfrancisco" isCandidate:YES withCompletionHandler:^{
+    [[webView textInputContentView] applyAutocorrection:@"San Francisco" toString:@"sanfrancisco" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
         appliedAutocorrection = true;
     }];
 
@@ -1584,7 +1584,7 @@ TEST(DocumentEditingContext, RequestAutocorrectedRanges)
     [contentView insertText:@" atfer"];
 
     appliedAutocorrection = false;
-    [webView applyAutocorrection:@"after" toString:@"atfer" isCandidate:YES withCompletionHandler:^{
+    [[webView textInputContentView] applyAutocorrection:@"after" toString:@"atfer" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
         appliedAutocorrection = true;
     }];
 

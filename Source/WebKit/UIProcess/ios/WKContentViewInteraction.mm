@@ -203,7 +203,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 @interface WKUITextSelectionRect : UITextSelectionRect
 + (instancetype)selectionRectWithCGRect:(CGRect)rect;
@@ -232,7 +232,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -974,37 +974,51 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 }
 
-- (void)_ensureBinaryCompatibilityWithAsyncInteractionsIfNeeded
+- (void)_updateRuntimeProtocolConformanceIfNeeded
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, ^{
-#if HAVE(UI_ASYNC_TEXT_INPUT)
-        if (_page->preferences().useAsyncUIKitInteractions()) {
-            class_addProtocol(self.class, @protocol(UIAsyncTextInput));
-            unsigned methodCount = 0;
-            using MethodDescriptionList = objc_method_description[];
-            auto methods = std::unique_ptr<MethodDescriptionList, WTF::SystemFree<MethodDescriptionList>> {
-                protocol_copyMethodDescriptionList(@protocol(UIAsyncTextInput), NO, YES, &methodCount)
-            };
-            for (unsigned i = 0; i < methodCount; i++) {
-                if (![self.class instancesRespondToSelector:methods[i].name])
-                    RELEASE_LOG_ERROR(TextInteraction, "Warning: -[UIAsyncTextInput %s] is unimplemented", sel_getName(methods[i].name));
-            }
+    static bool hasUpdatedProtocolConformance = false;
+    if (std::exchange(hasUpdatedProtocolConformance, true))
+        return;
+
+    bool shouldConformToLegacyPrivateProtocols = true;
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (_page->preferences().useAsyncUIKitInteractions()) {
+        RELEASE_LOG(TextInteraction, "Conforming to UIAsyncTextInput");
+        class_addProtocol(self.class, @protocol(UIAsyncTextInput));
+        unsigned methodCount = 0;
+        using MethodDescriptionList = objc_method_description[];
+        auto methods = std::unique_ptr<MethodDescriptionList, WTF::SystemFree<MethodDescriptionList>> {
+            protocol_copyMethodDescriptionList(@protocol(UIAsyncTextInput), NO, YES, &methodCount)
+        };
+        for (unsigned i = 0; i < methodCount; i++) {
+            if (![self.class instancesRespondToSelector:methods[i].name])
+                RELEASE_LOG_ERROR(TextInteraction, "Warning: -[UIAsyncTextInput %s] is unimplemented", sel_getName(methods[i].name));
         }
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+        shouldConformToLegacyPrivateProtocols = false;
+    }
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+    if (shouldConformToLegacyPrivateProtocols) {
+        RELEASE_LOG(TextInteraction, "Conforming to legacy UIKit interaction and text input protocols");
+        class_addProtocol(self.class, @protocol(UIWKInteractionViewProtocol));
+        class_addProtocol(self.class, @protocol(UITextInputPrivate));
+        class_addProtocol(self.class, @protocol(UITextAutoscrolling));
+        class_addProtocol(self.class, @protocol(UITextInputMultiDocument));
+        class_addProtocol(self.class, @protocol(_UITextInputTranslationSupport));
+    }
+
 #if USE(UICONTEXTMENU)
-        if (!self._shouldUseUIContextMenuAsyncConfiguration) {
-            // Only fall back to the legacy asynchronous delegate method when UI_CONTEXT_MENU_ASYNC_CONFIGURATION
-            // is set, if the requisite class is unavailable at runtime (i.e. older builds that do not have the
-            // changes in <rdar://112292302>.
-            auto legacyAsyncConfigurationSelector = @selector(_contextMenuInteraction:configurationForMenuAtLocation:completion:);
-            auto internalAsyncConfigurationSelector = @selector(_internalContextMenuInteraction:configurationForMenuAtLocation:completion:);
-            auto internalMethod = class_getInstanceMethod(self.class, internalAsyncConfigurationSelector);
-            auto internalImplementation = method_getImplementation(internalMethod);
-            class_addMethod(self.class, legacyAsyncConfigurationSelector, internalImplementation, method_getTypeEncoding(internalMethod));
-        }
+    if (!self._shouldUseUIContextMenuAsyncConfiguration) {
+        // Only fall back to the legacy asynchronous delegate method when UI_CONTEXT_MENU_ASYNC_CONFIGURATION
+        // is set, if the requisite class is unavailable at runtime (i.e. older builds that do not have the
+        // changes in <rdar://112292302>.
+        auto legacyAsyncConfigurationSelector = @selector(_contextMenuInteraction:configurationForMenuAtLocation:completion:);
+        auto internalAsyncConfigurationSelector = @selector(_internalContextMenuInteraction:configurationForMenuAtLocation:completion:);
+        auto internalMethod = class_getInstanceMethod(self.class, internalAsyncConfigurationSelector);
+        auto internalImplementation = method_getImplementation(internalMethod);
+        class_addMethod(self.class, legacyAsyncConfigurationSelector, internalImplementation, method_getTypeEncoding(internalMethod));
+    }
 #endif // USE(UICONTEXTMENU)
-    });
 }
 
 - (void)setUpInteraction
@@ -1015,8 +1029,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     if (_hasSetUpInteractions)
         return;
-
-    [self _ensureBinaryCompatibilityWithAsyncInteractionsIfNeeded];
 
     _cachedHasCustomTintColor = std::nullopt;
 
@@ -6771,14 +6783,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([_keyboardScrollingAnimator beginWithEvent:event] || [_keyboardScrollingAnimator scrollTriggeringKeyIsPressed])
         return YES;
 
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
     if (auto systemDelegate = retainPtr(_asyncSystemInputDelegate)) {
         auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
         [context setDocumentIsEditable:_page->editorState().isContentEditable];
         [context setShouldInsertChar:isCharEvent];
         return [systemDelegate deferEventHandlingToSystemWithContext:context.get()];
     }
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
         return NO;
@@ -12016,7 +12028,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
-#if HAVE(UI_ASYNC_TEXT_INPUT)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #pragma mark - UIAsyncTextInput (and related)
 
@@ -12069,7 +12081,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     return self;
 }
 
-#endif // HAVE(UI_ASYNC_TEXT_INPUT)
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 @end
 
