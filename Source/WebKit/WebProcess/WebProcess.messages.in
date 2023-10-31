@@ -221,4 +221,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     RenderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
     
     AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
+
+#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+    PostNotification(String message)
+    PostObserverNotification(String message)
+#endif
 }

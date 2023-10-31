@@ -1503,6 +1503,19 @@ void WebProcess::revokeLaunchServicesSandboxExtension()
 }
 #endif
 
+#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+void WebProcess::postNotification(const String& message)
+{
+    notify_post(message.ascii().data());
+}
+
+void WebProcess::postObserverNotification(const String& message)
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:message object:nil];
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

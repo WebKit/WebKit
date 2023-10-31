@@ -364,6 +364,11 @@ public:
     void openDirectoryCacheInvalidated(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
 #endif
 
+#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+    void postNotification(const String& message);
+    void postObserverNotification(const String& message);
+#endif
+
     bool areAllPagesThrottleable() const;
 
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
