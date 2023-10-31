@@ -79,7 +79,7 @@ public:
     ~Device();
 
     Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
-    Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&);
+    Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
     Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);

@@ -448,13 +448,6 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
         auto& entries = pipelineEntries[pipelineLayoutIndex];
         HashMap<String, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
-            if (auto existingIndex = entries.findIf([&](auto& existingEntry) {
-                return existingEntry.binding == entry.binding;
-            }); existingIndex != WTF::notFound) {
-                entries[existingIndex].visibility |= convertVisibility(entry.visibility);
-                continue;
-            }
-
             WGPUBindGroupLayoutEntry newEntry = { };
             uint64_t minBindingSize = 0;
             WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
@@ -466,7 +459,7 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
             } else
                 entryMap.set(entryName, entry.binding);
 
-            newEntry.binding = entry.binding;
+            newEntry.binding = entry.webBinding;
             newEntry.visibility = convertVisibility(entry.visibility);
             WTF::switchOn(entry.bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) {
                 newEntry.buffer = WGPUBufferBindingLayout {
@@ -519,7 +512,7 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
         bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
         bindGroupLayoutDescriptor.entryCount = entries.size();
         bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
-        bindGroupLayoutsRefs.append(createBindGroupLayout(bindGroupLayoutDescriptor));
+        bindGroupLayoutsRefs.append(createBindGroupLayout(bindGroupLayoutDescriptor, true));
         bindGroupLayouts.append(&bindGroupLayoutsRefs[bindGroupLayoutsRefs.size() - 1].get());
     }
 
