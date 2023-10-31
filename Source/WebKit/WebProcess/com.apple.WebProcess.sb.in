@@ -1941,6 +1941,7 @@
 (define (syscalls-rarely-used-blocked-in-lockdown-mode)
     (syscall-number
         SYS___pthread_kill
+        SYS_openat_nocancel ;; Used when dumping the GC heap.
         SYS_psynch_rw_rdlock
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
@@ -2272,7 +2273,7 @@
     (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
         (allow syscall-mach (syscall-mach-downlevels)))
     (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-        (allow syscall-unix (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+        (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
 #endif
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
     (allow syscall-mach (syscall-mach-downlevels))
