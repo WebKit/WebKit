@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebAVPlayerLayerView.h"
+#import "config.h"
+#import "WebAVPlayerLayerView.h"
 
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
@@ -35,6 +35,10 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
+
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
+static NSString * const pictureInPicturePlayerLayerViewKey = @"_pictureInPicturePlayerLayerView";
+#endif
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
@@ -57,19 +61,19 @@ static void WebAVPlayerLayerView_setPlayerController(id aSelf, SEL, AVPlayerCont
 {
     __AVPlayerLayerView *playerLayerView = aSelf;
     WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
-    [webAVPlayerLayer setPlayerController: playerController];
+    [webAVPlayerLayer setPlayerController:playerController];
 }
 
 static AVPlayerLayer *WebAVPlayerLayerView_playerLayer(id aSelf, SEL)
 {
     __AVPlayerLayerView *playerLayerView = aSelf;
-    
+
     if ([get__AVPlayerLayerViewClass() instancesRespondToSelector:@selector(playerLayer)]) {
         objc_super superClass { playerLayerView, get__AVPlayerLayerViewClass() };
         auto superClassMethod = reinterpret_cast<AVPlayerLayer *(*)(objc_super *, SEL)>(objc_msgSendSuper);
         return superClassMethod(&superClass, @selector(playerLayer));
     }
-    
+
     return (AVPlayerLayer *)[playerLayerView layer];
 }
 
@@ -96,7 +100,7 @@ static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerV
 {
     WebAVPlayerLayerView *playerLayerView = aSelf;
     auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView pictureInPicturePlayerLayerView];
-    
+
     auto *playerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
     auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
@@ -120,22 +124,21 @@ static void WebAVPlayerLayerView_stopRoutingVideoToPictureInPicturePlayerLayerVi
 static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPicturePlayerLayerView(id aSelf, SEL)
 {
     WebAVPlayerLayerView *playerLayerView = aSelf;
-    WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"];
-    if (!pipView) {
-        pipView = [allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero];
-        [playerLayerView setValue:pipView forKey:@"_pictureInPicturePlayerLayerView"];
-    }
-    return pipView;
+    if (WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:pictureInPicturePlayerLayerViewKey])
+        return pipView;
+
+    auto pipView = adoptNS([allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero]);
+    [playerLayerView setValue:pipView.get() forKey:pictureInPicturePlayerLayerViewKey];
+    return pipView.get();
 }
-#endif
+#endif // HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
 
 static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 {
     WebAVPlayerLayerView *playerLayerView = aSelf;
-    
+
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-    RetainPtr<WebAVPictureInPicturePlayerLayerView> pipView = adoptNS([playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"]);
-    [playerLayerView setValue:nil forKey:@"_pictureInPicturePlayerLayerView"];
+    [playerLayerView setValue:nil forKey:pictureInPicturePlayerLayerViewKey];
 #endif
     objc_super superClass { playerLayerView, get__AVPlayerLayerViewClass() };
     auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
@@ -164,7 +167,7 @@ WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
         
         class_addIvar(theClass, "_pictureInPicturePlayerLayerView", sizeof(WebAVPictureInPicturePlayerLayerView *), log2(sizeof(WebAVPictureInPicturePlayerLayerView *)), "@");
 #endif
-        
+
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPlayerLayerView_layerClass, "@@:");
@@ -188,11 +191,11 @@ WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewI
         Class metaClass = objc_getMetaClass("WebAVPictureInPicturePlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");
     });
-    
+
     return (WebAVPictureInPicturePlayerLayerView *)[theClass alloc];
 }
 #endif
 
-}
+} // namespace WebCore
 
-#endif
+#endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
