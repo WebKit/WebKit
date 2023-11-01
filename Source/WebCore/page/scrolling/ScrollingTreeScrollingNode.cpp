@@ -317,8 +317,18 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
 
     if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
         auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *requestedScrollData.requestedDataBeforeAnimatedScroll;
-        auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
-        scrollTo(intermediatePosition, scrollType, clamping);
+
+        switch (requestType) {
+        case ScrollRequestType::PositionUpdate:
+        case ScrollRequestType::DeltaUpdate: {
+            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
+            scrollTo(intermediatePosition, scrollType, clamping);
+            break;
+        }
+        case ScrollRequestType::CancelAnimatedScroll:
+            stopAnimatedScroll();
+            break;
+        }
     }
 
     auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition);
