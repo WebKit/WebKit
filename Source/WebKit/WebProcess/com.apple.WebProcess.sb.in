@@ -1754,7 +1754,11 @@
             "com.apple.webinspector"
             "com.apple.coreservices.launchservicesd"
             "com.apple.iconservices"
-            "com.apple.iconservices.store")))
+            "com.apple.iconservices.store"
+            "com.apple.tccd"
+        )
+    )
+)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 (allow mach-lookup
