@@ -1597,10 +1597,6 @@ void RenderLayer::updateAncestorDependentState()
     m_enclosingSVGHiddenOrResourceContainer = nullptr;
     auto determineSVGAncestors = [&] (const RenderElement& renderer) {
         for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
-            if (auto* container = dynamicDowncast<RenderSVGResourceContainer>(ancestor)) {
-                m_enclosingSVGHiddenOrResourceContainer = container;
-                return;
-            }
             if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
                 m_enclosingSVGHiddenOrResourceContainer = container;
                 return;
@@ -3324,14 +3320,16 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             return false;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
-        if (is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer)) {
-            ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
-            return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
-        }
+        if (!m_enclosingSVGHiddenOrResourceContainer)
+            return true;
 
         // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
-        return !m_enclosingSVGHiddenOrResourceContainer;
+        if (!is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
+            return false;
+
+        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
+        ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
+        return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
 #else
         return true;
 #endif
