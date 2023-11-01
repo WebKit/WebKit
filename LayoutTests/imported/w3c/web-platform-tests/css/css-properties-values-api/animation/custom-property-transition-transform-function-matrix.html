@@ -8,10 +8,10 @@
 
 transition_test({
   syntax: "<transform-function>",
-  from: "translateX(100px)",
-  to: "translateX(200px)",
-  expected: "translateX(150px)",
+  from: "translateZ(100px)",
+  to: "scale(4)",
+  expected: "matrix3d(2.5, 0, 0, 0, 0, 2.5, 0, 0, 0, 0, 1, 0, 0, 0, 50, 1)",
   behavior: 'allow-discrete',
-}, 'A custom property of type <transform-function> can yield a CSS Transition');
+}, 'A custom property of type <transform-function> can yield a CSS Transition between different function types');
 
 </script>

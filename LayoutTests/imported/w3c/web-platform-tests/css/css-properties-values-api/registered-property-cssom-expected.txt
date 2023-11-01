@@ -1,4 +1,5 @@
 
+PASS Initially unregistered values from stylesheet
 PASS CSSOM setters function as expected for unregistered properties
 PASS CSS.registerProperty
 PASS Formerly valid values are still readable from inline styles but are computed as the unset value

@@ -2,6 +2,8 @@
 PASS @property determines the registration when uncontested
 PASS CSS.registerProperty wins over @property
 PASS @property later in document order wins
+PASS @property later in document order wins (overridding definition with inherits=true)
+PASS @property later in document order wins (overridding definition with inherits=false)
 PASS @property later in stylesheet wins
 PASS CSS.registerProperty determines the registration when uncontested
 PASS @property registrations are cleared when rule removed
