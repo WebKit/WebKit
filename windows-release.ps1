@@ -35,7 +35,7 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
         Invoke-WebRequest -Uri $ICU_SOURCE_URL -OutFile $ICU_STATIC_TAR
     }
     Write-Host ":: Extracting ICU"
-    tar.exe -xzf "icu4c-73_2-src.tgz" -C $WebKitBuild
+    tar.exe -xzf $ICU_STATIC_TAR -C $WebKitBuild
     if ($LASTEXITCODE -ne 0) { throw "tar failed with exit code $LASTEXITCODE" }
 
     # two patches needed to build statically with clang-cl
