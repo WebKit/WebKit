@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 
@@ -107,4 +108,27 @@ TEST(WKWebViewSuspendAllMediaPlayback, PauseWhenResume)
 
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.querySelector('video').paused"] boolValue]);
 
+}
+
+TEST(WKWebViewSuspendAllMediaPlayback, FullscreenWhileSuspended)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setFullScreenEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+
+    __block bool completionHandlerCalled = false;
+    auto completionHandler = ^{
+        completionHandlerCalled = true;
+    };
+
+    [webView suspendAllMediaPlayback:completionHandler];
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+
+    NSError *error = nil;
+    EXPECT_NULL([webView objectByCallingAsyncFunction:@"return document.getElementsByTagName('video')[0].webkitEnterFullscreen()" withArguments:@{ } error:&error]);
+    EXPECT_NULL(error);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.webkitIsFullScreen"] boolValue]);
 }
