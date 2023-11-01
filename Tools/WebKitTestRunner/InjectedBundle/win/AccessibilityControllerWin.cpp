@@ -79,6 +79,10 @@ bool AccessibilityController::removeNotificationListener()
     return false;
 }
 
+void AccessibilityController::overrideClient(JSStringRef)
+{
+}
+
 } // namespace WTR
 
 #endif // ENABLE(ACCESSIBILITY)

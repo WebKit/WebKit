@@ -1,0 +1,46 @@
+This tests that when the AX client is VoiceOver, we do not spellcheck.
+
+Attributed String (without client set):
+Hello {
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}wolrd{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+    AXMarkedMisspelled = 1;
+    AXMisspelled = 1;
+}.{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed String (with VoiceOver specified as the client):
+Hello wolrd!{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXDidSpellCheck = 0;
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

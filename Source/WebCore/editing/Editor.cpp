@@ -2679,7 +2679,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
 {
     Ref document = protectedDocument();
 
-    if (platformDrivenTextCheckerEnabled())
+    if (platformOrClientDrivenTextCheckerEnabled())
         return;
 
 #if PLATFORM(IOS_FAMILY)
@@ -2887,7 +2887,7 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType> textCheckingOptions, const std::optional<SimpleRange>& spellingRange, const std::optional<SimpleRange>& automaticReplacementRange, const std::optional<SimpleRange>& grammarRange)
 {
-    if (platformDrivenTextCheckerEnabled())
+    if (platformOrClientDrivenTextCheckerEnabled())
         return;
 
     ASSERT(unifiedTextCheckerEnabled());
@@ -3189,7 +3189,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection)
 {
-    if (platformDrivenTextCheckerEnabled())
+    if (platformOrClientDrivenTextCheckerEnabled())
         return;
 
     if (unifiedTextCheckerEnabled()) {

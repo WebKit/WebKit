@@ -90,6 +90,8 @@ public:
 
     void resetToConsistentState();
 
+    void overrideClient(JSStringRef clientType);
+
 #if !ENABLE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
     RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }
     RefPtr<AccessibilityUIElement> focusedElement() { return nullptr; }
