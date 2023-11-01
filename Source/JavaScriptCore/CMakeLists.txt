@@ -1073,6 +1073,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IndexingType.h
     runtime/InferredValue.h
     runtime/InitializeThreading.h
+    runtime/InlineAttribute.h
     runtime/Int16Array.h
     runtime/Int32Array.h
     runtime/Int8Array.h

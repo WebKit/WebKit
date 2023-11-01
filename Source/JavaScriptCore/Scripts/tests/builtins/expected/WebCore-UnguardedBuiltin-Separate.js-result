@@ -48,6 +48,7 @@ extern const int s_unguardedBuiltinIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_unguardedBuiltinIsReadableStreamLockedCodeConstructAbility;
 extern const JSC::ConstructorKind s_unguardedBuiltinIsReadableStreamLockedCodeConstructorKind;
 extern const JSC::ImplementationVisibility s_unguardedBuiltinIsReadableStreamLockedCodeImplementationVisibility;
+extern const JSC::InlineAttribute s_unguardedBuiltinIsReadableStreamLockedCodeInlineAttribute;
 
 #define WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, unguardedBuiltinIsReadableStreamLocked, 1) \
@@ -107,7 +108,7 @@ inline JSC::UnlinkedFunctionExecutable* UnguardedBuiltinBuiltinsWrapper::name##E
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
             executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
-        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility, s_##name##InlineAttribute), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
 }
@@ -170,6 +171,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_unguardedBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_unguardedBuiltinIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
 const JSC::ImplementationVisibility s_unguardedBuiltinIsReadableStreamLockedCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+const JSC::InlineAttribute s_unguardedBuiltinIsReadableStreamLockedCodeInlineAttribute = JSC::InlineAttribute::None;
 const int s_unguardedBuiltinIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_unguardedBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_unguardedBuiltinIsReadableStreamLockedCode =

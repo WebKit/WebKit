@@ -28,6 +28,7 @@
 #include "ConstructAbility.h"
 #include "ConstructorKind.h"
 #include "Identifier.h"
+#include "InlineAttribute.h"
 
 namespace JSC {
 

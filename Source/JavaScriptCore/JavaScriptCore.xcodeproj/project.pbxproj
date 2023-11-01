@@ -2061,6 +2061,7 @@
 		E3CDCFAF28DD065A00215350 /* ImportMap.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CDCFAE28DD065A00215350 /* ImportMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D3515F241B89D7008DC16E /* MarkedJSValueRefArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */; };
+		E3D4FFE22AF21D96004ED359 /* InlineAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D4FFE12AF21D96004ED359 /* InlineAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D7086E29FA66820061F230 /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D7086C29FA667E0061F230 /* ScriptFunctionCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D877721E65C08900BE945A /* BytecodeDumper.h */; };
 		E3E6E9CC28F3C33F00EDE7C0 /* ChainedWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E6E9CB28F3C33F00EDE7C0 /* ChainedWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5735,6 +5736,7 @@
 		E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeRewriter.h; sourceTree = "<group>"; };
 		E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkedJSValueRefArray.h; sourceTree = "<group>"; };
 		E3D3515E241B89CF008DC16E /* MarkedJSValueRefArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedJSValueRefArray.cpp; sourceTree = "<group>"; };
+		E3D4FFE12AF21D96004ED359 /* InlineAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineAttribute.h; sourceTree = "<group>"; };
 		E3D7086C29FA667E0061F230 /* ScriptFunctionCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		E3D7086D29FA667E0061F230 /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		E3D877711E65C08900BE945A /* BytecodeDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeDumper.cpp; sourceTree = "<group>"; };
@@ -8108,6 +8110,7 @@
 				0F4AE0421FE0D25400E20839 /* InferredValueInlines.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
+				E3D4FFE12AF21D96004ED359 /* InlineAttribute.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
 				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
@@ -10927,6 +10930,7 @@
 				A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */,
 				9959E9321BD18279001AA413 /* inline-and-minify-stylesheets-and-scripts.py in Headers */,
 				7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */,
+				E3D4FFE22AF21D96004ED359 /* InlineAttribute.h in Headers */,
 				0FF9CE741B9CD6D0004EDCA6 /* InlineCacheCompiler.h in Headers */,
 				148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */,
 				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,

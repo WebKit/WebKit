@@ -44,6 +44,7 @@ _FRAMEWORK_CONFIG_MAP = {
 
 functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*(?:async\s+)?function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionLinkTimeConstantRegExp = re.compile(r".*^@linkTimeConstant", re.MULTILINE | re.DOTALL)
+functionAlwaysInlineRegExp = re.compile(r".*^@alwaysInline", re.MULTILINE | re.DOTALL)
 functionVisibilityRegExp = re.compile(r".*^@visibility=(\w+)", re.MULTILINE | re.DOTALL)
 functionNakedConstructorRegExp = re.compile(r".*^@nakedConstructor", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
@@ -104,13 +105,14 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, visibility, overridden_name):
+    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, is_always_inline, intrinsic, visibility, overridden_name):
         self.function_name = function_name
         self.function_source = function_source
         self.parameters = parameters
         self.is_async = is_async
         self.is_constructor = is_constructor
         self.is_naked_constructor = is_naked_constructor
+        self.is_always_inline = is_always_inline
         self.is_link_time_constant = is_link_time_constant
         self.intrinsic = intrinsic
         self.visibility = visibility
@@ -146,6 +148,7 @@ class BuiltinFunction:
         is_getter = functionIsGetterRegExp.match(function_source) != None
         is_link_time_constant = functionLinkTimeConstantRegExp.match(function_source) != None
         is_naked_constructor = functionNakedConstructorRegExp.match(function_source) != None
+        is_always_inline = functionAlwaysInlineRegExp.match(function_source) != None
         if is_naked_constructor:
             is_constructor = True
 
@@ -170,7 +173,7 @@ class BuiltinFunction:
         if overridden_name[-1] == "\"":
             overridden_name += "_s"
 
-        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, visibility, overridden_name)
+        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, is_always_inline, intrinsic, visibility, overridden_name)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))
