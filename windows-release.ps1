@@ -1,5 +1,44 @@
 $ErrorActionPreference = "Stop"
 
+# Set up MSVC environment variables. This is taken from Bun's 'scripts\env.ps1'
+if ($env:VSINSTALLDIR -eq $null) {
+    Write-Host "Loading Visual Studio environment, this may take a second..."
+    $vsDir = Get-ChildItem -Path "C:\Program Files\Microsoft Visual Studio\2022" -Directory
+    if ($vsDir -eq $null) {
+        throw "Visual Studio directory not found."
+    } 
+    Push-Location $vsDir
+    try {
+        . (Join-Path -Path $vsDir.FullName -ChildPath "Common7\Tools\Launch-VsDevShell.ps1") -Arch amd64 -HostArch amd64
+    }
+    finally { Pop-Location }
+}
+
+if ($Env:VSCMD_ARG_TGT_ARCH -eq "x86") {
+    # Please do not try to compile Bun for 32 bit. It will not work. I promise.
+    throw "Visual Studio environment is targetting 32 bit. This configuration is definetly a mistake."
+}
+
+# Fix up $PATH
+Write-Host $env:PATH
+
+$MakeExe = (Get-Command make).Path
+
+$SplitPath = $env:PATH -split ";";
+$MSVCPaths = $SplitPath | Where-Object { $_ -like "Microsoft Visual Studio" }
+$SplitPath = $MSVCPaths + ($SplitPath | Where-Object { $_ -notlike "Microsoft Visual Studio" } | Where-Object { $_ -notlike "*mingw*" })
+$PathWithPerl = $SplitPath -join ";"
+$env:PATH = ($SplitPath | Where-Object { $_ -notlike "*strawberry*" }) -join ';'
+
+Write-Host $env:PATH
+
+(Get-Command link).Path
+(Get-Command bash).Path
+clang-cl.exe --version
+
+$env:CC = "clang-cl"
+$env:CXX = "clang-cl"
+
 $output = if ($env:WEBKIT_OUTPUT_DIR) { $env:WEBKIT_OUTPUT_DIR } else { "bun-webkit" }
 $WebKitBuild = if ($env:WEBKIT_BUILD_DIR) { $env:WEBKIT_BUILD_DIR } else { "WebKitBuild" }
 $CMAKE_BUILD_TYPE = if ($env:CMAKE_BUILD_TYPE) { $env:CMAKE_BUILD_TYPE } else { "Release" }
@@ -58,10 +97,13 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
             --disable-tests `
             --disable-debug `
             --enable-release
-        if ($LASTEXITCODE -ne 0) { throw "runConfigureICU failed with exit code $LASTEXITCODE" }
+        if ($LASTEXITCODE -ne 0) { 
+            Get-Content "config.log"
+            throw "runConfigureICU failed with exit code $LASTEXITCODE"
+        }
     
         Write-Host ":: Building ICU"
-        make "-j$((Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors)"
+        & $MakeExe "-j$((Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors)"
         if ($LASTEXITCODE -ne 0) { throw "make failed with exit code $LASTEXITCODE" }
     }
     finally { Pop-Location }
@@ -88,12 +130,12 @@ if (!(Test-Path -Path $ICU_SHARED_ROOT)) {
 
 }
 
-$env:CC = "clang-cl"
-$env:CXX = "clang-cl"
+Write-Host ":: Configuring WebKit"
+
+$env:PATH = $PathWithPerl
+
 $env:CFLAGS = "/Zi /Z7"
 $env:CXXFLAGS = "/Zi /Z7"
-
-Write-Host ":: Configuring WebKit"
 
 cmake -S . -B $WebKitBuild `
     -DPORT="JSCOnly" `

@@ -151,6 +151,7 @@ jobs:
           name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
+jobs:
   windows:
     strategy:
       matrix:
@@ -161,12 +162,10 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 90
     steps:
-      - uses: ilammy/msvc-dev-cmd@7315a94840631165970262a99c72cfb48a65d25d
-        with:
-          arch: ${{ matrix.arch }}
       - uses: KyleMayes/install-llvm-action@1a3da29f56261a1e1f937ec88f0856a9b8321d7e
         with:
           version: 16.0.6
+      - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
       - run: choco install -y ninja
       - uses: actions/checkout@v4
       - name: Build WebKit
