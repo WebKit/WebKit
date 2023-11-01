@@ -747,7 +747,10 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         } else {
             tz = canonicalizeTimeZoneName(originalTz);
             if (tz.isNull()) {
-                throwRangeError(globalObject, scope, "invalid time zone: "_s + originalTz);
+                String message = tryMakeString("invalid time zone: "_s, originalTz);
+                if (!message)
+                    message = "invalid time zone"_s;
+                throwRangeError(globalObject, scope, message);
                 return;
             }
         }
