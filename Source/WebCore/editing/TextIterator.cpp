@@ -2530,24 +2530,25 @@ bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehaviors behaviors)
 
 String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior, bool isDisplayString)
 {
+    TextIterator it(range, defaultBehavior);
+    if (it.atEnd())
+        return emptyString();
+
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     constexpr unsigned initialCapacity = 1 << 15;
 
     Ref document = range.start.document();
 
-    unsigned bufferLength = 0;
     StringBuilder builder;
     builder.reserveCapacity(initialCapacity);
     TextIteratorBehaviors behaviors = defaultBehavior;
     if (!isDisplayString)
         behaviors.add(TextIteratorBehavior::EmitsTextsWithoutTranscoding);
 
-    for (TextIterator it(range, behaviors); !it.atEnd(); it.advance()) {
+    for (; !it.atEnd(); it.advance())
         it.appendTextToStringBuilder(builder);
-        bufferLength += it.text().length();
-    }
 
-    if (!bufferLength)
+    if (builder.isEmpty())
         return emptyString();
 
     String result = builder.toString();
