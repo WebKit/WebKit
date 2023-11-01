@@ -78,6 +78,7 @@ public:
     const IntSize& size() const { return m_size; }
 
     ImageBuffer* buffer() const;
+    ImageBuffer* bufferIfExists() const;
 
     virtual void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) { }
 

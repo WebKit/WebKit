@@ -98,6 +98,11 @@ ImageBuffer* CanvasBase::buffer() const
     return m_imageBuffer.get();
 }
 
+ImageBuffer* CanvasBase::bufferIfExists() const
+{
+    return m_imageBuffer.get();
+}
+
 AffineTransform CanvasBase::baseTransform() const
 {
     ASSERT(hasCreatedImageBuffer());

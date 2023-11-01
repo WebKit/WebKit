@@ -879,7 +879,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::setTransform(DOMMatrix2DInit&& m
 
 void CanvasRenderingContext2DBase::resetTransform()
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = canvasBase().existingDrawingContext();
     if (!c)
         return;
 
@@ -1859,7 +1859,7 @@ void CanvasRenderingContext2DBase::drawImageFromRect(HTMLImageElement& imageElem
 
 void CanvasRenderingContext2DBase::clearCanvas()
 {
-    auto* c = drawingContext();
+    auto* c = canvasBase().existingDrawingContext();
     if (!c)
         return;
 
@@ -2271,13 +2271,13 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
+    if (auto buffer = canvasBase().bufferIfExists())
         buffer->flushDrawingContextAsync();
 }
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-    RefPtr buffer = canvasBase().buffer();
+    RefPtr buffer = canvasBase().bufferIfExists();
     if (buffer && buffer->prefersPreparationForDisplay())
         return true;
 
