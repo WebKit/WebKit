@@ -34,6 +34,7 @@ scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 tiled-drawing [ Pass ]
+ipc/restrictedendpoints/mac [ Pass ]
 
 fast/events/autoscroll-when-zoomed.html [ Pass ]
 fast/events/autoscroll-main-document.html [ Pass ]
@@ -91,6 +92,10 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html [ DumpJSConsoleLogInStdErr ]
+
+# These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
+# They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
+[ Debug ] ipc/restrictedendpoints/mac/deny-access-modelElement.html [ Skip ]
 
 # This test is failing due to lack of user activation.
 imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ Skip ]

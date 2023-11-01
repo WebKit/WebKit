@@ -687,10 +687,9 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origi
 webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.py [ Skip ]
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
-# They crash in debug (as expected) so we skip them there.
+# They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
 [ Debug ] ipc/restrictedendpoints/deny-access-testOnlyIPC.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Skip ]
-[ Debug ] ipc/restrictedendpoints/deny-access-modelElement.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
