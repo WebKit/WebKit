@@ -89,6 +89,8 @@ protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);
     void resetWindowProxy();
 
+    virtual void frameWasDisconnectedFromOwner() const { }
+
 private:
     virtual DOMWindow* virtualWindow() const = 0;
 

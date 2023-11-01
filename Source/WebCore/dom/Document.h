@@ -1734,8 +1734,6 @@ public:
     WEBCORE_EXPORT bool isRunningUserScripts() const;
     WEBCORE_EXPORT void setAsRunningUserScripts();
 
-    void frameWasDisconnectedFromOwner();
-
     WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 #if ASSERT_ENABLED
@@ -1841,6 +1839,8 @@ public:
 
     void invalidateDOMCookieCache();
 
+    void detachFromFrame();
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -1915,8 +1915,6 @@ private:
 
     void pendingTasksTimerFired();
     bool isCookieAverse() const;
-
-    void detachFromFrame();
 
     template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
 

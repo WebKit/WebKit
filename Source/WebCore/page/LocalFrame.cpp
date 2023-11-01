@@ -1232,6 +1232,17 @@ DataDetectionResultsStorage& LocalFrame::dataDetectionResults()
 
 #endif
 
+void LocalFrame::frameWasDisconnectedFromOwner() const
+{
+    if (!m_doc)
+        return;
+
+    if (RefPtr window = m_doc->domWindow())
+        window->willDetachDocumentFromFrame();
+
+    protectedDocument()->detachFromFrame();
+}
+
 } // namespace WebCore
 
 #undef FRAME_RELEASE_LOG_ERROR

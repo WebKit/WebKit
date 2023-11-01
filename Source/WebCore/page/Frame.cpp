@@ -26,9 +26,7 @@
 #include "config.h"
 #include "Frame.h"
 
-#include "DocumentInlines.h"
 #include "HTMLFrameOwnerElement.h"
-#include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
@@ -103,9 +101,7 @@ void Frame::disconnectOwnerElement()
         m_ownerElement = nullptr;
     }
 
-    // FIXME: This is a layering violation. Move this code so Frame doesn't do anything with its Document.
-    if (auto* document = is<LocalFrame>(*this) ? downcast<LocalFrame>(*this).document() : nullptr)
-        document->frameWasDisconnectedFromOwner();
+    frameWasDisconnectedFromOwner();
 }
 
 void Frame::takeWindowProxyFrom(Frame& frame)
