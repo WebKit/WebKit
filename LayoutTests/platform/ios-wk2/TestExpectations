@@ -2431,6 +2431,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 # Requires grammar checking to be enabled (rdar://103646683)
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Skip ]
 
+webkit.org/b/264063 platform/ios/mediastream/video-muted-in-background-tab.html [ Skip ]
 
 webkit.org/b/259524 media/audioSession/audioSessionState.html [ Pass Failure ]
 
