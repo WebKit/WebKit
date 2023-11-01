@@ -135,10 +135,12 @@ inline CSSValueContainingVector::~CSSValueContainingVector()
 
 inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) const
 {
-    ASSERT(index < m_size);
     unsigned maxInlineSize = m_inlineStorage.size();
-    if (index < maxInlineSize)
+    if (index < maxInlineSize) {
+        ASSERT(index < m_size);
         return *m_inlineStorage[index];
+    }
+    RELEASE_ASSERT(index < m_size);
     return *m_additionalStorage[index - maxInlineSize];
 }
 
