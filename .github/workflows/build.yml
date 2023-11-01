@@ -151,7 +151,6 @@ jobs:
           name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
-jobs:
   windows:
     strategy:
       matrix:
