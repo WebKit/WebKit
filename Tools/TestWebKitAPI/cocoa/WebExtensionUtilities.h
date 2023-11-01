@@ -74,6 +74,8 @@
 @property (nonatomic, weak) TestWebExtensionWindow * window;
 @property (nonatomic, strong) WKWebView *mainWebView;
 
+- (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context;
+
 @property (nonatomic, weak) TestWebExtensionTab *parentTab;
 
 @property (nonatomic, getter=isPinned) bool pinned;

@@ -184,6 +184,24 @@ inline JSValue *toJSValue(JSContextRef context, JSValueRef value)
     return [JSValue valueWithJSValueRef:value inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
 }
 
+inline JSValue *toWindowObject(JSContextRef context, WebFrame& frame)
+{
+    ASSERT(context);
+
+    auto frameContext = frame.jsContext();
+    if (!frameContext)
+        return nil;
+
+    return toJSValue(context, JSContextGetGlobalObject(frameContext));
+}
+
+inline JSValue *toWindowObject(JSContextRef context, WebPage& page)
+{
+    ASSERT(context);
+
+    return toWindowObject(context, page.mainWebFrame());
+}
+
 inline JSValueRef toJSValueRef(JSContextRef context, id object)
 {
     ASSERT(context);

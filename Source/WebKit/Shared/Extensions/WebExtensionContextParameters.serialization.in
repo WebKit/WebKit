@@ -27,10 +27,16 @@ struct WebKit::WebExtensionContextParameters {
 
     URL baseURL;
     String uniqueIdentifier;
+
     Ref<API::Data> localizationJSON;
     Ref<API::Data> manifestJSON;
+
     double manifestVersion;
     bool testingMode;
+
+    std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
+    Vector<WebKit::WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
+    Vector<WebKit::WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
 }
 
 #endif

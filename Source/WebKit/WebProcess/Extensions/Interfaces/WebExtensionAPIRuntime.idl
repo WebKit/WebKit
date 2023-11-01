@@ -35,6 +35,7 @@
     [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
 
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
+    [MainWorldOnly] void getBackgroundPage([Optional, CallbackHandler] function callback);
 
     [MainWorldOnly] readonly attribute any lastError;
 

@@ -56,13 +56,13 @@ static auto *windowsManifest = @{
 TEST(WKWebExtensionAPIWindows, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertThrows(() => browser.windows.get('bad'), /'windowID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(NaN), /'windowID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(Infinity), /'windowID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(-Infinity), /'windowID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(-3), /'windowID' value is invalid, because it is not a window identifier/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(1.2), /'windowID' value is invalid, because it is not a window identifier/i)",
-        @"browser.test.assertThrows(() => browser.windows.get(browser.windows.WINDOW_ID_NONE), /'windowID' value is invalid, because 'windows.WINDOW_ID_NONE' is not allowed/i)",
+        @"browser.test.assertThrows(() => browser.windows.get('bad'), /'windowId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(NaN), /'windowId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(Infinity), /'windowId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(-Infinity), /'windowId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(-3), /'windowId' value is invalid, because it is not a window identifier/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(1.2), /'windowId' value is invalid, because it is not a window identifier/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(browser.windows.WINDOW_ID_NONE), /'windowId' value is invalid, because 'windows.WINDOW_ID_NONE' is not allowed/i)",
 
         @"await browser.test.assertRejects(browser.windows.get(42), /window not found/i)",
 

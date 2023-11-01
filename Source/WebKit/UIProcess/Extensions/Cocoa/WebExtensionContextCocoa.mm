@@ -44,6 +44,7 @@
 #import "WKWebpagePreferencesPrivate.h"
 #import "WKWebsiteDataStorePrivate.h"
 #import "WebExtensionAction.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -1303,6 +1304,9 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
     if (identifier)
         return getTab(identifier.value());
 
+    if (m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier())
+        return nullptr;
+
     RefPtr<WebExtensionTab> result;
 
     for (auto& tab : openTabs()) {
@@ -1715,13 +1719,57 @@ void WebExtensionContext::setTestingMode(bool testingMode)
     m_testingMode = testingMode;
 }
 
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
+{
+    if (!m_backgroundWebView || extension().backgroundContentIsServiceWorker())
+        return std::nullopt;
+
+    return m_backgroundWebView.get()._page->webPageID();
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    auto addWebViewPageIdentifier = [&](auto& action) {
+        auto *webView = action->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            return;
+
+        RefPtr tab = action->tab();
+        RefPtr window = tab ? tab->window() : action->window();
+
+        result.append({ webView._page->webPageID(), tab ? std::optional(tab->identifier()) : std::nullopt, window ? std::optional(window->identifier()) : std::nullopt });
+    };
+
+    for (auto entry : m_actionWindowMap)
+        addWebViewPageIdentifier(entry.value);
+
+    for (auto entry : m_actionTabMap)
+        addWebViewPageIdentifier(entry.value);
+
+    if (m_defaultAction)
+        addWebViewPageIdentifier(m_defaultAction);
+
+    return result;
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    for (auto& tab : openTabs()) {
+        auto window = tab->window();
+        for (WKWebView *webView in tab->webViews())
+            result.append({ webView._page->webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt });
+    }
+
+    return result;
+}
+
 WKWebView *WebExtensionContext::relatedWebView()
 {
     ASSERT(isLoaded());
-
-    // When using manifest v3 the web views don't need to use the same process.
-    if (extension().supportsManifestVersion(3))
-        return nil;
 
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
@@ -1736,25 +1784,10 @@ WKWebView *WebExtensionContext::relatedWebView()
     return nil;
 }
 
-NSString *WebExtensionContext::processDisplayName(WebViewPurpose purpose)
+NSString *WebExtensionContext::processDisplayName()
 {
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    // When not using manifest v3 the web views need to use the same process, so use a generic name.
-    if (!extension().supportsManifestVersion(3) || purpose == WebViewPurpose::Any)
-        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
-
-    switch (purpose) {
-    case WebViewPurpose::Any:
-        // Handled above.
-        ASSERT_NOT_REACHED();
-        return nil;
-    case WebViewPurpose::Background:
-        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Background Content", "Extension's process name for background content that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
-    case WebViewPurpose::Popup:
-        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Popup", "Extension's process name for popups that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
-    case WebViewPurpose::Tab:
-        return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension Tab", "Extension's process name for tabs that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
-    }
+    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
 ALLOW_NONLITERAL_FORMAT_END
 }
 
@@ -1784,7 +1817,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     WKWebViewConfiguration *configuration = [extensionController()->configuration().webViewConfiguration() copy];
     configuration._corsDisablingPatterns = corsDisablingPatterns();
     configuration._crossOriginAccessControlCheckEnabled = NO;
-    configuration._processDisplayName = processDisplayName(purpose);
+    configuration._processDisplayName = processDisplayName();
     configuration._relatedWebView = relatedWebView();
     configuration._requiredWebExtensionBaseURL = baseURL();
     configuration._shouldRelaxThirdPartyCookieBlocking = YES;
@@ -1863,6 +1896,9 @@ void WebExtensionContext::loadBackgroundWebView()
     extension().removeError(WebExtension::Error::BackgroundContentFailedToLoad);
 
     if (!extension().backgroundContentIsServiceWorker()) {
+        auto backgroundPage = m_backgroundWebView.get()._page;
+        backgroundPage->process().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageID()), identifier());
+
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
     }

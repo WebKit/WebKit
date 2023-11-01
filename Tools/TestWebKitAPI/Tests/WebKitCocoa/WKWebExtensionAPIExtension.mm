@@ -45,10 +45,31 @@ static auto *extensionManifest = @{
         @"persistent": @NO,
     },
 
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"popup.html",
+        @"default_icon": @{
+            @"16": @"toolbar-16.png",
+            @"32": @"toolbar-32.png",
+        },
+    },
+
     @"content_scripts": @[ @{
         @"js": @[ @"content.js" ],
         @"matches": @[ @"*://localhost/*" ],
     } ],
+};
+
+static auto *extensionServiceWorkerManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Extension Test",
+    @"description": @"Extension Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"service_worker": @"background.js",
+    },
 };
 
 TEST(WKWebExtensionAPIExtension, GetURL)
@@ -111,6 +132,275 @@ TEST(WKWebExtensionAPIExtension, GetURL)
     manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromBackground)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"const backgroundPage = browser.extension.getBackgroundPage()",
+
+        @"browser.test.assertEq(backgroundPage, window, 'Should be able to get the background window from itself')",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    Util::loadAndRunExtension(extensionManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = browser.extension.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())",
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(extensionManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromPopup)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"const backgroundPage = browser.extension.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    auto *popupHTML = @"<script type='module' src='popup.js'></script>";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": popupHTML,
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIExtension, GetBackgroundPageForServiceWorker)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = browser.extension.getBackgroundPage()",
+        @"browser.test.assertEq(backgroundPage, null, 'Background page should be null for service workers')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(extensionServiceWorkerManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsFromBackgroundPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"const views = browser.extension.getViews()",
+
+        @"browser.test.assertEq(views.length, 1, 'Background view should be included')",
+        @"browser.test.assertSafe(() => views[0].notifyTestPass())"
+    ]);
+
+    Util::loadAndRunExtension(extensionManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsForBackground)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const views = browser.extension.getViews()",
+        @"browser.test.assertEq(views.length, 2)",
+
+        @"for (const view of views) {",
+        @"  if (view.notifyTestPass) {",
+        @"    browser.test.assertSafe(() => view.notifyTestPass())",
+        @"    break",
+        @"  }",
+        @"}"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(extensionManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsForTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'ready')",
+
+        @"  const views = browser.extension.getViews({ type: 'tab' })",
+        @"  browser.test.assertEq(views.length, 1)",
+
+        @"  browser.test.assertSafe(() => views[0].notifyTestPass())",
+        @"})",
+
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.runtime.sendMessage('ready')"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(extensionManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsForMultipleTabs)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let tabCount = 0",
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'ready')",
+
+        @"  if (++tabCount === 2) {",
+        @"    const views = browser.extension.getViews({ type: 'tab' })",
+        @"    browser.test.assertEq(views.length, 2)",
+
+        @"    for (let i = 0; i < views.length; ++i) {",
+        @"      const view = views[i]",
+        @"      if (view.notifyTestPass)",
+        @"        browser.test.assertSafe(() => view.notifyTestPass(i))",
+        @"    }",
+        @"  }",
+        @"})",
+
+        @"browser.tabs.create({ url: 'test.html' })",
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"window.notifyTestPass = (index) => {",
+        @"  if (index === 1)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"browser.runtime.sendMessage('ready')"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(extensionManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsForPopup)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'ready')",
+
+        @"  const popupViews = browser.extension.getViews({ type: 'popup' })",
+        @"  browser.test.assertEq(popupViews.length, 1)",
+
+        @"  browser.test.assertSafe(() => popupViews[0].notifyTestPass())",
+        @"})",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.runtime.sendMessage('ready')"
+    ]);
+
+    auto *popupHTML = @"<script type='module' src='popup.js'></script>";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": popupHTML,
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIExtension, GetViewsExcludesServiceWorkerBackground)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const views = browser.extension.getViews()",
+        @"browser.test.assertEq(views.length, 0, 'Background view should not be included for service workers')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(extensionServiceWorkerManifest, @{
+        @"background.js": backgroundScript,
+    });
 }
 
 TEST(WKWebExtensionAPIExtension, InIncognitoContext)

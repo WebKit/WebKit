@@ -1451,10 +1451,14 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 {
     bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
 #if PLATFORM(MAC)
-    allowed = allowed || WebCore::MacApplication::isSafari();
+    allowed |= WebCore::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
-    allowed = allowed || WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+    allowed |= WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    allowed |= !!_requiredWebExtensionBaseURL;
+#endif
+
     if (!allowed)
         [NSException raise:NSObjectNotAvailableException format:@"_shouldRelaxThirdPartyCookieBlocking may only be used by Safari."];
 

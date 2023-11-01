@@ -30,6 +30,9 @@
 
     [URL, ConvertNullStringTo=Null, RaisesException, Dynamic] DOMString getURL(DOMString resourcePath);
 
+    [MainWorldOnly, NeedsScriptContext] any getBackgroundPage();
+    [MainWorldOnly, RaisesException, NeedsScriptContext] any getViews([Optional, NSDictionary] any filter);
+
     [ImplementedAs=isInIncognitoContext, NeedsPage] readonly attribute boolean inIncognitoContext;
 
     [MainWorldOnly] void isAllowedIncognitoAccess([Optional, CallbackHandler] function callback);

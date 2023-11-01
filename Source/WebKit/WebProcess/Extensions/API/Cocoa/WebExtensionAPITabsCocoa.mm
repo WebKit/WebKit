@@ -542,11 +542,11 @@ bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **out
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
-            *outExceptionString = toErrorString(nil, @"tabID", @"'tabs.TAB_ID_NONE' is not allowed");
+            *outExceptionString = toErrorString(nil, @"tabId", @"'tabs.TAB_ID_NONE' is not allowed");
         else if (identifier)
-            *outExceptionString = toErrorString(nil, @"tabID", @"'%llu' is not a tab identifier", identifier.value().toUInt64());
+            *outExceptionString = toErrorString(nil, @"tabId", @"'%llu' is not a tab identifier", identifier.value().toUInt64());
         else
-            *outExceptionString = toErrorString(nil, @"tabID", @"it is not a tab identifier");
+            *outExceptionString = toErrorString(nil, @"tabId", @"it is not a tab identifier");
         return false;
     }
 
@@ -1218,6 +1218,15 @@ void WebExtensionContextProxy::dispatchTabsDetachedEvent(WebExtensionTabIdentifi
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onDetached
 
+    for (auto entry : m_tabPageMap) {
+        if (!entry.value.first || entry.value.first.value() != tabIdentifier)
+            continue;
+
+        // Clear the window id until it is reattached.
+        entry.value.second = std::nullopt;
+        break;
+    }
+
     auto *detachInfo = @{ oldWindowIdKey: @(toWebAPI(oldWindowIdentifier)), oldPositionKey: toWebAPI(oldIndex) };
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
@@ -1239,6 +1248,14 @@ void WebExtensionContextProxy::dispatchTabsMovedEvent(WebExtensionTabIdentifier 
 void WebExtensionContextProxy::dispatchTabsAttachedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onAttached
+
+    for (auto entry : m_tabPageMap) {
+        if (!entry.value.first || entry.value.first.value() != tabIdentifier)
+            continue;
+
+        entry.value.second = newWindowIdentifier;
+        break;
+    }
 
     auto *attachInfo = @{ newWindowIdKey: @(toWebAPI(newWindowIdentifier)), newPositionKey: toWebAPI(newIndex) };
 

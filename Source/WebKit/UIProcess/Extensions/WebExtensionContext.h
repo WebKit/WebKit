@@ -135,6 +135,8 @@ public:
     using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<String>>;
     using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
+    using PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
+
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
     enum class ReloadFromOrigin : bool { No, Yes };
@@ -314,11 +316,16 @@ public:
 
     UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
 
+    std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
+    Vector<PageIdentifierTuple> popupPageIdentifiers() const;
+    Vector<PageIdentifierTuple> tabPageIdentifiers() const;
+
     WKWebView *relatedWebView();
-    NSString *processDisplayName(WebViewPurpose = WebViewPurpose::Any);
+    NSString *processDisplayName();
     NSArray *corsDisablingPatterns();
     WKWebViewConfiguration *webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
 
+    void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
     HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
@@ -363,7 +370,6 @@ private:
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
-    void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
     void queueStartupAndInstallEventsForExtensionIfNecessary();
     void scheduleBackgroundContentToUnload();
 
@@ -434,6 +440,7 @@ private:
     void firePortDisconnectEventIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
 
     // Runtime APIs
+    void runtimeGetBackgroundPage(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<String> error)>&&);
     void runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
     void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);

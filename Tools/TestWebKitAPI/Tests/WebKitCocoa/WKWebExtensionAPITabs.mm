@@ -68,17 +68,17 @@ static auto *tabsContentScriptManifest = @{
 TEST(WKWebExtensionAPITabs, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertThrows(() => browser.tabs.get('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.get('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabId' value is invalid, because it is not a tab identifier/i)",
+        @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabId' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array with other values was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.reload('bad'), /an unknown argument was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabId' value is invalid, because a number is expected/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.setZoom('bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.setZoom(1, 'bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
