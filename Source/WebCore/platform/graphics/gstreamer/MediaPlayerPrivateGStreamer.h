@@ -45,6 +45,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
@@ -60,7 +61,6 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 #endif
 
 #if USE(TEXTURE_MAPPER)
-#include "TextureMapper.h"
 #if USE(NICOSIA)
 #include "NicosiaContentLayer.h"
 #else
@@ -101,6 +101,8 @@ class VideoTrackPrivateGStreamer;
 #if USE(TEXTURE_MAPPER_DMABUF)
 class GBMBufferSwapchain;
 #endif
+
+enum class TextureMapperFlags : uint16_t;
 
 void registerWebKitGStreamerElements();
 
@@ -374,7 +376,7 @@ protected:
     bool m_areVolumeAndMuteInitialized { false };
 
 #if USE(TEXTURE_MAPPER)
-    TextureMapper::Flags m_textureMapperFlags { TextureMapper::NoFlag };
+    OptionSet<TextureMapperFlags> m_textureMapperFlags;
 #endif
 
     GRefPtr<GstStreamVolume> m_volumeElement;

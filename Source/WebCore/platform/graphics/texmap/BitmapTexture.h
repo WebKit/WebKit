@@ -31,16 +31,19 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapper.h"
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGLHeaders.h"
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class FilterOperations;
 class GraphicsLayer;
 class NativeImage;
+class TextureMapper;
+enum class TextureMapperFlags : uint16_t;
 
 #if OS(WINDOWS)
 #define USE_TEXMAP_DEPTH_STENCIL_BUFFER 1
@@ -108,7 +111,7 @@ public:
 
     void copyFromExternalTexture(GLuint textureID);
 
-    TextureMapper::Flags colorConvertFlags() const { return m_colorConvertFlags; }
+    OptionSet<TextureMapperFlags> colorConvertFlags() const { return m_colorConvertFlags; }
 
 private:
     BitmapTexture(const TextureMapperContextAttributes&, const Flags, GLint internalFormat);
@@ -128,7 +131,7 @@ private:
     bool m_shouldClear { true };
     ClipStack m_clipStack;
     TextureMapperContextAttributes m_contextAttributes;
-    TextureMapper::Flags m_colorConvertFlags { TextureMapper::NoFlag };
+    OptionSet<TextureMapperFlags> m_colorConvertFlags;
     FilterInfo m_filterInfo;
     GLint m_internalFormat { 0 };
     GLenum m_format { 0 };

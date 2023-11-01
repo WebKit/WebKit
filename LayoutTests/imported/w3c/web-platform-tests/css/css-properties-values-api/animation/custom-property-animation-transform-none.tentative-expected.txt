@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: SyntaxError: The given initial value does not parse for the given syntax.
+
+Harness Error (FAIL), message = SyntaxError: The given initial value does not parse for the given syntax.
+
+

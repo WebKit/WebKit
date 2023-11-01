@@ -75,7 +75,7 @@ private:
     void setRightForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
     InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&) const;
-    void setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexList, const LineBox&, const Line::RunList&, const Vector<int32_t>& visualOrderList = { });
+    void setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t>& indexList, const LineBox&, const Line::RunList&, const Vector<int32_t>& visualOrderList = { });
 
     bool isLineFullyTruncatedInBlockDirection() const { return m_lineIsFullyTruncatedInBlockDirection; }
 

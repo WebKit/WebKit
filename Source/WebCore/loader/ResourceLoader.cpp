@@ -287,6 +287,11 @@ FrameLoader* ResourceLoader::frameLoader() const
     return &m_frame->loader();
 }
 
+RefPtr<DocumentLoader> ResourceLoader::protectedDocumentLoader() const
+{
+    return m_documentLoader;
+}
+
 void ResourceLoader::loadDataURL()
 {
     auto url = m_request.url();

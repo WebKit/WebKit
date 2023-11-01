@@ -763,10 +763,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
         auto contentRightInInlineDirectionVisualOrder = contentStartInInlineDirectionVisualOrder;
         auto& inlineContent = lineLayoutResult.inlineContent;
         for (size_t index = 0; index < lineLayoutResult.directionality.visualOrderList.size(); ++index) {
-            auto visualOrder = lineLayoutResult.directionality.visualOrderList[index];
-            ASSERT(inlineContent[visualOrder].bidiLevel() != InlineItem::opaqueBidiLevel);
+            auto logicalIndex = lineLayoutResult.directionality.visualOrderList[index];
+            ASSERT(inlineContent[logicalIndex].bidiLevel() != InlineItem::opaqueBidiLevel);
 
-            auto& lineRun = inlineContent[visualOrder];
+            auto& lineRun = inlineContent[logicalIndex];
             auto& layoutBox = lineRun.layoutBox();
 
             auto needsDisplayBoxOrGeometrySetting = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
@@ -951,32 +951,75 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(InlineDisplay
     }
 }
 
-void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexListOfOutOfFlowBoxes, const LineBox& lineBox, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList)
+static inline size_t runIndex(auto i, auto listSize, auto isLeftToRightDirection)
 {
+    if (isLeftToRightDirection)
+        return i;
+    auto lastIndex = listSize - 1;
+    return lastIndex - i;
+}
+
+static inline void setGeometryForOutOfFlowBoxes(const Vector<size_t>& indexListOfOutOfFlowBoxes, std::optional<size_t> firstOutOfFlowIndexWithPreviousInflowSibling, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList, InlineFormattingContext& formattingContext, const LineBox& lineBox, const ConstraintsForInlineContent& constraints)
+{
+    auto isLeftToRightDirection = formattingContext.root().style().isLeftToRightDirection();
+    auto outOfFlowBoxListSize = indexListOfOutOfFlowBoxes.size();
+
+    auto outOfFlowBox = [&](size_t i) -> const Box& {
+        auto outOfFlowRunIndex = indexListOfOutOfFlowBoxes[runIndex(i, outOfFlowBoxListSize, isLeftToRightDirection)];
+        return (visualOrderList.isEmpty() ? lineRuns[outOfFlowRunIndex] : lineRuns[visualOrderList[outOfFlowRunIndex]]).layoutBox();
+    };
+    // Set geometry on "before inflow content" boxes first, followed by the "after inflow content" list.
+    auto beforeAfterBoundary = firstOutOfFlowIndexWithPreviousInflowSibling.value_or(outOfFlowBoxListSize);
+    // These out of flow boxes "sit" on the line start (they are before any inflow content e.g. <div><div class=out-of-flow></div>some text<div>)
+    for (size_t i = 0; i < beforeAfterBoundary; ++i)
+        formattingContext.geometryForBox(outOfFlowBox(i)).setTopLeft({ constraints.horizontal().logicalLeft, lineBox.logicalRect().top() });
+    // These out of flow boxes are all _after_ an inflow content and get "wrapped" to the next line.
+    for (size_t i = beforeAfterBoundary; i < outOfFlowBoxListSize; ++i)
+        formattingContext.geometryForBox(outOfFlowBox(i)).setTopLeft({ constraints.horizontal().logicalLeft, lineBox.logicalRect().bottom() });
+}
+
+void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t>& indexListOfOutOfFlowBoxes, const LineBox& lineBox, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList)
+{
+    if (indexListOfOutOfFlowBoxes.isEmpty())
+        return;
+
+    // Block level boxes are placed either at the start of the line or "under" depending whether they have previous inflow sibling.
+    // Here we figure out if a particular out of flow box has an inflow sibling or not.
+    // 1. Find the first inflow content. Any out of flow box after this gets moved _under_ the line box.
+    // 2. Loop through the out of flow boxes (indexListOfOutOfFlowBoxes) and set their vertical geometry depending whether they are before or after the first inflow content.
+    // Note that there's an extra layer of directionality here: in case of right to left inline direction, the before inflow content check starts from the right edge and progresses in a leftward manner
+    // and not in visual order. However this is not logical order either (which is more about bidi than inline direction). So LTR starts at the left while RTL starts at the right and in
+    // both cases jumping from run to run in bidi order.
     auto& formattingContext = this->formattingContext();
-    auto outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = false;
+    auto isLeftToRightDirection = root().style().isLeftToRightDirection();
 
-    for (size_t i = 0; i < indexListOfOutOfFlowBoxes.size(); ++i) {
-        auto outOfFlowBoxIndex = indexListOfOutOfFlowBoxes[i];
-        ASSERT(outOfFlowBoxIndex < lineRuns.size());
-
-        auto hasPreviousInFlowContent = [&] {
-            if (outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration)
-                return true;
-            for (size_t previousRunIndex = !i ? 0 : indexListOfOutOfFlowBoxes[i - 1] + 1; previousRunIndex < outOfFlowBoxIndex; ++previousRunIndex) {
-                auto& previousRun = visualOrderList.isEmpty() ? lineRuns[previousRunIndex] : lineRuns[visualOrderList[previousRunIndex]];
-                if (Line::Run::isContentfulOrHasDecoration(previousRun, formattingContext)) {
-                    outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = true;
-                    return true;
-                }
-            }
-            return false;
-        };
-        // Block level boxes are placed either at the start of the line or "under" depending whether they have previous inflow sibling.
-        auto logicalTop = hasPreviousInFlowContent() ? lineBox.logicalRect().bottom() : lineBox.logicalRect().top();
-        auto& lineRun = visualOrderList.isEmpty() ? lineRuns[outOfFlowBoxIndex] : lineRuns[visualOrderList[outOfFlowBoxIndex]];
-        formattingContext.geometryForBox(lineRun.layoutBox()).setTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
+    auto firstContentfulInFlowRunIndex = std::optional<size_t> { };
+    auto contentListSize = visualOrderList.isEmpty() ? lineRuns.size() : visualOrderList.size();
+    for (size_t i = 0; i < contentListSize; ++i) {
+        auto index = runIndex(i, contentListSize, isLeftToRightDirection);
+        auto& lineRun = visualOrderList.isEmpty() ? lineRuns[index] : lineRuns[visualOrderList[index]];
+        if (lineRun.layoutBox().isInFlow() && Line::Run::isContentfulOrHasDecoration(lineRun, formattingContext)) {
+            firstContentfulInFlowRunIndex = index;
+            break;
+        }
     }
+
+    if (!firstContentfulInFlowRunIndex) {
+        setGeometryForOutOfFlowBoxes(indexListOfOutOfFlowBoxes, { }, lineRuns, visualOrderList, formattingContext, lineBox, constraints());
+        return;
+    }
+
+    auto firstOutOfFlowIndexWithPreviousInflowSibling = std::optional<size_t> { };
+    auto outOfFlowBoxListSize = indexListOfOutOfFlowBoxes.size();
+    for (size_t i = 0; i < outOfFlowBoxListSize; ++i) {
+        auto outOfFlowIndex = runIndex(i, outOfFlowBoxListSize, isLeftToRightDirection);
+        auto hasPreviousInflowSibling = (isLeftToRightDirection && indexListOfOutOfFlowBoxes[outOfFlowIndex] > *firstContentfulInFlowRunIndex) || (!isLeftToRightDirection && indexListOfOutOfFlowBoxes[outOfFlowIndex] < *firstContentfulInFlowRunIndex);
+        if (hasPreviousInflowSibling) {
+            firstOutOfFlowIndexWithPreviousInflowSibling = outOfFlowIndex;
+            break;
+        }
+    }
+    setGeometryForOutOfFlowBoxes(indexListOfOutOfFlowBoxes, firstOutOfFlowIndexWithPreviousInflowSibling, lineRuns, visualOrderList, formattingContext, lineBox, constraints());
 }
 
 static float logicalBottomForTextDecorationContent(const InlineDisplay::Boxes& boxes, bool isHorizontalWritingMode)

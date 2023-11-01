@@ -269,12 +269,25 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     conf_win_bottom_offset = reader.ReadExponentialGolomb();
   }
 
+#if WEBRTC_WEBKIT_BUILD
+  // log2_max_pic_order_cnt_lsb_minus4 is used with
+  // BitstreamReader::ConsumeBits, which can read at most INT_MAX bits at
+  // a time. We also have to avoid overflow when adding 4 to the on-wire
+  // golomb value, e.g., for evil input data.
+  const uint32_t kMaxLog2LsbMinus4 = std::numeric_limits<int>::max() - 4;
+#endif
+
   // bit_depth_luma_minus8: ue(v)
   reader.ReadExponentialGolomb();
   // bit_depth_chroma_minus8: ue(v)
   reader.ReadExponentialGolomb();
   // log2_max_pic_order_cnt_lsb_minus4: ue(v)
   sps.log2_max_pic_order_cnt_lsb_minus4 = reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+  if (!reader.Ok() || sps.log2_max_pic_order_cnt_lsb_minus4 > kMaxLog2LsbMinus4) {
+    return absl::nullopt;
+  }
+#endif
   uint32_t sps_sub_layer_ordering_info_present_flag = 0;
   // sps_sub_layer_ordering_info_present_flag: u(1)
   sps_sub_layer_ordering_info_present_flag = reader.Read<bool>();

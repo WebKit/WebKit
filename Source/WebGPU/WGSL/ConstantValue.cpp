@@ -37,8 +37,17 @@ void ConstantValue::dump(PrintStream& out) const
         [&](double d) {
             out.print(String::number(d));
         },
+        [&](float f) {
+            out.print(String::number(f), "f");
+        },
         [&](int64_t i) {
             out.print(String::number(i));
+        },
+        [&](int32_t i) {
+            out.print(String::number(i), "i");
+        },
+        [&](uint32_t u) {
+            out.print(String::number(u), "u");
         },
         [&](bool b) {
             out.print(b ? "true" : "false");

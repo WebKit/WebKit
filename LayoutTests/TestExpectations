@@ -101,6 +101,7 @@ fast/dom/Range/mac [ Skip ]
 remote-layer-tree [ Skip ]
 inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
+ipc/restrictedendpoints/mac [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]

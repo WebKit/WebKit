@@ -187,8 +187,6 @@ operator :~, {
     "|" => 'constantBitwiseOr',
     "&" => 'constantBitwiseAnd',
     "^" => 'constantBitwiseXor',
-    "<<" => 'constantBitwiseShiftLeft',
-    ">>" => 'constantBitwiseShiftRight',
 }.each do |op, const_function|
     operator :"#{op}", {
         must_use: true,
@@ -196,6 +194,19 @@ operator :~, {
 
         [T < Integer].(T, T) => T,
         [T < Integer, N].(vec[N][T], vec[N][T]) => vec[N][T]
+    }
+end
+
+{
+    "<<" => 'constantBitwiseShiftLeft',
+    ">>" => 'constantBitwiseShiftRight',
+}.each do |op, const_function|
+    operator :"#{op}", {
+        must_use: true,
+        const: const_function,
+
+        [S < ConcreteInteger].(S, u32) => S,
+        [S < ConcreteInteger, N].(vec[N][S], vec[N][u32]) => vec[N][S],
     }
 end
 

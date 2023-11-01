@@ -2206,6 +2206,7 @@ webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.htm
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
+webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-viewable-baseline-alignment.html [ ImageOnlyFailure ]
 
 webkit.org/b/182103 fast/forms/textarea-scrolled-type.html [ Failure ]
 webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]

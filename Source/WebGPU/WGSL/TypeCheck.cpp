@@ -136,7 +136,7 @@ private:
     bool isBottom(const Type*) const;
     void introduceType(const AST::Identifier&, const Type*);
     void introduceValue(const AST::Identifier&, const Type*, std::optional<ConstantValue> = std::nullopt);
-    bool convertValue(const SourceSpan&, const Type*, ConstantValue&);
+    bool convertValue(const SourceSpan&, const Type*, ConstantValue&, bool explicitConversion = false);
 
     template<typename TargetConstructor, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
@@ -359,12 +359,15 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     visitAttributes(variable.attributes());
 
     const Type* result = nullptr;
-    std::optional<ConstantValue> value;
+    ConstantValue* value = nullptr;
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
-        value = variable.maybeInitializer()->constantValue();
+        auto& constantValue = variable.maybeInitializer()->m_constantValue;
+        if (constantValue.has_value())
+            value = &*constantValue;
+
         if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
             initializerType = reference->element;
             variable.maybeInitializer()->m_inferredType = initializerType;
@@ -383,13 +386,14 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
     }
 
+    if (value)
+        convertValue(variable.span(), result, *value);
+
     if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType()) {
-        if (value)
-            convertValue(variable.span(), result, *value);
-        else
+        if (!value)
             typeError(InferBottom::No, variable.span(), "INTERNAL ERROR: failed to compute constant");
     } else
-        value = std::nullopt;
+        value = nullptr;
 
     if (variable.flavor() == AST::VariableFlavor::Var) {
         AddressSpace addressSpace;
@@ -417,7 +421,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         }
     }
 
-    introduceValue(variable.name(), result, value);
+    introduceValue(variable.name(), result, value ? std::optional<ConstantValue>(*value) : std::nullopt);
 }
 
 void TypeChecker::visit(AST::Function& function)
@@ -547,8 +551,15 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
         typeError(InferBottom::No, statement.span(), "cannot store into a read-only type '", *lhs, "'");
         return;
     }
-    if (!unify(reference->element, rhs))
+    if (!unify(reference->element, rhs)) {
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *reference->element, "'");
+        return;
+    }
+
+    statement.rhs().m_inferredType = reference->element;
+    auto& value = statement.rhs().m_constantValue;
+    if (value.has_value())
+        convertValue(statement.rhs().span(), statement.rhs().inferredType(), *value);
 }
 
 void TypeChecker::visit(AST::CallStatement& statement)
@@ -856,6 +867,9 @@ void TypeChecker::visit(AST::CallExpression& call)
                             return;
                         }
                         argument.m_inferredType = fieldType;
+                        auto& value = argument.m_constantValue;
+                        if (value.has_value())
+                            convertValue(argument.span(), argument.inferredType(), *value);
                     }
                     inferred(targetBinding->type);
                     return;
@@ -903,6 +917,9 @@ void TypeChecker::visit(AST::CallExpression& call)
                             return;
                         }
                         argument.m_inferredType = parameterType;
+                        auto& value = argument.m_constantValue;
+                        if (value.has_value())
+                            convertValue(argument.span(), argument.inferredType(), *value);
                     }
                     inferred(functionType->result);
                     return;
@@ -950,7 +967,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
 
-            elementCount = array.maybeElementCount()->constantValue()->toInt();
+            elementCount = array.maybeElementCount()->constantValue()->integerValue();
             if (!elementCount) {
                 typeError(call.span(), "array count must be greater than 0");
                 return;
@@ -1000,13 +1017,17 @@ void TypeChecker::visit(AST::CallExpression& call)
 
         unsigned argumentCount = call.arguments().size();
         FixedVector<ConstantValue> arguments(argumentCount);
+        bool isConstant = true;
         for (unsigned i = 0; i < argumentCount; ++i) {
-            auto value = call.arguments()[i].constantValue();
-            if (!value.has_value())
-                return;
-            arguments[i] = *value;
+            auto& argument = call.arguments()[i];
+            auto& value = argument.m_constantValue;
+            if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), *value))
+                isConstant = false;
+            else
+                arguments[i] = *value;
         }
-        setConstantValue(call, ConstantArray(WTFMove(arguments)));
+        if (isConstant)
+            setConstantValue(call, ConstantArray(WTFMove(arguments)));
 
         return;
     }
@@ -1123,7 +1144,7 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
             return;
         }
 
-        size = value->toInt();
+        size = value->integerValue();
     }
 
     inferred(m_types.arrayType(elementType, size));
@@ -1271,21 +1292,33 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
+        bool isConstructor = false;
         if (it->value.kind == OverloadedDeclaration::Constructor && is<AST::CallExpression>(expression)) {
             auto& call = downcast<AST::CallExpression>(expression);
             call.m_isConstructor = true;
+            isConstructor = true;
         }
 
-        if (auto constantFunction = it->value.constantFunction) {
+        if (isConstructor && callArguments.size() == 1 && callArguments[0].inferredType()->index() == overload->result->index()) {
+            auto& argument = callArguments[0];
+            auto& value = argument.m_constantValue;
+            if (value.has_value() && convertValue(argument.span(), overload->result, *value, true))
+                setConstantValue(expression, *value);
+        } else {
             unsigned argumentCount = callArguments.size();
             FixedVector<ConstantValue> arguments(argumentCount);
+            bool isConstant = true;
             for (unsigned i = 0; i < argumentCount; ++i) {
-                auto value = callArguments[i].constantValue();
-                if (!value.has_value())
-                    return overload->result;
-                arguments[i] = *value;
+                auto& argument = callArguments[i];
+                auto& value = argument.m_constantValue;
+                if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), *value))
+                    isConstant = false;
+                else
+                    arguments[i] = *value;
             }
-            setConstantValue(expression, constantFunction(overload->result, WTFMove(arguments)));
+
+            if (auto constantFunction = it->value.constantFunction; isConstant && constantFunction)
+                setConstantValue(expression, constantFunction(overload->result, WTFMove(arguments)));
         }
 
         return overload->result;
@@ -1392,9 +1425,8 @@ void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
-bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, ConstantValue& value)
+bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, ConstantValue& value, bool explicitConversion)
 {
-
     if (shouldDumpConstantValues) {
         StringPrintStream valueString;
         value.dump(valueString);
@@ -1405,42 +1437,127 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
         [&](const Types::Primitive& primitive) -> bool {
             switch (primitive.kind) {
             case Types::Primitive::F32: {
-                auto result = convertFloat<float>(value.toDouble());
+                std::optional<float> result;
+                if (auto* f32 = std::get_if<float>(&value))
+                    result = convertFloat<float>(*f32);
+                else if (auto* abstractFloat = std::get_if<double>(&value))
+                    result = convertFloat<float>(*abstractFloat);
+                else if (auto* abstractInt = std::get_if<int64_t>(&value))
+                    result = convertFloat<float>(static_cast<double>(*abstractInt));
+                else {
+                    RELEASE_ASSERT(explicitConversion);
+
+                    if (auto* boolean = std::get_if<bool>(&value))
+                        result = convertFloat<float>(static_cast<double>(*boolean));
+                    else if (auto* i32 = std::get_if<int32_t>(&value))
+                        result = convertFloat<float>(static_cast<double>(*i32));
+                    else if (auto* u32 = std::get_if<uint32_t>(&value))
+                        result = convertFloat<float>(static_cast<double>(*u32));
+                    else
+                        RELEASE_ASSERT_NOT_REACHED();
+                }
+
                 if (!result.has_value())
                     return false;
                 value = { *result };
                 return true;
             }
             case Types::Primitive::I32: {
-                auto result = convertInteger<int>(value.toInt());
+                if (std::holds_alternative<int32_t>(value))
+                    return true;
+                std::optional<int32_t> result;
+                if (auto* abstractInt = std::get_if<int64_t>(&value))
+                    result = convertInteger<int32_t>(*abstractInt);
+                else {
+                    RELEASE_ASSERT(explicitConversion);
+
+                    if (auto* u32 = std::get_if<uint32_t>(&value))
+                        result = convertInteger<int32_t>(*u32);
+                    else if (auto* boolean = std::get_if<bool>(&value))
+                        result = static_cast<int32_t>(*boolean);
+                    else if (auto* f32 = std::get_if<float>(&value))
+                        result = convertInteger<int32_t>(static_cast<int64_t>(*f32));
+                    else if (auto* abstractFloat = std::get_if<double>(&value))
+                        result = convertInteger<int32_t>(static_cast<int64_t>(*abstractFloat));
+                    else
+                        RELEASE_ASSERT_NOT_REACHED();
+                }
                 if (!result.has_value())
                     return false;
                 value = { *result };
                 return true;
             }
             case Types::Primitive::U32: {
-                auto result = convertInteger<unsigned>(value.toInt());
+                if (std::holds_alternative<uint32_t>(value))
+                    return true;
+                std::optional<uint32_t> result;
+                if (auto* abstractInt = std::get_if<int64_t>(&value))
+                    result = convertInteger<uint32_t>(*abstractInt);
+                else {
+                    RELEASE_ASSERT(explicitConversion);
+
+                    if (auto* i32 = std::get_if<int32_t>(&value))
+                        result = convertInteger<uint32_t>(*i32);
+                    else if (auto* boolean = std::get_if<bool>(&value))
+                        result = static_cast<uint32_t>(*boolean);
+                    else if (auto* f32 = std::get_if<float>(&value))
+                        result = convertInteger<uint32_t>(static_cast<int64_t>(*f32));
+                    else if (auto* abstractFloat = std::get_if<double>(&value))
+                        result = convertInteger<uint32_t>(static_cast<int64_t>(*abstractFloat));
+                    else
+                        RELEASE_ASSERT_NOT_REACHED();
+                }
                 if (!result.has_value())
                     return false;
                 value = { *result };
                 return true;
             }
-            case Types::Primitive::AbstractInt: {
-                auto result = convertInteger<int64_t>(value.toInt());
-                if (!result.has_value())
-                    return false;
-                value = { *result };
+            case Types::Primitive::AbstractInt:
+                // We might get an "explicit" conversion for things like vec2(vec2(0)),
+                // where the source and target types are the same. Otherwise, it should
+                // be impossible to force a conversion to from any other type to
+                // an abstract type
+                ASSERT(std::holds_alternative<int64_t>(value));
                 return true;
-            }
             case Types::Primitive::AbstractFloat: {
-                auto result = convertFloat<double>(value.toDouble());
+                // We might get an "explicit" conversion for things like vec2(vec2(0.0)),
+                // where the source and target types are the same. Otherwise, it should
+                // be impossible to force a conversion to from any other type to
+                // an abstract type
+                ASSERT(!explicitConversion || std::holds_alternative<double>(value));
+
+                std::optional<double> result;
+                if (auto* abstractFloat = std::get_if<double>(&value))
+                    result = convertFloat<double>(*abstractFloat);
+                else if (auto* abstractInt = std::get_if<int64_t>(&value))
+                    result = convertFloat<double>(static_cast<double>(*abstractInt));
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
                 if (!result.has_value())
                     return false;
                 value = { *result };
                 return true;
             }
             case Types::Primitive::Bool:
-                ASSERT(value.isBool());
+                if (std::holds_alternative<bool>(value))
+                    return true;
+
+                bool result;
+                RELEASE_ASSERT(explicitConversion);
+
+                if (auto* i32 = std::get_if<int32_t>(&value))
+                    result = static_cast<bool>(*i32);
+                else if (auto* u32 = std::get_if<uint32_t>(&value))
+                    result = static_cast<bool>(*u32);
+                else if (auto* abstractInt = std::get_if<int64_t>(&value))
+                    result = static_cast<bool>(*abstractInt);
+                else if (auto* f32 = std::get_if<float>(&value))
+                    result = static_cast<bool>(*f32);
+                else if (auto* abstractFloat = std::get_if<double>(&value))
+                    result = static_cast<bool>(*abstractFloat);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+                value = { result };
                 return true;
             case Types::Primitive::Void:
             case Types::Primitive::Sampler:
@@ -1456,7 +1573,7 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             ASSERT(value.isVector());
             auto& vector = std::get<ConstantVector>(value);
             for (auto& element : vector.elements) {
-                if (!convertValue(span, vectorType.element, element))
+                if (!convertValue(span, vectorType.element, element, explicitConversion))
                     return false;
             }
             return true;
@@ -1465,7 +1582,7 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             ASSERT(value.isMatrix());
             auto& matrix = std::get<ConstantMatrix>(value);
             for (auto& element : matrix.elements) {
-                if (!convertValue(span, matrixType.element, element))
+                if (!convertValue(span, matrixType.element, element, explicitConversion))
                     return false;
             }
             return true;
@@ -1474,7 +1591,7 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             ASSERT(value.isArray());
             auto& array = std::get<ConstantArray>(value);
             for (auto& element : array.elements) {
-                if (!convertValue(span, arrayType.element, element))
+                if (!convertValue(span, arrayType.element, element, explicitConversion))
                     return false;
             }
             return true;

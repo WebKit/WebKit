@@ -90,6 +90,9 @@ public:
         HashMap<String, String> extraInitializationData;
         bool nonValidInjectedCodeAllowed { false };
         bool shouldMakeProcessLaunchFailForTesting { false };
+#if USE(EXTENSIONKIT)
+        bool launchAsExtensions { false };
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
         HashMap<CString, SandboxPermission> extraSandboxPaths;

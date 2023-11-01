@@ -3270,7 +3270,10 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
                 layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
             }
             frameHolder->updateTexture(layerBuffer->texture());
-            layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapper::ShouldBlend | TextureMapper::ShouldPremultiply : 0));
+            auto extraFlags = m_textureMapperFlags;
+            if (frameHolder->hasAlphaChannel())
+                extraFlags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
+            layerBuffer->setExtraFlags(extraFlags);
         }
         proxy.pushNextBuffer(WTFMove(layerBuffer));
     };
@@ -3938,23 +3941,23 @@ void MediaPlayerPrivateGStreamer::updateTextureMapperFlags()
 {
     switch (m_videoSourceOrientation.orientation()) {
     case ImageOrientation::Orientation::OriginTopLeft:
-        m_textureMapperFlags = 0;
+        m_textureMapperFlags = { };
         break;
     case ImageOrientation::Orientation::OriginRightTop:
-        m_textureMapperFlags = TextureMapper::ShouldRotateTexture90;
+        m_textureMapperFlags = { TextureMapperFlags::ShouldRotateTexture90 };
         break;
     case ImageOrientation::Orientation::OriginBottomRight:
-        m_textureMapperFlags = TextureMapper::ShouldRotateTexture180;
+        m_textureMapperFlags = { TextureMapperFlags::ShouldRotateTexture180 };
         break;
     case ImageOrientation::Orientation::OriginLeftBottom:
-        m_textureMapperFlags = TextureMapper::ShouldRotateTexture270;
+        m_textureMapperFlags = { TextureMapperFlags::ShouldRotateTexture270 };
         break;
     case ImageOrientation::Orientation::OriginBottomLeft:
-        m_textureMapperFlags = TextureMapper::ShouldFlipTexture;
+        m_textureMapperFlags = { TextureMapperFlags::ShouldFlipTexture };
         break;
     default:
         // FIXME: Handle OriginTopRight, OriginLeftTop and OriginRightBottom.
-        m_textureMapperFlags = 0;
+        m_textureMapperFlags = { };
         break;
     }
 }

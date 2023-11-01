@@ -43,6 +43,7 @@
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
@@ -170,7 +171,7 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor {
+class Editor : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Editor(Document&);

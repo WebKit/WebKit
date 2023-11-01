@@ -578,7 +578,7 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    unsigned bufferIndex = group.group().constantValue()->toInt();
+    unsigned bufferIndex = group.group().constantValue()->integerValue();
     if (m_entryPointStage.has_value() && *m_entryPointStage == ShaderStage::Vertex) {
         ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
         auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
@@ -589,7 +589,7 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id(", binding.binding().constantValue()->toInt(), ")]]");
+    m_stringBuilder.append("[[id(", binding.binding().constantValue()->integerValue(), ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -599,7 +599,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc", location.location().constantValue()->toInt(), ")]]");
+            m_stringBuilder.append("[[user(loc", location.location().constantValue()->integerValue(), ")]]");
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
@@ -610,10 +610,10 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::FragmentOutputWrapper:
             RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
-            m_stringBuilder.append("[[color(", location.location().constantValue()->toInt(), ")]]");
+            m_stringBuilder.append("[[color(", location.location().constantValue()->integerValue(), ")]]");
             return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute(", location.location().constantValue()->toInt(), ")]]");
+            m_stringBuilder.append("[[attribute(", location.location().constantValue()->integerValue(), ")]]");
             break;
         }
     }
@@ -1727,16 +1727,23 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
             case Primitive::AbstractInt:
+                m_stringBuilder.append(std::get<int64_t>(value));
+                break;
             case Primitive::I32:
-                m_stringBuilder.append(value.toInt());
+                m_stringBuilder.append(std::get<int32_t>(value));
                 break;
             case Primitive::U32:
-                m_stringBuilder.append(value.toInt(), "u");
+                m_stringBuilder.append(std::get<uint32_t>(value), "u");
                 break;
-            case Primitive::AbstractFloat:
+            case Primitive::AbstractFloat: {
+                NumberToStringBuffer buffer;
+                WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer);
+                m_stringBuilder.append(&buffer[0]);
+                break;
+            }
             case Primitive::F32: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(value.toDouble(), buffer);
+                WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer);
                 m_stringBuilder.append(&buffer[0]);
                 break;
             }

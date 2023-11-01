@@ -541,6 +541,11 @@ ScrollingCoordinator* Page::scrollingCoordinator()
     return m_scrollingCoordinator.get();
 }
 
+RefPtr<ScrollingCoordinator> Page::protectedScrollingCoordinator()
+{
+    return scrollingCoordinator();
+}
+
 String Page::scrollingStateTreeAsText()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
@@ -3391,6 +3396,11 @@ PluginInfoProvider& Page::pluginInfoProvider()
 }
 
 UserContentProvider& Page::userContentProvider()
+{
+    return m_userContentProvider;
+}
+
+Ref<UserContentProvider> Page::protectedUserContentProvider()
 {
     return m_userContentProvider;
 }

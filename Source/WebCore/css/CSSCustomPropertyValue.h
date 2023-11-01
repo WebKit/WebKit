@@ -62,7 +62,7 @@ public:
         friend bool operator==(const SyntaxValueList&, const SyntaxValueList&) = default;
     };
 
-    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue, SyntaxValueList>;
+    using VariantValue = std::variant<Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue, SyntaxValueList>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 

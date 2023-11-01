@@ -120,6 +120,10 @@ bool AccessibilityController::removeNotificationListener()
     return true;
 }
 
+void AccessibilityController::overrideClient(JSStringRef)
+{
+}
+
 } // namespace WTR
 
 #endif // USE(ATSPI)

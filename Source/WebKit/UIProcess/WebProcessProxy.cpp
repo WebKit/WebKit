@@ -337,7 +337,7 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(DISPLAY_LINK)
-    protectedProcessPool()->displayLinks().stopDisplayLinks(m_displayLinkClient);
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
@@ -528,6 +528,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
+    AuxiliaryProcessProxy::platformGetLaunchOptions(launchOptions);
 }
 #endif
 

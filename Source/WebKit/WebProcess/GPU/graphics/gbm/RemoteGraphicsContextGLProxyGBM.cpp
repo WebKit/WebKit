@@ -40,6 +40,7 @@
 #include <WebCore/DMABufObject.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
+#include <WebCore/TextureMapperFlags.h>
 #include <WebCore/TextureMapperPlatformLayerProxyDMABuf.h>
 
 namespace WebKit {
@@ -88,9 +89,9 @@ void NicosiaDisplayDelegate::swapBuffersIfNeeded()
     if (!!m_pending.handle) {
         Locker locker { proxy.lock() };
 
-        WebCore::TextureMapper::Flags flags = WebCore::TextureMapper::ShouldFlipTexture;
+        OptionSet<WebCore::TextureMapperFlags> flags = WebCore::TextureMapperFlags::ShouldFlipTexture;
         if (!m_isOpaque)
-            flags |= WebCore::TextureMapper::ShouldBlend;
+            flags.add(WebCore::TextureMapperFlags::ShouldBlend);
 
         downcast<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(WTFMove(m_pending),
             [](auto&& object) { return object; }, flags);

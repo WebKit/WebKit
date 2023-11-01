@@ -304,6 +304,10 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
         for (const auto& pool : WebProcessPool::allProcessPools())
             logProcessPoolState(pool.get());
     });
+
+#if USE(EXTENSIONKIT)
+    AuxiliaryProcessProxy::setManageProcessesAsExtensions(CFPreferencesGetAppBooleanValue(CFSTR("manageProcessesAsExtensions"), CFSTR("com.apple.WebKit"), nullptr));
+#endif
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()

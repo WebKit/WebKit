@@ -21,12 +21,13 @@
 
 #include "FloatRect.h"
 #include "Image.h"
-#include "TextureMapper.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class BitmapTexture;
 class GraphicsLayer;
+class TextureMapper;
 
 class TextureMapperTile {
     WTF_MAKE_FAST_ALLOCATED;

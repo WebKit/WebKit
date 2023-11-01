@@ -67,24 +67,26 @@ SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceManager);
 namespace WebKit {
 
 #if USE(EXTENSIONKIT)
-static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(ProcessLauncher::ProcessType processType)
+static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client)
 {
     switch (processType) {
-    case ProcessLauncher::ProcessType::Web:
-        // FIXME: Add support for lockdown mode again.
-        return { "com.apple.WebKit.WebContent", @"com.apple.mobilesafari.WebContentExtension" };
+    case ProcessLauncher::ProcessType::Web: {
+        if (client && client->shouldEnableLockdownMode())
+            return { "com.apple.WebKit.WebContent"_s, @"com.apple.mobilesafari.WebContentExtension.CaptivePortal" };
+        return { "com.apple.WebKit.WebContent"_s, @"com.apple.mobilesafari.WebContentExtension" };
+    }
     case ProcessLauncher::ProcessType::Network:
-        return { "com.apple.WebKit.Networking", @"com.apple.mobilesafari.NetworkingExtension" };
+        return { "com.apple.WebKit.Networking"_s, @"com.apple.mobilesafari.NetworkingExtension" };
 #if ENABLE(GPU_PROCESS)
     case ProcessLauncher::ProcessType::GPU:
-        return { "com.apple.WebKit.GPU", @"com.apple.mobilesafari.GPUExtension" };
+        return { "com.apple.WebKit.GPU"_s, @"com.apple.mobilesafari.GPUExtension" };
 #endif
     }
 }
 
-static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, std::function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)> handler)
+static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, std::function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)> handler)
 {
-    auto [name, identifier] = serviceNameAndIdentifier(processType);
+    auto [name, identifier] = serviceNameAndIdentifier(processType, client);
 
     auto configuration = adoptNS([alloc_SEServiceConfigurationInstance() initWithServiceIdentifier:identifier.get()]);
     _SEServiceManager* manager = [get_SEServiceManagerClass() performSelector:@selector(sharedInstance)];
@@ -113,7 +115,8 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
     }
     }
 }
-#else
+#endif // USE(EXTENSIONKIT)
+
 static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     if (client && client->shouldEnableLockdownMode())
@@ -135,7 +138,6 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 #endif
     }
 }
-#endif
 
 void ProcessLauncher::launchProcess()
 {
@@ -147,8 +149,15 @@ void ProcessLauncher::launchProcess()
         if (!weakProcessLauncher.get())
             return;
         if (error) {
-            // FIXME: fall back to XPC launch path
             NSLog(@"Error launching process %@ error %@", process, error);
+            callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
+                auto launcher = weakProcessLauncher.get();
+                if (!launcher)
+                    return;
+                const char* name = serviceName(launcher->m_launchOptions, launcher->m_client);
+                launcher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
+                launcher->finishLaunchingProcess(name);
+            });
         }
         callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher, name = name, process = RetainPtr<_SEExtensionProcess>(process)] {
             auto connection = [process makeLibXPCConnectionError:nil];
@@ -161,12 +170,14 @@ void ProcessLauncher::launchProcess()
         });
     };
 
-    launchWithExtensionKit(*this, m_launchOptions.processType, handler);
-#else
+    if (m_launchOptions.launchAsExtensions) {
+        launchWithExtensionKit(*this, m_launchOptions.processType, m_client, handler);
+        return;
+    }
+#endif
     const char* name = serviceName(m_launchOptions, m_client);
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
-#endif
 }
 
 void ProcessLauncher::finishLaunchingProcess(const char* name)

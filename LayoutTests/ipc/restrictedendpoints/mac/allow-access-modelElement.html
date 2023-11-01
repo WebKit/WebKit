@@ -1,13 +1,13 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ModelElementEnabled=true ] -->
 <title>Test that calling into modelElement specific methods, like ModelElementDestroyRemotePreview, is enabled if ModelElementEnabled is true</title>
-<script src="../../resources/ipc.js"></script>
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<script src="../../../resources/ipc.js"></script>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
 <body>
 <script>
     testRunner.dumpAsText();
 
-    if (window.IPC) {
+    if (window.IPC && IPC.messages.WebPageProxy_ModelElementDestroyRemotePreview) {
         IPC.sendMessage(
             'UI',
             IPC.webPageProxyID,

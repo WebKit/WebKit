@@ -30,7 +30,6 @@
 #if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER_DMABUF)
 
 #include "PlatformDisplay.h"
-#include "TextureMapper.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperLayer.h"
 #include <fcntl.h>
@@ -162,10 +161,11 @@ void TextureMapperPlatformLayerProxyDMABuf::pushDMABuf(Ref<DMABufLayer>&& dmabuf
         m_compositor->onNewBufferAvailable();
 }
 
-TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::DMABufLayer(DMABufObject&& object, TextureMapper::Flags flags)
+TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::DMABufLayer(DMABufObject&& object, OptionSet<TextureMapperFlags> flags)
     : m_object(WTFMove(object))
     , m_flags(flags)
-{ }
+{
+}
 
 TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::~DMABufLayer() = default;
 

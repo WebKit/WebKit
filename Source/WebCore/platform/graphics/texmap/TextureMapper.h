@@ -30,6 +30,7 @@
 #include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
 #include <array>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 // TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
@@ -44,27 +45,11 @@ class TextureMapperGLData;
 class TextureMapperShaderProgram;
 class FilterOperations;
 class FloatRoundedRect;
+enum class TextureMapperFlags : uint16_t;
 
 class TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Flag {
-        NoFlag = 0x00,
-        ShouldBlend = 0x01,
-        ShouldFlipTexture = 0x02,
-        ShouldAntialias = 0x08,
-        ShouldRotateTexture90 = 0x10,
-        ShouldRotateTexture180 = 0x20,
-        ShouldRotateTexture270 = 0x40,
-        ShouldConvertTextureBGRAToRGBA = 0x80,
-        ShouldConvertTextureARGBToRGBA = 0x100,
-        ShouldNotBlend = 0x200,
-        ShouldUseExternalOESTextureRect = 0x400,
-        ShouldPremultiply = 0x800
-    };
-
-    typedef int Flags;
-
     enum PaintFlag {
         PaintingMirrored = 1 << 0,
     };
@@ -94,11 +79,11 @@ public:
     void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&);
 
     WEBCORE_EXPORT void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, unsigned exposedEdges = AllEdges);
-    void drawTexture(GLuint texture, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    void drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, std::optional<GLuint> alphaPlane, unsigned exposedEdges = AllEdges);
-    void drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    void drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    void drawTextureExternalOES(GLuint texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexture(GLuint texture, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 16>& yuvToRgbMatrix, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, std::optional<GLuint> alphaPlane, unsigned exposedEdges = AllEdges);
+    void drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 16>& yuvToRgbMatrix, OptionSet<TextureMapperFlags>, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTextureExternalOES(GLuint texture, OptionSet<TextureMapperFlags>, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&, bool);
     void clearColor(const Color&);
 
@@ -141,9 +126,9 @@ private:
     void drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect);
     void drawBlurred(const BitmapTexture& sourceTexture, const FloatRect&, float radius, Direction, bool alphaBlur = false);
     void drawFilterPass(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
-    void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, Flags);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, OptionSet<TextureMapperFlags>, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, OptionSet<TextureMapperFlags>, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, OptionSet<TextureMapperFlags>);
     void drawUnitRect(TextureMapperShaderProgram&, GLenum drawingMode);
     void drawEdgeTriangles(TextureMapperShaderProgram&);
 

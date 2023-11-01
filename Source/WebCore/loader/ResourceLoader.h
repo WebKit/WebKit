@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "CachedResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceLoaderIdentifier.h"
@@ -80,6 +81,7 @@ public:
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+    RefPtr<DocumentLoader> protectedDocumentLoader() const;
     const ResourceRequest& originalRequest() const { return m_originalRequest; }
 
     WEBCORE_EXPORT void start();
@@ -136,6 +138,7 @@ public:
     WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;
     
     virtual CachedResource* cachedResource() const { return nullptr; }
+    CachedResourceHandle<CachedResource> protectedCachedResource() const { return cachedResource(); }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 

@@ -30,6 +30,7 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "NicosiaPlatformLayer.h"
+#include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 
@@ -95,7 +96,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 }
 
                 auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-                layerBuffer->setExtraFlags(TextureMapper::ShouldBlend);
+                layerBuffer->setExtraFlags(TextureMapperFlags::ShouldBlend);
                 downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
             });
         };

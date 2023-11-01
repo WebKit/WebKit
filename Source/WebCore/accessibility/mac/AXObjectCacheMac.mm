@@ -725,6 +725,10 @@ void AXObjectCache::initializeAXThreadIfNeeded()
 
 bool AXObjectCache::shouldSpellCheck()
 {
+    // This method can be called from non-accessibility contexts, so we need to allow spellchecking if accessibility is disabled.
+    if (!accessibilityEnabled())
+        return true;
+
     if (UNLIKELY(forceDeferredSpellChecking()))
         return false;
 

@@ -76,22 +76,22 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
 
         switch (specializationConstant.type) {
         case WGSL::Reflection::SpecializationConstantType::Boolean: {
-            bool value = constantValue.toBool();
+            auto value = std::get<bool>(constantValue);
             [constantValues setConstantValue:&value type:MTLDataTypeBool withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Float: {
-            float value = constantValue.toDouble();
+            auto value = std::get<float>(constantValue);
             [constantValues setConstantValue:&value type:MTLDataTypeFloat withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Int: {
-            int value = constantValue.toInt();
+            auto value = std::get<int32_t>(constantValue);
             [constantValues setConstantValue:&value type:MTLDataTypeInt withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Unsigned: {
-            unsigned value = constantValue.toInt();
+            auto value = std::get<uint32_t>(constantValue);
             [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
             break;
         }

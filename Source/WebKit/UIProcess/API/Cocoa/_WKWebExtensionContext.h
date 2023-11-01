@@ -523,7 +523,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly, copy) NSArray<id <_WKWebExtensionWindow>> *openWindows;
 
 /*!
- @abstract The window that currently has focus.
+ @abstract The window that currently has focus for this extension.
  @discussion This property holds the window object that currently has focus, as set by the `didFocusWindow:` method.
  It will be \c nil if no window has focus or if a window has focus that is not visible to the extension.  Initially populated by the window
  returned by the extension controller delegate method `webExtensionController:focusedWindowForExtensionContext:`.

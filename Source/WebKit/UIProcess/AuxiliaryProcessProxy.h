@@ -183,6 +183,7 @@ public:
 
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> extensionProcess() const;
+    static void setManageProcessesAsExtensions(bool manageProcessesAsExtensions) { s_manageProcessesAsExtensions = manageProcessesAsExtensions; }
 #endif
 
 protected:
@@ -196,7 +197,7 @@ protected:
     virtual ASCIILiteral processName() const = 0;
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
+    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 
     struct PendingMessage {
         UniqueRef<IPC::Encoder> encoder;
@@ -244,6 +245,9 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
+#endif
+#if USE(EXTENSIONKIT)
+    static bool s_manageProcessesAsExtensions;
 #endif
 };
 

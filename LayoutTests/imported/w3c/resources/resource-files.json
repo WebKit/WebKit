@@ -3025,6 +3025,7 @@
         "web-platform-tests/css/css-overflow/select-size-overflow-001-ref.html",
         "web-platform-tests/css/css-overflow/text-overflow-ellipsis-003-ref.html",
         "web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input-ref.html",
+        "web-platform-tests/css/css-properties-values-api/registered-property-change-style-002-ref.html",
         "web-platform-tests/css/css-pseudo/active-selection-051-ref.html",
         "web-platform-tests/css/css-pseudo/backdrop-animate-002-ref.html",
         "web-platform-tests/css/css-pseudo/before-after-dynamic-custom-property-001-ref.html",
