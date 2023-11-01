@@ -293,7 +293,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacemen
     return { };
 }
 
-void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, const String& directionString, const AXTextStateChangeIntent& intent)
+void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, const String& directionString, const AXTextStateChangeIntent& intent, ForBindings forBindings)
 {
     TextFieldSelectionDirection direction = SelectionHasNoDirection;
     if (directionString == "forward"_s)
@@ -301,11 +301,11 @@ void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
     else if (directionString == "backward"_s)
         direction = SelectionHasBackwardDirection;
 
-    if (setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent))
+    if (setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent, forBindings))
         scheduleSelectEvent();
 }
 
-bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
+bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent, ForBindings forBindings)
 {
     if (!isTextField())
         return false;
@@ -361,8 +361,27 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
             endPosition = positionForIndex(innerText.get(), end);
     }
 
-    if (RefPtr frame = document().frame())
-        frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus, revealMode, intent);
+    if (RefPtr frame = document().frame()) {
+        auto options = FrameSelection::defaultSetSelectionOptions();
+        if (forBindings == ForBindings::Yes)
+            options.add(FrameSelection::SetSelectionOption::ForBindings);
+        if (hasFocus)
+            options.add(FrameSelection::SetSelectionOption::DoNotSetFocus);
+        switch (revealMode) {
+        case SelectionRevealMode::DoNotReveal:
+            break;
+        case SelectionRevealMode::Reveal:
+            options.add(FrameSelection::SetSelectionOption::RevealSelection);
+            break;
+        case SelectionRevealMode::RevealUpToMainFrame:
+            options.add(FrameSelection::SetSelectionOption::RevealSelectionUpToMainFrame);
+            break;
+        case SelectionRevealMode::DelegateMainFrameScroll:
+            options.add(FrameSelection::SetSelectionOption::DelegateMainFrameScroll);
+            break;
+        }
+        frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, options, intent);
+    }
 
     return m_cachedSelectionStart != previousSelectionStart || m_cachedSelectionEnd != previousSelectionEnd || m_cachedSelectionDirection != previousSelectionDirection;
 }

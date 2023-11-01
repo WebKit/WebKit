@@ -243,29 +243,13 @@ void FrameSelection::moveTo(const Position& base, const Position& extent, Affini
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, bool shouldSetFocus, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
+void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, OptionSet<SetSelectionOption> options, const AXTextStateChangeIntent& intent)
 {
     VisibleSelection newSelection;
     newSelection.setWithoutValidation(base, extent);
     newSelection.setIsDirectional(selectionHasDirection);
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
-    auto options = defaultSetSelectionOptions();
-    if (!shouldSetFocus)
-        options.add(SetSelectionOption::DoNotSetFocus);
-    switch (revealMode) {
-    case SelectionRevealMode::DoNotReveal:
-        break;
-    case SelectionRevealMode::Reveal:
-        options.add(SetSelectionOption::RevealSelection);
-        break;
-    case SelectionRevealMode::RevealUpToMainFrame:
-        options.add(SetSelectionOption::RevealSelectionUpToMainFrame);
-        break;
-    case SelectionRevealMode::DelegateMainFrameScroll:
-        options.add(SetSelectionOption::DelegateMainFrameScroll);
-        break;
-    }
-    setSelection(newSelection, options, newIntent);
+    setSelection(newSelection, options, newIntent, CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
@@ -433,7 +417,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     if (!newSelection.isNone() && !(options & SetSelectionOption::DoNotSetFocus)) {
         RefPtr oldFocusedElement = document->focusedElement();
-        setFocusedElementIfNeeded();
+        setFocusedElementIfNeeded(options);
         if (!document->frame())
             return false;
         // FIXME: Should not be needed.
@@ -2365,7 +2349,7 @@ static bool isFrameElement(const Node& node)
     return widget && widget->isLocalFrameView();
 }
 
-void FrameSelection::setFocusedElementIfNeeded()
+void FrameSelection::setFocusedElementIfNeeded(OptionSet<SetSelectionOption> options)
 {
     if (isNone() || !isFocused())
         return;
@@ -2386,7 +2370,10 @@ void FrameSelection::setFocusedElementIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(*target)) {
-                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame());
+                FocusOptions focusOptions;
+                if (options & SetSelectionOption::ForBindings)
+                    focusOptions.trigger = FocusTrigger::Bindings;
+                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame(), focusOptions);
                 return;
             }
             target = target->parentOrShadowHostElement();

@@ -57,7 +57,7 @@
     undefined setRangeText(DOMString replacement);
     undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
-    undefined setSelectionRange(optional unsigned long start = 0, optional unsigned long end = 0, optional DOMString direction);
+    [ImplementedAs=setSelectionRangeForBindings] undefined setSelectionRange(optional unsigned long start = 0, optional unsigned long end = 0, optional DOMString direction);
 
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
 };
