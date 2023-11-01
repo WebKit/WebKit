@@ -195,7 +195,7 @@ private:
     Node* getArgumentCount();
     template<typename ChecksFunctor>
     bool handleRecursiveTailCall(Node* callTargetNode, CallVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded);
-    unsigned inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
+    std::tuple<unsigned, InlineAttribute> inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleVarargsInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
     unsigned getInliningBalance(const CallLinkStatus&, CodeSpecializationKind);
@@ -1645,7 +1645,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
     return false;
 }
 
-unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountIncludingThis, InlineCallFrame::Kind kind)
+std::tuple<unsigned, InlineAttribute> ByteCodeParser::inliningCost(CallVariant callee, int argumentCountIncludingThis, InlineCallFrame::Kind kind)
 {
     CallMode callMode = InlineCallFrame::callModeFor(kind);
     CodeSpecializationKind specializationKind = specializationKindFor(callMode);
@@ -1653,18 +1653,18 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     
     if (m_hasDebuggerEnabled) {
         VERBOSE_LOG("    Failing because the debugger is in use.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
 
     if (m_graph.m_plan.isUnlinked()) {
         VERBOSE_LOG("    Failing because the compilation mode is unlinked DFG.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
 
     FunctionExecutable* executable = callee.functionExecutable();
     if (!executable) {
         VERBOSE_LOG("    Failing because there is no function executable.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
     
     // Do we have a code block, and does the code block's size match the heuristics/requirements for
@@ -1677,18 +1677,18 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     CodeBlock* codeBlock = executable->baselineCodeBlockFor(specializationKind);
     if (!codeBlock) {
         VERBOSE_LOG("    Failing because no code block available.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
 
     if (codeBlock->couldBeTainted() != m_codeBlock->couldBeTainted()) {
         VERBOSE_LOG("    Failing because taintedness of callee does not match the caller");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
 
     if (!Options::useArityFixupInlining()) {
         if (codeBlock->numParameters() > static_cast<unsigned>(argumentCountIncludingThis)) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");
-            return UINT_MAX;
+            return { UINT_MAX, InlineAttribute::None };
         }
     }
 
@@ -1703,7 +1703,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     VERBOSE_LOG("    Is inlining candidate: ", codeBlock->ownerExecutable()->isInliningCandidate(), "\n");
     if (!canInline(capabilityLevel)) {
         VERBOSE_LOG("    Failing because the function is not inlineable.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
     
     // Check if the caller is already too large. We do this check here because that's just
@@ -1712,7 +1712,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     if (!isSmallEnoughToInlineCodeInto(m_codeBlock)) {
         codeBlock->m_shouldAlwaysBeInlined = false;
         VERBOSE_LOG("    Failing because the caller is too large.\n");
-        return UINT_MAX;
+        return { UINT_MAX, InlineAttribute::None };
     }
     
     // FIXME: this should be better at predicting how much bloat we will introduce by inlining
@@ -1735,14 +1735,14 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         ++depth;
         if (depth >= Options::maximumInliningDepth()) {
             VERBOSE_LOG("    Failing because depth exceeded.\n");
-            return UINT_MAX;
+            return { UINT_MAX, InlineAttribute::None };
         }
         
         if (entry->executable() == executable) {
             ++recursion;
             if (recursion >= Options::maximumInliningRecursion()) {
                 VERBOSE_LOG("    Failing because recursion detected.\n");
-                return UINT_MAX;
+                return { UINT_MAX, InlineAttribute::None };
             }
         }
     }
@@ -1750,7 +1750,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     VERBOSE_LOG("    Inlining should be possible.\n");
     
     // It might be possible to inline.
-    return codeBlock->bytecodeCost();
+    return { codeBlock->bytecodeCost(), codeBlock->ownerExecutable()->inlineAttribute() };
 }
 
 template<typename ChecksFunctor>
@@ -2052,8 +2052,11 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
         }
     }
     
-    unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, kind);
-    if (myInliningCost > inliningBalance)
+    auto [myInliningCost, inlineAttribute] = inliningCost(callee, argumentCountIncludingThis, kind);
+    if (!inliningBalance)
+        return CallOptimizationResult::DidNothing;
+
+    if (inlineAttribute != InlineAttribute::Always && myInliningCost > inliningBalance)
         return CallOptimizationResult::DidNothing;
 
     auto insertCheck = [&] (CodeBlock*) {
@@ -2061,7 +2064,10 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
             emitFunctionChecks(callee, callTargetNode, thisArgument);
     };
     inlineCall(callTargetNode, result, callee, registerOffset, argumentCountIncludingThis, kind, continuationBlock, insertCheck);
-    inliningBalance -= myInliningCost;
+    if (inliningBalance > myInliningCost)
+        inliningBalance -= myInliningCost;
+    else
+        inliningBalance = 0;
     return CallOptimizationResult::Inlined;
 }
 
@@ -2098,7 +2104,8 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
     unsigned maxArgumentCountIncludingThis = std::max(callLinkStatus.maxArgumentCountIncludingThisForVarargs(), mandatoryMinimum + 1);
 
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
-    if (inliningCost(callVariant, maxArgumentCountIncludingThis, kind) > getInliningBalance(callLinkStatus, specializationKind)) {
+    auto [bytecodeCost, inlineAttribute] = inliningCost(callVariant, maxArgumentCountIncludingThis, kind);
+    if (inlineAttribute != InlineAttribute::Always && bytecodeCost > getInliningBalance(callLinkStatus, specializationKind)) {
         VERBOSE_LOG("Bailing inlining: inlining cost too high.\n");
         return false;
     }

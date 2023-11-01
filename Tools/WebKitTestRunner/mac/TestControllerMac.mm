@@ -29,8 +29,10 @@
 #import "LayoutTestSpellChecker.h"
 #import "PlatformWebView.h"
 #import "PoseAsClass.h"
+#import "TestCommand.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
+#import "WPTFunctions.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -186,10 +188,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     return true;
 }
 
-TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
+static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
+{
+    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+}
+
+TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const
 {
     TestFeatures features;
     features.boolTestRunnerFeatures.insert({ "useThreadedScrolling", true });
+    if (shouldEnableAsyncOverflowScrolling(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "AsyncOverflowScrollingEnabled", true });
     return features;
 }
 

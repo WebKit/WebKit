@@ -44,11 +44,13 @@ extern const int s_builtinConstructorOfCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind;
 extern const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility;
+extern const JSC::InlineAttribute s_builtinConstructorOfCodeInlineAttribute;
 extern const char* const s_builtinConstructorFromCode;
 extern const int s_builtinConstructorFromCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind;
 extern const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility;
+extern const JSC::InlineAttribute s_builtinConstructorFromCodeInlineAttribute;
 
 #define JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_DATA(macro) \
     macro(of, builtinConstructorOf, 0) \
@@ -119,6 +121,7 @@ namespace JSC {
 const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind = JSC::ConstructorKind::None;
 const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+const JSC::InlineAttribute s_builtinConstructorOfCodeInlineAttribute = JSC::InlineAttribute::None;
 const int s_builtinConstructorOfCodeLength = 294;
 static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorOfCode =
@@ -139,6 +142,7 @@ const char* const s_builtinConstructorOfCode =
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind = JSC::ConstructorKind::None;
 const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+const JSC::InlineAttribute s_builtinConstructorFromCodeInlineAttribute = JSC::InlineAttribute::None;
 const int s_builtinConstructorFromCodeLength = 2046;
 static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorFromCode =

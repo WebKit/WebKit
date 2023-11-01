@@ -165,8 +165,18 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
 
         if (auto previousData = std::exchange(data.requestedDataBeforeAnimatedScroll, std::nullopt)) {
             auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
-            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
-            targetNode->scrollTo(intermediatePosition, scrollType, clamping);
+
+            switch (requestType) {
+            case ScrollRequestType::PositionUpdate:
+            case ScrollRequestType::DeltaUpdate: {
+                auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
+                targetNode->scrollTo(intermediatePosition, scrollType, clamping);
+                break;
+            }
+            case ScrollRequestType::CancelAnimatedScroll:
+                targetNode->stopAnimatedScroll();
+                break;
+            }
         }
 
         targetNode->startAnimatedScrollToPosition(data.destinationPosition(currentScrollPosition));

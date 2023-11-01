@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+            background-image: repeating-linear-gradient(transparent, silver 500px);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        description('When canceling an animated scroll, we should not trigger a scroll from zero.');
+        window.addEventListener('load', async () => {
+            const startingScrollOffset = 400;
+            window.scrollTo(0, startingScrollOffset);
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollTop < startingScrollOffset)
+                    testFailed(`We should never see a scroll offset less than ${startingScrollOffset} - saw ${window.scrollTop}`);
+            }, false);
+
+            setTimeout(() => {
+                window.scrollTo({ top: 500, behavior: 'smooth' });
+            }, 10);
+
+            await UIHelper.startMonitoringWheelEvents();
+            
+            setTimeout(() => {
+                window.scrollTo({ top: 520, behavior: 'smooth' });
+            }, 60);
+
+            await UIHelper.waitForScrollCompletion();
+            finishJSTest();
+
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

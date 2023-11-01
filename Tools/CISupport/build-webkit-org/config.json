@@ -568,11 +568,6 @@
                     "workernames": ["jsconly-linux-igalia-bot-3"]
                   },
                   {
-                    "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndJSCTestsFactory",
-                    "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
-                    "workernames": ["jsconly-linux-igalia-bot-1"]
-                  },
-                  {
                     "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js", "wpe-linux-64-release-tests-webdriver"],
@@ -694,7 +689,7 @@
                                      "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build",
                                      "JSCOnly-Linux-AArch64-Release",
                                      "JSCOnly-Linux-ARMv7-Thumb2-Release",
-                                     "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
+                                     "PlayStation-Release-Build", "PlayStation-Debug-Build",
                                      "WinCairo-64-bit-Release-Build", "WinCairo-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",

@@ -50,6 +50,7 @@ extern const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility;
 extern const JSC::ConstructorKind s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructorKind;
 extern const JSC::ImplementationVisibility s_arbitraryConditionalGuardIsReadableStreamLockedCodeImplementationVisibility;
+extern const JSC::InlineAttribute s_arbitraryConditionalGuardIsReadableStreamLockedCodeInlineAttribute;
 
 #define WEBCORE_FOREACH_ARBITRARYCONDITIONALGUARD_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, arbitraryConditionalGuardIsReadableStreamLocked, 1) \
@@ -109,7 +110,7 @@ inline JSC::UnlinkedFunctionExecutable* ArbitraryConditionalGuardBuiltinsWrapper
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
             executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
-        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility, s_##name##InlineAttribute), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
 }
@@ -176,6 +177,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
 const JSC::ImplementationVisibility s_arbitraryConditionalGuardIsReadableStreamLockedCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+const JSC::InlineAttribute s_arbitraryConditionalGuardIsReadableStreamLockedCodeInlineAttribute = JSC::InlineAttribute::None;
 const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_arbitraryConditionalGuardIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_arbitraryConditionalGuardIsReadableStreamLockedCode =

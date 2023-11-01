@@ -65,7 +65,10 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
         extension().serializeLocalization(),
         extension().serializeManifest(),
         extension().manifestVersion(),
-        inTestingMode()
+        inTestingMode(),
+        backgroundPageIdentifier(),
+        popupPageIdentifiers(),
+        tabPageIdentifiers()
     };
 }
 

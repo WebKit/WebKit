@@ -41,6 +41,11 @@ class WebExtensionAPIExtension : public WebExtensionAPIObject, public JSWebExten
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIExtension, extension);
 
 public:
+    enum class ViewType : uint8_t {
+        Popup,
+        Tab,
+    };
+
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
@@ -49,7 +54,12 @@ public:
     void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
 
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
+    JSValue *getBackgroundPage(JSContextRef);
+    NSArray *getViews(JSContextRef, NSDictionary *filter, NSString **outExceptionString);
 #endif
+
+private:
+    static bool parseViewFilters(NSDictionary *, std::optional<ViewType>&, std::optional<WebExtensionTabIdentifier>&, std::optional<WebExtensionWindowIdentifier>&, NSString *sourceKey, NSString **outExceptionString);
 };
 
 } // namespace WebKit

@@ -117,8 +117,10 @@
         auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.desiredWindow) ?: window;
         auto *newTab = [desiredWindow openNewTabAtIndex:options.desiredIndex];
 
-        if (options.desiredURL)
+        if (options.desiredURL) {
+            [newTab changeWebViewIfNeededForURL:options.desiredURL forExtensionContext:context];
             [newTab.mainWebView loadRequest:[NSURLRequest requestWithURL:options.desiredURL]];
+        }
 
         newTab.parentTab = options.desiredParentTab;
         newTab.pinned = options.shouldPin;
@@ -328,6 +330,21 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 - (id<_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context
 {
     return _window;
+}
+
+- (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context
+{
+    BOOL usingPrivateBrowsing = _window.usingPrivateBrowsing;
+
+    if ([_mainWebView.URL.scheme isEqualToString:url.scheme])
+        return;
+
+    WKWebViewConfiguration *configuration = [url.scheme hasPrefix:@"http"] ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
+    configuration._webExtensionController = _extensionController;
+    configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
+    configuration.userContentController = userContentController(usingPrivateBrowsing);
+
+    _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
 }
 
 - (WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context

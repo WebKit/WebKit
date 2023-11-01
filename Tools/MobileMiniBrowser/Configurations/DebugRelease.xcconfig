@@ -24,6 +24,9 @@
 #include "Base.xcconfig"
 #include? "../../../LocalOverrides.xcconfig"
 
+CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_EMBEDDED_YES = $(inherited);
+
 ONLY_ACTIVE_ARCH = YES;
 
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;

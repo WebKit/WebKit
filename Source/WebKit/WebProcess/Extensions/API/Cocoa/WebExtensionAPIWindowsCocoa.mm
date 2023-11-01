@@ -365,11 +365,11 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
-            *outExceptionString = toErrorString(nil, @"windowID", @"'windows.WINDOW_ID_NONE' is not allowed");
+            *outExceptionString = toErrorString(nil, @"windowId", @"'windows.WINDOW_ID_NONE' is not allowed");
         else if (identifier)
-            *outExceptionString = toErrorString(nil, @"windowID", @"'%llu' is not a window identifier", identifier.value().toUInt64());
+            *outExceptionString = toErrorString(nil, @"windowId", @"'%llu' is not a window identifier", identifier.value().toUInt64());
         else
-            *outExceptionString = toErrorString(nil, @"windowID", @"it is not a window identifier");
+            *outExceptionString = toErrorString(nil, @"windowId", @"it is not a window identifier");
         return false;
     }
 

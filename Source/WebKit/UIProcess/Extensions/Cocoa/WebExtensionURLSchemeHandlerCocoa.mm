@@ -37,8 +37,10 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtension.h"
 #import "WebExtensionContext.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionController.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "WebURLSchemeTask.h"
 #import "_WKWebExtensionLocalization.h"
 #import <UniformTypeIdentifiers/UTType.h>
@@ -88,7 +90,10 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             }
         }
 
+        bool loadingExtensionMainFrame = false;
         if (task.frameInfo().isMainFrame() && requestURL == frameDocumentURL) {
+            loadingExtensionMainFrame = true;
+
             auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
             if (!requiredBaseURL || !extensionContext->isURLForThisExtension(requiredBaseURL)) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:nil]);
@@ -100,6 +105,13 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         if (!fileData) {
             task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
+        }
+
+        if (loadingExtensionMainFrame) {
+            if (auto tab = extensionContext->getTab(page.identifier())) {
+                auto window = tab->window();
+                page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt), extensionContext->identifier());
+            }
         }
 
         NSString *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;

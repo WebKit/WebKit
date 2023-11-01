@@ -27,6 +27,7 @@
 #include "TestFeatures.h"
 
 #include "TestCommand.h"
+#include "WPTFunctions.h"
 #include <fstream>
 #include <string>
 #include <wtf/StdFilesystem.h>
@@ -107,28 +108,19 @@ static std::optional<double> overrideDeviceScaleFactorForTest(const std::string&
 
 static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
 {
-    auto url = URL({ }, String::fromUTF8(pathOrURL.c_str()));
-    if (!url.isValid())
-        return false;
-
-    auto host = url.host();
-    if (host != "localhost"_s && host != "web-platform.test"_s)
-        return false;
-
-    auto port = url.port().value_or(0);
-    if (port != 8800 && port != 9443)
-        return false;
-
-    auto path = url.path();
-    return path.startsWith("/beacon"_s)
-        || path.startsWith("/cors"_s)
-        || path.startsWith("/fetch"_s)
-        || path.startsWith("/service-workers"_s)
-        || path.startsWith("/streams/writable-streams"_s)
-        || path.startsWith("/streams/piping"_s)
-        || path.startsWith("/xhr"_s)
-        || path.startsWith("/webrtc"_s)
-        || path.startsWith("/websockets"_s);
+    if (auto url = URL { { }, String::fromUTF8(pathOrURL.c_str()) }; isWebPlatformTestURL(url)) {
+        auto path = url.path();
+        return path.startsWith("/beacon"_s)
+            || path.startsWith("/cors"_s)
+            || path.startsWith("/fetch"_s)
+            || path.startsWith("/service-workers"_s)
+            || path.startsWith("/streams/writable-streams"_s)
+            || path.startsWith("/streams/piping"_s)
+            || path.startsWith("/xhr"_s)
+            || path.startsWith("/webrtc"_s)
+            || path.startsWith("/websockets"_s);
+    }
+    return false;
 }
 
 static bool shouldEnableWebGPU(const std::string& pathOrURL)

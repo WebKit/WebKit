@@ -54,7 +54,6 @@ class Buildbot():
         'api-gtk': 'gtk',
         'gtk-wk2': 'gtk',
         'wpe-wk2': 'wpe',
-        'jsc-mips-tests': 'jsc-mips',
         'jsc-armv7-tests': 'jsc-armv7',
     }
 

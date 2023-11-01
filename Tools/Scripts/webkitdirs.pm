@@ -1189,11 +1189,6 @@ sub determineGenerateDsym()
     $generateDsym = checkForArgumentAndRemoveFromARGV("--dsym");
 }
 
-sub hasIOSDevelopmentCertificate()
-{
-    return !exitStatus(system("security find-identity -p codesigning | grep '" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX . "' > /dev/null 2>&1"));
-}
-
 sub argumentsForXcode()
 {
     my @args = ();
@@ -1280,15 +1275,6 @@ sub XcodeOptions
     die "Cannot enable both ASAN and TSAN at the same time\n" if $asanIsEnabled && $tsanIsEnabled;
     die "Cannot enable both (ASAN or TSAN) and Coverage at this time\n" if $coverageIsEnabled && ($asanIsEnabled || $tsanIsEnabled);
 
-    if (willUseIOSDeviceSDK() || willUseWatchDeviceSDK() || willUseAppleTVDeviceSDK()) {
-        if (hasIOSDevelopmentCertificate()) {
-            # FIXME: May match more than one installed development certificate.
-            push @options, "CODE_SIGN_IDENTITY=" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX;
-        } else {
-            push @options, "CODE_SIGN_IDENTITY="; # No identity
-            push @options, "CODE_SIGNING_REQUIRED=NO";
-        }
-    }
     push @options, argumentsForXcode();
     return @options;
 }

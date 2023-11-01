@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "BuiltinExecutableCreator.h"
-
-#include "BuiltinExecutables.h"
+#pragma once
 
 namespace JSC {
 
-UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& source, const Identifier& ident, ImplementationVisibility implementationVisibility, ConstructorKind kind, ConstructAbility ability, InlineAttribute inlineAttribute)
-{
-    return BuiltinExecutables::createExecutable(vm, source, ident, implementationVisibility, kind, ability, inlineAttribute, NeedsClassFieldInitializer::No);
-}
-    
+enum class InlineAttribute : uint8_t {
+    None,
+    Always,
+};
+
 } // namespace JSC

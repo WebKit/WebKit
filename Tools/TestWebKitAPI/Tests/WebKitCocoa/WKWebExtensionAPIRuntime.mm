@@ -45,6 +45,15 @@ static auto *runtimeManifest = @{
         @"persistent": @NO,
     },
 
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"popup.html",
+        @"default_icon": @{
+            @"16": @"toolbar-16.png",
+            @"32": @"toolbar-32.png",
+        },
+    },
+
     @"permissions": @[ @"nativeMessaging" ],
 };
 
@@ -67,6 +76,18 @@ static auto *runtimeContentScriptManifest = @{
     } ],
 
     @"permissions": @[ @"nativeMessaging" ],
+};
+
+static auto *runtimeServiceWorkerManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Runtime Test",
+    @"description": @"Runtime Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"service_worker": @"background.js",
+    },
 };
 
 TEST(WKWebExtensionAPIRuntime, GetURL)
@@ -114,6 +135,102 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromBackground)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = async () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+
+        @"browser.test.assertEq(backgroundPage, window, 'Should be able to get the background window from itself')",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+    });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())",
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromPopup)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    auto *popupHTML = @"<script type='module' src='popup.js'></script>";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": popupHTML,
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageForServiceWorker)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertEq(backgroundPage, null, 'Background page should be null for service workers')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(runtimeServiceWorkerManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
 }
 
 TEST(WKWebExtensionAPIRuntime, Id)

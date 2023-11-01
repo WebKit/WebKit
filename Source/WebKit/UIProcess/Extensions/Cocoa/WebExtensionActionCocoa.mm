@@ -37,8 +37,11 @@
 #import "WKNavigationDelegatePrivate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import "WKWebViewPrivate.h"
+#import "WKWebViewInternal.h"
 #import "WebExtensionContext.h"
+#import "WebExtensionContextProxyMessages.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKWebExtensionActionInternal.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import <wtf/BlockPtr.h>
@@ -265,6 +268,11 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
         [m_popupWebView.get().heightAnchor constraintLessThanOrEqualToConstant:popoverMaximumHeight]
     ]];
 #endif // USE(APPKIT)
+
+    auto popupPage = m_popupWebView.get()._page;
+    auto tabIdentifier = m_tab ? std::optional(m_tab->identifier()) : std::nullopt;
+    auto windowIdentifier = m_window ? std::optional(m_window->identifier()) : std::nullopt;
+    popupPage->process().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(popupPage->webPageID(), tabIdentifier, windowIdentifier), extensionContext()->identifier());
 
     auto url = URL { extensionContext()->baseURL(), popupPath() };
     [m_popupWebView loadRequest:[NSURLRequest requestWithURL:url]];

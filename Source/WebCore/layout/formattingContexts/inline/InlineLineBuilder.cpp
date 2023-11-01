@@ -466,7 +466,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         auto handleTrailingContent = [&] {
             auto& quirks = formattingContext().quirks();
             auto lineHasOverflow = [&] {
-                return horizontalAvailableSpace < m_line.contentLogicalWidth();
+                return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContentOrListMarker();
             };
             auto isLineBreakAfterWhitespace = [&] {
                 return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || lineHasOverflow());

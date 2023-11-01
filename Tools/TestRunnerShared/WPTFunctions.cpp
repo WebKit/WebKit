@@ -25,6 +25,9 @@
 
 #include "config.h"
 #include "WPTFunctions.h"
+#include <array>
+#include <wtf/URL.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #include "JSBasics.h"
 
@@ -51,6 +54,23 @@ bool hasTestWaitAttribute(JSGlobalContextRef context)
     auto classList = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement", "classList" });
     return JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "reftest-wait") }))
         || JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "test-wait") }));
+}
+
+bool isWebPlatformTestURL(const URL& url)
+{
+    if (!url.isValid())
+        return false;
+
+    auto contains = [] (const auto& collection, const auto& value) {
+        return std::find(collection.cbegin(), collection.cend(), value) != collection.cend();
+    };
+
+    // Sourced from imported/w3c/resources/config.json
+    constexpr std::array<ASCIILiteral, 3> possibleHosts { "localhost"_s, "web-platform.test"_s, "127.0.0.1"_s };
+    constexpr std::array<uint16_t, 6> possiblePorts { 8800, 8801, 9443, 9444, 9000, 49001 };
+    auto host = url.host();
+    auto port = url.port().value_or(0);
+    return contains(possibleHosts, host) && contains(possiblePorts, port);
 }
 
 }

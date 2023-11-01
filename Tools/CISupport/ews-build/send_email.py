@@ -34,7 +34,7 @@ custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
 FROM_EMAIL = 'ews@webkit{}.org'.format(custom_suffix)
-IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'mips', 'i386']
+IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
 SERVER = 'localhost'
 
