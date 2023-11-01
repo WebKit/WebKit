@@ -602,6 +602,20 @@ webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [
 
 webkit.org/b/231372 [ BigSur arm64 Debug ] http/tests/xmlhttprequest/access-control-response-with-body.html [ Pass Crash ]
 
+# webkit.org/b/263955 Twelve css WPTs are failing with async overflow scrolling enabled on macOS
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip/clip-rect-scroll.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Failure ]
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -100,6 +100,8 @@
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
 		31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */; };
+		33558B2D2AF1BF600041E63F /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C7881F250C69E400C0AA24 /* WPTFunctions.cpp */; };
+		33558B2E2AF1C22B0041E63F /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C7881F250C69E400C0AA24 /* WPTFunctions.cpp */; };
 		41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */; };
 		41D5B62622DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */; };
 		4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */; };
@@ -1263,6 +1265,7 @@
 				E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */,
 				E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */,
 				9376417A210D737200A3DAAE /* WebKitTestRunnerWindow.mm in Sources */,
+				33558B2D2AF1BF600041E63F /* WPTFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1304,6 +1307,7 @@
 				A18510431B9AE14500744AEB /* WebNotificationProvider.cpp in Sources */,
 				51998A082810FBD1009D68EB /* WebNotificationProviderCocoa.mm in Sources */,
 				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
+				33558B2E2AF1C22B0041E63F /* WPTFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
