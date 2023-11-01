@@ -337,7 +337,9 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(DISPLAY_LINK)
-    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
+    // Prewarmed / cached processes may not have a process pool on destruction.
+    if (RefPtr processPool = m_processPool.get())
+        processPool->displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
@@ -1873,11 +1875,10 @@ void WebProcessProxy::isResponsive(CompletionHandler<void(bool isWebProcessRespo
         m_isResponsiveCallbacks.append(WTFMove(callback));
 
     checkForResponsiveness([weakThis = WeakPtr { *this }]() mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!weakThis)
             return;
 
-        for (auto& isResponsive : std::exchange(protectedThis->m_isResponsiveCallbacks, { }))
+        for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
             isResponsive(true);
     });
 }
@@ -1891,11 +1892,10 @@ void WebProcessProxy::isResponsiveWithLazyStop()
         // We do not send a ping if we are already waiting for the WebProcess.
         // Spamming pings on a slow web process is not helpful.
         checkForResponsiveness([weakThis = WeakPtr { *this }]() mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
+            if (!weakThis)
                 return;
 
-            for (auto& isResponsive : std::exchange(protectedThis->m_isResponsiveCallbacks, { }))
+            for (auto& isResponsive : std::exchange(weakThis->m_isResponsiveCallbacks, { }))
                 isResponsive(true);
         }, UseLazyStop::Yes);
     }
