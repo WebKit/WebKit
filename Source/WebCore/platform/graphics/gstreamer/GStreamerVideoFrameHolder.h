@@ -24,12 +24,15 @@
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
+enum class TextureMapperFlags : uint16_t;
+
 class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder {
 public:
-    explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, TextureMapper::Flags, bool gstGLEnabled);
+    explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, OptionSet<TextureMapperFlags>, bool gstGLEnabled);
     virtual ~GstVideoFrameHolder();
 
 #if USE(GSTREAMER_GL)
@@ -38,7 +41,7 @@ public:
 
     const IntSize& size() const { return m_size; }
     bool hasAlphaChannel() const { return m_hasAlphaChannel; }
-    TextureMapper::Flags flags() const { return m_flags; }
+    OptionSet<TextureMapperFlags> flags() const { return m_flags; }
     GLuint textureID() const { return m_textureID; }
     bool hasMappedTextures() const { return m_hasMappedTextures; }
     const GstVideoFrame& videoFrame() const { return m_videoFrame; }
@@ -53,7 +56,7 @@ private:
     IntSize m_size;
     bool m_hasAlphaChannel;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    TextureMapper::Flags m_flags { };
+    OptionSet<TextureMapperFlags> m_flags;
     GLuint m_textureID { 0 };
 #if USE(GSTREAMER_GL)
     GstGLTextureTarget m_textureTarget { GST_GL_TEXTURE_TARGET_NONE };

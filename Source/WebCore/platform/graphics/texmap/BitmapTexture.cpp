@@ -30,6 +30,8 @@
 #include "ImageBuffer.h"
 #include "LengthFunctions.h"
 #include "NativeImage.h"
+#include "TextureMapper.h"
+#include "TextureMapperFlags.h"
 #include "TextureMapperShaderProgram.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -66,7 +68,7 @@ void BitmapTexture::didReset()
         glGenTextures(1, &m_id);
 
     m_shouldClear = true;
-    m_colorConvertFlags = TextureMapper::NoFlag;
+    m_colorConvertFlags = { };
     m_filterInfo = FilterInfo();
     if (m_textureSize == contentSize())
         return;
@@ -86,7 +88,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     // We are updating a texture with format RGBA with content from a buffer that has BGRA format. Instead of turning BGRA
     // into RGBA and then uploading it, we upload it as is. This causes the texture format to be RGBA but the content to be BGRA,
     // so we mark the texture to convert the colors when painting the texture.
-    m_colorConvertFlags = TextureMapper::ShouldConvertTextureBGRAToRGBA;
+    m_colorConvertFlags = TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
 
     glBindTexture(GL_TEXTURE_2D, m_id);
 

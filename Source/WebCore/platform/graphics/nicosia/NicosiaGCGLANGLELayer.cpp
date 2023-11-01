@@ -32,6 +32,7 @@
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLTextureMapperANGLE.h"
+#include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #include <epoxy/gl.h>
@@ -56,9 +57,9 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
         if (bo) {
             Locker locker { proxy.lock() };
 
-            TextureMapper::Flags flags = TextureMapper::ShouldFlipTexture;
+            OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
             if (m_context.contextAttributes().alpha)
-                flags |= TextureMapper::ShouldBlend;
+                flags.add(TextureMapperFlags::ShouldBlend);
 
             downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
                 DMABufObject(reinterpret_cast<uintptr_t>(swapchain.swapchain.get()) + bo->handle()),
@@ -71,10 +72,10 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
 #endif
 
-    TextureMapper::Flags flags = TextureMapper::ShouldFlipTexture;
+    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     GLint colorFormat;
     if (m_context.contextAttributes().alpha) {
-        flags |= TextureMapper::ShouldBlend;
+        flags.add(TextureMapperFlags::ShouldBlend);
         colorFormat = GL_RGBA;
     } else
         colorFormat = GL_RGB;

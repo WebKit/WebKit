@@ -24,6 +24,7 @@
 #include "BitmapTexture.h"
 #include "FloatQuad.h"
 #include "Region.h"
+#include "TextureMapper.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
 

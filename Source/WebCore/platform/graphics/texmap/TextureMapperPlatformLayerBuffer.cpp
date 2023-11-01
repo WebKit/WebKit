@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&& texture, TextureMapper::Flags flags)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&& texture, OptionSet<TextureMapperFlags> flags)
     : m_variant(RGBTexture { 0 })
     , m_texture(WTFMove(texture))
     , m_extraFlags(flags)
@@ -41,12 +41,12 @@ TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<Bitmap
 {
 }
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, TextureMapper::Flags flags, GLint internalFormat)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, GLint internalFormat)
     : TextureMapperPlatformLayerBuffer({ RGBTexture { textureID } }, size, flags, internalFormat)
 {
 }
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(TextureVariant&& variant, const IntSize& size, TextureMapper::Flags flags, GLint internalFormat)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(TextureVariant&& variant, const IntSize& size, OptionSet<TextureMapperFlags> flags, GLint internalFormat)
     : m_variant(WTFMove(variant))
     , m_size(size)
     , m_internalFormat(internalFormat)
@@ -78,7 +78,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
                 return nullptr;
             }
 
-            auto clonedTexture = BitmapTexture::create(TextureMapperContextAttributes::get(), TextureMapper::NoFlag, m_internalFormat);
+            auto clonedTexture = BitmapTexture::create(TextureMapperContextAttributes::get(), BitmapTexture::NoFlag, m_internalFormat);
             clonedTexture->reset(m_size);
             clonedTexture->copyFromExternalTexture(texture.id);
             return makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(clonedTexture), m_extraFlags);
@@ -103,7 +103,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
         return;
     }
 
-    if (m_extraFlags & TextureMapper::ShouldNotBlend) {
+    if (m_extraFlags.contains(TextureMapperFlags::ShouldNotBlend)) {
         ASSERT(!m_texture);
         if (m_holePunchClient)
             m_holePunchClient->setVideoRectangle(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
