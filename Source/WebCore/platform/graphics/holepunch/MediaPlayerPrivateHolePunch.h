@@ -112,7 +112,7 @@ private:
     IntSize m_size;
     RunLoop::Timer m_readyTimer;
     MediaPlayer::NetworkState m_networkState;
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
     Ref<Nicosia::ContentLayer> m_nicosiaLayer;
 #else

@@ -31,9 +31,7 @@
 #include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaScene.h>
-#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperBackingStore.h>
-#include <WebCore/TextureMapperGL.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
 

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "TextureMapperLayer.h"
 
+#include "BitmapTexture.h"
 #include "FloatQuad.h"
 #include "Region.h"
 #include <wtf/MathExtras.h>

@@ -34,6 +34,8 @@
 #include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
+#include <WebCore/BitmapTexture.h>
+#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>

@@ -88,9 +88,9 @@ void NicosiaDisplayDelegate::swapBuffersIfNeeded()
     if (!!m_pending.handle) {
         Locker locker { proxy.lock() };
 
-        WebCore::TextureMapperGL::Flags flags = WebCore::TextureMapperGL::ShouldFlipTexture;
+        WebCore::TextureMapper::Flags flags = WebCore::TextureMapper::ShouldFlipTexture;
         if (!m_isOpaque)
-            flags |= WebCore::TextureMapperGL::ShouldBlend;
+            flags |= WebCore::TextureMapper::ShouldBlend;
 
         downcast<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(WTFMove(m_pending),
             [](auto&& object) { return object; }, flags);

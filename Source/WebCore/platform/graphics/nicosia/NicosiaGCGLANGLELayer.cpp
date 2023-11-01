@@ -56,9 +56,9 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
         if (bo) {
             Locker locker { proxy.lock() };
 
-            TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture;
+            TextureMapper::Flags flags = TextureMapper::ShouldFlipTexture;
             if (m_context.contextAttributes().alpha)
-                flags |= TextureMapperGL::ShouldBlend;
+                flags |= TextureMapper::ShouldBlend;
 
             downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
                 DMABufObject(reinterpret_cast<uintptr_t>(swapchain.swapchain.get()) + bo->handle()),
@@ -71,10 +71,10 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
 #endif
 
-    TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture;
+    TextureMapper::Flags flags = TextureMapper::ShouldFlipTexture;
     GLint colorFormat;
     if (m_context.contextAttributes().alpha) {
-        flags |= TextureMapperGL::ShouldBlend;
+        flags |= TextureMapper::ShouldBlend;
         colorFormat = GL_RGBA;
     } else
         colorFormat = GL_RGB;

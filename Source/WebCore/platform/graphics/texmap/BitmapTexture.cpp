@@ -1,38 +1,156 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2014 Igalia S.L.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Igalia S.L.
+ Copyright (C) 2012 Adobe Systems Incorporated
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public License
+ along with this library; see the file COPYING.LIB.  If not, write to
+ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ Boston, MA 02110-1301, USA.
  */
 
 #include "config.h"
 #include "BitmapTexture.h"
 
+#if USE(TEXTURE_MAPPER)
+
+#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
-#include "TextureMapper.h"
+#include "LengthFunctions.h"
+#include "NativeImage.h"
+#include "TextureMapperShaderProgram.h"
+#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#include "RefPtrCairo.h"
+#include <cairo.h>
+#include <wtf/text/CString.h>
+#endif
+
+#if OS(DARWIN)
+#define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
+#endif
 
 namespace WebCore {
+
+BitmapTexture::BitmapTexture(const TextureMapperContextAttributes& contextAttributes, const Flags, GLint internalFormat)
+    : m_contextAttributes(contextAttributes)
+    , m_format(GL_RGBA)
+{
+    if (internalFormat != GL_DONT_CARE) {
+        m_internalFormat = internalFormat;
+        return;
+    }
+
+    m_internalFormat = GL_RGBA;
+}
+
+void BitmapTexture::didReset()
+{
+    if (!m_id)
+        glGenTextures(1, &m_id);
+
+    m_shouldClear = true;
+    m_colorConvertFlags = TextureMapper::NoFlag;
+    m_filterInfo = FilterInfo();
+    if (m_textureSize == contentSize())
+        return;
+
+    m_textureSize = contentSize();
+    glBindTexture(GL_TEXTURE_2D, m_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_textureSize.width(), m_textureSize.height(), 0, m_format, m_type, 0);
+}
+
+void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
+{
+    // We are updating a texture with format RGBA with content from a buffer that has BGRA format. Instead of turning BGRA
+    // into RGBA and then uploading it, we upload it as is. This causes the texture format to be RGBA but the content to be BGRA,
+    // so we mark the texture to convert the colors when painting the texture.
+    m_colorConvertFlags = TextureMapper::ShouldConvertTextureBGRAToRGBA;
+
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
+    const unsigned bytesPerPixel = 4;
+    auto data = static_cast<const uint8_t*>(srcData);
+    Vector<uint8_t> temporaryData;
+    IntPoint adjustedSourceOffset = sourceOffset;
+
+    // Texture upload requires subimage buffer if driver doesn't support subimage and we don't have full image upload.
+    bool requireSubImageBuffer = !m_contextAttributes.supportsUnpackSubimage
+        && !(bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero());
+
+    // prepare temporaryData if necessary
+    if (requireSubImageBuffer) {
+        temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
+        auto dst = temporaryData.data();
+        data = dst;
+        auto bits = static_cast<const uint8_t*>(srcData);
+        auto src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
+        const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
+        for (int y = 0; y < targetRect.height(); ++y) {
+            memcpy(dst, src, targetBytesPerLine);
+            src += bytesPerLine;
+            dst += targetBytesPerLine;
+        }
+
+        bytesPerLine = targetBytesPerLine;
+        adjustedSourceOffset = IntPoint(0, 0);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
+    if (m_contextAttributes.supportsUnpackSubimage) {
+        // Use the OpenGL sub-image extension, now that we know it's available.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, adjustedSourceOffset.y());
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, adjustedSourceOffset.x());
+    }
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, data);
+
+    if (m_contextAttributes.supportsUnpackSubimage) {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    }
+}
+
+void BitmapTexture::updateContents(NativeImage* frameImage, const IntRect& targetRect, const IntPoint& offset)
+{
+    if (!frameImage)
+        return;
+
+    int bytesPerLine;
+    const uint8_t* imageData;
+
+#if USE(CAIRO)
+    cairo_surface_t* surface = frameImage->platformImage().get();
+    imageData = cairo_image_surface_get_data(surface);
+    bytesPerLine = cairo_image_surface_get_stride(surface);
+#endif
+
+    updateContents(imageData, targetRect, offset, bytesPerLine);
+}
 
 void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& offset, float scale)
 {
@@ -60,4 +178,156 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
     updateContents(image.get(), targetRect, IntPoint());
 }
 
-} // namespace
+RefPtr<BitmapTexture> BitmapTexture::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters, bool defersLastFilterPass)
+{
+    if (filters.isEmpty())
+        return this;
+
+    RefPtr<BitmapTexture> previousSurface = textureMapper.currentSurface();
+    RefPtr<BitmapTexture> surface = this;
+
+    for (size_t i = 0; i < filters.size(); ++i) {
+        RefPtr<FilterOperation> filter = filters.operations()[i];
+        ASSERT(filter);
+
+        bool lastFilter = (i == filters.size() - 1);
+
+        surface = textureMapper.applyFilter(surface, filter, defersLastFilterPass && lastFilter);
+    }
+
+    textureMapper.bindSurface(previousSurface.get());
+    return surface;
+}
+
+void BitmapTexture::initializeStencil()
+{
+#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
+    if (m_rbo)
+        return;
+
+    glGenRenderbuffers(1, &m_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height());
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+#endif
+}
+
+void BitmapTexture::initializeDepthBuffer()
+{
+    if (m_depthBufferObject)
+        return;
+
+#if USE(TEXMAP_DEPTH_STENCIL_BUFFER)
+    GLenum format = GL_DEPTH24_STENCIL8_OES;
+#else
+    GLenum format = GL_DEPTH_COMPONENT16;
+#endif
+
+    glGenRenderbuffers(1, &m_depthBufferObject);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
+    glRenderbufferStorage(GL_RENDERBUFFER, format, m_textureSize.width(), m_textureSize.height());
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
+}
+
+void BitmapTexture::clearIfNeeded()
+{
+    if (!m_shouldClear)
+        return;
+
+    m_clipStack.reset(IntRect(IntPoint::zero(), m_textureSize), ClipStack::YAxisMode::Default);
+    m_clipStack.applyIfNeeded();
+    glClearColor(0, 0, 0, 0);
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    m_shouldClear = false;
+}
+
+void BitmapTexture::createFboIfNeeded()
+{
+    if (m_fbo)
+        return;
+
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0);
+    if (flags() & DepthBuffer)
+        initializeDepthBuffer();
+    m_shouldClear = true;
+}
+
+void BitmapTexture::bindAsSurface()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+    createFboIfNeeded();
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glViewport(0, 0, m_textureSize.width(), m_textureSize.height());
+    if (flags() & DepthBuffer)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    clearIfNeeded();
+    m_clipStack.apply();
+}
+
+BitmapTexture::~BitmapTexture()
+{
+    if (m_id)
+        glDeleteTextures(1, &m_id);
+
+    if (m_fbo)
+        glDeleteFramebuffers(1, &m_fbo);
+
+#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
+    if (m_rbo)
+        glDeleteRenderbuffers(1, &m_rbo);
+#endif
+
+    if (m_depthBufferObject)
+        glDeleteRenderbuffers(1, &m_depthBufferObject);
+}
+
+bool BitmapTexture::isValid() const
+{
+    return m_id;
+}
+
+IntSize BitmapTexture::size() const
+{
+    return m_textureSize;
+}
+
+void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)
+{
+    GLint boundTexture = 0;
+    GLint boundFramebuffer = 0;
+    GLint boundActiveTexture = 0;
+
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &boundActiveTexture);
+
+    glBindTexture(GL_TEXTURE_2D, sourceTextureID);
+
+    GLuint copyFbo = 0;
+    glGenFramebuffers(1, &copyFbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, copyFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sourceTextureID, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, id());
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_textureSize.width(), m_textureSize.height());
+
+    glBindTexture(GL_TEXTURE_2D, boundTexture);
+    glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
+    glBindTexture(GL_TEXTURE_2D, boundTexture);
+    glActiveTexture(boundActiveTexture);
+    glDeleteFramebuffers(1, &copyFbo);
+}
+
+} // namespace WebCore
+
+#endif // USE(TEXTURE_MAPPER)

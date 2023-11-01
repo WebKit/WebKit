@@ -17,15 +17,32 @@
  Boston, MA 02110-1301, USA.
  */
 #include "config.h"
-
 #include "TextureMapperTile.h"
 
+#include "BitmapTexture.h"
 #include "Image.h"
 #include "TextureMapper.h"
 
 namespace WebCore {
 
 class GraphicsLayer;
+
+TextureMapperTile::TextureMapperTile(const FloatRect& rect)
+    : m_rect(rect)
+{
+}
+
+TextureMapperTile::~TextureMapperTile() = default;
+
+RefPtr<BitmapTexture> TextureMapperTile::texture() const
+{
+    return m_texture;
+}
+
+void TextureMapperTile::setTexture(BitmapTexture* texture)
+{
+    m_texture = texture;
+}
 
 void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* image, const IntRect& dirtyRect)
 {

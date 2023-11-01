@@ -8,12 +8,15 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
+    platform/graphics/texmap/ClipStack.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
+    platform/graphics/texmap/TextureMapperContextAttributes.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp
     platform/graphics/texmap/TextureMapperLayer.cpp
+    platform/graphics/texmap/TextureMapperShaderProgram.cpp
     platform/graphics/texmap/TextureMapperTile.cpp
 )
 
@@ -28,7 +31,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperBackingStore.h
     platform/graphics/texmap/TextureMapperContextAttributes.h
     platform/graphics/texmap/TextureMapperFPSCounter.h
-    platform/graphics/texmap/TextureMapperGL.h
     platform/graphics/texmap/TextureMapperGLHeaders.h
     platform/graphics/texmap/TextureMapperLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayer.h
@@ -39,16 +41,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperTile.h
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
 )
-
-if (USE_TEXTURE_MAPPER_GL)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/BitmapTextureGL.cpp
-        platform/graphics/texmap/ClipStack.cpp
-        platform/graphics/texmap/TextureMapperContextAttributes.cpp
-        platform/graphics/texmap/TextureMapperGL.cpp
-        platform/graphics/texmap/TextureMapperShaderProgram.cpp
-    )
-endif ()
 
 if (USE_TEXTURE_MAPPER_DMABUF)
     list(APPEND WebCore_SOURCES
