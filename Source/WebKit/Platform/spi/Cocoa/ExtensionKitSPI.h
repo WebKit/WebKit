@@ -34,12 +34,23 @@ typedef void(^_SEServiceInteruptionHandler)();
 
 @end
 
+@protocol _SEGrant <NSObject>
+-(BOOL)invalidateWithError:(NSError* _Nullable*)error;
+@property (readonly) BOOL isValid;
+@end
+
+@interface _SECapabilities : NSObject
++(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name;
+@end
+
 NS_REFINED_FOR_SWIFT
 @interface _SEExtensionProcess: NSObject
 
 -(nullable xpc_connection_t)makeLibXPCConnectionError:(NSError* _Nullable*)error;
 
 -(void)invalidate;
+
+-(nullable id<_SEGrant>)grantCapabilities:(_SECapabilities*)capabilities error:(NSError* _Nullable*)error;
 
 @end
 
@@ -66,19 +77,6 @@ NS_REFINED_FOR_SWIFT
 
 -(void)gpuProcessWithConfiguration:(_SEServiceConfiguration*)configuration completion:(void(^)(_SEGPUProcess* _Nullable process, NSError* _Nullable error))completion;
 
-@end
-
-@protocol _SEGrant <NSObject>
--(BOOL)invalidateWithError:(NSError* _Nullable*)error;
-@property (readonly) BOOL isValid;
-@end
-
-@interface _SECapabilities : NSObject
-+(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name;
-@end
-
-@interface _SEExtensionProcess: NSObject
--(nullable id<_SEGrant>)grantCapabilities:(_SECapabilities*)capabilities error:(NSError* _Nullable*)error;
 @end
 
 NS_ASSUME_NONNULL_END
