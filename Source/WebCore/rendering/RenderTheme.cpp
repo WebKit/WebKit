@@ -493,6 +493,12 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 
         if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
             return StyleAppearance::InnerSpinButton;
+
+        if (pseudo == ShadowPseudoIds::thumb())
+            return StyleAppearance::SwitchThumb;
+
+        if (pseudo == ShadowPseudoIds::track())
+            return StyleAppearance::SwitchTrack;
     }
 
     return StyleAppearance::None;

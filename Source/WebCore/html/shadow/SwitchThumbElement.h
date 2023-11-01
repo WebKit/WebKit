@@ -38,8 +38,6 @@ public:
 private:
     static constexpr auto CreateSwitchThumbElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     explicit SwitchThumbElement(Document&);
-
-    std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
 };
 
 } // namespace WebCore

@@ -27,3 +27,7 @@
 input[type="checkbox"][switch] {
     margin: initial;
 }
+
+input[type="checkbox"][switch]::thumb, input[type="checkbox"][switch]::track {
+    appearance: inherit !important;
+}

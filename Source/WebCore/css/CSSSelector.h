@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
 #include <wtf/EnumTraits.h>
@@ -252,7 +253,7 @@ struct PossiblyQuotedIdentifier {
             RightBottomMarginBox,
         };
 
-        static PseudoElementType parsePseudoElementType(StringView);
+        static PseudoElementType parsePseudoElementType(StringView, CSSParserMode = HTMLStandardMode);
         static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList.

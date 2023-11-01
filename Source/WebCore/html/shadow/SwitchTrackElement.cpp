@@ -25,8 +25,8 @@
 #include "config.h"
 #include "SwitchTrackElement.h"
 
-#include "RenderStyleInlines.h"
-#include "ResolvedStyle.h"
+#include "ScriptDisallowedScope.h"
+#include "ShadowPseudoIds.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,24 +37,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SwitchTrackElement);
 
 Ref<SwitchTrackElement> SwitchTrackElement::create(Document& document)
 {
-    return adoptRef(*new SwitchTrackElement(document));
+    Ref element = adoptRef(*new SwitchTrackElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
+    element->setPseudo(ShadowPseudoIds::track());
+    return element;
 }
 
 SwitchTrackElement::SwitchTrackElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document, CreateSwitchTrackElement)
 {
-}
-
-std::optional<Style::ResolvedStyle> SwitchTrackElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
-{
-    if (!hostStyle)
-        return std::nullopt;
-
-    auto elementStyle = resolveStyle(resolutionContext);
-    if (hostStyle->effectiveAppearance() == StyleAppearance::Auto)
-        elementStyle.style->setEffectiveAppearance(StyleAppearance::SwitchTrack);
-
-    return elementStyle;
 }
 
 } // namespace WebCore
