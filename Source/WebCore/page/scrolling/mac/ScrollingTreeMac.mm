@@ -123,38 +123,58 @@ static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNod
 
 RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
 {
-    auto* rootScrollingNode = rootNode();
+    RefPtr rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return nullptr;
 
     Locker locker { m_layerHitTestMutex };
 
-    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode.get())->rootContentsLayer();
     FloatPoint scrollOrigin = rootScrollingNode->scrollOrigin();
     auto pointInContentsLayer = point;
     pointInContentsLayer.moveBy(scrollOrigin);
 
-    Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), pointInContentsLayer, layerEventRegionContainsPoint);
+    bool hasAnyNonInteractiveScrollingLayers = false;
+    auto layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, rootContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED
-    for (auto [layer, point] : WTF::makeReversedRange(layersAtPoint))
+    for (auto [layer, point] : layersAtPoint)
         LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
 #endif
 
     if (layersAtPoint.size()) {
-        auto* frontmostLayer = layersAtPoint.last().first;
-        for (auto [layer, point] : WTF::makeReversedRange(layersAtPoint)) {
-            auto nodeID = scrollingNodeIDForLayer(layer);
-            
-            auto* scrollingNode = nodeForID(nodeID);
-            if (!is<ScrollingTreeScrollingNode>(scrollingNode))
+        auto* frontmostLayer = layersAtPoint.first().first;
+        for (size_t i = 0 ; i < layersAtPoint.size() ; i++) {
+            auto [layer, point] = layersAtPoint[i];
+
+            if (!layerEventRegionContainsPoint(layer, point))
                 continue;
-            
-            if (isScrolledBy(*this, nodeID, frontmostLayer))
+
+            auto scrollingNodeForLayer = [&] (auto layer, auto point) -> RefPtr<ScrollingTreeNode> {
+                UNUSED_PARAM(point);
+                auto nodeID = scrollingNodeIDForLayer(layer);
+                RefPtr scrollingNode = nodeForID(nodeID);
+                if (!is<ScrollingTreeScrollingNode>(scrollingNode))
+                    return nullptr;
+                if (isScrolledBy(*this, nodeID, frontmostLayer)) {
+                    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
+                    return scrollingNode;
+                }
+                return nullptr;
+            };
+
+            if (RefPtr scrollingNode = scrollingNodeForLayer(layer, point))
                 return scrollingNode;
 
+            // This layer may be scrolled by some other layer further back which may itself be non-interactive.
+            if (hasAnyNonInteractiveScrollingLayers) {
+                for (size_t j = i + 1; j < layersAtPoint.size() ; j++) {
+                    auto [behindLayer, behindPoint] = layersAtPoint[j];
+                    if (RefPtr scrollingNode = scrollingNodeForLayer(behindLayer, behindPoint))
+                        return scrollingNode;
+                }
+            }
             // FIXME: Hit-test scroll indicator layers.
         }
     }
