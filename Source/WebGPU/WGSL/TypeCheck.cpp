@@ -602,7 +602,7 @@ void TypeChecker::visit(AST::IfStatement& statement)
     if (!unify(test, m_types.boolType()))
         typeError(statement.test().span(), "expected 'bool', found ", *test);
 
-    AST::Visitor::visit(statement.trueBody());
+    visit(statement.trueBody());
     if (statement.maybeFalseBody())
         AST::Visitor::visit(*statement.maybeFalseBody());
 }
