@@ -104,7 +104,7 @@ void AttributeValidator::visit(AST::Function& function)
                 auto value = dimension->constantValue();
                 if (!value.has_value())
                     return;
-                if (value->toInt() < 1)
+                if (value->integerValue() < 1)
                     error(dimension->span(), "@workgroup_size argument must be at least 1");
             };
             check(workgroupSize.x);
@@ -189,7 +189,7 @@ void AttributeValidator::visit(AST::Variable& variable)
         if (is<AST::BindingAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@binding attribute must only be applied to resource variables");
-            auto bindingValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->toInt();
+            auto bindingValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->integerValue();
             if (bindingValue < 0)
                 error(attribute.span(), "@binding value must be non-negative");
             else
@@ -200,7 +200,7 @@ void AttributeValidator::visit(AST::Variable& variable)
         if (is<AST::GroupAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@group attribute must only be applied to resource variables");
-            auto groupValue = downcast<AST::GroupAttribute>(attribute).group().constantValue()->toInt();
+            auto groupValue = downcast<AST::GroupAttribute>(attribute).group().constantValue()->integerValue();
             if (groupValue < 0)
                 error(attribute.span(), "@group value must be non-negative");
             else
@@ -212,7 +212,7 @@ void AttributeValidator::visit(AST::Variable& variable)
             auto& idExpression = downcast<AST::IdAttribute>(attribute).value();
             if (variable.flavor() != AST::VariableFlavor::Override || !satisfies(variable.storeType(), Constraints::Scalar))
                 error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
-            auto idValue = idExpression.constantValue()->toInt();
+            auto idValue = idExpression.constantValue()->integerValue();
             if (idValue < 0)
                 error(attribute.span(), "@id value must be non-negative");
             else
@@ -291,7 +291,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
         if (is<AST::SizeAttribute>(attribute)) {
             // FIXME: check that the member type must have creation-fixed footprint.
             m_hasSizeOrAlignmentAttributes = true;
-            auto sizeValue = downcast<AST::SizeAttribute>(attribute).size().constantValue()->toInt();
+            auto sizeValue = downcast<AST::SizeAttribute>(attribute).size().constantValue()->integerValue();
             if (sizeValue < 0)
                 error(attribute.span(), "@size value must be non-negative");
             else if (sizeValue < member.type().inferredType()->size())
@@ -302,7 +302,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
         if (is<AST::AlignAttribute>(attribute)) {
             m_hasSizeOrAlignmentAttributes = true;
-            auto alignmentValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->toInt();
+            auto alignmentValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->integerValue();
             auto isPowerOf2 = !(alignmentValue & (alignmentValue - 1));
             if (alignmentValue < 0)
                 error(attribute.span(), "@align value must be non-negative");
@@ -366,7 +366,7 @@ bool AttributeValidator::parseLocation(AST::Function* function, std::optional<un
     if (!isNumeric && !isNumericVector)
         error(attribute.span(), "@location must only be applied to declarations of numeric scalar or numeric vector type");
 
-    auto locationValue = downcast<AST::LocationAttribute>(attribute).location().constantValue()->toInt();
+    auto locationValue = downcast<AST::LocationAttribute>(attribute).location().constantValue()->integerValue();
     if (locationValue < 0)
         error(attribute.span(), "@location value must be non-negative");
     else

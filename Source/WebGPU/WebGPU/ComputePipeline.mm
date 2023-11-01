@@ -57,9 +57,9 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
 
 static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
-    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues).toInt();
-    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues).toInt() : 1;
-    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues).toInt() : 1;
+    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues).integerValue();
+    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues).integerValue() : 1;
+    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues).integerValue() : 1;
 
     return MTLSizeMake(width, height, depth);
 }
