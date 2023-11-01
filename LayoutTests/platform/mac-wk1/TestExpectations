@@ -2685,5 +2685,3 @@ fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
 webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
-
-webkit.org/b/263601 [ Sonoma arm64 ] imported/blink/compositing/layer-creation/incremental-destruction.html [ ImageOnlyFailure ]
