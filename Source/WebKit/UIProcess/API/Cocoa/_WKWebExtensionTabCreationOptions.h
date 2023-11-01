@@ -33,9 +33,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- @abstract A `_WKWebExtensionWindowCreationOptions` object encapsulates new window creation options for an extension.
- @discussion This class holds the various options that influence the behavior and initial state of a newly created window.
- The app retains the discretion to disregard any or all of these options, or even opt not to create a new window.
+ @abstract A `_WKWebExtensionTabCreationOptions` object encapsulates new tab creation options for an extension.
+ @discussion This class holds the various options that influence the behavior and initial state of a newly created tab.
+ The app retains the discretion to disregard any or all of these options, or even opt not to create a new tab.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebExtensionTabCreationOptions : NSObject

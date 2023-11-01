@@ -151,8 +151,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, nullable, readonly, copy) NSString *displayDescription;
 
 /*!
- @abstract The default localized extension action label.
- @result The action label, or `nil` if there was no default action label specified.
+ @abstract The default localized extension action label. Returns `nil` if there was no default action label specified.
  @discussion This label serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to
  the extension being loaded into an extension context. Once the extension is loaded, use the `actionForTab:` API to get the tab-specific label.
  */
