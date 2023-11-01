@@ -3495,7 +3495,12 @@ static bool shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = t
 
 @end
 
+// FIXME when rdar://117758550 is resolved.
+#if PLATFORM(IOS)
+TEST(ServiceWorker, DISABLED_WindowClientNavigate)
+#else
 TEST(ServiceWorker, WindowClientNavigate)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -3565,7 +3570,12 @@ TEST(ServiceWorker, WindowClientNavigate)
     shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
 }
 
+// FIXME when rdar://117758550 is resolved.
+#if PLATFORM(IOS)
+TEST(ServiceWorker, DISABLED_WindowClientNavigateCrossOrigin)
+#else
 TEST(ServiceWorker, WindowClientNavigateCrossOrigin)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
