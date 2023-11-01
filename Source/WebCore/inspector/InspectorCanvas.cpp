@@ -973,35 +973,13 @@ Ref<Protocol::Recording::Recording> InspectorCanvas::releaseObjectForRecording()
 
 Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(CanvasRenderingContext& context)
 {
-#if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(context))
-        downcast<WebGLRenderingContextBase>(context).setPreventBufferClearForInspector(true);
-
-    auto resetPreventBufferClearForInspector = makeScopeExit([&] {
-        if (is<WebGLRenderingContextBase>(context))
-            downcast<WebGLRenderingContextBase>(context).setPreventBufferClearForInspector(false);
-    });
-#endif
-    if (auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(context.canvasBase())) {
-        auto result = canvasElement->toDataURL("image/png"_s);
-        if (result.hasException())
-            return makeUnexpected(result.releaseException().releaseMessage());
-        return result.releaseReturnValue().string;
-    }
-#if ENABLE(OFFSCREEN_CANVAS)
-    if (auto* offscreenCanvas = dynamicDowncast<OffscreenCanvas>(context.canvasBase())) {
-        if (!offscreenCanvas->originClean())
-            return makeUnexpected("Canvas is origin tainted."_s);
-
-        if (offscreenCanvas->hasCreatedImageBuffer()) {
-            if (auto* buffer = offscreenCanvas->buffer())
-                return buffer->toDataURL("image/png"_s);
-        }
-        return emptyString();
-    }
-#endif
-    ASSERT_NOT_REACHED();
-    return makeUnexpected(""_s);
+    if (context.compositingResultsNeedUpdating())
+        context.drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+    else
+        context.drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+    if (auto* buffer = context.canvasBase().buffer())
+        return buffer->toDataURL("image/png"_s);
+    return emptyString();
 }
 
 void InspectorCanvas::appendActionSnapshotIfNeeded()

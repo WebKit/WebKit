@@ -133,7 +133,6 @@ class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBa
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using WebGLVersion = GraphicsContextGLWebGLVersion;
-    using SurfaceBuffer = GraphicsContextGL::SurfaceBuffer;
 
     using GPUBasedCanvasRenderingContext::weakPtrFactory;
     using GPUBasedCanvasRenderingContext::WeakValueType;
@@ -243,9 +242,6 @@ public:
     bool extensionIsEnabled(const String&);
 
     bool isPreservingDrawingBuffer() const { return m_attributes.preserveDrawingBuffer; }
-
-    bool preventBufferClearForInspector() const { return m_preventBufferClearForInspector; }
-    void setPreventBufferClearForInspector(bool value) { m_preventBufferClearForInspector = value; }
 
     void hint(GCGLenum target, GCGLenum mode);
     GCGLboolean isBuffer(WebGLBuffer*);
@@ -399,8 +395,8 @@ public:
 
     void reshape(int width, int height) override;
 
-    void prepareForDisplayWithPaint() final;
-    void paintRenderingResultsToCanvas() final;
+    void drawBufferToCanvas(SurfaceBuffer) final;
+
     RefPtr<PixelBuffer> drawingBufferToPixelBuffer(GraphicsContextGL::FlipY);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
@@ -564,7 +560,6 @@ protected:
 
     EventLoopTimerHandle m_restoreTimer;
     GCGLErrorCodeSet m_errors;
-    bool m_markedCanvasDirty;
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::ARRAY_BUFFER> m_boundArrayBuffer;
@@ -670,10 +665,8 @@ protected:
 
     int m_numGLErrorsToConsoleAllowed;
 
-    bool m_preventBufferClearForInspector { false };
-
     bool m_compositingResultsNeedUpdating { false };
-    bool m_isDisplayingWithPaint { false };
+    std::optional<SurfaceBuffer> m_canvasBufferContents;
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2

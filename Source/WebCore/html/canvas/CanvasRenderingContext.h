@@ -79,10 +79,18 @@ public:
 
     virtual void clearAccumulatedDirtyRect() { }
 
-    // Called before paintRenderingResultsToCanvas if paintRenderingResultsToCanvas is
-    // used for compositing purposes.
-    virtual void prepareForDisplayWithPaint() { }
-    virtual void paintRenderingResultsToCanvas() { }
+    // Canvas 2DContext drawing buffer is the same as display buffer.
+    // WebGL, WebGPU draws to drawing buffer. The draw buffer is then swapped to
+    // display buffer during preparation and compositor composites the display buffer.
+    // toDataURL and similar functions from JS execution reads the drawing buffer.
+    // Web Inspector and similar reads from the engine reads both.
+    enum class SurfaceBuffer : uint8_t {
+        DrawingBuffer,
+        DisplayBuffer
+    };
+
+    // Draws the source buffer to the canvasBase().buffer().
+    virtual void drawBufferToCanvas(SurfaceBuffer) { }
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 
@@ -91,6 +99,7 @@ public:
 
     virtual bool compositingResultsNeedUpdating() const { return false; }
     virtual bool needsPreparationForDisplay() const { return false; }
+    // Swaps the current drawing buffer to display buffer.
     virtual void prepareForDisplay() { }
 
     virtual PixelFormat pixelFormat() const;

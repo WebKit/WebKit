@@ -65,8 +65,7 @@ public:
     PixelFormat pixelFormat() const override;
     void reshape(int width, int height) override;
 
-    void prepareForDisplayWithPaint() override;
-    void paintRenderingResultsToCanvas() override;
+    void drawBufferToCanvas(SurfaceBuffer) override;
     // GPUCanvasContext methods:
     CanvasType canvas() override;
     void configure(GPUCanvasConfiguration&&) override;

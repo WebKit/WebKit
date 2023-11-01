@@ -107,7 +107,7 @@ AffineTransform CanvasBase::baseTransform() const
 void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
-        context->paintRenderingResultsToCanvas();
+        context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         if (m_canvasNoiseHashSalt)
             m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *m_canvasNoiseHashSalt);
     }
