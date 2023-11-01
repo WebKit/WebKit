@@ -39,5 +39,6 @@ messages -> VideoPresentationManager {
     FullscreenModeChanged(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenMayReturnToInline(WebKit::PlaybackSessionContextIdentifier contextId, bool isPageVisible)
     RequestRouteSharingPolicyAndContextUID(WebKit::PlaybackSessionContextIdentifier contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID)
+    EnsureUpdatedVideoDimensions(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatSize existingVideoDimensions)
 }
 #endif

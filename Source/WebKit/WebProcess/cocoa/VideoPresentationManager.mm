@@ -732,6 +732,24 @@ void VideoPresentationManager::requestRouteSharingPolicyAndContextUID(PlaybackSe
     ensureModel(contextId).requestRouteSharingPolicyAndContextUID(WTFMove(reply));
 }
 
+void VideoPresentationManager::ensureUpdatedVideoDimensions(PlaybackSessionContextIdentifier contextId, WebCore::FloatSize existingVideoDimensions)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    auto model = std::get<0>(m_contextMap.get(contextId));
+    if (!model)
+        return;
+
+    auto videoDimensions = model->videoDimensions();
+    if (videoDimensions == existingVideoDimensions)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "existingVideoDimensions=", existingVideoDimensions, ", videoDimensions=", videoDimensions);
+    page->send(Messages::VideoPresentationManagerProxy::SetVideoDimensions(contextId, videoDimensions));
+}
+
 void VideoPresentationManager::setCurrentlyInFullscreen(VideoPresentationInterfaceContext& interface, bool currentlyInFullscreen)
 {
     interface.setTargetIsFullscreen(currentlyInFullscreen);

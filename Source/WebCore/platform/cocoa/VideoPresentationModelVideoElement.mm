@@ -289,7 +289,7 @@ void VideoPresentationModelVideoElement::setVideoDimensions(const FloatSize& vid
     if (m_videoDimensions == videoDimensions)
         return;
 
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions, ", clients=", m_clients.size());
     m_videoDimensions = videoDimensions;
 
     for (auto& client : copyToVector(m_clients))

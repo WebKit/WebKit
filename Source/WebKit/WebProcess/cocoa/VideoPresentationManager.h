@@ -189,6 +189,7 @@ protected:
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+    void ensureUpdatedVideoDimensions(PlaybackSessionContextIdentifier, WebCore::FloatSize existingVideoDimensions);
 
     void setCurrentlyInFullscreen(VideoPresentationInterfaceContext&, bool);
 
