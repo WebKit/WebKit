@@ -43,6 +43,7 @@
 #include "WebMAudioUtilitiesCocoa.h"
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
+#include <wtf/NativePromise.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StdList.h>
 #include <wtf/darwin/WeakLinking.h>
@@ -1583,7 +1584,7 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
     m_queuedAudioDuration = { };
 }
 
-void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags appendFlags)
+Ref<GenericPromise> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -1594,17 +1595,13 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
 
     auto result = m_parser.parse(WTFMove(segment));
     if (result.hasException()) {
-        completionHandler();
-        return;
+        return GenericPromise::createAndReject(int(result.exception().code()));
     }
 
     if (result.returnValue()) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", result.returnValue(), ")");
 
-        m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, code = result.returnValue()] {
-            if (m_didEncounterErrorDuringParsingCallback)
-                m_didEncounterErrorDuringParsingCallback(code);
-        });
+        return GenericPromise::createAndReject(result.returnValue());
     }
 
     // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
@@ -1612,7 +1609,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
     // audio buffers.
     flushPendingAudioSamples();
 
-    completionHandler();
+    return GenericPromise::createAndResolve();
 }
 
 void SourceBufferParserWebM::flushPendingMediaData()

@@ -155,7 +155,6 @@ private:
 
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
-    void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
     void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);

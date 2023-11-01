@@ -58,6 +58,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>
+#import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
@@ -499,16 +500,6 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     });
 }
 
-void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
-{
-#if LOG_DISABLED
-    UNUSED_PARAM(code);
-#endif
-    ERROR_LOG(LOGIDENTIFIER, code);
-
-    m_parsingSucceeded = false;
-}
-
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
@@ -649,13 +640,6 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
         weakThis->didParseInitializationData(WTFMove(segment));
     });
 
-    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = WeakPtr { *this }] (int32_t errorCode) {
-        ASSERT(isMainThread());
-        if (!weakThis)
-            return;
-        weakThis->didEncounterErrorDuringParsing(errorCode);
-    });
-
     m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
         ASSERT(isMainThread());
         if (!weakThis)
@@ -719,15 +703,13 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
         weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, nullptr);
     });
 
-    m_parsingSucceeded = true;
-
-    m_appendQueue->dispatch([data = WTFMove(data), weakThis = WeakPtr { *this }, parser = m_parser]() mutable {
-        parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis)]() mutable {
-            callOnMainThread([weakThis = WTFMove(weakThis)] {
-                if (weakThis)
-                    weakThis->appendCompleted();
-            });
-        });
+    invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser]() mutable {
+        return parser->appendData(WTFMove(data));
+    })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }](auto&& result) {
+        if (!weakThis)
+            return;
+        weakThis->m_parsingSucceeded = !!result;
+        weakThis->appendCompleted();
     });
 }
 
