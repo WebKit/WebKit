@@ -237,8 +237,16 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
     WTF::storeStoreFence();
     header().m_markingVersion = markingVersion;
     
+    // Workaround for a clang regression <rdar://111818130>.
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wthread-safety-analysis"
+#endif
     // This means we're the first ones to mark any object in this block.
     directory->setIsMarkingNotEmpty(Locker { directory->bitvectorLock() }, &handle(), true);
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 }
 
 void MarkedBlock::resetAllocated()
