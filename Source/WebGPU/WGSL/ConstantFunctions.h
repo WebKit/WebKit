@@ -547,8 +547,44 @@ static ConstantValue constantBitwiseAnd(const Type*, const FixedVector<ConstantV
 
 UNARY_OPERATION(BitwiseNot, Integer, [&](auto arg) { return ~arg; })
 BINARY_OPERATION(BitwiseXor, Integer, [&](auto left, auto right) { return left ^ right; })
-BINARY_OPERATION(BitwiseShiftLeft, Integer, [&](auto left, auto right) { return left << right; })
-BINARY_OPERATION(BitwiseShiftRight, Integer, [&](auto left, auto right) { return left >> right; })
+
+static ConstantValue constantBitwiseShiftLeft(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    // We can't use a BINARY_OPERATION here since the arguments might not all have the same type
+    // i.e. we accept (u32, u32) as well as (i32, u32)
+    ASSERT(arguments.size() == 2);
+    const auto& shift = [&]<typename T>(T left, uint32_t right) {
+        return left << right;
+    };
+
+    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantValue {
+        auto right = std::get<uint32_t>(rightValue);
+        if (auto* i32 = std::get_if<int32_t>(&left))
+            return shift(*i32, right);
+        if (auto* u32 = std::get_if<uint32_t>(&left))
+            return shift(*u32, right);
+        RELEASE_ASSERT_NOT_REACHED();
+    }, arguments[0], arguments[1]);
+}
+
+static ConstantValue constantBitwiseShiftRight(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    // We can't use a BINARY_OPERATION here since the arguments might not all have the same type
+    // i.e. we accept (u32, u32) as well as (i32, u32)
+    ASSERT(arguments.size() == 2);
+    const auto& shift = [&]<typename T>(T left, uint32_t right) {
+        return left >> right;
+    };
+
+    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantValue {
+        auto right = std::get<uint32_t>(rightValue);
+        if (auto* i32 = std::get_if<int32_t>(&left))
+            return shift(*i32, right);
+        if (auto* u32 = std::get_if<uint32_t>(&left))
+            return shift(*u32, right);
+        RELEASE_ASSERT_NOT_REACHED();
+    }, arguments[0], arguments[1]);
+}
 
 
 // Constructors
