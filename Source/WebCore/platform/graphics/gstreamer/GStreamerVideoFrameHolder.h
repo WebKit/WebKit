@@ -20,7 +20,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER)
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
@@ -29,7 +29,7 @@ namespace WebCore {
 
 class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder {
 public:
-    explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, TextureMapperGL::Flags, bool gstGLEnabled);
+    explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, TextureMapper::Flags, bool gstGLEnabled);
     virtual ~GstVideoFrameHolder();
 
 #if USE(GSTREAMER_GL)
@@ -38,11 +38,11 @@ public:
 
     const IntSize& size() const { return m_size; }
     bool hasAlphaChannel() const { return m_hasAlphaChannel; }
-    TextureMapperGL::Flags flags() const { return m_flags; }
+    TextureMapper::Flags flags() const { return m_flags; }
     GLuint textureID() const { return m_textureID; }
     bool hasMappedTextures() const { return m_hasMappedTextures; }
     const GstVideoFrame& videoFrame() const { return m_videoFrame; }
-    void updateTexture(BitmapTextureGL&);
+    void updateTexture(BitmapTexture&);
     std::unique_ptr<TextureMapperPlatformLayerBuffer> platformLayerBuffer();
 
     bool hasDMABuf() const { return false; }
@@ -53,7 +53,7 @@ private:
     IntSize m_size;
     bool m_hasAlphaChannel;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    TextureMapperGL::Flags m_flags { };
+    TextureMapper::Flags m_flags { };
     GLuint m_textureID { 0 };
 #if USE(GSTREAMER_GL)
     GstGLTextureTarget m_textureTarget { GST_GL_TEXTURE_TARGET_NONE };
@@ -62,6 +62,7 @@ private:
     bool m_hasMappedTextures { false };
 };
 
-}
-#endif // ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER_GL)
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER)
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 
 namespace WebCore {
 
@@ -40,4 +40,4 @@ struct TextureMapperContextAttributes {
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER)

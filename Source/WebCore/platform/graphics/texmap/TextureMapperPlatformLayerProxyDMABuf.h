@@ -32,7 +32,7 @@
 
 #include "DMABufFormat.h"
 #include "DMABufObject.h"
-#include "TextureMapperGL.h"
+#include "TextureMapper.h"
 #include "TextureMapperPlatformLayer.h"
 #include <cstdint>
 #include <memory>
@@ -54,7 +54,7 @@ public:
     class DMABufLayer : public ThreadSafeRefCounted<DMABufLayer>, public TextureMapperPlatformLayer {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        DMABufLayer(DMABufObject&&, TextureMapperGL::Flags = 0);
+        DMABufLayer(DMABufObject&&, TextureMapper::Flags = 0);
         virtual ~DMABufLayer();
 
         void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = { }, float opacity = 1.0) final;
@@ -72,14 +72,14 @@ public:
 
         DMABufObject m_object;
         std::unique_ptr<EGLImageData> m_imageData;
-        TextureMapperGL::Flags m_flags;
+        TextureMapper::Flags m_flags;
 
         static constexpr unsigned c_maximumAge { 16 };
         unsigned m_age { 0 };
     };
 
     template<typename F>
-    void pushDMABuf(DMABufObject&& dmabufObject, const F& constructor, TextureMapperGL::Flags flags = 0)
+    void pushDMABuf(DMABufObject&& dmabufObject, const F& constructor, TextureMapper::Flags flags = 0)
     {
         ASSERT(m_lock.isHeld());
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TextureMapperContextAttributes.h"
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 
 #include "TextureMapperGLHeaders.h"
 #include <mutex>
@@ -63,4 +63,4 @@ const TextureMapperContextAttributes& TextureMapperContextAttributes::get()
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER)

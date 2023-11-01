@@ -21,6 +21,7 @@
 
 #include "TextureMapperTiledBackingStore.h"
 
+#include "BitmapTexture.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "TextureMapper.h"

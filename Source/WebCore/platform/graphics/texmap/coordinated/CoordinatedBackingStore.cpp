@@ -22,9 +22,9 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "BitmapTexture.h"
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
-#include "TextureMapperGL.h"
 
 namespace WebCore {
 

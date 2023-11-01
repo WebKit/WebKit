@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class IntSize;
-class TextureMapperGL;
 class TextureMapperLayer;
 class TextureMapperPlatformLayerBuffer;
 

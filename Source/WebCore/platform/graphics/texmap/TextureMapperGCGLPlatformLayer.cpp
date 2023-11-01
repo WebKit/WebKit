@@ -24,7 +24,7 @@
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
 #include "ANGLEHeaders.h"
-#include "BitmapTextureGL.h"
+#include "BitmapTexture.h"
 #include "GLContext.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayerBuffer.h"
@@ -46,9 +46,8 @@ TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer()
 void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     auto attrs = m_context.contextAttributes();
-    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
-    TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
-    texmapGL.drawTexture(m_context.m_compositorTexture, flags, targetRect, matrix, opacity);
+    TextureMapper::Flags flags = TextureMapper::ShouldFlipTexture | (attrs.alpha ? TextureMapper::ShouldBlend : 0);
+    textureMapper.drawTexture(m_context.m_compositorTexture, flags, targetRect, matrix, opacity);
 }
 
 } // namespace WebCore

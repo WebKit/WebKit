@@ -17,31 +17,54 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextureMapper_h
-#define TextureMapper_h
+#pragma once
 
-#include "BitmapTexture.h"
+#if USE(TEXTURE_MAPPER)
+
+#include "ClipStack.h"
 #include "Color.h"
+#include "FilterOperation.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "TextureMapperContextAttributes.h"
+#include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
+#include <array>
+#include <wtf/Vector.h>
 
-/*
-    TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
-    a need for a platform specific scene-graph library like CoreAnimations or QGraphicsView.
-*/
+// TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
+// a need for a platform specific scene-graph library like CoreAnimation.
 
 namespace WebCore {
 
+class BitmapTexture;
 class BitmapTexturePool;
 class GraphicsLayer;
-class TextureMapper;
+class TextureMapperGLData;
+class TextureMapperShaderProgram;
 class FilterOperations;
 class FloatRoundedRect;
 
 class TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum Flag {
+        NoFlag = 0x00,
+        ShouldBlend = 0x01,
+        ShouldFlipTexture = 0x02,
+        ShouldAntialias = 0x08,
+        ShouldRotateTexture90 = 0x10,
+        ShouldRotateTexture180 = 0x20,
+        ShouldRotateTexture270 = 0x40,
+        ShouldConvertTextureBGRAToRGBA = 0x80,
+        ShouldConvertTextureARGBToRGBA = 0x100,
+        ShouldNotBlend = 0x200,
+        ShouldUseExternalOESTextureRect = 0x400,
+        ShouldPremultiply = 0x800
+    };
+
+    typedef int Flags;
+
     enum PaintFlag {
         PaintingMirrored = 1 << 0,
     };
@@ -55,8 +78,8 @@ public:
 
     WEBCORE_EXPORT static std::unique_ptr<TextureMapper> create();
 
-    explicit TextureMapper();
-    virtual ~TextureMapper();
+    TextureMapper();
+    WEBCORE_EXPORT ~TextureMapper();
 
     enum ExposedEdges {
         NoEdges = 0,
@@ -67,58 +90,79 @@ public:
         AllEdges = LeftEdge | RightEdge | TopEdge | BottomEdge,
     };
 
-    virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) = 0;
-    virtual void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) = 0;
+    WEBCORE_EXPORT void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&);
+    void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&);
 
-    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, unsigned exposedEdges = AllEdges) = 0;
-    virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&, bool) = 0;
-    virtual void clearColor(const Color&) = 0;
+    WEBCORE_EXPORT void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, unsigned exposedEdges = AllEdges);
+    void drawTexture(GLuint texture, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, std::optional<GLuint> alphaPlane, unsigned exposedEdges = AllEdges);
+    void drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
+    void drawTextureExternalOES(GLuint texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&, bool);
+    void clearColor(const Color&);
 
     // makes a surface the target for the following drawTexture calls.
-    virtual void bindSurface(BitmapTexture* surface) = 0;
-    virtual BitmapTexture* currentSurface() = 0;
-    virtual void beginClip(const TransformationMatrix&, const FloatRoundedRect&) = 0;
-    virtual void endClip() = 0;
-    virtual IntRect clipBounds() = 0;
-    virtual Ref<BitmapTexture> createTexture() = 0;
-    virtual void setDepthRange(double zNear, double zFar) = 0;
-
-    virtual void beginPainting(PaintFlags = 0, BitmapTexture* = nullptr) { }
-    virtual void endPainting() { }
-
+    void bindSurface(BitmapTexture* surface);
+    BitmapTexture* currentSurface();
+    void beginClip(const TransformationMatrix&, const FloatRoundedRect&);
+    WEBCORE_EXPORT void beginPainting(PaintFlags = 0, BitmapTexture* = nullptr);
+    WEBCORE_EXPORT void endPainting();
+    void endClip();
+    IntRect clipBounds();
+    IntSize maxTextureSize() const { return IntSize(2000, 2000); }
+    Ref<BitmapTexture> createTexture();
+    void setDepthRange(double zNear, double zFar);
     void setMaskMode(bool m) { m_isMaskMode = m; }
+    void setWrapMode(WrapMode m) { m_wrapMode = m; }
+    void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
 
-    virtual IntSize maxTextureSize() const = 0;
+    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>&, bool defersLastPass);
 
-    virtual RefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const BitmapTexture::Flags = BitmapTexture::SupportsAlpha);
+    WEBCORE_EXPORT RefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const unsigned = 1);
+
 #if USE(GRAPHICS_LAYER_WC)
     WEBCORE_EXPORT void releaseUnusedTexturesNow();
 #endif
 
-    void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
-    void setWrapMode(WrapMode m) { m_wrapMode = m; }
-
-protected:
+private:
     std::unique_ptr<BitmapTexturePool> m_texturePool;
 
     bool isInMaskMode() const { return m_isMaskMode; }
     WrapMode wrapMode() const { return m_wrapMode; }
     const TransformationMatrix& patternTransform() const { return m_patternTransform; }
 
-private:
-#if USE(TEXTURE_MAPPER_GL)
-    static std::unique_ptr<TextureMapper> platformCreateAccelerated();
-#else
-    static std::unique_ptr<TextureMapper> platformCreateAccelerated()
-    {
-        return nullptr;
-    }
-#endif
+    enum class Direction { X, Y };
+
+    RefPtr<BitmapTexture> applyBlurFilter(RefPtr<BitmapTexture> sourceTexture, const BlurFilterOperation&);
+    RefPtr<BitmapTexture> applyDropShadowFilter(RefPtr<BitmapTexture> sourceTexture, const DropShadowFilterOperation&);
+    RefPtr<BitmapTexture> applySinglePassFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>&, bool shouldDefer);
+
+    void drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect);
+    void drawBlurred(const BitmapTexture& sourceTexture, const FloatRect&, float radius, Direction, bool alphaBlur = false);
+    void drawFilterPass(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, Flags);
+    void drawUnitRect(TextureMapperShaderProgram&, GLenum drawingMode);
+    void drawEdgeTriangles(TextureMapperShaderProgram&);
+
+    bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
+    bool beginRoundedRectClip(const TransformationMatrix&, const FloatRoundedRect&);
+    void bindDefaultSurface();
+    ClipStack& clipStack();
+    TextureMapperGLData& data() { return *m_data; }
+
+    void updateProjectionMatrix();
+
     bool m_isMaskMode { false };
     TransformationMatrix m_patternTransform;
     WrapMode m_wrapMode { StretchWrap };
+    TextureMapperContextAttributes m_contextAttributes;
+    TextureMapperGLData* m_data;
+    ClipStack m_clipStack;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // USE(TEXTURE_MAPPER)

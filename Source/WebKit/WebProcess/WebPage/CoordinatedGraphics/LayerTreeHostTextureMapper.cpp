@@ -39,7 +39,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TextureMapperGL.h>
+#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperLayer.h>
 
 namespace WebKit {
@@ -134,7 +134,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 
     m_context->makeContextCurrent();
 
-    m_textureMapper = TextureMapperGL::create();
+    m_textureMapper = TextureMapper::create();
 }
 
 LayerTreeHost::~LayerTreeHost() = default;

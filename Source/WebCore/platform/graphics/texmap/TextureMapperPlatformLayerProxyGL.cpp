@@ -28,8 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "BitmapTextureGL.h"
-#include "TextureMapperGL.h"
+#include "BitmapTexture.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 

@@ -70,7 +70,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 if (!proxy.isActive())
                     return;
 
-                auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
+                auto texture = BitmapTexture::create(TextureMapperContextAttributes::get());
 
                 {
                     Locker locker { m_imageBufferLock };
@@ -95,7 +95,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 }
 
                 auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-                layerBuffer->setExtraFlags(TextureMapperGL::ShouldBlend);
+                layerBuffer->setExtraFlags(TextureMapper::ShouldBlend);
                 downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
             });
         };

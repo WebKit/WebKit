@@ -48,7 +48,6 @@ class Buffer;
 
 namespace WebCore {
 class CoordinatedBackingStore;
-class TextureMapperGL;
 }
 
 namespace WebKit {
