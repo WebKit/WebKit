@@ -3,9 +3,6 @@
     { "name": "webkit-misc", "platform": "*", "max_builds": 3 },
     { "name": "igalia-jsc32-armv7-ews", "platform": "jsc-only" },
     { "name": "igalia-jsc32-armv7-ews-02", "platform": "jsc-only" },
-    { "name": "igalia-jsc32-mipsel-ews", "platform": "jsc-only" },
-    { "name": "igalia-jsc32-mipsel-ews-02", "platform": "jsc-only" },
-    { "name": "igalia-jsc32-mipsel-ews-03", "platform": "jsc-only" },
     { "name": "igalia-jsc32-i386-ews", "platform": "jsc-only" },
     { "name": "igalia1-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia2-gtk-wk2-ews", "platform": "gtk" },
@@ -306,20 +303,6 @@
       "workernames": ["ews136", "ews137"]
     },
     {
-      "name": "JSC-MIPSEL-32bits-Build-EWS", "shortname": "jsc-mips", "icon": "buildOnly",
-      "factory": "JSCBuildFactory", "platform": "jsc-only",
-      "configuration": "release", "architectures": ["mipsel"],
-      "triggers": ["jsc-tests-mipsel-tests-ews"],
-      "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-03"]
-    },
-    {
-      "name": "JSC-MIPSEL-32bits-Tests-EWS", "shortname": "jsc-mips-tests", "icon": "testOnly",
-      "factory": "JSCTestsFactory", "platform": "jsc-only",
-      "configuration": "release", "architectures": ["mipsel"],
-      "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-02"],
-      "remotes": "../../EWS-test-devices.json"
-    },
-    {
       "name": "JSC-ARMv7-32bits-Build-EWS", "shortname": "jsc-armv7", "icon": "buildOnly",
       "factory": "JSCBuildFactory", "platform": "jsc-only",
       "configuration": "release", "architectures": ["armv7"],
@@ -415,7 +398,7 @@
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
             "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
@@ -429,7 +412,7 @@
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
             "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
@@ -514,10 +497,6 @@
     {
       "type": "Triggerable", "name": "api-tests-wpe-ews",
       "builderNames": ["API-Tests-WPE-EWS"]
-    },
-    {
-      "type": "Triggerable", "name": "jsc-tests-mipsel-tests-ews",
-      "builderNames": ["JSC-MIPSEL-32bits-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "jsc-tests-armv7-tests-ews",

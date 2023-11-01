@@ -211,8 +211,8 @@ class GitHubEWS(GitHub):
                           ['jsc', 'api-ios', 'mac-wk2', 'api-gtk', ''],
                           ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
                           ['services', 'tv-sim', 'mac-wk2-stress', 'jsc-armv7-tests', ''],
-                          ['merge', 'watch', '', 'jsc-mips', ''],
-                          ['unsafe-merge', 'watch-sim', '', 'jsc-mips-tests', '']]
+                          ['merge', 'watch', '', '', ''],
+                          ['unsafe-merge', 'watch-sim', '', '', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
