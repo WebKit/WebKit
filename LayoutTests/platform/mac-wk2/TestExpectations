@@ -2010,8 +2010,6 @@ webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
 
 webkit.org/b/263296 [ Sonoma+ arm64 ] compositing/hidpi-compositing-layer-with-tile-layers-on-subpixel-position.html [ ImageOnlyFailure ]
 
-webkit.org/b/263347 [ Sonoma+ Release ] compositing/reflections/repaint-with-reflection.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
