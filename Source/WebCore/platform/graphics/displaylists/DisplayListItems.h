@@ -201,7 +201,7 @@ public:
     }
 
     SetInlineStroke(SRGBA<uint8_t> colorData)
-        : m_colorData(*Color(colorData).tryGetAsPackedInline())
+        : m_colorData(PackedColor::RGBA(colorData))
     {
     }
 
