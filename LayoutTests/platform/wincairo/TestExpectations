@@ -973,6 +973,8 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
 
+webkit.org/b/68278  http/tests/history/back-with-fragment-change.py [ Failure Pass ]
+
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////
@@ -2668,3 +2670,6 @@ http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failu
 webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ] # Makes a subsequent test timeout
+
+webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
+webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
