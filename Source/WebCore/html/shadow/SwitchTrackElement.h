@@ -38,8 +38,6 @@ public:
 private:
     static constexpr auto CreateSwitchTrackElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     explicit SwitchTrackElement(Document&);
-
-    std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
 };
 
 } // namespace WebCore

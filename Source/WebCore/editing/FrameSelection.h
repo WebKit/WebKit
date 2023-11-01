@@ -132,6 +132,7 @@ public:
         DelegateMainFrameScroll = 1 << 10,
         RevealSelectionBounds = 1 << 11,
         ForceCenterScroll = 1 << 12,
+        ForBindings = 1 << 13,
     };
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(UserTriggered = UserTriggered::No);
 
@@ -145,7 +146,7 @@ public:
     WEBCORE_EXPORT void moveTo(const VisiblePosition&, const VisiblePosition&, UserTriggered = UserTriggered::No);
     void moveTo(const Position&, Affinity, UserTriggered = UserTriggered::No);
     void moveTo(const Position&, const Position&, Affinity, UserTriggered = UserTriggered::No);
-    void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, bool shouldSetFocus, SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
+    void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 
     const VisibleSelection& selection() const { return m_selection; }
     WEBCORE_EXPORT void setSelection(const VisibleSelection&, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = CursorAlignOnScroll::IfNeeded, TextGranularity = TextGranularity::CharacterGranularity);
@@ -309,7 +310,7 @@ private:
 
     void selectFrameElementInParentIfFullySelected();
 
-    void setFocusedElementIfNeeded();
+    void setFocusedElementIfNeeded(OptionSet<SetSelectionOption>);
     void focusedOrActiveStateChanged();
 
     enum class ShouldUpdateAppearance : bool { No, Yes };

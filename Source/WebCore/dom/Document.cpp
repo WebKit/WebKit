@@ -9311,17 +9311,6 @@ void Document::detachFromFrame()
     observeFrame(nullptr);
 }
 
-void Document::frameWasDisconnectedFromOwner()
-{
-    if (!frame())
-        return;
-
-    if (RefPtr window = domWindow())
-        window->willDetachDocumentFromFrame();
-
-    detachFromFrame();
-}
-
 bool Document::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
     return hitTest(request, result.hitTestLocation(), result);

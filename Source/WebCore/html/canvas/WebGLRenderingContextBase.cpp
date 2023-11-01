@@ -568,6 +568,10 @@ static String ensureNotNull(const String& text)
     return text;
 }
 
+static GraphicsContextGL::SurfaceBuffer toGCGLSurfaceBuffer(CanvasRenderingContext::SurfaceBuffer buffer)
+{
+    return buffer == CanvasRenderingContext::SurfaceBuffer::DrawingBuffer ? GraphicsContextGL::SurfaceBuffer::DrawingBuffer : GraphicsContextGL::SurfaceBuffer::DisplayBuffer;
+}
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -725,7 +729,8 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
 void WebGLRenderingContextBase::initializeContextState()
 {
     m_errors = { };
-    m_markedCanvasDirty = false;
+    m_canvasBufferContents = SurfaceBuffer::DrawingBuffer;
+    m_compositingResultsNeedUpdating = false;
     m_activeTextureUnit = 0;
     m_packParameters = { };
     m_unpackParameters = { };
@@ -866,7 +871,6 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     }
 }
 
-
 void WebGLRenderingContextBase::destroyGraphicsContextGL()
 {
     removeActivityStateChangeObserver();
@@ -897,15 +901,15 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
             canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
             RenderBox* renderBox = canvas->renderBox();
             if (renderBox && renderBox->hasAcceleratedCompositing()) {
-                m_markedCanvasDirty = true;
+                m_canvasBufferContents = std::nullopt;
                 canvas->clearCopiedImage();
                 renderBox->contentChanged(CanvasPixelsChanged);
             }
         }
     }
 
-    if (!m_markedCanvasDirty) {
-        m_markedCanvasDirty = true;
+    if (m_canvasBufferContents.has_value()) {
+        m_canvasBufferContents = std::nullopt;
         canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
     }
 }
@@ -917,9 +921,6 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
 
     // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
     updateActiveOrdinal();
-
-    if (m_preventBufferClearForInspector)
-        return false;
 
     GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
 
@@ -997,51 +998,23 @@ void WebGLRenderingContextBase::restoreStateAfterClear()
     m_context->depthMask(m_depthMask);
 }
 
-void WebGLRenderingContextBase::prepareForDisplayWithPaint()
-{
-    m_isDisplayingWithPaint = true;
-}
-
-void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
+void WebGLRenderingContextBase::drawBufferToCanvas(SurfaceBuffer sourceBuffer)
 {
     if (isContextLost())
         return;
-
-    if (m_isDisplayingWithPaint) {
-        bool canvasContainsDisplayBuffer = !m_markedCanvasDirty;
-        prepareForDisplay();
-        m_isDisplayingWithPaint = false;
-        if (!canvasContainsDisplayBuffer) {
-            auto& base = canvasBase();
-            base.clearCopiedImage();
-            m_markedCanvasDirty = false;
-            if (auto buffer = base.buffer()) {
-                // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
-                // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
-                // canvas element repeatedly.
-                buffer->flushDrawingContext();
-                m_context->drawSurfaceBufferToImageBuffer(SurfaceBuffer::DisplayBuffer, *buffer);
-            }
-        }
+    if (m_canvasBufferContents == sourceBuffer)
         return;
-    }
-
-    clearIfComposited(CallerTypeOther);
-
-    if (!m_markedCanvasDirty && m_context->getBuffersToAutoClear())
+    auto buffer = canvasBase().buffer();
+    if (!buffer)
         return;
-
-    auto& base = canvasBase();
-    base.clearCopiedImage();
-
-    m_markedCanvasDirty = false;
-    if (auto buffer = base.buffer()) {
-        // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
-        // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
-        // canvas element repeatedly.
-        buffer->flushDrawingContext();
-        m_context->drawSurfaceBufferToImageBuffer(SurfaceBuffer::DrawingBuffer, *buffer);
-    }
+    if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
+        clearIfComposited(CallerTypeOther);
+    m_canvasBufferContents = sourceBuffer;
+    // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
+    // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
+    // canvas element repeatedly.
+    buffer->flushDrawingContext();
+    m_context->drawSurfaceBufferToImageBuffer(toGCGLSurfaceBuffer(sourceBuffer), *buffer);
 }
 
 RefPtr<PixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer(GraphicsContextGL::FlipY flipY)
@@ -1059,7 +1032,7 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
         return nullptr;
     if (buffer == SurfaceBuffer::DrawingBuffer)
         clearIfComposited(CallerTypeOther);
-    return m_context->surfaceBufferToVideoFrame(buffer);
+    return m_context->surfaceBufferToVideoFrame(toGCGLSurfaceBuffer(buffer));
 }
 #endif
 
@@ -5962,6 +5935,7 @@ void WebGLRenderingContextBase::prepareForDisplay()
     m_context->prepareForDisplay();
 
     m_compositingResultsNeedUpdating = false;
+    m_canvasBufferContents = std::nullopt;
 
     if (UNLIKELY(hasActiveInspectorCanvasCallTracer()))
         InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);

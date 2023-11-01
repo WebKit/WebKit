@@ -41,6 +41,7 @@ public:
         Replace,
         Transition,
         Setter,
+        CustomAccessorSetter,
         Proxy,
     };
     
@@ -61,6 +62,8 @@ public:
     
     static PutByVariant setter(CacheableIdentifier, const StructureSet&, PropertyOffset, const ObjectPropertyConditionSet&, std::unique_ptr<CallLinkStatus>);
 
+    static PutByVariant customSetter(CacheableIdentifier, const StructureSet&, const ObjectPropertyConditionSet&, CodePtr<CustomAccessorPtrTag>, std::unique_ptr<DOMAttributeAnnotation>&&);
+
     static PutByVariant proxy(CacheableIdentifier, const StructureSet&, std::unique_ptr<CallLinkStatus>);
     
     Kind kind() const { return m_kind; }
@@ -76,7 +79,7 @@ public:
     
     const StructureSet& oldStructure() const
     {
-        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == Proxy);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == CustomAccessorSetter || kind() == Proxy);
         return m_oldStructure;
     }
     
@@ -87,7 +90,7 @@ public:
     
     StructureSet& oldStructure()
     {
-        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == Proxy);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == CustomAccessorSetter || kind() == Proxy);
         return m_oldStructure;
     }
     
@@ -152,15 +155,20 @@ public:
         return structureSet().overlaps(other.structureSet());
     }
 
+    CodePtr<CustomAccessorPtrTag> customAccessorSetter() const { return m_customAccessorSetter; }
+    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
+
 private:
     bool attemptToMergeTransitionWithReplace(const PutByVariant& replace);
     
     Kind m_kind;
-    PropertyOffset m_offset;
+    PropertyOffset m_offset { invalidOffset };
     StructureSet m_oldStructure;
     Structure* m_newStructure { nullptr };
     ObjectPropertyConditionSet m_conditionSet;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
+    CodePtr<CustomAccessorPtrTag> m_customAccessorSetter;
+    std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
     CacheableIdentifier m_identifier;
 };
 

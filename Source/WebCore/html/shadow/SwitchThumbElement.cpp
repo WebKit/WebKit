@@ -25,8 +25,8 @@
 #include "config.h"
 #include "SwitchThumbElement.h"
 
-#include "RenderStyleInlines.h"
-#include "ResolvedStyle.h"
+#include "ScriptDisallowedScope.h"
+#include "ShadowPseudoIds.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,24 +37,16 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SwitchThumbElement);
 
 Ref<SwitchThumbElement> SwitchThumbElement::create(Document& document)
 {
-    return adoptRef(*new SwitchThumbElement(document));
+    Ref element = adoptRef(*new SwitchThumbElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
+    element->setPseudo(ShadowPseudoIds::thumb());
+    return element;
+
 }
 
 SwitchThumbElement::SwitchThumbElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document, CreateSwitchThumbElement)
 {
-}
-
-std::optional<Style::ResolvedStyle> SwitchThumbElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
-{
-    if (!hostStyle)
-        return std::nullopt;
-
-    auto elementStyle = resolveStyle(resolutionContext);
-    if (hostStyle->effectiveAppearance() == StyleAppearance::Auto)
-        elementStyle.style->setEffectiveAppearance(StyleAppearance::SwitchThumb);
-
-    return elementStyle;
 }
 
 } // namespace WebCore

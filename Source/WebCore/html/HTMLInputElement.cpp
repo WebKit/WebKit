@@ -2221,7 +2221,7 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start,
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
     
-    setSelectionRange(start, end, direction);
+    setSelectionRange(start, end, direction, AXTextStateChangeIntent(), ForBindings::Yes);
     return { };
 }
 

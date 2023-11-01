@@ -649,8 +649,9 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         if (m_context) {
             shouldPaint = paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting;
             if (shouldPaint) {
-                m_context->prepareForDisplayWithPaint();
-                m_context->paintRenderingResultsToCanvas();
+                if (m_context->compositingResultsNeedUpdating())
+                    m_context->prepareForDisplay();
+                m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
             }
         }
 
@@ -821,7 +822,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         if (document().settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).surfaceBufferToVideoFrame(WebGLRenderingContextBase::SurfaceBuffer::DrawingBuffer);
+        return downcast<WebGLRenderingContextBase>(*m_context).surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
     }
 #endif
 
@@ -924,7 +925,7 @@ Image* HTMLCanvasElement::copiedImage() const
 {
     if (!m_copiedImage && buffer()) {
         if (m_context)
-            m_context->paintRenderingResultsToCanvas();
+            m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         m_copiedImage = BitmapImage::create(buffer()->copyNativeImage());
     }
     return m_copiedImage.get();

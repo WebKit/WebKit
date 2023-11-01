@@ -197,7 +197,7 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     RefPtr<VideoFrame> videoFrame = [&]() -> RefPtr<VideoFrame> {
 #if ENABLE(WEBGL)
         if (auto* gl = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->renderingContext()))
-            return gl->surfaceBufferToVideoFrame(WebGLRenderingContextBase::SurfaceBuffer::DisplayBuffer);
+            return gl->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
 #endif
         return m_canvas->toVideoFrame();
     }();

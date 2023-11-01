@@ -301,6 +301,9 @@ public:
 
     void documentURLDidChange(const URL&);
 
+protected:
+    void frameWasDisconnectedFromOwner() const final;
+
 private:
     friend class NavigationDisabler;
 

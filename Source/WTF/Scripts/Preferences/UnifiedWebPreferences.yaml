@@ -4930,6 +4930,22 @@ OverscrollBehaviorEnabled:
       "PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
 
+PDFJSViewerEnabled:
+  type: bool
+  status: testable
+  category: html
+  humanReadableName: "Enable PDF.js viewer"
+  humanReadableDescription: "Enable PDF.js viewer"
+  condition: ENABLE(PDFJS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+    WebCore:
+      default: false
+
 PDFPluginEnabled:
   type: bool
   status: embedder
@@ -4940,6 +4956,19 @@ PDFPluginEnabled:
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+
+PDFPluginHUDEnabled:
+  type: bool
+  status: embedder
+  condition: PLATFORM(COCOA)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": false
+      default: true
+    WebCore:
+      default: false
 
 PageAtRuleSupportEnabled:
   type: bool
@@ -5032,22 +5061,6 @@ PasswordEchoEnabled:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)": true
-      default: false
-    WebCore:
-      default: false
-
-PdfJSViewerEnabled:
-  type: bool
-  status: testable
-  category: html
-  humanReadableName: "Enable PDF.js viewer"
-  humanReadableDescription: "Enable PDF.js viewer"
-  condition: ENABLE(PDFJS)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false

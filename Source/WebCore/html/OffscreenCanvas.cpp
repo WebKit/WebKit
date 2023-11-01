@@ -388,7 +388,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         auto* gc3d = webGLContext->graphicsContextGL();
-        gc3d->drawSurfaceBufferToImageBuffer(WebGLRenderingContextBase::SurfaceBuffer::DrawingBuffer, *imageBitmap->buffer());
+        gc3d->drawSurfaceBufferToImageBuffer(GraphicsContextGL::SurfaceBuffer::DrawingBuffer, *imageBitmap->buffer());
 
         // FIXME: The transfer algorithm requires that the canvas effectively
         // creates a new backing store. Since we're not doing that yet, we
@@ -467,7 +467,7 @@ Image* OffscreenCanvas::copiedImage() const
 
     if (!m_copiedImage && buffer()) {
         if (m_context)
-            m_context->paintRenderingResultsToCanvas();
+            m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         m_copiedImage = BitmapImage::create(buffer()->copyNativeImage());
     }
     return m_copiedImage.get();
@@ -539,8 +539,9 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
 
     // FIXME: Transfer texture over if we're using accelerated compositing
     if (m_context && (m_context->isWebGL() || m_context->isAccelerated())) {
-        m_context->prepareForDisplayWithPaint();
-        m_context->paintRenderingResultsToCanvas();
+        if (m_context->compositingResultsNeedUpdating())
+            m_context->prepareForDisplay();
+        m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     }
 
     if (m_placeholderData->bufferPipeSource) {

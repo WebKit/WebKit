@@ -194,7 +194,7 @@ IntRect RenderVideo::videoBox() const
         intrinsicSize = m_cachedImageSize;
 
     auto videoBoxRect = snappedIntRect(replacedContentRect(intrinsicSize));
-    if (inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
+    if (!intrinsicSize.isEmpty() && inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
         return snappedIntRect({ contentBoxLocation(), contentSize().fitToAspectRatio(intrinsicSize, AspectRatioFitGrow) });
 
     return videoBoxRect;

@@ -811,7 +811,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 #endif
         }
     } else {
-        selector = CSSParserSelector::parsePseudoElementSelector(token.value());
+        selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context.mode);
 #if ENABLE(VIDEO)
         // Treat the ident version of cue as PseudoElementWebkitCustom.
         if (token.type() == IdentToken && selector && selector->match() == CSSSelector::Match::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue)

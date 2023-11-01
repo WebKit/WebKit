@@ -1454,6 +1454,12 @@ private:
         case CallWasm:
             compileCallWasm();
             break;
+        case CallCustomAccessorGetter:
+            compileCallCustomAccessorGetter();
+            break;
+        case CallCustomAccessorSetter:
+            compileCallCustomAccessorSetter();
+            break;
         case VarargsLength:
             compileVarargsLength();
             break;
@@ -12576,6 +12582,38 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
+        }
+    }
+
+    void compileCallCustomAccessorGetter()
+    {
+        // The following function is not an operation: we directly call a custom accessor getter.
+        // Since the getter does not have code setting topCallFrame, As is the same to IC, we should set topCallFrame in caller side.
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
+        auto getter = m_node->customAccessor();
+        auto* uid = m_node->cacheableIdentifier().uid();
+        if (Options::useJITCage())
+            setJSValue(vmCall(Int64, vmEntryCustomGetter, weakPointer(globalObject), lowJSValue(m_node->child1()), m_out.constIntPtr(uid), m_out.constIntPtr(getter.taggedPtr())));
+        else {
+            CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
+            setJSValue(vmCall(Int64, bypassedFunction, weakPointer(globalObject), lowJSValue(m_node->child1()), m_out.constIntPtr(uid)));
+        }
+    }
+
+    void compileCallCustomAccessorSetter()
+    {
+        // The following function is not an operation: we directly call a custom accessor setter.
+        // Since the setter does not have code setting topCallFrame, As is the same to IC, we should set topCallFrame in caller side.
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
+        auto setter = m_node->customAccessor();
+        auto* uid = m_node->cacheableIdentifier().uid();
+        if (Options::useJITCage())
+            vmCall(Void, vmEntryCustomSetter, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2()), m_out.constIntPtr(uid), m_out.constIntPtr(setter.taggedPtr()));
+        else {
+            CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(setter.taggedPtr())));
+            vmCall(Void, bypassedFunction, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2()), m_out.constIntPtr(uid));
         }
     }
 

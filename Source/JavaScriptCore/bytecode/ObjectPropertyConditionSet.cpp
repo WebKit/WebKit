@@ -138,6 +138,18 @@ bool ObjectPropertyConditionSet::structuresEnsureValidity() const
     return true;
 }
 
+bool ObjectPropertyConditionSet::isStillValid() const
+{
+    if (!isValid())
+        return false;
+
+    for (const ObjectPropertyCondition& condition : *this) {
+        if (!condition.isStillValid(Concurrency::ConcurrentThread))
+            return false;
+    }
+    return true;
+}
+
 bool ObjectPropertyConditionSet::needImpurePropertyWatchpoint() const
 {
     for (const ObjectPropertyCondition& condition : *this) {

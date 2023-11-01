@@ -428,6 +428,11 @@ String HTMLTextAreaElement::validationMessage() const
     return String();
 }
 
+void HTMLTextAreaElement::setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction)
+{
+    setSelectionRange(start, end, direction, AXTextStateChangeIntent(), ForBindings::Yes);
+}
+
 bool HTMLTextAreaElement::valueMissing() const
 {
     return valueMissing({ });

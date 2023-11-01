@@ -1481,6 +1481,16 @@ bool PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
     return false;
 }
 
+bool PDFPlugin::hudEnabled() const
+{
+    if (auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
+        if (auto* page = coreFrame->page())
+            return page->settings().pdfPluginHUDEnabled();
+    }
+
+    return false;
+}
+
 ScrollPosition PDFPlugin::scrollPosition() const
 {
     return IntPoint(m_scrollOffset.width(), m_scrollOffset.height());
@@ -1967,6 +1977,8 @@ IntRect PDFPlugin::boundsOnScreen() const
 void PDFPlugin::visibilityDidChange(bool visible)
 {
     if (!m_frame)
+        return;
+    if (!hudEnabled())
         return;
     if (visible)
         m_frame->page()->createPDFHUD(*this, frameForHUD());

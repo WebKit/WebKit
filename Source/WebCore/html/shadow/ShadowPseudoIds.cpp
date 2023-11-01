@@ -51,6 +51,18 @@ const AtomString& placeholder()
     return placeholder;
 }
 
+const AtomString& thumb()
+{
+    static MainThreadNeverDestroyed<const AtomString> thumb("thumb"_s);
+    return thumb;
+}
+
+const AtomString& track()
+{
+    static MainThreadNeverDestroyed<const AtomString> track("track"_s);
+    return track;
+}
+
 const AtomString& webkitContactsAutoFillButton()
 {
     static MainThreadNeverDestroyed<const AtomString> webkitContactsAutoFillButton("-webkit-contacts-auto-fill-button"_s);

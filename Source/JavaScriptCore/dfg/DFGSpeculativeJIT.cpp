@@ -11529,6 +11529,71 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileCallCustomAccessorGetter(Node* node)
+{
+    auto getter = node->customAccessor();
+    UniquedStringImpl* uid = node->cacheableIdentifier().uid();
+
+    JSValueOperand base(this, node->child1());
+
+    JSValueRegs baseRegs = base.jsValueRegs();
+
+    flushRegisters();
+
+    storePtr(GPRInfo::callFrameRegister, &vm().topCallFrame);
+    emitStoreCodeOrigin(m_currentNode->origin.semantic);
+
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+
+    if (Options::useJITCage())
+        setupArguments<GetValueFuncWithPtr>(LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid), TrustedImmPtr(getter.taggedPtr()));
+    else
+        setupArguments<GetValueFunc>(LinkableConstant::globalObject(*this, node), baseRegs, TrustedImmPtr(uid));
+
+    if (Options::useJITCage())
+        appendCall(vmEntryCustomGetter);
+    else {
+        CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
+        appendOperationCall(bypassedFunction);
+    }
+    setupResults(resultRegs);
+
+    exceptionCheck();
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileCallCustomAccessorSetter(Node* node)
+{
+    auto setter = node->customAccessor();
+    UniquedStringImpl* uid = node->cacheableIdentifier().uid();
+
+    JSValueOperand base(this, node->child1());
+    JSValueOperand value(this, node->child2());
+
+    JSValueRegs baseRegs = base.jsValueRegs();
+    JSValueRegs valueRegs = value.jsValueRegs();
+
+    flushRegisters();
+
+    storePtr(GPRInfo::callFrameRegister, &vm().topCallFrame);
+    emitStoreCodeOrigin(m_currentNode->origin.semantic);
+
+    if (Options::useJITCage())
+        setupArguments<PutValueFuncWithPtr>(LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImmPtr(uid), TrustedImmPtr(setter.taggedPtr()));
+    else
+        setupArguments<PutValueFunc>(LinkableConstant::globalObject(*this, node), baseRegs, valueRegs, TrustedImmPtr(uid));
+
+    if (Options::useJITCage())
+        appendCall(vmEntryCustomSetter);
+    else {
+        CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(setter.taggedPtr())));
+        appendOperationCall(bypassedFunction);
+    }
+    exceptionCheck();
+    noResult(node);
+}
+
 GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, ArrayMode arrayMode)
 {
     if (!putByValWillNeedExtraRegister(arrayMode))

@@ -4456,7 +4456,7 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setMathMLEnabled(false);
 #endif
 #if ENABLE(PDFJS)
-    settings.setPdfJSViewerEnabled(true);
+    settings.setPDFJSViewerEnabled(true);
 #endif
 #if USE(SYSTEM_PREVIEW)
     settings.setSystemPreviewEnabled(false);

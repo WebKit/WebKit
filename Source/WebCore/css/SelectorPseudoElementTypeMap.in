@@ -22,3 +22,5 @@ placeholder, PseudoElementWebKitCustom
 -webkit-scrollbar-track-piece
 selection
 slotted
+thumb, PseudoElementWebKitCustom
+track, PseudoElementWebKitCustom

@@ -823,6 +823,10 @@ private:
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
     Vector<int> m_openDirectoryNotifyTokens;
 #endif
+#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+    Vector<int> m_notifyTokens;
+    Vector<RetainPtr<NSObject>> m_notificationObservers;
+#endif
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
