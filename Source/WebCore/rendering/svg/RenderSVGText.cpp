@@ -264,10 +264,7 @@ void RenderSVGText::willLayout()
 
     // Only update the metrics cache, but not the text positioning element cache
     // nor the layout attributes cached in the leaf #text renderers.
-    for (RenderObject* descendant = firstChild(); descendant; descendant = descendant->nextInPreOrder(this)) {
-        if (is<RenderSVGInlineText>(*descendant))
-            m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
-    }
+    m_layoutAttributesBuilder.rebuildMetricsForSubtree(*this);
 }
 
 void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
@@ -296,16 +293,16 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
     }
 }
 
-static inline void updateFontInAllDescendants(RenderObject* start, SVGTextLayoutAttributesBuilder* builder = nullptr)
+static inline void updateFontInAllDescendants(RenderSVGText& text, SVGTextLayoutAttributesBuilder* builder = nullptr)
 {
-    for (RenderObject* descendant = start; descendant; descendant = descendant->nextInPreOrder(start)) {
+    for (RenderObject* descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
         if (!is<RenderSVGInlineText>(*descendant))
             continue;
         auto& text = downcast<RenderSVGInlineText>(*descendant);
         text.updateScaledFont();
-        if (builder)
-            builder->rebuildMetricsForTextRenderer(text);
     }
+    if (builder)
+        builder->rebuildMetricsForSubtree(text);
 }
 
 void RenderSVGText::layout()
@@ -343,7 +340,7 @@ void RenderSVGText::layout()
         // and propogate resulting SVGLayoutAttributes to all RenderSVGInlineText children in the subtree.
         ASSERT(m_layoutAttributes.isEmpty());
         collectLayoutAttributes(this, m_layoutAttributes);
-        updateFontInAllDescendants(this);
+        updateFontInAllDescendants(*this);
         m_layoutAttributesBuilder.buildLayoutAttributesForForSubtree(*this);
 
         m_needsReordering = true;
@@ -354,7 +351,7 @@ void RenderSVGText::layout()
         // When the x/y/dx/dy/rotate lists change, recompute the layout attributes, and eventually
         // update the on-screen font objects as well in all descendants.
         if (m_needsTextMetricsUpdate) {
-            updateFontInAllDescendants(this);
+            updateFontInAllDescendants(*this);
             m_needsTextMetricsUpdate = false;
         }
 
@@ -374,7 +371,7 @@ void RenderSVGText::layout()
         if (m_needsTextMetricsUpdate || isLayoutSizeChanged) {
             // If the root layout size changed (eg. window size changes) or the transform to the root
             // context has changed then recompute the on-screen font size.
-            updateFontInAllDescendants(this, &m_layoutAttributesBuilder);
+            updateFontInAllDescendants(*this, &m_layoutAttributesBuilder);
 
             ASSERT(!m_needsReordering);
             ASSERT(!m_needsPositioningValuesUpdate);
