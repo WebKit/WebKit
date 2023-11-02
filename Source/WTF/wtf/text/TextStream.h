@@ -84,12 +84,6 @@ public:
 
 #if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE TextStream& operator<<(id);
-#ifdef __OBJC__
-    WTF_EXPORT_PRIVATE TextStream& operator<<(NSArray *);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(CGRect);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(CGSize);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(CGPoint);
-#endif
 #endif
 
     OptionSet<Formatting> formattingFlags() const { return m_formattingFlags; }

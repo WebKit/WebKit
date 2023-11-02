@@ -209,4 +209,4 @@ void writeIndent(TextStream& ts, int indent)
         ts << "  ";
 }
 
-}
+} // namespace WTF
