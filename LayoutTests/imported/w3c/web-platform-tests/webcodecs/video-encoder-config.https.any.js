@@ -191,9 +191,13 @@ validButUnsupportedConfigs.forEach(entry => {
 validButUnsupportedConfigs.forEach(entry => {
   async_test(
       t => {
-        let codec = new VideoEncoder(getDefaultCodecInit(t));
-        assert_throws_dom('NotSupportedError', () => {
-          codec.configure(entry.config);
+        let codec = new VideoEncoder({
+          output: t.unreached_func('unexpected output'),
+          error: t.step_func_done(e => {
+            assert_true(e instanceof DOMException);
+            assert_equals(e.name, 'NotSupportedError');
+            assert_equals(codec.state, 'closed', 'state');
+          })
         });
         codec.configure(entry.config);
         codec.flush()
@@ -266,12 +270,7 @@ validConfigs.forEach(config => {
       assert_equals(new_config.latencyMode, config.latencyMode);
     if (config.alpha)
       assert_equals(new_config.alpha, config.alpha);
-    if (config.codec.startsWith('avc')) {
-      if (config.avc) {
-        assert_equals(new_config.avc.format, config.avc.format);
-      }
-    } else {
-      assert_equals(new_config.avc, undefined);
-    }
+    if (config.avc)
+      assert_equals(new_config.avc.format, config.avc.format);
   }, "VideoEncoder.isConfigSupported() supports:" + JSON.stringify(config));
 });
