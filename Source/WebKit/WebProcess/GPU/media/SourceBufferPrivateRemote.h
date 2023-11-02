@@ -102,7 +102,7 @@ private:
     void setAppendWindowEnd(const MediaTime&) final;
     Vector<WebCore::PlatformTimeRanges> trackBuffersRanges() const final { return m_trackBufferRanges; };
 
-    void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    Ref<ComputeSeekPromise> computeSeekTime(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&) final;
 
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;

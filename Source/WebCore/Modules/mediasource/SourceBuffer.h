@@ -105,7 +105,8 @@ public:
 
     void abortIfUpdating();
     void removedFromMediaSource();
-    void computeSeekTime(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
+    using ComputeSeekPromise = SourceBufferPrivate::ComputeSeekPromise;
+    Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
     void seekToTime(const MediaTime&);
 
     bool canPlayThroughRange(const PlatformTimeRanges&);

@@ -123,7 +123,8 @@ public:
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
-    WEBCORE_EXPORT virtual void computeSeekTime(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
+    using ComputeSeekPromise = NativePromise<MediaTime, int>;
+    WEBCORE_EXPORT virtual Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
     WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 

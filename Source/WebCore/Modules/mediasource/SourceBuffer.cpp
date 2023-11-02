@@ -443,11 +443,10 @@ void SourceBuffer::removedFromMediaSource()
     m_source = nullptr;
 }
 
-void SourceBuffer::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
-
+Ref<SourceBuffer::ComputeSeekPromise> SourceBuffer::computeSeekTime(const SeekTarget& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
-    m_private->computeSeekTime(target, WTFMove(completionHandler));
+    return m_private->computeSeekTime(target);
 }
 
 void SourceBuffer::seekToTime(const MediaTime& time)

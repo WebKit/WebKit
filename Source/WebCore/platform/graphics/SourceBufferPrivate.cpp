@@ -282,12 +282,10 @@ void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
     reenqueueMediaForTime(*trackBuffer, trackID, currentMediaTime());
 }
 
-void SourceBufferPrivate::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
 {
-    if (!isAttached()) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!isAttached())
+        return ComputeSeekPromise::createAndReject(-1);
 
     auto seekTime = target.time;
 
@@ -306,7 +304,7 @@ void SourceBufferPrivate::computeSeekTime(const SeekTarget& target, CompletionHa
     if (seekTime.hasDoubleValue())
         seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
 
-    completionHandler(seekTime);
+    return ComputeSeekPromise::createAndResolve(seekTime);
 }
 
 void SourceBufferPrivate::seekToTime(const MediaTime& time)

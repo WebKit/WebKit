@@ -349,15 +349,17 @@ void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindow
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning()) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!isGPURunning())
+        return ComputeSeekPromise::createAndReject(-1);
 
-    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), WTFMove(completionHandler), m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        if (!result)
+            return ComputeSeekPromise::createAndReject(-1);
+        return ComputeSeekPromise::createAndSettle(*result);
+    });
 }
 
 void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)

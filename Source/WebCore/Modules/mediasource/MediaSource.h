@@ -41,6 +41,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

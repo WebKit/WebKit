@@ -56,6 +56,7 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -245,45 +246,23 @@ void MediaSource::completeSeek()
     auto seekTarget = *m_pendingSeekTarget;
     m_pendingSeekTarget.reset();
 
-    struct SeeksCallbackAggregator final : public RefCounted<SeeksCallbackAggregator> {
-        SeeksCallbackAggregator(MediaTime target, MediaSource& source, CompletionHandler<void(const MediaTime&)>&& completionHandler)
-            : time(target)
-            , mediaSource(source)
-            , completionHandler(WTFMove(completionHandler))
-        {
-            ASSERT(this->completionHandler);
+    auto promise = SourceBuffer::ComputeSeekPromise::all(RunLoop::main(), WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
+        return sourceBuffer->computeSeekTime(seekTarget);
+    }))->whenSettled(RunLoop::main(), [time = seekTarget.time, completionHandler = WTFMove(m_seekCompletedHandler), strongThis = Ref { *this }] (auto&& results) mutable {
+        if (!results) {
+            completionHandler(MediaTime::invalidTime());
+            return;
         }
-
-        ~SeeksCallbackAggregator()
-        {
-            auto seekTime = time;
-            for (auto& result : seekResults) {
-                if (result.isInvalid()) {
-                    completionHandler(MediaTime::invalidTime());
-                    return;
-                }
-                if (abs(time - result) > abs(time - seekTime))
-                    seekTime = result;
-            }
-            completionHandler(seekTime);
-
-            // 4. Resume the seek algorithm at the "Await a stable state" step.
-            mediaSource->monitorSourceBuffers();
+        auto seekTime = time;
+        for (auto& result : *results) {
+            if (abs(time - result) > abs(time - seekTime))
+                seekTime = result;
         }
+        completionHandler(seekTime);
 
-        MediaTime time;
-        Ref<MediaSource> mediaSource;
-        CompletionHandler<void(const MediaTime&)> completionHandler;
-        Vector<MediaTime> seekResults;
-    };
-
-    auto callbackAggregator = adoptRef(*new SeeksCallbackAggregator(seekTarget.time, *this, WTFMove(m_seekCompletedHandler)));
-
-    for (auto& sourceBuffer : *m_activeSourceBuffers) {
-        sourceBuffer->computeSeekTime(seekTarget, [callbackAggregator](const MediaTime& seekTime) {
-            callbackAggregator->seekResults.append(seekTime);
-        });
-    }
+        // 4. Resume the seek algorithm at the "Await a stable state" step.
+        strongThis->monitorSourceBuffers();
+    });
 }
 
 void MediaSource::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
