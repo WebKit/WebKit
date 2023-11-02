@@ -26,6 +26,9 @@
 #include "config.h"
 #include "DFGOperations.h"
 
+#include "VMInspector.h"
+#include "VMInspectorInlines.h"
+
 #include "ArrayPrototypeInlines.h"
 #include "ButterflyInlines.h"
 #include "CacheableIdentifierInlines.h"
@@ -328,13 +331,78 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
+    JSFinalObject* targetAsObject = jsDynamicCast<JSFinalObject*>(target);
+    bool targetCanPerformFastPut = targetAsObject && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
     JSValue sourceValue = JSValue::decode(encodedSource);
     if (sourceValue.isUndefinedOrNull())
         return;
     JSObject* source = sourceValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
+
+    bool canPerformFastClone = targetAsObject && targetCanPerformFastPut && source->staticPropertiesReified()
+        && target->structure()->inlineCapacity() == source->structure()->inlineCapacity()
+        && !hasIndexedProperties(target->indexingType())
+        && !hasAnyArrayStorage(target->indexingType())
+        && source->structure()->canPerformFastPropertyEnumerationCommon()
+        && !target->structure()->propertyHash()
+        && target->getPrototype(vm, globalObject) == source->getPrototype(vm, globalObject);
+
+    if (canPerformFastClone && (source->getVectorLength() || source->getArrayLength())) {
+        canPerformFastClone = false;
+        dataLogLn("Public length: ", source->getArrayLength());
+    }
+
+    if (canPerformFastClone) {
+        source->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) ALWAYS_INLINE_LAMBDA {
+            PropertyName propertyName(entry.key());
+            if (propertyName.isPrivateName()
+                || entry.attributes() & PropertyAttribute::DontEnum) {
+                canPerformFastClone = false;
+                dataLogLn("can perform fast clone fails due to dont enum");
+                return false;
+            }
+            return true;
+        });
+    }
+
+    if (canPerformFastClone) {
+        dataLogLn("can perform fast clone");
+
+        // TODO fire watchpoint?
+
+        bool hasIndexingHeader = source->hasIndexingHeader();
+        Structure* oldStructure = target->structure();
+        Structure* structure = source->structure();
+
+        if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity() || hasIndexingHeader) {
+            size_t indexingPayloadSizeInBytes = hasIndexingHeader ? source->butterfly()->indexingHeader()->indexingPayloadSizeInBytes(structure) : 0;
+            auto* newButterfly = Butterfly::create(vm, target, source->butterflyPreCapacity(), structure->outOfLineCapacity(), hasIndexingHeader, hasIndexingHeader ? *source->butterfly()->indexingHeader() : IndexingHeader(), indexingPayloadSizeInBytes);
+            // TODO check if this is safe for every possible previous target structure
+            target->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
+        }
+
+        void* currentBase = source->butterfly()->propertyStorage() - structure->outOfLineCapacity();
+        void* newBase = target->butterfly()->propertyStorage() - structure->outOfLineCapacity();
+
+        gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(currentBase), source->butterflyTotalSize());
+
+        target->setStructure(vm, structure);
+        RELEASE_ASSERT(target->hasIndexingHeader() == hasIndexingHeader);
+
+        dataLogLn("=== target v");
+        VMInspector::dumpCellMemory(target);
+        dataLogLn();
+        VMInspector::dumpCellMemory(source);
+        dataLogLn("=== source ^");
+
+        VMInspector::verifyCell(vm, target);
+
+        if (target->mayBePrototype())
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
+
+        return;
+    }
 
     if (targetCanPerformFastPut) {
         if (!source->staticPropertiesReified()) {

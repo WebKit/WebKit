@@ -1092,8 +1092,10 @@ protected:
         }
     }
         
+public:
     size_t butterflyTotalSize();
     size_t butterflyPreCapacity();
+protected:
 
     Butterfly* createInitialUndecided(VM&, unsigned length);
     ContiguousJSValues createInitialInt32(VM&, unsigned length);
