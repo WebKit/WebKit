@@ -116,6 +116,8 @@ public:
 
     String customCSSText() const;
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customClearReplacementURLForSubresources();
     bool equals(const CSSFontFaceSrcResourceValue&) const;
 
 private:
@@ -126,6 +128,7 @@ private:
     Vector<FontTechnology> m_technologies;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     CachedResourceHandle<CachedFont> m_cachedFont;
+    String m_replacementURLString;
 };
 
 } // namespace WebCore

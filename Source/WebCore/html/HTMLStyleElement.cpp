@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLStyleElement.h"
 
+#include "CSSRule.h"
 #include "CachedResource.h"
 #include "Document.h"
 #include "Event.h"
@@ -38,6 +39,7 @@
 #include "ShadowRoot.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "TextNodeTraversal.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -150,7 +152,7 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
 }
 
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
-{    
+{
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     if (RefPtr styleSheet = this->sheet()) {
@@ -173,6 +175,31 @@ void HTMLStyleElement::setDisabled(bool setDisabled)
 {
     if (CSSStyleSheet* styleSheet = sheet())
         styleSheet->setDisabled(setDisabled);
+}
+
+String HTMLStyleElement::textContentWithReplacementURLs(const HashMap<String, String>& replacementURLStrings) const
+{
+    RefPtr styleSheet = sheet();
+    if (!styleSheet)
+        return TextNodeTraversal::contentsAsString(*this);
+
+    auto ruleList = styleSheet->cssRules();
+    if (!ruleList)
+        return TextNodeTraversal::contentsAsString(*this);
+
+    StringBuilder result;
+    for (unsigned index = 0; index < ruleList->length(); ++index) {
+        auto rule = ruleList->item(index);
+        if (!rule)
+            continue;
+
+        auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings);
+        if (!result.isEmpty() && !ruleText.isEmpty())
+            result.append(" ");
+
+        result.append(ruleText);
+    }
+    return result.toString();
 }
 
 }

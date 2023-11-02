@@ -250,6 +250,20 @@ bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>&
     });
 }
 
+void CSSValue::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    return visitDerived([&](auto& value) {
+        return value.customSetReplacementURLForSubresources(replacementURLStrings);
+    });
+}
+
+void CSSValue::clearReplacementURLForSubresources()
+{
+    return visitDerived([&](auto& value) {
+        return value.customClearReplacementURLForSubresources();
+    });
+}
+
 ComputedStyleDependencies CSSValue::computedStyleDependencies() const
 {
     ComputedStyleDependencies dependencies;

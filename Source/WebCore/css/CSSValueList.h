@@ -66,6 +66,8 @@ public:
     using CSSValue::separatorCSSText;
 
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customClearReplacementURLForSubresources();
 
     CSSValueListBuilder copyValues() const;
 

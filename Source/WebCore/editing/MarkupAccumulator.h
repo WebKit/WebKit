@@ -87,6 +87,7 @@ protected:
     virtual void appendEndTag(StringBuilder&, const Element&);
     virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*);
     virtual void appendText(StringBuilder&, const Text&);
+    virtual bool appendContentsForNode(StringBuilder& result, const Node&);
 
     void appendOpenTag(StringBuilder&, const Element&, Namespaces*);
     void appendCloseTag(StringBuilder&, const Element&);
