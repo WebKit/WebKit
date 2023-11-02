@@ -845,7 +845,9 @@ static void webkitWebViewConstructed(GObject* object)
 
     attachNavigationClientToView(webView);
     attachUIClientToView(webView);
+#if ENABLE(CONTEXT_MENUS)
     attachContextMenuClientToView(webView);
+#endif // ENABLE(CONTEXT_MENUS)
     attachFormClientToView(webView);
 
 #if PLATFORM(GTK)
@@ -2796,6 +2798,7 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
     g_signal_emit(webView, signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 #if PLATFORM(GTK)
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)
 {
@@ -2844,6 +2847,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         hitTestResult.get(), &returnValue);
 }
 #endif
+#endif // ENABLE(CONTEXT_MENUS)
 
 void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmissionRequest* request)
 {
@@ -4633,6 +4637,7 @@ struct ViewSaveAsyncData {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ViewSaveAsyncData)
 
+#if ENABLE(MHTML)
 static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, gpointer data)
 {
     GRefPtr<GTask> task = adoptGRef(G_TASK(data));
@@ -4667,6 +4672,7 @@ static void getContentsAsMHTMLDataCallback(API::Data* wkData, GTask* taskPtr)
 
     g_task_return_boolean(task.get(), TRUE);
 }
+#endif // ENABLE(MHTML)
 
 /**
  * webkit_web_view_save:
@@ -4693,12 +4699,14 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
+#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#endif // ENABLE(MHTML)
 }
 
 /**
@@ -4757,6 +4765,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
+#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
     ViewSaveAsyncData* data = createViewSaveAsyncData();
@@ -4766,6 +4775,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#endif // ENABLE(MHTML)
 }
 
 /**

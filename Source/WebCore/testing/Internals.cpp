@@ -5013,7 +5013,11 @@ void Internals::mockMediaPlaybackTargetPickerDismissPopup()
 
 bool Internals::isMonitoringWirelessRoutes() const
 {
+#if ENABLE(VIDEO)
     return PlatformMediaSessionManager::sharedManager().isMonitoringWirelessTargets();
+#else
+    return false;
+#endif // ENABLE(VIDEO)
 }
 
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)
@@ -6516,6 +6520,8 @@ void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(isPlaying);
+#else
+    UNUSED_PARAM(isPlaying);
 #endif
 }
 

@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "HTMLParserIdioms.h"
 #include "ParsingUtilities.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 

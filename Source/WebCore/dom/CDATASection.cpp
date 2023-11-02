@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CDATASection.h"
 
+#include "Document.h"
 #include "DocumentInlines.h"
 #include <wtf/IsoMallocInlines.h>
 

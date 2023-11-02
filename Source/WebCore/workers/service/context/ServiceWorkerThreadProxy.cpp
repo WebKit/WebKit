@@ -494,8 +494,12 @@ void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
 void ServiceWorkerThreadProxy::setInspectable(bool inspectable)
 {
     ASSERT(isMainThread());
+#if ENABLE(REMOTE_INSPECTOR)
     m_page->setInspectable(inspectable);
     m_remoteDebuggable->setInspectable(inspectable);
+#else
+    UNUSED_PARAM(inspectable);
+#endif // ENABLE(REMOTE_INSPECTOR)
 }
 
 } // namespace WebCore

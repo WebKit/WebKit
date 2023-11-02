@@ -548,6 +548,8 @@ ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should
         return Exception { InvalidAccessError };
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(should);
+#else
+    UNUSED_PARAM(should);
 #endif
     return { };
 }

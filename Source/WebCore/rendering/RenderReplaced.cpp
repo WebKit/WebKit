@@ -27,6 +27,7 @@
 #include "BackgroundPainter.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
+#include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
@@ -401,6 +402,8 @@ static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
 #if ENABLE(VIDEO)
     if (auto* video = dynamicDowncast<RenderVideo>(maybeVideo))
         return video->hasDefaultObjectSize();
+#else
+    UNUSED_PARAM(maybeVideo);
 #endif
     return false;
 } 

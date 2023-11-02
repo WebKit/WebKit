@@ -462,12 +462,14 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
     setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
 }
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 
 CheckedPtr<RenderLayer> RenderLayerModelObject::checkedLayer() const
 {
     return m_layer.get();
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());

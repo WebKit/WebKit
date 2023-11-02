@@ -33,6 +33,7 @@
 #include "HiddenInputType.h"
 
 #include "DOMFormData.h"
+#include "ElementInlines.h"
 #include "FormController.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

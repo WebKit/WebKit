@@ -2926,6 +2926,7 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
 
 void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContextStateSaver&, const AffineTransform& layerContentTransform)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool wasPaintingSVGResourceLayer = m_isPaintingSVGResourceLayer;
     m_isPaintingSVGResourceLayer = true;
     context.concatCTM(layerContentTransform);
@@ -2945,6 +2946,10 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContex
     paintLayer(context, paintingInfo, flags);
 
     m_isPaintingSVGResourceLayer = wasPaintingSVGResourceLayer;
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(layerContentTransform);
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 }
 
 static inline bool paintForFixedRootBackground(const RenderLayer* layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags)
@@ -3173,6 +3178,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 
     if (is<ReferencePathOperation>(style.clipPath())) {
         auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (auto* svgClipper = svgClipperFromStyle()) {
             auto* graphicsElement = svgClipper->shouldApplyPathClipping();
             if (!graphicsElement) {
@@ -3202,6 +3208,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
                 context.translate(-coordinateSystemOriginTranslation);
             return;
         }
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 
         if (auto* clipperRenderer = ReferencedSVGResources::referencedClipperRenderer(renderer().treeScopeForSVGReferences(), referenceClipPathOperation)) {
             // Use the border box as the reference box, even though this is not clearly specified: https://github.com/w3c/csswg-drafts/issues/5786.

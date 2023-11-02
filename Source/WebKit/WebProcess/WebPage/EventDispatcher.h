@@ -76,7 +76,7 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     void addScrollingTreeForPage(WebPage&);
     void removeScrollingTreeForPage(WebPage&);
 #endif

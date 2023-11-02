@@ -27,6 +27,7 @@
 #include "DOMWindow.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTTPParsers.h"
 #include "Location.h"
 #include "SecurityOrigin.h"

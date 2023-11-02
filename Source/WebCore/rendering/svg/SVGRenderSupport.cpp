@@ -667,6 +667,7 @@ void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& render
         return;
 
     ASSERT(renderer.isSVGLayerAwareRenderer());
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     const auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*renderer.style().clipPath());
     auto* renderResource = renderer.document().lookupSVGResourceById(referenceClipPathOperation.fragment());
     if (!renderResource)
@@ -674,6 +675,7 @@ void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& render
 
     if (auto clipper = dynamicDowncast<RenderSVGResourceClipper>(renderResource))
         clipper->applyMaskClipping(paintInfo, renderer, renderer.objectBoundingBox());
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 }
 
 }

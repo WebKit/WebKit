@@ -27,6 +27,7 @@
 
 #include "AppPrivacyReport.h"
 #include "AuxiliaryProcessProxy.h"
+#include "BackgroundFetchState.h"
 #include "DataReference.h"
 #include "DataTaskIdentifier.h"
 #include "IdentifierTypes.h"

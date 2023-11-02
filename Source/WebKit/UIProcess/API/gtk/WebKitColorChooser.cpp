@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitColorChooser.h"
 
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "WebKitColorChooserRequestPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <WebCore/Color.h>
@@ -80,3 +81,5 @@ void WebKitColorChooser::showColorPicker(const Color& color)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INPUT_TYPE_COLOR)
