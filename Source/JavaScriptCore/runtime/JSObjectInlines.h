@@ -30,6 +30,7 @@
 #include "JSArrayInlines.h"
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewInlines.h"
+#include "JSGlobalProxy.h"
 #include "JSObject.h"
 #include "JSTypedArrays.h"
 #include "Lookup.h"
@@ -525,6 +526,9 @@ inline void JSObject::didBecomePrototype(VM& vm)
         DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
         setStructure(vm, Structure::becomePrototypeTransition(vm, oldStructure, &deferred));
     }
+
+    if (UNLIKELY(type() == GlobalProxyType))
+        jsCast<JSGlobalProxy*>(this)->target()->didBecomePrototype(vm);
 }
 
 inline bool JSObject::canGetIndexQuicklyForTypedArray(unsigned i) const
