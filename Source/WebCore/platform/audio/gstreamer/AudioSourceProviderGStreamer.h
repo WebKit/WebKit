@@ -43,6 +43,10 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
 class AudioSourceProviderGStreamer final : public WebAudioSourceProvider {
 public:
+    static Ref<AudioSourceProviderGStreamer> create()
+    {
+        return adoptRef(*new AudioSourceProviderGStreamer());
+    }
     static Ref<AudioSourceProviderGStreamer> create(MediaStreamTrackPrivate& source)
     {
         return adoptRef(*new AudioSourceProviderGStreamer(source));

@@ -561,7 +561,7 @@ private:
     AtomString m_requestedTextStreamId;
 
 #if ENABLE(WEB_AUDIO)
-    std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
+    RefPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
 
