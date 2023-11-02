@@ -347,7 +347,7 @@ void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JS
 {
     ASSERT(canAccessRangeQuickly(offset, length));
     ASSERT((array->indexingType() & IndexingShapeMask) == Int32Shape);
-    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 && Adaptor::typeValue != TypeBigUint64);
     ASSERT((length + objectOffset) <= array->length());
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
@@ -380,7 +380,7 @@ void JSGenericTypedArrayView<Adaptor>::copyFromDoubleShapeArray(size_t offset, J
 {
     ASSERT(canAccessRangeQuickly(offset, length));
     ASSERT((array->indexingType() & IndexingShapeMask) == DoubleShape);
-    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 && Adaptor::typeValue != TypeBigUint64);
     ASSERT((length + objectOffset) <= array->length());
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
@@ -411,7 +411,7 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
     size_t safeUnadjustedLength = std::min(length, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
     size_t safeLength = objectOffset <= safeUnadjustedLength ? safeUnadjustedLength - objectOffset : 0;
 
-    if constexpr (TypedArrayStorageType != TypeBigInt64 || TypedArrayStorageType != TypeBigUint64) {
+    if constexpr (TypedArrayStorageType != TypeBigInt64 && TypedArrayStorageType != TypeBigUint64) {
         if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array && isJSArray(array))) {
             if (safeLength == length && (safeLength + objectOffset) <= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
                 IndexingType indexingType = array->indexingType() & IndexingShapeMask;
