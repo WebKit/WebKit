@@ -43,6 +43,7 @@
 #include "Timer.h"
 #include "VideoTrackClient.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Observer.h>
 
 namespace WebCore {
@@ -209,8 +210,6 @@ private:
 
     void monitorBufferingRate();
 
-    void removeTimerFired();
-
     void reportExtraMemoryAllocated(uint64_t extraMemory);
 
     void appendError(bool);
@@ -259,16 +258,14 @@ private:
     // Can grow and shrink.
     uint64_t m_extraMemoryCost { 0 };
 
-    MediaTime m_pendingRemoveStart;
-    MediaTime m_pendingRemoveEnd;
-    Timer m_removeTimer;
-
     bool m_updating { false };
     bool m_receivedFirstInitializationSegment { false };
     bool m_active { false };
     bool m_shouldGenerateTimestamps { false };
     bool m_pendingInitializationSegmentForChangeType { false };
     Ref<TimeRanges> m_buffered;
+    NativePromiseRequest<GenericPromise> m_removeCodedFramesPromise;
+
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

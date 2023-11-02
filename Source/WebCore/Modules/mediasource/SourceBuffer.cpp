@@ -63,6 +63,7 @@
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/WeakPtr.h>
 
@@ -89,9 +90,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
     , m_timeOfBufferingMonitor(MonotonicTime::fromRawSeconds(0))
-    , m_pendingRemoveStart(MediaTime::invalidTime())
-    , m_pendingRemoveEnd(MediaTime::invalidTime())
-    , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
     , m_buffered(TimeRanges::create())
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_private->sourceBufferLogger())
@@ -264,7 +262,7 @@ ExceptionOr<void> SourceBuffer::abort()
         return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the range removal algorithm is running, then throw an InvalidStateError exception and abort these steps.
-    if (m_removeTimer.isActive())
+    if (m_removeCodedFramesPromise)
         return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
@@ -339,9 +337,28 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     scheduleEvent(eventNames().updatestartEvent);
 
     // 5. Return control to the caller and run the rest of the steps asynchronously.
-    m_pendingRemoveStart = start;
-    m_pendingRemoveEnd = end;
-    m_removeTimer.startOneShot(0_s);
+    invokeAsync(RunLoop::main(), [protectedThis = Ref { *this }, this, start, end] {
+        if (isRemoved())
+            return GenericPromise::createAndReject(-1);
+        // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
+        return m_private->removeCodedFrames(start, end, m_source->currentTime());
+    })->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }] {
+        m_removeCodedFramesPromise.complete();
+
+        if (isRemoved())
+            return;
+
+        // 7. Set the updating attribute to false.
+        m_updating = false;
+
+        // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
+        scheduleEvent(eventNames().updateEvent);
+
+        // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+        scheduleEvent(eventNames().updateendEvent);
+
+        m_source->monitorSourceBuffers();
+    })->track(m_removeCodedFramesPromise);
 }
 
 ExceptionOr<void> SourceBuffer::changeType(const String& type)
@@ -435,6 +452,9 @@ void SourceBuffer::removedFromMediaSource()
     if (isRemoved())
         return;
 
+    if (m_removeCodedFramesPromise)
+        m_removeCodedFramesPromise.disconnect();
+
     abortIfUpdating();
 
     m_private->clearTrackBuffers();
@@ -463,7 +483,6 @@ bool SourceBuffer::virtualHasPendingActivity() const
 void SourceBuffer::stop()
 {
     m_appendBufferTimer.stop();
-    m_removeTimer.stop();
 }
 
 const char* SourceBuffer::activeDOMObjectName() const
@@ -607,39 +626,6 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 
     if (!isRemoved())
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
-}
-
-void SourceBuffer::removeTimerFired()
-{
-    if (isRemoved())
-        return;
-
-    ASSERT(m_updating);
-    ASSERT(m_pendingRemoveStart.isValid());
-    ASSERT(m_pendingRemoveStart < m_pendingRemoveEnd);
-
-    // Section 3.5.7 Range Removal
-    // http://w3c.github.io/media-source/#sourcebuffer-range-removal
-
-    // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
-
-    m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), [this, protectedThis = Ref { *this }] {
-        if (isRemoved())
-            return;
-
-        // 7. Set the updating attribute to false.
-        m_updating = false;
-        m_pendingRemoveStart = MediaTime::invalidTime();
-        m_pendingRemoveEnd = MediaTime::invalidTime();
-
-        // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
-        scheduleEvent(eventNames().updateEvent);
-
-        // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
-        scheduleEvent(eventNames().updateendEvent);
-
-        m_source->monitorSourceBuffers();
-    });
 }
 
 uint64_t SourceBuffer::maximumBufferSize() const

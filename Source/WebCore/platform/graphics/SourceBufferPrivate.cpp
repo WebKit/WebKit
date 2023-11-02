@@ -480,13 +480,11 @@ MediaTime SourceBufferPrivate::findPreviousSyncSamplePresentationTime(const Medi
     return previousSyncSamplePresentationTime;
 }
 
-void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
 {
     ASSERT(start < end);
-    if (start >= end) {
-        completionHandler();
-        return;
-    }
+    if (start >= end)
+        return GenericPromise::createAndResolve();
 
     // 3.5.9 Coded Frame Removal Algorithm
     // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-removal
@@ -522,7 +520,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
 
-    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
+    return updateBufferedFromTrackBuffers(trackBuffers);
 }
 
 size_t SourceBufferPrivate::platformEvictionThreshold() const

@@ -115,7 +115,7 @@ public:
     virtual void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
-    WEBCORE_EXPORT virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT virtual Ref<GenericPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;

@@ -93,7 +93,7 @@ private:
     void setGroupStartTimestamp(const MediaTime&) final;
     void setGroupStartTimestampToEndTimestamp() final;
     void setShouldGenerateTimestamps(bool) final;
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime) final;
     void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime) final;
     void resetTimestampOffsetInTrackBuffers() final;
     void startChangingType() final;

@@ -199,20 +199,19 @@ void SourceBufferPrivateRemote::setMode(SourceBufferAppendMode mode)
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetMode(mode), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning()) {
-        completionHandler();
-        return;
-    }
+    if (!isGPURunning())
+        return GenericPromise::createAndReject(-1);
 
-    gpuProcessConnection->connection().sendWithAsyncReply(
-        Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](WebCore::PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
-            m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-            setBufferedRanges(WTFMove(buffered))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
-        },
-        m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(
+        Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }] (auto&& result) mutable {
+            if (!result)
+                return GenericPromise::createAndReject(-1);
+            m_totalTrackBufferSizeInBytes = std::get<uint64_t>(*result);
+            return setBufferedRanges(WTFMove(std::get<WebCore::PlatformTimeRanges>(*result)));
+        });
 }
 
 void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime)

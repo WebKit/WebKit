@@ -254,7 +254,7 @@ void RemoteSourceBufferProxy::startChangingType()
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto buffered = m_sourceBufferPrivate->buffered();
         completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
     });
