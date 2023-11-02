@@ -287,7 +287,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuNalu(
     absl::optional<uint32_t> pps_id =
         H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
             rtp_payload.cdata() + kHevcNalHeaderSize + kHevcFuHeaderSize,
-            rtp_payload.size() - kHevcFuHeaderSize, nalu.type);
+            rtp_payload.size() - kHevcNalHeaderSize - kHevcFuHeaderSize, nalu.type);
     if (pps_id) {
       nalu.pps_id = *pps_id;
     } else {
