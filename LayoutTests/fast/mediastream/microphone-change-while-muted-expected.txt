@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
 
 
-PASS Detection of missing capturing device should trigger capture to fail even if track is muted
+PASS Detection of missing capturing device should not trigger capture to fail if device disappears when track is muted
+PASS Detection of missing capturing device should trigger capture to fail even if device disappears when track is muted and track gets later on unmuted
 
