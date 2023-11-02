@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,11 @@
 
 [
     Conditional=WK_WEB_EXTENSIONS,
+    MainWorldOnly,
     ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+] interface WebExtensionAPINotifications {
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
-
-    readonly attribute WebExtensionAPIExtension extension;
-
-    readonly attribute WebExtensionAPILocalization i18n;
-
-    readonly attribute WebExtensionAPIRuntime runtime;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
-
-    [Dynamic] readonly attribute WebExtensionAPITest test;
+    readonly attribute WebExtensionAPIEvent onClicked;
+    readonly attribute WebExtensionAPIEvent onButtonClicked;
 
 };

@@ -757,6 +757,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIExtension \
     WebExtensionAPILocalization \
     WebExtensionAPINamespace \
+    WebExtensionAPINotifications \
     WebExtensionAPIPermissions \
     WebExtensionAPIPort \
     WebExtensionAPIRuntime \

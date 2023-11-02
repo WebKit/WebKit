@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+#pragma once
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+#include "JSWebExtensionAPINotifications.h"
+#include "WebExtensionAPIEvent.h"
+#include "WebExtensionAPIObject.h"
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
+namespace WebKit {
 
-    readonly attribute WebExtensionAPIExtension extension;
+class WebExtensionAPINotifications : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINotifications, notifications);
 
-    readonly attribute WebExtensionAPILocalization i18n;
+public:
+#if PLATFORM(COCOA)
+    WebExtensionAPIEvent& onClicked();
+    WebExtensionAPIEvent& onButtonClicked();
 
-    readonly attribute WebExtensionAPIRuntime runtime;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
-
-    [Dynamic] readonly attribute WebExtensionAPITest test;
-
+private:
+    RefPtr<WebExtensionAPIEvent> m_onClicked;
+    RefPtr<WebExtensionAPIEvent> m_onButtonClicked;
+#endif
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

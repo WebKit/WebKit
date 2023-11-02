@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,14 @@ bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 
     if (name == "browserAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
+
+    if (name == "notifications"_s) {
+        // FIXME: <rdar://problem/57202210> Add support for browser.notifications.
+        // Notifications are currently only available in test mode as an empty stub.
+        if (!extensionContext().inTestingMode())
+            return false;
+        // Fall through to the permissions check below.
+    }
 
     if (name == "pageAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action");
@@ -93,6 +101,16 @@ WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
         m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
 
     return *m_i18n;
+}
+
+WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications
+
+    if (!m_notifications)
+        m_notifications = WebExtensionAPINotifications::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_notifications;
 }
 
 WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()

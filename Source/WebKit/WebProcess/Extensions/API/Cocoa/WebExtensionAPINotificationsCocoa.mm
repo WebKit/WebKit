@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
+#import "config.h"
+#import "WebExtensionAPINotifications.h"
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
+namespace WebKit {
 
-    readonly attribute WebExtensionAPIExtension extension;
+WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClicked
 
-    readonly attribute WebExtensionAPILocalization i18n;
+    if (!m_onClicked)
+        m_onClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::NotificationsOnClicked);
 
-    readonly attribute WebExtensionAPIRuntime runtime;
+    return *m_onClicked;
+}
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
+WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onButtonClicked
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
+    if (!m_onButtonClicked)
+        m_onButtonClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::NotificationsOnButtonClicked);
 
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+    return *m_onButtonClicked;
+}
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
+} // namespace WebKit
 
-    [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
-
-    [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
-
-    [Dynamic] readonly attribute WebExtensionAPITest test;
-
-};
+#endif // ENABLE(WK_WEB_EXTENSIONS)
