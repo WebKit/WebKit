@@ -923,8 +923,8 @@ public:
 
     // This uses either constant property inference or property type inference to derive a good abstract
     // value for some property accessed with the given abstract value base.
-    AbstractValue inferredValueForProperty(
-        const AbstractValue& base, PropertyOffset, StructureClobberState);
+    AbstractValue inferredValueForProperty(const AbstractValue& base, PropertyOffset, StructureClobberState);
+    AbstractValue inferredValueForProperty(const AbstractValue& base, const RegisteredStructureSet&, PropertyOffset, StructureClobberState);
     
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
