@@ -120,6 +120,8 @@
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 #import <UIKit/UIAsyncTextInput.h>
+#import <UIKit/UIAsyncTextInputClient.h>
+#import <UIKit/UIAsyncTextInteraction.h>
 #import <UIKit/UIKeyEventContext.h>
 #endif
 
@@ -542,6 +544,7 @@ typedef enum {
 @end
 
 @interface UITextInteractionAssistant : NSObject
+- (instancetype)initWithView:(UIResponder <UITextInput> *)view;
 @end
 
 @interface UITextInteractionAssistant ()
@@ -1063,6 +1066,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UITextInteractionAssistant (IPI)
 - (void)willStartScrollingOrZooming;
 - (void)didEndScrollingOrZooming;
+- (void)selectWord;
 @end
 
 #if USE(UICONTEXTMENU)
