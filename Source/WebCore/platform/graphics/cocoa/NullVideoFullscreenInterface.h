@@ -71,6 +71,7 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const { return false; }
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return std::nullopt; }
     bool changingStandbyOnly() { return false; }
+    bool returningToStandby() const { return false; }
 
     // VideoPresentationModelClient
     void hasVideoChanged(bool) final { }
