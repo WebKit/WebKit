@@ -239,6 +239,9 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-f
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 
+# This test is a bit slow.
+fast/frames/frame-append-body-child-crash.html [ Slow ]
+
 # This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
 # is served on the parent of the reporting frame, not the reporting frame.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
