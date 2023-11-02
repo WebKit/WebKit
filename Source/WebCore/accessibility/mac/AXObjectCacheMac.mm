@@ -459,6 +459,22 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     AXPostNotificationWithUserInfo(object->wrapper(), macNotification, nil, skipSystemNotification);
 }
 
+void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+{
+    ASSERT(isMainThread());
+
+    NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
+        NSAccessibilityAnnouncementKey: message,
+    };
+    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+
+    // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
+    if (UNLIKELY(axShouldRepostNotificationsForTests)) {
+        if (RefPtr root = getOrCreate(m_document->view()))
+            [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
+    }
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optional<PageIdentifier> pageID)
 {

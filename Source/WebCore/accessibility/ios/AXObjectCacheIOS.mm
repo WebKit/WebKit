@@ -32,11 +32,10 @@
 #import "Chrome.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
-
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
-    
+
 void AXObjectCache::attachWrapper(AccessibilityObject* object)
 {
     RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:object]);
@@ -84,6 +83,9 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     case AXSortDirectionChanged:
         name = "AXSortDirectionChanged"_s;
         break;
+    case AXAnnouncementRequested:
+        name = "AXAnnouncementRequested"_s;
+        break;
     default:
         break;
     }
@@ -112,6 +114,19 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
     [object->wrapper() accessibilityPostedNotification:notificationName.get()];
+}
+
+void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+{
+    auto notificationName = notificationPlatformName(AXAnnouncementRequested).createNSString();
+    NSString *nsMessage = static_cast<NSString *>(message);
+    if (RefPtr root = getOrCreate(m_document->view())) {
+        [root->wrapper() accessibilityOverrideProcessNotification:notificationName.get() notificationData:[nsMessage dataUsingEncoding:NSUTF8StringEncoding]];
+
+        // To simulate AX notifications for LayoutTests on the simulator, call
+        // the wrapper's accessibilityPostedNotification.
+        [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : nsMessage }];
+    }
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

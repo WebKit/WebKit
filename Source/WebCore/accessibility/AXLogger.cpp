@@ -532,6 +532,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXActiveDescendantChanged:
         stream << "AXActiveDescendantChanged";
         break;
+    case AXObjectCache::AXNotification::AXAnnouncementRequested:
+        stream << "AXAnnouncement";
+        break;
     case AXObjectCache::AXNotification::AXAutocorrectionOccured:
         stream << "AXAutocorrectionOccured";
         break;

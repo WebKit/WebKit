@@ -71,6 +71,7 @@ public:
 #endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
+    void announce(JSStringRef);
 
 #if PLATFORM(COCOA)
     void executeOnAXThreadAndWait(Function<void()>&&);
