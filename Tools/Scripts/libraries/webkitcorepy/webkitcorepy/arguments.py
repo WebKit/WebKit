@@ -22,6 +22,7 @@
 
 import argparse
 import logging
+import os
 
 from webkitcorepy import log
 
@@ -58,14 +59,19 @@ def CallbackAction(action, callback=lambda namespace: None):
     return Action
 
 
-def LoggingGroup(parser, loggers=None, default=logging.WARNING, help='{} amount of logging'):
+def LoggingGroup(parser, loggers=None, default=logging.WARNING, getenv=True, setenv=True, help='{} amount of logging'):
     if not isinstance(parser, argparse.ArgumentParser):
         raise ValueError('Provided parser is not a {}'.format(type(argparse.ArgumentParser)))
+
+    if getenv and 'LOG_LEVEL' in os.environ:
+        default = int(os.environ['LOG_LEVEL'])
 
     if not loggers:
         loggers = [logging.getLogger(), log]
     for logger in loggers:
         logger.setLevel(default)
+    if setenv:
+        os.environ['LOG_LEVEL'] = str(default)
 
     def verbose_callback(namespace):
         verbosity = getattr(namespace, 'verbose')
@@ -75,6 +81,8 @@ def LoggingGroup(parser, loggers=None, default=logging.WARNING, help='{} amount 
 
         for logger in loggers:
             logger.setLevel(log_level)
+        if setenv:
+            os.environ['LOG_LEVEL'] = str(log_level)
 
     group = parser.add_argument_group('Logging')
     group.add_argument(
