@@ -193,16 +193,14 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
+// youtube.com https://bugs.webkit.org/show_bug.cgi?id=263789
+// and https://bugs.webkit.org/show_bug.cgi?id=249740
 bool Quirks::shouldDisableContentChangeObserver() const
 {
     if (!needsQuirks())
         return false;
 
-    auto& topDocument = m_document->topDocument();
-    if (isDomain("youtube.com"_s) && (topDocument.url().path().startsWithIgnoringASCIICase("/results"_s) || topDocument.url().path().startsWithIgnoringASCIICase("/watch"_s)))
-        return true;
-
-    return false;
+    return isDomain("youtube.com"_s);
 }
 
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=200609
