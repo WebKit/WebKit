@@ -27,14 +27,26 @@
 #include "config.h"
 #include <wtf/StackTrace.h>
 
+#include <optional>
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
 #if USE(LIBBACKTRACE)
-#include <string.h>
+#include <backtrace.h>
 #include <wtf/NeverDestroyed.h>
+#endif
+
+#if HAVE(DLADDR)
+#include <dlfcn.h>
+#endif
+
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wtf/win/DbgHelperWin.h>
+#else
+#include <cxxabi.h>
 #endif
 
 void WTFGetBacktrace(void** stack, int* size)
@@ -70,34 +82,6 @@ static int backtraceFullCallback(void* data, uintptr_t, const char*, int, const 
     *symbol = function;
     return 0;
 }
-
-char** symbolize(void* const* addresses, int size)
-{
-    struct backtrace_state* state = backtraceState();
-    if (!state)
-        return nullptr;
-
-    char** symbols = static_cast<char**>(malloc(sizeof(char*) * size));
-
-    for (int i = 0; i < size; ++i) {
-        uintptr_t pc = reinterpret_cast<uintptr_t>(addresses[i]);
-        char* symbol;
-
-        backtrace_pcinfo(state, pc, backtraceFullCallback, nullptr, &symbol);
-        if (!symbol)
-            backtrace_syminfo(backtraceState(), pc, backtraceSyminfoCallback, nullptr, &symbol);
-
-        if (symbol) {
-            char* demangled = abi::__cxa_demangle(symbol, nullptr, nullptr, nullptr);
-            if (demangled)
-                symbols[i] = demangled;
-            else
-                symbols[i] = strdup(symbol);
-        } else
-            symbols[i] = strdup("???");
-    }
-    return symbols;
-}
 #endif
 
 std::unique_ptr<StackTrace> StackTrace::captureStackTrace(size_t maxFrames, size_t framesToSkip)
@@ -129,31 +113,55 @@ String StackTrace::toString() const
     return stream.toString();
 }
 
-auto StackTraceSymbolResolver::demangle(void* pc) -> std::optional<DemangleEntry>
+auto StackTraceSymbolResolver::resolve(void* pc) -> const char *
 {
-#if HAVE(DLADDR)
-    const char* mangledName = nullptr;
-    const char* cxaDemangled = nullptr;
+#if USE(LIBBACKTRACE)
+    struct backtrace_state* state = backtraceState();
+    if (!state)
+        return nullptr;
+
+    char* symbol;
+    backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(pc), backtraceFullCallback, nullptr, &symbol);
+    if (symbol)
+        return symbol;
+
+    backtrace_syminfo(backtraceState(), reinterpret_cast<uintptr_t>(pc), backtraceSyminfoCallback, nullptr, &symbol);
+    if (symbol)
+        return symbol;
+#elif HAVE(DLADDR)
     Dl_info info;
     if (dladdr(pc, &info) && info.dli_sname)
-        mangledName = info.dli_sname;
-    if (mangledName) {
-        int status = 0;
-        cxaDemangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, &status);
-        UNUSED_PARAM(status);
-    }
-    if (mangledName || cxaDemangled)
-        return DemangleEntry { mangledName, cxaDemangled };
+        return info.dli_sname;
+#elif OS(WINDOWS)
+    HANDLE hProc = GetCurrentProcess();
+    uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
+    auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
+
+    symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
+    symbolInfo->MaxNameLen = MAX_SYM_NAME;
+
+    if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(pc), nullptr, symbolInfo))
+        return symbolInfo->Name;
 #else
     UNUSED_PARAM(pc);
 #endif
-    return std::nullopt;
+    return nullptr;
+}
+
+auto StackTraceSymbolResolver::demangle(const char* mangledName) -> std::unique_ptr<char, SystemFree<char>>
+{
+#if OS(WINDOWS)
+    UNUSED_PARAM(mangledName);
+    return nullptr;
+#else
+    return std::unique_ptr<char, SystemFree<char>>(abi::__cxa_demangle(mangledName, nullptr, nullptr, nullptr));
+#endif
 }
 
 void StackTracePrinter::dump(PrintStream& out) const
 {
     StackTraceSymbolResolver { m_stack }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
-        out.printf("%s%-3d %p %s\n", m_prefix ? m_prefix : "", frameNumber, stackFrame, name);
+        out.printf("%s%-3d %p %s\n", m_prefix ? m_prefix : "", frameNumber, stackFrame, name ? name : "?");
     });
 }
 
