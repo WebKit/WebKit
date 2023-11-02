@@ -160,7 +160,7 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     // will likely get dropped on the floor (if the Web process is terminated)
     // or queued up until process launch completes, and there's nothing useful
     // to synchronize in these cases.
-    auto connection = m_webPageProxy->process().connection();
+    RefPtr connection = m_webPageProxy->process().connection();
     if (!connection)
         return MachSendRight();
 

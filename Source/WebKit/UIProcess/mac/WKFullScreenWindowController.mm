@@ -609,7 +609,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setVideoPresentationManagerObserver
 {
-    auto* videoPresentationManager = self._videoPresentationManager;
+    RefPtr<WebKit::VideoPresentationManagerProxy> videoPresentationManager = self._videoPresentationManager;
     if (!videoPresentationManager)
         return;
 

@@ -403,8 +403,8 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
 #if PLATFORM(COCOA)
     if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
-        auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
-        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == &networkProcess);
+        Ref networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
+        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == networkProcess.ptr());
         m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
     }
 #endif
