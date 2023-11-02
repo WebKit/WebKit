@@ -50,7 +50,7 @@ void TextureMapperSparseBackingStore::paintToTextureMapper(TextureMapper& textur
     IntRect rect = { { }, m_size };
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& iterator : m_tiles)
-        iterator.value->paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect, iterator.value->rect()));
+        iterator.value->paint(textureMapper, adjustedTransform, opacity, allTileEdgesExposed(rect, iterator.value->rect()));
 }
 
 void TextureMapperSparseBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)

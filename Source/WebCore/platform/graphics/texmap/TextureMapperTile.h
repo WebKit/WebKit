@@ -39,7 +39,7 @@ public:
 
     void updateContents(TextureMapper&, Image*, const IntRect&);
     void updateContents(TextureMapper&, GraphicsLayer*, const IntRect&, float scale = 1);
-    WEBCORE_EXPORT virtual void paint(TextureMapper&, const TransformationMatrix&, float, const unsigned exposedEdges);
+    WEBCORE_EXPORT virtual void paint(TextureMapper&, const TransformationMatrix&, float, bool allEdgesExposed);
     virtual ~TextureMapperTile();
 
     explicit TextureMapperTile(const FloatRect&);
