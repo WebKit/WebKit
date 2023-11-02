@@ -910,6 +910,22 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     m_pendingFocusedNodeID = axID;
 }
 
+AXTextMarkerRange AXIsolatedTree::selectedTextMarkerRange()
+{
+    AXTRACE("AXIsolatedTree::selectedTextMarkerRange"_s);
+    Locker locker { m_changeLogLock };
+    return m_selectedTextMarkerRange;
+}
+
+void AXIsolatedTree::setSelectedTextMarkerRange(AXTextMarkerRange&& range)
+{
+    AXTRACE("AXIsolatedTree::setSelectedTextMarkerRange"_s);
+    ASSERT(isMainThread());
+
+    Locker locker { m_changeLogLock };
+    m_selectedTextMarkerRange = range;
+}
+
 void AXIsolatedTree::labelCreated(AccessibilityObject& axObject)
 {
     ASSERT(axObject.isLabel());
