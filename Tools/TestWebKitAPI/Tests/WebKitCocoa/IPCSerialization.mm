@@ -29,6 +29,8 @@
 #import "ArgumentCodersCocoa.h"
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
+#import <Foundation/NSValue.h>
+#import <limits.h>
 #import <wtf/RetainPtr.h>
 
 // This test makes it trivial to test round trip encoding and decoding of a particular object type.
@@ -127,7 +129,8 @@ struct ObjCHolderForTesting {
         RetainPtr<NSDate>,
         RetainPtr<NSString>,
         RetainPtr<NSURL>,
-        RetainPtr<NSData>
+        RetainPtr<NSData>,
+        RetainPtr<NSNumber>
     > ValueType;
 
     ValueType value;
@@ -267,4 +270,22 @@ TEST(IPCSerialization, Basic)
     constexpr CGFloat testComponents[4] = { 1, .75, .5, .25 };
     auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
     runTestCF({ cgColor.get() });
+
+    runTestNS({ [NSNumber numberWithChar: CHAR_MIN] });
+    runTestNS({ [NSNumber numberWithUnsignedChar: CHAR_MAX] });
+    runTestNS({ [NSNumber numberWithShort: SHRT_MIN] });
+    runTestNS({ [NSNumber numberWithUnsignedShort: SHRT_MAX] });
+    runTestNS({ [NSNumber numberWithInt: INT_MIN] });
+    runTestNS({ [NSNumber numberWithUnsignedInt: UINT_MAX] });
+    runTestNS({ [NSNumber numberWithLong: LONG_MIN] });
+    runTestNS({ [NSNumber numberWithUnsignedLong: ULONG_MAX] });
+    runTestNS({ [NSNumber numberWithLongLong: LLONG_MIN] });
+    runTestNS({ [NSNumber numberWithUnsignedLongLong: ULLONG_MAX] });
+    runTestNS({ [NSNumber numberWithFloat: 3.14159] });
+    runTestNS({ [NSNumber numberWithDouble: 9.98989898989] });
+    runTestNS({ [NSNumber numberWithBool: true] });
+    runTestNS({ [NSNumber numberWithBool: false] });
+    runTestNS({ [NSNumber numberWithInteger: NSIntegerMax] });
+    runTestNS({ [NSNumber numberWithInteger: NSIntegerMin] });
+    runTestNS({ [NSNumber numberWithUnsignedInteger: NSUIntegerMax] });
 }

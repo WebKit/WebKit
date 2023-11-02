@@ -618,6 +618,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in \
 	Shared/cf/CFTypes.serialization.in \
 	Shared/cf/CoreIPCBoolean.serialization.in \
+	Shared/cf/CoreIPCNumber.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \

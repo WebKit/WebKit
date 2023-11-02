@@ -2310,6 +2310,7 @@
 		F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EB4AFC269CD23600D297AE /* OSStateSPI.h */; };
 		F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D04E2821F7C73D0076741D /* ApplicationServicesSPI.h */; };
 		F4ED2BBD29B9803E00B8AE22 /* PrivateClickMeasurementPersistentStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F4ED2BBB29B9803E00B8AE22 /* PrivateClickMeasurementPersistentStore.h */; };
+		F4EFF36D2AF0267300479AB8 /* CoreIPCNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */; };
 		F4F475822A4F55A80004197B /* WKTouchEventsGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F4757F2A4F3D6D0004197B /* WKTouchEventsGestureRecognizer.h */; };
 		F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */; };
 		F6113E29126CE19B0057D0A7 /* WKUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7498,6 +7499,8 @@
 		F4ED2BBB29B9803E00B8AE22 /* PrivateClickMeasurementPersistentStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementPersistentStore.h; sourceTree = "<group>"; };
 		F4ED2BBC29B9803E00B8AE22 /* PrivateClickMeasurementPersistentStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementPersistentStore.cpp; sourceTree = "<group>"; };
 		F4EFD8AF29C256BD00570001 /* AlternativeTextClient.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AlternativeTextClient.serialization.in; sourceTree = "<group>"; };
+		F4EFF36A2AF0267200479AB8 /* CoreIPCNumber.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCNumber.serialization.in; sourceTree = "<group>"; };
+		F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCNumber.h; sourceTree = "<group>"; };
 		F4F4757F2A4F3D6D0004197B /* WKTouchEventsGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTouchEventsGestureRecognizer.h; path = ios/WKTouchEventsGestureRecognizer.h; sourceTree = "<group>"; };
 		F4F475812A4F3D860004197B /* WKTouchEventsGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTouchEventsGestureRecognizer.mm; path = ios/WKTouchEventsGestureRecognizer.mm; sourceTree = "<group>"; };
 		F4F59AD32065A5C9006CAA46 /* WKSelectMenuListViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSelectMenuListViewController.mm; path = ios/forms/WKSelectMenuListViewController.mm; sourceTree = "<group>"; };
@@ -8527,6 +8530,8 @@
 				5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */,
 				51D194392AEC9BC900E8E475 /* CoreIPCBoolean.h */,
 				51D1943A2AEC9BC900E8E475 /* CoreIPCBoolean.serialization.in */,
+				F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */,
+				F4EFF36A2AF0267200479AB8 /* CoreIPCNumber.serialization.in */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -14756,6 +14761,7 @@
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
 				F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */,
 				F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */,
+				F4EFF36D2AF0267300479AB8 /* CoreIPCNumber.h in Headers */,
 				A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */,
 				37C21CAE1E994C0C0029D5F9 /* CorePredictionSPI.h in Headers */,
 				1C62900D28EE2CD300C26B60 /* CoreSVGSPI.h in Headers */,

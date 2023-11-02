@@ -22,24 +22,10 @@
 
 #if USE(CF)
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createData()] CFDataRef wrapped by WebKit::CoreIPCData {
+webkit_platform_headers: "CoreIPCNumber.h"
+
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCNumber {
+     WebKit::CoreIPCNumber::NumberHolder get()
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFNumber()] CFNumberRef wrapped by WebKit::CoreIPCNumber {
-}
-
-#endif
-
-#if USE(CG)
-
-additional_forward_declaration: typedef struct CGColor *CGColorRef
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebCore::Color::createAndPreserveColorSpace, ToCFMethod=WebCore::cachedCGColor(*result)] CGColorRef wrapped by WebCore::Color {
-}
-
-#endif
+#endif // USE(CF)
