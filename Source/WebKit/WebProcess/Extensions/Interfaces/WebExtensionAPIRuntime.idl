@@ -37,6 +37,8 @@
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
     [MainWorldOnly] void getBackgroundPage([Optional, CallbackHandler] function callback);
 
+    [MainWorldOnly] void setUninstallURL([URL] DOMString url, [Optional, CallbackHandler] function callback);
+
     [MainWorldOnly] readonly attribute any lastError;
 
     [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);

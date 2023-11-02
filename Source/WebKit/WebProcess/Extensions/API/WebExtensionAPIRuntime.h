@@ -69,6 +69,8 @@ public:
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
 
+    void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
+
     NSString *runtimeIdentifier();
 
     JSValue *lastError();

@@ -233,6 +233,18 @@ TEST(WKWebExtensionAPIRuntime, GetBackgroundPageForServiceWorker)
     });
 }
 
+TEST(WKWebExtensionAPIRuntime, SetUninstallURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafeResolve(() => browser.runtime.setUninstallURL('https://example.com/uninstall'))",
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+    });
+}
+
 TEST(WKWebExtensionAPIRuntime, Id)
 {
     auto *uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
