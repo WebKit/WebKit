@@ -9460,7 +9460,7 @@ void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemP
         return;
 
     auto event = MessageEvent::create(message, securityOrigin().toString());
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, this);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, this);
     element->dispatchEvent(event);
 }
 #endif

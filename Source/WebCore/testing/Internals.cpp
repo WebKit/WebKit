@@ -5430,13 +5430,13 @@ bool Internals::isProcessingUserGesture()
 
 void Internals::withUserGesture(RefPtr<VoidCallback>&& callback)
 {
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, contextDocument());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, contextDocument());
     callback->handleEvent();
 }
 
 void Internals::withoutUserGesture(RefPtr<VoidCallback>&& callback)
 {
-    UserGestureIndicator gestureIndicator(NotProcessingUserGesture, contextDocument());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::No, contextDocument());
     callback->handleEvent();
 }
 

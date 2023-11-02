@@ -5088,7 +5088,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
 
     // FIXME: Do not focus an element if it moved or the caret point is outside its bounds
     // because we only want to do so if the caret can be placed.
-    UserGestureIndicator gestureIndicator { ProcessingUserGesture, &target->document() };
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, &target->document() };
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
     CheckedRef(m_page->focusController())->setFocusedElement(target.get(), targetFrame);
 

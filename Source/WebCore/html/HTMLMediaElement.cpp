@@ -8445,7 +8445,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
 {
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
-    UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
+    UserGestureIndicator remoteControlUserGesture(IsProcessingUserGesture::Yes, &document());
     const double defaultSkipAmount = 15;
     switch (command) {
     case PlatformMediaSession::RemoteControlCommandType::PlayCommand:

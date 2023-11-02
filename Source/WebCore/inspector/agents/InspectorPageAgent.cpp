@@ -426,7 +426,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::navigate(const String& url)
     if (!localMainFrame)
         return { };
 
-    UserGestureIndicator indicator { ProcessingUserGesture, localMainFrame->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, localMainFrame->document() };
 
     ResourceRequest resourceRequest { localMainFrame->document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest { *localMainFrame->document(), localMainFrame->document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };

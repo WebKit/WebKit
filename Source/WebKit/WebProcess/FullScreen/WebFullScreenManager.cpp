@@ -378,7 +378,7 @@ void WebFullScreenManager::requestRestoreFullScreen()
     }
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", element->tagName(), " id=\"", element->getIdAttribute(), "\">");
-    WebCore::UserGestureIndicator gestureIndicator(WebCore::ProcessingUserGesture, &element->document());
+    WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, &element->document());
     element->document().fullscreenManager().requestFullscreenForElement(*element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
 }
 

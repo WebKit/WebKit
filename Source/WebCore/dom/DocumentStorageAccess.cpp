@@ -309,7 +309,7 @@ void DocumentStorageAccess::requestStorageAccessQuirk(RegistrableDomain&& reques
 
 void DocumentStorageAccess::enableTemporaryTimeUserGesture()
 {
-    m_temporaryUserGesture = makeUnique<UserGestureIndicator>(ProcessingUserGesture, protectedDocument().ptr());
+    m_temporaryUserGesture = makeUnique<UserGestureIndicator>(IsProcessingUserGesture::Yes, protectedDocument().ptr());
 }
 
 void DocumentStorageAccess::consumeTemporaryTimeUserGesture()

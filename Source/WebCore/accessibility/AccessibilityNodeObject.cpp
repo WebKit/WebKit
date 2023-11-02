@@ -1352,13 +1352,13 @@ void AccessibilityNodeObject::alterRangeValue(StepAction stepAction)
     
 void AccessibilityNodeObject::increment()
 {
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document());
     alterRangeValue(StepAction::Increment);
 }
 
 void AccessibilityNodeObject::decrement()
 {
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document());
     alterRangeValue(StepAction::Decrement);
 }
 

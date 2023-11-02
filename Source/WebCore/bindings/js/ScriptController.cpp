@@ -594,7 +594,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     m_frame.loader().client().notifyPageOfAppBoundBehavior();
 #endif
 
-    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt, m_frame.document(), UserGestureType::ActivationTriggering, UserGestureIndicator::ProcessInteractionStyle::Never);
+    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<IsProcessingUserGesture>(IsProcessingUserGesture::Yes) : std::nullopt, m_frame.document(), UserGestureType::ActivationTriggering, UserGestureIndicator::ProcessInteractionStyle::Never);
 
     if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {

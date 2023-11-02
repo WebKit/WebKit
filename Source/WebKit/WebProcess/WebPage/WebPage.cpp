@@ -6524,7 +6524,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
-    UserGestureIndicator gestureIndicator { options.processingUserGesture ? ProcessingUserGesture : NotProcessingUserGesture, frame->document() };
+    UserGestureIndicator gestureIndicator { options.processingUserGesture ? IsProcessingUserGesture::Yes : IsProcessingUserGesture::No, frame->document() };
 
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
