@@ -177,7 +177,7 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
 
     ParserError error;
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(vm, source, Identifier(), ImplementationVisibility::Public,
-        JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, parseMode, SuperBinding::NotNeeded,
+        JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, parseMode, FunctionMode::None, SuperBinding::NotNeeded,
         error, nullptr, ConstructorKind::None, DerivedContextType::None, EvalContextType::None,
         &debuggerParseData);
     if (!rootNode)

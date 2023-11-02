@@ -71,7 +71,7 @@ public:
     unsigned length() const { return m_length; }
     CharType* characters() { return m_data; }
 
-    CharType& operator[](unsigned i) { ASSERT_WITH_SECURITY_IMPLICATION(i < m_length); return m_data[i]; }
+    CharType& operator[](unsigned i) { RELEASE_ASSERT(i < m_length); return m_data[i]; }
 
     MallocPtr<CharType, StringBufferMalloc> release()
     {
