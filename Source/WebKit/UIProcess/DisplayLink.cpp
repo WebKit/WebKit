@@ -49,6 +49,8 @@ DisplayLink::DisplayLink(PlatformDisplayID displayID)
 
 DisplayLink::~DisplayLink()
 {
+    ASSERT(m_clients.isEmpty());
+
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Destroying DisplayLink " << this << " for display " << m_displayID);
 
     platformFinalize();

@@ -338,12 +338,6 @@ WebProcessProxy::~WebProcessProxy()
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
-#if HAVE(DISPLAY_LINK)
-    // Prewarmed / cached processes may not have a process pool on destruction.
-    if (RefPtr processPool = m_processPool.get())
-        processPool->displayLinks().stopDisplayLinks(m_displayLinkClient);
-#endif
-
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
     for (auto& callback : isResponsiveCallbacks)
         callback(false);
