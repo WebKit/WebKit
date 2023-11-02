@@ -638,7 +638,7 @@ static constexpr unsigned StringDataIs8BitFlag = 0x80000000;
  *      BigIntObjectTag BigIntData
  *
  * BigIntData :-
- *      <sign:uint8_t> <lengthInUint64:uint32_t> <contents:uint64_t{lengthInUint64}>
+ *      <sign:uint8_t> <numberOfUint64Elements:uint32_t> <contents:uint64_t{numberOfUint64Elements}>
  *
  * File :-
  *    FileTag FileData
@@ -1152,10 +1152,10 @@ private:
                 write(static_cast<uint64_t>(bigInt->digit(index)));
         } else {
             ASSERT(sizeof(JSBigInt::Digit) == sizeof(uint32_t));
-            uint32_t lengthInUint64 = bigInt->length() / 2;
+            uint32_t numberOfUint64Elements = bigInt->length() / 2;
             if (bigInt->length() & 0x1)
-                ++lengthInUint64;
-            write(lengthInUint64);
+                ++numberOfUint64Elements;
+            write(numberOfUint64Elements);
             uint64_t value = 0;
             for (unsigned index = 0; index < bigInt->length(); ++index) {
                 if (!(index & 0x1))
@@ -4173,11 +4173,11 @@ private:
         bool sign;
         if (!read(sign, ForceReadingAs8Bit::Yes))
             return JSValue();
-        uint32_t lengthInUint64 = 0;
-        if (!read(lengthInUint64))
+        uint32_t numberOfUint64Elements = 0;
+        if (!read(numberOfUint64Elements))
             return JSValue();
 
-        if (!lengthInUint64) {
+        if (!numberOfUint64Elements) {
 #if USE(BIGINT32)
             return jsBigInt32(0);
 #else
@@ -4193,7 +4193,7 @@ private:
 
 #if USE(BIGINT32)
         static_assert(sizeof(JSBigInt::Digit) == sizeof(uint64_t));
-        if (lengthInUint64 == 1) {
+        if (numberOfUint64Elements == 1) {
             uint64_t digit64 = 0;
             if (!read(digit64))
                 return JSValue();
@@ -4223,12 +4223,12 @@ private:
 #endif
         JSBigInt* bigInt = nullptr;
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
-            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), lengthInUint64);
+            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), numberOfUint64Elements);
             if (!bigInt) {
                 fail();
                 return JSValue();
             }
-            for (uint32_t index = 0; index < lengthInUint64; ++index) {
+            for (uint32_t index = 0; index < numberOfUint64Elements; ++index) {
                 uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
@@ -4236,12 +4236,17 @@ private:
             }
         } else {
             ASSERT(sizeof(JSBigInt::Digit) == sizeof(uint32_t));
-            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), lengthInUint64 * 2);
+            auto actualBigIntLength = WTF::checkedProduct<uint32_t>(numberOfUint64Elements, 2);
+            if (actualBigIntLength.hasOverflowed()) {
+                fail();
+                return JSValue();
+            }
+            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), actualBigIntLength.value());
             if (!bigInt) {
                 fail();
                 return JSValue();
             }
-            for (uint32_t index = 0; index < lengthInUint64; ++index) {
+            for (uint32_t index = 0; index < numberOfUint64Elements; ++index) {
                 uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
