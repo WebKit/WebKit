@@ -288,7 +288,7 @@ using WebCore::LogOverlayScrollbars;
         break;
     }
 
-    if (!_scrollbar->supportsUpdateOnSecondaryThread())
+    if (_scrollbar && !_scrollbar->supportsUpdateOnSecondaryThread())
         _scrollbar->invalidate();
 }
 
@@ -313,7 +313,7 @@ using WebCore::LogOverlayScrollbars;
 @end
 
 @interface WebScrollerImpDelegate : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
-    WebCore::Scrollbar* _scrollbar;
+    WeakPtr<WebCore::Scrollbar> _scrollbar;
 
     RetainPtr<WebScrollbarPartAnimation> _knobAlphaAnimation;
     RetainPtr<WebScrollbarPartAnimation> _trackAlphaAnimation;
@@ -458,7 +458,7 @@ using WebCore::LogOverlayScrollbars;
             [self scrollbarsController]->setVisibleScrollerThumbRect({ });
     }
 
-    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
                                                                        featureToAnimate:part == WebCore::ThumbPart ? ThumbAlpha : TrackAlpha
                                                                             animateFrom:part == WebCore::ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
                                                                               animateTo:newAlpha
@@ -515,7 +515,7 @@ using WebCore::LogOverlayScrollbars;
         [scrollerImp setUsePresentationValue:NO];
 
     if (!_uiStateTransitionAnimation) {
-        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
             featureToAnimate:UIStateTransition
             animateFrom:[scrollerImp uiStateTransitionProgress]
             animateTo:1.0
@@ -540,7 +540,7 @@ using WebCore::LogOverlayScrollbars;
     [scrollerImp setExpansionTransitionProgress:1 - [scrollerImp expansionTransitionProgress]];
 
     if (!_expansionTransitionAnimation) {
-        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
             featureToAnimate:ExpansionTransition
             animateFrom:[scrollerImp expansionTransitionProgress]
             animateTo:1.0
