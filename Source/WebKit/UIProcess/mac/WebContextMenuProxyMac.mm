@@ -323,7 +323,7 @@ void WebContextMenuProxyMac::appendRemoveBackgroundItemToControlledImageMenuIfNe
         if (!shouldAllow)
             return;
 
-        auto* imageBitmap = protectedThis->m_context.controlledImage();
+        RefPtr imageBitmap = protectedThis->m_context.controlledImage();
         if (!imageBitmap)
             return;
 
@@ -518,7 +518,7 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
     if (auto potentialQRCodeNodeSnapshotImage = m_context.potentialQRCodeNodeSnapshotImage()) {
         auto image = potentialQRCodeNodeSnapshotImage->makeCGImage();
         requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
-            auto potentialQRCodeViewportSnapshotImage = m_context.potentialQRCodeViewportSnapshotImage();
+            RefPtr potentialQRCodeViewportSnapshotImage = m_context.potentialQRCodeViewportSnapshotImage();
             if (!potentialQRCodeViewportSnapshotImage || result.length) {
                 m_context.setQRCodePayloadString(result);
                 WebContextMenuProxy::show();
@@ -891,7 +891,7 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
         
         ASSERT(m_context.webHitTestResultData());
         Ref page = *this->page();
-        page->contextMenuClient().menuFromProposedMenu(page, menu, m_context, m_userData.object(), WTFMove(menuFromProposedMenu));
+        page->contextMenuClient().menuFromProposedMenu(page, menu, m_context, m_userData.protectedObject().get(), WTFMove(menuFromProposedMenu));
     });
 }
 

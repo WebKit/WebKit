@@ -42,6 +42,7 @@
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
 #include "NodeName.h"
 #include "ProcessingInstruction.h"
@@ -208,6 +209,16 @@ String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root,
     return m_markup.toString();
 }
 
+bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node& targetNode)
+{
+    if (m_replacementURLStrings.isEmpty() || !targetNode.hasTagName(styleTag))
+        return false;
+
+    auto& styleElement = downcast<HTMLStyleElement>(targetNode);
+    result.append(styleElement.textContentWithReplacementURLs(m_replacementURLStrings));
+    return true;
+}
+
 void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, SerializedNodes root, const Namespaces* namespaces, Vector<QualifiedName>* tagNamesToSkip)
 {
     WTF::Vector<Namespaces> namespaceStack;
@@ -248,8 +259,9 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                 }
             }
 
+            bool shouldSkipChidren = appendContentsForNode(m_markup, *current);
             auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(*current).content().firstChild() : current->firstChild();
-            if (firstChild) {
+            if (!shouldSkipChidren && firstChild) {
                 current = firstChild;
                 namespaceStack.append(namespaceStack.last());
                 continue;

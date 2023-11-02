@@ -1023,8 +1023,10 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
         if (run.isInlineBoxEnd())
             return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderEnd() || inlineBoxGeometry.paddingEnd().value_or(0_lu);
         if (run.isLineSpanningInlineBoxStart()) {
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (run.style().boxDecorationBreak() != BoxDecorationBreak::Clone)
                 return false;
+#endif // ENABLE(CSS_BOX_DECORATION_BREAK)
             return inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart().value_or(0_lu);
         }
     }

@@ -122,10 +122,11 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     ASSERT(!cachedProcess->process().suspendedPageCount());
     ASSERT(!cachedProcess->process().isRunningServiceWorkers());
 
-    if (!canCacheProcess(cachedProcess->process()))
+    Ref process = cachedProcess->process();
+    if (!canCacheProcess(process))
         return false;
 
-    auto registrableDomain = cachedProcess->process().registrableDomain();
+    auto registrableDomain = process->registrableDomain();
     RELEASE_ASSERT(!registrableDomain.isEmpty());
 
     if (auto previousProcess = m_processesPerRegistrableDomain.take(registrableDomain))
@@ -333,7 +334,8 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
 void WebProcessCache::CachedProcess::evictionTimerFired()
 {
     ASSERT(m_process);
-    m_process->processPool().webProcessCache().removeProcess(*m_process, ShouldShutDownProcess::Yes);
+    auto process = m_process.copyRef();
+    process->processPool().checkedWebProcessCache()->removeProcess(*process, ShouldShutDownProcess::Yes);
 }
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)

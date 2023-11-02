@@ -27,6 +27,7 @@
 
 #include "Attachment.h"
 #include "MessageNames.h"
+#include <WebCore/PlatformExportMacros.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>

@@ -62,8 +62,10 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 bool webkitWebViewBaseIsFullScreen(WebKitWebViewBase*);
 #endif
 void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase*, unsigned size);
+#if ENABLE(CONTEXT_MENUS)
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if USE(GTK4)
 GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);

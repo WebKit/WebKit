@@ -68,6 +68,9 @@ bool WillChangeData::createsContainingBlockForAbsolutelyPositioned(bool isRootEl
 
 bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const
 {
+#if !ENABLE(FILTERS_LEVEL_2)
+    UNUSED_PARAM(isRootElement);
+#endif // !ENABLE(FILTERS_LEVEL_2)
     return containsProperty(CSSPropertyPerspective)
         // CSS transforms
         || containsProperty(CSSPropertyTransform)

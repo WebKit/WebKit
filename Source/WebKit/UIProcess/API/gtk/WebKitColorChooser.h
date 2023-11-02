@@ -19,6 +19,7 @@
 
 #pragma once
 
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "WebColorPickerGtk.h"
 #include <WebCore/IntRect.h>
 #include <wtf/glib/GRefPtr.h>
@@ -52,3 +53,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INPUT_TYPE_COLOR)

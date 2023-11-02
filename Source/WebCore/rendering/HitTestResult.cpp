@@ -516,7 +516,7 @@ void HitTestResult::toggleMediaFullscreenState() const
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElement = this->mediaElement()) {
         if (mediaElement->isVideo() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
             mediaElement->toggleStandardFullscreenState();
         }
     }
@@ -530,7 +530,7 @@ void HitTestResult::enterFullscreenForVideo() const
     if (is<HTMLVideoElement>(mediaElement)) {
         HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
             videoElement.webkitEnterFullscreen();
         }
     }
@@ -855,7 +855,7 @@ void HitTestResult::toggleEnhancedFullscreenForVideo() const
         return;
 
     HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
-    UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
     if (videoElement.webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
         videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else

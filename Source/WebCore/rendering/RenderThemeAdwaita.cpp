@@ -41,7 +41,6 @@
 #include "RenderStyleSetters.h"
 #include "ThemeAdwaita.h"
 #include "TimeRanges.h"
-#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/Base64.h>
 
@@ -52,6 +51,10 @@
 #if PLATFORM(WIN)
 #include "WebCoreBundleWin.h"
 #include <wtf/FileSystem.h>
+#endif
+
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+#include "UserAgentScripts.h"
 #endif
 
 namespace WebCore {

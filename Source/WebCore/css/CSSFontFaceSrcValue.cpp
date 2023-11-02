@@ -123,10 +123,25 @@ bool CSSFontFaceSrcResourceValue::customTraverseSubresources(const Function<bool
     return m_cachedFont && handler(*m_cachedFont);
 }
 
+void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
+    if (!replacementURLString.isNull())
+        m_replacementURLString = replacementURLString;
+}
+
+void CSSFontFaceSrcResourceValue::customClearReplacementURLForSubresources()
+{
+    m_replacementURLString = { };
+}
+
 String CSSFontFaceSrcResourceValue::customCSSText() const
 {
     StringBuilder builder;
-    builder.append(serializeURL(m_location.specifiedURLString));
+    if (!m_replacementURLString.isEmpty())
+        builder.append(serializeURL(m_replacementURLString));
+    else
+        builder.append(serializeURL(m_location.specifiedURLString));
     if (!m_format.isEmpty())
         builder.append(" format(", serializeString(m_format), ')');
     if (!m_technologies.isEmpty()) {

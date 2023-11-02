@@ -91,7 +91,7 @@ void CoordinatedBackingStore::setSize(const FloatSize& size)
 void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
 {
     for (auto& tile : tiles)
-        tile->paint(textureMapper, transform, opacity, calculateExposedTileEdges(rect, tile->rect()));
+        tile->paint(textureMapper, transform, opacity, allTileEdgesExposed(rect, tile->rect()));
 }
 
 TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const FloatRect& targetRect)

@@ -268,7 +268,7 @@ void WebNotificationManager::didClickNotification(const WTF::UUID& notificationI
 
         // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
         if (isMainRunLoop()) {
-            UserGestureIndicator indicator(ProcessingUserGesture);
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
             notification->dispatchClickEvent();
         } else
             notification->dispatchClickEvent();

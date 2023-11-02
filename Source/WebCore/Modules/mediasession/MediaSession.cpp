@@ -288,7 +288,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     if (handler) {
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
-            maybeGestureIndicator.emplace(ProcessingUserGesture, document());
+            maybeGestureIndicator.emplace(IsProcessingUserGesture::Yes, document());
         handler->handleEvent(actionDetails);
         return true;
     }

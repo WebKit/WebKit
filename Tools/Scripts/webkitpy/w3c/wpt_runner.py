@@ -99,6 +99,10 @@ def parse_args(args):
                              help='Alias for --platform=gtk')
     option_parser.add_option('--wpe', action='store_const', dest='platform', const='wpe',
                              help='Alias for --platform=wpe')
+    option_parser.add_option('--release', action='store_const', dest='configuration', const='Release',
+                             help='Set the configuration to Release')
+    option_parser.add_option('--debug', action='store_const', dest='configuration', const='Debug',
+                             help='Set the configuration to Debug')
     option_parser.add_option('--child-processes',
                              help='Number of tests to run in parallel'),
     option_parser.add_option('--wpt-checkout', default=None,

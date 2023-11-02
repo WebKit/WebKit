@@ -284,7 +284,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
         return;
     Ref mainFrame = *localMainFrame;
 
-    UserGestureIndicator indicator { ProcessingUserGesture, mainFrame->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, mainFrame->document() };
 
     FrameLoadRequest frameLoadRequest { *mainFrame->document(), mainFrame->document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 

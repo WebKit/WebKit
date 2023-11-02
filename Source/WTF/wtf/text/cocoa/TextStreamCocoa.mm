@@ -19,54 +19,84 @@
  */
 
 #import "config.h"
-#import <wtf/text/TextStream.h>
+#import <wtf/text/TextStreamCocoa.h>
 
+#import <objc/runtime.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 namespace WTF {
 
 TextStream& TextStream::operator<<(id object)
 {
-    if ([object isKindOfClass:[NSArray class]])
-        return *this << static_cast<NSArray *>(object);
+    if (object_isClass(object)) {
+        m_text.append(NSStringFromClass(object));
+        return *this;
+    }
+
+    auto outputArray = [&](NSArray *array) {
+        *this << "[";
+
+        for (NSUInteger i = 0; i < array.count; ++i) {
+            id item = array[i];
+            *this << item;
+            if (i < array.count - 1)
+                *this << ", ";
+        }
+
+        *this << "]";
+    };
+
+    if ([object isKindOfClass:[NSArray class]]) {
+        outputArray(object);
+        return *this;
+    }
+
+    auto outputDictionary = [&](NSDictionary *dictionary) {
+        *this << "{";
+        bool needLeadingComma = false;
+
+        [dictionary enumerateKeysAndObjectsUsingBlock:[&](id key, id value, BOOL *) {
+            if (needLeadingComma)
+                *this << ", ";
+            needLeadingComma = true;
+
+            *this << key;
+            *this << ": ";
+            *this << value;
+        }];
+
+        *this << "}";
+    };
+
+    if ([object isKindOfClass:[NSDictionary class]]) {
+        outputDictionary(object);
+        return *this;
+    }
 
     if ([object conformsToProtocol:@protocol(NSObject)])
         m_text.append([object description]);
     else
-        m_text.append("(id)");
+        *this << "(id)";
+
     return *this;
 }
 
-TextStream& TextStream::operator<<(NSArray *array)
+TextStream& operator<<(TextStream& ts, CGRect rect)
 {
-    *this << "[";
-
-    for (NSUInteger i = 0; i < array.count; ++i) {
-        id item = array[i];
-        *this << item;
-        if (i < array.count - 1)
-            *this << ", ";
-    }
-
-    return *this << "]";
+    ts << "{{" << rect.origin.x << ", " << rect.origin.y << "}, {" << rect.size.width << ", " << rect.size.height << "}}";
+    return ts;
 }
 
-TextStream& TextStream::operator<<(CGRect rect)
+TextStream& operator<<(TextStream& ts, CGSize size)
 {
-    *this << "{{" << rect.origin.x << ", " << rect.origin.y << "}, {" << rect.size.width << ", " << rect.size.height << "}}";
-    return *this;
+    ts << "{" << size.width << ", " << size.height << "}";
+    return ts;
 }
 
-TextStream& TextStream::operator<<(CGSize size)
+TextStream& operator<<(TextStream& ts, CGPoint point)
 {
-    *this << "{" << size.width << ", " << size.height << "}";
-    return *this;
+    ts << "{" << point.x << ", " << point.y << "}";
+    return ts;
 }
 
-TextStream& TextStream::operator<<(CGPoint point)
-{
-    *this << "{" << point.x << ", " << point.y << "}";
-    return *this;
-}
-
-}
+} // namespace WTF

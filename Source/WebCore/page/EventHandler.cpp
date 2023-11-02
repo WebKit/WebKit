@@ -1794,7 +1794,7 @@ HandleMouseEventResult EventHandler::handleMousePressEvent(const PlatformMouseEv
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent));
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent));
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     frame->checkedLoader()->resetMultipleFormSubmissionProtection();
@@ -1946,7 +1946,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     frame->selection().setCaretBlinkingSuspended(false);
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent));
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent));
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
@@ -2261,7 +2261,7 @@ HandleMouseEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouse
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent), UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(platformMouseEvent), UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken());
 
 #if ENABLE(PAN_SCROLLING)
     m_autoscrollController->handleMouseReleaseEvent(platformMouseEvent);
@@ -3783,7 +3783,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     UserGestureType gestureType = userGestureTypeForPlatformEvent(initialKeyEvent);
 
     auto canRequestDOMPaste = frame->protectedDocument()->quirks().needsDisableDOMPasteAccessQuirk() ? CanRequestDOMPaste::No : CanRequestDOMPaste::Yes;
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, frame->protectedDocument().get(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed, std::nullopt, canRequestDOMPaste);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed, std::nullopt, canRequestDOMPaste);
     UserTypingGestureIndicator typingGestureIndicator(frame);
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
@@ -4862,7 +4862,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(event));
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), userGestureTypeForPlatformEvent(event));
 
     bool freshTouchEvents = true;
     bool allTouchReleased = true;

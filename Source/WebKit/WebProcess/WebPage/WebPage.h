@@ -155,7 +155,6 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
-OBJC_CLASS RVItem;
 OBJC_CLASS WKAccessibilityWebPageObject;
 #endif
 
@@ -877,8 +876,8 @@ public:
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
 
 #if ENABLE(REVEAL)
-    RetainPtr<RVItem> revealItemForCurrentSelection();
-    void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&&);
+    RevealItem revealItemForCurrentSelection();
+    void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const RevealItem&)>&&);
     void prepareSelectionForContextMenuWithLocationInView(WebCore::IntPoint, CompletionHandler<void(bool, const RevealItem&)>&&);
 #endif
     void willInsertFinalDictationResult();

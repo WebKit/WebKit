@@ -26,7 +26,8 @@
 // https://fullscreen.spec.whatwg.org/#api
 [
     Conditional=FULLSCREEN_API,
-    EnabledBySetting=FullScreenEnabled
+    EnabledBySetting=FullScreenEnabled,
+    DisabledByQuirk=shouldDisableElementFullscreen
 ] partial interface Element {
     [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
     [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
 #include "APIObject.h"
 #include <WebCore/CaptionUserPreferences.h>
 #include <wtf/Ref.h>
@@ -47,3 +48,5 @@ private:
 };
 
 }
+
+#endif // ENABLE(VIDEO)

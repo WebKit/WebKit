@@ -124,7 +124,7 @@ private:
     void contextMenuItemSelected(ContextMenuAction action, const String&) override
     {
         if (m_frontendHost) {
-            UserGestureIndicator gestureIndicator(ProcessingUserGesture, dynamicDowncast<Document>(executionContext(m_globalObject)));
+            UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, dynamicDowncast<Document>(executionContext(m_globalObject)));
             int itemNumber = action - ContextMenuItemBaseCustomTag;
 
             ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuItemSelected"_s, WebCore::functionCallHandlerFromAnyThread);

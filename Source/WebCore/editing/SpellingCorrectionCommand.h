@@ -26,10 +26,9 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include "DocumentFragment.h"
 
 namespace WebCore {
-
-class DocumentFragment;
 
 class SpellingCorrectionCommand : public CompositeEditCommand {
 public:

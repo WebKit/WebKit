@@ -3761,8 +3761,13 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*this))
         return overridingContentLogicalHeight();
 
-    if (shouldComputeLogicalHeightFromAspectRatio())
-        return blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced());
+    if (shouldComputeLogicalHeightFromAspectRatio()) {
+        auto borderAndPaddingLogicalHeight = this->borderAndPaddingLogicalHeight();
+        auto borderBoxLogicalHeight = blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight, style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced());
+        if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding)
+            return borderBoxLogicalHeight - borderAndPaddingLogicalHeight;
+        return borderBoxLogicalHeight;
+    }
 
     if (h.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.

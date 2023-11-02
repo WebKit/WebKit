@@ -91,9 +91,11 @@
 #include <stdio.h>
 #include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -403,8 +405,8 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
 #if PLATFORM(COCOA)
     if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
-        auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
-        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == &networkProcess);
+        Ref networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
+        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == networkProcess.ptr());
         m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
     }
 #endif

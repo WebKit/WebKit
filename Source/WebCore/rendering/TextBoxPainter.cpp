@@ -27,6 +27,7 @@
 
 #include "CompositionHighlight.h"
 #include "DocumentInlines.h"
+#include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventRegion.h"
 #include "GraphicsContext.h"

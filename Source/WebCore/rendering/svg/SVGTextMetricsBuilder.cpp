@@ -197,14 +197,10 @@ void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* 
     }
 }
 
-void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text)
+void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGText& textRoot, RenderSVGInlineText* stopAtLeaf)
 {
-    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
-    if (!textRoot)
-        return;
-
     MeasureTextData data(nullptr);
-    walkTree(*textRoot, &text, &data);
+    walkTree(textRoot, stopAtLeaf, &data);
 }
 
 void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText& textRoot, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)

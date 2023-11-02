@@ -30,6 +30,8 @@
 #include "WebKitColorChooser.h"
 #include "WebKitColorChooserRequest.h"
 
+#if ENABLE(INPUT_TYPE_COLOR)
 WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebKitColorChooser*);
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // WebKitColorChooserRequestPrivate_h

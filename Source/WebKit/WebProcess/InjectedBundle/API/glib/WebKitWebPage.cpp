@@ -357,6 +357,7 @@ private:
 };
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
 class PageContextMenuClient final : public API::InjectedBundle::PageContextMenuClient {
 public:
     explicit PageContextMenuClient(WebKitWebPage* webPage)
@@ -388,6 +389,7 @@ private:
 
     WebKitWebPage* m_webPage;
 };
+#endif // ENABLE(CONTEXT_MENUS)
 
 class PageFormClient final : public API::InjectedBundle::FormClient {
 public:
@@ -601,7 +603,11 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 2,
+#if ENABLE(CONTEXT_MENUS)
         WEBKIT_TYPE_CONTEXT_MENU,
+#else
+        G_TYPE_OBJECT,
+#endif // ENABLE(CONTEXT_MENUS)
         WEBKIT_TYPE_WEB_HIT_TEST_RESULT);
 
 #if !ENABLE(2022_GLIB_API)
@@ -797,7 +803,9 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 
     webPage->setInjectedBundleResourceLoadClient(makeUnique<PageResourceLoadClient>(page));
     webPage->setInjectedBundlePageLoaderClient(makeUnique<PageLoaderClient>(page));
+#if ENABLE(CONTEXT_MENUS)
     webPage->setInjectedBundleContextMenuClient(makeUnique<PageContextMenuClient>(page));
+#endif // ENABLE(CONTEXT_MENUS)
     webPage->setInjectedBundleFormClient(makeUnique<PageFormClient>(page));
 #if !ENABLE(2022_GLIB_API)
     webPage->setInjectedBundleUIClient(makeUnique<PageUIClient>(page));

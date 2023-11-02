@@ -295,18 +295,18 @@ bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling() const
 
 void DrawingAreaCoordinatedGraphics::registerScrollingTree()
 {
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     if (m_supportsAsyncScrolling)
         WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(m_webPage);
-#endif
+#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 }
 
 void DrawingAreaCoordinatedGraphics::unregisterScrollingTree()
 {
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     if (m_supportsAsyncScrolling)
         WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(m_webPage);
-#endif
+#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 }
 
 GraphicsLayerFactory* DrawingAreaCoordinatedGraphics::graphicsLayerFactory()

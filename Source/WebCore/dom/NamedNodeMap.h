@@ -24,13 +24,13 @@
 
 #pragma once
 
+#include "Element.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
 
 class Attr;
-class Element;
 
 class NamedNodeMap final : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(NamedNodeMap);

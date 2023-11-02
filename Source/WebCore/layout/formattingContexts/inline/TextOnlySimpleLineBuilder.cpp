@@ -466,8 +466,10 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify || rootBox.isRubyAnnotationBox())
         return false;
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (rootStyle.boxDecorationBreak() == BoxDecorationBreak::Clone)
         return false;
+#endif // ENABLE(CSS_BOX_DECORATION_BREAK)
     if (!rootStyle.hangingPunctuation().isEmpty())
         return false;
     if (rootStyle.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())

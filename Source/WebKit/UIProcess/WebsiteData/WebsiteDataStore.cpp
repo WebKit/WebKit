@@ -2483,10 +2483,12 @@ void WebsiteDataStore::updateServiceWorkerInspectability()
 
     bool wasInspectable = m_inspectionForServiceWorkersAllowed;
     m_inspectionForServiceWorkersAllowed = [&] {
+#if ENABLE(REMOTE_INSPECTOR)
         for (auto& page : m_pages) {
             if (page.inspectable())
                 return true;
         }
+#endif // ENABLE(REMOTE_INSPECTOR)
         return false;
     }();
 

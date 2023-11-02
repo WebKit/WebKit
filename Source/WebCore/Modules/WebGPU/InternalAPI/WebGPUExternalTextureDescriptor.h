@@ -39,8 +39,10 @@ namespace WebCore::WebGPU {
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, RefPtr<WebCore::VideoFrame>, RetainPtr<CVPixelBufferRef>>;
-#else
+#elif ENABLE(VIDEO)
 using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, RefPtr<WebCore::VideoFrame>, void*>;
+#else
+using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, void*>;
 #endif
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {

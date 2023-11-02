@@ -1307,7 +1307,7 @@ bool AccessibilityObject::press()
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
         pressElement = hitTestElement;
     
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document);
     
     bool dispatchedEvent = false;
 #if PLATFORM(IOS_FAMILY)

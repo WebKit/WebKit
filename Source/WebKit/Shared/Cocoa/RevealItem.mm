@@ -34,11 +34,30 @@ namespace WebKit {
 
 #if ENABLE(REVEAL)
 
-RevealItem::RevealItem(RetainPtr<RVItem>&& item)
-    : m_item { WTFMove(item) }
+RevealItemRange::RevealItemRange(NSRange range)
+    : location(range.location)
+    , length(range.length)
 {
 }
 
-#endif
-
+RevealItem::RevealItem(const String& text, RevealItemRange selectedRange)
+    : m_text(text)
+    , m_selectedRange(selectedRange)
+{
 }
+
+NSRange RevealItem::highlightRange() const
+{
+    return item().highlightRange;
+}
+
+RVItem *RevealItem::item() const
+{
+    if (!m_item)
+        m_item = adoptNS([PAL::allocRVItemInstance() initWithText:m_text selectedRange:NSMakeRange(m_selectedRange.location, m_selectedRange.length)]);
+    return m_item.get();
+}
+
+#endif // ENABLE(REVEAL)
+
+} // namespace WebKit

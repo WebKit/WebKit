@@ -278,4 +278,16 @@ bool CSSValueContainingVector::customTraverseSubresources(const Function<bool(co
     return false;
 }
 
+void CSSValueContainingVector::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    for (auto& value : *this)
+        const_cast<CSSValue&>(value).setReplacementURLForSubresources(replacementURLStrings);
+}
+
+void CSSValueContainingVector::customClearReplacementURLForSubresources()
+{
+    for (auto& value : *this)
+        const_cast<CSSValue&>(value).clearReplacementURLForSubresources();
+}
+
 } // namespace WebCore

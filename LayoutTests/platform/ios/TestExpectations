@@ -2791,8 +2791,6 @@ webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-cred
 
 webkit.org/b/177445 fast/loader/form-submission-after-beforeunload-cancel.html [ Pass Timeout ]
 
-webkit.org/b/177397 [ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
-
 webkit.org/b/177617 http/tests/storageAccess/request-storage-access-top-frame.html [ Pass Timeout ]
 
 webkit.org/b/177547 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Pass Failure ]
@@ -4686,7 +4684,5 @@ webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-overflow-001.html [ ImageOnlyFailure ]
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-wbr-nobr-001.html [ ImageOnlyFailure ]
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-wbr-nobr-002.html [ ImageOnlyFailure ]
-
-webkit.org/b/263977 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Crash ]
 
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]

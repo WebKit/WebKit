@@ -27,6 +27,7 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "DeclaredStylePropertyMap.h"
+#include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "RuleSet.h"
 #include "StyleProperties.h"
@@ -146,46 +147,72 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 // https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
 String CSSStyleRule::cssText() const
 {
+    auto declarationsString = m_styleRule->properties().asText();
+    StringBuilder declarations;
+    StringBuilder rules;
+    declarations.append(declarationsString);
+    cssTextForRules(rules);
+
+    return cssTextInternal(declarations, rules);
+}
+
+void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
+{
+    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
+        rules.append("\n  ", item(index)->cssText());
+}
+
+String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings) const
+{
+    StringBuilder declarations;
+    StringBuilder rules;
+
+    auto mutableStyleProperties = m_styleRule->properties().mutableCopy();
+    mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
+    auto declarationsString = mutableStyleProperties->asText();
+    mutableStyleProperties->clearReplacementURLForSubresources();
+
+    declarations.append(declarationsString);
+    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings);
+
+    return cssTextInternal(declarations, rules);
+}
+
+void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings) const
+{
+    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
+        rules.append("\n  ", item(index)->cssTextWithReplacementURLs(replacementURLStrings));
+}
+
+String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
+{
     StringBuilder builder;
     builder.append(selectorText());
     builder.append(" {");
 
-    auto declsString = m_styleRule->properties().asText();
-    StringBuilder decls;
-    StringBuilder rules;
-
-    decls.append(declsString);
-    cssTextForDeclsAndRules(decls, rules);
-
-    if (decls.isEmpty() && rules.isEmpty()) {
+    if (declarations.isEmpty() && rules.isEmpty()) {
         builder.append(" }");
         return builder.toString();
     }
 
     if (rules.isEmpty()) {
         builder.append(' ');
-        builder.append(decls);
+        builder.append(declarations);
         builder.append(" }");
         return builder.toString();
     }
 
-    if (decls.isEmpty()) {
+    if (declarations.isEmpty()) {
         builder.append(rules);
         builder.append("\n}");
         return builder.toString();
     }
 
     builder.append("\n  ");
-    builder.append(decls);
+    builder.append(declarations);
     builder.append(rules);
     builder.append("\n}");
     return builder.toString();
-}
-
-void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
-{
-    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
-        rules.append("\n  ", item(index)->cssText());
 }
 
 // FIXME: share all methods below with CSSGroupingRule.

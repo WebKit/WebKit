@@ -169,6 +169,32 @@ let extraCode = '';
             testPassed(`COMPLETION_STATUS_KHR sucessfully transitioned from false to true`);
         }
 
+        debug("Checking that compiling lots of programs in parallel eventually completes.");
+        let programs = [];
+        for (let i = 0; i < 256; ++i) {
+            gl.shaderSource(vs, vertexSource());
+            gl.shaderSource(fs, fragmentSource());
+            gl.compileShader(vs);
+            gl.compileShader(fs);
+            let program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+            programs.push(program);
+        }
+        let allDone = false;
+        while (!allDone) {
+            allDone = true;
+            for (let i = 0; i < programs.length; ++i) {
+                if (!gl.getProgramParameter(programs[i], COMPLETION_STATUS_KHR)) {
+                    allDone = false;
+                    break;
+                }
+            }
+            if (!allDone) {
+                await new Promise(requestAnimationFrame);
+            }
+        }
 
         debug("Checking that status is true when context is lost.");
         if (loseContext) {

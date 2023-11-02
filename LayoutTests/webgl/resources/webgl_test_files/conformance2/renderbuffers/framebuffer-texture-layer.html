@@ -121,6 +121,37 @@ function testFramebufferTextureLayer() {
         "attaching a depth_stencil texture to a framebuffer should succeed.");
     checkFramebuffer([gl.FRAMEBUFFER_COMPLETE]);
 
+    var texDepthStencil = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D_ARRAY, texDepthStencil);
+
+    var texDepthStencilMany = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D_ARRAY, texDepthStencilMany);
+    var fbDepthStencilMany = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbDepthStencilMany);
+    gl.texImage3D(gl.TEXTURE_2D_ARRAY,
+                  0,                                          // level
+                  gl.DEPTH24_STENCIL8,                        // internalFormat
+                  1,                                          // width
+                  1,                                          // height
+                  2,                                          // depth
+                  0,                                          // border
+                  gl.DEPTH_STENCIL,                           // format
+                  gl.UNSIGNED_INT_24_8,                       // type
+                  new Uint32Array([0, 1]));                      // data
+
+    gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, texDepthStencilMany, 0, 0);
+    gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, texDepthStencilMany, 0, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR,
+        "attaching a depth_stencil 2d array texture level 0 to a framebuffer should succeed.");
+    checkFramebuffer([gl.FRAMEBUFFER_COMPLETE]);
+    shouldEvaluateTo("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", texDepthStencilMany);
+    gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, texDepthStencilMany, 0, 1);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR,
+        "attaching a 2d array texture level 0 to depth and layer 1 to stencil attachment of a framebuffer should succeed.");
+    // "Depth and stencil attachments, if present, are the same image." If not, then "FRAMEBUFFER_UNSUPPORTED".
+    checkFramebuffer([gl.FRAMEBUFFER_UNSUPPORTED]);
+    shouldEvaluateTo("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", texDepthStencilMany);
+
     // Clean up
     gl.deleteTexture(tex3d);
     gl.deleteTexture(texDepthStencil);

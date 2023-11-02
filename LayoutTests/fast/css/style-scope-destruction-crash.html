@@ -1,0 +1,34 @@
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc() {
+    if (window.GCController) {
+        GCController.collect();
+        return;
+    }
+   for(var i=0;i<100;i++) {
+       new Uint8Array(1024*1024);
+   }
+}
+
+function main() {
+    var v63 = x5.attachShadow({mode: "open", delegatesFocus: false});
+    x18.scrollTop;
+    v63.appendChild(x11);
+    gc();
+}
+</script>
+</head>
+
+<body onload="main()">
+<svg id="x11" id="x44" tabindex="-1">
+<animateTransform id="x18" 0.97 0.23 0" min="0.5s">
+</animateTransform>
+<clipPath id="x20" 8em id="x25" vector-effect="non-scaling-size" clip-path="url(#x20)" markerUnits="strokeWidth" 1 clip="rect(1em,auto,auto,546px)" patternUnits="userSpaceOnUse">
+<style width="0.20em" translate="no" draggable="true" itemref="x50" itemgroup="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+<blockquote id="x5" onfocusout="f3()">
+</pre>
+AAAA
+</content>

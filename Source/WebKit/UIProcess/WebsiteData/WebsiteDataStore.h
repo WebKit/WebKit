@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameInfoData.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
 #include "WebFramePolicyListenerProxy.h"

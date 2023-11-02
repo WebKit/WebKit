@@ -617,10 +617,10 @@ static inline void disableAllJITOptions()
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
 
-    Options::useWebAssembly() = false;
+    if (!OptionsHelper::wasOverridden(Options::useWebAssemblyID))
+        Options::useWebAssembly() = false;
 
     Options::usePollingTraps() = true;
-    Options::useLLInt() = true;
 
     Options::dumpDisassembly() = false;
     Options::asyncDisassembly() = false;

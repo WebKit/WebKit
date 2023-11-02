@@ -156,6 +156,7 @@ private:
 
     ShaderModule& m_shaderModule;
     const Type* m_inferredType { nullptr };
+    const Type* m_returnType { nullptr };
 
     TypeStore& m_types;
     Vector<Error> m_errors;
@@ -429,7 +430,6 @@ void TypeChecker::visit(AST::Function& function)
     visitAttributes(function.attributes());
 
     Vector<const Type*> parameters;
-    const Type* result;
     parameters.reserveInitialCapacity(function.parameters().size());
     for (auto& parameter : function.parameters()) {
         visitAttributes(parameter.attributes());
@@ -438,11 +438,11 @@ void TypeChecker::visit(AST::Function& function)
 
     visitAttributes(function.returnAttributes());
     if (function.maybeReturnType())
-        result = resolve(*function.maybeReturnType());
+        m_returnType = resolve(*function.maybeReturnType());
     else
-        result = m_types.voidType();
+        m_returnType = m_types.voidType();
 
-    const Type* functionType = m_types.functionType(WTFMove(parameters), result);
+    const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType);
     introduceValue(function.name(), functionType);
 
     ContextScope functionContext(this);
@@ -628,13 +628,19 @@ void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
 void TypeChecker::visit(AST::ReturnStatement& statement)
 {
     const Type* type;
-    if (auto* expression = statement.maybeExpression())
+    auto* expression = statement.maybeExpression();
+    if (expression)
         type = infer(*expression);
     else
-        type = m_types.bottomType();
+        type = m_types.voidType();
 
-    // FIXME: unify type with the curent function's return type
-    UNUSED_PARAM(type);
+    if (!unify(m_returnType, type))
+        typeError(InferBottom::No, statement.span(), "return statement type does not match its function return type, returned '", *type, "', expected '", *m_returnType, "'");
+    else if (expression) {
+        expression->m_inferredType = m_returnType;
+        if (auto& value = expression->m_constantValue)
+            convertValue(expression->span(), m_returnType, *value);
+    }
 }
 
 void TypeChecker::visit(AST::CompoundStatement& statement)

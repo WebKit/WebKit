@@ -239,6 +239,9 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-f
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 
+# This test is a bit slow.
+fast/frames/frame-append-body-child-crash.html [ Slow ]
+
 # This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
 # is served on the parent of the reporting frame, not the reporting frame.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
@@ -4171,6 +4174,11 @@ webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Pass ]
 webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
 webgl/2.0.y/conformance2/textures/canvas/ [ Pass ]
 webgl/2.0.y/conformance2/textures/webgl_canvas [ Pass ]
+webgl/2.0.y/conformance2/wasm [ Pass ]
+
+webkit.org/b/263969 webgl/2.0.y/conformance2/wasm/readpixels-16gb-wasm-memory.html [ Failure ]
+webkit.org/b/263969 webgl/2.0.y/conformance2/wasm/teximage2d-16gb-wasm-memory.html [ Failure ]
+webkit.org/b/263969 webgl/2.0.y/conformance2/wasm/texsubimage2d-16gb-wasm-memory.html [ Failure ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.

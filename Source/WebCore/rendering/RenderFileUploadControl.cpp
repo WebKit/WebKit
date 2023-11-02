@@ -31,6 +31,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "LocalizedStrings.h"
 #include "PaintInfo.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderButton.h"

@@ -138,6 +138,11 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 webkit.org/b/254805 webgl/2.0.y/conformance/rendering/blending.html [ Failure ]
 webkit.org/b/261270 webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Failure Pass ]
 
+# Sometimes out of memory
+webgl/2.0.y/conformance2/wasm/readpixels-4gb-wasm-memory.html [ Pass Failure ]
+webgl/2.0.y/conformance2/wasm/teximage2d-4gb-wasm-memory.html [ Pass Failure ]
+webgl/2.0.y/conformance2/wasm/texsubimage2d-4gb-wasm-memory.html [ Pass Failure ]
+
 # Failure for CSS tables
 imported/w3c/web-platform-tests/css/css-tables/subpixel-collapsed-borders-003.html [ ImageOnlyFailure ]
 

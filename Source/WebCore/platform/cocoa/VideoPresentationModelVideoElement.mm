@@ -249,7 +249,7 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoFullscreenMode);
     if (m_videoElement) {
-        UserGestureIndicator gestureIndicator(ProcessingUserGesture, &m_videoElement->document());
+        UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &m_videoElement->document());
         m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(videoFullscreenMode));
     }
 }

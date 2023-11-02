@@ -275,12 +275,13 @@ TEST(WebArchive, SaveResourcesIframe)
         EXPECT_NULL(error);
         NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
         EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
-        NSString *savedMainResourceString = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
 
+        NSString *savedMainResourceString = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
         NSString *resourceDirectoryName = @"host_files";
         NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
         NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:0];
         EXPECT_EQ(4llu, resourceFileNames.count);
+
         unsigned frameFileCount = 0;
         unsigned imageFileCount = 0;
         NSMutableSet *frameResourceContentsToFind = [NSMutableSet set];
@@ -376,12 +377,13 @@ TEST(WebArchive, SaveResourcesFrame)
         EXPECT_NULL(error);
         NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
         EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
-        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
 
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
         NSString *resourceDirectoryName = @"host_files";
         NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
         NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:0];
         EXPECT_EQ(3llu, resourceFileNames.count);
+
         unsigned frameFileCount = 0;
         unsigned imageFileCount = 0;
         NSMutableSet *frameResourceContentsToFind = [NSMutableSet set];
@@ -546,13 +548,13 @@ TEST(WebArchive, SaveResourcesBlobURL)
         EXPECT_NULL(error);
         NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
         EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
         NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
-
-        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:[directoryURL URLByAppendingPathComponent:@"host_files"].path error:nil];
-        EXPECT_EQ(2llu, resourceFileNames.count);
-
         NSString *resourceDirectoryName = @"host_files";
         NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:0];
+        EXPECT_EQ(2llu, resourceFileNames.count);
+
         for (NSString *fileName in resourceFileNames) {
             NSString *replacementPath = [resourceDirectoryName stringByAppendingPathComponent:fileName];
             if ([fileName containsString:@"frame_"]) {
@@ -723,15 +725,16 @@ TEST(WebArchive, SaveResourcesDataURL)
         EXPECT_NULL(error);
         NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
         EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
-        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
 
-        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:[directoryURL URLByAppendingPathComponent:@"host_files"].path error:nil];
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:nil];
         EXPECT_EQ(3llu, resourceFileNames.count);
+
         unsigned frameFileCount = 0;
         unsigned imageFileCount = 0;
         unsigned frameWithDataURLCount = 0;
-        NSString *resourceDirectoryName = @"host_files";
-        NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
         for (NSString *fileName in resourceFileNames) {
             if ([fileName containsString:@"frame_"]) {
                 NSString *replacementPath = [resourceDirectoryName stringByAppendingPathComponent:fileName];
@@ -1082,6 +1085,90 @@ TEST(WebArchive, SaveResourcesDeclarativeShadowDOM)
 
         NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
         EXPECT_TRUE([savedMainResource containsString:@"<template shadowroot=\"open\"><slot></slot></template><p>ShadowDOM</p><button>Button</button>"]);
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
+static const char* htmlDataBytesForCSS = R"TESTRESOURCE(
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("Ahem-10000A.ttf");
+}
+div {
+    height: 50%;
+    width: 50%;
+    font-family: "WebFont";
+    background-image: url("image.png");
+}
+</style>
+<div id="div">Hello</div>
+<script>
+    div = document.getElementById("div");
+    imageURL = getComputedStyle(div).backgroundImage;
+    document.fonts.ready.then(() => { window.webkit.messageHandlers.testHandler.postMessage("done"); });
+</script>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesStyle)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForCSS length:strlen(htmlDataBytesForCSS)];
+    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/image.png"]) {
+            mimeType = @"image/png";
+            data = imageData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/Ahem-10000A.ttf"]) {
+            mimeType = @"font/ttf";
+            data = fontData;
+        } else
+            FAIL();
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:0];
+        EXPECT_EQ(2llu, resourceFileNames.count);
+
+        for (NSString *fileName in resourceFileNames) {
+            NSString *replacementPath = [resourceDirectoryName stringByAppendingPathComponent:fileName];
+            EXPECT_TRUE([savedMainResource containsString:replacementPath]);
+        }
+
         saved = true;
     }];
     Util::run(&saved);

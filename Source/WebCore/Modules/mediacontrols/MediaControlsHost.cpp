@@ -680,7 +680,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             return;
         auto& mediaElement = *strongThis->m_mediaElement;
 
-        UserGestureIndicator gestureIndicator(ProcessingUserGesture, &mediaElement.document());
+        UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &mediaElement.document());
 
         auto selectedItem = idMap.get(selectedItemID);
         WTF::switchOn(selectedItem,

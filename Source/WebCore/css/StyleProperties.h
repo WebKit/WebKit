@@ -130,6 +130,8 @@ public:
     bool isMutable() const { return m_isMutable; }
 
     bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
+    void setReplacementURLForSubresources(const HashMap<String, String>&);
+    void clearReplacementURLForSubresources();
 
     static unsigned averageSizeInBytes();
 

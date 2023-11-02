@@ -422,85 +422,85 @@ void PlaybackSessionManager::isPictureInPictureSupportedChanged(PlaybackSessionC
 
 void PlaybackSessionManager::play(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).play();
 }
 
 void PlaybackSessionManager::pause(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).pause();
 }
 
 void PlaybackSessionManager::togglePlayState(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).togglePlayState();
 }
 
 void PlaybackSessionManager::beginScrubbing(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).beginScrubbing();
 }
 
 void PlaybackSessionManager::endScrubbing(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).endScrubbing();
 }
 
 void PlaybackSessionManager::seekToTime(PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).seekToTime(time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionManager::fastSeek(PlaybackSessionContextIdentifier contextId, double time)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).fastSeek(time);
 }
 
 void PlaybackSessionManager::beginScanningForward(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).beginScanningForward();
 }
 
 void PlaybackSessionManager::beginScanningBackward(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).beginScanningBackward();
 }
 
 void PlaybackSessionManager::endScanning(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).endScanning();
 }
 
 void PlaybackSessionManager::setDefaultPlaybackRate(PlaybackSessionContextIdentifier contextId, float defaultPlaybackRate)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
 void PlaybackSessionManager::setPlaybackRate(PlaybackSessionContextIdentifier contextId, float playbackRate)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).setPlaybackRate(playbackRate);
 }
 
 void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).selectAudioMediaOption(index);
 }
 
 void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).selectLegibleMediaOption(index);
 }
 
@@ -512,37 +512,37 @@ void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionCon
 
 void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).togglePictureInPicture();
 }
 
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).toggleMuted();
 }
 
 void PlaybackSessionManager::setMuted(PlaybackSessionContextIdentifier contextId, bool muted)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).setMuted(muted);
 }
 
 void PlaybackSessionManager::setVolume(PlaybackSessionContextIdentifier contextId, double volume)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).setVolume(volume);
 }
 
 void PlaybackSessionManager::setPlayingOnSecondScreen(PlaybackSessionContextIdentifier contextId, bool value)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).setPlayingOnSecondScreen(value);
 }
 
 void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier contextId, WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
 

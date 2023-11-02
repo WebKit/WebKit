@@ -20,8 +20,10 @@
 #ifndef WebKitContextMenuClient_h
 #define WebKitContextMenuClient_h
 
+#if ENABLE(CONTEXT_MENUS)
 #include "WebKitWebView.h"
 
 void attachContextMenuClientToView(WebKitWebView*);
+#endif // ENABLE(CONTEXT_MENUS)
 
 #endif

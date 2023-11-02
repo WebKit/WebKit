@@ -31,6 +31,9 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
 }
 
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFNumber()] CFNumberRef wrapped by WebKit::CoreIPCNumber {
+}
+
 #endif
 
 #if USE(CG)

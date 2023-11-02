@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextMenuItemGlib.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "APIObject.h"
 #include <gio/gio.h>
 
@@ -139,3 +140,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

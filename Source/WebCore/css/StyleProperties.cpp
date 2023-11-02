@@ -349,6 +349,18 @@ bool StyleProperties::traverseSubresources(const Function<bool(const CachedResou
     return false;
 }
 
+void StyleProperties::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    for (auto property : *this)
+        property.value()->setReplacementURLForSubresources(replacementURLStrings);
+}
+
+void StyleProperties::clearReplacementURLForSubresources()
+{
+    for (auto property : *this)
+        property.value()->clearReplacementURLForSubresources();
+}
+
 bool StyleProperties::propertyMatches(CSSPropertyID propertyID, const CSSValue* propertyValue) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);

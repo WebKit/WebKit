@@ -2434,11 +2434,10 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
 }
 
 #if ENABLE(REVEAL)
-RetainPtr<RVItem> WebPage::revealItemForCurrentSelection()
+RevealItem WebPage::revealItemForCurrentSelection()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto selection = frame->selection().selection();
-    RetainPtr<RVItem> item;
     if (!selection.isNone()) {
         std::optional<SimpleRange> fullCharacterRange;
         if (selection.isRange()) {
@@ -2453,11 +2452,11 @@ RetainPtr<RVItem> WebPage::revealItemForCurrentSelection()
             if (fullCharacterRange) {
                 auto selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)), characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
                 String itemString = plainText(*fullCharacterRange);
-                item = adoptNS([PAL::allocRVItemInstance() initWithText:itemString selectedRange:selectionRange]);
+                return { itemString, selectionRange };
             }
         }
     }
-    return item;
+    return { };
 }
 
 void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& completionHandler)
@@ -5088,7 +5087,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
 
     // FIXME: Do not focus an element if it moved or the caret point is outside its bounds
     // because we only want to do so if the caret can be placed.
-    UserGestureIndicator gestureIndicator { ProcessingUserGesture, &target->document() };
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, &target->document() };
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
     CheckedRef(m_page->focusController())->setFocusedElement(target.get(), targetFrame);
 

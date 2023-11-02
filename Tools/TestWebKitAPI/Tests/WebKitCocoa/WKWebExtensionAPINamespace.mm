@@ -37,8 +37,6 @@ TEST(WKWebExtensionAPINamespace, NoWebNavigationObjectWithoutPermission)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.webNavigation, 'undefined')",
-
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
@@ -51,8 +49,45 @@ TEST(WKWebExtensionAPINamespace, WebNavigationObjectWithPermission)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.webNavigation, 'object')",
+        @"browser.test.notifyPass()"
+    ]);
 
-        // Finish
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPINamespace, NoNotificationsObjectWithoutPermission)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.notifications, 'undefined')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPINamespace, NotificationsObjectWithPermission)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"notifications" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.notifications, 'object')",
         @"browser.test.notifyPass()"
     ]);
 

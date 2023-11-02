@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitContextMenuClient.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "APIContextMenuClient.h"
 #include "APIString.h"
 #include "WebContextMenuItem.h"
@@ -59,3 +60,4 @@ void attachContextMenuClientToView(WebKitWebView* webView)
     webkitWebViewGetPage(webView).setContextMenuClient(makeUnique<ContextMenuClient>(webView));
 }
 
+#endif // ENABLE(CONTEXT_MENUS)

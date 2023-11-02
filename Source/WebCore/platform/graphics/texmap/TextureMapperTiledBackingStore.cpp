@@ -52,7 +52,7 @@ void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper& texture
     updateContentsFromImageIfNeeded(textureMapper);
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& tile : m_tiles)
-        tile.paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect(), tile.rect()));
+        tile.paint(textureMapper, adjustedTransform, opacity, allTileEdgesExposed(rect(), tile.rect()));
 }
 
 void TextureMapperTiledBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)

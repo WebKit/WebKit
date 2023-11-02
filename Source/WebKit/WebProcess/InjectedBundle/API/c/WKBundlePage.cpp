@@ -877,6 +877,7 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
     return WebKit::toAPI(&API::CaptionUserPreferencesTestingModeToken::create(captionPreferences).leakRef());
 #else
     UNUSED_PARAM(page);
+    return { };
 #endif
 }
 

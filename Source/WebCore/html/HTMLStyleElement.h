@@ -43,6 +43,7 @@ public:
     virtual ~HTMLStyleElement();
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
+    String textContentWithReplacementURLs(const HashMap<String, String>&) const;
 
     WEBCORE_EXPORT bool disabled() const;
     WEBCORE_EXPORT void setDisabled(bool);

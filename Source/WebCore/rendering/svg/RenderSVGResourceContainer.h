@@ -20,6 +20,8 @@
 
 #pragma once
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "LegacyRenderSVGResource.h"
 #include "RenderSVGHiddenContainer.h"
 
@@ -57,3 +59,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceContainer, isSVGResourceContainer())
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

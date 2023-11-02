@@ -34,6 +34,7 @@
 
 #include "DOMFormData.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -41,6 +42,8 @@
 #include "LocalizedStrings.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 const AtomString& SubmitInputType::formControlType() const
 {

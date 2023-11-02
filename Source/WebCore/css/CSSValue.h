@@ -150,6 +150,8 @@ public:
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool traverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    void setReplacementURLForSubresources(const HashMap<String, String>&);
+    void clearReplacementURLForSubresources();
 
     // What properties does this value rely on (eg, font-size for em units)
     ComputedStyleDependencies computedStyleDependencies() const;
@@ -187,6 +189,9 @@ public:
     // FIXME: Should these be named isIdent and ident instead?
     inline bool isValueID() const;
     inline CSSValueID valueID() const;
+
+    void customSetReplacementURLForSubresources(const HashMap<String, String>&) { }
+    void customClearReplacementURLForSubresources() { }
 
 protected:
     static const size_t ClassTypeBits = 6;
