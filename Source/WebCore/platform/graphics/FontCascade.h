@@ -32,6 +32,7 @@
 #include "Path.h"
 #include "TextSpacing.h"
 #include <optional>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -105,7 +106,7 @@ public:
     void operator()(TextLayout*) const;
 };
 
-class FontCascade : public CanMakeWeakPtr<FontCascade> {
+class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, float letterSpacing = 0, float wordSpacing = 0);
