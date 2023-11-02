@@ -45,7 +45,7 @@ static inline bool checkSyntaxInternal(VM& vm, const SourceCode& source, ParserE
 {
     return !!parse<ProgramNode>(
         vm, source, Identifier(), ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
+        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, FunctionMode::None, SuperBinding::NotNeeded, error);
 }
 
 bool checkSyntax(JSGlobalObject* globalObject, const SourceCode& source, JSValue* returnedException)
@@ -77,7 +77,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         vm, source, Identifier(), ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
+        JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, FunctionMode::None, SuperBinding::NotNeeded, error);
     if (!moduleProgramNode)
         return false;
 

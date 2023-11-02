@@ -46,7 +46,7 @@ enum class CodeGenerationMode : uint8_t {
     ControlFlowProfiler = 1 << 2,
 };
 
-enum class FunctionMode { FunctionExpression, FunctionDeclaration, MethodDefinition };
+enum class FunctionMode { None, FunctionExpression, FunctionDeclaration, MethodDefinition };
 
 // Keep it less than 32, it means this should be within 5 bits.
 enum class SourceParseMode : uint8_t {
