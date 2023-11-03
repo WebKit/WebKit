@@ -315,7 +315,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
-@property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
@@ -342,6 +341,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, getter=cssShadowPartsEnabled) BOOL CSSShadowPartsEnabled;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;
 @property (nonatomic) BOOL fetchAPIEnabled;
+@property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL shadowDOMEnabled;
 @property (nonatomic) BOOL customElementsEnabled;
 @property (nonatomic) BOOL keygenElementEnabled;

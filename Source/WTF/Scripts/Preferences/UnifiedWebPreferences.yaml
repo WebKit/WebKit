@@ -2644,21 +2644,6 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
-# FIXME: This seems to be accidentally enabled for WebKit1 right now due to the old code using the
-# wrong preference key in some places. We should identify whether it really makes sense to keep this
-# enabled.
-FetchAPIKeepAliveEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Fetch API Request KeepAlive"
-  humanReadableDescription: "Enable Fetch API Request KeepAlive"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 FetchMetadataEnabled:
   type: bool
   status: stable

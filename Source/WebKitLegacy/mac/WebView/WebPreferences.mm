@@ -3026,16 +3026,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
 }
 
-- (BOOL)fetchAPIKeepAliveEnabled
-{
-    return [self _boolValueForKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
-- (void)setFetchAPIKeepAliveEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
 - (BOOL)genericCueAPIEnabled
 {
     return [self _boolValueForKey:WebKitGenericCueAPIEnabledKey];
@@ -3213,6 +3203,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (BOOL)fetchAPIEnabled
+{
+    return YES;
+}
+
+- (void)setFetchAPIKeepAliveEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)fetchAPIKeepAliveEnabled
 {
     return YES;
 }
