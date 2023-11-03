@@ -806,6 +806,7 @@ fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-without-devices.html [ Skip ]
 
+accessibility/announcement-notification.html [ WontFix ]
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]

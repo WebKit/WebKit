@@ -28,6 +28,7 @@
 
 #if HAVE(APP_SSO)
 
+#import "APIFrameHandle.h"
 #import "APIHTTPCookieStore.h"
 #import "APINavigation.h"
 #import "APINavigationAction.h"
@@ -40,6 +41,8 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebsiteDataStore.h"
+#import <WebCore/ContentSecurityPolicy.h>
+#import <WebCore/HTTPParsers.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/cocoa/AppSSOSoftLink.h>
@@ -49,6 +52,7 @@
 #define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] SOAuthorizationSession::" fmt, this, toString(m_action), stateString(), ##__VA_ARGS__)
 
 namespace WebKit {
+using namespace WebCore;
 
 namespace {
 
@@ -305,6 +309,13 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
     becomeCompleted();
 
     auto response = WebCore::ResourceResponse(httpResponse);
+
+    if (shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
+        AUTHORIZATIONSESSION_RELEASE_LOG("complete: CSP failed. Falling back to web path.");
+        fallBackToWebPathInternal();
+        return;
+    }
+
     if (!isSameOrigin(m_navigationAction->request(), response)) {
         AUTHORIZATIONSESSION_RELEASE_LOG("complete:  Origins don't match. Falling back to web path.");
         fallBackToWebPathInternal();
@@ -391,6 +402,69 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 #endif
 
     uiCallback(YES, nil);
+}
+
+bool SOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<RefPtr<SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL& url)
+{
+    switch (parseXFrameOptionsHeader(xFrameOptions)) {
+    case XFrameOptionsDisposition::None:
+    case XFrameOptionsDisposition::AllowAll:
+        return false;
+    case XFrameOptionsDisposition::Deny:
+        return true;
+    case XFrameOptionsDisposition::SameOrigin: {
+        auto origin = SecurityOrigin::create(url);
+        for (auto& ancestorOrigin : frameAncestorOrigins) {
+            if (!origin->isSameSchemeHostPort(*ancestorOrigin))
+                return true;
+        }
+        return false;
+    }
+    case XFrameOptionsDisposition::Conflict: {
+        String errorMessage = "Multiple 'X-Frame-Options' headers with conflicting values ('" + xFrameOptions + "') encountered. Falling back to 'DENY'.";
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().data());
+        return true;
+    }
+    case XFrameOptionsDisposition::Invalid: {
+        String errorMessage = "Invalid 'X-Frame-Options' header encountered: '" + xFrameOptions + "' is not a recognized directive. The header will be ignored.";
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().data());
+        return false;
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool SOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse& response)
+{
+    Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
+    if (auto* targetFrame = m_navigationAction->targetFrame()) {
+        if (auto parentFrameHandle = targetFrame->parentFrameHandle()) {
+            for (auto* parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame()) {
+                auto origin = SecurityOrigin::create(parent->url());
+                RefPtr<SecurityOrigin> frameOrigin = origin.ptr();
+                frameAncestorOrigins.append(frameOrigin);
+            }
+        }
+    }
+
+    auto url = response.url();
+    ContentSecurityPolicy contentSecurityPolicy { URL { url }, nullptr, nullptr };
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_navigationAction->request().httpReferrer());
+    if (!contentSecurityPolicy.allowFrameAncestors(frameAncestorOrigins, url))
+        return true;
+
+    if (!contentSecurityPolicy.overridesXFrameOptions()) {
+        String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
+        if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTFMove(frameAncestorOrigins), xFrameOptions, response.url())) {
+            String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '", xFrameOptions, "'.");
+            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8().data());
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 #if PLATFORM(MAC)

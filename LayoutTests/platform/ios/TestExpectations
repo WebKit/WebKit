@@ -2247,6 +2247,7 @@ accessibility/ignore-modals-without-any-content.html [ Pass ]
 accessibility/selected-state-changed-notifications.html [ Pass ]
 accessibility/element-line-rects-and-text.html [ Pass ]
 accessibility/svg-font-face.html [ Pass ]
+accessibility/announcement-notification.html [ Pass ]
 
 # Enable "attachment element" test for iOS
 accessibility/attachment-element.html [ Pass ]

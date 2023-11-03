@@ -735,6 +735,12 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 cs->selectorList()->buildSelectorsText(builder);
                 builder.append(')');
                 break;
+            case CSSSelector::PseudoElementHighlight: {
+                builder.append("::highlight(");
+                serializeIdentifier(cs->argumentList()->first().identifier, builder);
+                builder.append(')');
+                break;
+            }
             case CSSSelector::PseudoElementPart: {
                 builder.append("::part(");
                 bool isFirst = true;

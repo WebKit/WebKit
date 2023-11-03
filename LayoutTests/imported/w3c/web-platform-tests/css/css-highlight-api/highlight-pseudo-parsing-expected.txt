@@ -1,8 +1,8 @@
 
-FAIL "::highlight(foo)" should be a valid selector assert_equals: serialization should be canonical expected "::highlight(foo)" but got "::highlight"
-FAIL ".a::highlight(foo)" should be a valid selector assert_equals: serialization should be canonical expected ".a::highlight(foo)" but got ".a::highlight"
-FAIL "div ::highlight(foo)" should be a valid selector assert_equals: serialization should be canonical expected "div ::highlight(foo)" but got "div ::highlight"
-FAIL "::part(my-part)::highlight(foo)" should be a valid selector assert_equals: serialization should be canonical expected "::part(my-part)::highlight(foo)" but got "::part(my-part)::highlight"
+PASS "::highlight(foo)" should be a valid selector
+PASS ".a::highlight(foo)" should be a valid selector
+PASS "div ::highlight(foo)" should be a valid selector
+PASS "::part(my-part)::highlight(foo)" should be a valid selector
 PASS "::before::highlight(foo)" should be an invalid selector
 PASS "::highlight(foo).a" should be an invalid selector
 PASS "::highlight(foo) div" should be an invalid selector

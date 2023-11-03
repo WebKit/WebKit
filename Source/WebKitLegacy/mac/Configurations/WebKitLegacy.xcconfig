@@ -117,7 +117,7 @@ TAPI_USE_SRCROOT_XCODE_SINCE_15 = YES;
 TAPI_VERIFY_MODE = Pedantic;
 
 // FIXME: Replace -extra-*-header and -exclude-*-header flags with build setting equivalents once rdar://99885053 is completed in all needed toolchains.
-OTHER_TAPI_FLAGS = $(inherited) -fvisibility-inlines-hidden $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) -DRELEASE_WITHOUT_OPTIMIZATIONS -exclude-private-header $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/NSURLDownloadSPI.h -extra-private-header $(SOURCE_ROOT)/mac/TestingFunctions.h -extra-private-header $(SOURCE_ROOT)/mac/ExtraPrivateSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
+OTHER_TAPI_FLAGS = $(inherited) $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) -DRELEASE_WITHOUT_OPTIMIZATIONS -exclude-private-header $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/NSURLDownloadSPI.h -extra-private-header $(SOURCE_ROOT)/mac/TestingFunctions.h -extra-private-header $(SOURCE_ROOT)/mac/ExtraPrivateSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
 // Include WebKitPrefix.h to work around rdar://104248994.
 OTHER_TAPI_FLAGS_SRCROOT_YES = -Xparser -include -Xparser mac/WebKitPrefix.h $(OTHER_TAPI_FLAGS_102197642_WORKAROUND);
 

@@ -503,7 +503,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_needsDeferredEndScrollingSelectionUpdate)
         return;
 
-    [_textInteractionAssistant deactivateSelection];
+    [_textInteractionWrapper deactivateSelection];
 }
 
 static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)

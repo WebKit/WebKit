@@ -321,8 +321,8 @@ public:
     // Use only if the s_storeLock is already held like in findAXTree.
     WEBCORE_EXPORT OptionSet<ActivityState> lockedPageActivityState() const;
 
-    AXTextMarkerRange selectedTextMarkerRange() { return m_selectedTextMarkerRange; };
-    void setSelectedTextMarkerRange(AXTextMarkerRange range) { m_selectedTextMarkerRange = range; }
+    AXTextMarkerRange selectedTextMarkerRange();
+    void setSelectedTextMarkerRange(AXTextMarkerRange&&);
 
 private:
     AXIsolatedTree(AXObjectCache&);
@@ -419,7 +419,7 @@ private:
     std::atomic<bool> m_relationsNeedUpdate { true };
 
     Lock m_changeLogLock;
-    AXTextMarkerRange m_selectedTextMarkerRange;
+    AXTextMarkerRange m_selectedTextMarkerRange WTF_GUARDED_BY_LOCK(m_changeLogLock);
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

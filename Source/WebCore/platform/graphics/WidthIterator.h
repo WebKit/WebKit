@@ -95,8 +95,8 @@ private:
     bool rtl() const { return m_direction == TextDirection::RTL; }
     bool ltr() const { return m_direction == TextDirection::LTR; }
 
-    const FontCascade& m_font;
-    const TextRun& m_run;
+    CheckedRef<const FontCascade> m_font;
+    CheckedRef<const TextRun> m_run;
     WeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     std::optional<unsigned> m_lastCharacterIndex;

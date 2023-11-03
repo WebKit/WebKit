@@ -4824,6 +4824,18 @@ std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObjec
     return targetsIterator->value;
 }
 
+#if PLATFORM(COCOA)
+void AXObjectCache::announce(const String& message)
+{
+    postPlatformAnnouncementNotification(message);
+}
+#else
+void AXObjectCache::announce(const String&)
+{
+    // FIXME: implement in other platforms.
+}
+#endif
+
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)
     : m_cache(cache)
 {

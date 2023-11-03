@@ -31,6 +31,7 @@
 #include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "HTMLBaseElement.h"
 #include "HTMLNames.h"
 #include "SelectorChecker.h"
 #include "StaticNodeList.h"
@@ -277,6 +278,16 @@ static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomStr
 template<typename OutputType>
 static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, OutputType& output)
 {
+    if (is<Document>(rootNode) && lowercaseLocalName == HTMLNames::baseTag->localName()) {
+        RefPtr firstBaseElement = downcast<Document>(rootNode).firstBaseElement();
+        if (!firstBaseElement)
+            return;
+        if constexpr (std::is_same_v<OutputType, Element*>) {
+            appendOutputForElement(output, *firstBaseElement);
+            return;
+        }
+    }
+
     if (localName == lowercaseLocalName) {
         for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
             if (element.tagQName().localName() == localName) {

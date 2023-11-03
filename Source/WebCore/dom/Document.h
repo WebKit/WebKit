@@ -136,6 +136,7 @@ class GPUCanvasContext;
 class GraphicsClient;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
+class HTMLBaseElement;
 class HTMLBodyElement;
 class HTMLCanvasElement;
 class HTMLCollection;
@@ -789,6 +790,7 @@ public:
     const URL& baseURLOverride() const { return m_baseURLOverride; }
     const URL& baseElementURL() const { return m_baseElementURL; }
     const AtomString& baseTarget() const { return m_baseTarget; }
+    HTMLBaseElement* firstBaseElement() const;
     void processBaseElement();
 
     URL baseURLForComplete(const URL& baseURLOverride) const;
@@ -2005,6 +2007,8 @@ private:
     String m_documentURI;
 
     AtomString m_baseTarget;
+
+    WeakPtr<HTMLBaseElement, WeakPtrImplWithEventTargetData> m_firstBaseElement;
 
     // MIME type of the document in case it was cloned or created by XHR.
     String m_overriddenMIMEType;

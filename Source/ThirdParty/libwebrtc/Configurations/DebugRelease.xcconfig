@@ -24,11 +24,8 @@
 #include "Base.xcconfig"
 #include? "../../../../LocalOverrides.xcconfig"
 
-
-CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
-CODE_SIGN_IDENTITY_EMBEDDED_YES = $(inherited);
-
 VALID_ARCHS[sdk=watch*] = $(ARCHS_STANDARD_32_64_BIT);
+
 ONLY_ACTIVE_ARCH = YES;
 
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
