@@ -25,6 +25,12 @@ typedef absl::optional<webrtc::H265SpsParser::ShortTermRefPicSet>
 
 namespace webrtc {
 
+#if WEBRTC_WEBKIT_BUILD
+const uint32_t kMaxSPSLongTermRefPics = 32;
+const uint32_t kMaxSPSPics = 16;
+const uint32_t kMaxSPSShortTermRefPics = 64;
+#endif
+
 H265SpsParser::SpsState::SpsState() = default;
 
 H265SpsParser::ShortTermRefPicSet::ShortTermRefPicSet() = default;
@@ -73,6 +79,13 @@ bool H265SpsParser::ParseScalingListData(BitstreamReader& reader) {
       }
     }
   }
+
+#if WEBRTC_WEBKIT_BUILD
+  if (!reader.Ok()) {
+    return false;
+  }
+#endif
+
   return true;
 }
 
@@ -134,6 +147,12 @@ H265SpsParser::ParseShortTermRefPicSet(
     ref_pic_set.num_negative_pics = reader.ReadExponentialGolomb();
     // num_positive_pics: ue(v)
     ref_pic_set.num_positive_pics = reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+    if (!reader.Ok() || ref_pic_set.num_negative_pics > kMaxSPSPics || ref_pic_set.num_positive_pics > kMaxSPSPics
+        || (ref_pic_set.num_negative_pics + ref_pic_set.num_positive_pics) > kMaxSPSPics) {
+      return absl::nullopt;
+    }
+#endif
 
     ref_pic_set.delta_poc_s0_minus1.resize(ref_pic_set.num_negative_pics, 0);
     ref_pic_set.used_by_curr_pic_s0_flag.resize(ref_pic_set.num_negative_pics,
@@ -154,6 +173,12 @@ H265SpsParser::ParseShortTermRefPicSet(
       ref_pic_set.used_by_curr_pic_s1_flag[i] = reader.Read<bool>();
     }
   }
+
+#if WEBRTC_WEBKIT_BUILD
+  if (!reader.Ok()) {
+    return absl::nullopt;
+  }
+#endif
 
   return OptionalShortTermRefPicSet(ref_pic_set);
 }
@@ -348,6 +373,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
 
   // num_short_term_ref_pic_sets: ue(v)
   sps.num_short_term_ref_pic_sets = reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+    if (!reader.Ok() || sps.num_short_term_ref_pic_sets > kMaxSPSShortTermRefPics) {
+      return absl::nullopt;
+    }
+#endif
   sps.short_term_ref_pic_set.resize(sps.num_short_term_ref_pic_sets);
   for (uint32_t st_rps_idx = 0; st_rps_idx < sps.num_short_term_ref_pic_sets;
        st_rps_idx++) {
@@ -367,6 +397,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   if (sps.long_term_ref_pics_present_flag) {
     // num_long_term_ref_pics_sps: ue(v)
     sps.num_long_term_ref_pics_sps = reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+    if (!reader.Ok() || sps.num_long_term_ref_pics_sps > kMaxSPSLongTermRefPics) {
+      return absl::nullopt;
+    }
+#endif
     sps.used_by_curr_pic_lt_sps_flag.resize(sps.num_long_term_ref_pics_sps, 0);
     for (uint32_t i = 0; i < sps.num_long_term_ref_pics_sps; i++) {
       // lt_ref_pic_poc_lsb_sps: u(v)
@@ -382,6 +417,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   sps.sps_temporal_mvp_enabled_flag = reader.Read<bool>();
 
   // Far enough! We don't use the rest of the SPS.
+#if WEBRTC_WEBKIT_BUILD
+  if (!reader.Ok()) {
+    return absl::nullopt;
+  }
+#endif
 
   sps.vps_id = sps_video_parameter_set_id;
 
@@ -408,9 +448,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     sps.height -= sub_height_c * (conf_win_top_offset + conf_win_bottom_offset);
   }
 
+#ifndef WEBRTC_WEBKIT_BUILD
   if (!reader.Ok()) {
     return absl::nullopt;
   }
+#endif
 
   return OptionalSps(sps);
 }
