@@ -942,6 +942,7 @@ private:
     template<FailureAction, typename U> bool append(const U*, size_t);
 
     template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable> friend struct Mapper;
+    template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable> friend struct CompactMapper;
     template<typename DestinationItemType, typename Collection> friend Vector<DestinationItemType> copyToVectorOf(const Collection&);
     template<typename Collection> friend Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(const Collection&);
     template<typename U, size_t otherInlineCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> friend class Vector;
@@ -1923,7 +1924,7 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType, typename st
         for (auto&& item : source) {
             auto itemResult = mapFunction(WTFMove(item));
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
-                result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
+                result.unsafeAppendWithoutCapacityCheck(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
         }
         result.shrinkToFit();
     }
@@ -1938,6 +1939,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
+    result.reserveInitialCapacity(containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
     return result;
 }
@@ -1951,6 +1953,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
+    result.reserveInitialCapacity(containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, std::forward<MapFunction>(mapFunction));
     return result;
 }

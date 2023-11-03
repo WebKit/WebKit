@@ -67,3 +67,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID);
 unsigned indexOfShorthandForLonghand(CSSPropertyID, const StylePropertyShorthandVector&);
 
 } // namespace WebCore
+
+namespace WTF {
+template<> inline size_t containerSize(const WebCore::StylePropertyShorthand& container) { return container.length(); }
+}
