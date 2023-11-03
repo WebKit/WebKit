@@ -26,7 +26,6 @@
 #pragma once
 
 #include "RunLoopObserver.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -76,7 +75,6 @@ private:
     bool isPageInactiveOrLoading() const;
 
     bool shouldAllowOpportunisticallyScheduledTasks() const;
-    CheckedPtr<Page> checkedPage() const;
 
     WeakPtr<Page> m_page;
     uint64_t m_imminentlyScheduledWorkCount { 0 };
