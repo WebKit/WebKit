@@ -2052,7 +2052,7 @@ void Page::renderingUpdateCompleted()
 
     if (!isUtilityPage()) {
         auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
-        m_opportunisticTaskScheduler->reschedule(nextRenderingUpdate);
+        m_opportunisticTaskScheduler->rescheduleIfNeeded(nextRenderingUpdate);
     }
 }
 

@@ -35,19 +35,35 @@ OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [weakThis = WeakPtr { this }] {
         if (auto strongThis = weakThis.get())
             strongThis->runLoopObserverFired();
-    }, RunLoopObserver::Type::Repeating))
+    }, RunLoopObserver::Type::OneShot))
 {
 }
 
 OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
 
-void OpportunisticTaskScheduler::reschedule(MonotonicTime deadline)
+void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
 {
+#if USE(WEB_THREAD)
+    if (WebThreadIsEnabled())
+        return;
+#endif
+
+    auto page = checkedPage();
+    if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
+        return;
+
+    if (!m_mayHavePendingIdleCallbacks && !page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
+        return;
+
     m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
+    m_runLoopObserver->invalidate();
+    m_runLoopObserver->schedule();
+}
 
-    if (!m_runLoopObserver->isScheduled())
-        m_runLoopObserver->schedule();
+CheckedPtr<Page> OpportunisticTaskScheduler::checkedPage() const
+{
+    return m_page.get();
 }
 
 Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
@@ -60,15 +76,10 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     if (!m_currentDeadline)
         return;
 
-#if USE(WEB_THREAD)
-    if (WebThreadIsEnabled())
-        return;
-#endif
-
-    auto page = m_page;
-    if (UNLIKELY(!page))
+    if (UNLIKELY(!m_page))
         return;
 
+    auto page = checkedPage();
     if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
         return;
 
@@ -94,8 +105,11 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
         return false;
     }();
 
-    if (!shouldRunTask)
+    if (!shouldRunTask) {
+        m_runLoopObserver->invalidate();
+        m_runLoopObserver->schedule();
         return;
+    }
 
     TraceScope tracingScope {
         PerformOpportunisticallyScheduledTasksStart,
@@ -104,9 +118,12 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     };
 
     auto deadline = std::exchange(m_currentDeadline, MonotonicTime { });
-    page->opportunisticallyRunIdleCallbacks();
-    if (UNLIKELY(!page))
-        return;
+    if (std::exchange(m_mayHavePendingIdleCallbacks, false)) {
+        auto weakPage = m_page;
+        page->opportunisticallyRunIdleCallbacks();
+        if (UNLIKELY(!weakPage))
+            return;
+    }
 
     if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
         return;
