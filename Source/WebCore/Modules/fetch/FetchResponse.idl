@@ -38,7 +38,6 @@ dictionary FetchResponseInit {
 };
 
 [
-    EnabledBySetting=FetchAPIEnabled,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),

@@ -2644,19 +2644,6 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
-FetchAPIEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Fetch API"
-  humanReadableDescription: "Fetch API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: This seems to be accidentally enabled for WebKit1 right now due to the old code using the
 # wrong preference key in some places. We should identify whether it really makes sense to keep this
 # enabled.
