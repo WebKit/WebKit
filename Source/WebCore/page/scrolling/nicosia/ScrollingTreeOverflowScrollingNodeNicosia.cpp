@@ -31,6 +31,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "NicosiaCompositionLayer.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingTreeScrollingNodeDelegateNicosia.h"
 #include "ThreadedScrollingTree.h"

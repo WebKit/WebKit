@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
+#include "ExecutableBaseInlines.h"
 #include "JSCellInlines.h"
 #include "Options.h"
 
