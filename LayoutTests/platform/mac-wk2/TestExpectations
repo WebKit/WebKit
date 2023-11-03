@@ -1962,8 +1962,6 @@ webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/lin
 webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html [ Pass Failure ]
 
-webkit.org/b/263282 [ Sonoma+ ] fast/replaced/replaced-breaking.html [ Failure ]
-
 webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]

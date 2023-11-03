@@ -1406,8 +1406,6 @@ http/tests/multipart/multipart-async-image.html
 
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
-
 # DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.
 # So we shouldn't bother with this test in WebKit1.
 storage/indexeddb/modern/exceed-open-file-limit.html
