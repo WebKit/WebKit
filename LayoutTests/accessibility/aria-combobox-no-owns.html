@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" role="combobox" id="combobox" aria-label="Combobox">
+<div role="list" id="list" aria-label="List1">
+  <div role="listitem" id="item1">item1</div>
+  <div role="listitem" id="item2">item2</div>
+</div>
+
+<script>
+    var output = "A combobox should still support aria-activedescendant even if it doesn't use aria-owns.\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var selectedChildrenChangeCount = 0;
+
+        window.accessibilityController.addNotificationListener(function (target, notification) {
+            if (notification == "AXSelectedChildrenChanged" || notification == "AXSelectedRowsChanged") {
+                selectedChildrenChangeCount++;
+                var targetString = platformValueForW3CName(target);
+                output += "Received " + notification + " for " + targetString + "\n";
+            }
+        });
+
+        document.getElementById("combobox").focus();
+        var list = accessibilityController.accessibleElementById("list");
+        output += expect("list.selectedChildrenCount", "0");
+        document.getElementById("combobox").setAttribute("aria-activedescendant", "item1");
+        var listitem1 = accessibilityController.accessibleElementById("item1");
+        setTimeout(async function() {
+            output += await expectAsync("list.selectedChildrenCount", "1");
+            output += list.selectedChildAtIndex(0).isEqual(listitem1)
+                ? "PASS list.selectedChildAtIndex(0) is listitem1\n"
+                  : "FAIL list.selectedChildAtIndex(0) is not listitem1\n";
+
+            debug(output);
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
