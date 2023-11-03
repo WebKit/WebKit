@@ -152,8 +152,6 @@ private:
     template<typename Node>
     void setConstantValue(Node&, const ConstantValue&);
 
-    using ConstantFunction = ConstantValue(*)(const Type*, const FixedVector<ConstantValue>&);
-
     ShaderModule& m_shaderModule;
     const Type* m_inferredType { nullptr };
     const Type* m_returnType { nullptr };
@@ -573,10 +571,20 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
     // FIXME: Implement type checking - infer is called to avoid ASSERT in
     // TypeChecker::visit(AST::Expression&)
-    if (statement.operation() == AST::BinaryOperation::Divide)
-        m_shaderModule.setUsesDivision();
     infer(statement.leftExpression());
     infer(statement.rightExpression());
+
+    if (statement.operation() == AST::BinaryOperation::Divide) {
+        auto* rightType = statement.rightExpression().inferredType();
+        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
+            rightType = vectorType->element;
+        if (satisfies(rightType, Constraints::Integer)) {
+            m_shaderModule.setUsesDivision();
+            auto rightValue = statement.rightExpression().constantValue();
+            if (rightValue && containsZero(*rightValue, statement.rightExpression().inferredType()))
+                typeError(InferBottom::No, statement.span(), "invalid division by zero");
+        }
+    }
 }
 
 void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
@@ -815,9 +823,20 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    if (binary.operation() == AST::BinaryOperation::Divide)
-        m_shaderModule.setUsesDivision();
     chooseOverload("operator", binary, toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
+
+    if (binary.operation() == AST::BinaryOperation::Divide) {
+        auto* rightType = binary.rightExpression().inferredType();
+        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
+            rightType = vectorType->element;
+        if (satisfies(rightType, Constraints::Integer)) {
+            m_shaderModule.setUsesDivision();
+            auto leftValue = binary.leftExpression().constantValue();
+            auto rightValue = binary.rightExpression().constantValue();
+            if (!leftValue && rightValue && containsZero(*rightValue, binary.rightExpression().inferredType()))
+                typeError(InferBottom::No, binary.span(), "invalid division by zero");
+        }
+    }
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
@@ -1327,8 +1346,13 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
                     arguments[i] = *value;
             }
 
-            if (auto constantFunction = it->value.constantFunction; isConstant && constantFunction)
-                setConstantValue(expression, constantFunction(overload->result, WTFMove(arguments)));
+            if (auto constantFunction = it->value.constantFunction; isConstant && constantFunction) {
+                auto result = constantFunction(overload->result, WTFMove(arguments));
+                if (!result)
+                    typeError(InferBottom::No, expression.span(), result.error());
+                else
+                    setConstantValue(expression, WTFMove(*result));
+            }
         }
 
         return overload->result;
@@ -1443,8 +1467,9 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
         dataLogLn("converting value ", valueString.toString(), " to '", *type, "'");
     }
 
+    enum Conversion { Failed, FailedInner, Success };
     auto converted = WTF::switchOn(*type,
-        [&](const Types::Primitive& primitive) -> bool {
+        [&](const Types::Primitive& primitive) -> Conversion {
             switch (primitive.kind) {
             case Types::Primitive::F32: {
                 std::optional<float> result;
@@ -1468,13 +1493,13 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                 }
 
                 if (!result.has_value())
-                    return false;
+                    return Failed;
                 value = { *result };
-                return true;
+                return Success;
             }
             case Types::Primitive::I32: {
                 if (std::holds_alternative<int32_t>(value))
-                    return true;
+                    return Success;
                 std::optional<int32_t> result;
                 if (auto* abstractInt = std::get_if<int64_t>(&value))
                     result = convertInteger<int32_t>(*abstractInt);
@@ -1493,13 +1518,13 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                         RELEASE_ASSERT_NOT_REACHED();
                 }
                 if (!result.has_value())
-                    return false;
+                    return Failed;
                 value = { *result };
-                return true;
+                return Success;
             }
             case Types::Primitive::U32: {
                 if (std::holds_alternative<uint32_t>(value))
-                    return true;
+                    return Success;
                 std::optional<uint32_t> result;
                 if (auto* abstractInt = std::get_if<int64_t>(&value))
                     result = convertInteger<uint32_t>(*abstractInt);
@@ -1518,9 +1543,9 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                         RELEASE_ASSERT_NOT_REACHED();
                 }
                 if (!result.has_value())
-                    return false;
+                    return Failed;
                 value = { *result };
-                return true;
+                return Success;
             }
             case Types::Primitive::AbstractInt:
                 // We might get an "explicit" conversion for things like vec2(vec2(0)),
@@ -1528,7 +1553,7 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                 // be impossible to force a conversion to from any other type to
                 // an abstract type
                 ASSERT(std::holds_alternative<int64_t>(value));
-                return true;
+                return Success;
             case Types::Primitive::AbstractFloat: {
                 // We might get an "explicit" conversion for things like vec2(vec2(0.0)),
                 // where the source and target types are the same. Otherwise, it should
@@ -1544,13 +1569,13 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                 else
                     RELEASE_ASSERT_NOT_REACHED();
                 if (!result.has_value())
-                    return false;
+                    return Failed;
                 value = { *result };
-                return true;
+                return Success;
             }
             case Types::Primitive::Bool:
                 if (std::holds_alternative<bool>(value))
-                    return true;
+                    return Success;
 
                 bool result;
                 RELEASE_ASSERT(explicitConversion);
@@ -1568,7 +1593,7 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
                 else
                     RELEASE_ASSERT_NOT_REACHED();
                 value = { result };
-                return true;
+                return Success;
             case Types::Primitive::Void:
             case Types::Primitive::Sampler:
             case Types::Primitive::SamplerComparison:
@@ -1576,75 +1601,75 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
             case Types::Primitive::AddressSpace:
-                return false;
+                return Failed;
             }
         },
-        [&](const Types::Vector& vectorType) -> bool {
+        [&](const Types::Vector& vectorType) -> Conversion {
             ASSERT(value.isVector());
             auto& vector = std::get<ConstantVector>(value);
             for (auto& element : vector.elements) {
                 if (!convertValue(span, vectorType.element, element, explicitConversion))
-                    return false;
+                    return FailedInner;
             }
-            return true;
+            return Success;
         },
-        [&](const Types::Matrix& matrixType) -> bool {
+        [&](const Types::Matrix& matrixType) -> Conversion {
             ASSERT(value.isMatrix());
             auto& matrix = std::get<ConstantMatrix>(value);
             for (auto& element : matrix.elements) {
                 if (!convertValue(span, matrixType.element, element, explicitConversion))
-                    return false;
+                    return FailedInner;
             }
-            return true;
+            return Success;
         },
-        [&](const Types::Array& arrayType) -> bool {
+        [&](const Types::Array& arrayType) -> Conversion {
             ASSERT(value.isArray());
             auto& array = std::get<ConstantArray>(value);
             for (auto& element : array.elements) {
                 if (!convertValue(span, arrayType.element, element, explicitConversion))
-                    return false;
+                    return FailedInner;
             }
-            return true;
+            return Success;
         },
-        [&](const Types::Struct&) -> bool {
+        [&](const Types::Struct&) -> Conversion {
             // FIXME: this should be supported
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Function&) -> bool {
+        [&](const Types::Function&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Texture&) -> bool {
+        [&](const Types::Texture&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::TextureStorage&) -> bool {
+        [&](const Types::TextureStorage&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::TextureDepth&) -> bool {
+        [&](const Types::TextureDepth&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Reference&) -> bool {
+        [&](const Types::Reference&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Pointer&) -> bool {
+        [&](const Types::Pointer&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Atomic&) -> bool {
+        [&](const Types::Atomic&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::TypeConstructor&) -> bool {
+        [&](const Types::TypeConstructor&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::Bottom&) -> bool {
+        [&](const Types::Bottom&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();
         });
 
-    if (UNLIKELY(!converted)) {
+    if (UNLIKELY(converted == Failed)) {
         StringPrintStream valueString;
         value.dump(valueString);
         typeError(InferBottom::No, span, "value ", valueString.toString(), " cannot be represented as '", *type, "'");
     }
 
-    return converted;
+    return converted == Success;
 }
 
 void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, std::optional<ConstantValue> value)

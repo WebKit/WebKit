@@ -38,7 +38,9 @@ void ConstantValue::dump(PrintStream& out) const
             out.print(String::number(d));
         },
         [&](float f) {
-            out.print(String::number(f), "f");
+            out.print(String::number(f));
+            if (std::isfinite(f))
+                out.print("f");
         },
         [&](int64_t i) {
             out.print(String::number(i));

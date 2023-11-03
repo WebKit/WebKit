@@ -37,6 +37,33 @@ namespace WGSL {
 
 // Zero values
 
+using ConstantResult = Expected<ConstantValue, String>;
+using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<ConstantValue>&);
+
+#define CONSTANT_FUNCTION(name) \
+    static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+
+#define CALL_(__tmp, __variable, __fnName, ...) \
+    auto __tmp = constant##__fnName(__VA_ARGS__); \
+    if (!__tmp) \
+        return makeUnexpected(__tmp.error()); \
+    auto __variable = WTFMove(*__tmp)
+
+#define CALL(__variable, __fnName, ...) \
+    CALL_(WTF_LAZY_JOIN(tmp, __COUNTER__), __variable, __fnName, __VA_ARGS__)
+
+#define CALL_MOVE_(__tmp, __target, __fnName, ...) \
+    do { \
+        auto __tmp = constant##__fnName(__VA_ARGS__); \
+        if (!__tmp) \
+            return makeUnexpected(__tmp.error()); \
+        __target = WTFMove(*__tmp); \
+    } while (0)
+
+#define CALL_MOVE(__target, __fnName, ...) \
+    CALL_MOVE_(tmp ## __COUNTER__, __target, __fnName, __VA_ARGS__)
+
+
 static ConstantValue zeroValue(const Type* type)
 {
     return WTF::switchOn(*type,
@@ -123,102 +150,102 @@ static ConstantValue zeroValue(const Type* type)
 // Helpers
 
 template<Constraint constraint, typename Functor>
-static ConstantValue constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 1);
-    return scalarOrVector([&](auto& arg) -> ConstantValue {
+    return scalarOrVector([&](auto& arg) -> ConstantResult {
         if constexpr (constraint & Constraints::Bool) {
             if (auto* boolean = std::get_if<bool>(&arg))
-                return fn(*boolean);
+                return { { fn(*boolean) } };
         }
         if constexpr (constraint & Constraints::I32) {
             if (auto* i32 = std::get_if<int32_t>(&arg))
-                return fn(*i32);
+                return { { fn(*i32) } };
         }
         if constexpr (constraint & Constraints::U32) {
             if (auto* u32 = std::get_if<uint32_t>(&arg))
-                return fn(*u32);
+                return { { fn(*u32) } };
         }
         if constexpr (constraint & Constraints::AbstractInt) {
             if (auto* abstractInt = std::get_if<int64_t>(&arg))
-                return fn(*abstractInt);
+                return { { fn(*abstractInt) } };
         }
         // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* f32 = std::get_if<float>(&arg))
-                return fn(*f32);
+                return { { fn(*f32) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* abstractFloat = std::get_if<double>(&arg))
-                return fn(*abstractFloat);
+                return { { fn(*abstractFloat) } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0]);
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantValue constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 2);
-    return scalarOrVector([&](auto& left, auto& right) -> ConstantValue {
+    return scalarOrVector([&](auto& left, auto& right) -> ConstantResult {
         if constexpr (constraint & Constraints::Bool) {
             if (auto* leftBool = std::get_if<bool>(&left))
-                return fn(*leftBool, std::get<bool>(right));
+                return { { fn(*leftBool, std::get<bool>(right)) } };
         }
         if constexpr (constraint & Constraints::I32) {
             if (auto* leftI32 = std::get_if<int32_t>(&left))
-                return fn(*leftI32, std::get<int32_t>(right));
+                return { { fn(*leftI32, std::get<int32_t>(right)) } };
         }
         if constexpr (constraint & Constraints::U32) {
             if (auto* leftU32 = std::get_if<uint32_t>(&left))
-                return fn(*leftU32, std::get<uint32_t>(right));
+                return { { fn(*leftU32, std::get<uint32_t>(right)) } };
         }
         if constexpr (constraint & Constraints::AbstractInt) {
             if (auto* leftAbstractInt = std::get_if<int64_t>(&left))
-                return fn(*leftAbstractInt, std::get<int64_t>(right));
+                return { { fn(*leftAbstractInt, std::get<int64_t>(right)) } };
         }
         // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* leftF32 = std::get_if<float>(&left))
-                return fn(*leftF32, std::get<float>(right));
+                return { { fn(*leftF32, std::get<float>(right)) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* leftAbstractFloat = std::get_if<double>(&left))
-                return fn(*leftAbstractFloat, std::get<double>(right));
+                return { { fn(*leftAbstractFloat, std::get<double>(right)) } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantValue constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 3);
-    return scalarOrVector([&](auto& first, auto& second, auto& third) -> ConstantValue {
+    return scalarOrVector([&](auto& first, auto& second, auto& third) -> ConstantResult {
         if constexpr (constraint & Constraints::Bool) {
             if (auto* firstBool = std::get_if<bool>(&first))
-                return fn(*firstBool, std::get<bool>(second), std::get<bool>(third));
+                return { { fn(*firstBool, std::get<bool>(second), std::get<bool>(third)) } };
         }
         if constexpr (constraint & Constraints::I32) {
             if (auto* firstI32 = std::get_if<int32_t>(&first))
-                return fn(*firstI32, std::get<int32_t>(second), std::get<int32_t>(third));
+                return { { fn(*firstI32, std::get<int32_t>(second), std::get<int32_t>(third)) } };
         }
         if constexpr (constraint & Constraints::U32) {
             if (auto* firstU32 = std::get_if<uint32_t>(&first))
-                return fn(*firstU32, std::get<uint32_t>(second), std::get<uint32_t>(third));
+                return { { fn(*firstU32, std::get<uint32_t>(second), std::get<uint32_t>(third)) } };
         }
         if constexpr (constraint & Constraints::AbstractInt) {
             if (auto* firstAbstractInt = std::get_if<int64_t>(&first))
-                return fn(*firstAbstractInt, std::get<int64_t>(second), std::get<int64_t>(third));
+                return { { fn(*firstAbstractInt, std::get<int64_t>(second), std::get<int64_t>(third)) } };
         }
         // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* firstF32 = std::get_if<float>(&first))
-                return fn(*firstF32, std::get<float>(second), std::get<float>(third));
+                return { { fn(*firstF32, std::get<float>(second), std::get<float>(third)) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* firstAbstractFloat = std::get_if<double>(&first))
-                return fn(*firstAbstractFloat, std::get<double>(second), std::get<double>(third));
+                return { { fn(*firstAbstractFloat, std::get<double>(second), std::get<double>(third)) } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1], arguments[2]);
@@ -250,7 +277,7 @@ static ConstantValue constantConstructor(const Type* resultType, const FixedVect
 }
 
 template<typename Functor, typename... Arguments>
-static ConstantValue scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
+static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
 {
     unsigned vectorSize = 0;
     std::initializer_list<ConstantValue> arguments { unpackedArguments... };
@@ -274,10 +301,12 @@ static ConstantValue scalarOrVector(const Functor& functor, Arguments&&... unpac
             else
                 scalars[j++] = argument;
         }
-        result.elements[i] = std::apply(functor, scalars);
+        ConstantResult tmp = std::apply(functor, scalars);
+        if (!tmp)
+            return makeUnexpected(tmp.error());
+        result.elements[i] = WTFMove(*tmp);
     }
-    return result;
-
+    return { { result } };
 }
 
 static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
@@ -341,34 +370,34 @@ static ConstantValue constantMatrix(const Type* resultType, const FixedVector<Co
 }
 
 #define UNARY_OPERATION(name, constraint, fn) \
-    static ConstantValue constant##name(const Type* resultType, const FixedVector<ConstantValue>& arguments) \
+    CONSTANT_FUNCTION(name) \
     { \
         UNUSED_PARAM(resultType); \
         return constantUnaryOperation<Constraints::constraint>(arguments, fn); \
     }
 
 #define BINARY_OPERATION(name, constraint, fn) \
-    static ConstantValue constant##name(const Type* resultType, const FixedVector<ConstantValue>& arguments) \
+    CONSTANT_FUNCTION(name) \
     { \
         UNUSED_PARAM(resultType); \
         return constantBinaryOperation<Constraints::constraint>(arguments, fn); \
     }
 
 #define TERNARY_OPERATION(name, constraint, fn) \
-    static ConstantValue constant##name(const Type* resultType, const FixedVector<ConstantValue>& arguments) \
+    CONSTANT_FUNCTION(name) \
     { \
         UNUSED_PARAM(resultType); \
         return constantTernaryOperation<Constraints::constraint>(arguments, fn); \
     }
 
 #define CONSTANT_CONSTRUCTOR(name, type) \
-    static ConstantValue constant##name(const Type* resultType, const FixedVector<ConstantValue>& arguments) \
+    CONSTANT_FUNCTION(name) \
     { \
-        return constantConstructor<type>(resultType, arguments); \
+        return { constantConstructor<type>(resultType, arguments) }; \
     }
 
 #define MATRIX_CONSTRUCTOR(columns, rows) \
-    static ConstantValue constantMat ## columns ## x ## rows(const Type* resultType, const FixedVector<ConstantValue>& arguments) \
+    CONSTANT_FUNCTION(Mat ## columns ## x ## rows) \
     { \
         return constantMatrix(resultType, arguments, columns, rows); \
     }
@@ -379,7 +408,8 @@ static ConstantValue constantMatrix(const Type* resultType, const FixedVector<Co
     [&]<typename... Args>(Args&&... args) { return std::fn(std::forward<Args>(args)...); }
 
 // Arithmetic operators
-static ConstantValue constantAdd(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+
+CONSTANT_FUNCTION(Add)
 {
     ASSERT(arguments.size() == 2);
 
@@ -390,8 +420,8 @@ static ConstantValue constantAdd(const Type* resultType, const FixedVector<Const
         ASSERT(left->rows == right.rows);
         ConstantMatrix result(left->columns, left->rows);
         for (unsigned i = 0; i < result.elements.size(); ++i)
-            result.elements[i] = constantAdd(elementType, { left->elements[i], right.elements[i] });
-        return result;
+            CALL_MOVE(result.elements[i], Add, elementType, { left->elements[i], right.elements[i] });
+        return { { result } };
     }
 
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
@@ -399,8 +429,9 @@ static ConstantValue constantAdd(const Type* resultType, const FixedVector<Const
     });
 }
 
-static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Minus)
 {
+    UNUSED_PARAM(resultType);
     if (arguments.size() == 1) {
         return constantUnaryOperation<Constraints::Number>(arguments, [&](auto arg) {
             return -arg;
@@ -412,8 +443,9 @@ static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>
 }
 
 
-static ConstantValue constantDot(const Type*, const FixedVector<ConstantValue>&);
-static ConstantValue constantMultiply(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Dot);
+
+CONSTANT_FUNCTION(Multiply)
 {
     ASSERT(arguments.size() == 2);
 
@@ -427,13 +459,13 @@ static ConstantValue constantMultiply(const Type* resultType, const FixedVector<
             for (unsigned j = 0; j < leftMatrix->rows; ++j) {
                 ConstantValue value = zeroValue(elementType);
                 for (unsigned k = 0; k < leftMatrix->columns; ++k) {
-                    auto tmp = constantMultiply(elementType, { leftMatrix->elements[k * leftMatrix->rows + j], rightMatrix->elements[i * rightMatrix->rows + k] });
-                    value = constantAdd(elementType, { value, tmp });
+                    CALL(tmp, Multiply, elementType, { leftMatrix->elements[k * leftMatrix->rows + j], rightMatrix->elements[i * rightMatrix->rows + k] });
+                    CALL_MOVE(value, Add, elementType, { value, tmp });
                 }
                 result.elements[i * result.rows + j] = value;
             }
         }
-        return result;
+        return { { result } };
     }
     if (leftMatrix || rightMatrix) {
         if (auto* rightVector = std::get_if<ConstantVector>(&arguments[1])) {
@@ -445,9 +477,9 @@ static ConstantValue constantMultiply(const Type* resultType, const FixedVector<
             for (unsigned i = 0; i < rows; ++i) {
                 for (unsigned j = 0; j < columns; ++j)
                     leftVector.elements[j] = leftMatrix->elements[j * rows + i];
-                result.elements[i] = constantDot(elementType, { leftVector, *rightVector });
+                CALL_MOVE(result.elements[i], Dot, elementType, { leftVector, *rightVector });
             }
-            return result;
+            return { { result } };
         }
 
         if (auto* leftVector = std::get_if<ConstantVector>(&arguments[0])) {
@@ -459,9 +491,9 @@ static ConstantValue constantMultiply(const Type* resultType, const FixedVector<
             for (unsigned i = 0; i < columns; ++i) {
                 for (unsigned j = 0; j < rows; ++j)
                     rightVector.elements[j] = rightMatrix->elements[i * rows + j];
-                result.elements[i] = constantDot(elementType, { *leftVector, rightVector });
+                CALL_MOVE(result.elements[i], Dot, elementType, { *leftVector, rightVector });
             }
-            return result;
+            return { { result } };
         }
 
         const ConstantMatrix* matrix;
@@ -477,8 +509,8 @@ static ConstantValue constantMultiply(const Type* resultType, const FixedVector<
         auto* elementType = std::get<Types::Matrix>(*resultType).element;
         ConstantMatrix result(matrix->columns, matrix->rows);
         for (unsigned i = 0; i < result.elements.size(); ++i)
-            result.elements[i] = constantMultiply(elementType, { matrix->elements[i], scalar });
-        return result;
+            CALL_MOVE(result.elements[i], Multiply, elementType, { matrix->elements[i], scalar });
+        return { { result } };
     }
 
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
@@ -486,8 +518,16 @@ static ConstantValue constantMultiply(const Type* resultType, const FixedVector<
     });
 }
 
-BINARY_OPERATION(Divide, Number, [&](auto left, auto right) {
-    return left / right;
+BINARY_OPERATION(Divide, Number, [&]<typename T>(T left, T right) -> ConstantResult {
+    if constexpr (std::is_integral_v<T>) {
+        if (!right)
+            return makeUnexpected("invalid division by zero"_s);
+        if constexpr (std::is_signed_v<T>) {
+            if (left == std::numeric_limits<T>::lowest() && right == -1)
+                return makeUnexpected("invalid division overflow"_s);
+        }
+    }
+    return { { left / right } };
 });
 
 BINARY_OPERATION(Modulo, Number, [&](auto left, auto right) {
@@ -515,8 +555,9 @@ BINARY_OPERATION(And, Bool, [&](bool left, bool right) { return left && right; }
 
 // Bit Expressions
 
-static ConstantValue constantBitwiseOr(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(BitwiseOr)
 {
+    UNUSED_PARAM(resultType);
     return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
         if (auto* leftBool = std::get_if<bool>(&left))
             return static_cast<bool>(static_cast<int>(*leftBool) | static_cast<int>(std::get<bool>(right)));
@@ -530,8 +571,9 @@ static ConstantValue constantBitwiseOr(const Type*, const FixedVector<ConstantVa
     }, arguments[0], arguments[1]);
 }
 
-static ConstantValue constantBitwiseAnd(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(BitwiseAnd)
 {
+    UNUSED_PARAM(resultType);
     return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
         if (auto* leftBool = std::get_if<bool>(&left))
             return static_cast<bool>(static_cast<int>(*leftBool) & static_cast<int>(std::get<bool>(right)));
@@ -548,10 +590,11 @@ static ConstantValue constantBitwiseAnd(const Type*, const FixedVector<ConstantV
 UNARY_OPERATION(BitwiseNot, Integer, [&](auto arg) { return ~arg; })
 BINARY_OPERATION(BitwiseXor, Integer, [&](auto left, auto right) { return left ^ right; })
 
-static ConstantValue constantBitwiseShiftLeft(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(BitwiseShiftLeft)
 {
     // We can't use a BINARY_OPERATION here since the arguments might not all have the same type
     // i.e. we accept (u32, u32) as well as (i32, u32)
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
     const auto& shift = [&]<typename T>(T left, uint32_t right) {
         return left << right;
@@ -567,10 +610,11 @@ static ConstantValue constantBitwiseShiftLeft(const Type*, const FixedVector<Con
     }, arguments[0], arguments[1]);
 }
 
-static ConstantValue constantBitwiseShiftRight(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(BitwiseShiftRight)
 {
     // We can't use a BINARY_OPERATION here since the arguments might not all have the same type
     // i.e. we accept (u32, u32) as well as (i32, u32)
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
     const auto& shift = [&]<typename T>(T left, uint32_t right) {
         return left >> right;
@@ -594,17 +638,17 @@ CONSTANT_CONSTRUCTOR(I32, int32_t)
 CONSTANT_CONSTRUCTOR(U32, uint32_t)
 CONSTANT_CONSTRUCTOR(F32, float)
 
-static ConstantValue constantVec2(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Vec2)
 {
     return constantVector(resultType, arguments, 2);
 }
 
-static ConstantValue constantVec3(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Vec3)
 {
     return constantVector(resultType, arguments, 3);
 }
 
-static ConstantValue constantVec4(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Vec4)
 {
     return constantVector(resultType, arguments, 4);
 }
@@ -621,8 +665,9 @@ MATRIX_CONSTRUCTOR(4, 4);
 
 // Logical Built-in Functions
 
-static ConstantValue constantAll(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(All)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 1);
     const auto& arg = arguments[0];
     if (arg.isBool())
@@ -631,13 +676,14 @@ static ConstantValue constantAll(const Type*, const FixedVector<ConstantValue>& 
     ASSERT(arg.isVector());
     for (auto element : arg.toVector().elements) {
         if (!element.toBool())
-            return false;
+            return { { false } };
     }
-    return true;
+    return { { true } };
 }
 
-static ConstantValue constantAny(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Any)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 1);
     const auto& arg = arguments[0];
     if (arg.isBool())
@@ -646,13 +692,14 @@ static ConstantValue constantAny(const Type*, const FixedVector<ConstantValue>& 
     ASSERT(arg.isVector());
     for (auto element : arg.toVector().elements) {
         if (element.toBool())
-            return true;
+            return { { true } };
     }
-    return false;
+    return { { false } };
 }
 
-static ConstantValue constantSelect(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Select)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 3);
     const auto& falseValue = arguments[0];
     const auto& trueValue = arguments[1];
@@ -678,7 +725,7 @@ static ConstantValue constantSelect(const Type*, const FixedVector<ConstantValue
             ? trueVector.elements[i]
             : falseVector.elements[i];
     }
-    return result;
+    return { { result } };
 }
 
 // Numeric Built-in Functions
@@ -711,13 +758,14 @@ UNARY_OPERATION(CountLeadingZeros, Integer, [&](uint32_t arg) { return std::coun
 UNARY_OPERATION(CountOneBits, Integer, [&](uint32_t arg) { return std::popcount(arg); })
 UNARY_OPERATION(CountTrailingZeros, Integer, [&](uint32_t arg) { return std::countr_zero(arg); })
 
-static ConstantValue constantCross(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Cross)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
     auto& lhs = arguments[0].toVector();
     auto& rhs = arguments[1].toVector();
 
-    const auto& cross = [&]<typename T>() {
+    const auto& cross = [&]<typename T>() -> ConstantResult {
         auto u0 = std::get<T>(lhs.elements[0]);
         auto u1 = std::get<T>(lhs.elements[1]);
         auto u2 = std::get<T>(lhs.elements[2]);
@@ -729,7 +777,7 @@ static ConstantValue constantCross(const Type*, const FixedVector<ConstantValue>
         result.elements[0] = u1 * v2 - u2 * v1;
         result.elements[1] = u2 * v0 - u0 * v2;
         result.elements[2] = u0 * v1 - u1 * v0;
-        return result;
+        return { { result } };
     };
 
     if (std::holds_alternative<float>(lhs.elements[0]))
@@ -742,8 +790,9 @@ static ConstantValue constantCross(const Type*, const FixedVector<ConstantValue>
 
 UNARY_OPERATION(Degrees, Float, [&]<typename T>(T arg) -> T { return arg * (180 / std::numbers::pi); })
 
-static ConstantValue constantDeterminant(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Determinant)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 1);
     auto& matrix = std::get<ConstantMatrix>(arguments[0]);
     auto columns = matrix.columns;
@@ -798,29 +847,33 @@ static ConstantValue constantDeterminant(const Type*, const FixedVector<Constant
     };
 
     if (std::holds_alternative<float>(matrix.elements[0]))
-        return determinant.operator()<float>();
+        return { { determinant.operator()<float>() } };
     if (std::holds_alternative<double>(matrix.elements[0]))
-        return determinant.operator()<double>();
+        return { { determinant.operator()<double>() } };
     // FIXME: implement f16
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static ConstantValue constantLength(const Type*, const FixedVector<ConstantValue>&);
-static ConstantValue constantDistance(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Length);
+
+CONSTANT_FUNCTION(Distance)
 {
-    return constantLength(resultType, { constantMinus(resultType, arguments) });
+    // we can't produce the type for the intermediate computation here. Pass
+    // nullptr instead so we crash if we ever start depending on it.
+    CALL(minus, Minus, nullptr, arguments);
+    return constantLength(resultType, { minus });
 }
 
-static ConstantValue constantDot(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Dot)
 {
-    auto product = constantMultiply(resultType, arguments).toVector();
+    CALL(product, Multiply, resultType, arguments);
     ConstantValue result = zeroValue(resultType);
-    for (auto& element : product.elements)
-        result = constantAdd(resultType,  { result, element });
-    return result;
+    for (auto& element : product.toVector().elements)
+        CALL_MOVE(result, Add, resultType,  { result, element });
+    return { { result } };
 }
 
-static ConstantValue constantLength(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Length)
 {
     ASSERT(arguments.size() == 1);
     const auto& arg = arguments[0];
@@ -829,19 +882,20 @@ static ConstantValue constantLength(const Type* resultType, const FixedVector<Co
 
     ConstantValue result = zeroValue(resultType);
     for (auto& element : arg.toVector().elements) {
-        auto tmp = constantMultiply(resultType, { element, element });
-        result = constantAdd(resultType, { result, tmp });
+        CALL(tmp, Multiply, resultType, { element, element });
+        CALL_MOVE(result, Add, resultType, { result, tmp });
     }
-    return result;
+    return { { result } };
 }
 
 UNARY_OPERATION(Exp, Float, WRAP_STD(exp));
 UNARY_OPERATION(Exp2, Float, WRAP_STD(exp2));
 
-static ConstantValue constantExtractBits(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(ExtractBits)
 {
     // We can't use a TERNARY_OPERATION here since the arguments might not all have the same type
     // i.e. we accept (u32, u32, u32) as well as (i32, u32, u32)
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 3);
     auto offset = std::get<uint32_t>(arguments[1]);
     auto count = std::get<uint32_t>(arguments[2]);
@@ -874,7 +928,7 @@ static ConstantValue constantExtractBits(const Type*, const FixedVector<Constant
     }, arguments[0]);
 }
 
-static ConstantValue constantFaceForward(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(FaceForward)
 {
     ASSERT(arguments.size() == 3);
     const auto& e1 = arguments[0];
@@ -882,8 +936,9 @@ static ConstantValue constantFaceForward(const Type* resultType, const FixedVect
     const auto& e3 = arguments[2];
 
     auto* elementType = std::get<Types::Vector>(*resultType).element;
-    auto dot = constantDot(elementType, { e2, e3 });
-    if (constantLt(elementType, { dot, zeroValue(elementType) }).toBool())
+    CALL(dot, Dot, elementType, { e2, e3 });
+    CALL(lt, Lt, elementType, { dot, zeroValue(elementType) });
+    if (lt.toBool())
         return e1;
     return constantMinus(resultType, { e1 });
 }
@@ -911,27 +966,32 @@ UNARY_OPERATION(FirstTrailingBit, ConcreteInteger, [&](auto e) {
 
 UNARY_OPERATION(Floor, Float, WRAP_STD(floor));
 
-static ConstantValue constantFma(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Fma)
 {
     ASSERT(arguments.size() == 3);
-    return constantAdd(resultType, { constantMultiply(resultType, { arguments[0], arguments[1] }), arguments[2] });
+    CALL(product, Multiply, resultType, { arguments[0], arguments[1] });
+    return constantAdd(resultType, { product, arguments[2] });
 }
 
-static ConstantValue constantFract(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Fract)
 {
     ASSERT(arguments.size() == 1);
     const auto& arg = arguments[0];
-    return constantMinus(resultType, { arg, constantFloor(resultType, { arg }) });
+    CALL(floor, Floor, resultType, { arg });
+    return constantMinus(resultType, { arg, floor });
 }
 
-static ConstantValue constantFrexp(const Type*, const FixedVector<ConstantValue>&)
+CONSTANT_FUNCTION(Frexp)
 {
     // FIXME: this needs the special return types __frexp_result_*
+    UNUSED_PARAM(resultType);
+    UNUSED_PARAM(arguments);
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static ConstantValue constantInsertBits(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(InsertBits)
 {
+    UNUSED_PARAM(resultType);
     return scalarOrVector([&](auto eValue, auto newbitsValue, auto offset, auto count) -> ConstantValue {
         constexpr unsigned w = 32;
         unsigned o = std::min(std::get<uint32_t>(offset), w);
@@ -960,8 +1020,9 @@ UNARY_OPERATION(InverseSqrt, Float, [&]<typename T>(T arg) -> T {
     return 1.0 / std::sqrt(arg);
 })
 
-static ConstantValue constantLdexp(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Ldexp)
 {
+    UNUSED_PARAM(resultType);
     return scalarOrVector([&](const auto& e1, auto& e2) -> ConstantValue {
         if (auto* abstractE2 = std::get_if<int64_t>(&e2))
             return std::get<double>(e1) * std::pow(2.0, static_cast<double>(*abstractE2));
@@ -978,31 +1039,36 @@ BINARY_OPERATION(Max, Number, WRAP_STD(max))
 BINARY_OPERATION(Min, Number, WRAP_STD(min))
 TERNARY_OPERATION(Mix, Number, [&](auto e1, auto e2, auto e3) { return  e1 * (1 - e3) + e2 * e3; })
 
-static ConstantValue constantModf(const Type*, const FixedVector<ConstantValue>&)
+CONSTANT_FUNCTION(Modf)
 {
     // FIXME: this needs the special return types __modf_result_*
+    UNUSED_PARAM(resultType);
+    UNUSED_PARAM(arguments);
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static ConstantValue constantNormalize(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Normalize)
 {
     ASSERT(arguments.size() == 1);
     auto* elementType = std::get<Types::Vector>(*resultType).element;
     const auto& arg = arguments[0];
-    return constantDivide(resultType, { arg, constantLength(elementType, arguments) });
+    CALL(length, Length, elementType, arguments);
+    return constantDivide(resultType, { arg, length });
 }
 
 BINARY_OPERATION(Pow, Float, WRAP_STD(pow))
 
-static ConstantValue constantQuantizeToF16(const Type*, const FixedVector<ConstantValue>&)
+CONSTANT_FUNCTION(QuantizeToF16)
 {
     // FIXME: add support for f16
+    UNUSED_PARAM(resultType);
+    UNUSED_PARAM(arguments);
     RELEASE_ASSERT_NOT_REACHED();
 }
 
 UNARY_OPERATION(Radians, Float, [&]<typename T>(T arg) -> T { return arg * std::numbers::pi / 180; })
 
-static ConstantValue constantReflect(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Reflect)
 {
     ASSERT(arguments.size() == 2);
     const auto& e1 = arguments[0];
@@ -1010,10 +1076,10 @@ static ConstantValue constantReflect(const Type* resultType, const FixedVector<C
     auto* elementType = std::get<Types::Vector>(*resultType).element;
     auto& primitive = std::get<Types::Primitive>(*elementType);
 
-    const auto& reflect = [&]<typename T>() {
-        auto dot = constantDot(elementType, { e2, e1 });
-        auto prod = constantMultiply(resultType, { dot, e2 });
-        auto doubleResult = constantMultiply(resultType, { static_cast<T>(2), e2 });
+    const auto& reflect = [&]<typename T>() -> ConstantResult {
+        CALL(dot, Dot, elementType, { e2, e1 });
+        CALL(prod, Multiply, resultType, { dot, e2 });
+        CALL(doubleResult, Multiply, resultType, { static_cast<T>(2), e2 });
         return constantMinus(resultType, { e1, doubleResult });
     };
 
@@ -1025,32 +1091,34 @@ static ConstantValue constantReflect(const Type* resultType, const FixedVector<C
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static ConstantValue constantSqrt(const Type*, const FixedVector<ConstantValue>&);
-static ConstantValue constantRefract(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Sqrt);
+
+CONSTANT_FUNCTION(Refract)
 {
     ASSERT(arguments.size() == 3);
     const auto& e1 = arguments[0];
     const auto& e2 = arguments[1];
     const auto& e3 = arguments[2];
 
-    const auto& refract = [&]<typename T>(T e3) {
+    const auto& refract = [&]<typename T>(T e3) -> ConstantResult {
         auto* elementType = std::get<Types::Vector>(*resultType).element;
-        auto dot = constantDot(elementType, { e2, e1 });
-        auto pow = constantPow(elementType, { dot, static_cast<T>(2.0) });
-        auto sub = constantMinus(elementType, { static_cast<T>(1.0), pow });
-        auto pow2 = constantPow(elementType, { e3, static_cast<T>(2.0) });
-        auto mul = constantMultiply(elementType, { pow2, sub });
-        auto k = constantMinus(elementType, { static_cast<T>(1.0), mul });
+        CALL(dot, Dot, elementType, { e2, e1 });
+        CALL(pow, Pow, elementType, { dot, static_cast<T>(2.0) });
+        CALL(sub, Minus, elementType, { static_cast<T>(1.0), pow });
+        CALL(pow2, Pow, elementType, { e3, static_cast<T>(2.0) });
+        CALL(mul, Multiply, elementType, { pow2, sub });
+        CALL(k, Minus, elementType, { static_cast<T>(1.0), mul });
+        CALL(lt, Lt, elementType, { k, static_cast<T>(0.0) });
 
-        if (constantLt(elementType, { k, static_cast<T>(0.0) }).toBool())
+        if (lt.toBool())
             return zeroValue(resultType);
 
         {
-            auto mul = constantMultiply(elementType, { e3, dot });
-            auto sqrt = constantSqrt(elementType, { k });
-            auto sum = constantAdd(elementType, { mul, sqrt });
-            auto mul2 = constantMultiply(resultType, { e3, e1 });
-            auto mul3 = constantMultiply(resultType, { sum, e2 });
+            CALL(mul, Multiply, elementType, { e3, dot });
+            CALL(sqrt, Sqrt, elementType, { k });
+            CALL(sum, Add, elementType, { mul, sqrt });
+            CALL(mul2, Multiply, resultType, { e3, e1 });
+            CALL(mul3, Multiply, resultType, { sum, e2 });
             return constantMinus(resultType, { mul2, mul3 });
         }
     };
@@ -1102,8 +1170,9 @@ TERNARY_OPERATION(Smoothstep, Float, [&](auto low, auto high, auto x) {
 UNARY_OPERATION(Sqrt, Float, WRAP_STD(sqrt))
 BINARY_OPERATION(Step, Float, [&](auto edge, auto x) { return edge <= x ? 1.0 : 0.0; })
 
-static ConstantValue constantTranspose(const Type*, const FixedVector<ConstantValue>& arguments)
+CONSTANT_FUNCTION(Transpose)
 {
+    UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 1);
     auto& matrix = std::get<ConstantMatrix>(arguments[0]);
     auto columns = matrix.columns;
@@ -1113,9 +1182,31 @@ static ConstantValue constantTranspose(const Type*, const FixedVector<ConstantVa
         for (unsigned i = 0; i < columns; ++i)
             result.elements[j * columns + i] = matrix.elements[i * rows + j];
     }
-    return result;
+    return { { result } };
 }
 
 UNARY_OPERATION(Trunc, Float, WRAP_STD(trunc))
+
+// Type checker helpers
+
+static bool containsZero(ConstantValue value, const Type* valueType)
+{
+    auto wrapped = [&]() -> Expected<bool, String> {
+        auto zero = zeroValue(valueType);
+        CALL(equal, Equal, nullptr, { value, zero });
+        CALL(any, Any, nullptr, { equal });
+        return any.toBool();
+    }();
+
+    if (!wrapped)
+        return false;
+    return *wrapped;
+}
+
+#undef CALL_
+#undef CALL
+#undef CALL_MOVE_
+#undef CALL_MOVE
+#undef CONSTANT_FUNCTION
 
 } // namespace WGSL

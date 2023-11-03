@@ -132,7 +132,7 @@ struct OverloadedDeclaration {
     Kind kind;
     bool mustUse;
 
-    ConstantValue (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
+    Expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
     OptionSet<ShaderStage> visibility;
     Vector<OverloadCandidate> overloads;
 };
