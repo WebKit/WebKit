@@ -2183,7 +2183,8 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "transformFeedbackVaryings", "invalid buffer mode");
         return;
     }
-    program.setRequiredTransformFeedbackBufferCount(bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? 1 : varyings.size());
+    program.setRequiredTransformFeedbackBufferCount(
+        bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? std::min(static_cast<size_t>(1), varyings.size()) : varyings.size());
 
     m_context->transformFeedbackVaryings(program.object(), varyings, bufferMode);
 }
@@ -2259,6 +2260,10 @@ bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, G
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        if (m_boundTransformFeedback->isActive()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "transform feedback is active");
+            return false;
+        }
         if (index >= m_maxTransformFeedbackSeparateAttribs) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
             return false;
