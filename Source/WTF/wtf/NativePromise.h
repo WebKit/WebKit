@@ -1372,4 +1372,5 @@ struct LogArgument<GenericPromise> {
 using WTF::invokeAsync;
 using WTF::GenericPromise;
 using WTF::NativePromise;
+using WTF::NativePromiseRequest;
 using WTF::PromiseDispatchMode;
