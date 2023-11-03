@@ -53,6 +53,11 @@ SecurityOrigin* SecurityContext::securityOrigin() const
     return &m_securityOriginPolicy->origin();
 }
 
+RefPtr<SecurityOrigin> SecurityContext::protectedSecurityOrigin() const
+{
+    return securityOrigin();
+}
+
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
     m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);

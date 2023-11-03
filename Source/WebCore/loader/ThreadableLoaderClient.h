@@ -32,6 +32,7 @@
 
 #include "LoaderMalloc.h"
 #include "ResourceLoaderIdentifier.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ class ResourceResponse;
 class ResourceTiming;
 class SharedBuffer;
 
-class ThreadableLoaderClient {
+class ThreadableLoaderClient : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }

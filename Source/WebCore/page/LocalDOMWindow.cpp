@@ -779,6 +779,11 @@ Performance& LocalDOMWindow::performance() const
     return *m_performance;
 }
 
+Ref<Performance> LocalDOMWindow::protectedPerformance() const
+{
+    return performance();
+}
+
 ReducedResolutionSeconds LocalDOMWindow::nowTimestamp() const
 {
     return performance().nowInReducedResolutionSeconds();

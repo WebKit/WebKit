@@ -347,6 +347,8 @@ public:
 #endif
 
     Performance& performance() const;
+    Ref<Performance> protectedPerformance() const;
+
     WEBCORE_EXPORT ReducedResolutionSeconds nowTimestamp() const;
     void freezeNowTimestamp();
     void unfreezeNowTimestamp();
