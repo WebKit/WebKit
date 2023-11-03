@@ -40,6 +40,7 @@
     [MainWorldOnly] void setUninstallURL([URL] DOMString url, [Optional, CallbackHandler] function callback);
 
     [MainWorldOnly] void openOptionsPage([Optional, CallbackHandler] function callback);
+    [MainWorldOnly] void reload();
 
     [MainWorldOnly] readonly attribute any lastError;
 

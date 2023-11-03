@@ -111,6 +111,11 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::opt
     }).get()];
 }
 
+void WebExtensionContext::runtimeReload()
+{
+    reload();
+}
+
 void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
 {
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {

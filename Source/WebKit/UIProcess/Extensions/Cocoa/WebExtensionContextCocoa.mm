@@ -253,6 +253,28 @@ bool WebExtensionContext::unload(NSError **outError)
     return true;
 }
 
+bool WebExtensionContext::reload(NSError **outError)
+{
+    if (outError)
+        *outError = nil;
+
+    if (!isLoaded()) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
+        if (outError)
+            *outError = createError(Error::NotLoaded);
+        return false;
+    }
+
+    Ref controller = *m_extensionController;
+    if (!controller->unload(*this, outError))
+        return false;
+
+    if (!controller->load(*this, outError))
+        return false;
+
+    return true;
+}
+
 String WebExtensionContext::stateFilePath() const
 {
     if (!storageIsPersistent())

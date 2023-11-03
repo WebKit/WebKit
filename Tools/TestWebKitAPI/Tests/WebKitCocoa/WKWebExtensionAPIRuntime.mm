@@ -784,6 +784,27 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIRuntime, Reload)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Loaded')",
+        @"browser.runtime.reload()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager done];
+}
+
 TEST(WKWebExtensionAPIRuntime, StartupEvent)
 {
     auto *backgroundScript = Util::constructScript(@[

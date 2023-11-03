@@ -72,6 +72,7 @@ public:
     void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
 
     void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
+    void reload();
 
     NSString *runtimeIdentifier();
 
