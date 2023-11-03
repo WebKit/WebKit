@@ -147,17 +147,14 @@ void add(Hasher& hasher, const CSSParserContext& context)
 ResolvedURL CSSParserContext::completeURL(const String& string) const
 {
     auto result = [&] () -> ResolvedURL {
-        // See also Document::completeURL(const String&)
+        // See also Document::completeURL(const String&), but note that CSS always uses UTF-8 for URLs
         if (string.isNull())
             return { };
 
         if (CSSValue::isCSSLocalURL(string))
             return { string, URL { string } };
 
-        if (charset.isEmpty())
-            return { string, { baseURL, string } };
-        auto encodingForURLParsing = PAL::TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
-        return { string, { baseURL, string, encodingForURLParsing == PAL::UTF8Encoding() ? nullptr : &encodingForURLParsing } };
+        return { string, { baseURL, string } };
     }();
 
     if (mode == WebVTTMode && !result.resolvedURL.protocolIsData())
