@@ -423,11 +423,11 @@ public:
 
         // Lexically sort for same length strings.
         for (unsigned i = 0; i < a.size(); ++i) {
-            if (a[i] < b[i])
-                return -1;
+            if (a[i] != b[i])
+                return (a[i] < b[i]) ? -1 : 1;
         }
 
-        return a[a.size() - 1] > b[a.size() - 1] ? 1 : 0;
+        return 0;
     }
 
     static void sort(Vector<Vector<UChar32>>& utf32Strings)
