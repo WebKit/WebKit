@@ -40,22 +40,27 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
 
     RetainPtr<NSAttributedString> attributedText;
-    if (object->hasAttributedText()) {
-        std::optional<SimpleRange> range;
-        if (isTextControl())
-            range = rangeForCharacterRange({ 0, object->text().length() });
-        else
-            range = object->simpleRange();
-        if (range) {
-            if ((attributedText = object->attributedStringForRange(*range, SpellCheck::Yes)))
-                setProperty(AXPropertyName::AttributedText, attributedText);
+    // FIXME: Don't eagerly cache textarea/contenteditable values longer than 12500 characters as rangeForCharacterRange is very expensive.
+    // This should be cached once rangeForCharacterRange is more performant for large text control values.
+    unsigned textControlLength = isTextControl() ? object->text().length() : 0;
+    if (textControlLength < 12500) {
+        if (object->hasAttributedText()) {
+            std::optional<SimpleRange> range;
+            if (isTextControl())
+                range = rangeForCharacterRange({ 0, textControlLength });
+            else
+                range = object->simpleRange();
+            if (range) {
+                if ((attributedText = object->attributedStringForRange(*range, SpellCheck::Yes)))
+                    setProperty(AXPropertyName::AttributedText, attributedText);
+            }
         }
-    }
 
-    // Cache the TextContent only if it is not empty and differs from the AttributedText.
-    if (auto text = object->textContent()) {
-        if (!attributedText || (text->length() && *text != String([attributedText string])))
-            setProperty(AXPropertyName::TextContent, text->isolatedCopy());
+        // Cache the TextContent only if it is not empty and differs from the AttributedText.
+        if (auto text = object->textContent()) {
+            if (!attributedText || (text->length() && *text != String([attributedText string])))
+                setProperty(AXPropertyName::TextContent, text->isolatedCopy());
+        }
     }
 
     // Cache the StringValue only if it differs from the AttributedText.

@@ -111,4 +111,8 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     return nullptr;
 }
 
+void AccessibilityController::overrideClient(JSStringRef)
+{
+}
+
 } // namespace WTR
