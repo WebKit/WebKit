@@ -2,15 +2,12 @@
 
 import argparse
 import json
-import operator
 import re
 import sys
 import subprocess
 import time
-import urllib
-import urllib2
+from urllib.request import urlopen
 
-from datetime import datetime
 from xml.dom.minidom import parseString as parseXmlString
 from util import submit_commits
 from util import text_content
@@ -33,7 +30,7 @@ def main(argv):
         server_config = load_server_config(args.server_config_json)
         for fetcher in fetchers:
             fetcher.fetch_and_report_new_builds(server_config)
-        print "Sleeping for %d seconds" % args.seconds_to_sleep
+        print(f'Sleeping for {args.seconds_to_sleep} seconds')
         time.sleep(args.seconds_to_sleep)
 
 
@@ -50,23 +47,23 @@ class OSBuildFetcher:
         if 'customCommands' in config:
             available_builds = []
             for command in config['customCommands']:
-                print "Executing", ' '.join(command['command'])
+                print(f'Executing {" ".join(command["command"])}')
                 available_builds += available_builds_from_command(repository_name, command['command'], command['linesToIgnore'])
         else:
             url = config['buildSourceURL']
-            print "Fetching available builds from", url
+            print(f'Fetching available builds from {url}')
             available_builds = fetch_available_builds(repository_name, url, config['trainVersionMap'])
         return available_builds
 
     def fetch_and_report_new_builds(self, server_config):
         available_builds = self._fetch_available_builds()
         reported_revisions = self._reported_revisions
-        print 'Found %d builds' % len(available_builds)
+        print(f'Found {len(available_builds)} builds')
 
-        available_builds = filter(lambda commit: commit['revision'] not in reported_revisions, available_builds)
+        available_builds = list(filter(lambda commit: commit['revision'] not in reported_revisions, available_builds))
         self._assign_order(available_builds)
 
-        print "Submitting %d builds" % len(available_builds)
+        print(f'Submitting {len(available_builds)} builds')
         submit_commits(available_builds, server_config['server']['url'], server_config['worker']['name'], server_config['worker']['password'])
         reported_revisions |= set(map(lambda commit: commit['revision'], available_builds))
 
@@ -84,9 +81,9 @@ class OSBuildFetcher:
 
 def available_builds_from_command(repository_name, command, lines_to_ignore):
     try:
-        output = subprocess.check_output(command, stderr=subprocess.STDOUT)
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT, encoding='utf-8')
     except subprocess.CalledProcessError as error:
-        print "Failed:", str(error)
+        print(f'Failed {error}')
         return []
 
     regex = re.compile(lines_to_ignore)
@@ -94,10 +91,10 @@ def available_builds_from_command(repository_name, command, lines_to_ignore):
 
 
 def fetch_available_builds(repository_name, url, train_version_map):
-    output = urllib2.urlopen(url).read()
+    output = urlopen(url).read()
     try:
         xml = parseXmlString(output)
-    except Exception, error:
+    except Exception as error:
         raise Exception(error, output)
     available_builds = []
     for image in xml.getElementsByTagName('baseASR'):
