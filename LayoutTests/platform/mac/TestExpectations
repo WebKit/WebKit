@@ -2537,8 +2537,6 @@ webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure 
 # Results changed with Sonoma
 [ Monterey Ventura ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
 
-webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Failure ]
-
 # webkit.org/b/262595 (REGRESSION(Sonoma): [ Sonoma ] 2 lookup menu-related tests are constant text failures.)
 [ Sonoma ] editing/mac/dictionary-lookup/dictionary-lookup.html [ Failure ]
 [ Sonoma ] editing/selection/context-menu-text-selection-lookup.html [ Failure ]

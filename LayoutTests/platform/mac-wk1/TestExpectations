@@ -790,7 +790,7 @@ webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-repor
 
 # WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
-webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure ]
+webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html [ Failure ]
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html [ Failure ]
