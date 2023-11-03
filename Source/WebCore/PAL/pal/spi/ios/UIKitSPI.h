@@ -48,6 +48,10 @@ WTF_EXTERN_C_END
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#import <UIKit/UIKeyEvent.h>
+#endif
+
 @interface UIApplication ()
 + (UIApplicationSceneClassicMode)_classicMode;
 - (GSKeyboardRef)_hardwareKeyboard;
