@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../resources/Ahem-COLR.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" width="700" height="500" style="width: 700px; height; 500px;"></canvas>
+<script>
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+context.strokeStyle = "green";
+context.lineWidth = 2;
+context.strokeRect(100, 20, 100, 100);
+context.strokeRect(200, 20, 100, 100);
+context.strokeRect(220, 20, 20, 100);
+context.strokeRect(300, 20, 100, 100);
+</script>
+</body>
+</html>

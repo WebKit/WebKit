@@ -201,7 +201,7 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         backingStore = &solidColorLayer;
     }
 
-    options.textureMapper.setWrapMode(TextureMapper::StretchWrap);
+    options.textureMapper.setWrapMode(TextureMapper::WrapMode::Stretch);
     options.textureMapper.setPatternTransform(TransformationMatrix());
 
     if (backingStore) {
@@ -222,7 +222,7 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         return;
 
     if (!m_state.contentsTileSize.isEmpty()) {
-        options.textureMapper.setWrapMode(TextureMapper::RepeatWrap);
+        options.textureMapper.setWrapMode(TextureMapper::WrapMode::Repeat);
 
         auto patternTransform = TransformationMatrix::rectToRect({ { }, m_state.contentsTileSize }, { { }, m_state.contentsRect.size() })
             .translate(m_state.contentsTilePhase.width() / m_state.contentsRect.width(), m_state.contentsTilePhase.height() / m_state.contentsRect.height());

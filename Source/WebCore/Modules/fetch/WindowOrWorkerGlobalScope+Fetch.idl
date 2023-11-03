@@ -27,7 +27,6 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 // https://fetch.spec.whatwg.org/#fetch-method
 [
-    EnabledBySetting=FetchAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeFetch
 ] partial interface mixin WindowOrWorkerGlobalScope {
     [NewObject] Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);

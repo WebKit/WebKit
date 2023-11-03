@@ -95,6 +95,8 @@
 /Source/WebCore/editing @rniwa
 /LayoutTests/editing @rniwa
 
+/Source/WebCore/Modules/applepay @aprotyas
+/Source/WebCore/Modules/applepay-ams-ui @aprotyas
 /Source/WebCore/Modules/applicationmanifest/ @marcoscaceres
 /Source/WebCore/Modules/beacon @cdumez
 /Source/WebCore/Modules/contact-picker @marcoscaceres
@@ -102,7 +104,7 @@
 /Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
 /Source/WebCore/Modules/model-element @graouts @marcoscaceres
 /Source/WebCore/Modules/notifications @cdumez
-/Source/WebCore/Modules/paymentrequest @marcoscaceres
+/Source/WebCore/Modules/paymentrequest @aprotyas @marcoscaceres
 /Source/WebCore/Modules/permissions @marcoscaceres
 /Source/WebCore/Modules/screen-wake-lock @marcoscaceres
 /Source/WebCore/Modules/web-locks @cdumez
@@ -123,9 +125,11 @@
 
 /Source/WebCore/crypto/ @zdobersek
 
-/LayoutTests/http/tests/paymentrequest @marcoscaceres
+/LayoutTests/http/tests/paymentrequest @aprotyas @marcoscaceres
+/LayoutTests/http/tests/ssl/applepay @aprotyas
+/LayoutTests/http/tests/ssl/applepay-ams-ui @aprotyas
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
-/LayoutTests/imported/w3c/web-platform-tests/payment-request @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/payment-request @aprotyas @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
@@ -140,11 +144,14 @@
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/Platform @cdumez
+/Source/WebKit/Platform/*/Payment* @aprotyas
 /Source/WebKit/Resources/SandboxProfiles @brentfulgham @pvollan
+/Source/WebKit/Shared/ApplePay @aprotyas
 /Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess @cdumez
+/Source/WebKit/WebProcess/ApplePay @aprotyas
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 

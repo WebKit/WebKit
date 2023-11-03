@@ -123,7 +123,8 @@ template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Va
 template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
 template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
-
+using GenericPromise = NativePromise<void, int>;
+template<typename T> class NativePromiseRequest;
 }
 
 namespace std {
@@ -146,6 +147,7 @@ using WTF::EnumeratedArray;
 using WTF::FixedVector;
 using WTF::Function;
 using WTF::FunctionDispatcher;
+using WTF::GenericPromise;
 using WTF::HashCountedSet;
 using WTF::HashMap;
 using WTF::HashSet;
@@ -157,6 +159,7 @@ using WTF::MachSendRight;
 using WTF::makeUniqueRef;
 using WTF::MonotonicTime;
 using WTF::NativePromise;
+using WTF::NativePromiseRequest;
 using WTF::NeverDestroyed;
 using WTF::ObjectIdentifier;
 using WTF::ObjectIdentifierGeneric;

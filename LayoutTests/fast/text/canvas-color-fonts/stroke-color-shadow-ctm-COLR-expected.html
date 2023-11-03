@@ -4,15 +4,22 @@
 <meta charset="utf-8">
 </head>
 <body>
-<canvas id="canvas" width="700" height="500" style="width: 700px; height; 500px;"></canvas>
+<canvas id="canvas" width="700" height="500" style="width: 700px; height: 500px;"></canvas>
 <script>
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 context.lineWidth = 2;
+context.fillStyle = "magenta";
+context.fillRect(300, 120, 100, 100);
+context.fillStyle = "cyan";
+context.fillRect(320, 120, 20, 100);
+context.strokeStyle = "white";
+context.strokeRect(400, 120, 100, 100);
+
 context.strokeStyle = "green";
+context.fillStyle = "green";
 context.strokeRect(300, 225, 100, 100);
-context.strokeRect(400, 225, 100, 100);
-context.strokeRect(420, 225, 20, 100);
+context.fillRect(400, 225, 100, 100);
 context.strokeRect(500, 225, 100, 100);
 </script>
 </body>

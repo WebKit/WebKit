@@ -23,8 +23,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 require 'rubygems'
-
-require 'readline'
+require 'getoptlong'
 
 begin
     require 'json'
@@ -39,9 +38,18 @@ rescue LoadError
     exit 1
 end
 
+
+$samplingProfilerIgnoreExternalSourceID = false
 $samplingProfilerTopFunctionsCount = 12
 $samplingProfilerTopBytecodesCount = 40
-$json = JSON::parse(IO::read(ARGV[0]))
+
+GetoptLong.new(['--ignore-external-source-id', '-s', GetoptLong::NO_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--ignore-external-source-id'
+      $samplingProfilerIgnoreExternalSourceID = true
+    end
+}
 
 def reportTopFunctions database
   totalSamples = 0
@@ -50,7 +58,10 @@ def reportTopFunctions database
     next if stackTrace["frames"].empty?
     frame = stackTrace["frames"][0]
     hash, category, offset = frame["location"].split(":")
-    description = "#{frame["name"]}#{hash}:#{frame["sourceID"]}"
+    description = "#{frame["name"]}#{hash}"
+    unless $samplingProfilerIgnoreExternalSourceID
+      description = "#{description}:#{frame["sourceID"]}"
+    end
     functionCounts[description] += 1
     totalSamples += 1
   end
@@ -152,6 +163,17 @@ def reportTopBytecodes database
   end
 end
 
-reportTopFunctions($json)
-puts ""
-reportTopBytecodes($json)
+def main
+  json = nil
+  if ARGV.empty?
+      json = JSON.parse(STDIN.read)
+  else
+      json = JSON::parse(IO::read(ARGV[0]))
+  end
+
+  reportTopFunctions(json)
+  puts ""
+  reportTopBytecodes(json)
+end
+
+main

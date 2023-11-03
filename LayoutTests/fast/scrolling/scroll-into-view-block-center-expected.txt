@@ -1,0 +1,6 @@
+This should not jiggle
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS scroller.scrollTop is scrollTopAfterFirstScrollIntoView
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<canvas id="canvas" width="700" height="500" style="width: 700px; height; 500px;"></canvas>
+<script>
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+context.lineWidth = 2;
+context.strokeStyle = "green";
+context.strokeRect(300, 225, 100, 100);
+context.strokeRect(400, 225, 100, 100);
+context.strokeRect(420, 225, 20, 100);
+context.strokeRect(500, 225, 100, 100);
+</script>
+</body>
+</html>

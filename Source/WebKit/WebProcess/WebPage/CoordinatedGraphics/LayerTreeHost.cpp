@@ -84,16 +84,12 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     scaledSize.scale(m_webPage.deviceScaleFactor());
     float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
 
-    TextureMapper::PaintFlags paintFlags = 0;
-    if (m_surface->shouldPaintMirrored())
-        paintFlags |= TextureMapper::PaintingMirrored;
-
 #if HAVE(DISPLAY_LINK)
     // FIXME: remove the displayID from ThreadedCompositor too.
     auto displayID = m_webPage.corePage()->displayID();
-    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, paintFlags);
+    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored());
 #else
-    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, paintFlags);
+    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored());
 #endif
     m_layerTreeContext.contextID = m_surface->surfaceID();
     m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
