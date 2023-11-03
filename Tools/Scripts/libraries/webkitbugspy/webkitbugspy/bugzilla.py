@@ -341,7 +341,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -400,6 +400,9 @@ class Tracker(GenericTracker):
             update_dict['component'] = component
             update_dict['version'] = version
 
+        if keywords is not None:
+            update_dict['keywords'] = dict(set=keywords)
+
         if update_dict:
             update_dict['ids'] = [issue.id]
             response = None
@@ -420,10 +423,13 @@ class Tracker(GenericTracker):
                     issue._opened = None
                 sys.stderr.write("Failed to modify '{}'\n".format(issue))
                 return None
-            elif project and component and version:
+
+            if project and component and version:
                 issue._project = project
                 issue._component = component
                 issue._version = version
+            if keywords is not None:
+                issue._keywords = keywords
 
         return issue
 
