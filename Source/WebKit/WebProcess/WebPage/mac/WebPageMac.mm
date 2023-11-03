@@ -113,17 +113,31 @@
 
 #import "PDFKitSoftLink.h"
 
+static BOOL NSURLgetResourceValue(NSURL* self, SEL selector, id* value, NSString* key, NSError* error)
+{
+    if (value)
+        *value = nil;
+    return TRUE;
+}
+
 namespace WebKit {
 using namespace WebCore;
+
 
 void WebPage::platformInitializeAccessibility()
 {
     // For performance reasons, we should have received the LS database before initializing NSApplication.
     ASSERT(LaunchServicesDatabaseManager::singleton().hasReceivedLaunchServicesDatabase());
 
+    // Temporarily swizzle [NSURL getResourceValue:forKey:error:], since these calls can block the main thread. See rdar://92981500.
+    Method methodToPatch = class_getInstanceMethod([NSURL class], @selector(getResourceValue:forKey:error:));
+    auto originalNSURLgetResourceValueMethod = method_setImplementation(methodToPatch, (IMP)NSURLgetResourceValue);
+
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
     [NSApplication _accessibilityInitialize];
+
+    method_setImplementation(methodToPatch, originalNSURLgetResourceValueMethod);
 
     auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
 
