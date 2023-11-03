@@ -43,6 +43,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NativePromise.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -223,22 +225,9 @@ void SourceBufferPrivate::rewindOperationState()
     }
 }
 
-void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, Function<void()>&& preAppendCompletedTask)
-{
-    DEBUG_LOG(LOGIDENTIFIER);
-
-    rewindOperationState();
-    if (parsingSucceeded)
-        queueOperation(AppendCompletedOperation { m_abortCount, WTFMove(preAppendCompletedTask) });
-    else
-        queueOperation(ErrorOperation { });
-}
-
 void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperation&& operation)
 {
     DEBUG_LOG(LOGIDENTIFIER);
-
-    operation.preTask();
 
     // Resolve the changes in TrackBuffers' buffered ranges
     // into the SourceBuffer's buffered ranges
@@ -753,9 +742,15 @@ void SourceBufferPrivate::processPendingOperations()
             resetParserStateInternal();
         }, [&](AppendBufferOperation&& buffer) {
             advanceOperationState();
-            appendInternal(WTFMove(buffer));
-        }, [&](AppendCompletedOperation&& appendComplete) {
-            processAppendCompletedOperation(WTFMove(appendComplete));
+            appendInternal(WTFMove(buffer))->whenSettled(RunLoop::main(), [this, strongThis = Ref { *this }, abortCount = m_abortCount] (auto&& result) mutable {
+                rewindOperationState();
+                if (result)
+                    queueOperation(AppendCompletedOperation { abortCount });
+                else
+                    queueOperation(ErrorOperation { });
+            });
+        }, [&](AppendCompletedOperation&& operation) {
+            processAppendCompletedOperation(WTFMove(operation));
         }, [&](ErrorOperation&&) {
             abortPendingOperations();
             processError();

@@ -115,9 +115,10 @@ void SourceBufferPrivateRemote::resetParserState()
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
+Ref<GenericPromise> SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
 {
     ASSERT_NOT_REACHED();
+    return GenericPromise::createAndReject(-1);
 }
 
 void SourceBufferPrivateRemote::resetParserStateInternal()

@@ -43,6 +43,7 @@
 #include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ public:
 
     constexpr PlatformType platformType() const final { return PlatformType::GStreamer; }
 
-    void appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
@@ -101,6 +102,7 @@ private:
     UniqueRef<AppendPipeline> m_appendPipeline;
     AtomString m_trackId;
     HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+    std::optional<GenericPromise::Producer> m_appendPromise;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

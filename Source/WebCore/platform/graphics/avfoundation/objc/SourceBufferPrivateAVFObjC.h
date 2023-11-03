@@ -160,7 +160,7 @@ private:
     void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
 
     // SourceBufferPrivate overrides
-    void appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserStateInternal() final;
     MediaPlayer::ReadyState readyState() const final;

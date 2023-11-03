@@ -623,7 +623,7 @@ bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
     return sampleBufferRenderersSupportKeySession();
 }
 
-void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
+Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
@@ -703,13 +703,14 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
         weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, nullptr);
     });
 
-    invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser]() mutable {
+    return invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser]() mutable {
         return parser->appendData(WTFMove(data));
     })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }](auto&& result) {
-        if (!weakThis)
-            return;
-        weakThis->m_parsingSucceeded = !!result;
-        weakThis->appendCompleted();
+        if (weakThis) {
+            weakThis->m_parsingSucceeded = !!result;
+            weakThis->appendCompleted();
+        }
+        return GenericPromise::createAndSettle(WTFMove(result));
     });
 }
 
@@ -717,21 +718,18 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, [this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        if (m_abortSemaphore) {
-            m_abortSemaphore->signal();
-            m_abortSemaphore = nil;
-        }
+    if (m_abortSemaphore) {
+        m_abortSemaphore->signal();
+        m_abortSemaphore = nil;
+    }
 
-        if (m_hasSessionSemaphore) {
-            m_hasSessionSemaphore->signal();
-            m_hasSessionSemaphore = nil;
-        }
-        if (auto player = this->player(); player && m_parsingSucceeded)
-            player->setLoadingProgresssed(true);
-    });
+    if (m_hasSessionSemaphore) {
+        m_hasSessionSemaphore->signal();
+        m_hasSessionSemaphore = nil;
+    }
+
+    if (auto player = this->player(); player && m_parsingSucceeded)
+        player->setLoadingProgresssed(true);
 }
 
 void SourceBufferPrivateAVFObjC::abort()

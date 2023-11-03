@@ -42,6 +42,7 @@
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
@@ -189,7 +190,6 @@ protected:
     using SamplesVector = Vector<Ref<MediaSample>>;
     struct AppendCompletedOperation {
         size_t abortCount { 0 };
-        Function<void()> preTask;
     };
     using Operation = std::variant<AppendBufferOperation, InitOperation, UpdateFormatDescriptionOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
     void queueOperation(Operation&&);
@@ -197,7 +197,7 @@ protected:
     MediaTime currentMediaTime() const;
     MediaTime duration() const;
 
-    virtual void appendInternal(Ref<SharedBuffer>&&) = 0;
+    virtual Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
     bool isActive() const { return m_isActive; }

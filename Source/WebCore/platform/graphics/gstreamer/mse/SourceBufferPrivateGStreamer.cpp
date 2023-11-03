@@ -50,6 +50,7 @@
 #include "NotImplemented.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <wtf/NativePromise.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
@@ -80,13 +81,16 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
-void SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
+Ref<GenericPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_mediaSource);
     ASSERT(m_client);
 
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data->size());
+
+    ASSERT(!m_appendPromise);
+    m_appendPromise.emplace();
     gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
     auto bufferLength = data->size();
     GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, &data.leakRef(),
@@ -96,6 +100,7 @@ void SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
         }));
 
     m_appendPipeline->pushNewBuffer(WTFMove(buffer));
+    return *m_appendPromise;
 }
 
 void SourceBufferPrivateGStreamer::resetParserStateInternal()
@@ -233,12 +238,14 @@ void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    SourceBufferPrivate::appendCompleted(true);
+    m_appendPromise->resolve();
+    m_appendPromise.reset();
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    SourceBufferPrivate::appendCompleted(false);
+    m_appendPromise->reject(1);
+    m_appendPromise.reset();
 }
 
 #if !RELEASE_LOG_DISABLED
