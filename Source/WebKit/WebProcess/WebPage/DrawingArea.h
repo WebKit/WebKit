@@ -157,10 +157,6 @@ public:
     virtual void updateGeometryWC(uint64_t, WebCore::IntSize) { };
 #endif
 
-#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    virtual void layerHostDidFlushLayers() { }
-#endif
-
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) = 0;
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;

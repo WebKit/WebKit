@@ -173,19 +173,8 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
     if (!m_layerTreeHost)
         return;
 
-    // FIXME: We need to do the same work as the layerHostDidFlushLayers function here,
-    // but clearly it doesn't make sense to call the function with that name.
-    // Consider refactoring and renaming it.
     if (m_compositingAccordingToProxyMessages)
         m_layerTreeHost->forceRepaint();
-    else {
-        // Call setShouldNotifyAfterNextScheduledLayerFlush(false) here to
-        // prevent layerHostDidFlushLayers() from being called a second time.
-        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
-#if USE(COORDINATED_GRAPHICS)
-        layerHostDidFlushLayers();
-#endif
-    }
 }
 
 void DrawingAreaCoordinatedGraphics::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
@@ -323,11 +312,6 @@ void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(WebCore::Frame&, Gr
             // We're already in accelerated compositing mode, but the root compositing layer changed.
             m_exitCompositingTimer.stop();
             m_wantsToExitAcceleratedCompositingMode = false;
-
-            // If we haven't sent the EnterAcceleratedCompositingMode message, make sure that the
-            // layer tree host calls us back after the next layer flush so we can send it then.
-            if (!m_compositingAccordingToProxyMessages)
-                m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
         }
         m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
 
@@ -361,14 +345,6 @@ void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
     else
         scheduleDisplay();
 }
-
-#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-void DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers()
-{
-    ASSERT(m_layerTreeHost);
-    m_layerTreeHost->forceRepaint();
-}
-#endif
 
 RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
@@ -576,8 +552,6 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
         m_layerTreeHost->setLayerFlushSchedulingEnabled(false);
     if (m_isPaintingSuspended)
         m_layerTreeHost->pauseRendering();
-    if (!m_inUpdateGeometry)
-        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
 
