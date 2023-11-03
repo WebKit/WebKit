@@ -58,8 +58,6 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isScriptAllowedInMainThread());
-
     JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -68,9 +66,9 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
             handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     });
 
-    if (activeDOMObjectsAreSuspended()) {
+    if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
-        ASSERT(scriptExecutionContext()->eventLoop().isSuspended());
+        ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
         scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTFMove(strongResolution)]() mutable {
             if (shouldIgnoreRequestToFulfill())
                 return;
