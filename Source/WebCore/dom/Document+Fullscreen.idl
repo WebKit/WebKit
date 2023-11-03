@@ -27,6 +27,7 @@
 [
     Conditional=FULLSCREEN_API,
     EnabledBySetting=FullScreenEnabled,
+    DisabledByQuirk=shouldDisableElementFullscreen,
     ImplementedBy=DocumentFullscreen
 ] partial interface Document {
     [LegacyLenientSetter, EnabledBySetting=UnprefixedFullscreenAPIEnabled, ImplementedAs=fullscreenEnabled] readonly attribute boolean fullscreenEnabled;

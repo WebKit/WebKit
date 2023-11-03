@@ -368,6 +368,23 @@ bool Quirks::shouldAvoidUsingIOS17UserAgentForFacebook() const
 #endif
 }
 
+bool Quirks::shouldDisableElementFullscreenQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    // Vimeo.com has incorrect layout on iOS on certain videos with wider
+    // aspect ratios than the device's screen in landscape mode.
+    // (Ref: rdar://116531089)
+    if (!m_shouldDisableElementFullscreen)
+        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s);
+    return m_shouldDisableElementFullscreen.value();
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
