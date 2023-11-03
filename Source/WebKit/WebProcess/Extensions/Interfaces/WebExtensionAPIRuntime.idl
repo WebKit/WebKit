@@ -28,11 +28,11 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIRuntime {
 
-    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
-
-    [NSDictionary] any getManifest();
-
     [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
+
+    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
+    [NSDictionary] any getManifest();
+    double getFrameId(any target);
 
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
     [MainWorldOnly] void getBackgroundPage([Optional, CallbackHandler] function callback);

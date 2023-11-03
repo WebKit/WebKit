@@ -39,6 +39,7 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIPort.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
@@ -201,6 +202,20 @@ void WebExtensionAPIRuntime::getBackgroundPage(Ref<WebExtensionCallbackHandler>&
 
         callback->call(toWindowObject(callback->globalContext(), *page));
     }, extensionContext().identifier());
+}
+
+double WebExtensionAPIRuntime::getFrameId(JSValue *target)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getFrameId
+
+    if (!target)
+        return WebExtensionFrameConstants::None;
+
+    auto frame = WebFrame::contentFrameForWindowOrFrameElement(target.context.JSGlobalContextRef, target.JSValueRef);
+    if (!frame)
+        return WebExtensionFrameConstants::None;
+
+    return toWebAPI(toWebExtensionFrameIdentifier(*frame));
 }
 
 void WebExtensionAPIRuntime::setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&& callback)

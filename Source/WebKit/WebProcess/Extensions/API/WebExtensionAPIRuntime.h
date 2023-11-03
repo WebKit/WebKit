@@ -68,6 +68,7 @@ public:
     NSDictionary *getManifest();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
+    double getFrameId(JSValue *);
 
     void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
 
