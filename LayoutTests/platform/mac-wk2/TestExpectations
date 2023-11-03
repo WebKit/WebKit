@@ -1971,6 +1971,7 @@ webkit.org/b/263738 fast/clip/overflow-hidden-with-border-radius-overflow-clippi
 webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 # WebGPU
+http/tests/webgpu/webgpu/api/operation/compute_pipeline/overrides.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Pass ]
@@ -1980,6 +1981,11 @@ http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/overrides.html [ Pass ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html [ Pass ]
 
 webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
