@@ -97,7 +97,7 @@ public:
     {
         Glyph glyph = glyphForIndex(index);
         auto colorGlyphType = colorGlyphTypeForIndex(index);
-        return GlyphData(glyph, glyph ? m_font.ptr() : nullptr, colorGlyphType);
+        return GlyphData(glyph, glyph ? m_font.get() : nullptr, colorGlyphType);
     }
 
     Glyph glyphForIndex(unsigned index) const
@@ -122,7 +122,7 @@ public:
 
     const Font& font() const
     {
-        return m_font.get();
+        return *m_font;
     }
 
     // Implemented by the platform.
@@ -135,7 +135,7 @@ private:
         ++s_count;
     }
 
-    CheckedRef<const Font> m_font;
+    WeakPtr<const Font> m_font;
     Glyph m_glyphs[size] { };
     WTF::BitSet<size> m_isColor;
 
