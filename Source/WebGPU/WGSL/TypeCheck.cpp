@@ -573,6 +573,8 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
     // FIXME: Implement type checking - infer is called to avoid ASSERT in
     // TypeChecker::visit(AST::Expression&)
+    if (statement.operation() == AST::BinaryOperation::Divide)
+        m_shaderModule.setUsesDivision();
     infer(statement.leftExpression());
     infer(statement.rightExpression());
 }
@@ -813,6 +815,8 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
+    if (binary.operation() == AST::BinaryOperation::Divide)
+        m_shaderModule.setUsesDivision();
     chooseOverload("operator", binary, toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 }
 

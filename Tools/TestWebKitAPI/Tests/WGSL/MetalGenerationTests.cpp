@@ -54,6 +54,7 @@ fn main() -> @location(0) vec4<f32> {
 
     EXPECT_TRUE(mslSource.has_value());
     EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
+#include <metal_types>
 
 using namespace metal;
 
@@ -77,6 +78,7 @@ fn main(@builtin(position) position : vec4<f32>,
 
     EXPECT_TRUE(mslSource.has_value());
     EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
+#include <metal_types>
 
 using namespace metal;
 

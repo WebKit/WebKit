@@ -41,6 +41,7 @@ static StringView metalCodePrologue()
 {
     return StringView {
         "#include <metal_stdlib>\n"
+        "#include <metal_types>\n"
         "\n"
         "using namespace metal;\n"
         "\n"_s

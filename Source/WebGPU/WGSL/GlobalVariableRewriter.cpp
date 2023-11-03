@@ -467,6 +467,7 @@ auto RewriteGlobalVariables::getPacking(AST::CallExpression& call) -> Packing
             );
             strideExpression.m_inferredType = m_callGraph.ast().types().u32Type();
 
+            m_callGraph.ast().setUsesDivision();
             auto& elementCount = m_callGraph.ast().astBuilder().construct<AST::BinaryExpression>(
                 SourceSpan::empty(),
                 length,

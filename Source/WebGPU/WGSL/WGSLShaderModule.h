@@ -80,6 +80,10 @@ public:
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
     void clearUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = false; }
 
+    bool usesDivision() const { return m_usesDivision; }
+    void setUsesDivision() { m_usesDivision = true; }
+    void clearUsesDivision() { m_usesDivision = false; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -218,6 +222,7 @@ private:
     bool m_usesPackedStructs { false };
     bool m_usesUnpackArray { false };
     bool m_usesWorkgroupUniformLoad { false };
+    bool m_usesDivision { false };
     Configuration m_configuration;
     AST::Directive::List m_directives;
     AST::Function::List m_functions;
