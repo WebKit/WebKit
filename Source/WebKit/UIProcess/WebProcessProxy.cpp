@@ -1275,14 +1275,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
 #if USE(RUNNINGBOARD)
-#if USE(EXTENSIONKIT_ASSERTIONS)
-    m_throttler.didConnectToProcess(extensionProcess());
-#else
-    if (connection()) {
-        if (xpc_connection_t xpcConnection = connection()->xpcConnection())
-            m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
-    }
-#endif // USE(EXTENSIONKIT_ASSERTIONS)
+    m_throttler.didConnectToProcess(*this);
 #if PLATFORM(MAC)
     for (Ref page : pages()) {
         if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
@@ -1821,7 +1814,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     if (hasAudibleWebPage) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Taking MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = AudibleMediaActivity {
-            ProcessAssertion::create(processID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
+            ProcessAssertion::create(*this, "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
             processPool().webProcessWithAudibleMediaToken()
         };
     } else {

@@ -26,27 +26,29 @@
 #import "config.h"
 #import "XPCConnectionTerminationWatchdog.h"
 
+#import "AuxiliaryProcessProxy.h"
 #import "ProcessAssertion.h"
 #import "XPCUtilities.h"
 
 namespace WebKit {
 
-void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t> xpcConnection, Seconds interval)
+void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
 {
-    new XPCConnectionTerminationWatchdog(WTFMove(xpcConnection), interval);
+    new XPCConnectionTerminationWatchdog(process, interval);
 }
     
-XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>&& xpcConnection, Seconds interval)
-    : m_xpcConnection(WTFMove(xpcConnection))
+XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
+    : m_process(process)
     , m_watchdogTimer(RunLoop::main(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
-    , m_assertion(ProcessAndUIAssertion::create(xpc_connection_get_pid(m_xpcConnection.get()), "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
+    , m_assertion(ProcessAndUIAssertion::create(process, "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
 {
     m_watchdogTimer.startOneShot(interval);
 }
     
 void XPCConnectionTerminationWatchdog::watchdogTimerFired()
 {
-    terminateWithReason(m_xpcConnection.get(), ReasonCode::WatchdogTimerFired, "XPCConnectionTerminationWatchdog::watchdogTimerFired");
+    if (m_process && m_process->connection())
+        terminateWithReason(m_process->connection()->xpcConnection(), ReasonCode::WatchdogTimerFired, "XPCConnectionTerminationWatchdog::watchdogTimerFired");
     delete this;
 }
 

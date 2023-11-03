@@ -32,6 +32,8 @@ void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
 {
     // This could use ReasonSPI.h, but currently does not as the SPI is blocked by the sandbox.
     // See https://bugs.webkit.org/show_bug.cgi?id=224499 rdar://76396241
+    if (!connection)
+        return;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_connection_kill(connection, SIGKILL);
 ALLOW_DEPRECATED_DECLARATIONS_END

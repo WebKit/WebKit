@@ -70,7 +70,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
     // Deploy a watchdog in the UI process, since the child process may be suspended.
     // If 30s is insufficient for any outstanding activity to complete cleanly, then it will be killed.
     ASSERT(m_connection && m_connection->xpcConnection());
-    XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(m_connection->xpcConnection(), 30_s);
+    XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(*this, 30_s);
 #endif
 }
 

@@ -116,8 +116,8 @@ void ProcessAssertion::acquireSync()
 {
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
-    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier)
+ProcessAndUIAssertion::ProcessAndUIAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
+    : ProcessAssertion(process, reason, assertionType)
 {
 }
 

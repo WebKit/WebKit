@@ -364,31 +364,36 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     , m_pid(pid)
     , m_reason(reason)
 {
-    NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
+    init(environmentIdentifier);
+}
+
+void ProcessAssertion::init(const String& environmentIdentifier)
+{
+    NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
     ASSERT(runningBoardAssertionName);
-    if (pid <= 0) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName, reason.utf8().data(), pid);
+    if (m_pid <= 0) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName, m_reason.utf8().data(), m_pid);
         m_wasInvalidated = true;
         return;
     }
 
     RBSTarget *target = nil;
     if (environmentIdentifier.isEmpty())
-        target = [RBSTarget targetWithPid:pid];
+        target = [RBSTarget targetWithPid:m_pid];
     else
-        target = [RBSTarget targetWithPid:pid environmentIdentifier:environmentIdentifier];
+        target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier];
 
-    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(assertionType) name:runningBoardAssertionName];
-    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
+    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType) name:runningBoardAssertionName];
+    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason target:target attributes:@[domainAttribute]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
     m_delegate.get().invalidationCallback = ^{
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", this, runningBoardAssertionName, pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", this, runningBoardAssertionName, m_pid);
         processAssertionWasInvalidated();
     };
     m_delegate.get().prepareForInvalidationCallback = ^{
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, m_pid);
         processAssertionWillBeInvalidated();
     };
 }
@@ -408,7 +413,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
     if (!m_grant)
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability with error %@", this, error);
 #else
-    ProcessAssertion(m_pid, reason, assertionType, process.environmentIdentifier());
+    init(process.environmentIdentifier());
 #endif
 }
 
@@ -497,8 +502,8 @@ bool ProcessAssertion::isValid() const
     return !m_wasInvalidated;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
-    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier)
+ProcessAndUIAssertion::ProcessAndUIAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
+    : ProcessAssertion(process, reason, assertionType)
 {
 #if PLATFORM(IOS_FAMILY)
     updateRunInBackgroundCount();
