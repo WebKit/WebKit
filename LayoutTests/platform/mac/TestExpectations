@@ -2620,6 +2620,4 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 [ Sonoma+ ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure Failure ]
 [ Sonoma+ ] tables/mozilla/bugs/bug2479-2.html [ Pass ImageOnlyFailure Failure ]
 
-webkit.org/b/264165 http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Failure ]
-
 webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]
