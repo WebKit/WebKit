@@ -6751,19 +6751,6 @@ TrackConfigurationEnabled:
     WebCore:
       default: false
 
-TransformStreamAPIEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "TransformStream API"
-  humanReadableDescription: "Enable Transform Stream API"
-  defaultValue:
-    WebCore:
-      default: true
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 TreatsAnyTextCSSLinkAsStylesheet:
   type: bool
   status: embedder

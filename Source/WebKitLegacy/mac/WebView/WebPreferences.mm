@@ -3096,16 +3096,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];
 }
 
-- (BOOL)transformStreamAPIEnabled
-{
-    return [self _boolValueForKey:WebKitTransformStreamAPIEnabledPreferenceKey];
-}
-
-- (void)setTransformStreamAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitTransformStreamAPIEnabledPreferenceKey];
-}
-
 - (BOOL)_mediaRecorderEnabled
 {
     return [self _boolValueForKey:WebKitMediaRecorderEnabledPreferenceKey];
@@ -3345,6 +3335,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setDisplayListDrawingEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)transformStreamAPIEnabled
+{
+    return YES;
+}
+
+- (void)setTransformStreamAPIEnabled:(BOOL)flag
 {
 }
 

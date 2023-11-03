@@ -322,7 +322,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL remotePlaybackEnabled;
 @property (nonatomic) BOOL readableByteStreamAPIEnabled;
-@property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webGL2Enabled;
 @property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
 @property (nonatomic) BOOL displayListDrawingEnabled;
+@property (nonatomic) BOOL transformStreamAPIEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

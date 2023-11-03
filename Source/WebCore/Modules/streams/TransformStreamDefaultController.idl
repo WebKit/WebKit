@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledBySetting=TransformStreamAPIEnabled,
     Exposed=*,
     JSBuiltin,
     PrivateIdentifier,
