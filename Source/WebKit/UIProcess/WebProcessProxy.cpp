@@ -339,8 +339,8 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(DISPLAY_LINK)
-    // Prewarmed / cached processes may not have a process pool on destruction.
-    if (RefPtr processPool = m_processPool.get())
+    // Unable to ref the process pool as it may have started destruction.
+    if (auto* processPool = m_processPool.get())
         processPool->displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
