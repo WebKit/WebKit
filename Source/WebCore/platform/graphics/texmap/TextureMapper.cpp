@@ -478,7 +478,7 @@ void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> fl
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -543,7 +543,7 @@ void TextureMapper::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, 
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -599,7 +599,7 @@ void TextureMapper::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textur
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -647,7 +647,7 @@ void TextureMapper::drawTexturePackedYUV(GLuint texture, const std::array<GLfloa
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -794,7 +794,7 @@ void TextureMapper::drawTexturedQuadWithProgram(TextureMapperShaderProgram& prog
 {
     glUseProgram(program.programID());
 
-    bool repeatWrap = wrapMode() == RepeatWrap && m_contextAttributes.supportsNPOTTextures;
+    bool repeatWrap = m_wrapMode == WrapMode::Repeat && m_contextAttributes.supportsNPOTTextures;
     GLenum target = GLenum(GL_TEXTURE_2D);
     if (flags.contains(TextureMapperFlags::ShouldUseExternalOESTextureRect))
         target = GLenum(GL_TEXTURE_EXTERNAL_OES);

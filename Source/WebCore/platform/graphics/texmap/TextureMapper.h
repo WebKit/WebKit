@@ -50,9 +50,9 @@ enum class TextureMapperFlags : uint16_t;
 class TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum WrapMode {
-        StretchWrap,
-        RepeatWrap
+    enum class WrapMode : uint8_t {
+        Stretch,
+        Repeat
     };
 
     WEBCORE_EXPORT static std::unique_ptr<TextureMapper> create();
@@ -102,7 +102,6 @@ private:
     std::unique_ptr<BitmapTexturePool> m_texturePool;
 
     bool isInMaskMode() const { return m_isMaskMode; }
-    WrapMode wrapMode() const { return m_wrapMode; }
     const TransformationMatrix& patternTransform() const { return m_patternTransform; }
 
     enum class Direction { X, Y };
@@ -130,7 +129,7 @@ private:
 
     bool m_isMaskMode { false };
     TransformationMatrix m_patternTransform;
-    WrapMode m_wrapMode { StretchWrap };
+    WrapMode m_wrapMode { WrapMode::Stretch };
     TextureMapperContextAttributes m_contextAttributes;
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
