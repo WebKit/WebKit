@@ -3776,13 +3776,22 @@ void Document::setBaseURLOverride(const URL& url)
     updateBaseURL();
 }
 
+HTMLBaseElement* Document::firstBaseElement() const
+{
+    return m_firstBaseElement.get();
+}
+
 void Document::processBaseElement()
 {
     // Find the first href attribute in a base element and the first target attribute in a base element.
     AtomString href;
     AtomString target;
+    RefPtr<HTMLBaseElement> baseElement;
     auto baseDescendants = descendantsOfType<HTMLBaseElement>(*this);
     for (auto& base : baseDescendants) {
+        if (!baseElement)
+            baseElement = &base;
+
         if (href.isNull()) {
             auto& value = base.attributeWithoutSynchronization(hrefAttr);
             if (!value.isNull()) {
@@ -3816,6 +3825,7 @@ void Document::processBaseElement()
     }
 
     m_baseTarget = WTFMove(target);
+    m_firstBaseElement = WTFMove(baseElement);
 }
 
 String Document::userAgent(const URL& url) const
