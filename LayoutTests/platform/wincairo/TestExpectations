@@ -307,16 +307,22 @@ webkit.org/b/103926 media/track/opera [ Skip ]
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 # We don't support Wasm.
-workers/wasm-references.html [ Skip ]
+imported/w3c/web-platform-tests/wasm [ Skip ]
+js/dom/webassembly-memory-normal-fail.html [ Failure ]
+js/dom/webassembly-memory-shared-basic.html [ Failure ]
+js/dom/webassembly-memory-shared-fail.html [ Failure ]
+storage/indexeddb/wasm-exceptions.html [ Skip ]
+wasm/iframe-parent-postmessage.html [ Skip ]
+wasm/iframe-postmessage.html [ Skip ]
+wasm/window-postmessage.html [ Skip ]
+webgl/2.0.y/conformance2/wasm [ Skip ]
 workers/wasm-hashset-many-2.html [ Skip ]
 workers/wasm-hashset-many.html [ Skip ]
 workers/wasm-hashset.html [ Skip ]
 workers/wasm-long-compile-many.html [ Skip ]
 workers/wasm-long-compile.html [ Skip ]
 workers/wasm-mem-post-message.html [ Skip ]
-wasm/iframe-postmessage.html [ Skip ]
-wasm/iframe-parent-postmessage.html [ Skip ]
-wasm/window-postmessage.html [ Skip ]
+workers/wasm-references.html [ Skip ]
 
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
@@ -562,6 +568,8 @@ crypto/subtle/ecdh-generate-export-key-raw-p256.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p384.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p521.html [ Failure Pass ]
 
+webkit.org/b/264144 crypto/subtle/ecdsa-generate-export-key-pkcs8.html [ Failure Pass ]
+
 # Tests explicitly enabled.
 crypto/subtle/derive-bits-malformed-parameters.html [ Pass ]
 crypto/subtle/derive-key-malformed-parameters.html [ Pass ]
@@ -634,9 +642,6 @@ js/dfg-double-vote-fuzz.html [ Skip ] # Slow
 js/dfg-int52-spill-trickier.html [ Skip ] # Slow
 js/dfg-int52-spill.html [ Skip ] # Slow
 js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
-js/dom/webassembly-memory-normal-fail.html [ Failure ]
-js/dom/webassembly-memory-shared-basic.html [ Failure ]
-js/dom/webassembly-memory-shared-fail.html [ Failure ]
 
 js/date-timeClip-large-values.html [ Failure Pass ]
 
@@ -1204,8 +1209,6 @@ editing/input/press-tab-during-ime-composition.html [ Failure ]
 ################################################################################
 
 # TODO These tests failures need to be investigated
-
-storage/indexeddb/wasm-exceptions.html [ Skip ]
 
 storage/indexeddb/IDBKey-create-array-buffer-view-oom.html [ Skip ] # Slow
 storage/indexeddb/cursor-request-cycle-private.html [ Skip ] # Slow
@@ -1810,7 +1813,6 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests [ Skip ]
 imported/w3c/web-platform-tests/url [ Skip ]
 imported/w3c/web-platform-tests/user-timing [ Skip ]
 imported/w3c/web-platform-tests/visual-viewport [ Skip ]
-imported/w3c/web-platform-tests/wasm [ Skip ]
 imported/w3c/web-platform-tests/web-animations [ Skip ]
 imported/w3c/web-platform-tests/web-locks [ Skip ]
 imported/w3c/web-platform-tests/web-share [ Skip ]
@@ -2673,3 +2675,5 @@ webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-i
 
 webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
 webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
+
+webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
