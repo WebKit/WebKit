@@ -133,7 +133,8 @@ WTF_EXTERN_C_END
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
 @property (nonatomic, readonly) UIColor *insertionPointColor;
 @property (nonatomic, readonly) UIColor *selectionBarColor;
-@property (nonatomic, readwrite) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL learnsCorrections;
 @end
 
 @interface UITextInputTraits : NSObject <UITextInputTraits, UITextInputTraits_Private, NSCopying>
