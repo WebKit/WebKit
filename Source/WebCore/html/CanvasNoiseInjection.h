@@ -40,6 +40,7 @@ public:
     void postProcessDirtyCanvasBuffer(ImageBuffer*, NoiseInjectionHashSalt);
     bool postProcessPixelBufferResults(PixelBuffer&, NoiseInjectionHashSalt) const;
     void updateDirtyRect(const IntRect&);
+    void clearDirtyRect();
     bool haveDirtyRects() const { return !m_postProcessDirtyRect.isEmpty(); }
 
 private:

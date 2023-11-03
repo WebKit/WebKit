@@ -345,10 +345,30 @@ private:
         ApplyPostProcessing = 1 << 3,
         PreserveCachedImageData = 1 << 4,
     };
-    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip, DidDrawOption::ApplyPostProcessing });
-    void didDrawEntireCanvas();
-    void didDraw(bool entireCanvas, const FloatRect&);
-    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
+
+    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptions()
+    {
+        return {
+            DidDrawOption::ApplyTransform,
+            DidDrawOption::ApplyShadow,
+            DidDrawOption::ApplyClip,
+            DidDrawOption::ApplyPostProcessing,
+        };
+    }
+
+    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptionsWithoutPostProcessing()
+    {
+        return {
+            DidDrawOption::ApplyTransform,
+            DidDrawOption::ApplyShadow,
+            DidDrawOption::ApplyClip,
+        };
+    }
+
+    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = defaultDidDrawOptions());
+    void didDrawEntireCanvas(OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
 
     bool is2dBase() const final { return true; }
     bool needsPreparationForDisplay() const final;

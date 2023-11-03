@@ -185,11 +185,14 @@ void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& re
 void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
-    if (shouldInjectNoiseBeforeReadback() && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
-        if (rect)
-            m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
-        else
-            m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+    if (shouldInjectNoiseBeforeReadback()) {
+        if (shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
+            if (rect)
+                m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
+            else
+                m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+        } else if (!rect)
+            m_canvasNoiseInjection.clearDirtyRect();
     }
 }
 

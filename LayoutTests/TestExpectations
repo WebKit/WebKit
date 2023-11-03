@@ -5499,9 +5499,6 @@ webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Failure ]
 webkit.org/b/255255 fast/text/text-underline-vertical-first-line-decoration.html [ ImageOnlyFailure ]
 webkit.org/b/255287 fast/block/lineboxcontain/inline-box-vertical.html [ Failure ]
 
-# This is marked as passing on WK2.
-fast/canvas/large-getImageData.html [ Skip ]
-
 # This should fail, but it flakey-passes, so skipping now.
 fast/canvas/canvas-noise-injection.html [ Skip ]
 
