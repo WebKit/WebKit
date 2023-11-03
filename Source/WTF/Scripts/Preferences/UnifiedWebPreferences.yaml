@@ -6510,7 +6510,8 @@ SuppressesIncrementalRendering:
 
 SwitchControlEnabled:
   type: bool
-  status: unstable
+  status: testable
+  category: html
   humanReadableName: "HTML switch control"
   humanReadableDescription: "Enable HTML switch control"
   defaultValue:
