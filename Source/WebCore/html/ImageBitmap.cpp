@@ -717,14 +717,14 @@ private:
     URL m_sourceUrl;
 };
 
-class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
+class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public ActiveDOMObject, public FileReaderLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {
         if (scriptExecutionContext.activeDOMObjectsAreStopped())
             return;
-        auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
+        Ref pendingImageBitmap = adoptRef(*new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler)));
         pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
     }
@@ -748,37 +748,22 @@ private:
 
     void start(ScriptExecutionContext& scriptExecutionContext)
     {
+        m_pendingActivity = makePendingActivity(*this); // Prevent destruction until the load has finished.
         m_blobLoader.start(&scriptExecutionContext, *m_blob);
     }
 
     // ActiveDOMObject
-
-    const char* activeDOMObjectName() const final
-    {
-        return "PendingImageBitmap";
-    }
-
-    void stop() final
-    {
-        delete this;
-    }
+    const char* activeDOMObjectName() const final { return "PendingImageBitmap"; }
+    void stop() final { m_pendingActivity = nullptr; }
 
     // FileReaderLoaderClient
-
-    void didStartLoading() override
-    {
-    }
-
-    void didReceiveData() override
-    {
-    }
-
-    void didFinishLoading() override
+    void didStartLoading() final { }
+    void didReceiveData() final { }
+    void didFinishLoading() final
     {
         createImageBitmapAndCallCompletionHandlerSoon(m_blobLoader.arrayBufferResult());
     }
-
-    void didFail(ExceptionCode) override
+    void didFail(ExceptionCode) final
     {
         createImageBitmapAndCallCompletionHandlerSoon(nullptr);
     }
@@ -786,17 +771,15 @@ private:
     void createImageBitmapAndCallCompletionHandlerSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
         m_arrayBufferToProcess = WTFMove(arrayBuffer);
-        scriptExecutionContext()->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                weakThis->createImageBitmapAndCallCompletionHandler();
+        protectedScriptExecutionContext()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->createImageBitmapAndCallCompletionHandler();
         });
     }
 
     void createImageBitmapAndCallCompletionHandler()
     {
-        auto destroyOnExit = makeScopeExit([this] {
-            delete this;
-        });
+        RefPtr pendingActivity = std::exchange(m_pendingActivity, nullptr);
 
         if (!m_arrayBufferToProcess) {
             m_completionHandler(Exception { InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s });
@@ -812,6 +795,7 @@ private:
     std::optional<IntRect> m_rect;
     ImageBitmap::ImageBitmapCompletionHandler m_completionHandler;
     RefPtr<ArrayBuffer> m_arrayBufferToProcess;
+    RefPtr<PendingActivity<PendingImageBitmap>> m_pendingActivity;
 };
 
 void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, String mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
