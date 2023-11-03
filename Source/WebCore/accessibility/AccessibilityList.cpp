@@ -134,13 +134,14 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     if (ariaRoleAttribute() == AccessibilityRole::Directory)
         return AccessibilityRole::List;
 
-    // Heuristic to determine if this list is being used for layout or for content.
-    //   1. If it's a named list, like ol or aria=list, then it's a list.
+    // Heuristic to determine if an ambiguous list is relevant to convey to the accessibility tree.
+    //   1. If it's an ordered list or has role="list" defined, then it's a list.
     //      1a. Unless the list has no children, then it's not a list.
-    //   2. If it displays visible list markers, it's a list.
-    //   3. If it does not display list markers and has only one child, it's not a list.
-    //   4. If it does not have any listitem children, it's not a list.
-    //   5. Otherwise it's a list (for now).
+    //   2. If it is contained in <nav> or <el role="navigation">, it's a list.
+    //   3. If it displays visible list markers, it's a list.
+    //   4. If it does not display list markers, it's not a list.
+    //   5. If it has one or zero listitem children, it's not a list.
+    //   6. Otherwise it's a list.
 
     auto role = AccessibilityRole::List;
 
