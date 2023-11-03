@@ -50,16 +50,10 @@ enum class TextureMapperFlags : uint16_t;
 class TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum PaintFlag {
-        PaintingMirrored = 1 << 0,
-    };
-
     enum WrapMode {
         StretchWrap,
         RepeatWrap
     };
-
-    typedef unsigned PaintFlags;
 
     WEBCORE_EXPORT static std::unique_ptr<TextureMapper> create();
 
@@ -67,6 +61,7 @@ public:
     WEBCORE_EXPORT ~TextureMapper();
 
     enum class AllEdgesExposed : bool { No, Yes };
+    enum class FlipY : bool { No, Yes };
 
     WEBCORE_EXPORT void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&);
     void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&);
@@ -84,7 +79,7 @@ public:
     void bindSurface(BitmapTexture* surface);
     BitmapTexture* currentSurface();
     void beginClip(const TransformationMatrix&, const FloatRoundedRect&);
-    WEBCORE_EXPORT void beginPainting(PaintFlags = 0, BitmapTexture* = nullptr);
+    WEBCORE_EXPORT void beginPainting(FlipY = FlipY::No, BitmapTexture* = nullptr);
     WEBCORE_EXPORT void endPainting();
     void endClip();
     IntRect clipBounds();

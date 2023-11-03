@@ -56,7 +56,7 @@ void CoordinatedGraphicsScene::applyStateChanges(const Vector<RefPtr<Nicosia::Sc
         commitSceneState(scene);
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, bool flipY)
 {
     updateSceneState();
 
@@ -68,7 +68,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         currentRootLayer->setTransform(matrix);
 
     bool sceneHasRunningAnimations = currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
-    m_textureMapper->beginPainting(PaintFlags);
+    m_textureMapper->beginPainting(flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
 
     currentRootLayer->paint(*m_textureMapper);

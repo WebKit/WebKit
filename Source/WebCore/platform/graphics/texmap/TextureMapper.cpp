@@ -62,7 +62,7 @@ public:
     Ref<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options);
 
     TransformationMatrix projectionMatrix;
-    TextureMapper::PaintFlags PaintFlags { 0 };
+    TextureMapper::FlipY flipY { TextureMapper::FlipY::No };
     GLint previousProgram { 0 };
     GLint previousVAO { 0 };
     GLint targetFrameBuffer { 0 };
@@ -207,7 +207,7 @@ ClipStack& TextureMapper::clipStack()
     return data().currentSurface ? data().currentSurface->clipStack() : m_clipStack;
 }
 
-void TextureMapper::beginPainting(PaintFlags flags, BitmapTexture* surface)
+void TextureMapper::beginPainting(FlipY flipY, BitmapTexture* surface)
 {
     glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram);
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
@@ -217,9 +217,9 @@ void TextureMapper::beginPainting(PaintFlags flags, BitmapTexture* surface)
     data().didModifyStencil = false;
     glGetIntegerv(GL_VIEWPORT, data().viewport);
     glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
-    m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), flags & PaintingMirrored ? ClipStack::YAxisMode::Default : ClipStack::YAxisMode::Inverted);
+    m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), flipY == FlipY::Yes ? ClipStack::YAxisMode::Default : ClipStack::YAxisMode::Inverted);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
-    data().PaintFlags = flags;
+    data().flipY = flipY;
     bindSurface(surface);
 }
 
@@ -1162,14 +1162,14 @@ RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture> sourceTex
     return nullptr;
 }
 
-static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored, double zNear, double zFar)
+static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool flipY, double zNear, double zFar)
 {
     const double nearValue = std::min(zNear + 1, 9999999.0);
     const double farValue = std::max(zFar - 1, -99999.0);
     return TransformationMatrix(2.0 / size.width(), 0, 0, 0,
-        0, (mirrored ? 2.0 : -2.0) / size.height(), 0, 0,
+        0, (flipY ? 2.0 : -2.0) / size.height(), 0, 0,
         0, 0, 2.0 / (farValue - nearValue), 0,
-        -1, mirrored ? -1 : 1, -(farValue + nearValue) / (farValue - nearValue), 1);
+        -1, flipY ? -1 : 1, -(farValue + nearValue) / (farValue - nearValue), 1);
 }
 
 TextureMapper::~TextureMapper()
@@ -1334,16 +1334,16 @@ void TextureMapper::setDepthRange(double zNear, double zFar)
 
 void TextureMapper::updateProjectionMatrix()
 {
-    bool mirrored;
+    bool flipY;
     IntSize size;
     if (data().currentSurface) {
         size = data().currentSurface->size();
-        mirrored = true;
+        flipY = true;
     } else {
         size = IntSize(data().viewport[2], data().viewport[3]);
-        mirrored = data().PaintFlags & PaintingMirrored;
+        flipY = data().flipY == FlipY::Yes;
     }
-    data().projectionMatrix = createProjectionMatrix(size, mirrored, data().zNear, data().zFar);
+    data().projectionMatrix = createProjectionMatrix(size, flipY, data().zNear, data().zFar);
 }
 
 void TextureMapper::drawTextureExternalOES(GLuint texture, OptionSet<TextureMapperFlags> flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)

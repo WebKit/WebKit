@@ -53,24 +53,24 @@ using namespace WebCore;
 static constexpr unsigned c_defaultRefreshRate = 60000;
 
 #if HAVE(DISPLAY_LINK)
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, flipY));
 }
 #else
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, flipY));
 }
 #endif
 
 #if HAVE(DISPLAY_LINK)
-ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
 #else
-ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
 #endif
     : m_client(client)
-    , m_paintFlags(paintFlags)
+    , m_flipY(flipY)
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if !HAVE(DISPLAY_LINK)
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient, WebCore::DisplayUpdate { 0, c_defaultRefreshRate / 1000 }))
@@ -106,12 +106,8 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
 
         createGLContext();
         if (m_context) {
-            if (!m_nativeSurfaceHandle) {
-                if (m_paintFlags & TextureMapper::PaintingMirrored)
-                    m_paintFlags &= ~TextureMapper::PaintingMirrored;
-                else
-                    m_paintFlags |= TextureMapper::PaintingMirrored;
-            }
+            if (!m_nativeSurfaceHandle)
+                m_flipY = !m_flipY;
             m_scene->setActive(true);
         }
     });
@@ -276,7 +272,7 @@ void ThreadedCompositor::renderLayerTree()
     glClear(GL_COLOR_BUFFER_BIT);
 
     m_scene->applyStateChanges(states);
-    m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_paintFlags);
+    m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
 
     m_context->swapBuffers();
 

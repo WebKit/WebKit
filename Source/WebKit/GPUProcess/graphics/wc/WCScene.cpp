@@ -256,7 +256,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     } else
         glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    m_textureMapper->beginPainting(0, surface);
+    m_textureMapper->beginPainting(WebCore::TextureMapper::FlipY::No, surface);
     rootLayer->paint(*m_textureMapper);
     if (showFPS)
         m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
