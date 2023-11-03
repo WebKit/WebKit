@@ -794,7 +794,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     const FontCustomPlatformData* customPlatformData = nullptr;
     if (safeCFEqual(platformData.font(), substituteFont))
         customPlatformData = platformData.customPlatformData();
-    FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), customPlatformData);
+    FontPlatformData alternateFont(substituteFont, description.computedSize(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), customPlatformData);
 
     return fontForPlatformData(alternateFont);
 }
