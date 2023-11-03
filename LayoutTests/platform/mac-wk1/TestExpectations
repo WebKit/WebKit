@@ -2587,7 +2587,7 @@ webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-descendants.h
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
 
 webkit.org/b/260107 [ Debug ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Skip ]
-webkit.org/b/260111 [ Ventura Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Failure ]
+webkit.org/b/260111 [ Ventura+ Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Pass Failure ]
 
 webkit.org/b/260280 fullscreen/fullscreen-no-scrollbars-on-ancestor-root.html [ ImageOnlyFailure ]
 
