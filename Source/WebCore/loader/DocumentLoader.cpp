@@ -128,6 +128,10 @@
 #include "NetworkStorageSession.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 #define PAGE_ID ((m_frame ? valueOrDefault(m_frame->pageID()) : PageIdentifier()).toUInt64())
 #define FRAME_ID ((m_frame ? m_frame->frameID() : FrameIdentifier()).object().toUInt64())
 #define IS_MAIN_FRAME (m_frame ? m_frame->isMainFrame() : false)
@@ -2109,6 +2113,25 @@ static bool canUseServiceWorkers(LocalFrame* frame)
 }
 #endif
 
+static bool shouldCancelLoadingAboutURL(const URL& url)
+{
+    if (!url.protocolIsAbout())
+        return false;
+
+    if (url.isAboutBlank() || url.isAboutSrcDoc())
+        return false;
+
+    if (!url.hasOpaquePath())
+        return false;
+
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::OnlyLoadWellKnownAboutURLs))
+        return false;
+#endif
+
+    return true;
+}
+
 void DocumentLoader::startLoadingMainResource()
 {
 #if ENABLE(SERVICE_WORKER)
@@ -2122,9 +2145,7 @@ void DocumentLoader::startLoadingMainResource()
 
     Ref<DocumentLoader> protectedThis(*this);
 
-    if (m_request.url().protocolIsAbout()
-        && !(m_request.url().isAboutBlank() || m_request.url().isAboutSrcDoc())
-        && m_request.url().hasOpaquePath()) {
+    if (shouldCancelLoadingAboutURL(m_request.url())) {
         cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
         return;
     }
