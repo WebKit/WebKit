@@ -218,6 +218,20 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  */
 @property (nonatomic, readonly) BOOL backgroundContentIsPersistent;
 
+/*!
+ @abstract A Boolean value indicating whether the extension has an options page.
+ @discussion If this property is `YES`, the extension includes a dedicated options page where users can customize settings.
+ The app should provide access to this page through a user interface element, which can be accessed via `optionsPageURL` on an extension context.
+ */
+@property (nonatomic, readonly) BOOL hasOptionsPage;
+
+/*!
+ @abstract A Boolean value indicating whether the extension provides an alternative to the default new tab page.
+ @discussion If this property is `YES`, the extension can specify a custom page that can be displayed when a new tab is opened in the app, instead of the default new tab page.
+ The app should prompt the user for permission to use the extension's new tab page as the default, which can be accessed via `overrideNewTabPageURL` on an extension context.
+ */
+@property (nonatomic, readonly) BOOL hasOverrideNewTabPage;
+
 @end
 
 NS_ASSUME_NONNULL_END

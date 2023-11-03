@@ -190,6 +190,24 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly, copy, nullable) WKWebViewConfiguration *webViewConfiguration;
 
 /*!
+ @abstract The URL of the extension's options page, if the extension has one.
+ @discussion This property holds the URL for the dedicated options page, if provided by the extension; otherwise `nil` if no page is defined.
+ The app should provide access to this page through a user interface element.
+ @note Navigation to the options page is only possible after this extension has been loaded.
+ @seealso webViewConfiguration
+ */
+@property (nonatomic, readonly, copy, nullable) NSURL *optionsPageURL;
+
+/*!
+ @abstract The URL to use as an alternative to the default new tab page, if the extension has one.
+ @discussion This property holds the URL for a new tab page, if provided by the extension; otherwise `nil` if no page is defined.
+ The app should prompt the user for permission to use the extension's new tab page as the default.
+ @note Navigation to the override new tab page is only possible after this extension has been loaded.
+ @seealso webViewConfiguration
+ */
+@property (nonatomic, readonly, copy, nullable) NSURL *overrideNewTabPageURL;
+
+/*!
  @abstract The currently granted permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.

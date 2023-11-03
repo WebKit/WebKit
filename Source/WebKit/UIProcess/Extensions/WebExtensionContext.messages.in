@@ -64,6 +64,7 @@ messages -> WebExtensionContext {
 
     // Runtime APIs
     RuntimeGetBackgroundPage() -> (std::optional<WebCore::PageIdentifier> pageIdentifier, std::optional<String> error);
+    RuntimeOpenOptionsPage() -> (std::optional<String> error);
     RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON, std::optional<String> error);
     RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> error);
     RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::optional<String> replyJSON, std::optional<String> error);

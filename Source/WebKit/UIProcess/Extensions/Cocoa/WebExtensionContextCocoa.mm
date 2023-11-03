@@ -400,6 +400,20 @@ bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
     return false;
 }
 
+URL WebExtensionContext::optionsPageURL() const
+{
+    if (!extension().hasOptionsPage())
+        return { };
+    return { m_baseURL, extension().optionsPagePath() };
+}
+
+URL WebExtensionContext::overrideNewTabPageURL() const
+{
+    if (!extension().hasOverrideNewTabPage())
+        return { };
+    return { m_baseURL, extension().overrideNewTabPagePath() };
+}
+
 void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
 {
     if (m_hasAccessInPrivateBrowsing == hasAccess)

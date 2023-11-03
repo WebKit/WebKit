@@ -54,6 +54,8 @@ static auto *runtimeManifest = @{
         },
     },
 
+    @"options_page": @"options.html",
+
     @"permissions": @[ @"nativeMessaging" ],
 };
 
@@ -841,6 +843,36 @@ TEST(WKWebExtensionAPIRuntime, InstalledEvent)
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+}
+
+TEST(WKWebExtensionAPIRuntime, OpenOptionsPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafeResolve(() => browser.runtime.openOptionsPage())"
+    ]);
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"options.html": @"Hello world!"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block bool optionsPageOpened = false;
+    manager.get().internalDelegate.openOptionsPage = ^(_WKWebExtensionContext *, void (^completionHandler)(NSError *)) {
+        optionsPageOpened = true;
+
+        EXPECT_NS_EQUAL(manager.get().context.optionsPageURL, [NSURL URLWithString:@"options.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        completionHandler(nil);
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_TRUE(optionsPageOpened);
 }
 
 } // namespace TestWebKitAPI

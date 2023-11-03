@@ -101,6 +101,7 @@ public:
         InvalidExternallyConnectable,
         InvalidIcon,
         InvalidName,
+        InvalidOptionsPage,
         InvalidURLOverrides,
         InvalidVersion,
         InvalidWebAccessibleResources,
@@ -194,6 +195,12 @@ public:
     NSString *backgroundContentPath();
     NSString *generatedBackgroundContent();
 
+    bool hasOptionsPage();
+    bool hasOverrideNewTabPage();
+
+    NSString *optionsPagePath();
+    NSString *overrideNewTabPagePath();
+
     const InjectedContentVector& staticInjectedContents();
     bool hasStaticInjectedContentForURL(NSURL *);
 
@@ -233,6 +240,7 @@ private:
     void populateBackgroundPropertiesIfNeeded();
     void populateContentScriptPropertiesIfNeeded();
     void populatePermissionsPropertiesIfNeeded();
+    void populatePagePropertiesIfNeeded();
 
     InjectedContentVector m_staticInjectedContents;
 
@@ -273,15 +281,19 @@ private:
     RetainPtr<NSString> m_backgroundPagePath;
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
-    bool m_backgroundContentIsPersistent = false;
-    bool m_backgroundPageUsesModules = false;
+    bool m_backgroundContentIsPersistent : 1 { false };
+    bool m_backgroundPageUsesModules : 1 { false };
 
-    bool m_parsedManifest = false;
-    bool m_parsedManifestDisplayStrings = false;
-    bool m_parsedManifestActionProperties = false;
-    bool m_parsedManifestBackgroundProperties = false;
-    bool m_parsedManifestContentScriptProperties = false;
-    bool m_parsedManifestPermissionProperties = false;
+    RetainPtr<NSString> m_optionsPagePath;
+    RetainPtr<NSString> m_overrideNewTabPagePath;
+
+    bool m_parsedManifest : 1 { false };
+    bool m_parsedManifestDisplayStrings : 1 { false };
+    bool m_parsedManifestActionProperties : 1 { false };
+    bool m_parsedManifestBackgroundProperties : 1 { false };
+    bool m_parsedManifestContentScriptProperties : 1 { false };
+    bool m_parsedManifestPermissionProperties : 1 { false };
+    bool m_parsedManifestPageProperties : 1 { false };
 };
 
 #ifdef __OBJC__

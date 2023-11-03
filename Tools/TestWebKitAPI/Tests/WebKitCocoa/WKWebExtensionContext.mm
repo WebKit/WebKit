@@ -388,6 +388,200 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
 }
 
+TEST(WKWebExtensionContext, OptionsPageURLParsing)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @"options.html"
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *expectedOptionsURL = [NSURL URLWithString:@"options.html" relativeToURL:testContext.baseURL].absoluteURL;
+    EXPECT_NS_EQUAL(testContext.optionsPageURL, expectedOptionsURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @123
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.optionsPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"page": @"options.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    expectedOptionsURL = [NSURL URLWithString:@"options.html" relativeToURL:testContext.baseURL].absoluteURL;
+    EXPECT_NS_EQUAL(testContext.optionsPageURL, expectedOptionsURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"page": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.optionsPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @""
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.optionsPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.optionsPageURL);
+}
+
+TEST(WKWebExtensionContext, URLOverridesParsing)
+{
+    NSDictionary *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @"newtab.html"
+        }
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *expectedURL = [NSURL URLWithString:@"newtab.html" relativeToURL:testContext.baseURL].absoluteURL;
+    EXPECT_NS_EQUAL(testContext.overrideNewTabPageURL, expectedURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @""
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @"newtab.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    expectedURL = [NSURL URLWithString:@"newtab.html" relativeToURL:testContext.baseURL].absoluteURL;
+    EXPECT_NS_EQUAL(testContext.overrideNewTabPageURL, expectedURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @""
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NULL(testContext.overrideNewTabPageURL);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -212,6 +212,20 @@ void WebExtensionAPIRuntime::setUninstallURL(URL, Ref<WebExtensionCallbackHandle
     callback->call();
 }
 
+void WebExtensionAPIRuntime::openOptionsPage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/openOptionsPage
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeOpenOptionsPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
 JSValue *WebExtensionAPIRuntime::lastError()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/lastError

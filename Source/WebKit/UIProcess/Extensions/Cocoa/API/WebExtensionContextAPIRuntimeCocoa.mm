@@ -40,6 +40,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebPageProxy.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
+#import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -49,6 +50,65 @@ void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(std::o
     wakeUpBackgroundContentIfNecessary([completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }]() mutable {
         completionHandler(backgroundPageIdentifier(), std::nullopt);
     });
+}
+
+void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::optional<String> error)>&& completionHandler)
+{
+    if (!optionsPageURL().isValid()) {
+        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"no options page is specified in the manifest"));
+        return;
+    }
+
+    auto delegate = extensionController()->delegate();
+
+    bool respondsToOpenOptionsPage = [delegate respondsToSelector:@selector(webExtensionController:openOptionsPageForExtensionContext:completionHandler:)];
+    bool respondsToOpenNewTab = [delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)];
+    if (!respondsToOpenOptionsPage && !respondsToOpenNewTab) {
+        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"it is not implemented"));
+        return;
+    }
+
+    if (respondsToOpenOptionsPage) {
+        [delegate webExtensionController:extensionController()->wrapper() openOptionsPageForExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(Extensions, "Error opening options page: %{private}@", error);
+                completionHandler(error.localizedDescription);
+                return;
+            }
+
+            completionHandler(std::nullopt);
+        }).get()];
+
+        return;
+    }
+
+    ASSERT(respondsToOpenNewTab);
+
+    auto frontmostWindow = this->frontmostWindow();
+
+    auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    creationOptions.shouldActivate = YES;
+    creationOptions.shouldSelect = YES;
+    creationOptions.desiredWindow = frontmostWindow ? frontmostWindow->delegate() : nil;
+    creationOptions.desiredIndex = frontmostWindow ? frontmostWindow->tabs().size() : 0;
+    creationOptions.desiredURL = optionsPageURL();
+
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        if (!newTab) {
+            completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"the options page cound not be opened"));
+            return;
+        }
+
+        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
+
+        completionHandler(std::nullopt);
+    }).get()];
 }
 
 void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)

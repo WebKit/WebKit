@@ -80,6 +80,14 @@
     completionHandler(newTab.get(), nil);
 }
 
+- (void)webExtensionController:(_WKWebExtensionController *)controller openOptionsPageForExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_openOptionsPage)
+        _openOptionsPage(extensionContext, completionHandler);
+    else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.openOptionsPage() not implemneted" }]);
+}
+
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler
 {
     if (_promptForPermissions)

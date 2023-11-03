@@ -48,6 +48,7 @@
 
 @property (nonatomic, copy) void (^openNewWindow)(_WKWebExtensionWindowCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionWindow>, NSError *));
 @property (nonatomic, copy) void (^openNewTab)(_WKWebExtensionTabCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^openOptionsPage)(_WKWebExtensionContext *, void (^)(NSError *));
 
 @property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
 @property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
