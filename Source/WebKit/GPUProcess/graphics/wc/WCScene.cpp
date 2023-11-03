@@ -156,7 +156,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
                         auto bitmap = tileUpdate.backingStore.bitmap();
                         if (bitmap) {
                             auto image = bitmap->createImage();
-                            backingStore.updateContents(*m_textureMapper, tileUpdate.index, *image, tileUpdate.dirtyRect);
+                            backingStore.updateContents(tileUpdate.index, *image, tileUpdate.dirtyRect);
                         }
                     }
                 }

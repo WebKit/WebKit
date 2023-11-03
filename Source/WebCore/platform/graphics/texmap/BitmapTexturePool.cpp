@@ -35,9 +35,8 @@ namespace WebCore {
 static const Seconds releaseUnusedSecondsTolerance { 3_s };
 static const Seconds releaseUnusedTexturesTimerInterval { 500_ms };
 
-BitmapTexturePool::BitmapTexturePool(const TextureMapperContextAttributes& contextAttributes)
-    : m_contextAttributes(contextAttributes)
-    , m_releaseUnusedTexturesTimer(RunLoop::current(), this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
+BitmapTexturePool::BitmapTexturePool()
+    : m_releaseUnusedTexturesTimer(RunLoop::current(), this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
 {
 }
 
@@ -51,7 +50,7 @@ RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, con
         });
 
     if (selectedEntry == m_textures.end()) {
-        m_textures.append(Entry(createTexture(flags)));
+        m_textures.append(Entry(BitmapTexture::create(flags)));
         selectedEntry = &m_textures.last();
     }
 
@@ -82,11 +81,6 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 
     if (!m_textures.isEmpty())
         scheduleReleaseUnusedTextures();
-}
-
-RefPtr<BitmapTexture> BitmapTexturePool::createTexture(const BitmapTexture::Flags flags)
-{
-    return BitmapTexture::create(m_contextAttributes, flags);
 }
 
 } // namespace WebCore

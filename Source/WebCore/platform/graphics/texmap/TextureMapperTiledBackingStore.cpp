@@ -154,14 +154,14 @@ void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper.maxTextureSize(), !image->currentFrameKnownToBeOpaque());
     for (auto& tile : m_tiles)
-        tile.updateContents(textureMapper, image, dirtyRect);
+        tile.updateContents(image, dirtyRect);
 }
 
 void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const FloatSize& totalSize, const IntRect& dirtyRect)
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper.maxTextureSize(), true);
     for (auto& tile : m_tiles)
-        tile.updateContents(textureMapper, sourceLayer, dirtyRect, m_contentsScale);
+        tile.updateContents(sourceLayer, dirtyRect, m_contentsScale);
 }
 
 } // namespace WebCore

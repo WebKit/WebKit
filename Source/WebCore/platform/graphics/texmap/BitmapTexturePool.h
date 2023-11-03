@@ -29,7 +29,6 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "BitmapTexture.h"
-#include "TextureMapperContextAttributes.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -40,7 +39,7 @@ class BitmapTexturePool {
     WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit BitmapTexturePool(const TextureMapperContextAttributes&);
+    BitmapTexturePool();
 
     RefPtr<BitmapTexture> acquireTexture(const IntSize&, const BitmapTexture::Flags);
     void releaseUnusedTexturesTimerFired();
@@ -59,9 +58,7 @@ private:
     };
 
     void scheduleReleaseUnusedTextures();
-    RefPtr<BitmapTexture> createTexture(const BitmapTexture::Flags);
 
-    TextureMapperContextAttributes m_contextAttributes;
     Vector<Entry> m_textures;
     RunLoop::Timer m_releaseUnusedTexturesTimer;
 };

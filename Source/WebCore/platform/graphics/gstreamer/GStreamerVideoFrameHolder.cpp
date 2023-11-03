@@ -25,7 +25,6 @@
 
 #include "BitmapTexture.h"
 #include "BitmapTexturePool.h"
-#include "TextureMapperContextAttributes.h"
 #include "TextureMapperFlags.h"
 
 namespace WebCore {

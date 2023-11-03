@@ -71,7 +71,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 if (!proxy.isActive())
                     return;
 
-                auto texture = BitmapTexture::create(TextureMapperContextAttributes::get());
+                auto texture = BitmapTexture::create();
 
                 {
                     Locker locker { m_imageBufferLock };

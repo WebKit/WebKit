@@ -81,6 +81,8 @@ private:
     public:
         static Ref<SharedGLData> currentSharedGLData(void* platformContext)
         {
+            ASSERT(platformContext);
+
             auto it = contextDataMap().find(platformContext);
             if (it != contextDataMap().end())
                 return *it->value;
@@ -176,13 +178,9 @@ std::unique_ptr<TextureMapper> TextureMapper::create()
 }
 
 TextureMapper::TextureMapper()
-    : m_contextAttributes(TextureMapperContextAttributes::get())
+    : m_texturePool(makeUnique<BitmapTexturePool>())
+    , m_data(new TextureMapperGLData(GLContext::current()->platformContext()))
 {
-    void* platformContext = GLContext::current()->platformContext();
-    ASSERT(platformContext);
-
-    m_data = new TextureMapperGLData(platformContext);
-    m_texturePool = makeUnique<BitmapTexturePool>(m_contextAttributes);
 }
 
 RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
@@ -478,7 +476,7 @@ void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> fl
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -543,7 +541,7 @@ void TextureMapper::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, 
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -599,7 +597,7 @@ void TextureMapper::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textur
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -647,7 +645,7 @@ void TextureMapper::drawTexturePackedYUV(GLuint texture, const std::array<GLfloa
         options.add(TextureMapperShaderProgram::Antialiasing);
         flags.add(TextureMapperFlags::ShouldAntialias);
     }
-    if (m_wrapMode == WrapMode::Repeat && !m_contextAttributes.supportsNPOTTextures)
+    if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
@@ -794,7 +792,7 @@ void TextureMapper::drawTexturedQuadWithProgram(TextureMapperShaderProgram& prog
 {
     glUseProgram(program.programID());
 
-    bool repeatWrap = m_wrapMode == WrapMode::Repeat && m_contextAttributes.supportsNPOTTextures;
+    bool repeatWrap = m_wrapMode == WrapMode::Repeat && GLContext::current()->glExtensions().OES_texture_npot;
     GLenum target = GLenum(GL_TEXTURE_2D);
     if (flags.contains(TextureMapperFlags::ShouldUseExternalOESTextureRect))
         target = GLenum(GL_TEXTURE_EXTERNAL_OES);
@@ -1318,11 +1316,6 @@ void TextureMapper::endClip()
 IntRect TextureMapper::clipBounds()
 {
     return clipStack().current().scissorBox;
-}
-
-Ref<BitmapTexture> TextureMapper::createTexture()
-{
-    return BitmapTexture::create(m_contextAttributes);
 }
 
 void TextureMapper::setDepthRange(double zNear, double zFar)

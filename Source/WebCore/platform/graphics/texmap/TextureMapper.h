@@ -26,7 +26,6 @@
 #include "FilterOperation.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapperContextAttributes.h"
 #include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
 #include <array>
@@ -84,7 +83,6 @@ public:
     void endClip();
     IntRect clipBounds();
     IntSize maxTextureSize() const { return IntSize(2000, 2000); }
-    Ref<BitmapTexture> createTexture();
     void setDepthRange(double zNear, double zFar);
     void setMaskMode(bool m) { m_isMaskMode = m; }
     void setWrapMode(WrapMode m) { m_wrapMode = m; }
@@ -130,7 +128,6 @@ private:
     bool m_isMaskMode { false };
     TransformationMatrix m_patternTransform;
     WrapMode m_wrapMode { WrapMode::Stretch };
-    TextureMapperContextAttributes m_contextAttributes;
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
 };

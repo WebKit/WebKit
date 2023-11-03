@@ -576,6 +576,17 @@ unsigned GLContext::version()
     return m_version;
 }
 
+const GLContext::GLExtensions& GLContext::glExtensions() const
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this] {
+        const char* extensionsString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+        m_glExtensions.OES_texture_npot = isExtensionSupported(extensionsString, "GL_OES_texture_npot");
+        m_glExtensions.EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage");
+    });
+    return m_glExtensions;
+}
+
 GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)
     : m_context(WTFMove(context))
 {
