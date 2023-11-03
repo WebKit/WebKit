@@ -680,6 +680,9 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRe
                 queue.append(*element);
         }
 
+        // Gaining or losing fullscreen state may change viewport arguments
+        node->protectedDocument()->updateViewportArguments();
+
 #if ENABLE(VIDEO)
         if (shouldNotifyMediaElement && is<HTMLMediaElement>(node.get()))
             downcast<HTMLMediaElement>(node.get()).enteredOrExitedFullscreen();

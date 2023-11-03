@@ -1,0 +1,8 @@
+
+EXPECTED (internals.documentBackgroundColor() == 'rgb(255, 255, 255)') OK
+RUN(enterFullscreen())
+EXPECTED (internals.documentBackgroundColor() == 'rgb(0, 128, 0)') OK
+RUN(exitFullscreen())
+EXPECTED (internals.documentBackgroundColor() == 'rgb(255, 255, 255)') OK
+END OF TEST
+

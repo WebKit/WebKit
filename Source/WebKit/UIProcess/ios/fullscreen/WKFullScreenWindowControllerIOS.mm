@@ -32,6 +32,7 @@
 #import "VideoPresentationManagerProxy.h"
 #import "WKFullScreenViewController.h"
 #import "WKFullscreenStackView.h"
+#import "WKScrollView.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
@@ -140,54 +141,106 @@ struct WKWebViewState {
     CGFloat _savedPageScale = 1;
     CGFloat _savedViewScale = 1.0;
     CGFloat _savedZoomScale = 1;
+    CGFloat _savedContentZoomScale = 1;
+    BOOL _savedContentInsetWasExternallyOverridden = NO;
     UIEdgeInsets _savedEdgeInset = UIEdgeInsetsZero;
+    BOOL _savedHaveSetObscuredInsets = NO;
     UIEdgeInsets _savedObscuredInsets = UIEdgeInsetsZero;
     UIEdgeInsets _savedScrollIndicatorInsets = UIEdgeInsetsZero;
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    BOOL _savedContentInsetAdjustmentBehaviorWasExternallyOverridden = NO;
+#endif
+    UIScrollViewContentInsetAdjustmentBehavior _savedContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
     CGPoint _savedContentOffset = CGPointZero;
     CGFloat _savedMinimumZoomScale = 1;
     CGFloat _savedMaximumZoomScale = 1;
     BOOL _savedBouncesZoom = NO;
     BOOL _savedForceAlwaysUserScalable = NO;
     CGFloat _savedMinimumEffectiveDeviceWidth = 0;
+    BOOL _savedHaveSetUnobscuredSafeAreaInsets = NO;
+    UIEdgeInsets _savedUnobscuredSafeAreaInsets = UIEdgeInsetsZero;
+    BOOL _savedHasOverriddenLayoutParameters = NO;
+    std::optional<CGSize> _savedMinimumUnobscuredSizeOverride;
+    std::optional<CGSize> _savedMaximumUnobscuredSizeOverride;
+
 
     void applyTo(WKWebView* webView)
     {
         [webView _setPageScale:_savedPageScale withOrigin:CGPointMake(0, 0)];
-        [webView _setObscuredInsets:_savedObscuredInsets];
-        [[webView scrollView] setContentInset:_savedEdgeInset];
-        [[webView scrollView] setContentOffset:_savedContentOffset];
-        [[webView scrollView] setScrollIndicatorInsets:_savedScrollIndicatorInsets];
+        if (_savedHaveSetObscuredInsets)
+            webView._obscuredInsets = _savedObscuredInsets;
+        else
+            [webView _resetObscuredInsets];
+
+        auto* scrollView = (WKScrollView *)[webView scrollView];
+        if (_savedContentInsetWasExternallyOverridden)
+            scrollView.contentInset = _savedEdgeInset;
+        else
+            [scrollView _resetContentInset];
+
+        scrollView.contentOffset = _savedContentOffset;
+        scrollView.scrollIndicatorInsets = _savedScrollIndicatorInsets;
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        if (_savedContentInsetAdjustmentBehaviorWasExternallyOverridden)
+            scrollView.contentInsetAdjustmentBehavior = _savedContentInsetAdjustmentBehavior;
+        else
+            [webView _resetScrollViewInsetAdjustmentBehavior];
+#endif
+
+        if (_savedHaveSetUnobscuredSafeAreaInsets)
+            webView._unobscuredSafeAreaInsets = _savedUnobscuredSafeAreaInsets;
+        else
+            [webView _resetUnobscuredSafeAreaInsets];
+
+        if (_savedHasOverriddenLayoutParameters && _savedMinimumUnobscuredSizeOverride && _savedMaximumUnobscuredSizeOverride)
+            [webView _overrideLayoutParametersWithMinimumLayoutSize:*_savedMinimumUnobscuredSizeOverride maximumUnobscuredSizeOverride:*_savedMaximumUnobscuredSizeOverride];
+        else
+            [webView _clearOverrideLayoutParameters];
+
         if (auto page = webView._page) {
             page->setTopContentInset(_savedTopContentInset);
             page->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
         }
         [webView _setViewScale:_savedViewScale];
-        [[webView scrollView] setZoomScale:_savedZoomScale];
-        webView.scrollView.minimumZoomScale = _savedMinimumZoomScale;
-        webView.scrollView.maximumZoomScale = _savedMaximumZoomScale;
-        webView.scrollView.bouncesZoom = _savedBouncesZoom;
+        scrollView.zoomScale = _savedZoomScale;
+        scrollView.minimumZoomScale = _savedMinimumZoomScale;
+        scrollView.maximumZoomScale = _savedMaximumZoomScale;
+        scrollView.bouncesZoom = _savedBouncesZoom;
         webView._minimumEffectiveDeviceWidth = _savedMinimumEffectiveDeviceWidth;
     }
 
     void store(WKWebView* webView)
     {
-        _savedPageScale = [webView _pageScale];
-        _savedObscuredInsets = [webView _obscuredInsets];
-        _savedEdgeInset = [[webView scrollView] contentInset];
-        _savedContentOffset = [[webView scrollView] contentOffset];
+        auto* scrollView = [webView _wkScrollView];
+        _savedPageScale = webView._pageScale;
+        _savedHaveSetObscuredInsets = webView._haveSetObscuredInsets;
+        _savedObscuredInsets = webView._obscuredInsets;
+        _savedContentInsetWasExternallyOverridden = scrollView._contentInsetWasExternallyOverridden;
+        _savedEdgeInset = scrollView.contentInset;
+        _savedContentOffset = scrollView.contentOffset;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
+        _savedScrollIndicatorInsets = scrollView.scrollIndicatorInsets;
 ALLOW_DEPRECATED_DECLARATIONS_END
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        _savedContentInsetAdjustmentBehaviorWasExternallyOverridden = scrollView._contentInsetAdjustmentBehaviorWasExternallyOverridden;
+#endif
         if (auto page = webView._page) {
             _savedTopContentInset = page->topContentInset();
             _savedForceAlwaysUserScalable = page->forceAlwaysUserScalable();
         }
-        _savedViewScale = [webView _viewScale];
-        _savedZoomScale = [[webView scrollView] zoomScale];
-        _savedMinimumZoomScale = webView.scrollView.minimumZoomScale;
-        _savedMaximumZoomScale = webView.scrollView.maximumZoomScale;
-        _savedBouncesZoom = webView.scrollView.bouncesZoom;
+        _savedViewScale = webView._viewScale;
+        _savedZoomScale = scrollView.zoomScale;
+        _savedContentZoomScale = webView._contentZoomScale;
+        _savedMinimumZoomScale = scrollView.minimumZoomScale;
+        _savedMaximumZoomScale = scrollView.maximumZoomScale;
+        _savedBouncesZoom = scrollView.bouncesZoom;
         _savedMinimumEffectiveDeviceWidth = webView._minimumEffectiveDeviceWidth;
+        _savedHaveSetUnobscuredSafeAreaInsets = webView._haveSetUnobscuredSafeAreaInsets;
+        _savedUnobscuredSafeAreaInsets = webView._unobscuredSafeAreaInsets;
+        _savedHasOverriddenLayoutParameters = webView._hasOverriddenLayoutParameters;
+        _savedMaximumUnobscuredSizeOverride = webView._maximumUnobscuredSizeOverride;
+        _savedMinimumUnobscuredSizeOverride = webView._minimumUnobscuredSizeOverride;
     }
 };
 
@@ -896,31 +949,15 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         WebKit::replaceViewWithView(webView.get(), _webViewPlaceholder.get());
 
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
-        [webView setFrame:[_window bounds]];
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
-        [webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
+        WebKit::WKWebViewState().applyTo(webView.get());
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];
         [webView layoutIfNeeded];
 
         if (auto* manager = self._manager)
             manager->setAnimatingFullScreen(true);
-
-        WebCore::ViewportArguments arguments { WebCore::ViewportArguments::Type::CSSDeviceAdaptation };
-        arguments.zoom = WebKit::ZoomForFullscreenWindow;
-        arguments.minZoom = WebKit::ZoomForFullscreenWindow;
-        arguments.maxZoom = WebKit::ZoomForFullscreenWindow;
-        arguments.userZoom = WebKit::ZoomForFullscreenWindow;
-#if PLATFORM(VISION)
-        if (manager->isVideoElement()) {
-            arguments.zoom = WebKit::ZoomForVisionFullscreenVideoWindow;
-            arguments.minZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
-            arguments.maxZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
-            arguments.userZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
-        }
-#endif
-        page->setOverrideViewportArguments(arguments);
 
         page->forceRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
             if (_exitRequested) {
@@ -1005,7 +1042,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             return;
         }
 
-        WebKit::WKWebViewState().applyTo(webView.get());
         auto page = [self._webView _page];
         auto* manager = self._manager;
 

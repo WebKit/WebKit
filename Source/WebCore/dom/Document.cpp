@@ -4230,13 +4230,24 @@ ViewportArguments Document::viewportArguments() const
 void Document::updateViewportArguments()
 {
     CheckedPtr page = this->page();
-    if (page && frame()->isMainFrame()) {
-#if ASSERT_ENABLED
-        m_didDispatchViewportPropertiesChanged = true;
+    if (!page)
+        return;
+
+    bool isViewportDocument = [&] {
+#if ENABLE(FULLSCREEN_API)
+        if (auto* outermostFullscreenDocument = page->outermostFullscreenDocument())
+            return outermostFullscreenDocument == this;
 #endif
-        page->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
-        page->chrome().didReceiveDocType(protectedFrame().releaseNonNull());
-    }
+        return frame()->isMainFrame();
+    }();
+    if (!isViewportDocument)
+        return;
+
+#if ASSERT_ENABLED
+    m_didDispatchViewportPropertiesChanged = true;
+#endif
+    page->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
+    page->chrome().didReceiveDocType(protectedFrame().releaseNonNull());
 }
 
 void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)

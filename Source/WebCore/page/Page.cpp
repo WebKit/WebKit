@@ -511,10 +511,31 @@ OptionSet<DisabledAdaptations> Page::disabledAdaptations() const
     return { };
 }
 
+static Document* viewportDocumentForFrame(const Frame& frame)
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (!localFrame)
+        return nullptr;
+
+    auto* document = localFrame->document();
+    if (!document)
+        return nullptr;
+
+    Page* page = localFrame->page();
+    if (!page)
+        return nullptr;
+
+    if (auto* fullscreenDocument = page->outermostFullscreenDocument())
+        return fullscreenDocument;
+
+    return document;
+}
+
 ViewportArguments Page::viewportArguments() const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    return localMainFrame && localMainFrame->document() ? localMainFrame->document()->viewportArguments() : ViewportArguments();
+    if (auto* document = viewportDocumentForFrame(mainFrame()))
+        return document->viewportArguments();
+    return ViewportArguments();
 }
 
 void Page::setOverrideViewportArguments(const std::optional<ViewportArguments>& viewportArguments)
@@ -3801,6 +3822,33 @@ void Page::setFullscreenControlsHidden(bool hidden)
     });
 #else
     UNUSED_PARAM(hidden);
+#endif
+}
+
+Document* Page::outermostFullscreenDocument() const
+{
+#if ENABLE(FULLSCREEN_API)
+    CheckedPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (!localMainFrame)
+        return nullptr;
+
+    CheckedPtr<Document> outermostFullscreenDocument = nullptr;
+    CheckedPtr currentDocument = localMainFrame->document();
+    while (currentDocument) {
+        auto* fullscreenElement = currentDocument->fullscreenManager().fullscreenElement();
+        if (!fullscreenElement)
+            break;
+
+        outermostFullscreenDocument = currentDocument;
+        auto* fullscreenFrame = dynamicDowncast<HTMLFrameOwnerElement>(fullscreenElement);
+        if (!fullscreenFrame)
+            break;
+
+        currentDocument = fullscreenFrame->contentDocument();
+    }
+    return outermostFullscreenDocument.get();
+#else
+    return nullptr;
 #endif
 }
 
