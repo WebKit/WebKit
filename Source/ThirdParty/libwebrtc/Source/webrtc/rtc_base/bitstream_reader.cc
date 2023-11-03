@@ -81,7 +81,12 @@ int BitstreamReader::ReadBit() {
 void BitstreamReader::ConsumeBits(int bits) {
   RTC_DCHECK_GE(bits, 0);
   set_last_read_is_verified(false);
-  if (remaining_bits_ < bits) {
+#if WEBRTC_WEBKIT_BUILD
+  if (remaining_bits_ < bits || bits < 0)
+#else
+  if (remaining_bits_ < bits)
+#endif
+  {
     Invalidate();
     return;
   }
