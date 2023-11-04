@@ -99,13 +99,16 @@ class VideoEncoderConfig {
 
     virtual void FillVideoCodecVp8(VideoCodecVP8* vp8_settings) const;
     virtual void FillVideoCodecVp9(VideoCodecVP9* vp9_settings) const;
+#ifdef WEBRTC_USE_H265
     virtual void FillVideoCodecH265(VideoCodecH265* h265_settings) const;
+#endif
 
    private:
     ~EncoderSpecificSettings() override {}
     friend class VideoEncoderConfig;
   };
 
+#ifdef WEBRTC_USE_H265
   class H265EncoderSpecificSettings : public EncoderSpecificSettings {
    public:
     explicit H265EncoderSpecificSettings(const VideoCodecH265& specifics);
@@ -114,6 +117,7 @@ class VideoEncoderConfig {
    private:
     VideoCodecH265 specifics_;
   };
+#endif
 
   class Vp8EncoderSpecificSettings : public EncoderSpecificSettings {
    public:

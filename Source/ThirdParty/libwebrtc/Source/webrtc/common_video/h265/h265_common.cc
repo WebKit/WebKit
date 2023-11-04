@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#ifdef WEBRTC_USE_H265
 #include "common_video/h265/h265_common.h"
 
 #include "common_video/h264/h264_common.h"
@@ -58,3 +59,4 @@ uint32_t Log2(uint32_t value) {
 
 }  // namespace H265
 }  // namespace webrtc
+#endif // WEBRTC_USE_H265

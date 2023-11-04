@@ -9,6 +9,7 @@
  *
  */
 
+#ifdef WEBRTC_USE_H265
 #import "RTCVideoEncoderH265.h"
 
 #import <VideoToolbox/VideoToolbox.h>
@@ -615,3 +616,4 @@ void compressionOutputCallback(void* encoder,
 }
 
 @end
+#endif // WEBRTC_USE_H265

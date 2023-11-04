@@ -31,7 +31,9 @@ namespace WebKit {
 
 enum class VideoCodecType : uint8_t {
     H264,
+#ifdef WEBRTC_USE_H265
     H265,
+#endif
     VP9,
     AV1
 };
@@ -45,7 +47,9 @@ template<> struct EnumTraits<WebKit::VideoCodecType> {
     using values = EnumValues<
         WebKit::VideoCodecType,
         WebKit::VideoCodecType::H264,
+#ifdef WEBRTC_USE_H265
         WebKit::VideoCodecType::H265,
+#endif
         WebKit::VideoCodecType::VP9,
         WebKit::VideoCodecType::AV1
     >;

@@ -2,6 +2,7 @@
  *  Intel License
  */
 
+#ifdef WEBRTC_USE_H265
 #include "modules/rtp_rtcp/source/rtp_format_h265.h"
 
 #include <string.h>
@@ -363,3 +364,4 @@ void RtpPacketizerH265::NextFragmentPacket(RtpPacketToSend* rtp_packet) {
 }
 
 }  // namespace webrtc
+#endif // WEBRTC_USE_H265

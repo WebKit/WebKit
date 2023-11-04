@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#ifdef WEBRTC_USE_H265
 #include "common_video/h265/h265_vps_parser.h"
 
 #include <memory>
@@ -55,3 +56,4 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
 }
 
 }  // namespace webrtc
+#endif // WEBRTC_USE_H265

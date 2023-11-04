@@ -55,6 +55,7 @@ bool VideoCodecH264::operator==(const VideoCodecH264& other) const {
           numberOfTemporalLayers == other.numberOfTemporalLayers);
 }
 
+#ifdef WEBRTC_USE_H265
 bool VideoCodecH265::operator==(const VideoCodecH265& other) const {
   return (frameDroppingOn == other.frameDroppingOn &&
           keyFrameInterval == other.keyFrameInterval &&
@@ -63,6 +64,7 @@ bool VideoCodecH265::operator==(const VideoCodecH265& other) const {
           (spsLen == 0 || memcmp(spsData, other.spsData, spsLen) == 0) &&
           (ppsLen == 0 || memcmp(ppsData, other.ppsData, ppsLen) == 0));
 }
+#endif
 
 VideoCodec::VideoCodec()
     : codecType(kVideoCodecGeneric),

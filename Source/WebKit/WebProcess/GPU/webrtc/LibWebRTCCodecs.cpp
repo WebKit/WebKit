@@ -70,8 +70,10 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
     if (equalIgnoringASCIICase(codecString, "H264"_s))
         return { codecs.createDecoder(VideoCodecType::H264), false };
 
+#ifdef WEBRTC_USE_H265
     if (equalIgnoringASCIICase(codecString, "H265"_s))
         return { codecs.createDecoder(VideoCodecType::H265), false };
+#endif
 
     if (equalIgnoringASCIICase(codecString, "VP9"_s) && codecs.supportVP9VTB())
         return { codecs.createDecoder(VideoCodecType::VP9), false };
@@ -96,8 +98,10 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const 
     if (codec.startsWith("avc1."_s))
         return VideoCodecType::H264;
 
+#ifdef WEBRTC_USE_H265
     if (codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s))
         return VideoCodecType::H265;
+#endif
 
     return { };
 }
@@ -115,8 +119,10 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoEncoderTypeFromWebCodec(cons
     if (codec.startsWith("avc1."_s))
         return VideoCodecType::H264;
 
+#ifdef WEBRTC_USE_H265
     if (codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s))
         return VideoCodecType::H265;
+#endif
 
     return { };
 }
@@ -142,8 +148,10 @@ static webrtc::WebKitVideoEncoder createVideoEncoder(const webrtc::SdpVideoForma
     if (format.name == "H264" || format.name == "h264")
         return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H264, format.parameters);
 
+#ifdef WEBRTC_USE_H265
     if (format.name == "H265" || format.name == "h265")
         return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H265, format.parameters);
+#endif
 
     return nullptr;
 }
@@ -520,8 +528,10 @@ static inline webrtc::VideoCodecType toWebRTCCodecType(VideoCodecType type)
     switch (type) {
     case VideoCodecType::H264:
         return webrtc::kVideoCodecH264;
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::H265:
         return webrtc::kVideoCodecH265;
+#endif
     case VideoCodecType::VP9:
         return webrtc::kVideoCodecVP9;
     case VideoCodecType::AV1:

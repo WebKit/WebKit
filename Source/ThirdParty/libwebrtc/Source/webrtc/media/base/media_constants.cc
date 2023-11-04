@@ -103,7 +103,9 @@ const char kVp8CodecName[] = "VP8";
 const char kVp9CodecName[] = "VP9";
 const char kAv1CodecName[] = "AV1";
 const char kH264CodecName[] = "H264";
+#ifdef WEBRTC_USE_H265
 const char kH265CodecName[] = "H265";
+#endif
 
 // RFC 6184 RTP Payload Format for H.264 video
 const char kH264FmtpProfileLevelId[] = "profile-level-id";

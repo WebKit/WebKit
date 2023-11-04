@@ -103,7 +103,9 @@ class AnnexBBufferReader final {
   // Return true if a NALU of the desired type is found, false if we
   // reached the end instead
   bool SeekToNextNaluOfType(H264::NaluType type);
+#ifdef WEBRTC_USE_H265
   bool SeekToNextNaluOfType(H265::NaluType type);
+#endif
 
  private:
   // Returns the the next offset that contains NALU data.

@@ -64,7 +64,9 @@ void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeS
 using LocalDecoder = void*;
 using LocalDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
 void* createLocalH264Decoder(LocalDecoderCallback);
+#ifdef WEBRTC_USE_H265
 void* createLocalH265Decoder(LocalDecoderCallback);
+#endif
 void* createLocalVP9Decoder(LocalDecoderCallback);
 void releaseLocalDecoder(LocalDecoder);
 void flushLocalDecoder(LocalDecoder);

@@ -11,6 +11,7 @@
 #ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H265_H_
 #define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H265_H_
 
+#ifdef WEBRTC_USE_H265
 #include <memory>
 #include <queue>
 #include <string>
@@ -104,4 +105,5 @@ class RtpPacketizerH265 : public RtpPacketizer {
   size_t num_packets_left_;
 };
 }  // namespace webrtc
+#endif // WEBRTC_USE_H265
 #endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H265_H_

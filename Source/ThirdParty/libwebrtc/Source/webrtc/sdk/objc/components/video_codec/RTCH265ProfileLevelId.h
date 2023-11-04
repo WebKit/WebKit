@@ -8,9 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#ifdef WEBRTC_USE_H265
 #import <Foundation/Foundation.h>
 
 #import "RTCMacros.h"
 
 RTC_OBJC_EXPORT extern NSString *const kRTCVideoCodecH265Name;
 RTC_OBJC_EXPORT extern NSString *const kRTCLevel31Main;
+#endif // WEBRTC_USE_H265

@@ -7,6 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
+#ifdef WEBRTC_USE_H265
 #include "modules/video_coding/h265_vps_sps_pps_tracker.h"
 
 #include <memory>
@@ -312,3 +314,4 @@ void H265VpsSpsPpsTracker::InsertVpsSpsPpsNalus(
 
 }  // namespace video_coding
 }  // namespace webrtc
+#endif // WEBRTC_USE_H265

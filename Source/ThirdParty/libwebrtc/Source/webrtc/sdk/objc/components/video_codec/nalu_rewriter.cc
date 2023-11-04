@@ -351,6 +351,7 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
   *out_sample_buffer = nullptr;
 
   AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size, false);
+#ifdef WEBRTC_USE_H265
   if (reader.SeekToNextNaluOfType(H265::kVps)) {
     // Buffer contains an SPS NALU - skip it and the following PPS
     const uint8_t* data;
@@ -367,7 +368,9 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
       RTC_LOG(LS_ERROR) << "Failed to read PPS";
       return false;
     }
-  } else {
+  } else
+#endif // WEBRTC_USE_H265
+  {
     // No SPS NALU - start reading from the first NALU in the buffer
     reader.SeekToStart();
   }

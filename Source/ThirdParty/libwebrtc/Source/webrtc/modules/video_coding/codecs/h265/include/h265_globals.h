@@ -14,6 +14,7 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_H265_INCLUDE_H265_GLOBALS_H_
 #define MODULES_VIDEO_CODING_CODECS_H265_INCLUDE_H265_GLOBALS_H_
 
+#ifdef WEBRTC_USE_H265
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 
 namespace webrtc {
@@ -56,3 +57,4 @@ struct RTPVideoHeaderH265 {
 }  // namespace webrtc
 
 #endif  // MODULES_VIDEO_CODING_CODECS_H265_INCLUDE_H265_GLOBALS_H_
+#endif // WEBRTC_USE_H265

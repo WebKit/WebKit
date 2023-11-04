@@ -106,10 +106,12 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
   }
 }
 
+#ifdef WEBRTC_USE_H265
 void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecH265(
     VideoCodecH265* h265_settings) const {
   RTC_DCHECK_NOTREACHED();
 }
+#endif
 
 void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecVp8(
     VideoCodecVP8* vp8_settings) const {
@@ -121,6 +123,7 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecVp9(
   RTC_DCHECK_NOTREACHED();
 }
 
+#ifdef WEBRTC_USE_H265
 VideoEncoderConfig::H265EncoderSpecificSettings::H265EncoderSpecificSettings(
     const VideoCodecH265& specifics)
     : specifics_(specifics) {}
@@ -129,6 +132,7 @@ void VideoEncoderConfig::H265EncoderSpecificSettings::FillVideoCodecH265(
     VideoCodecH265* h265_settings) const {
   *h265_settings = specifics_;
 }
+#endif
 
 VideoEncoderConfig::Vp8EncoderSpecificSettings::Vp8EncoderSpecificSettings(
     const VideoCodecVP8& specifics)

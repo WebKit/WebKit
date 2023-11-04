@@ -9,6 +9,7 @@
  */
  /* This file is borrowed from sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.mm */
 
+#ifdef WEBRTC_USE_H265
 #import "RTCCodecSpecificInfoH265+Private.h"
 
 #include "modules/video_coding/codecs/h265/include/h265_globals.h"
@@ -28,3 +29,4 @@
 }
 
 @end
+#endif // WEBRTC_USE_H265

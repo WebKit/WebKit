@@ -143,8 +143,10 @@ std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDe
     switch (codecType) {
     case VideoCodecType::H264:
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH264Decoder(block.get())).moveToUniquePtr();
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::H265:
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH265Decoder(block.get())).moveToUniquePtr();
+#endif
     case VideoCodecType::VP9:
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalVP9Decoder(block.get())).moveToUniquePtr();
     default:
@@ -163,10 +165,12 @@ static bool validateCodecString(VideoCodecType codecType, const String& codecStr
         // Limit to High Profile, level 5.2.
         return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
     }
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::H265: {
         auto parameters = parseHEVCCodecParameters(codecString);
         return parameters && validateHEVCParameters(*parameters, false, false);
     }
+#endif
     case VideoCodecType::VP9:
         ASSERT(codecString.startsWith("vp09.0"_s));
         return true;
@@ -283,6 +287,7 @@ static bool validateEncoderConfiguration(VideoCodecType codecType, const String&
         }
         return true;
     }
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::H265: {
         if (scalabilityMode != VideoEncoderScalabilityMode::L1T1)
             return false;
@@ -293,6 +298,7 @@ static bool validateEncoderConfiguration(VideoCodecType codecType, const String&
         }
         return true;
     }
+#endif
     case VideoCodecType::VP9:
     case VideoCodecType::AV1:
         break;
@@ -308,10 +314,17 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
 
+#ifdef WEBRTC_USE_H265
     if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265) {
         callback(false);
         return;
     }
+#else
+    if (codecType != VideoCodecType::H264) {
+        callback(false);
+        return;
+    }
+#endif
 
     if (!validateEncoderConfiguration(codecType, codecString, useLowLatency, scalabilityMode)) {
         callback(false);
@@ -339,7 +352,11 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
         callback(false);
         return;
     }
+#ifdef WEBRTC_USE_H265
     auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get());
+#else
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { "H264", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get());
+#endif
     if (!encoder) {
         callback(false);
         return;

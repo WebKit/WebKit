@@ -11,6 +11,8 @@
 #ifndef COMMON_VIDEO_H265_H265_COMMON_H_
 #define COMMON_VIDEO_H265_H265_COMMON_H_
 
+#ifdef WEBRTC_USE_H265
+
 #include <memory>
 #include <vector>
 
@@ -98,5 +100,7 @@ void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination);
 uint32_t Log2(uint32_t value);
 }  // namespace H265
 }  // namespace webrtc
+
+#endif // WEBRTC_USE_H265
 
 #endif  // COMMON_VIDEO_H265_H265_COMMON_H_
