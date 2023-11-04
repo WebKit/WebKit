@@ -1336,9 +1336,6 @@ fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-widt
 # problem with blur handling
 mathml/focus-event-handling.html [ Failure ]
 
-# <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
-fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
-
 # <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-001.html [ Pass Failure ]
 
