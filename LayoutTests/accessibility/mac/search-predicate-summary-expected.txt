@@ -1,16 +1,16 @@
 This tests the ability to search for summary elements.
 
 
-AXRole: AXButton AXTitle: Custom summary text
+AXRole: AXDisclosureTriangle AXTitle: Custom summary text
 PASS: searchResult.isPressActionSupported() === false
 
-AXRole: AXButton AXTitle: Details
+AXRole: AXDisclosureTriangle AXTitle: Details
 PASS: searchResult.isPressActionSupported() === false
 
-AXRole: AXButton AXTitle: display:contents custom summary text
+AXRole: AXDisclosureTriangle AXTitle: display:contents custom summary text
 PASS: searchResult.isPressActionSupported() === false
 
-AXRole: AXButton AXTitle: Details
+AXRole: AXDisclosureTriangle AXTitle: Details
 PASS: searchResult.isPressActionSupported() === false
 
 PASS successfullyParsed is true

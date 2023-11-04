@@ -37,7 +37,7 @@ This test ensures elements with CSS display: contents have the correct role.
     AXSubrole: AXDetails
 
 <summary class="testcase" id="summary"></summary>
-    AXRole: AXButton
+    AXRole: AXDisclosureTriangle
     AXSubrole: AXSummary
 
 <dfn class="testcase" id="dfn"></dfn>
