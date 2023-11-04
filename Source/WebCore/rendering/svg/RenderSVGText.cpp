@@ -286,7 +286,6 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
     // subtree. If this changes, clear the cache. It's going to be rebuilt below.
     m_layoutAttributesBuilder.clearTextPositioningElements();
 
-    checkLayoutAttributesConsistency(this, m_layoutAttributes);
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
         if (is<RenderSVGInlineText>(*descendant))
             m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
