@@ -185,9 +185,7 @@ TextureMapper::TextureMapper()
 
 RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
 {
-    RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, flags);
-    selectedTexture->reset(size, flags);
-    return selectedTexture;
+    return m_texturePool->acquireTexture(size, flags);
 }
 
 #if USE(GRAPHICS_LAYER_WC)
@@ -454,9 +452,6 @@ static void prepareRoundedRectClip(TextureMapperShaderProgram& program, const fl
 
 void TextureMapper::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, AllEdgesExposed allEdgesExposed)
 {
-    if (!texture.isValid())
-        return;
-
     if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
@@ -839,19 +834,19 @@ void TextureMapper::drawTexturedQuadWithProgram(TextureMapperShaderProgram& prog
 void TextureMapper::drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect)
 {
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram({ TextureMapperShaderProgram::TextureCopy });
-    IntSize textureSize = sourceTexture.contentSize();
+    const auto& textureSize = sourceTexture.size();
 
     glUseProgram(program->programID());
 
     auto textureCopyMatrix = TransformationMatrix::identity;
 
     textureCopyMatrix.scale3d(
-        double(sourceRect.width()) / sourceTexture.contentSize().width(),
-        double(sourceRect.height()) / sourceTexture.contentSize().height(),
+        double(sourceRect.width()) / textureSize.width(),
+        double(sourceRect.height()) / textureSize.height(),
         1
     ).translate3d(
-        double(sourceRect.x()) / sourceTexture.contentSize().width(),
-        double(sourceRect.y()) / sourceTexture.contentSize().height(),
+        double(sourceRect.x()) / textureSize.width(),
+        double(sourceRect.y()) / textureSize.height(),
         0
     );
 
@@ -872,7 +867,7 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
         alphaBlur ? TextureMapperShaderProgram::AlphaBlur : TextureMapperShaderProgram::BlurFilter,
     });
 
-    IntSize textureSize = sourceTexture.contentSize();
+    const auto& textureSize = sourceTexture.size();
 
     glUseProgram(program->programID());
 
@@ -911,7 +906,7 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
 
 RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourceTexture, const BlurFilterOperation& blurFilter)
 {
-    IntSize textureSize = sourceTexture->contentSize();
+    const auto& textureSize = sourceTexture->size();
     float radiusX = floatValueForLength(blurFilter.stdDeviation(), textureSize.width());
     float radiusY = floatValueForLength(blurFilter.stdDeviation(), textureSize.height());
 
@@ -993,7 +988,7 @@ RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourc
 
 RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture> sourceTexture, const DropShadowFilterOperation& dropShadowFilter)
 {
-    IntSize textureSize = sourceTexture->contentSize();
+    const auto& textureSize = sourceTexture->size();
     RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(textureSize, BitmapTexture::SupportsAlpha);
     RefPtr<BitmapTexture> contentTexture = acquireTextureFromPool(textureSize, BitmapTexture::SupportsAlpha);
     IntSize currentSize = textureSize;
@@ -1121,7 +1116,7 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
         return sourceTexture;
     }
 
-    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(sourceTexture->contentSize(), BitmapTexture::SupportsAlpha);
+    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(sourceTexture->size(), BitmapTexture::SupportsAlpha);
 
     bindSurface(resultTexture.get());
 
@@ -1130,7 +1125,7 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     prepareFilterProgram(program.get(), *filter);
-    FloatRect targetRect(FloatPoint::zero(), sourceTexture->contentSize());
+    FloatRect targetRect(FloatPoint::zero(), sourceTexture->size());
     drawTexturedQuadWithProgram(program.get(), sourceTexture->id(), { }, targetRect, TransformationMatrix(), 1);
 
     return resultTexture;

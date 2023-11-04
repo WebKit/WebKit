@@ -50,7 +50,6 @@ static auto *manifest = @{
 TEST(WKWebExtensionAPIScripting, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-
         @"browser.test.assertThrows(() => browser.scripting.executeScript(), /a required argument is missing/i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target' : {}}), /missing required keys: 'tabId'./i)",

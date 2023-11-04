@@ -209,8 +209,8 @@ enum class ScrollingStateNodeProperty : uint64_t {
     Layer                                       = 1LLU << 0,
     ChildNodes                                  = 1LLU << 44,
     // ScrollingStateScrollingNode
-    ScrollableAreaSize                          = 1LLU << 1,
-    TotalContentsSize                           = 1LLU << 2,
+    ScrollableAreaSize                          = 1LLU << 1, // Same value as RelatedOverflowScrollingNodes, ViewportConstraints and OverflowScrollingNode
+    TotalContentsSize                           = 1LLU << 2, // Same value as LayoutConstraintData
     ReachableContentsSize                       = 1LLU << 3,
     ScrollPosition                              = 1LLU << 4,
     ScrollOrigin                                = 1LLU << 5,
@@ -257,14 +257,14 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MaxLayoutViewportOrigin                     = MinLayoutViewportOrigin << 1,
     OverrideVisualViewportSize                  = MaxLayoutViewportOrigin << 1,
     OverlayScrollbarsEnabled                    = OverrideVisualViewportSize << 1,
-    // ScrollingStatePositionedNode
-    RelatedOverflowScrollingNodes               = 1LLU << 45,
-    LayoutConstraintData                        = 1LLU << 46,
-    // ScrollingStateFixedNode, ScrollingStateStickyNode
-    ViewportConstraints                         = 1LLU << 47,
-    // ScrollingStateOverflowScrollProxyNode
-    OverflowScrollingNode                       = 1LLU << 48,
     KeyboardScrollData                          = OverlayScrollbarsEnabled << 1,
+    // ScrollingStatePositionedNode
+    RelatedOverflowScrollingNodes               = 1LLU << 1, // Same value as ScrollableAreaSize, ViewportConstraints and OverflowScrollingNode
+    LayoutConstraintData                        = 1LLU << 2, // Same value as TotalContentsSize
+    // ScrollingStateFixedNode, ScrollingStateStickyNode
+    ViewportConstraints                         = 1LLU << 1, // Same value as ScrollableAreaSize, RelatedOverflowScrollingNodes and OverflowScrollingNode
+    // ScrollingStateOverflowScrollProxyNode
+    OverflowScrollingNode                       = 1LLU << 1, // Same value as ScrollableAreaSize, ViewportConstraints and RelatedOverflowScrollingNodes
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
@@ -339,7 +339,7 @@ public:
 
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
-    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree*, ScrollingNodeID); // FIXME: This ScrollingStateTree* should be ScrollingStateTree& once all subclasses have generated serialization.
+    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateNode(ScrollingNodeType, ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
 
     void setPropertyChangedInternal(Property property) { m_changedProperties.add(property); }

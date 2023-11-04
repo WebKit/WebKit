@@ -40,23 +40,14 @@
 
 namespace WebCore {
 
-Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateStickyNode(stateTree, nodeID));
-}
-
-Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateStickyNode(nodeID));
-}
-
-ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Sticky, nullptr, nodeID)
+ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, StickyPositionViewportConstraints&& constraints)
+    : ScrollingStateNode(ScrollingNodeType::Sticky, nodeID, WTFMove(children), changedProperties, layerID)
+    , m_constraints(WTFMove(constraints))
 {
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Sticky, &tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Sticky, tree, nodeID)
 {
 }
 

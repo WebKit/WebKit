@@ -71,8 +71,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                 if (!proxy.isActive())
                     return;
 
-                auto texture = BitmapTexture::create();
-
+                RefPtr<BitmapTexture> texture;
                 {
                     Locker locker { m_imageBufferLock };
 
@@ -84,8 +83,7 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                         return;
 
                     auto size = nativeImage->size();
-
-                    texture->reset(size, nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                    texture = BitmapTexture::create(size, nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
 #if USE(CAIRO)
                     auto* surface = nativeImage->platformImage().get();
                     auto* imageData = cairo_image_surface_get_data(surface);

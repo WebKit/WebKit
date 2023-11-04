@@ -55,7 +55,15 @@ header: <WebCore/ResourceRequest.h>
 }
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<PlatformColor>, RetainPtr<CGColorRef>> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor> value;
+}
+
+[Nested] struct WebCore::AttributedString::ColorFromPlatformColor {
+    WebCore::Color color
+}
+
+[Nested] struct WebCore::AttributedString::ColorFromCGColor {
+    WebCore::Color color
 }
 
 [Nested] struct WebCore::AttributedString::Range {

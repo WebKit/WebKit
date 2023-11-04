@@ -50,9 +50,10 @@ RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, con
         });
 
     if (selectedEntry == m_textures.end()) {
-        m_textures.append(Entry(BitmapTexture::create(flags)));
+        m_textures.append(Entry(BitmapTexture::create(size, flags)));
         selectedEntry = &m_textures.last();
-    }
+    } else
+        selectedEntry->m_texture->reset(size, flags);
 
     scheduleReleaseUnusedTextures();
     selectedEntry->markIsInUse();

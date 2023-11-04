@@ -60,15 +60,14 @@ public:
 
     typedef unsigned Flags;
 
-    static Ref<BitmapTexture> create(const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
+    static Ref<BitmapTexture> create(const IntSize& size, const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
     {
-        return adoptRef(*new BitmapTexture(flags, internalFormat));
+        return adoptRef(*new BitmapTexture(size, flags, internalFormat));
     }
 
     WEBCORE_EXPORT ~BitmapTexture();
 
-    IntSize size() const;
-    bool isValid() const;
+    const IntSize& size() const { return m_size; };
     Flags flags() const { return m_flags; }
     GLint internalFormat() const { return m_internalFormat; }
     bool isOpaque() const { return !(m_flags & SupportsAlpha); }
@@ -77,22 +76,13 @@ public:
     void initializeStencil();
     void initializeDepthBuffer();
     uint32_t id() const { return m_id; }
-    uint32_t textureTarget() const { return GL_TEXTURE_2D; }
-    IntSize textureSize() const { return m_textureSize; }
 
     void updateContents(NativeImage*, const IntRect&, const IntPoint& offset);
     void updateContents(GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
     void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine);
 
-    void reset(const IntSize& size, Flags flags = 0)
-    {
-        m_flags = flags;
-        m_contentSize = size;
-        didReset();
-    }
-    void didReset();
+    void reset(const IntSize&, Flags = NoFlag);
 
-    const IntSize& contentSize() const { return m_contentSize; }
     int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
 
     RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilterPass);
@@ -113,15 +103,14 @@ public:
     OptionSet<TextureMapperFlags> colorConvertFlags() const { return m_colorConvertFlags; }
 
 private:
-    BitmapTexture(const Flags, GLint internalFormat);
+    BitmapTexture(const IntSize&, const Flags, GLint internalFormat);
 
     void clearIfNeeded();
     void createFboIfNeeded();
 
     Flags m_flags { 0 };
-    IntSize m_contentSize;
+    IntSize m_size;
     GLuint m_id { 0 };
-    IntSize m_textureSize;
     GLuint m_fbo { 0 };
 #if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
     GLuint m_rbo { 0 };
@@ -133,13 +122,6 @@ private:
     FilterInfo m_filterInfo;
     GLint m_internalFormat { 0 };
     GLenum m_format { 0 };
-    GLenum m_type {
-#if OS(DARWIN)
-        GL_UNSIGNED_INT_8_8_8_8_REV
-#else
-        GL_UNSIGNED_BYTE
-#endif
-    };
 };
 
 } // namespace WebCore

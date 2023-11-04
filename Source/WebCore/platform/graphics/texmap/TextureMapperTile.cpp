@@ -57,10 +57,8 @@ void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
 
     // Normalize targetRect to the texture's coordinates.
     targetRect.move(-m_rect.x(), -m_rect.y());
-    if (!m_texture) {
-        m_texture = BitmapTexture::create();
-        m_texture->reset(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
-    }
+    if (!m_texture)
+        m_texture = BitmapTexture::create(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
 
     auto nativeImage = image->nativeImageForCurrentFrame();
     m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
@@ -77,10 +75,8 @@ void TextureMapperTile::updateContents(GraphicsLayer* sourceLayer, const IntRect
     // Normalize targetRect to the texture's coordinates.
     targetRect.move(-m_rect.x(), -m_rect.y());
 
-    if (!m_texture) {
-        m_texture = BitmapTexture::create();
-        m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
-    }
+    if (!m_texture)
+        m_texture = BitmapTexture::create(targetRect.size(), BitmapTexture::SupportsAlpha);
 
     m_texture->updateContents(sourceLayer, targetRect, sourceOffset, scale);
 }

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AttributedString.h"
 
+#import "ColorCocoa.h"
 #import "Font.h"
 #import "Logging.h"
 #import <Foundation/Foundation.h>
@@ -180,10 +181,10 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return value;
     }, [] (const Ref<Font>& font) -> RetainPtr<id> {
         return (__bridge PlatformFont *)(font->getCTFont());
-    }, [] (const RetainPtr<PlatformColor>& value) -> RetainPtr<id> {
-        return value;
-    }, [] (const RetainPtr<CGColorRef>& value) -> RetainPtr<id> {
-        return (__bridge id)value.get();
+    }, [] (const AttributedString::ColorFromPlatformColor& value) -> RetainPtr<id> {
+        return cocoaColor(value.color);
+    }, [] (const AttributedString::ColorFromCGColor& value) -> RetainPtr<id> {
+        return (__bridge id)cachedCGColor(value.color).get();
     });
 }
 
@@ -291,7 +292,7 @@ inline static Vector<std::optional<AttributedString::TableBlockAndTableIDPair>> 
 static std::optional<AttributedString::AttributeValue> extractValue(id value, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs, ListToIdentifierMap& listIDs)
 {
     if (CFGetTypeID((CFTypeRef)value) == CGColorGetTypeID())
-        return { { { RetainPtr<CGColorRef> { (CGColorRef) value } } } };
+        return { { AttributedString::ColorFromCGColor  { Color::createAndPreserveColorSpace((CGColorRef) value) } } };
     if (auto* number = dynamic_objc_cast<NSNumber>(value))
         return { { { number.doubleValue } } };
     if (auto* string = dynamic_objc_cast<NSString>(value))
@@ -319,7 +320,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     if ([value isKindOfClass:PlatformFontClass])
         return { { { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
     if ([value isKindOfClass:PlatformColorClass])
-        return { { { RetainPtr { (PlatformColor *)value } } } };
+        return { { AttributedString::ColorFromPlatformColor { colorFromCocoaColor((PlatformColor *)value) } } };
     if (value) {
         RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed for class <%@>", NSStringFromClass([value class]));
         ASSERT_NOT_REACHED();

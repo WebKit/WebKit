@@ -96,6 +96,7 @@ public:
         InvalidBackgroundContent,
         InvalidBackgroundPersistence,
         InvalidContentScripts,
+        InvalidContentSecurityPolicy,
         InvalidDeclarativeNetRequest,
         InvalidDescription,
         InvalidExternallyConnectable,
@@ -175,6 +176,8 @@ public:
     NSString *displayDescription();
     NSString *version();
 
+    NSString *contentSecurityPolicy();
+
     CocoaImage *icon(CGSize idealSize);
 
     CocoaImage *actionIcon(CGSize idealSize);
@@ -241,6 +244,7 @@ private:
     void populateContentScriptPropertiesIfNeeded();
     void populatePermissionsPropertiesIfNeeded();
     void populatePagePropertiesIfNeeded();
+    void populateContentSecurityPolicyStringsIfNeeded();
 
     InjectedContentVector m_staticInjectedContents;
 
@@ -277,18 +281,21 @@ private:
     RetainPtr<NSString> m_displayActionLabel;
     RetainPtr<NSString> m_actionPopupPath;
 
+    RetainPtr<NSString> m_contentSecurityPolicy;
+
     RetainPtr<NSArray> m_backgroundScriptPaths;
     RetainPtr<NSString> m_backgroundPagePath;
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
-    bool m_backgroundContentIsPersistent : 1 { false };
-    bool m_backgroundPageUsesModules : 1 { false };
 
     RetainPtr<NSString> m_optionsPagePath;
     RetainPtr<NSString> m_overrideNewTabPagePath;
 
+    bool m_backgroundContentIsPersistent : 1 { false };
+    bool m_backgroundPageUsesModules : 1 { false };
     bool m_parsedManifest : 1 { false };
     bool m_parsedManifestDisplayStrings : 1 { false };
+    bool m_parsedManifestContentSecurityPolicyStrings : 1 { false };
     bool m_parsedManifestActionProperties : 1 { false };
     bool m_parsedManifestBackgroundProperties : 1 { false };
     bool m_parsedManifestContentScriptProperties : 1 { false };

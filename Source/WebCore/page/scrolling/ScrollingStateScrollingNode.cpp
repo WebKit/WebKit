@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-    : ScrollingStateNode(nodeType, &stateTree, nodeID)
+    : ScrollingStateNode(nodeType, stateTree, nodeID)
 {
     scrollingStateTree().scrollingNodeAdded();
 }

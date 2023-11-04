@@ -129,9 +129,9 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             fileData = [stylesheetContents dataUsingEncoding:NSUTF8StringEncoding];
         }
 
-        // FIXME: <https://webkit.org/b/246490> Include the Content-Security-Policy header for the extension.
         NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
+            @"Content-Security-Policy": extensionContext->extension().contentSecurityPolicy(),
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
             @"Content-Type": mimeType
         }];

@@ -1850,7 +1850,10 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     if (!isLoaded())
         return nil;
 
+    bool isManifestVersion3 = extension().supportsManifestVersion(3);
+
     WKWebViewConfiguration *configuration = [extensionController()->configuration().webViewConfiguration() copy];
+    configuration._contentSecurityPolicyModeForExtension = isManifestVersion3 ? _WKContentSecurityPolicyModeForExtensionManifestV3 : _WKContentSecurityPolicyModeForExtensionManifestV2;
     configuration._corsDisablingPatterns = corsDisablingPatterns();
     configuration._crossOriginAccessControlCheckEnabled = NO;
     configuration._processDisplayName = processDisplayName();

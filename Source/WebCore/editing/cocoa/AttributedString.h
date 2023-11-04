@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "Color.h"
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
@@ -101,6 +102,14 @@ struct WEBCORE_EXPORT AttributedString {
         Vector<TextListID> listIDs; // Same length as `-textLists`.
     };
 
+    struct ColorFromCGColor {
+        Color color;
+    };
+
+    struct ColorFromPlatformColor {
+        Color color;
+    };
+
     struct AttributeValue {
         std::variant<
             double,
@@ -114,8 +123,8 @@ struct WEBCORE_EXPORT AttributedString {
             RetainPtr<NSTextAttachment>,
             RetainPtr<NSShadow>,
             RetainPtr<NSDate>,
-            RetainPtr<PlatformColor>,
-            RetainPtr<CGColorRef>
+            ColorFromCGColor,
+            ColorFromPlatformColor
         > value;
     };
 

@@ -153,3 +153,36 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     bool horizontalScrollbarIsEnabled;
     bool verticalScrollbarIsEnabled;
 };
+
+[RefCounted] class WebCore::ScrollingStateOverflowScrollProxyNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::OverflowScrollingNode] WebCore::ScrollingNodeID overflowScrollingNode()
+}
+
+[RefCounted] class WebCore::ScrollingStateFixedNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ViewportConstraints] WebCore::FixedPositionViewportConstraints viewportConstraints()
+}
+
+[RefCounted] class WebCore::ScrollingStateStickyNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ViewportConstraints] WebCore::StickyPositionViewportConstraints viewportConstraints()
+}
+
+[RefCounted] class WebCore::ScrollingStatePositionedNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::RelatedOverflowScrollingNodes] Vector<WebCore::ScrollingNodeID> relatedOverflowScrollingNodes()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::LayoutConstraintData] WebCore::AbsolutePositionConstraints layoutConstraints()
+}

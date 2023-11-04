@@ -363,6 +363,7 @@
 		51EB126424CA6B66000CB030 /* SonyDualShock4.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125F24CA6B5F000CB030 /* SonyDualShock4.mm */; };
 		51EB126524CA6B66000CB030 /* SteelSeriesNimbus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */; };
 		51EB126724CB8753000CB030 /* SunLightApplicationGenericNES.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */; };
+		51FA14312AF5BAE00003ACD1 /* IPCSerialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51FA14302AF5BAE00003ACD1 /* IPCSerialization.mm */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
 		521D1B7327713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */; };
 		5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */; };
@@ -2460,7 +2461,6 @@
 		51242CD42374E61E00EED9C1 /* FindInPageAPI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindInPageAPI.mm; sourceTree = "<group>"; };
 		51242CDA237B791E00EED9C1 /* PageZoom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageZoom.mm; sourceTree = "<group>"; };
 		512C4C9D20EAA405004945EA /* ResponsivenessTimerCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResponsivenessTimerCrash.mm; sourceTree = "<group>"; };
-		5131D53C2AE9D0F10016EF39 /* IPCSerialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IPCSerialization.mm; sourceTree = "<group>"; };
 		51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic_Bundle.cpp; sourceTree = "<group>"; };
 		51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic.cpp; sourceTree = "<group>"; };
 		51396E19222E4E8600A42FCE /* LoadFileURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadFileURL.mm; sourceTree = "<group>"; };
@@ -2533,6 +2533,7 @@
 		51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SteelSeriesNimbus.mm; sourceTree = "<group>"; };
 		51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SunLightApplicationGenericNES.mm; sourceTree = "<group>"; };
 		51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerBasic.mm; sourceTree = "<group>"; };
+		51FA14302AF5BAE00003ACD1 /* IPCSerialization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPCSerialization.mm; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
 		520BCF4B141EB09E00937EA8 /* WebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive.cpp; sourceTree = "<group>"; };
@@ -4063,7 +4064,6 @@
 				2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */,
 				2D116E1223E0CB3900208900 /* iOSMouseSupport.mm */,
 				950E4CC0252E75230071659F /* iOSStylusSupport.mm */,
-				5131D53C2AE9D0F10016EF39 /* IPCSerialization.mm */,
 				9B6D9FF8252EFDE500A51640 /* IPCTestingAPI.mm */,
 				5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */,
 				5C0160C021A132320077FA32 /* JITEnabled.mm */,
@@ -4573,6 +4573,7 @@
 				2D83D08A29194B0100C5C051 /* ArgumentCoderTests.cpp */,
 				7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */,
 				A73E66C32AB29574005FC327 /* EventTests.cpp */,
+				51FA14302AF5BAE00003ACD1 /* IPCSerialization.mm */,
 				7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */,
 				7B7392EA28F849F3007297FC /* IPCTestUtilities.h */,
 				7B7392E128F849EC007297FC /* MessageSenderTests.cpp */,
@@ -6184,6 +6185,7 @@
 				2D83D08B29194B0100C5C051 /* ArgumentCoderTests.cpp in Sources */,
 				7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */,
 				A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */,
+				51FA14312AF5BAE00003ACD1 /* IPCSerialization.mm in Sources */,
 				7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */,
 				7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */,
 				7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */,
