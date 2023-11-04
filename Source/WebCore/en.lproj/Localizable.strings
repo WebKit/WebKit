@@ -481,6 +481,9 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for content_scripts */
 "Empty or invalid `content_scripts` manifest entry." = "Empty or invalid `content_scripts` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for content_security_policy */
+"Empty or invalid `content_security_policy` manifest entry." = "Empty or invalid `content_security_policy` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only */
 "Empty or invalid `default_icon` for the `action` manifest entry." = "Empty or invalid `default_icon` for the `action` manifest entry.";
 

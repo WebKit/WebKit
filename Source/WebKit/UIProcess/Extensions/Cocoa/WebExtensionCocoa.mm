@@ -119,6 +119,9 @@ static NSString * const chromeURLOverridesManifestKey = @"chrome_url_overrides";
 static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
 static NSString * const newTabManifestKey = @"newtab";
 
+static NSString * const contentSecurityPolicyManifestKey = @"content_security_policy";
+static NSString * const contentSecurityPolicyExtensionPagesManifestKey = @"extension_pages";
+
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
     , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
@@ -452,6 +455,8 @@ static _WKWebExtensionError toAPI(WebExtension::Error error)
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidContentScripts:
         return _WKWebExtensionErrorInvalidManifestEntry;
+    case WebExtension::Error::InvalidContentSecurityPolicy:
+        return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidDeclarativeNetRequest:
         return _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
     case WebExtension::Error::InvalidDescription:
@@ -526,6 +531,10 @@ ALLOW_NONLITERAL_FORMAT_END
 
     case Error::InvalidContentScripts:
         localizedDescription = WEB_UI_STRING("Empty or invalid `content_scripts` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_scripts");
+        break;
+
+    case Error::InvalidContentSecurityPolicy:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `content_security_policy` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_security_policy");
         break;
 
     case Error::InvalidDeclarativeNetRequest:
@@ -653,6 +662,7 @@ NSArray *WebExtension::errors()
     populateContentScriptPropertiesIfNeeded();
     populatePermissionsPropertiesIfNeeded();
     populatePagePropertiesIfNeeded();
+    populateContentSecurityPolicyStringsIfNeeded();
 
     return [m_errors copy] ?: @[ ];
 }
@@ -744,6 +754,40 @@ void WebExtension::populateDisplayStringsIfNeeded()
     m_displayDescription = objectForKey<NSString>(m_manifest, descriptionManifestKey);
     if (!m_displayDescription)
         recordError(createError(Error::InvalidDescription));
+}
+
+NSString *WebExtension::contentSecurityPolicy()
+{
+    populateContentSecurityPolicyStringsIfNeeded();
+    return m_contentSecurityPolicy.get();
+}
+
+void WebExtension::populateContentSecurityPolicyStringsIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestContentSecurityPolicyStrings)
+        return;
+
+    m_parsedManifestContentSecurityPolicyStrings = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/content_security_policy
+
+    if (supportsManifestVersion(3)) {
+        if (auto *policyDictionary = objectForKey<NSDictionary>(m_manifest, contentSecurityPolicyManifestKey, false)) {
+            m_contentSecurityPolicy = objectForKey<NSString>(policyDictionary, contentSecurityPolicyExtensionPagesManifestKey);
+            if (!m_contentSecurityPolicy && (!policyDictionary.count || policyDictionary[contentSecurityPolicyExtensionPagesManifestKey]))
+                recordError(createError(Error::InvalidContentSecurityPolicy));
+        }
+    } else {
+        m_contentSecurityPolicy = objectForKey<NSString>(m_manifest, contentSecurityPolicyManifestKey);
+        if (!m_contentSecurityPolicy && [m_manifest objectForKey:contentSecurityPolicyManifestKey])
+            recordError(createError(Error::InvalidContentSecurityPolicy));
+    }
+
+    if (!m_contentSecurityPolicy)
+        m_contentSecurityPolicy = @"script-src 'self'";
 }
 
 CocoaImage *WebExtension::icon(CGSize size)

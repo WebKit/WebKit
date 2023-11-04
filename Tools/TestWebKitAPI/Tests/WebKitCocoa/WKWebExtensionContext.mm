@@ -45,7 +45,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -66,7 +66,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -87,7 +87,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -108,7 +108,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -131,7 +131,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -153,7 +153,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -174,7 +174,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -195,7 +195,7 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
@@ -222,7 +222,7 @@ TEST(WKWebExtensionContext, PermissionGranting)
     _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
     EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);

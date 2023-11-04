@@ -462,9 +462,9 @@ bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, std::op
     if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
-    if (NSNumber *frameNumber = objectForKey<NSNumber>(options, frameIdKey)) {
-        auto identifier = toWebExtensionFrameIdentifier(frameNumber.doubleValue);
-        if (!identifier) {
+    if (NSNumber *frameID = objectForKey<NSNumber>(options, frameIdKey)) {
+        auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
+        if (!isValid(identifier)) {
             *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
             return false;
         }
@@ -524,7 +524,7 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
 
     if (NSNumber *frameID = options[frameIdKey]) {
         auto frameIdentifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
-        if (!frameIdentifier) {
+        if (!isValid(frameIdentifier)) {
             *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
             return false;
         }

@@ -83,7 +83,7 @@ static inline void parseTargetInjectionOptions(NSDictionary *targetInfo, WebExte
         Vector<WebExtensionFrameIdentifier> frames;
         for (NSNumber *frameID in frameIDs) {
             auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
-            if (!identifier) {
+            if (!isValid(identifier)) {
                 *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
                 return;
             }
@@ -302,7 +302,7 @@ bool WebExtensionAPIScripting::validateTarget(NSDictionary *targetInfo, NSString
 
     for (NSNumber *frameID in targetInfo[frameIDsKey]) {
         auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
-        if (!identifier) {
+        if (!isValid(identifier)) {
             *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
             return false;
         }
