@@ -1465,19 +1465,26 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&& logSubsystem, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid)
 {
-    OSObjectPtr<os_log_t> osLogChannel;
-    if (logChannel.data() && logCategory.data()) {
-        auto channel = reinterpret_cast<const char*>(logChannel.data());
+    auto isNullTerminated = [](std::span<const uint8_t> view) {
+        return view.data() && !view.empty() && view.back() == '\0';
+    };
+
+    bool isValidLogType = logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT;
+    NETWORK_PROCESS_MESSAGE_CHECK(isNullTerminated(logString) && isValidLogType);
+
+    // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
+    auto osLog = OSObjectPtr<os_log_t>();
+    if (isNullTerminated(logSubsystem) && isNullTerminated(logCategory)) {
+        auto subsystem = reinterpret_cast<const char*>(logSubsystem.data());
         auto category = reinterpret_cast<const char*>(logCategory.data());
-        osLogChannel = adoptOSObject(os_log_create(channel, category));
+        osLog = adoptOSObject(os_log_create(subsystem, category));
     }
-    RELEASE_ASSERT(logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT);
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logString.data());
+    os_log_with_type(osLog.get() ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logString.data());
 }
 #endif
 
