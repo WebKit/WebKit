@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
+ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree& scrollingStateTree, ScrollingNodeID nodeID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
-    , m_scrollingStateTree(scrollingStateTree)
+    , m_scrollingStateTree(&scrollingStateTree)
 {
 }
 

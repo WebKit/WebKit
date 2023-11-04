@@ -50,7 +50,7 @@ ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(ScrollingNodeID n
 }
 
 ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::FrameHosting, &stateTree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::FrameHosting, stateTree, nodeID)
 {
     ASSERT(isFrameHostingNode());
 }

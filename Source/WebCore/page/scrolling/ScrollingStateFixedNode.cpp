@@ -35,29 +35,20 @@
 
 namespace WebCore {
 
-Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateFixedNode(stateTree, nodeID));
-}
-
-Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateFixedNode(nodeID));
-}
-
-ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Fixed, nullptr, nodeID)
-{
-}
-
-ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::Fixed, &tree, nodeID)
+ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, FixedPositionViewportConstraints&& constraints)
+    : ScrollingStateNode(ScrollingNodeType::Fixed, nodeID, WTFMove(children), changedProperties, layerID)
+    , m_constraints(WTFMove(constraints))
 {
 }
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(node, adoptiveTree)
     , m_constraints(FixedPositionViewportConstraints(node.viewportConstraints()))
+{
+}
+
+ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Fixed, tree, nodeID)
 {
 }
 

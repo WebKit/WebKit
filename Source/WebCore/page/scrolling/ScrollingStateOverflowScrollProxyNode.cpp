@@ -34,23 +34,14 @@
 
 namespace WebCore {
 
-Ref<ScrollingStateOverflowScrollProxyNode> ScrollingStateOverflowScrollProxyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollProxyNode(stateTree, nodeID));
-}
-
-Ref<ScrollingStateOverflowScrollProxyNode> ScrollingStateOverflowScrollProxyNode::create(ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollProxyNode(nodeID));
-}
-
-ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, nullptr, nodeID)
+ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, ScrollingNodeID overflowScrollingNode)
+    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, nodeID, WTFMove(children), changedProperties, layerID)
+    , m_overflowScrollingNodeID(overflowScrollingNode)
 {
 }
 
 ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, &stateTree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, stateTree, nodeID)
 {
 }
 
