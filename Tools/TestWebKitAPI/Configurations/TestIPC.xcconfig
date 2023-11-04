@@ -23,7 +23,7 @@
 
 PRODUCT_NAME = TestIPC;
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
 
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = $(CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING_$(ENABLE_LLVM_PROFILE_GENERATION));
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING_ENABLE_LLVM_PROFILE_GENERATION = YES;
@@ -37,7 +37,7 @@ WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
 OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers;
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices;
-OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit;
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText;
 
 STRIP_STYLE = debugging;
 

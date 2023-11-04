@@ -132,7 +132,6 @@ Tests/WebKitCocoa/IDBCheckpointWAL.mm
 Tests/WebKitCocoa/IDBDeleteRecovery.mm
 Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm
 Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm
-Tests/WebKitCocoa/IPCSerialization.mm
 Tests/WebKitCocoa/IPCTestingAPI.mm
 Tests/WebKitCocoa/IconLoadingDelegate.mm
 Tests/WebKitCocoa/ImageAnalysisTests.mm
