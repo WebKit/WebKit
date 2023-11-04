@@ -389,4 +389,9 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVSpeechSynthesisAvailableVoice
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureMaxAvailableTorchLevel, float)
 #define AVCaptureMaxAvailableTorchLevel PAL::get_AVFoundation_AVCaptureMaxAvailableTorchLevel()
 
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification, NSNotificationName)
+#define AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification PAL::get_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification()
+#endif
+
 #endif // USE(AVFOUNDATION)

@@ -82,6 +82,13 @@
 @interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
 @end
 
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+// FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
+@interface AVSampleBufferDisplayLayer (Staging_113656776)
+@property (nonatomic, readonly, getter=isReadyForDisplay) BOOL readyForDisplay;
+@end
+#endif
+
 @interface WebAVSampleBufferErrorListener : NSObject {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
@@ -137,7 +144,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _parent = nullptr;
 }
 
-- (void)beginObservingLayer:(AVSampleBufferDisplayLayer*)layer
+- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer
 {
     ASSERT(_parent);
     ASSERT(!_layers.contains(layer));
@@ -145,11 +152,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _layers.append(layer);
     [layer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
     [layer addObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection" options:NSKeyValueObservingOptionNew context:nullptr];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
+    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
+#endif
 }
 
-- (void)stopObservingLayer:(AVSampleBufferDisplayLayer*)layer
+- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer
 {
     ASSERT(_parent);
     ASSERT(_layers.contains(layer));
@@ -158,7 +170,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [layer removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
     _layers.remove(_layers.find(layer));
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
+    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
+        [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
+#endif
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -257,6 +275,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             strongParent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
     });
 }
+
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+- (void)layerReadyForDisplayChanged:(NSNotification *)notification
+{
+    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    BOOL isReadyForDisplay = [layer isReadyForDisplay];
+
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isReadyForDisplay] {
+        if (!_layers.contains(layer.get()))
+            return;
+        if (RefPtr parent = _parent.get())
+            parent->layerReadyForDisplayChanged(layer.get(), isReadyForDisplay);
+    });
+}
+#endif
 
 - (void)audioRendererWasAutomaticallyFlushed:(NSNotification*)note
 {
@@ -1131,6 +1164,16 @@ void SourceBufferPrivateAVFObjC::layerRequiresFlushToResumeDecodingChanged(AVSam
     m_layerRequiresFlush = requiresFlush;
 }
 
+void SourceBufferPrivateAVFObjC::layerReadyForDisplayChanged(AVSampleBufferDisplayLayer *layer, bool isReadyForDisplay)
+{
+    if (layer != m_displayLayer || !isReadyForDisplay)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (auto player = this->player())
+        player->setHasAvailableVideoFrame(true);
+}
+
 void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
@@ -1298,25 +1341,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
         if (!m_displayLayer)
             return;
 
-        if (player && !player->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
-            DEBUG_LOG(logSiteIdentifier, "adding buffer attachment");
-
-            [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-            [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = WeakPtr { *this }] (BOOL success) mutable {
-                callOnMainThread([this, logSiteIdentifier, weakThis = WTFMove(weakThis), success] () {
-                    if (!weakThis)
-                        return;
-
-                    if (!success) {
-                        ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
-                        return;
-                    }
-
-                    weakThis->bufferWasConsumed();
-                });
-            }];
-        } else
-            [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+        enqueueSampleBuffer(sample.get());
 
     } else {
         // AVSampleBufferAudioRenderer will throw an un-documented exception if passed a sample
@@ -1335,12 +1360,36 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
     }
 }
 
-void SourceBufferPrivateAVFObjC::bufferWasConsumed()
+void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
 {
-    DEBUG_LOG(LOGIDENTIFIER);
+    [m_displayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
 
-    if (auto player = this->player())
-        player->setHasAvailableVideoFrame(true);
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
+    if ([m_displayLayer respondsToSelector:@selector(isReadyForDisplay)])
+        return;
+#endif
+
+    auto player = this->player();
+    if (!player || player->hasAvailableVideoFrame() || sample.isNonDisplaying())
+        return;
+
+    DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
+
+    [m_displayLayer prerollDecodeWithCompletionHandler:[this, weakThis = WeakPtr { *this }, logSiteIdentifier = LOGIDENTIFIER] (BOOL success) mutable {
+        callOnMainThread([this, weakThis = WTFMove(weakThis), logSiteIdentifier, success] () {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            if (!success) {
+                ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
+                return;
+            }
+
+            layerReadyForDisplayChanged(m_displayLayer.get(), true);
+        });
+    }];
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)

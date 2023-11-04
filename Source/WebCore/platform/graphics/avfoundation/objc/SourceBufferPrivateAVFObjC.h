@@ -135,7 +135,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
-    void bufferWasConsumed();
+    void layerReadyForDisplayChanged(AVSampleBufferDisplayLayer *, bool isReadyForDisplay);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     SharedBuffer* initData() { return m_initData.get(); }
@@ -184,6 +184,7 @@ private:
 
     void processPendingTrackChangeTasks();
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, uint64_t trackID);
+    void enqueueSampleBuffer(MediaSampleAVFObjC&);
     void didBecomeReadyForMoreSamples(uint64_t trackID);
     void appendCompleted();
     void destroyStreamDataParser();
