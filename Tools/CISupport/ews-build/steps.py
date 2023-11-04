@@ -2281,6 +2281,7 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
     flunkOnFailure = False
     haltOnFailure = False
     LABELS_TO_REMOVE = [
+        GitHub.SAFE_MERGE_QUEUE_LABEL,
         GitHub.MERGE_QUEUE_LABEL,
         GitHub.UNSAFE_MERGE_QUEUE_LABEL,
         GitHub.BLOCKED_LABEL,
