@@ -229,7 +229,7 @@ class RadarModel(object):
                 yield ref
 
     def keywords(self):
-        return [self.Keyword(keyword) for keyword in self._issue.get('keywords', [])]
+        return [self.client.parent.keywords[keyword] for keyword in self._issue.get('keywords', [])]
 
     def commit_changes(self):
         self.client.parent.issues[self.id]['comments'] = [
@@ -280,6 +280,15 @@ class RadarModel(object):
                 self, RadarModel(self.client, data),
             ))
         return result
+
+    def remove_keyword(self, keyword):
+        if keyword.name in self._issue.get('keywords') or []:
+            self._issue['keywords'].remove(keyword.name)
+
+    def add_keyword(self, keyword):
+        self._issue['keywords'] = self._issue.get('keywords') or []
+        if keyword.name not in self._issue['keywords']:
+            self._issue['keywords'].append(keyword.name)
 
 
 class RadarClient(object):
@@ -387,6 +396,12 @@ class RadarClient(object):
             reproducible='Always',
         ))
 
+    def keywords_for_name(self, keyword_name):
+        return [
+            keyword for name, keyword in self.parent.keywords.items()
+            if name.startswith(keyword_name)
+        ]
+
 
 class Radar(Base, ContextStack):
     top = None
@@ -457,6 +472,11 @@ class Radar(Base, ContextStack):
         self.users = User.Mapping()
         for name in sorted([user.name for user in users or []]):
             self.users.add(self.transform_user(users[name]))
+
+        self.keywords = {}
+        for issue in issues or []:
+            for keyword in issue.get('keywords') or []:
+                self.keywords[keyword] = RadarModel.Keyword(keyword)
 
         self.issues = {}
         for issue in issues or []:

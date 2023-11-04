@@ -2799,7 +2799,7 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
             return false;
     }
 
-    if (layout.rowsPerImage != WGPU_COPY_STRIDE_UNDEFINED) {
+    if (copyExtent.height > 1 && layout.rowsPerImage != WGPU_COPY_STRIDE_UNDEFINED) {
         if (layout.rowsPerImage < heightInBlocks)
             return false;
     }

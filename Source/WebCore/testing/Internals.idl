@@ -474,6 +474,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DOMString viewBaseBackgroundColor();
     undefined setViewBaseBackgroundColor(DOMString colorValue);
 
+    DOMString documentBackgroundColor();
+
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
     unsigned long long lineIndexAfterPageBreak(Element element);
 

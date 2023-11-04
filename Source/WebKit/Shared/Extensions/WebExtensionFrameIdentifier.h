@@ -44,8 +44,10 @@ using WebExtensionFrameIdentifier = ObjectIdentifier<WebExtensionFrameIdentifier
 namespace WebExtensionFrameConstants {
 
 static constexpr double MainFrame { 0 };
+static constexpr double None { -1 };
 
 static constexpr const WebExtensionFrameIdentifier MainFrameIdentifier { std::numeric_limits<uint64_t>::max() - 1 };
+static constexpr const WebExtensionFrameIdentifier NoneIdentifier { std::numeric_limits<uint64_t>::max() - 2 };
 
 }
 
@@ -57,6 +59,21 @@ inline bool isMainFrame(WebExtensionFrameIdentifier identifier)
 inline bool isMainFrame(std::optional<WebExtensionFrameIdentifier> identifier)
 {
     return identifier && isMainFrame(identifier.value());
+}
+
+inline bool isNone(WebExtensionFrameIdentifier identifier)
+{
+    return identifier == WebExtensionFrameConstants::NoneIdentifier;
+}
+
+inline bool isNone(std::optional<WebExtensionFrameIdentifier> identifier)
+{
+    return identifier && isNone(identifier.value());
+}
+
+inline bool isValid(std::optional<WebExtensionFrameIdentifier> identifier)
+{
+    return identifier && !isNone(identifier.value());
 }
 
 inline WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier& identifier, const WebPage& page)
@@ -110,7 +127,10 @@ inline std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(
     if (identifier == WebExtensionFrameConstants::MainFrame)
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
-    if (!std::isfinite(identifier) || identifier <= 0 || identifier >= static_cast<double>(WebExtensionFrameConstants::MainFrameIdentifier.toUInt64()))
+    if (identifier == WebExtensionFrameConstants::None)
+        return WebExtensionFrameConstants::NoneIdentifier;
+
+    if (!std::isfinite(identifier) || identifier <= 0 || identifier >= static_cast<double>(WebExtensionFrameConstants::NoneIdentifier.toUInt64()))
         return std::nullopt;
 
     double integral;
@@ -130,6 +150,9 @@ inline double toWebAPI(const WebExtensionFrameIdentifier& identifier)
 
     if (isMainFrame(identifier))
         return WebExtensionFrameConstants::MainFrame;
+
+    if (isNone(identifier))
+        return WebExtensionFrameConstants::None;
 
     return static_cast<double>(identifier.toUInt64());
 }

@@ -464,8 +464,7 @@ public:
     
     RegisteredStructureSet* addStructureSet(const StructureSet& structureSet)
     {
-        m_structureSets.append();
-        RegisteredStructureSet* result = &m_structureSets.last();
+        RegisteredStructureSet* result = &m_structureSets.alloc();
 
         for (Structure* structure : structureSet)
             result->add(registerStructure(structure));
@@ -475,8 +474,7 @@ public:
 
     RegisteredStructureSet* addStructureSet(const RegisteredStructureSet& structureSet)
     {
-        m_structureSets.append();
-        RegisteredStructureSet* result = &m_structureSets.last();
+        RegisteredStructureSet* result = &m_structureSets.alloc();
 
         for (RegisteredStructure structure : structureSet)
             result->add(structure);
@@ -1179,7 +1177,7 @@ public:
     HashMap<String, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
-    Bag<FrozenValue> m_frozenValues;
+    SegmentedVector<FrozenValue, 16> m_frozenValues;
 
     Vector<uint32_t> m_uint32ValuesInUse;
     
@@ -1283,6 +1281,7 @@ public:
     bool m_hasExceptionHandlers { false };
     bool m_isInSSAConversion { false };
     bool m_isValidating { false };
+    bool m_frozenValuesAreFinalized { false };
     std::optional<uint32_t> m_maxLocalsForCatchOSREntry;
     std::unique_ptr<FlowIndexing> m_indexingCache;
     std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;

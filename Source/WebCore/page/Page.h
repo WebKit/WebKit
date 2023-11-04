@@ -564,6 +564,8 @@ public:
     WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
     WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
 
+    Document* outermostFullscreenDocument() const;
+
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);

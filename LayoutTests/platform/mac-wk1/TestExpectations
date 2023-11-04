@@ -790,7 +790,7 @@ webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-repor
 
 # WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
-webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure ]
+webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html [ Failure ]
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html [ Failure ]
@@ -1405,8 +1405,6 @@ fast/images/async-image-src-change.html
 http/tests/multipart/multipart-async-image.html
 
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
-
-webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 
 # DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.
 # So we shouldn't bother with this test in WebKit1.
@@ -2587,7 +2585,7 @@ webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-descendants.h
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
 
 webkit.org/b/260107 [ Debug ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Skip ]
-webkit.org/b/260111 [ Ventura Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Failure ]
+webkit.org/b/260111 [ Ventura+ Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Pass Failure ]
 
 webkit.org/b/260280 fullscreen/fullscreen-no-scrollbars-on-ancestor-root.html [ ImageOnlyFailure ]
 

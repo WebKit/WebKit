@@ -112,6 +112,13 @@ static NSString * const optionalPermissionsManifestKey = @"optional_permissions"
 static NSString * const hostPermissionsManifestKey = @"host_permissions";
 static NSString * const optionalHostPermissionsManifestKey = @"optional_host_permissions";
 
+static NSString * const optionsUIManifestKey = @"options_ui";
+static NSString * const optionsUIPageManifestKey = @"page";
+static NSString * const optionsPageManifestKey = @"options_page";
+static NSString * const chromeURLOverridesManifestKey = @"chrome_url_overrides";
+static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
+static NSString * const newTabManifestKey = @"newtab";
+
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
     , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
@@ -455,6 +462,8 @@ static _WKWebExtensionError toAPI(WebExtension::Error error)
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidName:
         return _WKWebExtensionErrorInvalidManifestEntry;
+    case WebExtension::Error::InvalidOptionsPage:
+        return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidURLOverrides:
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidVersion:
@@ -544,8 +553,18 @@ ALLOW_NONLITERAL_FORMAT_END
         localizedDescription = WEB_UI_STRING("Missing or empty `name` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for name");
         break;
 
+    case Error::InvalidOptionsPage:
+        if ([manifest() objectForKey:optionsUIManifestKey])
+            localizedDescription = WEB_UI_STRING("Empty or invalid `options_ui` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for options UI");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `options_page` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for options page");
+        break;
+
     case Error::InvalidURLOverrides:
-        localizedDescription = WEB_UI_STRING("Empty or invalid URL overrides manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for URL overrides");
+        if ([manifest() objectForKey:browserURLOverridesManifestKey])
+            localizedDescription = WEB_UI_STRING("Empty or invalid `browser_url_overrides` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for browser URL overrides");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `chrome_url_overrides` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for chrome URL overrides");
         break;
 
     case Error::InvalidVersion:
@@ -633,6 +652,7 @@ NSArray *WebExtension::errors()
     populateBackgroundPropertiesIfNeeded();
     populateContentScriptPropertiesIfNeeded();
     populatePermissionsPropertiesIfNeeded();
+    populatePagePropertiesIfNeeded();
 
     return [m_errors copy] ?: @[ ];
 }
@@ -1092,6 +1112,66 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     if (m_backgroundContentIsPersistent)
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
 #endif
+}
+
+bool WebExtension::hasOptionsPage()
+{
+    populatePagePropertiesIfNeeded();
+    return !!m_optionsPagePath;
+}
+
+bool WebExtension::hasOverrideNewTabPage()
+{
+    populatePagePropertiesIfNeeded();
+    return !!m_overrideNewTabPagePath;
+}
+
+NSString *WebExtension::optionsPagePath()
+{
+    populatePagePropertiesIfNeeded();
+    return m_optionsPagePath.get();
+}
+
+NSString *WebExtension::overrideNewTabPagePath()
+{
+    populatePagePropertiesIfNeeded();
+    return m_overrideNewTabPagePath.get();
+}
+
+void WebExtension::populatePagePropertiesIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestPageProperties)
+        return;
+
+    m_parsedManifestPageProperties = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_page
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_url_overrides
+
+    if (auto *optionsDictionary = objectForKey<NSDictionary>(m_manifest, optionsUIManifestKey, false)) {
+        m_optionsPagePath = objectForKey<NSString>(optionsDictionary, optionsUIPageManifestKey);
+        if (!m_optionsPagePath)
+            recordError(createError(Error::InvalidOptionsPage));
+    } else {
+        m_optionsPagePath = objectForKey<NSString>(m_manifest, optionsPageManifestKey);
+        if (!m_optionsPagePath && [m_manifest objectForKey:optionsPageManifestKey])
+            recordError(createError(Error::InvalidOptionsPage));
+    }
+
+    auto *overridesDictionary = objectForKey<NSDictionary>(m_manifest, browserURLOverridesManifestKey, false);
+    if (!overridesDictionary)
+        overridesDictionary = objectForKey<NSDictionary>(m_manifest, chromeURLOverridesManifestKey, false);
+
+    if (overridesDictionary && !overridesDictionary.count)
+        recordError(createError(Error::InvalidURLOverrides));
+
+    m_overrideNewTabPagePath = objectForKey<NSString>(overridesDictionary, newTabManifestKey);
+    if (!m_overrideNewTabPagePath && overridesDictionary[newTabManifestKey])
+        recordError(createError(Error::InvalidURLOverrides, WEB_UI_STRING("Empty or invalid `newtab` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry")));
 }
 
 const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()

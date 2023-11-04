@@ -1586,16 +1586,6 @@ WK_EXPORT bool WKPreferencesGetIsAccessibilityIsolatedTreeEnabled(WKPreferencesR
     return toImpl(preferencesRef)->isAccessibilityIsolatedTreeEnabled();
 }
 
-void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setFetchAPIKeepAliveEnabled(flag);
-}
-
-bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->fetchAPIKeepAliveEnabled();
-}
-
 void WKPreferencesSetAllowsPictureInPictureMediaPlayback(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setAllowsPictureInPictureMediaPlayback(enabled);
@@ -1996,6 +1986,15 @@ void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef preferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef)
 {
     return true;
 }

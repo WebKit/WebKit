@@ -323,8 +323,7 @@ private:
     {
         ASSERT(!operand.isConstant());
         
-        m_graph.m_variableAccessData.append(operand);
-        return &m_graph.m_variableAccessData.last();
+        return &m_graph.m_variableAccessData.alloc(operand);
     }
     
     // Get/Set the operands/result of a bytecode instruction.
@@ -9562,11 +9561,8 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     }
     
     m_argumentPositions.resize(argumentCountIncludingThisWithFixup);
-    for (int i = 0; i < argumentCountIncludingThisWithFixup; ++i) {
-        byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
-        ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
-        m_argumentPositions[i] = argumentPosition;
-    }
+    for (int i = 0; i < argumentCountIncludingThisWithFixup; ++i)
+        m_argumentPositions[i] = &byteCodeParser->m_graph.m_argumentPositions.alloc(ArgumentPosition());
     byteCodeParser->m_inlineCallFrameToArgumentPositions.add(m_inlineCallFrame, m_argumentPositions);
     
     byteCodeParser->m_inlineStackTop = this;

@@ -25,6 +25,7 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "FilterOperations.h"
+#include "GLContext.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
@@ -50,9 +51,8 @@
 
 namespace WebCore {
 
-BitmapTexture::BitmapTexture(const TextureMapperContextAttributes& contextAttributes, const Flags, GLint internalFormat)
-    : m_contextAttributes(contextAttributes)
-    , m_format(GL_RGBA)
+BitmapTexture::BitmapTexture(const Flags, GLint internalFormat)
+    : m_format(GL_RGBA)
 {
     if (internalFormat != GL_DONT_CARE) {
         m_internalFormat = internalFormat;
@@ -98,7 +98,8 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     IntPoint adjustedSourceOffset = sourceOffset;
 
     // Texture upload requires subimage buffer if driver doesn't support subimage and we don't have full image upload.
-    bool requireSubImageBuffer = !m_contextAttributes.supportsUnpackSubimage
+    bool supportsUnpackSubimage = GLContext::current()->glExtensions().EXT_unpack_subimage;
+    bool requireSubImageBuffer = !supportsUnpackSubimage
         && !(bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero());
 
     // prepare temporaryData if necessary
@@ -121,7 +122,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
 
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    if (m_contextAttributes.supportsUnpackSubimage) {
+    if (supportsUnpackSubimage) {
         // Use the OpenGL sub-image extension, now that we know it's available.
         glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
         glPixelStorei(GL_UNPACK_SKIP_ROWS, adjustedSourceOffset.y());
@@ -130,7 +131,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
 
     glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, data);
 
-    if (m_contextAttributes.supportsUnpackSubimage) {
+    if (supportsUnpackSubimage) {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
         glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);

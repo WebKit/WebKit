@@ -108,6 +108,7 @@ public:
     virtual void inheritPolicyContainerFrom(const PolicyContainer&);
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
+    WEBCORE_EXPORT RefPtr<SecurityOrigin> protectedSecurityOrigin() const;
 
     static SandboxFlags parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage);
     static bool isSupportedSandboxPolicy(StringView);

@@ -39,6 +39,7 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIPort.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
@@ -203,6 +204,20 @@ void WebExtensionAPIRuntime::getBackgroundPage(Ref<WebExtensionCallbackHandler>&
     }, extensionContext().identifier());
 }
 
+double WebExtensionAPIRuntime::getFrameId(JSValue *target)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getFrameId
+
+    if (!target)
+        return WebExtensionFrameConstants::None;
+
+    auto frame = WebFrame::contentFrameForWindowOrFrameElement(target.context.JSGlobalContextRef, target.JSValueRef);
+    if (!frame)
+        return WebExtensionFrameConstants::None;
+
+    return toWebAPI(toWebExtensionFrameIdentifier(*frame));
+}
+
 void WebExtensionAPIRuntime::setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/setUninstallURL
@@ -210,6 +225,27 @@ void WebExtensionAPIRuntime::setUninstallURL(URL, Ref<WebExtensionCallbackHandle
     // FIXME: rdar://58000001 Consider implementing runtime.setUninstallURL(), matching the behavior of other browsers.
 
     callback->call();
+}
+
+void WebExtensionAPIRuntime::openOptionsPage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/openOptionsPage
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeOpenOptionsPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPIRuntime::reload()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/reload
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::RuntimeReload(), extensionContext().identifier());
 }
 
 JSValue *WebExtensionAPIRuntime::lastError()

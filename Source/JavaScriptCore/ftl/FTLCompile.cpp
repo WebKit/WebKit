@@ -61,12 +61,11 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
         graph.freeDFGIRAfterLowering();
 
+    state.graph.m_frozenValuesAreFinalized = true;
     {
         GraphSafepoint safepoint(state.graph, safepointResult);
-
         B3::prepareForGeneration(*state.proc);
     }
-
     if (safepointResult.didGetCancelled())
         return;
     RELEASE_ASSERT(!state.graph.m_vm.heap.worldIsStopped());
@@ -124,7 +123,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
     codeBlock->clearExceptionHandlers();
 
     CCallHelpers jit(codeBlock);
-    B3::generate(*state.proc, jit);
+    {
+        GraphSafepoint safepoint(state.graph, safepointResult);
+        B3::generate(*state.proc, jit);
+    }
+    if (safepointResult.didGetCancelled())
+        return;
 
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();

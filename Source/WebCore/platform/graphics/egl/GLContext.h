@@ -123,6 +123,12 @@ public:
     WEBCORE_EXPORT void swapBuffers();
     GCGLContext platformContext() const;
 
+    struct GLExtensions {
+        bool OES_texture_npot { false };
+        bool EXT_unpack_subimage { false };
+    };
+    const GLExtensions& glExtensions() const;
+
     class ScopedGLContext {
         WTF_MAKE_NONCOPYABLE(ScopedGLContext);
     public:
@@ -193,6 +199,7 @@ private:
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif
+    mutable GLExtensions m_glExtensions;
 };
 
 } // namespace WebCore

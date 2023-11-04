@@ -355,7 +355,6 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
-    plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
@@ -410,7 +409,6 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
-    plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
 
@@ -461,7 +459,6 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
-    plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
 
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array

@@ -4655,3 +4655,5 @@ webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-wbr-nobr-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
+
+webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]

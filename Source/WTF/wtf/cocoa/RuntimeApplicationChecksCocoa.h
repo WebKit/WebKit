@@ -112,6 +112,7 @@ enum class SDKAlignedBehavior {
     DoesNotOverrideUAFromNSUserDefault,
     EvaluateJavaScriptWithoutTransientActivation,
     ResettingTransitionCancelsRunningTransitionQuirk,
+    OnlyLoadWellKnownAboutURLs,
 
     NumberOfBehaviors
 };

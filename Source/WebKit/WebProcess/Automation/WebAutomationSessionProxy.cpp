@@ -421,7 +421,10 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
 
-    callPropertyFunction(context, scriptObject, "evaluateJavaScriptFunction"_s, std::size(functionArguments), functionArguments, &exception);
+    {
+        WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, frame->coreLocalFrame()->document());
+        callPropertyFunction(context, scriptObject, "evaluateJavaScriptFunction"_s, std::size(functionArguments), functionArguments, &exception);
+    }
 
     if (!exception)
         return;

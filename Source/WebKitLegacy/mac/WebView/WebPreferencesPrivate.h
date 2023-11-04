@@ -315,14 +315,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
-@property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL remotePlaybackEnabled;
 @property (nonatomic) BOOL readableByteStreamAPIEnabled;
-@property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
@@ -343,6 +341,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, getter=cssShadowPartsEnabled) BOOL CSSShadowPartsEnabled;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;
 @property (nonatomic) BOOL fetchAPIEnabled;
+@property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL shadowDOMEnabled;
 @property (nonatomic) BOOL customElementsEnabled;
 @property (nonatomic) BOOL keygenElementEnabled;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webGL2Enabled;
 @property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
 @property (nonatomic) BOOL displayListDrawingEnabled;
+@property (nonatomic) BOOL transformStreamAPIEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

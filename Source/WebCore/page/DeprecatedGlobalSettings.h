@@ -91,9 +91,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-    static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
-    static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
-
     static void setRestrictedHTTPResponseAccess(bool isEnabled) { shared().m_isRestrictedHTTPResponseAccess = isEnabled; }
     static bool restrictedHTTPResponseAccess() { return shared().m_isRestrictedHTTPResponseAccess; }
 
@@ -213,7 +210,6 @@ private:
     bool m_isPaintTimingEnabled { false };
 
     bool m_isCustomPasteboardDataEnabled { false };
-    bool m_fetchAPIKeepAliveEnabled { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };

@@ -43,10 +43,14 @@
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 - (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate;
 
+- (void)_resetContentInset;
+@property (nonatomic, readonly) BOOL _contentInsetWasExternallyOverridden;
+
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 @property (nonatomic, assign, readonly) BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior;
+- (void)_resetContentInsetAdjustmentBehavior;
 #endif
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

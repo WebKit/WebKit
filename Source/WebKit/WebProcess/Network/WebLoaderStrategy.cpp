@@ -807,11 +807,6 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
 }
 
-bool WebLoaderStrategy::usePingLoad() const
-{
-    return !DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled();
-}
-
 void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)
 {
     auto webFrame = WebFrame::fromCoreFrame(frame);

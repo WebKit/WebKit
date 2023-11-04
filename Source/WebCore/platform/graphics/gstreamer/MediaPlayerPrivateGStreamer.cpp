@@ -115,7 +115,6 @@
 #include "BitmapTexture.h"
 #include "BitmapTexturePool.h"
 #include "GStreamerVideoFrameHolder.h"
-#include "TextureMapperContextAttributes.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #endif // USE(TEXTURE_MAPPER)
@@ -3265,7 +3264,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
         } else {
             layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
             if (UNLIKELY(!layerBuffer)) {
-                auto texture = BitmapTexture::create(TextureMapperContextAttributes::get());
+                auto texture = BitmapTexture::create();
                 texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
                 layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
             }

@@ -124,11 +124,6 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
     m_compositor->suspend();
 }
 
-void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
-{
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
-}
-
 void LayerTreeHost::scheduleLayerFlush()
 {
     if (!m_layerFlushSchedulingEnabled)
@@ -174,7 +169,7 @@ void LayerTreeHost::layerFlushTimerFired()
     flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
 #endif
 
-    bool didSync = m_coordinator.flushPendingLayerChanges(flags);
+    m_coordinator.flushPendingLayerChanges(flags);
 
 #if PLATFORM(GTK)
     // If we have an active transient zoom, we want the zoom to win over any changes
@@ -182,11 +177,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_transientZoom)
         applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 #endif
-
-    if (m_notifyAfterScheduledLayerFlush && didSync) {
-        m_webPage.drawingArea()->layerHostDidFlushLayers();
-        m_notifyAfterScheduledLayerFlush = false;
-    }
 
 #if HAVE(DISPLAY_LINK)
     m_compositor->updateScene();

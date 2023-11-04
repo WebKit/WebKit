@@ -145,6 +145,16 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
     return _webExtensionContext->webViewConfiguration(WebKit::WebExtensionContext::WebViewPurpose::Tab);
 }
 
+- (NSURL *)optionsPageURL
+{
+    return _webExtensionContext->optionsPageURL();
+}
+
+- (NSURL *)overrideNewTabPageURL
+{
+    return _webExtensionContext->overrideNewTabPageURL();
+}
+
 static inline WallTime toImpl(NSDate *date)
 {
     NSCParameterAssert(!date || [date isKindOfClass:NSDate.class]);
@@ -818,6 +828,16 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (WKWebViewConfiguration *)webViewConfiguration
+{
+    return nil;
+}
+
+- (NSURL *)optionsPageURL
+{
+    return nil;
+}
+
+- (NSURL *)overrideNewTabPageURL
 {
     return nil;
 }

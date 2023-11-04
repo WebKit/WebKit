@@ -224,6 +224,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     m_mappedRanges.add({ offset, offset + rangeSize });
     m_mappedRanges.compact();
 
+    m_device->getQueue().waitUntilIdle();
     ASSERT(m_buffer.contents);
     return static_cast<char*>(m_buffer.contents) + offset;
 }

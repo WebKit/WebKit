@@ -1,0 +1,4 @@
+
+PASS Default appearance value
+PASS appearance:none should work
+

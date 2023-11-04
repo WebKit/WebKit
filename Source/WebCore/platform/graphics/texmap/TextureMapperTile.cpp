@@ -44,7 +44,7 @@ void TextureMapperTile::setTexture(BitmapTexture* texture)
     m_texture = texture;
 }
 
-void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* image, const IntRect& dirtyRect)
+void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -58,7 +58,7 @@ void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* imag
     // Normalize targetRect to the texture's coordinates.
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
-        m_texture = textureMapper.createTexture();
+        m_texture = BitmapTexture::create();
         m_texture->reset(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
     }
 
@@ -66,7 +66,7 @@ void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* imag
     m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
 }
 
-void TextureMapperTile::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, float scale)
+void TextureMapperTile::updateContents(GraphicsLayer* sourceLayer, const IntRect& dirtyRect, float scale)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -78,7 +78,7 @@ void TextureMapperTile::updateContents(TextureMapper& textureMapper, GraphicsLay
     targetRect.move(-m_rect.x(), -m_rect.y());
 
     if (!m_texture) {
-        m_texture = textureMapper.createTexture();
+        m_texture = BitmapTexture::create();
         m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
     }
 

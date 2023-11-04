@@ -542,12 +542,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     }
     
 #if USE(RUNNINGBOARD)
-#if USE(EXTENSIONKIT_ASSERTIONS)
-    m_throttler.didConnectToProcess(extensionProcess());
-#else
-    if (xpc_connection_t connection = this->connection()->xpcConnection())
-        m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
-#endif
+    m_throttler.didConnectToProcess(*this);
 #endif
 
 #if PLATFORM(COCOA)

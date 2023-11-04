@@ -572,3 +572,21 @@ What component in 'WebKit' should the bug be associated with?:
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = bugzilla.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).classification, '')
+
+    def test_set_keywords(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(
+            self.URL.split('://')[1],
+            projects=mocks.PROJECTS,
+            environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ), users=mocks.USERS, issues=mocks.ISSUES,
+        ):
+
+            tracker = bugzilla.Tracker(self.URL)
+            issue = tracker.issue(1)
+
+            self.assertEqual(issue.keywords, ['Keyword A'])
+            issue.set_keywords(['REGRESSION'])
+            self.assertEqual(issue.keywords, ['REGRESSION'])
+            self.assertEqual(tracker.issue(1).keywords, ['REGRESSION'])

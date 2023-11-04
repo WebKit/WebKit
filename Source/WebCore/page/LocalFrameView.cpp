@@ -4641,19 +4641,45 @@ Color LocalFrameView::documentBackgroundColor() const
     // Background images are unfortunately impractical to include.
 
     // Return invalid Color objects whenever there is insufficient information.
-    if (!m_frame->document())
+    auto* backgroundDocument = [&] {
+#if ENABLE(FULLSCREEN_API)
+        if (auto* page = m_frame->page()) {
+            if (auto* fullscreenDocument = page->outermostFullscreenDocument())
+                return fullscreenDocument;
+        }
+#endif
+        return m_frame->document();
+    }();
+
+    if (!backgroundDocument)
         return Color();
 
-    auto* htmlElement = m_frame->document()->documentElement();
-    auto* bodyElement = m_frame->document()->bodyOrFrameset();
+    auto* htmlElement = backgroundDocument->documentElement();
+    auto* bodyElement = backgroundDocument->bodyOrFrameset();
+#if ENABLE(FULLSCREEN_API)
+    auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
+#else
+    Element* fullscreenElement = nullptr;
+#endif
 
     // Start with invalid colors.
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
+    Color fullscreenBackgroundColor;
     if (htmlElement && htmlElement->renderer())
         htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     if (bodyElement && bodyElement->renderer())
         bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    if (fullscreenElement && fullscreenElement->renderer())
+        fullscreenBackgroundColor = fullscreenElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+    // Replace or blend the fullscreen background color with the body background color, if present.
+    if (fullscreenBackgroundColor.isValid()) {
+        if (!bodyBackgroundColor.isValid())
+            bodyBackgroundColor = fullscreenBackgroundColor;
+        else
+            bodyBackgroundColor = blendSourceOver(bodyBackgroundColor, fullscreenBackgroundColor);
+    }
 
     if (!bodyBackgroundColor.isValid()) {
         if (!htmlBackgroundColor.isValid())

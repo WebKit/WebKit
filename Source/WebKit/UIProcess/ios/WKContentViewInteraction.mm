@@ -6504,6 +6504,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         }
     }
 
+    if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)] && _focusedElementInformation.hasEverBeenPasswordField)
+        privateTraits.learnsCorrections = NO;
+
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
         privateTraits.shortcutConversionType = _focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault;
 

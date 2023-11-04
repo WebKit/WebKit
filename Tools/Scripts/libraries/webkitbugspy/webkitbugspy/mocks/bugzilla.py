@@ -159,6 +159,14 @@ class Bugzilla(Base, mocks.Requests):
             if data.get('version'):
                 issue['version'] = data['version']
 
+            keywords = data.get('keywords', {})
+            if keywords:
+                assert len(keywords) == 1
+                if keywords.get('set'):
+                    issue['keywords'] = keywords.get('set')
+                elif keywords.get('add'):
+                    issue['keywords'] = issue.get('keywords', []) + keywords.get('add')
+
             if not issue.get('watchers', None):
                 issue['watchers'] = []
             for candidate in data.get('cc', {}).get('add', []):

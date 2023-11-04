@@ -202,6 +202,9 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk);
     }
 
+    if (linkedBefore(dyld_2023_SU_C_os_versions, DYLD_IOS_VERSION_17_2, DYLD_MACOSX_VERSION_14_2))
+        disableBehavior(SDKAlignedBehavior::OnlyLoadWellKnownAboutURLs);
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

@@ -433,10 +433,6 @@ WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef);
-
-// Defaults to false
 WK_EXPORT void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef);
 
@@ -533,6 +529,8 @@ WK_EXPORT void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef,
 WK_EXPORT bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;

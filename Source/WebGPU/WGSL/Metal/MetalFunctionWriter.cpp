@@ -229,6 +229,24 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
+    if (m_callGraph.ast().usesDivision()) {
+        m_callGraph.ast().clearUsesDivision();
+        m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
+        m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "auto predicate = V(rhs) == V(0);\n");
+            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<U>)\n");
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n");
+            }
+            m_stringBuilder.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -1415,6 +1433,20 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         }
     }
 
+    if (binary.operation() == AST::BinaryOperation::Divide) {
+        auto* resultType = binary.inferredType();
+        if (auto* vectorType = std::get_if<Types::Vector>(resultType))
+            resultType = vectorType->element;
+        if (satisfies(resultType, Constraints::Integer)) {
+            m_stringBuilder.append("__wgslDiv(");
+            visit(binary.leftExpression());
+            m_stringBuilder.append(", ");
+            visit(binary.rightExpression());
+            m_stringBuilder.append(")");
+            return;
+        }
+    }
+
     m_stringBuilder.append("(");
     visit(binary.leftExpression());
     switch (binary.operation()) {
@@ -1572,6 +1604,21 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
+    if (statement.operation() == AST::BinaryOperation::Divide) {
+        auto* rightType = statement.rightExpression().inferredType();
+        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
+            rightType = vectorType->element;
+        if (satisfies(rightType, Constraints::Integer)) {
+            visit(statement.leftExpression());
+            m_stringBuilder.append(" = __wgslDiv(");
+            visit(statement.leftExpression());
+            m_stringBuilder.append(", ");
+            visit(statement.rightExpression());
+            m_stringBuilder.append(")");
+            return;
+        }
+    }
+
     visit(statement.leftExpression());
     m_stringBuilder.append(" ", toASCIILiteral(statement.operation()), "= ");
     visit(statement.rightExpression());

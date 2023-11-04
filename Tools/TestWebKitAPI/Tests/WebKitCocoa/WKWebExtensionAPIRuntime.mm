@@ -54,6 +54,8 @@ static auto *runtimeManifest = @{
         },
     },
 
+    @"options_page": @"options.html",
+
     @"permissions": @[ @"nativeMessaging" ],
 };
 
@@ -310,6 +312,58 @@ TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
     ]);
 
     Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetFrameId)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/subframe'></iframe>"_s } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, "Subframe Content"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  let mainFrameId = browser.runtime.getFrameId(window)",
+        @"  browser.test.assertEq(mainFrameId, 0, 'Main frame should have frameId 0')",
+
+        @"  let frameElement = document.querySelector('iframe')",
+        @"  let subFrameElementId = browser.runtime.getFrameId(frameElement)",
+        @"  browser.test.assertTrue(subFrameElementId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  let subFrameWindow = frameElement.contentWindow",
+        @"  let subFrameWindowId = browser.runtime.getFrameId(subFrameWindow)",
+        @"  browser.test.assertTrue(subFrameWindowId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  browser.test.assertEq(subFrameElementId, subFrameWindowId, 'Subframes should have the same frameId from window and element')",
+        @"} else {",
+        @"  let subFrameId = browser.runtime.getFrameId(window)",
+        @"  browser.test.assertTrue(subFrameId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  let topFrameId = browser.runtime.getFrameId(window.top)",
+        @"  browser.test.assertEq(topFrameId, 0, 'The top window in a subframe context should have frameId 0')",
+        @"}",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIRuntime, LastError)
@@ -782,6 +836,27 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIRuntime, Reload)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Loaded')",
+        @"browser.runtime.reload()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager done];
+}
+
 TEST(WKWebExtensionAPIRuntime, StartupEvent)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -841,6 +916,36 @@ TEST(WKWebExtensionAPIRuntime, InstalledEvent)
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+}
+
+TEST(WKWebExtensionAPIRuntime, OpenOptionsPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafeResolve(() => browser.runtime.openOptionsPage())"
+    ]);
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"options.html": @"Hello world!"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block bool optionsPageOpened = false;
+    manager.get().internalDelegate.openOptionsPage = ^(_WKWebExtensionContext *, void (^completionHandler)(NSError *)) {
+        optionsPageOpened = true;
+
+        EXPECT_NS_EQUAL(manager.get().context.optionsPageURL, [NSURL URLWithString:@"options.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        completionHandler(nil);
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_TRUE(optionsPageOpened);
 }
 
 } // namespace TestWebKitAPI

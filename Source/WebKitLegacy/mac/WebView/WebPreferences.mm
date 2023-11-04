@@ -3026,16 +3026,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
 }
 
-- (BOOL)fetchAPIKeepAliveEnabled
-{
-    return [self _boolValueForKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
-- (void)setFetchAPIKeepAliveEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
 - (BOOL)genericCueAPIEnabled
 {
     return [self _boolValueForKey:WebKitGenericCueAPIEnabledKey];
@@ -3094,16 +3084,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setReadableByteStreamAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];
-}
-
-- (BOOL)transformStreamAPIEnabled
-{
-    return [self _boolValueForKey:WebKitTransformStreamAPIEnabledPreferenceKey];
-}
-
-- (void)setTransformStreamAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitTransformStreamAPIEnabledPreferenceKey];
 }
 
 - (BOOL)_mediaRecorderEnabled
@@ -3227,6 +3207,15 @@ static RetainPtr<NSString>& classIBCreatorID()
     return YES;
 }
 
+- (void)setFetchAPIKeepAliveEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)fetchAPIKeepAliveEnabled
+{
+    return YES;
+}
+
 - (void)setShadowDOMEnabled:(BOOL)flag
 {
 }
@@ -3345,6 +3334,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setDisplayListDrawingEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)transformStreamAPIEnabled
+{
+    return YES;
+}
+
+- (void)setTransformStreamAPIEnabled:(BOOL)flag
 {
 }
 

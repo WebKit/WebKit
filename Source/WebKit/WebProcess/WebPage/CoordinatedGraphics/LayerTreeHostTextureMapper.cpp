@@ -94,12 +94,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isSuspended)
         return;
 
-    if (m_notifyAfterScheduledLayerFlush) {
-        m_webPage.drawingArea()->layerHostDidFlushLayers();
-        m_notifyAfterScheduledLayerFlush = false;
-        return;
-    }
-
     flushAndRenderLayers();
 
     if (!enabled())
@@ -141,11 +135,6 @@ LayerTreeHost::~LayerTreeHost() = default;
 
 void LayerTreeHost::setLayerFlushSchedulingEnabled(bool)
 {
-}
-
-void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
-{
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
 void LayerTreeHost::scheduleLayerFlush()

@@ -37,8 +37,8 @@ public:
     void setTexture(BitmapTexture*);
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
-    void updateContents(TextureMapper&, Image*, const IntRect&);
-    void updateContents(TextureMapper&, GraphicsLayer*, const IntRect&, float scale = 1);
+    void updateContents(Image*, const IntRect&);
+    void updateContents(GraphicsLayer*, const IntRect&, float scale = 1);
     WEBCORE_EXPORT virtual void paint(TextureMapper&, const TransformationMatrix&, float, bool allEdgesExposed);
     virtual ~TextureMapperTile();
 

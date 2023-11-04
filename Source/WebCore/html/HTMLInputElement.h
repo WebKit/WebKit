@@ -339,6 +339,8 @@ public:
     bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
     void finishParsingChildren() final;
 
+    bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
@@ -483,6 +485,7 @@ private:
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
     bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };
     bool m_hasSwitchAttribute : 1 { false };
+    bool m_hasEverBeenPasswordField : 1 { false };
     RefPtr<InputType> m_inputType;
     // The ImageLoader must be owned by this element because the loader code assumes
     // that it lives as long as its owning element lives. If we move the loader into

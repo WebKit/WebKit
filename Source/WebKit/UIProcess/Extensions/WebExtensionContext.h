@@ -190,6 +190,7 @@ public:
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
+    bool reload(NSError ** = nullptr);
 
     bool isLoaded() const { return !!m_extensionController; }
 
@@ -211,6 +212,9 @@ public:
 
     const InjectedContentVector& injectedContents();
     bool hasInjectedContentForURL(NSURL *);
+
+    URL optionsPageURL() const;
+    URL overrideNewTabPageURL() const;
 
     const PermissionsMap& grantedPermissions();
     void setGrantedPermissions(PermissionsMap&&);
@@ -441,6 +445,8 @@ private:
 
     // Runtime APIs
     void runtimeGetBackgroundPage(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<String> error)>&&);
+    void runtimeOpenOptionsPage(CompletionHandler<void(std::optional<String> error)>&&);
+    void runtimeReload();
     void runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
     void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);

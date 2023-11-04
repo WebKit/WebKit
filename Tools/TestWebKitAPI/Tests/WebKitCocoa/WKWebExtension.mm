@@ -630,6 +630,238 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_EQ(testExtension.errors.count, 0ul);
 }
 
+TEST(WKWebExtension, OptionsPageParsing)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @"options.html"
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @""
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_page": @123
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"page": @"options.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"bad": @"options.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"page": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"options_ui": @{
+            @"page": @""
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOptionsPage);
+}
+
+TEST(WKWebExtension, URLOverridesParsing)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @"newtab.html"
+        }
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"bad": @"newtab.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 0ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_url_overrides": @{
+            @"newtab": @""
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @"newtab.html"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @123
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"chrome_url_overrides": @{
+            @"newtab": @""
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

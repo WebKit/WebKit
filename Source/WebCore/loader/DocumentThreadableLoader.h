@@ -109,10 +109,13 @@ namespace WebCore {
         bool isResponseAllowedByContentSecurityPolicy(const ResourceResponse&);
 
         SecurityOrigin& securityOrigin() const;
+        Ref<SecurityOrigin> protectedSecurityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
         const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const;
 
-        Document& document() { return m_document; }
+        Document& document() { return *m_document; }
+        Ref<Document> protectedDocument();
+
         const ThreadableLoaderOptions& options() const { return m_options; }
         const String& referrer() const { return m_referrer; }
         bool isLoading() { return m_resource || m_preflightChecker; }
@@ -126,9 +129,11 @@ namespace WebCore {
         bool shouldSetHTTPHeadersToKeep() const;
         bool checkURLSchemeAsCORSEnabled(const URL&);
 
+        CachedResourceHandle<CachedRawResource> protectedResource() const;
+
         CachedResourceHandle<CachedRawResource> m_resource;
-        ThreadableLoaderClient* m_client;
-        Document& m_document;
+        ThreadableLoaderClient* m_client; // FIXME: Use a smart pointer.
+        WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
         ThreadableLoaderOptions m_options;
         bool m_responsesCanBeOpaque { true };
         RefPtr<SecurityOrigin> m_origin;

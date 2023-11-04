@@ -31,7 +31,6 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapperContextAttributes.h"
 #include "TextureMapperGLHeaders.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -61,9 +60,9 @@ public:
 
     typedef unsigned Flags;
 
-    static Ref<BitmapTexture> create(const TextureMapperContextAttributes& contextAttributes, const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
+    static Ref<BitmapTexture> create(const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
     {
-        return adoptRef(*new BitmapTexture(contextAttributes, flags, internalFormat));
+        return adoptRef(*new BitmapTexture(flags, internalFormat));
     }
 
     WEBCORE_EXPORT ~BitmapTexture();
@@ -114,7 +113,7 @@ public:
     OptionSet<TextureMapperFlags> colorConvertFlags() const { return m_colorConvertFlags; }
 
 private:
-    BitmapTexture(const TextureMapperContextAttributes&, const Flags, GLint internalFormat);
+    BitmapTexture(const Flags, GLint internalFormat);
 
     void clearIfNeeded();
     void createFboIfNeeded();
@@ -130,7 +129,6 @@ private:
     GLuint m_depthBufferObject { 0 };
     bool m_shouldClear { true };
     ClipStack m_clipStack;
-    TextureMapperContextAttributes m_contextAttributes;
     OptionSet<TextureMapperFlags> m_colorConvertFlags;
     FilterInfo m_filterInfo;
     GLint m_internalFormat { 0 };

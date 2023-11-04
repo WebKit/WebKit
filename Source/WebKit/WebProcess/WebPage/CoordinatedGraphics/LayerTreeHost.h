@@ -80,7 +80,6 @@ public:
 
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
     void setLayerFlushSchedulingEnabled(bool);
-    void setShouldNotifyAfterNextScheduledLayerFlush(bool);
 
     void scheduleLayerFlush();
     void cancelPendingLayerFlush();
@@ -156,7 +155,6 @@ private:
     LayerTreeContext m_layerTreeContext;
 #if USE(COORDINATED_GRAPHICS)
     bool m_layerFlushSchedulingEnabled { true };
-    bool m_notifyAfterScheduledLayerFlush { false };
     bool m_isSuspended { false };
     bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };
@@ -195,7 +193,6 @@ inline LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID
 #endif
 inline LayerTreeHost::~LayerTreeHost() { }
 inline void LayerTreeHost::setLayerFlushSchedulingEnabled(bool) { }
-inline void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool) { }
 inline void LayerTreeHost::scheduleLayerFlush() { }
 inline void LayerTreeHost::cancelPendingLayerFlush() { }
 inline void LayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer*) { }

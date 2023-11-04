@@ -40,6 +40,7 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     : m_commandQueue(commandQueue)
     , m_device(device)
 {
+    m_pendingCommandBuffers = [NSMutableSet set];
 }
 
 Queue::Queue(Device& device)
@@ -147,14 +148,16 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 callback();
         }, CompletionHandlerCallThread::AnyThread));
     }];
-    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer> commandBuffer) {
+        protectedThis->scheduleWork(CompletionHandler<void(void)>([commandBuffer, protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
+            [protectedThis->m_pendingCommandBuffers removeObject:commandBuffer];
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);
         }, CompletionHandlerCallThread::AnyThread));
     }];
 
+    [m_pendingCommandBuffers addObject:commandBuffer];
     [commandBuffer commit];
     ++m_submittedCommandBufferCount;
 }
@@ -205,6 +208,13 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
         return false;
 
     return true;
+}
+
+void Queue::waitUntilIdle()
+{
+    finalizeBlitCommandEncoder();
+    for (id<MTLCommandBuffer> commandBuffer in m_pendingCommandBuffers)
+        [commandBuffer waitUntilCompleted];
 }
 
 void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void* data, size_t size)

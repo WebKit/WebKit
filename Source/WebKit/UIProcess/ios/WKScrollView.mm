@@ -317,6 +317,17 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
+- (BOOL)_contentInsetWasExternallyOverridden
+{
+    return _contentInsetWasExternallyOverridden;
+}
+
+- (void)_resetContentInset
+{
+    super.contentInset = UIEdgeInsetsZero;
+    [_internalDelegate _scheduleVisibleContentRectUpdate];
+}
+
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
@@ -342,6 +353,12 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         return;
 
     [super setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+}
+
+- (void)_resetContentInsetAdjustmentBehavior
+{
+    _contentInsetAdjustmentBehaviorWasExternallyOverridden = NO;
+    [self _setContentInsetAdjustmentBehaviorInternal:UIScrollViewContentInsetAdjustmentAutomatic];
 }
 
 #endif

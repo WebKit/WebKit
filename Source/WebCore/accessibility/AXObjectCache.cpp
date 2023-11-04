@@ -2277,6 +2277,8 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
             target = ownedObject;
         else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
             target = controlledObject;
+        else
+            target = object;
 #endif
     } else {
         // Check to see if the active descendant is a child of the controlled object. Then we have to use that
