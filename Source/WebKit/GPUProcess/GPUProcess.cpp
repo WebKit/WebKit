@@ -74,11 +74,8 @@
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCocoa.h"
 #include <WebCore/CoreAudioSharedUnit.h>
+#include <WebCore/UTIUtilities.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
-#endif
-
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-#include <pal/spi/cg/ImageIOSPI.h>
 #endif
 
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -268,9 +265,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     SandboxExtension::consumePermanently(parameters.gpuToolsExtensionHandles);
 #endif
 
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-    auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
-    CGImageSourceSetAllowableTypes(emptyArray.get());
+#if PLATFORM(COCOA)
+    WebCore::setImageSourceAllowableTypes({ });
 #endif
 
 #if USE(GBM)
