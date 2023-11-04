@@ -64,7 +64,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_device(device)
     , m_requestedFeatures(WTFMove(requestedFeatures))
     , m_activeRenderState(WebXRRenderState::create(mode))
-    , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
+    , m_viewerReferenceSpace(WebXRViewerSpace::create(document, *this))
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
