@@ -3264,8 +3264,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
         } else {
             layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
             if (UNLIKELY(!layerBuffer)) {
-                auto texture = BitmapTexture::create();
-                texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                auto texture = BitmapTexture::create(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
                 layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
             }
             frameHolder->updateTexture(layerBuffer->texture());

@@ -47,40 +47,39 @@
 
 #if OS(DARWIN)
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
+static const GLenum s_pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 #endif
 
 namespace WebCore {
 
-BitmapTexture::BitmapTexture(const Flags, GLint internalFormat)
-    : m_format(GL_RGBA)
+BitmapTexture::BitmapTexture(const IntSize& size, const Flags flags, GLint internalFormat)
+    : m_flags(flags)
+    , m_size(size)
+    , m_internalFormat(internalFormat == GL_DONT_CARE ? GL_RGBA : internalFormat)
+    , m_format(GL_RGBA)
 {
-    if (internalFormat != GL_DONT_CARE) {
-        m_internalFormat = internalFormat;
-        return;
-    }
-
-    m_internalFormat = GL_RGBA;
-}
-
-void BitmapTexture::didReset()
-{
-    if (!m_id)
-        glGenTextures(1, &m_id);
-
-    m_shouldClear = true;
-    m_colorConvertFlags = { };
-    m_filterInfo = FilterInfo();
-    if (m_textureSize == contentSize())
-        return;
-
-    m_textureSize = contentSize();
+    glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_size.width(), m_size.height(), 0, m_format, s_pixelDataType, nullptr);
+}
 
-    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_textureSize.width(), m_textureSize.height(), 0, m_format, m_type, 0);
+void BitmapTexture::reset(const IntSize& size, const Flags flags)
+{
+    m_flags = flags;
+    m_shouldClear = true;
+    m_colorConvertFlags = { };
+    m_filterInfo = FilterInfo();
+    if (m_size != size) {
+        m_size = size;
+        glBindTexture(GL_TEXTURE_2D, m_id);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_size.width(), m_size.height(), 0, m_format, s_pixelDataType, nullptr);
+    }
 }
 
 void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
@@ -129,7 +128,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, adjustedSourceOffset.x());
     }
 
-    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, s_pixelDataType, data);
 
     if (supportsUnpackSubimage) {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -210,7 +209,7 @@ void BitmapTexture::initializeStencil()
 
     glGenRenderbuffers(1, &m_rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_size.width(), m_size.height());
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
     glClearStencil(0);
@@ -231,7 +230,7 @@ void BitmapTexture::initializeDepthBuffer()
 
     glGenRenderbuffers(1, &m_depthBufferObject);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
-    glRenderbufferStorage(GL_RENDERBUFFER, format, m_textureSize.width(), m_textureSize.height());
+    glRenderbufferStorage(GL_RENDERBUFFER, format, m_size.width(), m_size.height());
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
 }
@@ -241,7 +240,7 @@ void BitmapTexture::clearIfNeeded()
     if (!m_shouldClear)
         return;
 
-    m_clipStack.reset(IntRect(IntPoint::zero(), m_textureSize), ClipStack::YAxisMode::Default);
+    m_clipStack.reset(IntRect(IntPoint::zero(), m_size), ClipStack::YAxisMode::Default);
     m_clipStack.applyIfNeeded();
     glClearColor(0, 0, 0, 0);
     glClearStencil(0);
@@ -267,7 +266,7 @@ void BitmapTexture::bindAsSurface()
     glBindTexture(GL_TEXTURE_2D, 0);
     createFboIfNeeded();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glViewport(0, 0, m_textureSize.width(), m_textureSize.height());
+    glViewport(0, 0, m_size.width(), m_size.height());
     if (flags() & DepthBuffer)
         glEnable(GL_DEPTH_TEST);
     else
@@ -278,8 +277,7 @@ void BitmapTexture::bindAsSurface()
 
 BitmapTexture::~BitmapTexture()
 {
-    if (m_id)
-        glDeleteTextures(1, &m_id);
+    glDeleteTextures(1, &m_id);
 
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
@@ -291,16 +289,6 @@ BitmapTexture::~BitmapTexture()
 
     if (m_depthBufferObject)
         glDeleteRenderbuffers(1, &m_depthBufferObject);
-}
-
-bool BitmapTexture::isValid() const
-{
-    return m_id;
-}
-
-IntSize BitmapTexture::size() const
-{
-    return m_textureSize;
 }
 
 void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)
@@ -322,7 +310,7 @@ void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, id());
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_textureSize.width(), m_textureSize.height());
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_size.width(), m_size.height());
 
     glBindTexture(GL_TEXTURE_2D, boundTexture);
     glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
