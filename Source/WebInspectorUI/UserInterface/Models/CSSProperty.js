@@ -366,7 +366,6 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return this._canonicalName;
     }
 
-    // FIXME: Remove current value getter and rename rawValue to value once the old styles sidebar is removed.
     get value()
     {
         if (!this._value)

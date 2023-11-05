@@ -119,26 +119,48 @@ WI.FontStyles = class FontStyles
 
     // Public
 
-    writeFontVariation(tag, value)
-    {
+    writeFontVariation(tag, value) {
         let targetPropertyName = WI.FontStyles.fontPropertyForAxisTag(tag);
-        let targetPropertyValue;
-        if (targetPropertyName && !this._authoredFontVariationSettingsMap.has(tag))
-            targetPropertyValue = WI.FontStyles.axisValueToFontPropertyValue(tag, value);
-        else {
+
+        // Check if the target property exists
+        let cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, false);
+
+        if (cssProperty) {
+            // The existing property exists, get its value
+            let existingValue = cssProperty.rawValue;
+
+            // Check if the existing value contains !important
+            let isImportant = existingValue.includes("!important");
+
+            // Check if existing property is font-weight
+            let isFontWeight = targetPropertyName === "font-weight";
+
+            // Update value without marking it as important if it is not already important
+            if (!isImportant) {
+                cssProperty.rawValue = isFontWeight
+                    ? `font-weight: ${WI.FontStyles.axisValueToFontPropertyValue(tag, value)} !important`
+                    : `${existingValue} ${WI.FontStyles.axisValueToFontPropertyValue(tag, value)}`;
+            }
+        } else {
+            // The property doesn't exist, create a new one
             this._authoredFontVariationSettingsMap.set(tag, value);
             let axes = [];
             for (let [tag, value] of this._authoredFontVariationSettingsMap) {
                 axes.push(`"${tag}" ${value}`);
             }
 
+            //FIXME: change font-variation-settings to font-weight under style attribute
             targetPropertyName = "font-variation-settings";
-            targetPropertyValue = axes.join(", ");
-        }
+            let targetPropertyValue = axes.join(", ");
 
-        const createIfMissing = true;
-        let cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
-        cssProperty.rawValue = targetPropertyValue;
+            const createIfMissing = true;
+            cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
+
+            if (cssProperty) {
+                // Set the value without marking it as important
+                cssProperty.rawValue = targetPropertyValue;
+            }
+        }
     }
 
     refresh(forceSignificantChange)
@@ -330,7 +352,7 @@ WI.FontStyles = class FontStyles
         let inlineCSSStyleDeclaration = this._nodeStyles.inlineStyle;
         let properties = inlineCSSStyleDeclaration.visibleProperties;
 
-        cssProperty = properties.find(property => property.name === name);
+        cssProperty = properties.findLast(property => property.name === name && property.enabled);
         if (!cssProperty && createIfMissing) {
             cssProperty = inlineCSSStyleDeclaration.newBlankProperty(properties.length);
             cssProperty.name = name;
