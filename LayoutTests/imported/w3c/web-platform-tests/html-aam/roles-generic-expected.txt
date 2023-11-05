@@ -1,0 +1,25 @@
+Tests ONLY the generic mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order by tagname.
+
+x x x x
+x
+x
+x
+x
+x x x x x
+
+PASS el-b
+PASS el-bdi
+PASS el-bdo
+PASS el-data
+PASS el-div
+PASS el-i
+FAIL el-li-orphaned assert_false: Computed Role: "listitem" does not match any of the acceptable role strings in ["generic", "", "none"]: <li data-testname="el-li-orphaned" class="ex-generic">x</li> expected false got true
+PASS el-pre
+PASS el-q
+PASS el-samp
+PASS el-small
+PASS el-span
+PASS el-u
+

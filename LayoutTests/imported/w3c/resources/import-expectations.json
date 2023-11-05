@@ -114,6 +114,7 @@
     "web-platform-tests/gyroscope": "skip",
     "web-platform-tests/hr-time": "import",
     "web-platform-tests/html": "import",
+    "web-platform-tests/html-aam": "import",
     "web-platform-tests/html-longdesc": "skip",
     "web-platform-tests/html-media-capture": "skip",
     "web-platform-tests/html/browsers/offline/application-cache-api": "skip",

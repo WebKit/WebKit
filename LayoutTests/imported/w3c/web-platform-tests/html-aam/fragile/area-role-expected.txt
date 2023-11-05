@@ -1,0 +1,5 @@
+
+
+FAIL el-area assert_equals: <area shape="rect" coords="0,0,15,15" href="#" alt="x" data-testname="el-area" data-expectedrole="link" class="ex"> expected "link" but got ""
+PASS el-area-no-href
+
