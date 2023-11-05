@@ -1743,7 +1743,7 @@ webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.h
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
 
-webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
+webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ Pass ImageOnlyFailure ]
 
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 [ Monterey+ ] http/wpt/loading/early-hints [ Pass ]
@@ -1984,4 +1984,4 @@ http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.html [ Pass
 http/tests/webgpu/webgpu/api/operation/render_pipeline/overrides.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html [ Pass ]
 
-webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
