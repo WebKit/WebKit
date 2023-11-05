@@ -124,6 +124,7 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
             continue;
         }
         ASSERT_NOT_REACHED();
+        ++index;
     }
 }
 
@@ -476,6 +477,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
             continue;
         }
         ASSERT_NOT_REACHED();
+        ++index;
     }
     return candidateContentLogicalWidth;
 }
