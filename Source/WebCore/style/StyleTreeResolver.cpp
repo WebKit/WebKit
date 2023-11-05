@@ -515,9 +515,6 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
             if (auto* firstLineStyle = elementUpdate.style->getCachedPseudoStyle(PseudoId::FirstLine))
                 return firstLineStyle;
         }
-        // ::backdrop does not inherit style, hence using the view style as parent style
-        if (pseudoId == PseudoId::Backdrop)
-            return &m_document.renderView()->style();
         return elementUpdate.style.get();
     };
 
