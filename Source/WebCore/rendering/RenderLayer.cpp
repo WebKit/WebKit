@@ -1597,6 +1597,10 @@ void RenderLayer::updateAncestorDependentState()
     m_enclosingSVGHiddenOrResourceContainer = nullptr;
     auto determineSVGAncestors = [&] (const RenderElement& renderer) {
         for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (auto* container = dynamicDowncast<RenderSVGResourceContainer>(ancestor)) {
+                m_enclosingSVGHiddenOrResourceContainer = container;
+                return;
+            }
             if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
                 m_enclosingSVGHiddenOrResourceContainer = container;
                 return;
