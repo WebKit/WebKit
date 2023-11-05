@@ -218,11 +218,6 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
                 descent += halfLeading;
             }
         }
-        if (inlineBox.layoutBox().isRubyBase()) {
-            auto [over, under] = RubyFormattingContext { formattingContext() }.annotationContributionToLayoutBounds(inlineBox.layoutBox());
-            ascent += over;
-            descent += under;
-        }
         return { ascent, descent };
     }();
 
@@ -275,6 +270,8 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         // With text-box-trim, the inline box top is not always where the content starts.
         auto fontMetricBasedAscent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType()).ascent;
         inlineLevelBox.setInlineBoxContentOffsetForTextBoxTrim(fontMetricBasedAscent - ascentAndDescent.ascent);
+        if (inlineLevelBox.layoutBox().isRubyBase())
+            RubyFormattingContext { formattingContext() }.applyAnnotationContributionToLayoutBounds(inlineLevelBox);
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {

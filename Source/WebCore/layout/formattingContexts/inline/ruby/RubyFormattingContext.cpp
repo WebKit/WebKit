@@ -226,15 +226,41 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     return { logicalAnnotationBoxGeometry.contentBoxHeight(), logicalAnnotationBoxGeometry.marginBoxWidth() };
 }
 
-RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
+void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox) const
 {
+    // In order to ensure consistent spacing of lines, documents with ruby typically ensure that the line-height is
+    // large enough to accommodate ruby between lines of text. Therefore, ordinarily, ruby annotation containers and ruby annotation
+    // boxes do not contribute to the measured height of a line’s inline contents;
+    // line-height calculations are performed using only the ruby base container, exactly as if it were a normal inline.
+    // However, if the line-height specified on the ruby container is less than the distance between the top of the top ruby annotation
+    // container and the bottom of the bottom ruby annotation container, then additional leading is added on the appropriate side(s).
+
+    auto& rubyBaseLayoutBox = rubyBaseInlineBox.layoutBox();
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!isInterlinearAnnotation(annotationBox))
-        return { };
+        return;
+
+    auto over = InlineLayoutUnit { };
+    auto under = InlineLayoutUnit { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
     if (annotationBox->style().rubyPosition() == RubyPosition::Before)
-        return { annotationBoxLogicalHeight, { } };
-    return { { }, annotationBoxLogicalHeight };
+        over = annotationBoxLogicalHeight;
+    else
+        under = annotationBoxLogicalHeight;
+
+    auto layoutBounds = rubyBaseInlineBox.layoutBounds();
+    if (rubyBaseInlineBox.isPreferredLineHeightFontMetricsBased()) {
+        layoutBounds.ascent += over;
+        layoutBounds.descent += under;
+    } else {
+        auto& fontMetrics = rubyBaseLayoutBox.style().metricsOfPrimaryFont();
+        auto ascent = fontMetrics.floatAscent() + over;
+        auto descent = fontMetrics.floatDescent() + under;
+        if (layoutBounds.height() < ascent + descent)
+            layoutBounds = { ascent , descent };
+    }
+    rubyBaseInlineBox.setLayoutBounds(layoutBounds);
 }
 
 static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
