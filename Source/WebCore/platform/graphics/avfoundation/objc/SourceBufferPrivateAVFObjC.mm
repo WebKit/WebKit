@@ -72,7 +72,7 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
-- (void)expectMinimumUpcomingSampleBufferPresentationTime: (CMTime)minimumUpcomingPresentationTime;
+- (void)expectMinimumUpcomingSampleBufferPresentationTime:(CMTime)minimumUpcomingPresentationTime;
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
 
@@ -89,7 +89,13 @@
 @end
 #endif
 
-@interface WebAVSampleBufferErrorListener : NSObject {
+static NSString * const errorKeyPath = @"error";
+static NSString * const outputObscuredDueToInsufficientExternalProtectionKeyPath = @"outputObscuredDueToInsufficientExternalProtection";
+
+static void* errorContext = &errorContext;
+static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputObscuredDueToInsufficientExternalProtectionContext;
+
+@interface WebAVSampleBufferListener : NSObject {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -97,7 +103,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
-- (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent;
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithParent:(WebCore::SourceBufferPrivateAVFObjC&)parent NS_DESIGNATED_INITIALIZER;
 - (void)invalidate;
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
 - (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
@@ -107,14 +115,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 @end
 
-@implementation WebAVSampleBufferErrorListener
+@implementation WebAVSampleBufferListener
 
-- (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent
+- (instancetype)initWithParent:(WebCore::SourceBufferPrivateAVFObjC&)parent
 {
     if (!(self = [super init]))
         return nil;
 
-    _parent = WTFMove(parent);
+    _parent = parent;
     return self;
 }
 
@@ -126,32 +134,34 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)invalidate
 {
+    ASSERT(isMainThread());
     if (!_parent && !_layers.size() && !_renderers.size())
         return;
 
     for (auto& layer : _layers) {
-        [layer removeObserver:self forKeyPath:@"error"];
-        [layer removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
+        [layer removeObserver:self forKeyPath:errorKeyPath];
+        [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
     }
     _layers.clear();
 
     for (auto& renderer : _renderers)
-        [renderer removeObserver:self forKeyPath:@"error"];
+        [renderer removeObserver:self forKeyPath:errorKeyPath];
     _renderers.clear();
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 
     _parent = nullptr;
 }
 
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer
 {
+    ASSERT(isMainThread());
     ASSERT(_parent);
     ASSERT(!_layers.contains(layer));
 
     _layers.append(layer);
-    [layer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
-    [layer addObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection" options:NSKeyValueObservingOptionNew context:nullptr];
+    [layer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
+    [layer addObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath options:NSKeyValueObservingOptionNew context:outputObscuredDueToInsufficientExternalProtectionContext];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
@@ -163,11 +173,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer
 {
+    ASSERT(isMainThread());
     ASSERT(_parent);
     ASSERT(_layers.contains(layer));
 
-    [layer removeObserver:self forKeyPath:@"error"];
-    [layer removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
+    [layer removeObserver:self forKeyPath:errorKeyPath];
+    [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
     _layers.remove(_layers.find(layer));
 
     [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
@@ -180,99 +191,107 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
-{
+- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
 ALLOW_NEW_API_WITHOUT_GUARDS_END
+{
+    ASSERT(isMainThread());
     ASSERT(_parent);
     ASSERT(!_renderers.contains(renderer));
 
     _renderers.append(renderer);
-    [renderer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRendererWasAutomaticallyFlushed:) name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
+    [renderer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(audioRendererWasAutomaticallyFlushed:) name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
+- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
+    ASSERT(isMainThread());
     ASSERT(_parent);
     ASSERT(_renderers.contains(renderer));
 
-    [renderer removeObserver:self forKeyPath:@"error"];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
+    [renderer removeObserver:self forKeyPath:errorKeyPath];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
 
     _renderers.remove(_renderers.find(renderer));
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
 {
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(keyPath);
     ASSERT(_parent);
 
-    if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
-        RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
-        ASSERT(_layers.contains(layer.get()));
-
-        if ([keyPath isEqualToString:@"error"]) {
-            RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
-            if ([error isKindOfClass:[NSNull class]])
-                return;
-
-            callOnMainThread([parent = _parent, layer = WTFMove(layer), error = WTFMove(error)] {
-                if (auto strongParent = RefPtr { parent.get() })
-                    strongParent->layerDidReceiveError(layer.get(), error.get());
-            });
-        } else if ([keyPath isEqualToString:@"outputObscuredDueToInsufficientExternalProtection"]) {
-            callOnMainThread([parent = _parent, obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
-                if (auto strongParent = RefPtr { parent.get() })
-                    strongParent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
-            });
-        } else
-            ASSERT_NOT_REACHED();
-
-    } else if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-        RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-        RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
-        if ([error isKindOfClass:[NSNull class]])
+    if (context == errorContext) {
+        RetainPtr error = dynamic_objc_cast<NSError>([change valueForKey:NSKeyValueChangeNewKey]);
+        if (!error)
             return;
 
-        ASSERT(_renderers.contains(renderer.get()));
-        ASSERT([keyPath isEqualToString:@"error"]);
+        if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
+            RetainPtr layer = (AVSampleBufferDisplayLayer *)object;
 
-        callOnMainThread([parent = _parent, renderer = WTFMove(renderer), error = WTFMove(error)] {
-            if (auto strongParent = RefPtr { parent.get() })
-                strongParent->rendererDidReceiveError(renderer.get(), error.get());
+            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
+                ASSERT(_layers.contains(layer.get()));
+                if (RefPtr parent = _parent.get())
+                    parent->layerDidReceiveError(layer.get(), error.get());
+            });
+            return;
+        }
+
+        if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+            RetainPtr renderer = (AVSampleBufferAudioRenderer *)object;
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+
+            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
+                ASSERT(_renderers.contains(renderer.get()));
+                if (RefPtr parent = _parent.get())
+                    parent->rendererDidReceiveError(renderer.get(), error.get());
+            });
+            return;
+        }
+
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Unexpected kind of object while observing errorContext");
+        return;
+    }
+
+    if (context == outputObscuredDueToInsufficientExternalProtectionContext) {
+        RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(object, PAL::getAVSampleBufferDisplayLayerClass());
+        BOOL isObscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue];
+
+        ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isObscured] {
+            ASSERT(_layers.contains(layer.get()));
+            if (RefPtr parent = _parent.get())
+                parent->outputObscuredDueToInsufficientExternalProtectionChanged(isObscured);
         });
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
-- (void)layerFailedToDecode:(NSNotification*)note
+- (void)layerFailedToDecode:(NSNotification *)notification
 {
-    RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)[note object];
-    if (!_layers.contains(layer.get()))
-        return;
+    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    RetainPtr error = dynamic_objc_cast<NSError>([notification.userInfo valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
 
-    callOnMainThread([parent = _parent, layer = WTFMove(layer), error = retainPtr([[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey])] {
-        if (auto strongParent = RefPtr { parent.get() })
-            strongParent->layerDidReceiveError(layer.get(), error.get());
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
+        if (!_layers.contains(layer.get()))
+            return;
+        if (RefPtr parent = _parent.get())
+            parent->layerDidReceiveError(layer.get(), error.get());
     });
 }
 
-- (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)note
+- (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)notification
 {
-    RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)[note object];
-    if (!_layers.contains(layer.get()))
-        return;
+    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    BOOL requiresFlush = [layer requiresFlushToResumeDecoding];
 
-    bool requiresFlush = [layer requiresFlushToResumeDecoding];
-
-    callOnMainThread([parent = _parent, layer = WTFMove(layer), requiresFlush] {
-        if (auto strongParent = RefPtr { parent.get() })
-            strongParent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), requiresFlush] {
+        if (!_layers.contains(layer.get()))
+            return;
+        if (RefPtr parent = _parent.get())
+            parent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
     });
 }
 
@@ -291,17 +310,19 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 #endif
 
-- (void)audioRendererWasAutomaticallyFlushed:(NSNotification*)note
+- (void)audioRendererWasAutomaticallyFlushed:(NSNotification *)notification
 {
-    RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)[note object];
-    if (!_renderers.contains(renderer.get()))
-        return;
+    RetainPtr renderer = dynamic_objc_cast<AVSampleBufferAudioRenderer>(notification.object, PAL::getAVSampleBufferAudioRendererClass());
+    CMTime flushTime = [[notification.userInfo valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
 
-    callOnMainThread([parent = _parent, renderer = WTFMove(renderer), flushTime = [[[note userInfo] valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue]] {
-        if (auto strongParent = RefPtr { parent.get() })
-            strongParent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {
+        if (!_renderers.contains(renderer.get()))
+            return;
+        if (RefPtr parent = _parent.get())
+            parent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
     });
 }
+
 @end
 
 namespace WebCore {
@@ -343,7 +364,7 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
     : m_parser(WTFMove(parser))
-    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:*this]))
+    , m_listener(adoptNS([[WebAVSampleBufferListener alloc] initWithParent:*this]))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
     , m_mediaSource(parent)
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
@@ -777,7 +798,7 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
             player->removeAudioRenderer(renderer.get());
         [renderer flush];
         [renderer stopRequestingMediaData];
-        [m_errorListener stopObservingRenderer:renderer.get()];
+        [m_listener stopObservingRenderer:renderer.get()];
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
@@ -785,8 +806,8 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
 #endif
     }
 
-    [m_errorListener invalidate];
-    m_errorListener = nullptr;
+    [m_listener invalidate];
+    m_listener = nullptr;
 
     m_audioRenderers.clear();
 }
@@ -911,7 +932,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                     weakThis->didBecomeReadyForMoreSamples(trackID);
             }];
             m_audioRenderers.set(trackID, renderer);
-            [m_errorListener beginObservingRenderer:renderer.get()];
+            [m_listener beginObservingRenderer:renderer.get()];
         } else
             renderer = m_audioRenderers.get(trackID);
 
@@ -1561,7 +1582,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
     if (m_displayLayer) {
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
-        [m_errorListener stopObservingLayer:m_displayLayer.get()];
+        [m_listener stopObservingLayer:m_displayLayer.get()];
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
@@ -1582,7 +1603,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
             if (weakThis)
                 weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
         }];
-        [m_errorListener beginObservingLayer:m_displayLayer.get()];
+        [m_listener beginObservingLayer:m_displayLayer.get()];
         reenqueSamples(AtomString::number(m_enabledVideoTrackID));
     }
 }
@@ -1628,6 +1649,6 @@ WTFLogChannel& SourceBufferPrivateAVFObjC::logChannel() const
 }
 #endif
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
