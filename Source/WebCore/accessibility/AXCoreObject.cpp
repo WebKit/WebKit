@@ -213,6 +213,9 @@ AXCoreObject::AXValue AXCoreObject::value()
     if (supportsCheckedState())
         return checkboxOrRadioValue();
 
+    if (roleValue() == AccessibilityRole::Summary)
+        return isExpanded();
+
     // Radio groups return the selected radio button as the AXValue.
     if (isRadioGroup())
         return selectedRadioButton();

@@ -6824,3 +6824,12 @@ webkit.org/b/263872 imported/w3c/web-platform-tests/scroll-animations/css/printi
 webkit.org/b/263873 imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-iframe-print.html [ ImageOnlyFailure ]
 
 webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
+
+# <dialog> element failures
+
+webkit.org/b/263834 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits.html [ ImageOnlyFailure ]
+
+# CloseWatcher related timeouts
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-canceling.html [ Skip ]

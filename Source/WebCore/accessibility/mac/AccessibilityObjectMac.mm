@@ -873,7 +873,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::RubyRun, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyText, NSAccessibilityGroupRole },
         { AccessibilityRole::Details, NSAccessibilityGroupRole },
-        { AccessibilityRole::Summary, NSAccessibilityButtonRole },
+        { AccessibilityRole::Summary, NSAccessibilityDisclosureTriangleRole },
         { AccessibilityRole::SVGTextPath, NSAccessibilityGroupRole },
         { AccessibilityRole::SVGText, NSAccessibilityGroupRole },
         { AccessibilityRole::SVGTSpan, NSAccessibilityGroupRole },

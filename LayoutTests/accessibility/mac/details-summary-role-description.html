@@ -19,7 +19,7 @@
           var summary = accessibilityController.accessibleElementById("summary");
           var details = accessibilityController.accessibleElementById("details");
          
-          shouldBe("summary.role", "'AXRole: AXButton'");
+          shouldBe("summary.role", "'AXRole: AXDisclosureTriangle'");
           shouldBe("details.role", "'AXRole: AXGroup'");
           shouldBe("summary.subrole", "'AXSubrole: AXSummary'");
           shouldBe("details.subrole", "'AXSubrole: AXDetails'");

@@ -1,5 +1,0 @@
-Test cancel event is fired when the dialog is closed by user interaction
-
-
-PASS Test cancel event is fired when the dialog is closed by user interaction
-

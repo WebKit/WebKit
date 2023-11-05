@@ -1336,9 +1336,6 @@ fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-widt
 # problem with blur handling
 mathml/focus-event-handling.html [ Failure ]
 
-# <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
-fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
-
 # <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-001.html [ Pass Failure ]
 
@@ -2205,10 +2202,6 @@ editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.
 editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html [ Pass Timeout ]
 editing/selection/ios/show-callout-bar-after-selecting-word.html [ Pass Timeout ]
 editing/selection/ios/show-callout-bar-after-tap.html [ Pass Timeout ]
-
-# Timing out since import.
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-closewatcher.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault-closewatcher.tentative.html [ Skip ]
 
 # Double-clicking does not select text on iOS.
 imported/w3c/web-platform-tests/css/css-ui/user-select-001.html [ Skip ]

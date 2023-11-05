@@ -2,7 +2,7 @@ This tests some basic attributes about the details element.
 PASS: details1.role === 'AXRole: AXGroup'
 PASS: details1.subrole === 'AXSubrole: AXDetails'
 PASS: details1.isExpanded === true
-PASS: summary1.role === 'AXRole: AXButton'
+PASS: summary1.role === 'AXRole: AXDisclosureTriangle'
 PASS: summary1.subrole === 'AXSubrole: AXSummary'
 PASS: summary1.title === 'AXTitle: Some open info'
 PASS: details1.isAttributeSettable('AXExpanded') === true

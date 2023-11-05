@@ -99,7 +99,7 @@ public:
 
     const Vector<PlatformXR::Device::ViewData>& views() const { return m_views; }
     const PlatformXR::Device::FrameData& frameData() const { return m_frameData; }
-    const WebXRViewerSpace& viewerReferenceSpace() const { return *m_viewerReferenceSpace; }
+    const WebXRViewerSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
     
 #if ENABLE(WEBXR_HANDS)
@@ -147,7 +147,7 @@ private:
     FeatureList m_requestedFeatures;
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
-    std::unique_ptr<WebXRViewerSpace> m_viewerReferenceSpace;
+    Ref<WebXRViewerSpace> m_viewerReferenceSpace;
     MonotonicTime m_timeOrigin;
 
     unsigned m_nextCallbackId { 1 };

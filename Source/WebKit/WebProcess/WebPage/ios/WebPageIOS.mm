@@ -3607,19 +3607,32 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     information.ariaLabel = focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
 
     if (is<HTMLSelectElement>(*focusedElement)) {
+#if USE(UICONTEXTMENU)
+        static bool selectPickerUsesMenu = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
+#else
+        bool selectPickerUsesMenu = false;
+#endif
+
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*focusedElement);
         information.elementType = InputType::Select;
 
+        RefPtr<ContainerNode> parentGroup;
         int parentGroupID = 0;
-        // The parent group ID indicates the group the option belongs to and is 0 for group elements.
-        // If there are option elements in between groups, they are given it's own group identifier.
-        // If a select does not have groups, all the option elements have group ID 0.
         for (auto& item : element.listItems()) {
-            if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get()))
+            if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get())) {
+                if (parentGroup && optionElement->parentNode() != parentGroup) {
+                    parentGroupID++;
+                    parentGroup = nullptr;
+                    information.selectOptions.append(OptionItem(emptyString(), true, false, false, parentGroupID));
+                }
+
                 information.selectOptions.append(OptionItem(optionElement->displayLabel(), false, optionElement->selected(), optionElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
-            else if (auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(item.get())) {
+            } else if (auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(item.get())) {
+                if (selectPickerUsesMenu)
+                    parentGroup = optGroupElement;
+
                 parentGroupID++;
-                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), 0));
+                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
             }
         }
         information.selectedIndex = element.selectedIndex();

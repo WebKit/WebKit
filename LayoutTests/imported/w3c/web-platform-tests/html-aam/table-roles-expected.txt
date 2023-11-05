@@ -1,0 +1,42 @@
+Tests the computedrole mappings for the table-related roles defined in HTML-AAM. Most test names correspond to unique ID defined in the spec.
+
+caption
+a	b	c
+1	2	3
+4	5	6
+x	y	z
+
+PASS el-table
+PASS el-caption
+FAIL el-thead assert_equals: <thead data-testname="el-thead" data-expectedrole="rowgroup" class="ex">
+    <tr data-testname="el-tr-thead" data-expectedrole="row" class="ex">
+      <th data-testname="el-th" data-expectedrole="columnheader" class="ex">a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead> expected "rowgroup" but got ""
+PASS el-tr-thead
+PASS el-th
+FAIL el-tbody assert_equals: <tbody data-testname="el-tbody" data-expectedrole="rowgroup" class="ex">
+    <tr data-testname="el-tr-tbody" data-expectedrole="row" class="ex">
+      <th data-testname="el-th-in-row" data-expectedrole="rowheader" class="ex">1</th>
+      <td data-testname="el-td" data-expectedrole="cell" class="ex">2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+  </tbody> expected "rowgroup" but got ""
+PASS el-tr-tbody
+FAIL el-th-in-row assert_equals: <th data-testname="el-th-in-row" data-expectedrole="rowheader" class="ex">1</th> expected "rowheader" but got "columnheader"
+PASS el-td
+FAIL el-tfoot assert_equals: <tfoot data-testname="el-tfoot" data-expectedrole="rowgroup" class="ex">
+    <tr>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+    </tr>
+  </tfoot> expected "rowgroup" but got ""
+
