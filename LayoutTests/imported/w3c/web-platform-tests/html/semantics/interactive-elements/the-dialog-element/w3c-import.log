@@ -18,9 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none.html
@@ -30,6 +27,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order-ref.html
@@ -43,9 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-just-once.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-closewatcher.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault-closewatcher.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-input.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-select.html
@@ -89,11 +87,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-fixed-position-cb-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-fo-ancestor-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-fo-ancestor.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-transformed-ancestor-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-transformed-ancestor.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-will-change-ancestor-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-will-change-ancestor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-transformed-ancestor.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-transformed-ancestor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-will-change-ancestor.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/fixed-position-child-with-will-change-ancestor.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-previous-iframe.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/green-dialog-and-backdrop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-does-not-match-disabled-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames.html
@@ -190,6 +189,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking.tentative.html

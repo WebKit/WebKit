@@ -1,5 +1,7 @@
-Test cancel event is fired when the dialog is closed by user interaction
+Hello World
 
 
-PASS Test cancel event is fired when the dialog is closed by user interaction
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test cancel event is fired when the dialog is closed by user close requests
 

@@ -1,8 +1,0 @@
-Test cancel event with preventDefault on cancel event for dialog element
-
-Hello World
-
-user activation button
-
-PASS Test cancel event with preventDefault on cancel event for dialog element
-

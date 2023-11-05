@@ -6826,6 +6826,7 @@
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-style-change-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow-ref.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-inherits-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialogs-with-no-backdrop-ref.html",

@@ -2203,10 +2203,6 @@ editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html [ Pass
 editing/selection/ios/show-callout-bar-after-selecting-word.html [ Pass Timeout ]
 editing/selection/ios/show-callout-bar-after-tap.html [ Pass Timeout ]
 
-# Timing out since import.
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-closewatcher.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault-closewatcher.tentative.html [ Skip ]
-
 # Double-clicking does not select text on iOS.
 imported/w3c/web-platform-tests/css/css-ui/user-select-001.html [ Skip ]
 
