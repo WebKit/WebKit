@@ -132,25 +132,22 @@ RubyFormattingContext::BaseLayoutResult RubyFormattingContext::layoutRubyBaseInl
 {
     // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-around" on the ruby subrange.
     auto& formattingUtils = parentFormattingContext().formattingUtils();
-    auto lineLogicalRight = line.contentLogicalRight();
-    auto baseContentLogicalWidth = InlineLayoutUnit { };
     auto baseRunStart = line.runs().size();
+    auto baseContentLogicalLeft = line.contentLogicalRight();
 
-    for (size_t index = rubyBaseContentStartIndex; index < inlineItemList.size(); ++index) {
-        auto& rubyBaseInlineItem = inlineItemList[index];
-        if (&rubyBaseInlineItem.layoutBox() == &rubyBaseLayoutBox) {
-            auto baseRunCount = line.runs().size() - baseRunStart;
-            auto logicalRightSpacing = InlineLayoutUnit { };
-            if (baseRunCount)
-                logicalRightSpacing = applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
-            return { index - rubyBaseContentStartIndex, logicalRightSpacing };
-        }
-        auto logicalWidth = formattingUtils.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
-        line.append(rubyBaseInlineItem, rubyBaseInlineItem.style(), logicalWidth);
-        baseContentLogicalWidth += logicalWidth;
+    auto index = rubyBaseContentStartIndex;
+    while (index < inlineItemList.size() && &inlineItemList[index].layoutBox() != &rubyBaseLayoutBox) {
+        auto& rubyBaseContentItem = inlineItemList[index++];
+        line.append(rubyBaseContentItem, rubyBaseContentItem.style(), formattingUtils.inlineItemWidth(rubyBaseContentItem, line.contentLogicalRight(), { }));
     }
-    ASSERT_NOT_REACHED();
-    return { inlineItemList.size() - rubyBaseContentStartIndex, { } };
+    ASSERT(index < inlineItemList.size());
+    auto logicalRightSpacing = InlineLayoutUnit { };
+    auto baseRunCount = line.runs().size() - baseRunStart;
+    if (baseRunCount) {
+        auto baseContentLogicalWidth = line.contentLogicalRight() - baseContentLogicalLeft;
+        logicalRightSpacing = applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
+    }
+    return { index - rubyBaseContentStartIndex, logicalRightSpacing };
 }
 
 InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseLayoutBox)
