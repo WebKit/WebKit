@@ -125,6 +125,7 @@ private:
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
     friend class InlineFormattingUtils;
+    friend class RubyFormattingContext;
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }

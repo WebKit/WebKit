@@ -124,6 +124,7 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
             continue;
         }
         ASSERT_NOT_REACHED();
+        ++index;
     }
 }
 
@@ -131,25 +132,22 @@ RubyFormattingContext::BaseLayoutResult RubyFormattingContext::layoutRubyBaseInl
 {
     // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-around" on the ruby subrange.
     auto& formattingUtils = parentFormattingContext().formattingUtils();
-    auto lineLogicalRight = line.contentLogicalRight();
-    auto baseContentLogicalWidth = InlineLayoutUnit { };
     auto baseRunStart = line.runs().size();
+    auto baseContentLogicalLeft = line.contentLogicalRight();
 
-    for (size_t index = rubyBaseContentStartIndex; index < inlineItemList.size(); ++index) {
-        auto& rubyBaseInlineItem = inlineItemList[index];
-        if (&rubyBaseInlineItem.layoutBox() == &rubyBaseLayoutBox) {
-            auto baseRunCount = line.runs().size() - baseRunStart;
-            auto logicalRightSpacing = InlineLayoutUnit { };
-            if (baseRunCount)
-                logicalRightSpacing = applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
-            return { index - rubyBaseContentStartIndex, logicalRightSpacing };
-        }
-        auto logicalWidth = formattingUtils.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
-        line.append(rubyBaseInlineItem, rubyBaseInlineItem.style(), logicalWidth);
-        baseContentLogicalWidth += logicalWidth;
+    auto index = rubyBaseContentStartIndex;
+    while (index < inlineItemList.size() && &inlineItemList[index].layoutBox() != &rubyBaseLayoutBox) {
+        auto& rubyBaseContentItem = inlineItemList[index++];
+        line.append(rubyBaseContentItem, rubyBaseContentItem.style(), formattingUtils.inlineItemWidth(rubyBaseContentItem, line.contentLogicalRight(), { }));
     }
-    ASSERT_NOT_REACHED();
-    return { inlineItemList.size() - rubyBaseContentStartIndex, { } };
+    ASSERT(index < inlineItemList.size());
+    auto logicalRightSpacing = InlineLayoutUnit { };
+    auto baseRunCount = line.runs().size() - baseRunStart;
+    if (baseRunCount) {
+        auto baseContentLogicalWidth = line.contentLogicalRight() - baseContentLogicalLeft;
+        logicalRightSpacing = applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
+    }
+    return { index - rubyBaseContentStartIndex, logicalRightSpacing };
 }
 
 InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseLayoutBox)
@@ -225,15 +223,41 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     return { logicalAnnotationBoxGeometry.contentBoxHeight(), logicalAnnotationBoxGeometry.marginBoxWidth() };
 }
 
-RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
+void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox) const
 {
+    // In order to ensure consistent spacing of lines, documents with ruby typically ensure that the line-height is
+    // large enough to accommodate ruby between lines of text. Therefore, ordinarily, ruby annotation containers and ruby annotation
+    // boxes do not contribute to the measured height of a line’s inline contents;
+    // line-height calculations are performed using only the ruby base container, exactly as if it were a normal inline.
+    // However, if the line-height specified on the ruby container is less than the distance between the top of the top ruby annotation
+    // container and the bottom of the bottom ruby annotation container, then additional leading is added on the appropriate side(s).
+
+    auto& rubyBaseLayoutBox = rubyBaseInlineBox.layoutBox();
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!isInterlinearAnnotation(annotationBox))
-        return { };
+        return;
+
+    auto over = InlineLayoutUnit { };
+    auto under = InlineLayoutUnit { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
     if (annotationBox->style().rubyPosition() == RubyPosition::Before)
-        return { annotationBoxLogicalHeight, { } };
-    return { { }, annotationBoxLogicalHeight };
+        over = annotationBoxLogicalHeight;
+    else
+        under = annotationBoxLogicalHeight;
+
+    auto layoutBounds = rubyBaseInlineBox.layoutBounds();
+    if (rubyBaseInlineBox.isPreferredLineHeightFontMetricsBased()) {
+        layoutBounds.ascent += over;
+        layoutBounds.descent += under;
+    } else {
+        auto& fontMetrics = rubyBaseLayoutBox.style().metricsOfPrimaryFont();
+        auto ascent = fontMetrics.floatAscent() + over;
+        auto descent = fontMetrics.floatDescent() + under;
+        if (layoutBounds.height() < ascent + descent)
+            layoutBounds = { ascent , descent };
+    }
+    rubyBaseInlineBox.setLayoutBounds(layoutBounds);
 }
 
 static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
@@ -476,6 +500,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
             continue;
         }
         ASSERT_NOT_REACHED();
+        ++index;
     }
     return candidateContentLogicalWidth;
 }

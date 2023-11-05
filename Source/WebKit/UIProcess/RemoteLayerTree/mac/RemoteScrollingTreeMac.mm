@@ -153,15 +153,12 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
     ASSERT(m_treeLock.isLocked());
 
     auto nodesWithPendingScrollAnimations = std::exchange(m_nodesWithPendingScrollAnimations, { });
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::startPendingScrollAnimations() - " << nodesWithPendingScrollAnimations.size() << " nodes with pending animations");
-
     for (auto& [nodeID, data] : nodesWithPendingScrollAnimations) {
         RefPtr targetNode = dynamicDowncast<ScrollingTreeScrollingNode>(nodeForID(nodeID));
         if (!targetNode)
             continue;
 
-        auto currentScrollPosition = targetNode->currentScrollPosition();
+        LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::startPendingScrollAnimations() for node " << nodeID << " with data " << data);
 
         if (auto previousData = std::exchange(data.requestedDataBeforeAnimatedScroll, std::nullopt)) {
             auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
@@ -169,7 +166,7 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
             switch (requestType) {
             case ScrollRequestType::PositionUpdate:
             case ScrollRequestType::DeltaUpdate: {
-                auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
+                auto intermediatePosition = RequestedScrollData::computeDestinationPosition(targetNode->currentScrollPosition(), requestType, positionOrDeltaBeforeAnimatedScroll);
                 targetNode->scrollTo(intermediatePosition, scrollType, clamping);
                 break;
             }
@@ -179,7 +176,8 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
             }
         }
 
-        targetNode->startAnimatedScrollToPosition(data.destinationPosition(currentScrollPosition));
+        auto finalPosition = data.destinationPosition(targetNode->currentScrollPosition());
+        targetNode->startAnimatedScrollToPosition(finalPosition);
     }
 
     auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });

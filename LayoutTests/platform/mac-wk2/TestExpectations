@@ -614,7 +614,6 @@ imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-sc
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Failure ]
-imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Failure ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################
@@ -1986,7 +1985,3 @@ http/tests/webgpu/webgpu/api/operation/render_pipeline/overrides.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html [ Pass ]
 
 webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
-
-# rdar://117706782 (REGRESSION (269897@main): [ Sonoma wk2 ] 2 tests in imported/w3c/web-platform-t ests/css/cssom-view/ are a constant failure
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Failure ]
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Failure ]

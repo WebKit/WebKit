@@ -46,11 +46,7 @@ public:
     };
     InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItemList&, Line&, InlineLayoutUnit availableWidth);
 
-    struct OverUnder {
-        InlineLayoutUnit over { 0.f };
-        InlineLayoutUnit under { 0.f };
-    };
-    OverUnder annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox);
+    void applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox) const;
     InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox);
     InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox);
 

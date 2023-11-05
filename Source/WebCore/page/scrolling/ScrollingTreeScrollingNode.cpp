@@ -301,11 +301,11 @@ void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardSc
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest()" << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes) << " requestedScrollData: " << requestedScrollData);
-
     stopAnimatedScroll();
 
     if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll) {
+        ASSERT(!requestedScrollData.requestedDataBeforeAnimatedScroll);
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() - cancel animated scroll");
         scrollingTree().removePendingScrollAnimationForNode(scrollingNodeID());
         return;
     }
@@ -313,7 +313,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;
 
-    auto currentScrollPosition = this->currentScrollPosition();
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData);
 
     if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
         auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *requestedScrollData.requestedDataBeforeAnimatedScroll;
@@ -321,7 +321,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
         switch (requestType) {
         case ScrollRequestType::PositionUpdate:
         case ScrollRequestType::DeltaUpdate: {
-            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition, requestType, positionOrDeltaBeforeAnimatedScroll);
+            auto intermediatePosition = RequestedScrollData::computeDestinationPosition(currentScrollPosition(), requestType, positionOrDeltaBeforeAnimatedScroll);
             scrollTo(intermediatePosition, scrollType, clamping);
             break;
         }
@@ -331,8 +331,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
         }
     }
 
-    auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition);
-
+    auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition());
     if (requestedScrollData.animated == ScrollIsAnimated::Yes) {
         startAnimatedScrollToPosition(destinationPosition);
         return;

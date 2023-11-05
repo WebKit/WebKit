@@ -393,8 +393,9 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , isFirstLastBox(inlineBox)
     });
 
-    if (layoutBox.isRubyBase()) {
-        if (isInterlinearAnnotationBox(layoutBox.associatedRubyAnnotationBox()))
+    if (auto* annotationBox = layoutBox.associatedRubyAnnotationBox()) {
+        ASSERT(layoutBox.isRubyBase());
+        if (isInterlinearAnnotationBox(annotationBox))
             m_interlinearRubyColumnRangeList.append({ boxes.size() - 1, boxes.size() });
         appendRubyAnnotationBox(layoutBox, boxes);
     }
