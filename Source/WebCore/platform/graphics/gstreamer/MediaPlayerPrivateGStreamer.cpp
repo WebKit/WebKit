@@ -867,7 +867,7 @@ void MediaPlayerPrivateGStreamer::simulateAudioInterruption()
 void MediaPlayerPrivateGStreamer::ensureAudioSourceProvider()
 {
     if (!m_audioSourceProvider)
-        m_audioSourceProvider = makeUnique<AudioSourceProviderGStreamer>();
+        m_audioSourceProvider = AudioSourceProviderGStreamer::create();
 }
 
 AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()
