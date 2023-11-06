@@ -4465,6 +4465,7 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!localMainFrame)
         return;
+    // FIXME: <rdar://117922051> Investigate if the correct origins are set here with site isolation enabled.
     localMainFrame->loader().initForSynthesizedDocument({ });
     auto document = Document::createNonRenderedPlaceholder(*localMainFrame, scriptURL);
     document->createDOMWindow();
