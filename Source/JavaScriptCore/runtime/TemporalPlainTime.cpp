@@ -414,6 +414,11 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
         return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
     }
 
+    if (!itemValue.isString()) {
+        throwTypeError(globalObject, scope, "can only convert to PlainTime from object or string values"_s);
+        return { };
+    }
+
     // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimestring
     // TemporalTimeString :
     //    CalendarTime

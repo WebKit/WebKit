@@ -672,8 +672,6 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
     updateErrors();
     validateAttributes();
 
-    markContextChanged();
-
     m_currentWidth = width;
     m_currentHeight = height;
 

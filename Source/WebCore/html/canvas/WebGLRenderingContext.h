@@ -52,7 +52,7 @@ public:
 
     GCGLint getMaxDrawBuffers() final;
     GCGLint getMaxColorAttachments() final;
-    void initializeVertexArrayObjects() final;
+    void initializeDefaultObjects() final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) final;

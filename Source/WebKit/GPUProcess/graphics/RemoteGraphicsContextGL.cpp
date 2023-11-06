@@ -203,12 +203,6 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
     m_context->ensureExtensionEnabled(extension);
 }
 
-void RemoteGraphicsContextGL::markContextChanged()
-{
-    assertIsCurrent(workQueue());
-    m_context->markContextChanged();
-}
-
 void RemoteGraphicsContextGL::drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());

@@ -145,6 +145,11 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
         RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime)));
     }
 
+    if (!itemValue.isString()) {
+        throwTypeError(globalObject, scope, "can only convert to PlainDateTime from object or string values"_s);
+        return { };
+    }
+
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 

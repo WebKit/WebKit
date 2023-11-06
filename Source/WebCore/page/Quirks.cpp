@@ -193,16 +193,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// youtube.com https://bugs.webkit.org/show_bug.cgi?id=263789
-// and https://bugs.webkit.org/show_bug.cgi?id=249740
-bool Quirks::shouldDisableContentChangeObserver() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("youtube.com"_s);
-}
-
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=200609
 bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
 {

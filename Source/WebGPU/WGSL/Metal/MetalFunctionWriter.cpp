@@ -1049,7 +1049,6 @@ static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::Call
     visitArguments(writer, call, 1);
 }
 
-
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     bool isArray = false;
@@ -1276,6 +1275,22 @@ static void emitArrayLength(FunctionDefinitionWriter* writer, AST::CallExpressio
     writer->stringBuilder().append(".size()");
 }
 
+static void emitDistance(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto* argumentType = call.arguments()[0].inferredType();
+    if (std::holds_alternative<Types::Primitive>(*argumentType)) {
+        writer->stringBuilder().append("abs(");
+        writer->visit(call.arguments()[0]);
+        writer->stringBuilder().append(" - ");
+        writer->visit(call.arguments()[1]);
+        writer->stringBuilder().append(")");
+        return;
+    }
+    writer->visit(call.target());
+    visitArguments(writer, call);
+}
+
+
 static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     auto* targetType = call.target().inferredType();
@@ -1350,6 +1365,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "atomicStore", emitAtomicStore },
             { "atomicSub", emitAtomicSub },
             { "atomicXor", emitAtomicXor },
+            { "distance", emitDistance },
             { "storageBarrier", emitStorageBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureLoad", emitTextureLoad },
@@ -1357,6 +1373,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
             { "textureSampleCompare", emitTextureSampleCompare },
+            { "textureSampleCompareLevel", emitTextureSampleCompare },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },
@@ -1378,6 +1395,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdyFine", "dfdy"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
+            { "inverseSqrt", "rsqrt"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {

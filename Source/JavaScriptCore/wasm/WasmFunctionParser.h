@@ -59,7 +59,7 @@ void splitStack(BlockSignature originalSignature, EnclosingStack& enclosingStack
     ASSERT(enclosingStack.size() >= signature->as<FunctionSignature>()->argumentCount());
     unsigned offset = enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount();
     for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
-        newStack.append(enclosingStack.at(i + offset));
+        newStack.unsafeAppendWithoutCapacityCheck(enclosingStack.at(i + offset));
     enclosingStack.shrink(offset);
 }
 
@@ -336,7 +336,7 @@ auto FunctionParser<Context>::parse() -> Result
 
     WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(signature.argumentCount()), "can't allocate enough memory for function's ", signature.argumentCount(), " arguments");
     for (uint32_t i = 0; i < signature.argumentCount(); ++i)
-        m_locals.append(signature.argumentType(i));
+        m_locals.unsafeAppendWithoutCapacityCheck(signature.argumentType(i));
 
     uint64_t totalNumberOfLocals = signature.argumentCount();
     uint64_t totalNonDefaultableLocals = 0;
@@ -362,7 +362,7 @@ auto FunctionParser<Context>::parse() -> Result
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's ", totalNumberOfLocals, " locals");
         for (uint32_t i = 0; i < numberOfLocals; ++i)
-            m_locals.append(typeOfLocal);
+            m_locals.unsafeAppendWithoutCapacityCheck(typeOfLocal);
 
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
@@ -2958,7 +2958,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             uint32_t target;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get ", i, "th target for br_table");
             WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br_table's ", i, "th target ", target, " exceeds control stack size ", m_controlStack.size());
-            targets.append(&m_controlStack[m_controlStack.size() - 1 - target].controlData);
+            targets.unsafeAppendWithoutCapacityCheck(&m_controlStack[m_controlStack.size() - 1 - target].controlData);
         }
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTargetIndex), "can't get default target for br_table");

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUQueue.h"
 
+#include "BitmapImage.h"
+#include "CachedImage.h"
 #include "GPUBuffer.h"
 #include "GPUDevice.h"
 #include "GPUImageCopyExternalImage.h"
@@ -38,7 +40,12 @@
 #include "JSDOMPromiseDeferred.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
+#include "VideoFrame.h"
 #include "WebCodecsVideoFrame.h"
+
+#if PLATFORM(COCOA)
+#include "CoreVideoSoftLink.h"
+#endif
 
 namespace WebCore {
 
@@ -106,36 +113,6 @@ void GPUQueue::writeTexture(
     const GPUExtent3D& size)
 {
     m_backing->writeTexture(destination.convertToBacking(), data.data(), data.length(), imageDataLayout.convertToBacking(), convertToBacking(size));
-}
-
-static ImageBuffer* imageBufferForSource(const auto& source)
-{
-    return WTF::switchOn(source, [](const RefPtr<ImageBitmap>& imageBitmap) {
-        return imageBitmap->buffer();
-#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [](const RefPtr<ImageData>) -> ImageBuffer* {
-        // FIXME: Support these formats - https://bugs.webkit.org/show_bug.cgi?id=261567
-        ASSERT(0 && "not implemented");
-        return nullptr;
-    }, [](const RefPtr<HTMLImageElement>) -> ImageBuffer* {
-        ASSERT(0 && "not implemented");
-        return nullptr;
-    }, [](const RefPtr<HTMLVideoElement>) -> ImageBuffer* {
-        ASSERT(0 && "not implemented");
-        return nullptr;
-    }, [](const RefPtr<WebCodecsVideoFrame>) -> ImageBuffer* {
-        ASSERT(0 && "not implemented");
-        return nullptr;
-#endif
-    }, [](const RefPtr<HTMLCanvasElement>& canvasElement) {
-        return canvasElement->buffer();
-    }
-#if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) {
-        return offscreenCanvasElement->buffer();
-    }
-#endif
-    );
 }
 
 static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
@@ -246,19 +223,121 @@ static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
     return PixelFormat::RGBA8;
 }
 
+using ImageDataCallback = Function<void(const uint8_t*, size_t, size_t)>;
+static void getImageBytesFromImageBuffer(ImageBuffer* imageBuffer, const auto& destination, ImageDataCallback&& callback)
+{
+    if (!imageBuffer)
+        return callback(nullptr, 0, 0);
+
+    auto size = imageBuffer->truncatedLogicalSize();
+    if (!size.width() || !size.height())
+        return callback(nullptr, 0, 0);
+
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, toPixelFormat(destination.texture->format()), DestinationColorSpace::SRGB() }, { { }, size });
+    ASSERT(pixelBuffer);
+
+    callback(pixelBuffer->bytes(), pixelBuffer->sizeInBytes(), size.height());
+}
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, ImageDataCallback&& callback)
+{
+    if (!videoFrame.get() || !videoFrame->pixelBuffer())
+        return callback(nullptr, 0, 0);
+
+    auto pixelBuffer = videoFrame->pixelBuffer();
+    auto rows = CVPixelBufferGetHeight(pixelBuffer);
+    auto sizeInBytes = rows * CVPixelBufferGetBytesPerRow(pixelBuffer);
+
+    CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    callback(reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer)), sizeInBytes, rows);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+}
+#endif
+
+static void imageBytesForSource(const auto& source, const auto& destination, ImageDataCallback&& callback)
+{
+    using ResultType = void;
+    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
+        return getImageBytesFromImageBuffer(imageBitmap->buffer(), destination, WTFMove(callback));
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
+        auto rows = imageData->height();
+        auto pixelBuffer = imageData->pixelBuffer();
+        auto sizeInBytes = pixelBuffer->data().byteLength();
+        callback(pixelBuffer->data().data(), sizeInBytes, rows);
+    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
+#if PLATFORM(COCOA)
+        if (auto* cachedImage = imageElement->cachedImage()) {
+            if (auto* image = cachedImage->image(); image && image->isBitmapImage()) {
+                if (auto nativeImage = static_cast<BitmapImage*>(image)->nativeImage(); nativeImage.get()) {
+                    if (auto platformImage = nativeImage->platformImage()) {
+                        auto pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
+                        if (!pixelDataCfData)
+                            return callback(nullptr, 0, 0);
+
+                        auto width = CGImageGetWidth(platformImage.get());
+                        auto height = CGImageGetHeight(platformImage.get());
+                        auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
+                        auto bytePointer = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixelDataCfData.get()));
+                        auto requiredSize = width * height * 4;
+                        if (sizeInBytes == requiredSize)
+                            return callback(bytePointer, sizeInBytes, height);
+
+                        auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get());
+                        Vector<uint8_t> tempBuffer(requiredSize, 255);
+                        auto bytesPerPixel = sizeInBytes / (width * height);
+                        for (size_t y = 0; y < height; ++y) {
+                            for (size_t x = 0; x < width; ++x) {
+                                for (size_t c = 0; c < bytesPerPixel; ++c)
+                                    tempBuffer[y * (width * 4) + x * 4 + c] = bytePointer[y * bytesPerRow + x * bytesPerPixel + c];
+                            }
+                        }
+                        callback(&tempBuffer[0], tempBuffer.size(), height);
+                    }
+                }
+            }
+        }
+#else
+        UNUSED_PARAM(imageElement);
+#endif
+        return callback(nullptr, 0, 0);
+    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
+#if PLATFORM(COCOA)
+        if (auto player = videoElement->player(); player->isVideoPlayer())
+            return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), WTFMove(callback));
+#endif
+        UNUSED_PARAM(videoElement);
+        return callback(nullptr, 0, 0);
+    }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
+#if PLATFORM(COCOA)
+        return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), WTFMove(callback));
+#else
+        UNUSED_PARAM(webCodecsFrame);
+        return callback(nullptr, 0, 0);
+#endif
+#endif
+    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
+        return getImageBytesFromImageBuffer(canvasElement->buffer(), destination, WTFMove(callback));
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+        return getImageBytesFromImageBuffer(offscreenCanvasElement->buffer(), destination, WTFMove(callback));
+    }
+#endif
+    );
+}
+
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed, it is to unblock
 // compiler <-> pipeline dependencies
-static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format, size_t& sizeInBytes, bool& freeData)
+static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat format, size_t& sizeInBytes)
 {
-    freeData = false;
-
 #if PLATFORM(COCOA)
     switch (format) {
     case GPUTextureFormat::R8unorm:
     case GPUTextureFormat::R8snorm:
     case GPUTextureFormat::R8uint:
     case GPUTextureFormat::R8sint: {
-        freeData = true;
         uint8_t* data = (uint8_t*)malloc(sizeInBytes / 4);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
             data[i0] = rgbaBytes[i];
@@ -270,7 +349,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     // 16-bit formats
     case GPUTextureFormat::R16uint:
     case GPUTextureFormat::R16sint: {
-        freeData = true;
         uint16_t* data = (uint16_t*)malloc(sizeInBytes / 2);
         for (size_t i = 0; i < sizeInBytes; i += 4)
             data[i] = rgbaBytes[i];
@@ -280,7 +358,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     }
 
     case GPUTextureFormat::R16float: {
-        freeData = true;
         __fp16* data = (__fp16*)malloc(sizeInBytes / 2);
         for (size_t i = 0; i < sizeInBytes; i += 4)
             data[i] = rgbaBytes[i];
@@ -293,7 +370,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     case GPUTextureFormat::Rg8snorm:
     case GPUTextureFormat::Rg8uint:
     case GPUTextureFormat::Rg8sint: {
-        freeData = true;
         uint8_t* data = (uint8_t*)malloc(sizeInBytes / 2);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 2, ++i0) {
             data[i0] = rgbaBytes[i];
@@ -322,12 +398,11 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     case GPUTextureFormat::Rgb10a2uint:
     case GPUTextureFormat::Rgb10a2unorm:
     case GPUTextureFormat::Rg11b10ufloat:
-        return rgbaBytes;
+        return nullptr;
 
     // 64-bit formats
     case GPUTextureFormat::Rg32uint:
     case GPUTextureFormat::Rg32sint: {
-        freeData = true;
         uint32_t* data = (uint32_t*)malloc((sizeInBytes / 2) * sizeof(uint32_t));
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
             data[i0] = rgbaBytes[i];
@@ -339,7 +414,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     }
 
     case GPUTextureFormat::Rg32float: {
-        freeData = true;
         float* data = (float*)malloc((sizeInBytes / 2) * sizeof(float));
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
             data[i0] = rgbaBytes[i];
@@ -352,7 +426,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
 
     case GPUTextureFormat::Rgba16uint:
     case GPUTextureFormat::Rgba16sint: {
-        freeData = true;
         uint16_t* data = (uint16_t*)malloc(sizeInBytes * sizeof(uint16_t));
         for (size_t i = 0; i < sizeInBytes; ++i)
             data[i] = rgbaBytes[i];
@@ -362,7 +435,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     }
 
     case GPUTextureFormat::Rgba16float: {
-        freeData = true;
         __fp16* data = (__fp16*)malloc(sizeInBytes * sizeof(__fp16));
         for (size_t i = 0; i < sizeInBytes; ++i)
             data[i] = rgbaBytes[i] / 255.f;
@@ -374,7 +446,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     // 128-bit formats
     case GPUTextureFormat::Rgba32uint:
     case GPUTextureFormat::Rgba32sint: {
-        freeData = true;
         uint32_t* data = (uint32_t*)malloc(sizeInBytes * sizeof(uint32_t));
         for (size_t i = 0; i < sizeInBytes; ++i)
             data[i] = rgbaBytes[i];
@@ -384,7 +455,6 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     }
 
     case GPUTextureFormat::Rgba32float: {
-        freeData = true;
         float* data = (float*)malloc(sizeInBytes * sizeof(float));
         for (size_t i = 0; i < sizeInBytes; ++i)
             data[i] = rgbaBytes[i] / 255.f;
@@ -463,39 +533,31 @@ static void* copyToDestinationFormat(uint8_t* rgbaBytes, GPUTextureFormat format
     case GPUTextureFormat::Astc12x10UnormSRGB:
     case GPUTextureFormat::Astc12x12Unorm:
     case GPUTextureFormat::Astc12x12UnormSRGB:
-        return rgbaBytes;
+        return nullptr;
     }
 
-    return rgbaBytes;
+    return nullptr;
 #else
     UNUSED_PARAM(format);
     UNUSED_PARAM(sizeInBytes);
+    UNUSED_PARAM(rgbaBytes);
 
-    return rgbaBytes;
+    return nullptr;
 #endif
 }
 
 void GPUQueue::copyExternalImageToTexture(const GPUImageCopyExternalImage& source, const GPUImageCopyTextureTagged& destination, const GPUExtent3D& copySize)
 {
-    RefPtr imageBuffer = imageBufferForSource(source.source);
-    if (!imageBuffer || !destination.texture)
-        return;
+    imageBytesForSource(source.source, destination, [&](const uint8_t* imageBytes, size_t sizeInBytes, size_t rows) {
+        if (!imageBytes || !sizeInBytes || !destination.texture)
+            return;
 
-    auto size = imageBuffer->truncatedLogicalSize();
-    if (!size.width() || !size.height())
-        return;
-
-    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, toPixelFormat(destination.texture->format()), DestinationColorSpace::SRGB() }, { { }, size });
-    ASSERT(pixelBuffer);
-
-    auto sizeInBytes = pixelBuffer->sizeInBytes();
-    auto rows = size.height();
-    bool shouldFreeData;
-    void* pixelBufferData = copyToDestinationFormat(pixelBuffer->bytes(), destination.texture->format(), sizeInBytes, shouldFreeData);
-    GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
-    m_backing->writeTexture(destination.convertToBacking(), pixelBufferData, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
-    if (shouldFreeData)
-        free(pixelBufferData);
+        auto* newImageBytes = copyToDestinationFormat(imageBytes, destination.texture->format(), sizeInBytes);
+        GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
+        m_backing->writeTexture(destination.convertToBacking(), newImageBytes ? newImageBytes : imageBytes, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+        if (newImageBytes)
+            free(newImageBytes);
+    });
 }
 
 } // namespace WebCore

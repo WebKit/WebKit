@@ -2336,7 +2336,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
             RegisterID* transitionValue = newBlockScopeVariable();
             transitionValue->ref();
             emitGetFromScope(transitionValue, loopScope, variableForLocalEntry(identifier, ptr->value, loopSymbolTable->index(), true), DoNotThrowIfNotFound);
-            activationValuesToCopyOver.append(std::make_pair(transitionValue, identifier));
+            activationValuesToCopyOver.unsafeAppendWithoutCapacityCheck(std::make_pair(transitionValue, identifier));
         }
     }
 

@@ -134,7 +134,6 @@ const TestFeatures& TestOptions::defaults()
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
-            { "AspectRatioEnabled", true },
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
             { "AttachmentWideLayoutEnabled", false },

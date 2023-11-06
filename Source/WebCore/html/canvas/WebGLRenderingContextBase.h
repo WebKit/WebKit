@@ -82,6 +82,7 @@ class IntSize;
 class WebCodecsVideoFrame;
 class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
+class WebGLDefaultFramebuffer;
 class WebGLObject;
 class WebGLPolygonMode;
 class WebGLShader;
@@ -475,10 +476,13 @@ protected:
 
     // Implementation helpers.
     friend class InspectorScopedShaderProgramHighlight;
+    friend class ScopedDisableRasterizerDiscard;
+    friend class ScopedEnableBackbuffer;
+    friend class ScopedDisableScissorTest;
 
     void initializeNewContext(Ref<GraphicsContextGL>);
     virtual void initializeContextState();
-    virtual void initializeVertexArrayObjects() = 0;
+    virtual void initializeDefaultObjects();
 
     // ActiveDOMObject
     void stop() override;
@@ -564,6 +568,7 @@ protected:
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::ARRAY_BUFFER> m_boundArrayBuffer;
 
+    std::unique_ptr<WebGLDefaultFramebuffer> m_defaultFramebuffer;
     RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
     WebGLBindingPoint<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
 
@@ -748,9 +753,6 @@ protected:
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
     bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
-
-    // Helper to restore state that clearing the framebuffer may destroy.
-    void restoreStateAfterClear();
 
     enum class TexImageFunctionType {
         TexImage,

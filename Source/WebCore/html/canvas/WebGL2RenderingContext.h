@@ -272,7 +272,7 @@ private:
     long long getInt64Parameter(GCGLenum) final;
     Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
-    void initializeVertexArrayObjects() final;
+    void initializeDefaultObjects() final;
     bool validateBufferTarget(const char* functionName, GCGLenum target) final;
     bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;

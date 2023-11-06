@@ -112,6 +112,7 @@
 #include "WebGLContextEvent.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLDefaultFramebuffer.h"
 #include "WebGLDepthTexture.h"
 #include "WebGLDrawBuffers.h"
 #include "WebGLDrawInstancedBaseVertexBaseInstance.h"
@@ -338,57 +339,73 @@ private:
 
 class ScopedDisableRasterizerDiscard {
 public:
-    explicit ScopedDisableRasterizerDiscard(WebGLRenderingContextBase* context, bool wasEnabled)
-        : m_context(context)
-        , m_wasEnabled(wasEnabled)
+    explicit ScopedDisableRasterizerDiscard(WebGLRenderingContextBase& context)
+        : m_context(context.m_rasterizerDiscardEnabled ? &context : nullptr)
     {
-        if (m_wasEnabled)
-            m_context->disable(GraphicsContextGL::RASTERIZER_DISCARD);
+        if (!m_context)
+            return;
+        m_context->graphicsContextGL()->disable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
     ~ScopedDisableRasterizerDiscard()
     {
-        if (m_wasEnabled)
-            m_context->enable(GraphicsContextGL::RASTERIZER_DISCARD);
+        if (!m_context)
+            return;
+        m_context->graphicsContextGL()->enable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
 private:
-    WebGLRenderingContextBase* m_context;
-    bool m_wasEnabled;
+    WebGLRenderingContextBase* const m_context;
 };
 
 class ScopedEnableBackbuffer {
 public:
-    explicit ScopedEnableBackbuffer(GraphicsContextGL& context, GCGLenum backDrawBuffer, bool isWebGL2)
-        : m_context(context)
-        , m_backDrawBufferDisabled(backDrawBuffer == GraphicsContextGL::NONE)
-        , m_isWebGL2(isWebGL2)
+    explicit ScopedEnableBackbuffer(WebGLRenderingContextBase& context)
+        : m_context(context.m_backDrawBuffer == GraphicsContextGL::NONE ? &context : nullptr)
     {
-        ASSERT(backDrawBuffer == GraphicsContextGL::NONE || backDrawBuffer == GraphicsContextGL::BACK);
-        if (m_backDrawBufferDisabled) {
-            GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
-            if (m_isWebGL2)
-                m_context.drawBuffers(value);
-            else
-                m_context.drawBuffersEXT(value);
-        }
+        if (!m_context)
+            return;
+        GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
+        if (m_context->isWebGL2())
+            m_context->graphicsContextGL()->drawBuffers(value);
+        else
+            m_context->graphicsContextGL()->drawBuffersEXT(value);
     }
 
     ~ScopedEnableBackbuffer()
     {
-        if (m_backDrawBufferDisabled) {
-            GCGLenum value[1] { GraphicsContextGL::NONE };
-            if (m_isWebGL2)
-                m_context.drawBuffers(value);
-            else
-                m_context.drawBuffersEXT(value);
-        }
+        if (!m_context)
+            return;
+        GCGLenum value[1] { GraphicsContextGL::NONE };
+        if (m_context->isWebGL2())
+            m_context->graphicsContextGL()->drawBuffers(value);
+        else
+            m_context->graphicsContextGL()->drawBuffersEXT(value);
     }
 
 private:
-    GraphicsContextGL& m_context;
-    const bool m_backDrawBufferDisabled;
-    const bool m_isWebGL2;
+    WebGLRenderingContextBase* const m_context;
+};
+
+class ScopedDisableScissorTest {
+public:
+    explicit ScopedDisableScissorTest(WebGLRenderingContextBase& context)
+        : m_context(context.m_scissorEnabled ? &context : nullptr)
+    {
+        if (!m_context)
+            return;
+        m_context->graphicsContextGL()->disable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+    ~ScopedDisableScissorTest()
+    {
+        if (!m_context)
+            return;
+        m_context->graphicsContextGL()->enable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+private:
+    WebGLRenderingContextBase* const m_context;
 };
 
 #define ADD_VALUES_TO_SET(set, arr) \
@@ -721,7 +738,7 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
         addActiveContext(*this);
     addActivityStateChangeObserverIfNecessary();
     initializeContextState();
-    initializeVertexArrayObjects();
+    initializeDefaultObjects();
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
 }
@@ -786,7 +803,6 @@ void WebGLRenderingContextBase::initializeContextState()
     m_context->setDrawingBufferColorSpace(toDestinationColorSpace(m_drawingBufferColorSpace));
 
     IntSize canvasSize = clampedCanvasSize();
-    m_context->reshape(canvasSize.width(), canvasSize.height());
     m_context->viewport(0, 0, canvasSize.width(), canvasSize.height());
     m_context->scissor(0, 0, canvasSize.width(), canvasSize.height());
 
@@ -800,6 +816,11 @@ void WebGLRenderingContextBase::initializeContextState()
     ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedFormatsES2);
     ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsES2);
     ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesES2);
+}
+
+void WebGLRenderingContextBase::initializeDefaultObjects()
+{
+    m_defaultFramebuffer = WebGLDefaultFramebuffer::create(*this, clampedCanvasSize());
 }
 
 void WebGLRenderingContextBase::addCompressedTextureFormat(GCGLenum format)
@@ -892,8 +913,6 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
     if (m_framebufferBinding)
         return;
 
-    m_context->markContextChanged();
-
     m_compositingResultsNeedUpdating = true;
 
     if (auto* canvas = htmlCanvas()) {
@@ -922,72 +941,57 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
     updateActiveOrdinal();
 
-    GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
+    GCGLbitfield dirtyBuffersMask = m_defaultFramebuffer->dirtyBuffers();
 
-    if (!buffersNeedingClearing || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == CallerTypeDrawOrClear))
+    if (!dirtyBuffersMask || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == CallerTypeDrawOrClear))
         return false;
-
-    // Use the underlying GraphicsContext3D's attributes to take into
-    // account (for example) packed depth/stencil buffers.
-    auto contextAttributes = m_context->contextAttributes();
 
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;
 
-    m_context->disable(GraphicsContextGL::SCISSOR_TEST);
-    if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && (m_backDrawBuffer != GraphicsContextGL::NONE)) {
-        m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
-                              m_colorMask[1] ? m_clearColor[1] : 0,
-                              m_colorMask[2] ? m_clearColor[2] : 0,
-                              m_colorMask[3] ? m_clearColor[3] : 0);
-    } else
-        m_context->clearColor(0, 0, 0, 0);
-    if (m_oesDrawBuffersIndexed)
-        m_context->colorMaskiOES(0, true, true, true, true);
-    else
-        m_context->colorMask(true, true, true, true);
-    GCGLbitfield clearMask = GraphicsContextGL::COLOR_BUFFER_BIT;
-    if (contextAttributes.depth) {
+    if (dirtyBuffersMask & GraphicsContextGL::COLOR_BUFFER_BIT) {
+        if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && (m_backDrawBuffer != GraphicsContextGL::NONE)) {
+            m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
+                m_colorMask[1] ? m_clearColor[1] : 0,
+                m_colorMask[2] ? m_clearColor[2] : 0,
+                m_colorMask[3] ? m_clearColor[3] : 0);
+        } else
+            m_context->clearColor(0, 0, 0, 0);
+        if (m_oesDrawBuffersIndexed)
+            m_context->colorMaskiOES(0, true, true, true, true);
+        else
+            m_context->colorMask(true, true, true, true);
+    }
+
+    if (dirtyBuffersMask & GraphicsContextGL::DEPTH_BUFFER_BIT) {
         if (!combinedClear || !m_depthMask || !(mask & GraphicsContextGL::DEPTH_BUFFER_BIT))
             m_context->clearDepth(1.0f);
-        clearMask |= GraphicsContextGL::DEPTH_BUFFER_BIT;
         m_context->depthMask(true);
     }
-    if (contextAttributes.stencil) {
+
+    if (dirtyBuffersMask & GraphicsContextGL::STENCIL_BUFFER_BIT) {
         if (combinedClear && (mask & GraphicsContextGL::STENCIL_BUFFER_BIT))
             m_context->clearStencil(m_clearStencil & m_stencilMask);
         else
             m_context->clearStencil(0);
-        clearMask |= GraphicsContextGL::STENCIL_BUFFER_BIT;
         m_context->stencilMaskSeparate(GraphicsContextGL::FRONT, 0xFFFFFFFF);
     }
 
     GCGLenum bindingPoint = isWebGL2() ? GraphicsContextGL::DRAW_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
     if (m_framebufferBinding)
-        m_context->bindFramebuffer(bindingPoint, 0);
+        m_context->bindFramebuffer(bindingPoint, m_defaultFramebuffer->object());
+
     {
-        ScopedDisableRasterizerDiscard disable(this, m_rasterizerDiscardEnabled);
-        ScopedEnableBackbuffer enable(*m_context, m_backDrawBuffer, isWebGL2());
-        // If the WebGL 2.0 clearBuffer APIs already have been used to
-        // selectively clear some of the buffers, don't destroy those
-        // results.
-        m_context->clear(clearMask & buffersNeedingClearing);
+        ScopedDisableRasterizerDiscard disableRasterizerDiscard { *this };
+        ScopedEnableBackbuffer enableBackBuffer { *this };
+        ScopedDisableScissorTest disableScissorTest { *this };
+        m_context->clear(dirtyBuffersMask);
     }
-    m_context->setBuffersToAutoClear(0);
 
-    restoreStateAfterClear();
-    if (m_framebufferBinding)
-        m_context->bindFramebuffer(bindingPoint, m_framebufferBinding->object());
-    return combinedClear;
-}
+    m_defaultFramebuffer->markBuffersClear(dirtyBuffersMask);
+    ASSERT(!m_defaultFramebuffer->dirtyBuffers());
 
-void WebGLRenderingContextBase::restoreStateAfterClear()
-{
-    // Restore the state that the context set.
-    if (m_scissorEnabled)
-        m_context->enable(GraphicsContextGL::SCISSOR_TEST);
-    m_context->clearColor(m_clearColor[0], m_clearColor[1],
-                          m_clearColor[2], m_clearColor[3]);
+    m_context->clearColor(m_clearColor[0], m_clearColor[1], m_clearColor[2], m_clearColor[3]);
     if (m_oesDrawBuffersIndexed)
         m_context->colorMaskiOES(0, m_colorMask[0], m_colorMask[1], m_colorMask[2], m_colorMask[3]);
     else
@@ -996,6 +1000,10 @@ void WebGLRenderingContextBase::restoreStateAfterClear()
     m_context->clearStencil(m_clearStencil);
     m_context->stencilMaskSeparate(GraphicsContextGL::FRONT, m_stencilMask);
     m_context->depthMask(m_depthMask);
+    if (m_framebufferBinding)
+        m_context->bindFramebuffer(bindingPoint, m_framebufferBinding->object());
+
+    return combinedClear;
 }
 
 void WebGLRenderingContextBase::drawBufferToCanvas(SurfaceBuffer sourceBuffer)
@@ -1056,7 +1064,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
     // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
     // clear (and this matches what reshape will do).
-    m_context->reshape(width, height);
+    m_defaultFramebuffer->reshape({ width, height });
 
     auto& textureUnit = m_textureUnits[m_activeTextureUnit];
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
@@ -5717,7 +5725,8 @@ void WebGLRenderingContextBase::setFramebuffer(const AbstractLocker&, GCGLenum t
 {
     if (target == GraphicsContextGL::FRAMEBUFFER || target == GraphicsContextGL::DRAW_FRAMEBUFFER)
         m_framebufferBinding = buffer;
-    m_context->bindFramebuffer(target, objectOrZero(buffer));
+    auto fbo = buffer ? buffer->object() : m_defaultFramebuffer->object();
+    m_context->bindFramebuffer(target, fbo);
 }
 
 bool WebGLRenderingContextBase::supportsDrawBuffers()
@@ -5933,6 +5942,7 @@ void WebGLRenderingContextBase::prepareForDisplay()
     ASSERT(m_compositingResultsNeedUpdating);
 
     m_context->prepareForDisplay();
+    m_defaultFramebuffer->markAllUnpreservedBuffersDirty();
 
     m_compositingResultsNeedUpdating = false;
     m_canvasBufferContents = std::nullopt;

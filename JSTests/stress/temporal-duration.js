@@ -67,7 +67,7 @@ shouldBe(pos.blank, false);
 shouldBe(neg.blank, false);
 
 shouldBe(Temporal.Duration.from.length, 1);
-shouldThrow(() => Temporal.Duration.from(), RangeError);
+shouldThrow(() => Temporal.Duration.from(), TypeError);
 shouldThrow(() => Temporal.Duration.from({}), TypeError);
 {
     const badStrings = [
@@ -102,9 +102,9 @@ shouldBe(Temporal.Duration.from('PT1.03125M').toString(), 'PT1M1.875S');
 const posAbsolute = new Temporal.Duration(0,0,0,1,2,3,4,5,6,7);
 
 shouldBe(Temporal.Duration.compare.length, 2);
-shouldThrow(() => Temporal.Duration.compare(), RangeError);
+shouldThrow(() => Temporal.Duration.compare(), TypeError);
 shouldThrow(() => Temporal.Duration.compare({}), TypeError);
-shouldThrow(() => Temporal.Duration.compare(zero), RangeError);
+shouldThrow(() => Temporal.Duration.compare(zero), TypeError);
 shouldThrow(() => Temporal.Duration.compare(zero, {}), TypeError);
 shouldThrow(() => Temporal.Duration.compare({ years: 1 }, zero), RangeError);
 shouldThrow(() => Temporal.Duration.compare({ months: 1 }, zero), RangeError);
@@ -160,7 +160,7 @@ shouldThrow(() => Temporal.Duration.prototype.abs.call({}), TypeError);
 for (const method of ['add', 'subtract']) {
     shouldBe(Temporal.Duration.prototype[method].length, 1);
     shouldThrow(() => Temporal.Duration.prototype[method].call({ hours: 1 }), TypeError);
-    shouldThrow(() => zero[method](), RangeError);
+    shouldThrow(() => zero[method](), TypeError);
     shouldThrow(() => zero[method]({}), TypeError);
     shouldThrow(() => zero[method]({ years: 1 }), RangeError);
     shouldThrow(() => zero[method]({ months: 1 }), RangeError);

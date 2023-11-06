@@ -1001,9 +1001,13 @@ fn testDeterminant()
 }
 
 // 17.5.19
+// RUN: %metal-compile testDistance
+@compute @workgroup_size(1)
 fn testDistance()
 {
     // [T < Float].(T, T) => T,
+    var a = 1.f;
+    let b = 2.f;
     {
         _ = distance(0, 1);
         _ = distance(0, 1.0);
@@ -1011,6 +1015,7 @@ fn testDistance()
         _ = distance(0.0, 1.0);
         _ = distance(1.0, 2f);
         _ = distance(1f, 2f);
+        _ = distance(a, b);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => T,
     {
@@ -1020,6 +1025,7 @@ fn testDistance()
         _ = distance(vec2(0.0), vec2(0.0));
         _ = distance(vec2(0.0), vec2(0f) );
         _ = distance(vec2(1f),  vec2(1f) );
+        _ = distance(vec2(a), vec2(b));
     }
     {
         _ = distance(vec3(0),   vec3(1)  );
@@ -1028,6 +1034,7 @@ fn testDistance()
         _ = distance(vec3(0.0), vec3(0.0));
         _ = distance(vec3(0.0), vec3(0f) );
         _ = distance(vec3(1f),  vec3(1f) );
+        _ = distance(vec3(a), vec3(b));
     }
     {
         _ = distance(vec4(0),   vec4(1)  );
@@ -1036,6 +1043,7 @@ fn testDistance()
         _ = distance(vec4(0.0), vec4(0.0));
         _ = distance(vec4(0.0), vec4(0f) );
         _ = distance(vec4(1f),  vec4(1f) );
+        _ = distance(vec4(a), vec4(b));
     }
 }
 
@@ -1394,30 +1402,37 @@ fn testInsertBits()
 }
 
 // 17.5.34
+// RUN: %metal-compile testInverseSqrt
+@compute @workgroup_size(1)
 fn testInverseSqrt()
 {
     // [T < Float].(T) => T,
+    let x = 2.f;
     {
-        _ = inverseSqrt(0);
-        _ = inverseSqrt(0.0);
-        _ = inverseSqrt(1f);
+        _ = inverseSqrt(2);
+        _ = inverseSqrt(2.0);
+        _ = inverseSqrt(2f);
+        _ = inverseSqrt(x);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = inverseSqrt(vec2(0));
-        _ = inverseSqrt(vec2(0.0));
-        _ = inverseSqrt(vec2(1f));
+        _ = inverseSqrt(vec2(2));
+        _ = inverseSqrt(vec2(2.0));
+        _ = inverseSqrt(vec2(2f));
+        _ = inverseSqrt(vec2(x));
     }
     {
-        _ = inverseSqrt(vec3(-1));
-        _ = inverseSqrt(vec3(-1.0));
-        _ = inverseSqrt(vec3(-1f));
+        _ = inverseSqrt(vec3(2));
+        _ = inverseSqrt(vec3(2.0));
+        _ = inverseSqrt(vec3(2f));
+        _ = inverseSqrt(vec3(x));
     }
     {
-        _ = inverseSqrt(vec4(-1));
-        _ = inverseSqrt(vec4(-1.0));
-        _ = inverseSqrt(vec4(-1f));
+        _ = inverseSqrt(vec4(2));
+        _ = inverseSqrt(vec4(2.0));
+        _ = inverseSqrt(vec4(2f));
+        _ = inverseSqrt(vec4(x));
     }
 }
 
@@ -1484,26 +1499,26 @@ fn testLog()
 {
     // [T < Float].(T) => T,
     {
-        _ = log(0);
-        _ = log(0.0);
+        _ = log(2);
+        _ = log(1.0);
         _ = log(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log(vec2(0));
-        _ = log(vec2(0.0));
-        _ = log(vec2(1f));
+        _ = log(vec2(2));
+        _ = log(vec2(2.0));
+        _ = log(vec2(2f));
     }
     {
-        _ = log(vec3(-1));
-        _ = log(vec3(-1.0));
-        _ = log(vec3(-1f));
+        _ = log(vec3(-2));
+        _ = log(vec3(-2.0));
+        _ = log(vec3(-2f));
     }
     {
-        _ = log(vec4(-1));
-        _ = log(vec4(-1.0));
-        _ = log(vec4(-1f));
+        _ = log(vec4(-2));
+        _ = log(vec4(-2.0));
+        _ = log(vec4(-2f));
     }
 }
 
@@ -1511,26 +1526,26 @@ fn testLog()
 fn testLog2() {
     // [T < Float].(T) => T,
     {
-        _ = log2(0);
-        _ = log2(0.0);
-        _ = log2(1f);
+        _ = log2(2);
+        _ = log2(2.0);
+        _ = log2(2f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log2(vec2(0));
-        _ = log2(vec2(0.0));
-        _ = log2(vec2(1f));
+        _ = log2(vec2(2));
+        _ = log2(vec2(2.0));
+        _ = log2(vec2(2f));
     }
     {
-        _ = log2(vec3(-1));
-        _ = log2(vec3(-1.0));
-        _ = log2(vec3(-1f));
+        _ = log2(vec3(-2));
+        _ = log2(vec3(-2.0));
+        _ = log2(vec3(-2f));
     }
     {
-        _ = log2(vec4(-1));
-        _ = log2(vec4(-1.0));
-        _ = log2(vec4(-1f));
+        _ = log2(vec4(-2));
+        _ = log2(vec4(-2.0));
+        _ = log2(vec4(-2f));
     }
 }
 
@@ -2653,6 +2668,8 @@ fn testTextureSampleCompare()
 }
 
 // 16.7.11
+// RUN: %metal-compile testTextureSampleCompareLevel
+@compute @workgroup_size(1)
 fn testTextureSampleCompareLevel()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,

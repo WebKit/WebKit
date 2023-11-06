@@ -121,8 +121,9 @@ WebGLRenderingContext::~WebGLRenderingContext()
     m_activeQuery = nullptr;
 }
 
-void WebGLRenderingContext::initializeVertexArrayObjects()
+void WebGLRenderingContext::initializeDefaultObjects()
 {
+    WebGLRenderingContextBase::initializeDefaultObjects();
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::createDefault(*this);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
 }

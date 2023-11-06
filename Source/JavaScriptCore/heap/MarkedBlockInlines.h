@@ -322,6 +322,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     constexpr size_t maxDeadCellBufferBytes = 8 * KB; // Arbitrary limit of 8kB for stack buffer.
     constexpr size_t deadCellBufferBytes = std::min(atomsPerBlock * sizeof(AtomNumberType), maxDeadCellBufferBytes);
     static_assert(deadCellBufferBytes <= maxDeadCellBufferBytes);
+    constexpr bool deadCellsAlwaysFitsOnStack = (deadCellBufferBytes / sizeof(AtomNumberType)) <= atomsPerBlock;
     Vector<AtomNumberType, deadCellBufferBytes / sizeof(AtomNumberType)> deadCells;
 
     auto handleDeadCell = [&] (size_t i) {
@@ -373,9 +374,12 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             continue;
         }
 
-        if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
-            deadCells.append(i);
-        else
+        if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
+            if constexpr (deadCellsAlwaysFitsOnStack)
+                deadCells.unsafeAppendWithoutCapacityCheck(i);
+            else
+                deadCells.append(i);
+        } else
             handleDeadCell(i);
     }
     if (destructionMode != BlockHasDestructorsAndCollectorIsRunning)

@@ -1350,7 +1350,7 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
                 auto result = constantFunction(overload->result, WTFMove(arguments));
                 if (!result)
                     typeError(InferBottom::No, expression.span(), result.error());
-                else
+                else if (convertValue(expression.span(), overload->result, *result))
                     setConstantValue(expression, WTFMove(*result));
             }
         }

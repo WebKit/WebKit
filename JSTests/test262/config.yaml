@@ -194,6 +194,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/round/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/round/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js
     - test/built-ins/Temporal/Duration/prototype/round/nanoseconds-to-days-loop-indefinitely-1.js
@@ -304,6 +305,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/total/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/total/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-1.js
     - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-2.js
     - test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js

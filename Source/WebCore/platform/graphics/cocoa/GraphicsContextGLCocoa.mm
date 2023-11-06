@@ -783,7 +783,6 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
         forceContextLost();
         return;
     }
-    markLayerComposited();
 }
 
 

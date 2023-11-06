@@ -202,7 +202,6 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
     auto [displayBufferSendRight] = sendResult.takeReply();
     if (!displayBufferSendRight)
         return;
-    markLayerComposited();
     auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
     addNewFence(finishedFence);
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));

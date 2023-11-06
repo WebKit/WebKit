@@ -1148,10 +1148,7 @@ void FrameLoader::resetMultipleFormSubmissionProtection()
 
 void FrameLoader::updateFirstPartyForCookies()
 {
-    if (RefPtr localParent = dynamicDowncast<LocalFrame>(m_frame->tree().parent()))
-        setFirstPartyForCookies(localParent->document()->firstPartyForCookies());
-    else
-        setFirstPartyForCookies(m_frame->document()->url());
+    setFirstPartyForCookies(m_frame->page()->mainFrameURL());
 }
 
 void FrameLoader::setFirstPartyForCookies(const URL& url)

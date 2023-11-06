@@ -43,6 +43,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
+#include "WebGLDefaultFramebuffer.h"
 #include "WebGLExtensionAnyInlines.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
@@ -128,8 +129,9 @@ long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
     return m_context->getInteger64(pname);
 }
 
-void WebGL2RenderingContext::initializeVertexArrayObjects()
+void WebGL2RenderingContext::initializeDefaultObjects()
 {
+    WebGLRenderingContextBase::initializeDefaultObjects();
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
     if (!m_defaultVertexArrayObject)
@@ -3533,7 +3535,7 @@ void WebGL2RenderingContext::updateBuffersToAutoClear(ClearBufferCaller caller, 
         return;
     }
 
-    m_context->setBuffersToAutoClear(m_context->getBuffersToAutoClear() & (~buffersToClear));
+    m_defaultFramebuffer->markBuffersClear(buffersToClear);
 }
 
 } // namespace WebCore
