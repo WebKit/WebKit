@@ -43,6 +43,7 @@ class RenderElement;
 class RenderSVGResourceFilter;
 class RenderStyle;
 class QualifiedName;
+class SVGClipPathElement;
 class SVGElement;
 class SVGFilterElement;
 class TreeScope;
@@ -58,6 +59,7 @@ public:
 
     // Clipping needs a renderer, filters use an element.
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
+    static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
     static RefPtr<SVGFilterElement> referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
