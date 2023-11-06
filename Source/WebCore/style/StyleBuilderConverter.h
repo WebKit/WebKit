@@ -1605,7 +1605,9 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& buil
         return { defaultMetric, true, aspectValueOfPrimaryFont(builderState.parentStyle(), defaultMetric) };
     }
 
-    ASSERT(value.isPair());
+    if (!is<CSSValuePair>(value))
+        return FontCascadeDescription::initialFontSizeAdjust();
+
     const auto& pair = downcast<CSSValuePair>(value);
 
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair.first()).valueID());
