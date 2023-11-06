@@ -116,7 +116,12 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *fr
     if (frameInfo.isMainFrame)
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
+    // FIXME: <rdar://117932176> Stop using FrameIdentifier/_WKFrameHandle for WebExtensionFrameIdentifier,
+    // which needs to be just one number and probably should only be generated in the UI process
+    // to prevent collisions with numbers generated in different web content processes, especially with site isolation.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebExtensionFrameIdentifier result { frameInfo._handle.frameID };
+ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(result.isValid());
     return result;
 }
