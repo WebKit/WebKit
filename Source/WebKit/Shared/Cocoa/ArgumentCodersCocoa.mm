@@ -268,6 +268,7 @@ enum class NSType {
     Dictionary,
     Font,
     Number,
+    RVItem,
     SecureCoding,
     String,
     URL,
@@ -300,6 +301,10 @@ static NSType typeFromObject(id object)
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
+#if ENABLE(REVEAL)
+    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
+        return NSType::RVItem;
+#endif
     // Not all CF types are toll-free-bridged to NS types.
     // Non-toll-free-bridged CF types do not conform to NSSecureCoding.
     if ([object isKindOfClass:NSClassFromString(@"__NSCFType")])
@@ -543,21 +548,12 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
         [delegate setRewriteMutableString:YES];
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
-#if ENABLE(REVEAL)
-    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
-        [delegate setRewriteMutableString:YES];
-#endif // ENABLE(REVEAL)
 
     if ([object isKindOfClass:NSTextAttachment.class]) {
         [delegate setRewriteMutableData:YES];
         [delegate setRewriteMutableArray:YES];
     }
 
-#if ENABLE(REVEAL)
-    // FIXME: This can be removed for RVItem on operating systems that have rdar://109237983.
-    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
-        [delegate setTransformURLs:NO];
-#endif
 #if ENABLE(DATA_DETECTION)
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
         [delegate setTransformURLs:NO];
@@ -825,6 +821,9 @@ void encodeObject(Encoder& encoder, id object)
     case NSType::Number:
         encodeNumberInternal(encoder, static_cast<NSNumber *>(object));
         return;
+    case NSType::RVItem:
+        RELEASE_LOG_FAULT(IPC, "Should never encode an instance of RVItem");
+        return;
     case NSType::SecureCoding:
         encodeSecureCodingInternal(encoder, static_cast<id <NSObject, NSSecureCoding>>(object));
         return;
@@ -873,6 +872,9 @@ std::optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allo
         return decodeFontInternal(decoder);
     case NSType::Number:
         return decodeNumberInternal(decoder);
+    case NSType::RVItem:
+        RELEASE_LOG_FAULT(IPC, "Should never decode an instance of RVItem");
+        return std::nullopt;
     case NSType::SecureCoding:
         return decodeSecureCodingInternal(decoder, allowedClasses);
     case NSType::String:
