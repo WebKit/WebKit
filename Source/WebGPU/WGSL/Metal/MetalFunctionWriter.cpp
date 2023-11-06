@@ -1049,7 +1049,6 @@ static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::Call
     visitArguments(writer, call, 1);
 }
 
-
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     bool isArray = false;
@@ -1357,6 +1356,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
             { "textureSampleCompare", emitTextureSampleCompare },
+            { "textureSampleCompareLevel", emitTextureSampleCompare },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },

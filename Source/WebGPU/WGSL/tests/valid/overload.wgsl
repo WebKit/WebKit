@@ -2653,6 +2653,8 @@ fn testTextureSampleCompare()
 }
 
 // 16.7.11
+// RUN: %metal-compile testTextureSampleCompareLevel
+@compute @workgroup_size(1)
 fn testTextureSampleCompareLevel()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
