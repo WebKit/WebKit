@@ -996,7 +996,7 @@
         SYS_dup2
         SYS_fsgetpath
         SYS_getpid
-        SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
         SYS_objc_bp_assist_cfg_np
         SYS_shared_region_check_np
         SYS_sigaction
@@ -1036,8 +1036,6 @@
         SYS_getuid
         SYS_ioctl ;; needed by tcgetattr (TIOCGETA - debugging
         SYS_issetugid
-        SYS_kdebug_trace64
-        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
         SYS_lseek
@@ -1164,7 +1162,10 @@
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (with-filter (system-attribute apple-internal)
-    (allow syscall-unix (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+    (allow syscall-unix (syscall-number
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        SYS_kdebug_typefilter)))
     
 (with-filter (lockdown-mode)
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
