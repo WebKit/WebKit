@@ -1,0 +1,12 @@
+This test verifies that choosing options in a <select multiple> with an <hr> child works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectValues is ""
+PASS selectValues is "D"
+PASS selectValues is "D,E"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

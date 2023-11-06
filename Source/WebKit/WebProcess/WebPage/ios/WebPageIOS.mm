@@ -99,6 +99,7 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLHRElement.h>
 #import <WebCore/HTMLIFrameElement.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLInputElement.h>
@@ -3633,6 +3634,10 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
 
                 parentGroupID++;
                 information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
+            } else if (selectPickerUsesMenu && is<HTMLHRElement>(item.get())) {
+                parentGroupID++;
+                parentGroup = nullptr;
+                information.selectOptions.append(OptionItem(emptyString(), true, false, false, parentGroupID));
             }
         }
         information.selectedIndex = element.selectedIndex();
