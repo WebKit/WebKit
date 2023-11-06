@@ -2310,6 +2310,9 @@ webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-di
 
 webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
 
+# rdar://118021950 ([ iOS ] [ Release ] fast/dom/focus-dialog-blur-input-type-change-crash.html is a flaky failure (264295))
+[ Release ] fast/dom/focus-dialog-blur-input-type-change-crash.html [ Pass Failure ]
+
 webkit.org/b/245967 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
