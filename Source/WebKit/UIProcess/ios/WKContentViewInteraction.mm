@@ -9366,7 +9366,7 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
     [self _removeDropCaret];
     _shouldRestoreEditMenuAfterDrop = NO;
 
-    _dragDropInteractionState.dragAndDropSessionsDidEnd();
+    _dragDropInteractionState.dragAndDropSessionsDidBecomeInactive();
     _dragDropInteractionState = { };
 }
 
@@ -9981,21 +9981,18 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         auto& state = protectedSelf->_dragDropInteractionState;
         if (!data || !protectedSelf->_dropAnimationCount) {
             RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing text indicator data.");
-            state.clearAllDelayedItemPreviewProviders();
             return;
         }
 
         auto snapshotWithoutSelection = data->contentImageWithoutSelection;
         if (!snapshotWithoutSelection) {
             RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
-            state.clearAllDelayedItemPreviewProviders();
             return;
         }
 
         auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
         if (!unselectedSnapshotImage) {
             RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: could not decode unselected content image.");
-            state.clearAllDelayedItemPreviewProviders();
             return;
         }
 
@@ -10362,13 +10359,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     [self _removeContainerForDropPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
-    _dragDropInteractionState.clearAllDelayedItemPreviewProviders();
     _page->didConcludeDrop();
 }
 
 - (UITargetedDragPreview *)dropInteraction:(UIDropInteraction *)interaction previewForDroppingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
 {
-    _dragDropInteractionState.setDefaultDropPreview(item, defaultPreview);
+    if (auto preview = _dragDropInteractionState.finalDropPreview(item))
+        return preview;
+
+    _dragDropInteractionState.addDefaultDropPreview(item, defaultPreview);
 
     CGRect caretRect = _page->currentDragCaretRect();
     if (CGRectIsEmpty(caretRect))
@@ -10380,12 +10379,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     auto targetPreviewCenterInWindowCoordinates = CGPointMake(caretCenterInWindowCoordinates.x + defaultPreview.size.width / 2, caretCenterInWindowCoordinates.y + defaultPreview.size.height / 2);
     auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:textEffectsWindow center:targetPreviewCenterInWindowCoordinates transform:CGAffineTransformIdentity]);
     return [defaultPreview retargetedPreviewWithTarget:target.get()];
-}
-
-- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider
-{
-    // FIXME: This doesn't currently handle multiple items in a drop session.
-    _dragDropInteractionState.prepareForDelayedDropPreview(item, previewProvider);
 }
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id <UIDropSession>)session

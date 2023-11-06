@@ -44,6 +44,37 @@
 
 using namespace TestWebKitAPI;
 
+@interface DragAndDropSimulator () <UIDragAnimating>
+
+- (void)_setNeedsDropPreviewUpdate:(UIDragItem *)item;
+
+@end
+
+@interface UIDragItem (DragAndDropSimulator)
+@property (nonatomic, strong, setter=_setDragAndDropSimulator:) DragAndDropSimulator *_dragAndDropSimulator;
+@end
+
+static char dragDropSimulatorKey;
+
+@implementation UIDragItem (DragAndDropSimulator)
+
+- (DragAndDropSimulator *)_dragAndDropSimulator
+{
+    return objc_getAssociatedObject(self, &dragDropSimulatorKey);
+}
+
+- (void)_setDragAndDropSimulator:(DragAndDropSimulator *)simulator
+{
+    objc_setAssociatedObject(self, &dragDropSimulatorKey, simulator, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)_setNeedsDropPreviewUpdate
+{
+    [self._dragAndDropSimulator _setNeedsDropPreviewUpdate:self];
+}
+
+@end
+
 @implementation WKWebView (DragAndDropTesting)
 
 - (UIView *)_dragDropInteractionView
@@ -295,9 +326,6 @@ IGNORE_WARNINGS_END
 
 @end
 
-@interface DragAndDropSimulator () <UIDragAnimating>
-@end
-
 @implementation DragAndDropSimulator {
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDragSession> _dragSession;
@@ -324,7 +352,6 @@ IGNORE_WARNINGS_END
     bool _hasStartedInputSession;
     double _currentProgress;
     bool _isDoneWithCurrentRun;
-    bool _isDoneWaitingForDelayedDropPreviews;
     DragAndDropPhase _phase;
 
     RetainPtr<UIDropProposal> _lastKnownDropProposal;
@@ -382,7 +409,6 @@ IGNORE_WARNINGS_END
     _phase = DragAndDropPhaseBeginning;
     _currentProgress = 0;
     _isDoneWithCurrentRun = false;
-    _isDoneWaitingForDelayedDropPreviews = true;
     _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
     _insertedAttachments = adoptNS([[NSMutableArray alloc] init]);
     _removedAttachments = adoptNS([[NSMutableArray alloc] init]);
@@ -467,7 +493,8 @@ IGNORE_WARNINGS_END
     }
 
     Util::run(&_isDoneWithCurrentRun);
-    Util::run(&_isDoneWaitingForDelayedDropPreviews);
+    // Wait for any delayed drop previews to be delivered.
+    [_webView waitForNextPresentationUpdate];
     [_webView clearMessageHandlers:dragAndDropEventNames()];
     [_webView waitForNextPresentationUpdate];
 
@@ -477,37 +504,41 @@ IGNORE_WARNINGS_END
     [defaultCenter removeObserver:self];
 }
 
+- (RetainPtr<UITargetedDragPreview>)defaultDropPreviewForItemAtIndex:(NSUInteger)index
+{
+    RetainPtr<UITargetedDragPreview> defaultPreview;
+    if ([_defaultDropPreviewsForExternalItems count] == [_dropSession items].count)
+        return [_defaultDropPreviewsForExternalItems objectAtIndex:index];
+
+    // Just fall back to an arbitrary non-null drag preview if the test didn't specify one.
+    return adoptNS([[UITargetedDragPreview alloc] initWithView:_webView.get()]);
+}
+
+- (void)_setNeedsDropPreviewUpdate:(UIDragItem *)item
+{
+    auto itemIndex = [[_dropSession items] indexOfObject:item];
+    if (itemIndex == NSNotFound)
+        return;
+
+    auto interaction = [_webView dropInteraction];
+    auto defaultPreview = [self defaultDropPreviewForItemAtIndex:itemIndex];
+    if (auto updatedPreview = [[_webView dropInteractionDelegate] dropInteraction:interaction previewForDroppingItem:item withDefault:defaultPreview.get()])
+        [_delayedDropPreviews setObject:updatedPreview atIndexedSubscript:itemIndex];
+}
+
 - (void)_concludeDropAndPerformOperationIfNecessary
 {
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
     auto operation = [_lastKnownDropProposal operation];
     if (operation != UIDropOperationCancel && operation != UIDropOperationForbidden) {
         NSInteger dropPreviewIndex = 0;
-        __block NSUInteger numberOfPendingPreviews = [_dropSession items].count;
-        _isDoneWaitingForDelayedDropPreviews = !numberOfPendingPreviews;
-        BOOL canUseDefaultDropPreviewsForExternalItems = [_defaultDropPreviewsForExternalItems count] == [_dropSession items].count;
         for (UIDragItem *item in [_dropSession items]) {
-            RetainPtr<UITargetedDragPreview> defaultPreview;
-            if (canUseDefaultDropPreviewsForExternalItems)
-                defaultPreview = [_defaultDropPreviewsForExternalItems objectAtIndex:dropPreviewIndex];
-            else {
-                // Just fall back to an arbitrary non-null drag preview if the test didn't specify one.
-                defaultPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:_webView.get()]);
-            }
+            item._dragAndDropSimulator = self;
+            auto defaultPreview = [self defaultDropPreviewForItemAtIndex:dropPreviewIndex];
 
-            id <UIDropInteractionDelegate_Private> delegate = (id <UIDropInteractionDelegate_Private>)[_webView dropInteractionDelegate];
             UIDropInteraction *interaction = [_webView dropInteraction];
-            [_dropPreviews addObject:[delegate dropInteraction:interaction previewForDroppingItem:item withDefault:defaultPreview.get()] ?: NSNull.null];
+            [_dropPreviews addObject:[[_webView dropInteractionDelegate] dropInteraction:interaction previewForDroppingItem:item withDefault:defaultPreview.get()] ?: NSNull.null];
             [_delayedDropPreviews addObject:NSNull.null];
-            [delegate _dropInteraction:interaction delayedPreviewProviderForDroppingItem:item previewProvider:^(UITargetedDragPreview *preview) {
-                if (preview)
-                    [_delayedDropPreviews setObject:preview atIndexedSubscript:dropPreviewIndex];
-
-                if (!--numberOfPendingPreviews) {
-                    _isDoneWaitingForDelayedDropPreviews = true;
-                    [self _expectNoDropPreviewsWithUnparentedContainerViews];
-                }
-            }];
             ++dropPreviewIndex;
         }
 
