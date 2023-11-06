@@ -80,8 +80,6 @@ public:
 
     _WKWebExtensionLocalization *localization() { return m_localization.get(); }
 
-    static _WKWebExtensionLocalization *parseLocalization(API::Data&);
-
     bool inTestingMode() { return m_testingMode; }
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
@@ -116,6 +114,8 @@ public:
 
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
+
+    static _WKWebExtensionLocalization *parseLocalization(API::Data&, const URL& baseURL);
 
     // Action
     void dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>&);

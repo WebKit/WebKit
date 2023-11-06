@@ -101,7 +101,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             }
         }
 
-        NSData *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
+        auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
         if (!fileData) {
             task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
@@ -114,22 +114,19 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             }
         }
 
-        NSString *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;
+        auto *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
         if ([mimeType isEqualToString:@"text/css"]) {
-            _WKWebExtensionLocalization *localization = extensionContext->extension().localization();
-            if (!localization.uniqueIdentifier)
-                localization.uniqueIdentifier = extensionContext->uniqueIdentifier();
-
             // FIXME: <https://webkit.org/b/252628> Only attempt to localize CSS files if we notice a localization wildcard in the file's NSData.
-            NSString *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
+            auto *localization = extensionContext->extension().localization();
+            auto *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
             stylesheetContents = [localization localizedStringForString:stylesheetContents];
             fileData = [stylesheetContents dataUsingEncoding:NSUTF8StringEncoding];
         }
 
-        NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
+        auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
             @"Content-Security-Policy": extensionContext->extension().contentSecurityPolicy(),
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],

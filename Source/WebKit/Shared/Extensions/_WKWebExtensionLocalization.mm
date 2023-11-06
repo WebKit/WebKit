@@ -56,13 +56,6 @@ static NSString * const predefinedMessageValueRightToLeft = @"rtl";
 static NSString * const predefinedMessageValueTextEdgeLeft = @"left";
 static NSString * const predefinedMessageValueTextEdgeRight = @"right";
 
-
-// NSCoding keys
-static NSString * const localizationDictionaryCodingKey = @"localizationDictionary";
-static NSString * const localeStringDictionaryCodingKey = @"localeString";
-static NSString * const localeCodingKey = @"locale";
-static NSString * const uniqueIdentifierCodingKey = @"uniqueIdentifier";
-
 using LocalizationDictionary = NSDictionary<NSString *, NSDictionary *>;
 using PlaceholderDictionary = NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *>;
 
@@ -94,7 +87,7 @@ using namespace WebKit;
     NSString *defaultLocaleString = webExtension.defaultLocale().localeIdentifier;
 
     if (!defaultLocaleString.length) {
-        RELEASE_LOG_INFO(Extensions, "Not loading localization for extension %{private}@. No default locale provided.", webExtension.displayName());
+        RELEASE_LOG_DEBUG(Extensions, "No default locale provided");
         return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
     }
 
@@ -106,18 +99,38 @@ using namespace WebKit;
     NSString *bestLocaleString;
 
     LocalizationDictionary *defaultLocaleDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:defaultLocaleString];
-    if (defaultLocaleDictionary)
+    if (defaultLocaleDictionary) {
+        RELEASE_LOG_DEBUG(Extensions, "Default locale available for %{public}@", defaultLocaleString);
         bestLocaleString = defaultLocaleString;
+    }
 
-    LocalizationDictionary *languageDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:languageCode];
-    if (languageDictionary)
-        bestLocaleString = languageCode;
+    LocalizationDictionary *languageDictionary;
+    if (![languageCode isEqualToString:defaultLocaleString]) {
+        if ((languageDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:languageCode])) {
+            RELEASE_LOG_DEBUG(Extensions, "Language locale available for %{public}@", languageCode);
+            bestLocaleString = languageCode;
+        }
+    }
 
-    LocalizationDictionary *regionalDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:regionalLocaleString];
-    if (regionalDictionary)
-        bestLocaleString = defaultLocaleString;
+    LocalizationDictionary *regionalDictionary;
+    if (![regionalLocaleString isEqualToString:defaultLocaleString]) {
+        if ((regionalDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:regionalLocaleString])) {
+            RELEASE_LOG_DEBUG(Extensions, "Regional locale available for %{public}@", regionalLocaleString);
+            bestLocaleString = regionalLocaleString;
+        }
+    }
+
+    RELEASE_LOG_DEBUG(Extensions, "Best locale is %{public}@", bestLocaleString ?: @"undefined");
 
     return [self initWithRegionalLocalization:regionalDictionary languageLocalization:languageDictionary defaultLocalization:defaultLocaleDictionary withBestLocale:bestLocaleString uniqueIdentifier:nil];
+}
+
+- (instancetype)initWithLocalizedDictionary:(NSDictionary<NSString *, NSDictionary *> *)localizedDictionary uniqueIdentifier:(NSString *)uniqueIdentifier
+{
+    ASSERT(uniqueIdentifier);
+
+    NSString *localeString = localizedDictionary[predefinedMessageUILocale][messageKey];
+    return [self initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localeString uniqueIdentifier:uniqueIdentifier];
 }
 
 - (instancetype)initWithRegionalLocalization:(LocalizationDictionary *)regionalLocalization languageLocalization:(LocalizationDictionary *)languageLocalization defaultLocalization:(LocalizationDictionary *)defaultLocalization withBestLocale:(NSString *)localeString uniqueIdentifier:(NSString *)uniqueIdentifier
@@ -129,11 +142,13 @@ using namespace WebKit;
     _localeString = localeString;
     _uniqueIdentifier = uniqueIdentifier;
 
-    LocalizationDictionary *localizationDictionary = [self _predefinedMessagesForLocale:_locale];
+    LocalizationDictionary *localizationDictionary = self._predefinedMessages;
     localizationDictionary = dictionaryWithLowercaseKeys(localizationDictionary);
     localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(regionalLocalization));
     localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(languageLocalization));
     localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(defaultLocalization));
+
+    ASSERT(localizationDictionary);
 
     _localizationDictionary = localizationDictionary;
 
@@ -142,7 +157,7 @@ using namespace WebKit;
 
 - (NSDictionary<NSString *, id> *)localizedDictionaryForDictionary:(NSDictionary<NSString *, id> *)dictionary
 {
-    if (!_localizationDictionary)
+    if (!_localizationDictionary.count)
         return dictionary;
 
     NSMutableDictionary<NSString *, id> *localizedDictionary = [dictionary mutableCopy];
@@ -166,6 +181,9 @@ using namespace WebKit;
     if (placeholders.count > 9)
         return nil;
 
+    if (!_localizationDictionary.count)
+        return @"";
+
     LocalizationDictionary *stringDictionary = objectForKey<NSDictionary>(_localizationDictionary, key.lowercaseString);
 
     NSString *localizedString = objectForKey<NSString>(stringDictionary, messageKey);
@@ -185,6 +203,9 @@ using namespace WebKit;
 
 - (NSArray *)_localizedArrayForArray:(NSArray *)array
 {
+    if (!_localizationDictionary.count)
+        return array;
+
     return mapObjects(array, ^id(id key, id value) {
         if ([value isKindOfClass:NSString.class])
             return [self localizedStringForString:value];
@@ -192,7 +213,6 @@ using namespace WebKit;
             return [self _localizedArrayForArray:value];
         if ([value isKindOfClass:NSDictionary.class])
             return [self localizedDictionaryForDictionary:value];
-
         return value;
     });
 }
@@ -217,37 +237,41 @@ using namespace WebKit;
     return localizedString;
 }
 
-- (LocalizationDictionary *)_localizationDictionaryForWebExtension:(WebExtension&)webExtension withLocale:(NSString *)locale
+- (LocalizationDictionary *)_localizationDictionaryForWebExtension:(WebExtension&)webExtension withLocale:(NSString *)localeString
 {
-    NSString *path = [NSString stringWithFormat:pathToJSONFile, locale];
-    NSData *data = [NSData dataWithData:webExtension.resourceDataForPath(path)];
+    auto *path = [NSString stringWithFormat:pathToJSONFile, localeString];
+    auto *data = [NSData dataWithData:webExtension.resourceDataForPath(path, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)];
     return parseJSON(data);
 }
 
-- (LocalizationDictionary *)_predefinedMessagesForLocale:(NSLocale *)locale
+- (LocalizationDictionary *)_predefinedMessages
 {
-    NSDictionary *predefindedMessage;
-    if ([NSParagraphStyle defaultWritingDirectionForLanguage:_locale.languageCode] == NSWritingDirectionLeftToRight) {
-        predefindedMessage = @{
-            predefinedMessageUILocale: @{ messageKey: _localeString ?: @"" },
+    NSMutableDictionary *predefinedMessages;
+
+    if (_locale && [NSParagraphStyle defaultWritingDirectionForLanguage:_locale.languageCode] == NSWritingDirectionLeftToRight) {
+        predefinedMessages = [@{
             predefinedMessageLanguageDirection: @{ messageKey: predefinedMessageValueLeftToRight },
             predefinedMessageLanguageDirectionReversed: @{ messageKey: predefinedMessageValueRightToLeft },
             predefinedMessageTextLeadingEdge: @{ messageKey: predefinedMessageValueTextEdgeLeft },
             predefinedMessageTextTrailingEdge: @{ messageKey: predefinedMessageValueTextEdgeRight },
-        };
-    } else {
-        predefindedMessage = @{
-            predefinedMessageUILocale: @{ messageKey: _localeString ?: @"" },
+        } mutableCopy];
+    } else if (_locale) {
+        predefinedMessages = [@{
             predefinedMessageLanguageDirection: @{ messageKey: predefinedMessageValueRightToLeft },
             predefinedMessageLanguageDirectionReversed: @{ messageKey: predefinedMessageValueLeftToRight },
             predefinedMessageTextLeadingEdge: @{ messageKey: predefinedMessageValueTextEdgeRight },
             predefinedMessageTextTrailingEdge: @{ messageKey: predefinedMessageValueTextEdgeLeft },
-        };
-    }
+        } mutableCopy];
+    } else
+        predefinedMessages = [NSMutableDictionary dictionary];
 
-    // FIXME: <https://webkit.org/b/261047> Handle multiple unique identifiers for localization.
+    if (_localeString)
+        predefinedMessages[predefinedMessageUILocale] = @{ messageKey: _localeString };
 
-    return predefindedMessage;
+    if (_uniqueIdentifier)
+        predefinedMessages[predefinedMessageExtensionID] = @{ messageKey: _uniqueIdentifier };
+
+    return [predefinedMessages copy];
 }
 
 - (NSString *)_stringByReplacingNamedPlaceholdersInString:(NSString *)string withNamedPlaceholders:(PlaceholderDictionary *)namedPlaceholders
@@ -296,6 +320,11 @@ using namespace WebKit;
 #else
 
 - (instancetype)initWithWebExtension:(WebExtension&)extension
+{
+    return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
+}
+
+- (instancetype)initWithLocalizedDictionary:(NSDictionary<NSString *, NSDictionary *> *)localizedDictionary uniqueIdentifier:(NSString *)uniqueIdentifier
 {
     return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
 }
