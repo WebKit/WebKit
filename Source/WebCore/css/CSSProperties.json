@@ -6361,7 +6361,6 @@
             ],
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "aspectRatioEnabled",
                 "parser-function": "consumeAspectRatio",
                 "parser-grammar-unused": "auto || <ratio>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."

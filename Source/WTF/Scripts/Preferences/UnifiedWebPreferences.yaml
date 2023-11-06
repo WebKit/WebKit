@@ -563,19 +563,6 @@ AriaTextRoleEnabled:
     WebCore:
       default: false
 
-AspectRatioEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "CSS Aspect Ratio"
-  humanReadableDescription: "Enable aspect-ratio CSS property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool
   status: mature
