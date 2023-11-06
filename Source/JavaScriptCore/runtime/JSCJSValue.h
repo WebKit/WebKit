@@ -299,7 +299,7 @@ public:
 
     // Integer conversions.
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
-    double toIntegerWithoutRounding(JSGlobalObject*) const;
+    double toIntegerWithTruncation(JSGlobalObject*) const;
     double toIntegerOrInfinity(JSGlobalObject*) const;
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;

@@ -92,7 +92,7 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
             continue;
 
         hasRelevantProperty = true;
-        result[unit] = value.toIntegerWithoutRounding(globalObject);
+        result[unit] = value.toNumber(globalObject) + 0.0;
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!isInteger(result[unit])) {
@@ -121,6 +121,11 @@ ISO8601::Duration TemporalDuration::toISO8601Duration(JSGlobalObject* globalObje
         duration = fromDurationLike(globalObject, asObject(itemValue));
         RETURN_IF_EXCEPTION(scope, { });
     } else {
+        if (!itemValue.isString()) {
+            throwTypeError(globalObject, scope, "can only convert to Duration from object or string values"_s);
+            return { };
+        }
+
         String string = itemValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
