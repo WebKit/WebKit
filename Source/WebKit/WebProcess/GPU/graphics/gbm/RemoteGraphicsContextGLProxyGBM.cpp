@@ -135,7 +135,6 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
 
     auto& [dmabufObject] = sendResult.reply();
     m_layerContentsDisplayDelegate->present(WTFMove(dmabufObject));
-    markLayerComposited();
 }
 
 Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)

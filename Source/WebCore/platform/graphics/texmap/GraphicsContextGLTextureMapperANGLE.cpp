@@ -352,7 +352,6 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 
     prepareTexture();
     swapCompositorTexture();
-    markLayerComposited();
 }
 
 } // namespace WebCore

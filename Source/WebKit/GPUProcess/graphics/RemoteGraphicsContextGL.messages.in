@@ -39,7 +39,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
-    void MarkContextChanged()
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
     void DrawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)

@@ -2030,6 +2030,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
         html/canvas/WebGLDebugShaders.cpp
+        html/canvas/WebGLDefaultFramebuffer.cpp
         html/canvas/WebGLDepthTexture.cpp
         html/canvas/WebGLDrawBuffers.cpp
         html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp

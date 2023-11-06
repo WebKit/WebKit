@@ -98,7 +98,6 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
     auto& [contentBuffer] = sendResult.reply();
     if (contentBuffer)
         static_cast<WCPlatformLayerGCGL*>(m_layerContentsDisplayDelegate->platformLayer())->addContentBufferIdentifier(*contentBuffer);
-    markLayerComposited();
 }
 
 }

@@ -1634,15 +1634,6 @@ public:
 
     virtual void prepareForDisplay() = 0;
 
-    // FIXME: should be removed, caller should keep track of changed state.
-    WEBCORE_EXPORT virtual void markContextChanged();
-
-    // FIXME: these should be removed, caller is interested in buffer clear status and
-    // should track that in a variable that the caller holds. Caller should receive
-    // the value from reshape().
-    void setBuffersToAutoClear(GCGLbitfield);
-    GCGLbitfield getBuffersToAutoClear() const;
-
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
@@ -1655,11 +1646,6 @@ public:
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
     virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
-
-    // FIXME: this should be removed. The layer should be marked composited by
-    // preparing for display, so that canvas image buffer and the layer agree
-    // on the content.
-    WEBCORE_EXPORT void markLayerComposited();
 
     using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
@@ -1729,10 +1715,6 @@ protected:
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
     Client* m_client { nullptr };
-    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
-    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
-    // auto-cleared.
-    GCGLbitfield m_buffersToAutoClear { 0 };
     bool m_contextLost { false };
 
 private:

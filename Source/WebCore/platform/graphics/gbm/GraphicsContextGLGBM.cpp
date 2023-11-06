@@ -104,7 +104,6 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
     prepareTexture();
     GL_Flush();
-    markLayerComposited();
 
     m_swapchain.displayBO = WTFMove(m_swapchain.drawBO);
     allocateDrawBufferObject();
