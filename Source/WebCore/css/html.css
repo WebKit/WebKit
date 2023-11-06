@@ -439,7 +439,8 @@ input {
     border-radius: 5px;
     border: 1px solid -apple-system-secondary-label;
     font: 11px system-ui;
-    padding: 0.2em 0.5em 0.3em 0.5em;
+    padding-block: 0.2em 0.3em;
+    padding-inline: 0.5em;
 #else
     border: 2px inset gray;
     padding: 1px;
@@ -482,7 +483,8 @@ input[type="search"]::-webkit-search-results-decoration {
     display: block;
     flex: none;
     align-self: flex-start;
-    margin: auto 0;
+    margin-block: auto;
+    margin-inline: 0;
 }
 
 input[type="search"]::-webkit-search-results-button {
@@ -491,7 +493,8 @@ input[type="search"]::-webkit-search-results-button {
     flex: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     align-self: flex-start;
-    margin: auto 0;
+    margin-block: auto;
+    margin-inline: 0;
 #endif
 }
 
@@ -534,9 +537,11 @@ input::-webkit-date-and-time-value {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     margin: 0px;
     text-align: center;
-    width: 100%;
+    inline-size: 100%;
 #else
-    margin: 1px 24px 1px 4px;
+    margin-block: 1px;
+    margin-inline-start: 4px;
+    margin-inline-end: 24px;
     white-space: pre;
 #endif
 }
@@ -738,13 +743,13 @@ input::-webkit-list-button {
     flex: none;
     -webkit-user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    width: 11px;
+    inline-size: 11px;
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
 #else
-    width: 16px;
-    height: 100%;
+    inline-size: 16px;
+    block-size: 100%;
 #endif
 }
 #endif
@@ -769,8 +774,7 @@ textarea {
     /* On iOS we want to inherit the left and right padding for consistency with
      other form controls (e.g. <input type="text">). We want to override the top
      and bottom padding to ensure we have a symmetric look for text areas. */
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-block: 2px;
 #endif
     flex-direction: column;
     resize: auto;
@@ -1070,7 +1074,8 @@ select {
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;
-    padding: 0 0.4em 0 0.4em;
+    padding-block: 0;
+    padding-inline: 0.4em;
     color: -apple-system-blue;
     font: 11px system-ui;
     border: 1px solid -webkit-control-background;
