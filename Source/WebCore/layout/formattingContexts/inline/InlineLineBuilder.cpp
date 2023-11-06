@@ -507,7 +507,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
             auto runsExpandHorizontally = [&] {
                 if (isInIntrinsicWidthMode())
                     return false;
-                if (root().isRubyAnnotationBox()) {
+                if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
                     // FIXME: This is a workaround until after we generate inline boxes for annotation content.
                     return true;
                 }
