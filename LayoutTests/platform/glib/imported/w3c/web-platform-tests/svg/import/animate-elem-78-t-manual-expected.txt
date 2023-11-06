@@ -97,7 +97,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (505,150) size 38x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGPath {polyline} at (505,150) size 38x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
             RenderSVGContainer {a} at (688,150) size 38x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-              RenderSVGPath {polyline} at (688,150) size 38x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#000000] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+              RenderSVGPath {polyline} at (688,150) size 38x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
           RenderSVGContainer {g} at (283,199) size 432x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
               RenderSVGContainer {g} at (283,200) size 64x14
@@ -141,7 +141,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (514,222) size 22x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGPath {line} at (514,222) size 22x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
             RenderSVGContainer {a} at (697,222) size 22x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-              RenderSVGPath {line} at (697,222) size 22x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
+              RenderSVGPath {line} at (697,222) size 22x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
           RenderSVGContainer {g} at (281,255) size 439x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
               RenderSVGContainer {g} at (281,255) size 73x20
@@ -163,7 +163,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (513,255) size 24x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGPath {line} at (513,255) size 24x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
             RenderSVGContainer {a} at (696,255) size 24x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-              RenderSVGPath {line} at (696,255) size 24x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
+              RenderSVGPath {line} at (696,255) size 24x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=0.00]
           RenderSVGContainer {g} at (282,292) size 444x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,100.00)}]
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
               RenderSVGContainer {g} at (282,292) size 77x16
@@ -229,7 +229,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (510,364) size 35x6 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGPath {line} at (510,364) size 35x6 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
             RenderSVGContainer {a} at (694,364) size 34x6 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-              RenderSVGPath {line} at (694,364) size 34x6 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+              RenderSVGPath {line} at (694,364) size 34x6 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}] [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
           RenderSVGContainer {g} at (283,391) size 431x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
               RenderSVGContainer {g} at (283,391) size 64x14
@@ -270,7 +270,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (516,425) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGRect {rect} at (516,425) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
             RenderSVGContainer {a} at (700,425) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-              RenderSVGRect {rect} at (700,425) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+              RenderSVGRect {rect} at (700,425) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
           RenderSVGContainer {g} at (283,458) size 431x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
               RenderSVGContainer {g} at (283,458) size 64x14

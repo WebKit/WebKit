@@ -83,9 +83,8 @@ public:
     inline const FontCascadeDescription& fontDescription();
     inline const FontCascadeDescription& parentFontDescription();
 
-    // FIXME: These are mutually exclusive, clean up the code to take that into account.
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
-    bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch == SelectorChecker::MatchVisited; }
+    bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch != SelectorChecker::MatchLink; }
 
     bool useSVGZoomRules() const;
     bool useSVGZoomRulesForLength() const;
