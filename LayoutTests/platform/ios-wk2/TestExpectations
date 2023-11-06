@@ -770,6 +770,8 @@ editing/caret/ios/emoji.html [ Failure ]
 editing/selection/designmode-no-caret.html
 editing/selection/move-by-character-brute-force.html
 editing/spelling/delete-into-misspelled-word.html
+editing/spelling/inline-spelling-markers-hidpi.html
+editing/spelling/inline-spelling-markers.html
 editing/spelling/grammar-edit-word.html
 editing/spelling/grammar.html
 editing/spelling/markers.html
