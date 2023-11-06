@@ -276,13 +276,6 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 
 #endif // USE(QUICK_LOOK)
 
-#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-
-@interface WKContentView (UITextSelectionDisplayInteraction) <UITextSelectionDisplayInteractionDelegate>
-@end
-
-#endif
-
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -308,6 +301,13 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+@interface WKContentView (UITextSelectionDisplayInteraction) <UITextSelectionDisplayInteractionDelegate>
+@end
+
+#endif
 
 namespace WebKit {
 using namespace WebCore;
