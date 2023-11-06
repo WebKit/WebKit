@@ -764,10 +764,11 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     
 static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElementType pseudoElementType)
 {
-    // Note that we omit cue since it can be either an ident or a function.
+    // Note that we omit ::cue since it can be either an ident or a function.
     switch (pseudoElementType) {
     case CSSSelector::PseudoElementPart:
     case CSSSelector::PseudoElementSlotted:
+    case CSSSelector::PseudoElementHighlight:
         return true;
     default:
         break;
