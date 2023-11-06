@@ -4646,6 +4646,9 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scro
 #rdar://118015813 ([ iOS ]imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html is a flaky text failure (264281))
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Pass Failure ]
 
+#rdar://118018816 ([ iOS ] imported/w3c/web-platform-tests/screen-orientation/active-lock.html is a flaky failure (264287))
+imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
+
 # Failing word-break: auto-phrase tests.
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-004.html [ ImageOnlyFailure ]
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-005.html [ ImageOnlyFailure ]
