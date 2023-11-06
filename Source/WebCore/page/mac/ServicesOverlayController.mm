@@ -278,11 +278,15 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
     if (!highlight)
         return 0_s;
 
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return 0_s;
+
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
     if (CheckedRef(m_page.focusController())->focusedOrMainFrame().selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
-    bool mousePressed = mainFrame().eventHandler().mousePressed();
+    bool mousePressed = localMainFrame->eventHandler().mousePressed();
 
     // Highlight hysteresis is only for selection services, because telephone number highlights are already much more stable
     // by virtue of being expanded to include the entire telephone number. However, we will still avoid highlighting
@@ -332,8 +336,12 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(DataDetectorH
 
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
     Vector<SimpleRange> phoneNumberRanges;
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -350,7 +358,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
-    auto& mainFrameView = *mainFrame().view();
+    auto& mainFrameView = *localMainFrame->view();
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
@@ -390,10 +398,14 @@ void ServicesOverlayController::buildSelectionHighlight()
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     if (auto selectionRange = m_page.selection().firstRange()) {
-        auto* mainFrameView = mainFrame().view();
+        RefPtr mainFrameView = localMainFrame->view();
         if (!mainFrameView)
             return;
 
@@ -566,7 +578,11 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
 
 bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 {
-    m_mousePosition = mainFrame().view()->windowToContents(event.position());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    m_mousePosition = localMainFrame->view()->windowToContents(event.position());
 
     bool mouseIsOverActiveHighlightButton = false;
     determineActiveHighlight(mouseIsOverActiveHighlightButton);
@@ -629,7 +645,11 @@ void ServicesOverlayController::didScrollFrame(PageOverlay&, LocalFrame& frame)
 
 void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDetectorHighlight& highlight)
 {
-    auto* frameView = mainFrame().view();
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    RefPtr frameView = localMainFrame->view();
     if (!frameView)
         return;
 
@@ -643,13 +663,6 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
         m_page.chrome().client().handleSelectionServiceClick(CheckedRef(m_page.focusController())->focusedOrMainFrame().selection(), WTFMove(selectedTelephoneNumbers), windowPoint);
     } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
         m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().firstRectForRange(highlight.range())));
-}
-
-LocalFrame& ServicesOverlayController::mainFrame() const
-{
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()); 
-    ASSERT(localMainFrame);
-    return *localMainFrame;
 }
 
 } // namespace WebKit
