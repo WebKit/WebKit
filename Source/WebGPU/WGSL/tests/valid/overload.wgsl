@@ -1402,30 +1402,37 @@ fn testInsertBits()
 }
 
 // 17.5.34
+// RUN: %metal-compile testInverseSqrt
+@compute @workgroup_size(1)
 fn testInverseSqrt()
 {
     // [T < Float].(T) => T,
+    let x = 2.f;
     {
-        _ = inverseSqrt(0);
-        _ = inverseSqrt(0.0);
-        _ = inverseSqrt(1f);
+        _ = inverseSqrt(2);
+        _ = inverseSqrt(2.0);
+        _ = inverseSqrt(2f);
+        _ = inverseSqrt(x);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = inverseSqrt(vec2(0));
-        _ = inverseSqrt(vec2(0.0));
-        _ = inverseSqrt(vec2(1f));
+        _ = inverseSqrt(vec2(2));
+        _ = inverseSqrt(vec2(2.0));
+        _ = inverseSqrt(vec2(2f));
+        _ = inverseSqrt(vec2(x));
     }
     {
-        _ = inverseSqrt(vec3(-1));
-        _ = inverseSqrt(vec3(-1.0));
-        _ = inverseSqrt(vec3(-1f));
+        _ = inverseSqrt(vec3(2));
+        _ = inverseSqrt(vec3(2.0));
+        _ = inverseSqrt(vec3(2f));
+        _ = inverseSqrt(vec3(x));
     }
     {
-        _ = inverseSqrt(vec4(-1));
-        _ = inverseSqrt(vec4(-1.0));
-        _ = inverseSqrt(vec4(-1f));
+        _ = inverseSqrt(vec4(2));
+        _ = inverseSqrt(vec4(2.0));
+        _ = inverseSqrt(vec4(2f));
+        _ = inverseSqrt(vec4(x));
     }
 }
 

@@ -1395,6 +1395,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdyFine", "dfdy"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
+            { "inverseSqrt", "rsqrt"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {
