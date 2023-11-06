@@ -73,6 +73,16 @@ private:
         return false;
     }
 
+    bool applyUnrounded(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
+    {
+        if (type() == TransformOperation::Type::Rotate)
+            transform.rotate(m_angle, TransformationMatrix::RotationSnapping::None);
+        else
+            transform.rotate3d(m_x, m_y, m_z, m_angle, TransformationMatrix::RotationSnapping::None);
+        return false;
+    }
+
+
     void dump(WTF::TextStream&) const final;
 
     RotateTransformOperation(double, double, double, double, TransformOperation::Type);
