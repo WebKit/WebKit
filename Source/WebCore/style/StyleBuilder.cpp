@@ -344,7 +344,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
-    if (m_state.applyPropertyToVisitedLinkStyle() && !isValidVisitedLinkProperty(id)) {
+    if (!m_state.applyPropertyToRegularStyle() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
