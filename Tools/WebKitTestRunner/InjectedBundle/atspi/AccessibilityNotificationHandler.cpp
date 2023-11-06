@@ -43,6 +43,7 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
     : m_callback(callback)
     , m_element(element)
 {
+    WKAccessibilityEnable();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(jsContext, m_callback);
