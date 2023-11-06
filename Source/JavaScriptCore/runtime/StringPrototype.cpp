@@ -515,7 +515,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         RETURN_IF_EXCEPTION(scope, nullptr);
         auto string = jsResult.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        replacements.append(WTFMove(string));
+        replacements.unsafeAppendWithoutCapacityCheck(WTFMove(string));
 
         lastIndex = end;
     }

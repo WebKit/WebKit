@@ -1904,7 +1904,7 @@ const Vector<String>& intlAvailableTimeZones()
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
         for (auto iterator = temporary.begin(); iterator != end; ++iterator)
-            availableTimeZones->append(createImmortalThreadSafeString(WTFMove(*iterator)));
+            availableTimeZones->unsafeAppendWithoutCapacityCheck(createImmortalThreadSafeString(WTFMove(*iterator)));
     });
     return availableTimeZones;
 }

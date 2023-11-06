@@ -55,7 +55,7 @@ public:
             if (index != m_cache.size() - 1) {
                 auto entry = WTFMove(m_cache[index]);
                 m_cache.remove(index);
-                m_cache.append(WTFMove(entry));
+                m_cache.unsafeAppendWithoutCapacityCheck(WTFMove(entry));
             }
             return m_cache[m_cache.size() - 1].second;
         }
@@ -64,7 +64,7 @@ public:
         if (m_cache.size() == capacity)
             m_cache.remove(0);
 
-        m_cache.append(std::pair { Policy::createKeyForStorage(key), Policy::createValueForKey(key) });
+        m_cache.unsafeAppendWithoutCapacityCheck(std::pair { Policy::createKeyForStorage(key), Policy::createValueForKey(key) });
         return m_cache.last().second;
     }
 

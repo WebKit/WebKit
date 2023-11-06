@@ -229,7 +229,7 @@ protected:
             numCandidates--;
             if (!hasBeenSimplified(adjacentTmpIndex) && m_degrees[adjacentTmpIndex] >= registerCount()) {
                 ASSERT(std::find(highOrderAdjacents.begin(), highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
-                highOrderAdjacents.append(adjacentTmpIndex);
+                highOrderAdjacents.unsafeAppendWithoutCapacityCheck(adjacentTmpIndex);
                 if (highOrderAdjacents.size() >= registerCount())
                     return false;
             } else if (highOrderAdjacents.size() + numCandidates < registerCount())
@@ -246,7 +246,7 @@ protected:
                 && m_degrees[adjacentTmpIndex] >= registerCount()
                 && std::find(highOrderAdjacents.begin(), iteratorEndHighOrderAdjacentsOfU, adjacentTmpIndex) == iteratorEndHighOrderAdjacentsOfU) {
                 ASSERT(std::find(iteratorEndHighOrderAdjacentsOfU, highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
-                highOrderAdjacents.append(adjacentTmpIndex);
+                highOrderAdjacents.unsafeAppendWithoutCapacityCheck(adjacentTmpIndex);
                 if (highOrderAdjacents.size() >= registerCount())
                     return false;
             } else if (highOrderAdjacents.size() + numCandidates < registerCount())

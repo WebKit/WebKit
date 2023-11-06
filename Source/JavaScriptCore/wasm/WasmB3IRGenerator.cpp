@@ -1333,7 +1333,7 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
-        m_locals.append(local);
+        m_locals.unsafeAppendWithoutCapacityCheck(local);
         if (type.isV128())
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), v128_t { }, Origin()));
         else {

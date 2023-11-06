@@ -926,6 +926,10 @@ public:
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
+    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
+    template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
+    template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
+
 private:
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
     template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
@@ -947,10 +951,6 @@ private:
     template<typename Collection> friend Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(const Collection&);
     template<typename U, size_t otherInlineCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> friend class Vector;
     template<typename DestinationVector, typename Collection> friend DestinationVector copyToVectorSpecialization(const Collection&);
-
-    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
-    template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
-    template<FailureAction, typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 
     template<size_t position, typename U, typename... Items>
     void uncheckedInitialize(U&& item, Items&&... items)
@@ -1434,10 +1434,9 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<FailureAction action, typename U>
+template<typename U>
 ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::unsafeAppendWithoutCapacityCheck(const U* data, size_t dataSize)
 {
-    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     if (!dataSize)
         return true;
 
