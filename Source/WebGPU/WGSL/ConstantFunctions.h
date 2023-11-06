@@ -754,9 +754,17 @@ BINARY_OPERATION(Atan2, Float, WRAP_STD(atan2))
 UNARY_OPERATION(Ceil, Float, WRAP_STD(ceil))
 TERNARY_OPERATION(Clamp, Number, [&](auto e, auto low, auto high) { return std::min(std::max(e, low), high); })
 
-UNARY_OPERATION(CountLeadingZeros, Integer, [&](uint32_t arg) { return std::countl_zero(arg); })
-UNARY_OPERATION(CountOneBits, Integer, [&](uint32_t arg) { return std::popcount(arg); })
-UNARY_OPERATION(CountTrailingZeros, Integer, [&](uint32_t arg) { return std::countr_zero(arg); })
+UNARY_OPERATION(CountLeadingZeros, ConcreteInteger, [&]<typename T>(T arg) -> T {
+    return std::countl_zero(static_cast<unsigned>(arg));
+})
+
+UNARY_OPERATION(CountOneBits, ConcreteInteger, [&]<typename T>(T arg) -> T {
+    return std::popcount(static_cast<unsigned>(arg));
+})
+
+UNARY_OPERATION(CountTrailingZeros, ConcreteInteger, [&]<typename T>(T arg) -> T {
+    return std::countr_zero(static_cast<unsigned>(arg));
+})
 
 CONSTANT_FUNCTION(Cross)
 {
@@ -1150,8 +1158,8 @@ UNARY_OPERATION(Saturate, Float, [&](auto e) {
     return std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));
 })
 
-UNARY_OPERATION(Sign, Number, [&](auto e) {
-    int result;
+UNARY_OPERATION(Sign, Number, [&]<typename T>(T e) -> T {
+    T result;
     if (e > 0)
         result = 1;
     else if (e < 0)

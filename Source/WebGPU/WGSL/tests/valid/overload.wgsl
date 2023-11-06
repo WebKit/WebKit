@@ -1499,26 +1499,26 @@ fn testLog()
 {
     // [T < Float].(T) => T,
     {
-        _ = log(0);
-        _ = log(0.0);
+        _ = log(2);
+        _ = log(1.0);
         _ = log(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log(vec2(0));
-        _ = log(vec2(0.0));
-        _ = log(vec2(1f));
+        _ = log(vec2(2));
+        _ = log(vec2(2.0));
+        _ = log(vec2(2f));
     }
     {
-        _ = log(vec3(-1));
-        _ = log(vec3(-1.0));
-        _ = log(vec3(-1f));
+        _ = log(vec3(-2));
+        _ = log(vec3(-2.0));
+        _ = log(vec3(-2f));
     }
     {
-        _ = log(vec4(-1));
-        _ = log(vec4(-1.0));
-        _ = log(vec4(-1f));
+        _ = log(vec4(-2));
+        _ = log(vec4(-2.0));
+        _ = log(vec4(-2f));
     }
 }
 
@@ -1526,26 +1526,26 @@ fn testLog()
 fn testLog2() {
     // [T < Float].(T) => T,
     {
-        _ = log2(0);
-        _ = log2(0.0);
-        _ = log2(1f);
+        _ = log2(2);
+        _ = log2(2.0);
+        _ = log2(2f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log2(vec2(0));
-        _ = log2(vec2(0.0));
-        _ = log2(vec2(1f));
+        _ = log2(vec2(2));
+        _ = log2(vec2(2.0));
+        _ = log2(vec2(2f));
     }
     {
-        _ = log2(vec3(-1));
-        _ = log2(vec3(-1.0));
-        _ = log2(vec3(-1f));
+        _ = log2(vec3(-2));
+        _ = log2(vec3(-2.0));
+        _ = log2(vec3(-2f));
     }
     {
-        _ = log2(vec4(-1));
-        _ = log2(vec4(-1.0));
-        _ = log2(vec4(-1f));
+        _ = log2(vec4(-2));
+        _ = log2(vec4(-2.0));
+        _ = log2(vec4(-2f));
     }
 }
 

@@ -83,14 +83,13 @@ fn testU32()
 
 fn testAbstractFloat()
 {
-    // FIXME: values need to be converted after return from call
-    // skip-CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
     _ = 42.0 / 0.0;
-    // skip-CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
     _ = 42.0 / vec2(1.0, 0.0);
-    // skip-CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
     _ = vec2(42.0) / 0.0;
-    // skip-CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
     _ = vec2(42.0) / vec2(1.0, 0.0);
 
     // CHECK-NOT-L: division by zero
@@ -122,14 +121,13 @@ fn testAbstractFloat()
 
 fn testF32()
 {
-    // FIXME: values need to be converted after return from call
-    // skip-CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value Infinity cannot be represented as 'f32'
     _ = 42f / 0f;
-    // skip-CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value Infinity cannot be represented as 'f32'
     _ = 42f / vec2(1f, 0f);
-    // skip-CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value Infinity cannot be represented as 'f32'
     _ = vec2(42f) / 0f;
-    // skip-CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value Infinity cannot be represented as 'f32'
     _ = vec2(42f) / vec2(1f, 0f);
 
     let x = 42f;
