@@ -87,16 +87,16 @@ AVFoundationEnabled:
 AbortSignalAnyOperationEnabled:
   type: bool
   category: dom
-  status: preview
+  status: stable
   humanReadableName: "AbortSignal.any() API"
   humanReadableDescription: "Enable AbortSignal.any() API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 AcceleratedCompositingEnabled:
   type: bool
