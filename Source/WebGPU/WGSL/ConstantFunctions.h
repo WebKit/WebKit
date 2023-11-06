@@ -878,7 +878,7 @@ CONSTANT_FUNCTION(Length)
     ASSERT(arguments.size() == 1);
     const auto& arg = arguments[0];
     if (!arg.isVector())
-        return arg;
+        return constantAbs(resultType, arguments);
 
     ConstantValue result = zeroValue(resultType);
     for (auto& element : arg.toVector().elements) {

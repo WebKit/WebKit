@@ -1001,9 +1001,13 @@ fn testDeterminant()
 }
 
 // 17.5.19
+// RUN: %metal-compile testDistance
+@compute @workgroup_size(1)
 fn testDistance()
 {
     // [T < Float].(T, T) => T,
+    var a = 1.f;
+    let b = 2.f;
     {
         _ = distance(0, 1);
         _ = distance(0, 1.0);
@@ -1011,6 +1015,7 @@ fn testDistance()
         _ = distance(0.0, 1.0);
         _ = distance(1.0, 2f);
         _ = distance(1f, 2f);
+        _ = distance(a, b);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => T,
     {
@@ -1020,6 +1025,7 @@ fn testDistance()
         _ = distance(vec2(0.0), vec2(0.0));
         _ = distance(vec2(0.0), vec2(0f) );
         _ = distance(vec2(1f),  vec2(1f) );
+        _ = distance(vec2(a), vec2(b));
     }
     {
         _ = distance(vec3(0),   vec3(1)  );
@@ -1028,6 +1034,7 @@ fn testDistance()
         _ = distance(vec3(0.0), vec3(0.0));
         _ = distance(vec3(0.0), vec3(0f) );
         _ = distance(vec3(1f),  vec3(1f) );
+        _ = distance(vec3(a), vec3(b));
     }
     {
         _ = distance(vec4(0),   vec4(1)  );
@@ -1036,6 +1043,7 @@ fn testDistance()
         _ = distance(vec4(0.0), vec4(0.0));
         _ = distance(vec4(0.0), vec4(0f) );
         _ = distance(vec4(1f),  vec4(1f) );
+        _ = distance(vec4(a), vec4(b));
     }
 }
 
