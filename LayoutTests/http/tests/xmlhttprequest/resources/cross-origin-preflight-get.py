@@ -2,17 +2,17 @@
 import os
 import sys
 
-sys.stdout.write('Content-Type: text/html\r\n')
+sys.stdout.buffer.write(b'Content-Type: text/html\r\n')
 
 if os.environ.get('HTTP_ORIGIN'):
-    sys.stdout.write(
-        'Access-Control-Allow-Origin: *\r\n'
-        'Access-Control-Allow-Headers: X-Proprietary-Header\r\n'
-        '\r\n'
-        'PASS: Origin header correctly sent'
+    sys.stdout.buffer.write(
+        b'Access-Control-Allow-Origin: *\r\n'
+        b'Access-Control-Allow-Headers: X-Proprietary-Header\r\n'
+        b'\r\n'
+        b'PASS: Origin header correctly sent'
     )
 else:
-    sys.stdout.write(
-        '\r\n'
-        'FAIL: No origin header sent'
+    sys.stdout.buffer.write(
+        b'\r\n'
+        b'FAIL: No origin header sent'
     )

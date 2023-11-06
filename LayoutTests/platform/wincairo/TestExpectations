@@ -896,7 +896,6 @@ http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-default.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
@@ -907,7 +906,6 @@ http/tests/xmlhttprequest/re-login-async.html [ Failure ]
 http/tests/xmlhttprequest/re-login.html [ Failure ]
 http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure ]
-http/tests/xmlhttprequest/upload-progress-events-gc.html [ Skip ] # Timeout
 
 # Fails on Buildbot
 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure Pass ]
