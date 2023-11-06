@@ -894,7 +894,7 @@ static double roundEpsilonToZero(double val)
     return val;
 }
 
-TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle)
+TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle, RotationSnapping snapping)
 {
     // Normalize the axis of rotation
     double length = std::hypot(x, y, z);
@@ -910,8 +910,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     // Angles are in degrees. Switch to radians.
     angle = deg2rad(angle);
 
-    double sinTheta = roundEpsilonToZero(sin(angle));
-    double cosTheta = roundEpsilonToZero(cos(angle));
+    double sinTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(sin(angle)) : sin(angle);
+    double cosTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(cos(angle)) : cos(angle);
 
     TransformationMatrix mat;
 
@@ -981,23 +981,23 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     return *this;
 }
 
-TransformationMatrix& TransformationMatrix::rotate(double angle)
+TransformationMatrix& TransformationMatrix::rotate(double angle, RotationSnapping snapping)
 {
     if (!std::fmod(angle, 360))
         return *this;
 
-    return rotateRadians(deg2rad(angle));
+    return rotateRadians(deg2rad(angle), snapping);
 }
 
-TransformationMatrix& TransformationMatrix::rotateRadians(double angle)
+TransformationMatrix& TransformationMatrix::rotateRadians(double angle, RotationSnapping snapping)
 {
-    double sinZ = roundEpsilonToZero(sin(angle));
-    double cosZ = roundEpsilonToZero(cos(angle));
+    double sinZ = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(sin(angle)) : sin(angle);
+    double cosZ = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(cos(angle)) : cos(angle);
     multiply({ cosZ, sinZ, -sinZ, cosZ, 0, 0 });
     return *this;
 }
 
-TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, double rz)
+TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, double rz, RotationSnapping snapping)
 {
     // Angles are in degrees. Switch to radians.
     rx = deg2rad(rx);
@@ -1006,8 +1006,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
     TransformationMatrix mat;
 
-    double sinTheta = roundEpsilonToZero(sin(rz));
-    double cosTheta = roundEpsilonToZero(cos(rz));
+    double sinTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(sin(rz)) : sin(rz);
+    double cosTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(cos(rz)) : cos(rz);
 
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = sinTheta;
@@ -1024,8 +1024,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
     TransformationMatrix rmat(mat);
 
-    sinTheta = sin(ry);
-    cosTheta = cos(ry);
+    sinTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(sin(ry)) : sin(ry);
+    cosTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(cos(ry)) : cos(ry);
 
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = 0.0;
@@ -1042,8 +1042,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
     rmat.multiply(mat);
 
-    sinTheta = sin(rx);
-    cosTheta = cos(rx);
+    sinTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(sin(rx)) : sin(rx);
+    cosTheta = snapping == RotationSnapping::Snap90degRotations ? roundEpsilonToZero(cos(rx)) : cos(rx);
 
     mat.m_matrix[0][0] = 1.0;
     mat.m_matrix[0][1] = 0.0;
