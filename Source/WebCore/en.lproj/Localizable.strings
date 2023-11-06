@@ -1768,6 +1768,9 @@
 /* accessibility label for a date field year input. */
 "year" = "year";
 
+/* Accessibility message to indicate that a page is being processed to be accessed. */
+"Processing page" = "Processing page";
+
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 

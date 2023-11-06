@@ -33,11 +33,14 @@
 #include "FrameSelection.h"
 #include "LocalFrameView.h"
 #include "Page.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXIsolatedTree);
+
+static const Seconds CreationFeedbackInterval { 3_s };
 
 HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 {
@@ -134,6 +137,10 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     ASSERT(axObjectCache.pageID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
+    if (RefPtr existingTree = isolatedTreeForID(tree->treeID())) {
+        tree->m_replacingTree = existingTree;
+        tree->reportCreationProgress(axObjectCache, 0);
+    }
 
     auto& document = axObjectCache.document();
     if (!document.view()->layoutContext().isInRenderTreeLayout() && !document.inRenderTreeUpdate() && !document.inStyleRecalc())
@@ -152,19 +159,37 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
         tree->setFocusedNodeID(axFocus->objectID());
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
-    tree->updatingSubtree(nullptr);
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
-
     return tree;
 }
 
 void AXIsolatedTree::storeTree(AXObjectCache& axObjectCache, const Ref<AXIsolatedTree>& tree)
 {
     AXTreeStore::set(tree->treeID(), tree.ptr());
+    tree->m_replacingTree = nullptr;
     Locker locker { s_storeLock };
     treePageCache().set(*axObjectCache.pageID(), tree.copyRef());
+}
+
+void AXIsolatedTree::reportCreationProgress(AXObjectCache& cache, unsigned percentComplete)
+{
+    ASSERT(m_replacingTree->isEmptyContentTree());
+
+    String percent = String::number(percentComplete) + "%"_s;
+    String title = AXProcessingPage() + " "_s + percent;
+    cache.announce(percent);
+    if (RefPtr axRoot = cache.get(cache.document().view())) {
+        m_replacingTree->overrideNodeProperties(axRoot->objectID(), {
+            { AXPropertyName::TitleAttributeValue, title },
+        });
+    }
+    if (RefPtr axWebarea = cache.rootWebArea()) {
+        m_replacingTree->overrideNodeProperties(axWebarea->objectID(), {
+            { AXPropertyName::TitleAttributeValue, WTFMove(title) },
+        });
+    }
 }
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
@@ -360,15 +385,29 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     if (!cache)
         return { };
 
-    auto resolvedAppends = WTF::compactMap(m_unresolvedPendingAppends, [&](auto& unresolvedAppend) -> std::optional<NodeChange> {
+    auto lastFeedbackTime = MonotonicTime::now();
+    double counter = 0;
+    Vector<NodeChange> resolvedAppends;
+    resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
+    for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
+        if (m_replacingTree) {
+            ++counter;
+            if (MonotonicTime::now() - lastFeedbackTime > CreationFeedbackInterval) {
+                reportCreationProgress(*cache, std::ceil((counter / m_unresolvedPendingAppends.size()) * 100));
+                lastFeedbackTime = MonotonicTime::now();
+            }
+        }
+
         if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
             if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
-                return *nodeChange;
+                resolvedAppends.append(*nodeChange);
         }
-        return std::nullopt;
-    });
+    }
+    resolvedAppends.shrinkToFit();
     m_unresolvedPendingAppends.clear();
 
+    if (m_replacingTree)
+        reportCreationProgress(*cache, 100);
     return resolvedAppends;
 }
 
@@ -658,6 +697,17 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
 
     Locker locker { m_changeLogLock };
     m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
+}
+
+void AXIsolatedTree::overrideNodeProperties(AXID axID, AXPropertyMap&& propertyMap)
+{
+    ASSERT(isMainThread());
+
+    if (propertyMap.isEmpty())
+        return;
+
+    Locker locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axID, WTFMove(propertyMap) });
 }
 
 void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObject)
