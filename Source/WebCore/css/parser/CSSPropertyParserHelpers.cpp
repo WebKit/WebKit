@@ -2269,9 +2269,6 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 {
     ASSERT(range.peek().functionId() == CSSValueHwb);
 
-    if (!context.cssColor4)
-        return { };
-
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -2482,9 +2479,6 @@ static Color parseLabParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 {
     ASSERT(range.peek().functionId() == CSSValueLab || range.peek().functionId() == CSSValueOklab);
 
-    if (!context.cssColor4)
-        return { };
-
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -2576,9 +2570,6 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 {
     ASSERT(range.peek().functionId() == CSSValueLch || range.peek().functionId() == CSSValueOklch);
 
-    if (!context.cssColor4)
-        return { };
-
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -2612,13 +2603,9 @@ static Color parseColorFunctionForRGBTypesRaw(CSSParserTokenRange& args, Consume
     return { ColorType { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
+template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(CSSParserTokenRange& args, Color originColor)
 {
     ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueSrgbLinear);
-
-    // Support sRGB and Display-P3 regardless of the setting as we have shipped support for them for a while.
-    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSrgbLinear))
-        return { };
 
     consumeIdentRaw(args);
 
@@ -2637,13 +2624,9 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
     return parseColorFunctionForRGBTypesRaw<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
 }
 
-template<typename ColorType> static Color parseColorFunctionForRGBTypesRaw(CSSParserTokenRange& args, const CSSParserContext& context)
+template<typename ColorType> static Color parseColorFunctionForRGBTypesRaw(CSSParserTokenRange& args)
 {
     ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueSrgbLinear);
-
-    // Support sRGB and Display-P3 regardless of the setting as we have shipped support for them for a while.
-    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSrgbLinear))
-        return { };
 
     consumeIdentRaw(args);
 
@@ -2679,12 +2662,9 @@ static Color parseColorFunctionForXYZTypesRaw(CSSParserTokenRange& args, Consume
     return { ColorType { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
+template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(CSSParserTokenRange& args, Color originColor)
 {
     ASSERT(args.peek().id() == CSSValueXyz || args.peek().id() == CSSValueXyzD50 || args.peek().id() == CSSValueXyzD65);
-
-    if (!context.cssColor4)
-        return { };
 
     consumeIdentRaw(args);
 
@@ -2703,12 +2683,9 @@ template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(
     return parseColorFunctionForXYZTypesRaw<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
 }
 
-template<typename ColorType> static Color parseColorFunctionForXYZTypesRaw(CSSParserTokenRange& args, const CSSParserContext& context)
+template<typename ColorType> static Color parseColorFunctionForXYZTypesRaw(CSSParserTokenRange& args)
 {
     ASSERT(args.peek().id() == CSSValueXyz || args.peek().id() == CSSValueXyzD50 || args.peek().id() == CSSValueXyzD65);
-
-    if (!context.cssColor4)
-        return { };
 
     consumeIdentRaw(args);
 
@@ -2729,22 +2706,22 @@ static Color parseRelativeColorFunctionParameters(CSSParserTokenRange& args, con
 
     switch (args.peek().id()) {
     case CSSValueA98Rgb:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedA98RGB<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedA98RGB<float>>(args, WTFMove(originColor));
     case CSSValueDisplayP3:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedDisplayP3<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedDisplayP3<float>>(args, WTFMove(originColor));
     case CSSValueProphotoRgb:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedProPhotoRGB<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedProPhotoRGB<float>>(args, WTFMove(originColor));
     case CSSValueRec2020:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedRec2020<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedRec2020<float>>(args, WTFMove(originColor));
     case CSSValueSRGB:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedSRGBA<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedSRGBA<float>>(args, WTFMove(originColor));
     case CSSValueSrgbLinear:
-        return parseRelativeColorFunctionForRGBTypes<ExtendedLinearSRGBA<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedLinearSRGBA<float>>(args, WTFMove(originColor));
     case CSSValueXyzD50:
-        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, WTFMove(originColor));
     case CSSValueXyz:
     case CSSValueXyzD65:
-        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D65>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D65>>(args, WTFMove(originColor));
     default:
         return { };
     }
@@ -2753,26 +2730,26 @@ static Color parseRelativeColorFunctionParameters(CSSParserTokenRange& args, con
     return { };
 }
 
-static Color parseNonRelativeColorFunctionParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+static Color parseNonRelativeColorFunctionParameters(CSSParserTokenRange& args)
 {
     switch (args.peek().id()) {
     case CSSValueA98Rgb:
-        return parseColorFunctionForRGBTypesRaw<ExtendedA98RGB<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedA98RGB<float>>(args);
     case CSSValueDisplayP3:
-        return parseColorFunctionForRGBTypesRaw<ExtendedDisplayP3<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedDisplayP3<float>>(args);
     case CSSValueProphotoRgb:
-        return parseColorFunctionForRGBTypesRaw<ExtendedProPhotoRGB<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedProPhotoRGB<float>>(args);
     case CSSValueRec2020:
-        return parseColorFunctionForRGBTypesRaw<ExtendedRec2020<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedRec2020<float>>(args);
     case CSSValueSRGB:
-        return parseColorFunctionForRGBTypesRaw<ExtendedSRGBA<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedSRGBA<float>>(args);
     case CSSValueSrgbLinear:
-        return parseColorFunctionForRGBTypesRaw<ExtendedLinearSRGBA<float>>(args, context);
+        return parseColorFunctionForRGBTypesRaw<ExtendedLinearSRGBA<float>>(args);
     case CSSValueXyzD50:
-        return parseColorFunctionForXYZTypesRaw<XYZA<float, WhitePoint::D50>>(args, context);
+        return parseColorFunctionForXYZTypesRaw<XYZA<float, WhitePoint::D50>>(args);
     case CSSValueXyz:
     case CSSValueXyzD65:
-        return parseColorFunctionForXYZTypesRaw<XYZA<float, WhitePoint::D65>>(args, context);
+        return parseColorFunctionForXYZTypesRaw<XYZA<float, WhitePoint::D65>>(args);
     default:
         return { };
     }
@@ -2789,7 +2766,7 @@ static Color parseColorFunctionParametersRaw(CSSParserTokenRange& range, const C
     auto color = [&] {
         if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
             return parseRelativeColorFunctionParameters(args, context);
-        return parseNonRelativeColorFunctionParameters(args, context);
+        return parseNonRelativeColorFunctionParameters(args);
     }();
 
     ASSERT(!color.isValid() || color.usesColorFunctionSerialization());

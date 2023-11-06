@@ -948,19 +948,6 @@ CSSCascadeLayersEnabled:
     WebCore:
       default: true
 
-CSSColor4:
-  type: bool
-  status: mature
-  humanReadableName: "CSS Color 4 Color Types"
-  humanReadableDescription: "Enable support for CSS Color 4 Color Types"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSColorContrastEnabled:
   type: bool
   status: testable

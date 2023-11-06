@@ -81,7 +81,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
-    , cssColor4 { document.settings().cssColor4() }
     , relativeColorSyntaxEnabled { document.settings().cssRelativeColorSyntaxEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
@@ -118,29 +117,28 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.colorContrastEnabled                      << 4
         | context.colorMixEnabled                           << 5
         | context.constantPropertiesEnabled                 << 6
-        | context.cssColor4                                 << 7
-        | context.relativeColorSyntaxEnabled                << 8
-        | context.springTimingFunctionEnabled               << 9
+        | context.relativeColorSyntaxEnabled                << 7
+        | context.springTimingFunctionEnabled               << 8
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        | context.transformStyleOptimized3DEnabled          << 10
+        | context.transformStyleOptimized3DEnabled          << 9
 #endif
-        | context.useLegacyBackgroundSizeShorthandBehavior  << 11
-        | context.focusVisibleEnabled                       << 12
-        | context.hasPseudoClassEnabled                     << 13
-        | context.cascadeLayersEnabled                      << 14
-        | context.overflowClipEnabled                       << 15
-        | context.gradientPremultipliedAlphaInterpolationEnabled << 16
-        | context.gradientInterpolationColorSpacesEnabled   << 17
-        | context.subgridEnabled                            << 18
-        | context.masonryEnabled                            << 19
-        | context.cssNestingEnabled                         << 20
-        | context.cssPaintingAPIEnabled                     << 21
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | context.cssWordBreakAutoPhraseEnabled             << 23
-        | context.popoverAttributeEnabled                   << 24
-        | context.sidewaysWritingModesEnabled               << 25
-        | context.cssTextWrapPrettyEnabled                  << 26
-        | (uint64_t)context.mode                            << 27; // This is multiple bits, so keep it last.
+        | context.useLegacyBackgroundSizeShorthandBehavior  << 10
+        | context.focusVisibleEnabled                       << 11
+        | context.hasPseudoClassEnabled                     << 12
+        | context.cascadeLayersEnabled                      << 13
+        | context.overflowClipEnabled                       << 14
+        | context.gradientPremultipliedAlphaInterpolationEnabled << 15
+        | context.gradientInterpolationColorSpacesEnabled   << 16
+        | context.subgridEnabled                            << 17
+        | context.masonryEnabled                            << 18
+        | context.cssNestingEnabled                         << 19
+        | context.cssPaintingAPIEnabled                     << 20
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 21
+        | context.cssWordBreakAutoPhraseEnabled             << 22
+        | context.popoverAttributeEnabled                   << 23
+        | context.sidewaysWritingModesEnabled               << 24
+        | context.cssTextWrapPrettyEnabled                  << 25
+        | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 
