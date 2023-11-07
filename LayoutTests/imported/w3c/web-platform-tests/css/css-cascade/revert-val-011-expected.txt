@@ -1,0 +1,7 @@
+Test passes if the text is black (not red).
+
+
+PASS CSS Cascade: 'revert' from mutating inline style
+PASS CSS Cascade: 'revert' from mutating inline style 1
+PASS CSS Cascade: 'revert' from mutating inline style 2
+

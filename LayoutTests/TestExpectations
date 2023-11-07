@@ -6820,6 +6820,11 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animation
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ Skip ]
 
+# webkit.org/b/229520 CSS @scope unimplemented
+imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ Skip ]
+
+
 # other scroll-animations failures
 webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Failure ]
 webkit.org/b/263872 imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative.html [ ImageOnlyFailure ]

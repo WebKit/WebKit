@@ -1,0 +1,14 @@
+
+PASS Nesting-selector in <scope-end>
+FAIL Implicit :scope in <scope-end> assert_equals: expected "1" but got "auto"
+FAIL Relative selectors in <scope-end> assert_equals: expected "1" but got "auto"
+FAIL Nesting-selector in the scope's <stylesheet> assert_equals: expected "1" but got "auto"
+FAIL Nesting-selector within :scope rule assert_equals: expected "2" but got "auto"
+FAIL Nesting-selector within :scope rule (double nested) assert_equals: expected "2" but got "auto"
+FAIL @scope nested within style rule assert_equals: expected "1" but got "auto"
+FAIL Parent pseudo class within scope-start assert_equals: expected "1" but got "auto"
+FAIL Parent pseudo class within scope-end assert_equals: expected "1" but got "auto"
+FAIL Parent pseudo class within body of nested @scope assert_equals: matching: DIVa b c expected "1" but got "auto"
+FAIL Implicit rule within nested @scope  assert_equals: expected "1" but got "auto"
+FAIL Implicit rule within nested @scope (proximity) assert_equals: expected "1" but got "2"
+
