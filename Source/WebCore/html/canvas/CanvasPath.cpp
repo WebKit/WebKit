@@ -144,7 +144,13 @@ static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwi
 {
     constexpr auto twoPiFloat = 2 * piFloat;
     float newStartAngle = fmodf(startAngle, twoPiFloat);
-    if (newStartAngle < 0)
+    if (newStartAngle < 0) {
+        newStartAngle += twoPiFloat;
+        // Check for possible catastrophic cancellation in cases where
+        // newStartAngle was a tiny negative number.
+        if (newStartAngle >= twoPiFloat)
+            newStartAngle -= twoPiFloat;
+    }
         newStartAngle += twoPiFloat;
 
     float delta = newStartAngle - startAngle;
