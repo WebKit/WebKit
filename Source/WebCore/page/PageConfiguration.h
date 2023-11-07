@@ -83,7 +83,6 @@ class UserContentProvider;
 class UserContentURLPattern;
 class ValidationMessageClient;
 class VisitedLinkStore;
-class WebGLStateTracker;
 class WebRTCProvider;
 
 class PageConfiguration {
@@ -156,9 +155,6 @@ public:
     FrameIdentifier mainFrameIdentifier;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
-#if ENABLE(WEBGL)
-    std::unique_ptr<WebGLStateTracker> webGLStateTracker;
-#endif
 #if ENABLE(SPEECH_SYNTHESIS)
     std::unique_ptr<SpeechSynthesisClient> speechSynthesisClient;
 #endif

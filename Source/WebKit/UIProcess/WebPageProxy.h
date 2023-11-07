@@ -734,9 +734,6 @@ public:
 
     bool preferFasterClickOverDoubleTap() const { return m_preferFasterClickOverDoubleTap; }
 
-    void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
-    bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
-
     void closePage();
 
     void addPlatformLoadParameters(WebProcessProxy&, LoadParameters&);
@@ -3241,7 +3238,6 @@ private:
     bool m_isPointerLocked { false };
 #endif
 
-    bool m_isUsingHighPerformanceWebGL { false };
     bool m_openedByDOM { false };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_preferFasterClickOverDoubleTap { false };

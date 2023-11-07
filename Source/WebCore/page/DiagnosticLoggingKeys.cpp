@@ -780,11 +780,6 @@ String WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey()
     return "notHTTPFamily"_s;
 }
 
-String WebCore::DiagnosticLoggingKeys::webGLStateKey()
-{
-    return "webGLState"_s;
-}
-
 String DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage)
 {
     if (memoryUsage < 32 * MB)

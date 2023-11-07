@@ -45,7 +45,6 @@
 #include "WebGLQuery.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
-#include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
 #include "WebGLTimerQueryEXT.h"
 #include "WebGLTransformFeedback.h"
@@ -1012,7 +1011,6 @@ private:
     void maybeRestoreContextSoon(Seconds timeout = 0_s);
     void maybeRestoreContext();
 
-    void registerWithWebGLStateTracker();
     void checkForContextLossHandling();
 
     void activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState) override;
@@ -1031,7 +1029,6 @@ private:
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, WebCodecsVideoFrame& source);
 #endif
 
-    WebGLStateTracker::Token m_trackerToken;
     Timer m_checkForContextLossHandlingTimer;
     bool m_isSuspended { false };
 

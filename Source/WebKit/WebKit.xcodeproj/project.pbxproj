@@ -1578,7 +1578,6 @@
 		83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */; };
 		839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 839149631BEA838500D2D953 /* NetworkLoadParameters.h */; };
 		839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 839901FE1BE9A01B000F3653 /* NetworkLoad.h */; };
-		839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */; };
 		83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A0ED321F747CC6003299EB /* PreconnectTask.h */; };
 		83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */; };
 		83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */; };
@@ -6075,8 +6074,6 @@
 		839149631BEA838500D2D953 /* NetworkLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadParameters.h; sourceTree = "<group>"; };
 		839901FE1BE9A01B000F3653 /* NetworkLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoad.h; sourceTree = "<group>"; };
 		839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoad.cpp; sourceTree = "<group>"; };
-		839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighPerformanceGraphicsUsageSampler.cpp; sourceTree = "<group>"; };
-		839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGraphicsUsageSampler.h; sourceTree = "<group>"; };
 		83A0ED321F747CC6003299EB /* PreconnectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreconnectTask.h; sourceTree = "<group>"; };
 		83A0ED331F747CC7003299EB /* PreconnectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreconnectTask.cpp; sourceTree = "<group>"; };
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadClient.h; sourceTree = "<group>"; };
@@ -12651,8 +12648,6 @@
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
 				2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */,
-				839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */,
-				839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */,
 				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
@@ -14898,7 +14893,6 @@
 				2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */,
 				5772F206217DBD6A0056BF2C /* HidService.h in Headers */,
 				312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */,
-				839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */,
 				51C0C9741DDD76000032CAD3 /* IconLoadingDelegate.h in Headers */,
 				93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */,
 				93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */,

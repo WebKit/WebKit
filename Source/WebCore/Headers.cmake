@@ -1260,7 +1260,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLExtensionAny.h
     html/canvas/WebGLExtensionAnyInlines.h
-    html/canvas/WebGLStateTracker.h
 
     html/forms/FileIconLoader.h
 

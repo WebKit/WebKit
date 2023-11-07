@@ -200,10 +200,6 @@
 #include "ServicesOverlayController.h"
 #endif
 
-#if ENABLE(WEBGL)
-#include "WebGLStateTracker.h"
-#endif
-
 #include "DisplayView.h"
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -308,9 +304,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
-#if ENABLE(WEBGL)
-    , m_webGLStateTracker(WTFMove(pageConfiguration.webGLStateTracker))
-#endif
 #if ENABLE(SPEECH_SYNTHESIS)
     , m_speechSynthesisClient(WTFMove(pageConfiguration.speechSynthesisClient))
 #endif

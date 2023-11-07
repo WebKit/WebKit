@@ -181,7 +181,6 @@ public:
     WEBCORE_EXPORT static String visibleAndActiveStateKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
-    WEBCORE_EXPORT static String webGLStateKey();
     WEBCORE_EXPORT static String webViewKey();
     static String yesKey();
 

@@ -664,7 +664,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     , m_isXRCompatible(attributes.xrCompatible)
 #endif
 {
-    registerWithWebGLStateTracker();
     if (htmlCanvas())
         m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 }
@@ -706,23 +705,6 @@ void WebGLRenderingContextBase::checkForContextLossHandling()
 
     bool handlesContextLoss = canvas->hasEventListeners(eventNames().webglcontextlostEvent) && canvas->hasEventListeners(eventNames().webglcontextrestoredEvent);
     page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey(), handlesContextLoss ? DiagnosticLoggingKeys::yesKey() : DiagnosticLoggingKeys::noKey(), ShouldSample::No);
-}
-
-void WebGLRenderingContextBase::registerWithWebGLStateTracker()
-{
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    auto* page = canvas->document().page();
-    if (!page)
-        return;
-
-    auto* tracker = page->webGLStateTracker();
-    if (!tracker)
-        return;
-
-    m_trackerToken = tracker->token(m_attributes.initialPowerPreference);
 }
 
 void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> context)

@@ -44,7 +44,6 @@
 #include "DownloadProxyMessages.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GamepadData.h"
-#include "HighPerformanceGraphicsUsageSampler.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
@@ -212,7 +211,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_historyClient(makeUnique<API::LegacyContextHistoryClient>())
     , m_visitedLinkStore(VisitedLinkStore::create())
 #if PLATFORM(MAC)
-    , m_highPerformanceGraphicsUsageSampler(makeUnique<HighPerformanceGraphicsUsageSampler>(*this))
     , m_perActivityStateCPUUsageSampler(makeUnique<PerActivityStateCPUUsageSampler>(*this))
 #endif
     , m_alwaysRunsAtBackgroundPriority(m_configuration->alwaysRunsAtBackgroundPriority())

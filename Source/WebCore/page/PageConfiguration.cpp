@@ -60,9 +60,6 @@
 #include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
 #include "WebRTCProvider.h"
-#if ENABLE(WEBGL)
-#include "WebGLStateTracker.h"
-#endif
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
 #endif
