@@ -278,8 +278,8 @@ private:
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
     WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
     bool validateAndCacheBufferBinding(const AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
-    GCGLint getMaxDrawBuffers() final;
-    GCGLint getMaxColorAttachments() final;
+    GCGLint maxDrawBuffers() final;
+    GCGLint maxColorAttachments() final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
     bool validateCapability(const char* functionName, GCGLenum cap) final;
     template<typename T, typename TypedArrayType>

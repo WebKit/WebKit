@@ -780,17 +780,21 @@ void WebGLRenderingContextBase::initializeContextState()
     m_textureUnits.resize(numCombinedTextureImageUnits);
 
     GCGLint numVertexAttribs = m_context->getInteger(GraphicsContextGL::MAX_VERTEX_ATTRIBS);
-    m_maxVertexAttribs = numVertexAttribs;
     m_vertexAttribValue.clear();
-    m_vertexAttribValue.resize(m_maxVertexAttribs);
+    m_vertexAttribValue.resize(numVertexAttribs);
 
     m_maxTextureSize = m_context->getInteger(GraphicsContextGL::MAX_TEXTURE_SIZE);
     m_maxTextureLevel = WebGLTexture::computeLevelCount(m_maxTextureSize, m_maxTextureSize);
     m_maxCubeMapTextureSize = m_context->getInteger(GraphicsContextGL::MAX_CUBE_MAP_TEXTURE_SIZE);
     m_maxCubeMapTextureLevel = WebGLTexture::computeLevelCount(m_maxCubeMapTextureSize, m_maxCubeMapTextureSize);
     m_maxRenderbufferSize = m_context->getInteger(GraphicsContextGL::MAX_RENDERBUFFER_SIZE);
+    m_maxViewportDims = { 0, 0 };
     m_context->getIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, m_maxViewportDims);
     m_isDepthStencilSupported = m_context->isExtensionEnabled("GL_OES_packed_depth_stencil"_s) || m_context->isExtensionEnabled("GL_ANGLE_depth_texture"_s);
+    // WebXR might use multisampling in WebGL2 context. Multisample extensions are also enabled in WebGL 1 case context
+    // is antialiased.
+    auto attributes = m_context->contextAttributes();
+    m_maxSamples = (isWebGL2() || attributes.antialias) ? m_context->getInteger(GraphicsContextGL::MAX_SAMPLES) : 0;
 
     // These two values from EXT_draw_buffers are lazily queried.
     m_maxDrawBuffers = 0;
@@ -1170,7 +1174,7 @@ void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLui
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindAttribLocation", "reserved prefix");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindAttribLocation", "index out of range");
         return;
     }
@@ -1769,7 +1773,7 @@ void WebGLRenderingContextBase::disableVertexAttribArray(GCGLuint index)
 {
     if (isContextLost())
         return;
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "disableVertexAttribArray", "index out of range");
         return;
     }
@@ -1844,7 +1848,7 @@ void WebGLRenderingContextBase::enableVertexAttribArray(GCGLuint index)
 {
     if (isContextLost())
         return;
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "enableVertexAttribArray", "index out of range");
         return;
     }
@@ -2185,21 +2189,21 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::LINE_WIDTH:
         return getFloatParameter(pname);
     case GraphicsContextGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
-        return getIntParameter(pname);
+        return static_cast<GCGLint>(m_textureUnits.size());
     case GraphicsContextGL::MAX_CUBE_MAP_TEXTURE_SIZE:
-        return getIntParameter(pname);
+        return m_maxCubeMapTextureSize;
     case GraphicsContextGL::MAX_FRAGMENT_UNIFORM_VECTORS:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_RENDERBUFFER_SIZE:
-        return getIntParameter(pname);
+        return m_maxRenderbufferSize;
     case GraphicsContextGL::MAX_TEXTURE_IMAGE_UNITS:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_TEXTURE_SIZE:
-        return getIntParameter(pname);
+        return m_maxTextureSize;
     case GraphicsContextGL::MAX_VARYING_VECTORS:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_VERTEX_ATTRIBS:
-        return getIntParameter(pname);
+        return static_cast<GCGLint>(maxVertexAttribs());
     case GraphicsContextGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_VERTEX_UNIFORM_VECTORS:
@@ -2377,18 +2381,18 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         return nullptr;
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers || isWebGL2())
-            return getMaxColorAttachments();
+            return maxColorAttachments();
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return nullptr;
     case GraphicsContextGL::MAX_DRAW_BUFFERS_EXT:
         if (m_webglDrawBuffers || isWebGL2())
-            return getMaxDrawBuffers();
+            return maxDrawBuffers();
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return nullptr;
     default:
         if ((m_webglDrawBuffers || isWebGL2())
             && pname >= GraphicsContextGL::DRAW_BUFFER0_EXT
-            && pname < static_cast<GCGLenum>(GraphicsContextGL::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
+            && pname < static_cast<GCGLenum>(GraphicsContextGL::DRAW_BUFFER0_EXT + maxDrawBuffers())) {
             GCGLint value = GraphicsContextGL::NONE;
             if (m_framebufferBinding)
                 value = m_framebufferBinding->getDrawBuffer(pname);
@@ -2862,7 +2866,7 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
     if (isContextLost())
         return nullptr;
 
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getVertexAttrib", "index out of range");
         return nullptr;
     }
@@ -4868,7 +4872,7 @@ void WebGLRenderingContextBase::vertexAttribPointer(GCGLuint index, GCGLint size
             return;
         }
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribPointer", "index out of range");
         return;
     }
@@ -5052,21 +5056,18 @@ RefPtr<Float32Array> WebGLRenderingContextBase::getWebGLFloatArrayParameter(GCGL
 
 RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GCGLenum pname)
 {
-    GCGLint value[4] = {0};
-    m_context->getIntegerv(pname, value);
-    unsigned length = 0;
     switch (pname) {
     case GraphicsContextGL::MAX_VIEWPORT_DIMS:
-        length = 2;
-        break;
+        return Int32Array::tryCreate(m_maxViewportDims.data(), m_maxViewportDims.size());
     case GraphicsContextGL::SCISSOR_BOX:
     case GraphicsContextGL::VIEWPORT:
-        length = 4;
         break;
     default:
         notImplemented();
     }
-    return Int32Array::tryCreate(value, length);
+    GCGLint value[4] { };
+    m_context->getIntegerv(pname, value);
+    return Int32Array::tryCreate(value, 4);
 }
 
 WebGLRenderingContextBase::PixelStoreParameters WebGLRenderingContextBase::computeUnpackPixelStoreParameters(TexImageDimension dimension) const
@@ -5319,7 +5320,7 @@ bool WebGLRenderingContextBase::validateFramebufferFuncParameters(const char* fu
     default:
         if ((m_webglDrawBuffers || isWebGL2())
             && attachment > GraphicsContextGL::COLOR_ATTACHMENT0
-            && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+            && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + maxColorAttachments()))
             return true;
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid attachment");
         return false;
@@ -5487,7 +5488,7 @@ void WebGLRenderingContextBase::vertexAttribfImpl(const char* functionName, GCGL
 {
     if (isContextLost())
         return;
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
         return;
     }
@@ -5529,7 +5530,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
         return;
     }
@@ -5694,7 +5695,7 @@ IntSize WebGLRenderingContextBase::clampedCanvasSize()
     return canvasSize.constrainedBetween({ 1, 1 }, { m_maxViewportDims[0], m_maxViewportDims[1] });
 }
 
-GCGLint WebGLRenderingContextBase::getMaxDrawBuffers()
+GCGLint WebGLRenderingContextBase::maxDrawBuffers()
 {
     if (!supportsDrawBuffers())
         return 0;
@@ -5706,7 +5707,7 @@ GCGLint WebGLRenderingContextBase::getMaxDrawBuffers()
     return std::min(m_maxDrawBuffers, m_maxColorAttachments);
 }
 
-GCGLint WebGLRenderingContextBase::getMaxColorAttachments()
+GCGLint WebGLRenderingContextBase::maxColorAttachments()
 {
     if (!supportsDrawBuffers())
         return 0;
@@ -5785,7 +5786,7 @@ void WebGLRenderingContextBase::vertexAttribDivisor(GCGLuint index, GCGLuint div
     if (isContextLost())
         return;
 
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribDivisor", "index out of range");
         return;
     }

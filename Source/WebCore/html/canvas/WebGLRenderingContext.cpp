@@ -320,7 +320,7 @@ long long WebGLRenderingContext::getInt64Parameter(GCGLenum pname)
     return m_context->getInteger64EXT(pname);
 }
 
-GCGLint WebGLRenderingContext::getMaxDrawBuffers()
+GCGLint WebGLRenderingContext::maxDrawBuffers()
 {
     if (!supportsDrawBuffers())
         return 0;
@@ -332,7 +332,7 @@ GCGLint WebGLRenderingContext::getMaxDrawBuffers()
     return std::min(m_maxDrawBuffers, m_maxColorAttachments);
 }
 
-GCGLint WebGLRenderingContext::getMaxColorAttachments()
+GCGLint WebGLRenderingContext::maxColorAttachments()
 {
     if (!supportsDrawBuffers())
         return 0;

@@ -54,6 +54,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/GenericTypedArrayView.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
+#include <array>
 #include <limits>
 #include <memory>
 #include <wtf/CheckedArithmetic.h>
@@ -378,6 +379,11 @@ public:
 
     void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height);
 
+    virtual GCGLint maxDrawBuffers() = 0;
+    virtual GCGLint maxColorAttachments() = 0;
+    size_t maxVertexAttribs() const { return m_vertexAttribValue.size(); }
+    GCGLint maxSamples() const { return m_maxSamples; }
+
     // WEBKIT_lose_context support
     enum LostContextMode {
         // Lost context occurred at the graphics system level.
@@ -405,8 +411,6 @@ public:
 
     void removeSharedObject(WebGLObject&);
     void removeContextObject(WebGLObject&);
-
-    unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
     bool isContextUnrecoverablyLost() const;
 
@@ -598,7 +602,6 @@ protected:
         };
     };
     Vector<VertexAttribValue> m_vertexAttribValue;
-    unsigned m_maxVertexAttribs;
 
     RefPtr<WebGLProgram> m_currentProgram;
     WebGLBindingPoint<WebGLFramebuffer> m_framebufferBinding;
@@ -630,9 +633,10 @@ protected:
     GCGLint m_maxTextureSize;
     GCGLint m_maxCubeMapTextureSize;
     GCGLint m_maxRenderbufferSize;
-    GCGLint m_maxViewportDims[2] { 0, 0 };
+    std::array<GCGLint, 2> m_maxViewportDims { 0, 0 };
     GCGLint m_maxTextureLevel;
     GCGLint m_maxCubeMapTextureLevel;
+    GCGLint m_maxSamples { 0 };
 
     GCGLint m_maxDrawBuffers;
     GCGLint m_maxColorAttachments;
@@ -984,9 +988,6 @@ protected:
 
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
     IntSize clampedCanvasSize();
-
-    virtual GCGLint getMaxDrawBuffers() = 0;
-    virtual GCGLint getMaxColorAttachments() = 0;
 
     void setBackDrawBuffer(GCGLenum);
     void setFramebuffer(const AbstractLocker&, GCGLenum, WebGLFramebuffer*);

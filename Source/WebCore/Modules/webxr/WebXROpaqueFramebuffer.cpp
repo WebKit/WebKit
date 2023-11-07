@@ -276,16 +276,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     const bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
 
     // Set up recommended samples for WebXR.
-    auto sampleCount = [](GraphicsContextGL& gl, bool isAntialias) {
-        if (!isAntialias)
-            return 0;
-
-        // FIXME: check if we can get recommended values from each device platform.
-        GCGLint maxSampleCount;
-        gl.getIntegerv(GL::MAX_SAMPLES, std::span(&maxSampleCount, 1));
-        // Cap the maximum multisample count at 4. Any more than this is likely overkill and will impact performance.
-        return std::min(4, maxSampleCount);
-    }(gl, m_attributes.antialias);
+    auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
 
     gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
 
