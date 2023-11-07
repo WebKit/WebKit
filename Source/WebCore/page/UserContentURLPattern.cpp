@@ -324,4 +324,9 @@ bool UserContentURLPattern::matchesPath(const String& path) const
     return MatchTester(m_path, path).test();
 }
 
+bool matchesWildcardPattern(const String& pattern, const String& testString)
+{
+    return MatchTester(pattern, testString).test();
+}
+
 } // namespace WebCore

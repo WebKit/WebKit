@@ -235,8 +235,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
     }
 
     if (parameters.titlePattern) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF LIKE %@", (NSString *)parameters.titlePattern.value()];
-        if (![predicate evaluateWithObject:title()])
+        if (!WebCore::matchesWildcardPattern(parameters.titlePattern.value(), title()))
             return false;
     }
 

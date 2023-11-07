@@ -139,7 +139,13 @@ public:
         NSArray *expandedExcludeMatchPatternStrings() const;
     };
 
+    struct WebAccessibleResourceData {
+        MatchPatternSet matchPatterns;
+        Vector<String> resourcePathPatterns;
+    };
+
     using InjectedContentVector = Vector<InjectedContentData>;
+    using WebAccessibleResourcesVector = Vector<WebAccessibleResourceData>;
 
     static const PermissionsSet& supportedPermissions();
 
@@ -159,7 +165,7 @@ public:
     bool validateResourceData(NSURL *, NSData *, NSError **);
 #endif
 
-    bool isAccessibleResourcePath(NSString *, NSURL *frameDocumentURL);
+    bool isWebAccessibleResource(const URL& resourceURL, const URL& pageURL);
 
     NSURL *resourceFileURLForPath(NSString *);
 
@@ -246,8 +252,10 @@ private:
     void populatePermissionsPropertiesIfNeeded();
     void populatePagePropertiesIfNeeded();
     void populateContentSecurityPolicyStringsIfNeeded();
+    void populateWebAccessibleResourcesIfNeeded();
 
     InjectedContentVector m_staticInjectedContents;
+    WebAccessibleResourcesVector m_webAccessibleResources;
 
     MatchPatternSet m_permissionMatchPatterns;
     MatchPatternSet m_optionalPermissionMatchPatterns;
@@ -302,6 +310,7 @@ private:
     bool m_parsedManifestContentScriptProperties : 1 { false };
     bool m_parsedManifestPermissionProperties : 1 { false };
     bool m_parsedManifestPageProperties : 1 { false };
+    bool m_parsedManifestWebAccessibleResources : 1 { false };
 };
 
 #ifdef __OBJC__

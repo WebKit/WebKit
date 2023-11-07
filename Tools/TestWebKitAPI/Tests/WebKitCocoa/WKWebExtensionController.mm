@@ -384,6 +384,79 @@ TEST(WKWebExtensionController, ContentSecurityPolicyV3BlockingImageLoad)
     });
 }
 
+TEST(WKWebExtensionController, WebAccessibleResources)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"var imgGood = document.createElement('img')",
+        @"imgGood.src = browser.runtime.getURL('good.svg')",
+
+        @"var imgBad = document.createElement('img')",
+        @"imgBad.src = browser.runtime.getURL('bad.svg')",
+
+        @"var goodLoaded = false",
+        @"var badFailed = false",
+
+        @"imgGood.onload = () => {",
+        @"  goodLoaded = true",
+        @"  if (badFailed)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"imgGood.onerror = () => {",
+        @"  browser.test.notifyFail('The good image should load')",
+        @"}",
+
+        @"imgBad.onload = () => {",
+        @"  browser.test.notifyFail('The bad image should not load')",
+        @"}",
+
+        @"imgBad.onerror = () => {",
+        @"  badFailed = true",
+        @"  if (goodLoaded)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"document.body.appendChild(imgGood)",
+        @"document.body.appendChild(imgBad)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/*" ],
+        } ],
+
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"g*.svg" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ]
+    };
+
+    auto *resources = @{
+        @"content.js": contentScript,
+        @"good.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>",
+        @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
