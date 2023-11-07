@@ -153,11 +153,11 @@ void RenderTextControlSingleLine::layout()
         oldContainerLogicalTop = containerRenderer->logicalTop();
         LayoutUnit containerLogicalHeight = containerRenderer->logicalHeight();
 
-        CheckedPtr autoFillStrongPasswordButtonRenderer = [&]() -> RenderBox* {
+        auto* autoFillStrongPasswordButtonRenderer = [&]() -> RenderBox* {
             if (!inputElement().hasAutoFillStrongPasswordButton())
                 return nullptr;
 
-            CheckedPtr autoFillButtonElement = inputElement().autoFillButtonElement();
+            auto* autoFillButtonElement = inputElement().autoFillButtonElement();
             if (!autoFillButtonElement)
                 return nullptr;
 
