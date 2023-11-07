@@ -78,9 +78,6 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
     ALWAYS_LOG(LOGIDENTIFIER);
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64());
-
-    for (auto& sourceBuffer : m_sourceBuffers)
-        sourceBuffer->clearMediaSource();
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
@@ -130,22 +127,17 @@ void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffere
 
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus status)
 {
-    m_ended = true;
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::MarkEndOfStream(status), m_identifier);
+    MediaSourcePrivate::markEndOfStream(status);
 }
 
 void MediaSourcePrivateRemote::unmarkEndOfStream()
 {
     // FIXME(125159): implement unmarkEndOfStream()
-    m_ended = false;
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
-}
-
-bool MediaSourcePrivateRemote::isEnded() const
-{
-    return m_ended;
+    MediaSourcePrivate::unmarkEndOfStream();
 }
 
 MediaPlayer::ReadyState MediaSourcePrivateRemote::readyState() const

@@ -49,19 +49,19 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
+Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
 {
     return adoptRef(*new SourceBufferPrivateRemote(gpuProcessConnection, remoteSourceBufferIdentifier, mediaSourcePrivate, mediaPlayerPrivate));
 }
 
-SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
-    : m_gpuProcessConnection(gpuProcessConnection)
+SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
+    : SourceBufferPrivate(mediaSourcePrivate)
+    , m_gpuProcessConnection(gpuProcessConnection)
     , m_remoteSourceBufferIdentifier(remoteSourceBufferIdentifier)
-    , m_mediaSourcePrivate(mediaSourcePrivate)
     , m_mediaPlayerPrivate(mediaPlayerPrivate)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(m_mediaSourcePrivate->logger())
-    , m_logIdentifier(m_mediaSourcePrivate->nextSourceBufferLogIdentifier())
+    , m_logger(mediaSourcePrivate.logger())
+    , m_logIdentifier(mediaSourcePrivate.nextSourceBufferLogIdentifier())
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -141,7 +141,7 @@ MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const
 
 void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
 {
-    if (!m_mediaSourcePrivate)
+    if (!m_mediaSource)
         return;
 
     if (m_mediaPlayerPrivate)
@@ -156,14 +156,15 @@ void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
 
 void SourceBufferPrivateRemote::setActive(bool active)
 {
-    if (!m_mediaSourcePrivate)
+    SourceBufferPrivate::setActive(active);
+
+    if (!m_mediaSource)
         return;
 
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
         return;
 
-    m_isActive = active;
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetActive(active), m_remoteSourceBufferIdentifier);
 }
 

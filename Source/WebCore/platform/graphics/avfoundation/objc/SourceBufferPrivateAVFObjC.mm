@@ -357,23 +357,23 @@ static bool sampleBufferRenderersSupportKeySession()
     return supports;
 }
 
-Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
+Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC& parent, Ref<SourceBufferParser>&& parser)
 {
     return adoptRef(*new SourceBufferPrivateAVFObjC(parent, WTFMove(parser)));
 }
 
-SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
-    : m_parser(WTFMove(parser))
+SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC& parent, Ref<SourceBufferParser>&& parser)
+    : SourceBufferPrivate(parent)
+    , m_parser(WTFMove(parser))
     , m_listener(adoptNS([[WebAVSampleBufferListener alloc] initWithParent:*this]))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
-    , m_mediaSource(parent)
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { keyStatusesChanged(); }))
 #endif
     , m_mapID(nextMapID())
 #if !RELEASE_LOG_DISABLED
-    , m_logger(parent->logger())
-    , m_logIdentifier(parent->nextSourceBufferLogIdentifier())
+    , m_logger(parent.logger())
+    , m_logIdentifier(parent.nextSourceBufferLogIdentifier())
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -552,7 +552,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
 {
     auto player = this->player();
-    if (!player)
+    if (!player || !m_mediaSource)
         return;
 
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -560,7 +560,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
     m_protectedTrackID = trackID;
     m_initData = WTFMove(initData);
-    m_mediaSource->sourceBufferKeyNeeded(this, *m_initData);
+    static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->sourceBufferKeyNeeded(this, *m_initData);
 
     if (auto session = player->cdmSession()) {
         if (sampleBufferRenderersSupportKeySession()) {
@@ -829,18 +829,6 @@ void SourceBufferPrivateAVFObjC::clearTracks()
     m_audioTracks.clear();
 }
 
-void SourceBufferPrivateAVFObjC::removedFromMediaSource()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    clearTrackBuffers();
-    destroyStreamDataParser();
-    destroyRenderers();
-
-    if (m_mediaSource)
-        m_mediaSource->removeSourceBuffer(this);
-}
-
 MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 {
     if (auto player = this->player())
@@ -888,7 +876,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
     if (auto* player = this->player())
         player->needsVideoLayerChanged();
 
-    m_mediaSource->hasSelectedVideoChanged(*this);
+    static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->hasSelectedVideoChanged(*this);
 }
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track, bool enabled)
@@ -915,7 +903,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             if (!renderer) {
                 ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");
                 if (m_mediaSource)
-                    m_mediaSource->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Audio);
+                    static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Audio);
                 if (auto player = this->player())
                     player->setNetworkState(MediaPlayer::NetworkState::DecodeError);
                 return;
@@ -948,7 +936,7 @@ AVStreamDataParser* SourceBufferPrivateAVFObjC::streamDataParser() const
     return nil;
 }
 
-void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* session)
+void SourceBufferPrivateAVFObjC::setCDMSession(LegacyCDMSession* session)
 {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (session == m_session)
@@ -959,7 +947,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     if (m_session)
         m_session->removeSourceBuffer(this);
 
-    m_session = session;
+    m_session = toCDMSessionMediaSourceAVFObjC(session);
 
     if (m_session) {
         m_session->addSourceBuffer(this);
@@ -1142,8 +1130,9 @@ void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferA
 void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_mediaSource && m_mediaSource->cdmInstance()) {
-        m_mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+    auto mediaSource = static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get());
+    if (mediaSource && mediaSource->cdmInstance()) {
+        mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
         return;
     }
 #else
@@ -1440,19 +1429,6 @@ MediaTime SourceBufferPrivateAVFObjC::timeFudgeFactor() const
     return SourceBufferPrivate::timeFudgeFactor();
 }
 
-void SourceBufferPrivateAVFObjC::setActive(bool isActive)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, isActive);
-    m_isActive = isActive;
-    if (m_mediaSource)
-        m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
-}
-
-bool SourceBufferPrivateAVFObjC::isActive() const
-{
-    return m_isActive;
-}
-
 void SourceBufferPrivateAVFObjC::willSeek()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -1555,22 +1531,6 @@ bool SourceBufferPrivateAVFObjC::isSeeking() const
     return m_seeking;
 }
 
-MediaTime SourceBufferPrivateAVFObjC::currentMediaTime() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->currentMediaTime();
-}
-
-MediaTime SourceBufferPrivateAVFObjC::duration() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->duration();
-}
-
 void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
 {
     if (layer == m_displayLayer)
@@ -1638,7 +1598,7 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
 
 MediaPlayerPrivateMediaSourceAVFObjC* SourceBufferPrivateAVFObjC::player() const
 {
-    return m_mediaSource ? m_mediaSource->player() : nullptr;
+    return m_mediaSource ? static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->player() : nullptr;
 }
 
 

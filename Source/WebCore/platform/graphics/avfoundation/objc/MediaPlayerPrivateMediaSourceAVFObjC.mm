@@ -806,9 +806,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
         return true;
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     return isCopyDisplayedPixelBufferAvailable() && [&] {
-        if (m_mediaSourcePrivate && anyOf(m_mediaSourcePrivate->sourceBuffers(), [] (auto& sourceBuffer) {
-            return sourceBuffer->needsVideoLayer();
-        }))
+        if (m_mediaSourcePrivate && m_mediaSourcePrivate->needsVideoLayer())
             return true;
         auto player = m_player.get();
         return player && player->renderingCanBeAccelerated();
@@ -1190,8 +1188,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
     if (!m_mediaSourcePrivate)
         return;
 
-    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
-        sourceBuffer->setCDMSession(m_session.get());
+    m_mediaSourcePrivate->setCDMSession(session);
 }
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 

@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSample.h"
+#include "MediaSourcePrivate.h"
 #include "PlatformTimeRanges.h"
 #include "SampleMap.h"
 #include "SharedBuffer.h"
@@ -58,11 +59,43 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 static const unsigned evictionAlgorithmInitialTimeChunk = 30000;
 static const unsigned evictionAlgorithmTimeChunkLowThreshold = 3000;
 
-SourceBufferPrivate::SourceBufferPrivate() = default;
+SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent)
+    : m_mediaSource(&parent)
+{
+}
 
 SourceBufferPrivate::~SourceBufferPrivate()
 {
     abortPendingOperations();
+}
+
+void SourceBufferPrivate::removedFromMediaSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    Ref<SourceBufferPrivate> protectedThis { *this };
+
+    // m_mediaSource may hold the last reference to ourselves.
+    if (m_mediaSource)
+        m_mediaSource->removeSourceBuffer(*this);
+
+    clearMediaSource();
+}
+
+MediaTime SourceBufferPrivate::currentMediaTime() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->currentMediaTime();
+}
+
+MediaTime SourceBufferPrivate::duration() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->duration();
 }
 
 void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
@@ -767,8 +800,6 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
                 return;
             }
 
-            completionHandler(result);
-
             if (!m_errored) {
                 rewindOperationState();
                 m_didReceiveInitializationSegmentErrored |= result != ReceiveResult::Succeeded;
@@ -776,6 +807,9 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
                 m_receivedFirstInitializationSegment = true;
                 m_pendingInitializationSegmentForChangeType = false;
             }
+
+            completionHandler(result);
+
             processPendingOperations();
         };
         if (!m_client || !m_client->isAsync()) {
@@ -1327,6 +1361,15 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
     } while (isBufferFull && timeChunkAsMilliseconds >= evictionAlgorithmTimeChunkLowThreshold);
 
     return isBufferFull;
+}
+
+void SourceBufferPrivate::setActive(bool isActive)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, isActive);
+
+    m_isActive = isActive;
+    if (m_mediaSource)
+        m_mediaSource->sourceBufferPrivateDidChangeActiveState(*this, isActive);
 }
 
 } // namespace WebCore

@@ -46,19 +46,14 @@ public:
     static Ref<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource&, MediaSourcePrivateClient&);
     virtual ~MockMediaSourcePrivate();
 
-    const Vector<MockSourceBufferPrivate*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
-
-    bool hasAudio() const;
-    bool hasVideo() const;
-
-    MediaTime duration();
     const PlatformTimeRanges& buffered();
 
     MockMediaPlayerMediaSource& player() const { return m_player; }
 
     void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
-    MediaTime currentMediaTime() const;
+    MediaTime currentMediaTime() const final;
+    MediaTime duration() const final;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
@@ -83,21 +78,16 @@ private:
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) override;
     void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
-    bool isEnded() const override { return m_isEnded; }
-    void unmarkEndOfStream() override;
+
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
 
-    void sourceBufferPrivateDidChangeActiveState(MockSourceBufferPrivate*, bool active);
-    void removeSourceBuffer(SourceBufferPrivate*);
+    void notifyActiveSourceBuffersChanged() final;
 
     friend class MockSourceBufferPrivate;
 
     MockMediaPlayerMediaSource& m_player;
     WeakPtr<MediaSourcePrivateClient> m_client;
-    Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
-    Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
-    bool m_isEnded { false };
 
     unsigned m_totalVideoFrames { 0 };
     unsigned m_droppedVideoFrames { 0 };

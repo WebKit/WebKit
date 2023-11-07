@@ -57,12 +57,9 @@ public:
     virtual ~MediaSourcePrivateGStreamer();
 
     AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;
-    void removeSourceBuffer(SourceBufferPrivate*);
 
     void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
-    void unmarkEndOfStream() override;
-    bool isEnded() const override { return m_isEnded; }
 
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
@@ -70,10 +67,11 @@ public:
     void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
 
-    MediaTime duration() const;
-    MediaTime currentMediaTime() const;
+    MediaTime duration() const final;
+    MediaTime currentMediaTime() const final;
 
-    void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
+    void notifyActiveSourceBuffersChanged() final { }
+
     void startPlaybackIfHasAllTracks();
     bool hasAllTracks() const { return m_hasAllTracks; }
 
@@ -91,11 +89,8 @@ public:
 private:
     MediaSourcePrivateGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
 
-    HashSet<RefPtr<SourceBufferPrivateGStreamer>> m_sourceBuffers;
-    HashSet<SourceBufferPrivateGStreamer*> m_activeSourceBuffers;
     WeakPtr<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
-    bool m_isEnded { false };
     bool m_hasAllTracks { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
