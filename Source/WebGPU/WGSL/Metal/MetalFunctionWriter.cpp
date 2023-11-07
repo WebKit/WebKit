@@ -1748,26 +1748,26 @@ void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
 {
     const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
-        bool first = true;
         for (auto& selector : clause.selectors) {
-            if (!first)
-                m_stringBuilder.append("\n");
-            first = false;
+            m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "case ");
             visit(selector);
             m_stringBuilder.append(":");
         }
         if (isDefault) {
-            if (!first)
-                m_stringBuilder.append("\n");
+            m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "default:");
         }
+        m_stringBuilder.append(" ");
         visit(clause.body);
+
+        IndentationScope scope(m_indent);
+        m_stringBuilder.append("\n", m_indent, "break;");
     };
 
     m_stringBuilder.append("switch (");
     visit(statement.value());
-    m_stringBuilder.append(") {\n");
+    m_stringBuilder.append(") {");
     for (auto& clause : statement.clauses())
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
