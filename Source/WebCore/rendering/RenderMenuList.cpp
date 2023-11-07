@@ -120,17 +120,22 @@ void RenderMenuList::adjustInnerStyle()
     innerStyle.setFlexGrow(1);
     innerStyle.setFlexShrink(1);
     // min-width: 0; is needed for correct shrinking.
-    innerStyle.setMinWidth(Length(0, LengthType::Fixed));
+    innerStyle.setLogicalMinWidth(Length(0, LengthType::Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     // But we only do that for the cases where html.css would otherwise use center.
     if (style().alignItems().position() == ItemPosition::Center) {
-        innerStyle.setMarginTop(Length());
-        innerStyle.setMarginBottom(Length());
+        innerStyle.setMarginBefore(Length());
+        innerStyle.setMarginAfter(Length());
+
         innerStyle.setAlignSelfPosition(ItemPosition::FlexStart);
     }
 
-    innerStyle.setPaddingBox(theme().popupInternalPaddingBox(style(), document().settings()));
+    auto paddingBox = theme().popupInternalPaddingBox(style(), document().settings());
+    if (!style().isHorizontalWritingMode())
+        paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
+
+    innerStyle.setPaddingBox(WTFMove(paddingBox));
 
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
@@ -322,12 +327,12 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     maxLogicalWidth = shouldApplySizeContainment() ? theme().minimumMenuListSize(style()) : std::max(m_optionsWidth, theme().minimumMenuListSize(style()));
-    maxLogicalWidth += m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
+    maxLogicalWidth += m_innerBlock->paddingStart() + m_innerBlock->paddingEnd();
     if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto width = explicitIntrinsicInnerLogicalWidth())
-            maxLogicalWidth = width.value();
+        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
+            maxLogicalWidth = logicalWidth.value();
     }
-    if (!style().width().isPercentOrCalculated())
+    if (!style().logicalWidth().isPercentOrCalculated())
         minLogicalWidth = maxLogicalWidth;
 }
 
@@ -336,12 +341,12 @@ void RenderMenuList::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
     
-    if (style().width().isFixed() && style().width().value() > 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().width());
+    if (style().logicalWidth().isFixed() && style().logicalWidth().value() > 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
     else
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-    RenderBox::computePreferredLogicalWidths(style().minWidth(), style().maxWidth(), horizontalBorderAndPaddingExtent());
+    RenderBox::computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), style().isHorizontalWritingMode() ? horizontalBorderAndPaddingExtent() : verticalBorderAndPaddingExtent());
 
     setPreferredLogicalWidthsDirty(false);
 }

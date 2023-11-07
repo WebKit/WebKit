@@ -3272,6 +3272,36 @@ void RenderStyle::setMarginEnd(Length&& margin)
     }
 }
 
+void RenderStyle::setMarginBefore(Length&& margin)
+{
+    if (isHorizontalWritingMode()) {
+        if (isFlippedBlocksWritingMode())
+            setMarginBottom(WTFMove(margin));
+        else
+            setMarginTop(WTFMove(margin));
+    } else {
+        if (isFlippedBlocksWritingMode())
+            setMarginRight(WTFMove(margin));
+        else
+            setMarginLeft(WTFMove(margin));
+    }
+}
+
+void RenderStyle::setMarginAfter(Length&& margin)
+{
+    if (isHorizontalWritingMode()) {
+        if (isFlippedBlocksWritingMode())
+            setMarginTop(WTFMove(margin));
+        else
+            setMarginBottom(WTFMove(margin));
+    } else {
+        if (isFlippedBlocksWritingMode())
+            setMarginLeft(WTFMove(margin));
+        else
+            setMarginRight(WTFMove(margin));
+    }
+}
+
 TextEmphasisMark RenderStyle::textEmphasisMark() const
 {
     auto mark = static_cast<TextEmphasisMark>(m_rareInheritedData->textEmphasisMark);
