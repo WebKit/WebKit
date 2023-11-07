@@ -1358,38 +1358,6 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
 
         bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
 
-        // Masonry Track Sizing
-        // https://drafts.csswg.org/css-grid-3/#track-sizing
-        // We should only compute track sizes on a subset of items.
-        //
-        // - Items placed at the first implicit line in the masonry axis.
-        // - Items that have a specified definite placement in the grid axis.
-        // - Items that span all grid axis tracks.
-        if (m_renderGrid->isMasonry()) {
-            bool skipTrackSizing = true;
-
-            // m_direction shall always be the gridAxisDirection.
-            ASSERT(!isDirectionInMasonryDirection());
-            auto gridAxisDirection = m_direction;
-            auto masonryAxisDirection = m_renderGrid->areMasonryRows() ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns;
-            auto span = GridPositionsResolver::resolveGridPositionsFromStyle(*m_renderGrid, *gridItem, gridAxisDirection);
-
-            // Items placed at the first implicit line in the masonry axis.
-            if (!m_renderGrid->gridSpanForChild(*gridItem, masonryAxisDirection).startLine())
-                skipTrackSizing = false;
-
-            // Items that have a specified definite placement in the grid axis.
-            if (!span.isIndefinite())
-                skipTrackSizing = false;
-
-            // Items that span all grid axis tracks.
-            if (m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).integerSpan() == tracks(gridAxisDirection).size())
-                skipTrackSizing = false;
-
-            if (skipTrackSizing)
-                continue;
-        }
-
         if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
             // Contribute the mbp of wrapper to the first and last tracks that we span.
             RenderGrid* inner = downcast<RenderGrid>(gridItem);
@@ -1423,13 +1391,17 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
                 }
                 return gutterTotal;
             }();
+
             auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner);
+
+
             track.setBaseSize(std::max(track.baseSize(), accumulatedMbpWithSubgrid + extraMarginFromSubgridAncestorGutters.value_or(0_lu)));
 
             GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
             accumulateIntrinsicSizesForTrack(track, trackIndex, childIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, accumulatedMbpWithSubgrid);
             continue;
         }
+
         if (!isNewEntry)
             continue;
         GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
@@ -1440,6 +1412,74 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
             sizeTrackToFitNonSpanningItem(span, *gridItem, track);
         else
             itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, span));
+    }
+
+    if (m_renderGrid->isMasonry()) {
+        for (auto* gridItem : m_renderGrid->indefiniteMasonryItems) {
+
+            bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
+
+            if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
+
+                // Contribute the mbp of wrapper to the first and last tracks that we span.
+                RenderGrid* inner = downcast<RenderGrid>(gridItem);
+                GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
+
+                auto extraMarginFromSubgridAncestorGutters = [&]() -> std::optional<LayoutUnit> {
+                    if (span.startLine() != trackIndex && span.endLine() - 1 != trackIndex)
+                        return std::nullopt;
+
+                    auto gutterTotal = 0_lu;
+                    auto flowAwareDirection = iterator.direction();
+
+                    for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(*gridItem, flowAwareDirection)) {
+                        std::optional<LayoutUnit> availableSpace;
+                        if (!GridLayoutFunctions::hasRelativeOrIntrinsicSizeForChild(currentAncestorSubgrid, flowAwareDirection))
+                            availableSpace = currentAncestorSubgrid.availableSpaceForGutters(flowAwareDirection);
+
+                        auto gridItemSpanInAncestor = currentAncestorSubgrid.gridSpanForChild(*gridItem, flowAwareDirection);
+                        auto numTracksForCurrentAncestor = currentAncestorSubgrid.numTracks(flowAwareDirection);
+
+                        const auto* currentAncestorSubgridParent = dynamicDowncast<RenderGrid>(currentAncestorSubgrid.parent());
+                        ASSERT(currentAncestorSubgridParent);
+                        if (!currentAncestorSubgridParent)
+                            return std::nullopt;
+
+                        if (gridItemSpanInAncestor.startLine())
+                            gutterTotal += (currentAncestorSubgrid.gridGap(flowAwareDirection) - currentAncestorSubgridParent->gridGap(flowAwareDirection)) / 2;
+                        if (span.endLine() != numTracksForCurrentAncestor)
+                            gutterTotal += (currentAncestorSubgrid.gridGap(flowAwareDirection) - currentAncestorSubgridParent->gridGap(flowAwareDirection)) / 2;
+                        flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForParent(currentAncestorSubgrid, *currentAncestorSubgridParent, flowAwareDirection);
+                    }
+                    return gutterTotal;
+                }();
+
+                auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner);
+
+
+                track.setBaseSize(std::max(track.baseSize(), accumulatedMbpWithSubgrid + extraMarginFromSubgridAncestorGutters.value_or(0_lu)));
+
+                GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
+                accumulateIntrinsicSizesForTrack(track, trackIndex, childIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, accumulatedMbpWithSubgrid);
+                continue;
+            }
+
+            if (!isNewEntry)
+                continue;
+
+            GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
+
+            sizeTrackToFitNonSpanningItem(span, *gridItem, track);
+
+
+//            if (spanningItemCrossesFlexibleSizedTracks(span))
+//                itemsCrossingFlexibleTracks.append(GridItemWithSpan(*gridItem, span));
+//            else if (span.integerSpan() == 1)
+//                sizeTrackToFitNonSpanningItem(span, *gridItem, track);
+//            else
+//                itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, span));
+
+        }
     }
 }
 

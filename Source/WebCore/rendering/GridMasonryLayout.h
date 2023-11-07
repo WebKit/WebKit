@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #pragma once
 
 #include "GridArea.h"
@@ -53,8 +54,7 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void addItemsToFirstTrack(); 
-    void placeItemsUsingOrderModifiedDocumentOrder(); 
+    void placeItemsUsingOrderModifiedDocumentOrder();
     void placeItemsWithDefiniteGridAxisPosition();
     void placeItemsWithIndefiniteGridAxisPosition();
     void setItemGridAxisContainingBlockToGridArea(RenderBox&);
@@ -78,7 +78,6 @@ private:
 
     unsigned m_gridAxisTracksCount;
 
-    HashMap<RenderBox*, GridArea> m_firstTrackItems;
     Vector<RenderBox*> m_itemsWithDefiniteGridAxisPosition;
     Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
 

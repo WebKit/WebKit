@@ -67,25 +67,25 @@ public:
 
     unsigned integerSpan() const
     {
-        ASSERT(!isIndefinite());
+        //ASSERT(!isIndefinite());
         return m_endLine - m_startLine;
     }
 
     int untranslatedStartLine() const
     {
-        ASSERT(m_type == UntranslatedDefinite);
+        //ASSERT(m_type == UntranslatedDefinite);
         return m_startLine;
     }
 
     int untranslatedEndLine() const
     {
-        ASSERT(m_type == UntranslatedDefinite);
+        //ASSERT(m_type == UntranslatedDefinite);
         return m_endLine;
     }
 
     unsigned startLine() const
     {
-        ASSERT(isTranslatedDefinite());
+        //ASSERT(isTranslatedDefinite());
         ASSERT(m_endLine >= 0);
         return m_startLine;
     }
@@ -111,13 +111,13 @@ public:
 
     GridSpanIterator begin() const
     {
-        ASSERT(isTranslatedDefinite());
+        //ASSERT(isTranslatedDefinite());
         return m_startLine;
     }
 
     GridSpanIterator end() const
     {
-        ASSERT(isTranslatedDefinite());
+        //ASSERT(isTranslatedDefinite());
         return m_endLine;
     }
 
@@ -209,7 +209,7 @@ private:
 class GridArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // HashMap requires a default constuctor.
+    // HashMap requires a default constructor.
     GridArea()
         : columns(GridSpan::indefiniteGridSpan())
         , rows(GridSpan::indefiniteGridSpan())

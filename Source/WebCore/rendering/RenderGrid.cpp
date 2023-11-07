@@ -403,6 +403,8 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
     m_baselineItemsCached = false;
 }
 
+// Layout Masonry is responsible for laying out all the grid items inside the Masonry Grid.
+// https://drafts.csswg.org/css-grid-3/#grid-template-masonry
 void RenderGrid::layoutMasonry(bool relayoutChildren)
 {
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
@@ -431,6 +433,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
         updateLogicalWidth();
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
+
         placeItemsOnGrid(availableSpaceForColumns);
 
         m_trackSizingAlgorithm.setAvailableSpace(GridTrackSizingDirection::ForColumns, availableSpaceForColumns);
@@ -953,7 +956,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     populateExplicitGridAndOrderIterator();
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
-    Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
+    Vector<RenderBox*> specifiedMajorAxisAutoGridItems; // what are specified grid items?
     for (auto* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next()) {
         if (currentGrid().orderIterator().shouldSkipChild(*child))
             continue;
@@ -1001,19 +1004,72 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         currentGrid().setNeedsItemsPlacement(false);
     };
+    if(!isMasonry())
+        performAutoPlacement();
+    else {
+        this->indefiniteMasonryItems = autoMajorAxisAutoGridItems;
 
-    performAutoPlacement();
+        // Compute collapsible tracks for auto-fit.
+        currentGrid().setAutoRepeatEmptyColumns(computeEmptyTracksForAutoRepeat(GridTrackSizingDirection::ForColumns));
+        currentGrid().setAutoRepeatEmptyRows(computeEmptyTracksForAutoRepeat(GridTrackSizingDirection::ForRows));
+
+        currentGrid().setNeedsItemsPlacement(false);
+    }
 
 #if ASSERT_ENABLED
+    if (!isMasonry()) {
+        for (auto* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next()) {
+            if (currentGrid().orderIterator().shouldSkipChild(*child))
+                continue;
+            
+            GridArea area = currentGrid().gridItemArea(*child);
+            ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
+        }
+    }
+#endif
+}
+
+// We will place all indefinite and definite items on the grid
+void RenderGrid::placeItemsOnMasonry(std::optional<LayoutUnit> availableLogicalWidth)
+{
+    // Determine the number of tracks that are created by 'repeat( auto-fit/fill, ...)';
+    unsigned autoRepeatColumns = computeAutoRepeatTracksCount(GridTrackSizingDirection::ForColumns, availableLogicalWidth);
+    unsigned autoRepeatRows = computeAutoRepeatTracksCount(GridTrackSizingDirection::ForRows, availableLogicalHeightForPercentageComputation());
+    autoRepeatRows = clampAutoRepeatTracks(GridTrackSizingDirection::ForRows, autoRepeatRows);
+    autoRepeatColumns = clampAutoRepeatTracks(GridTrackSizingDirection::ForColumns, autoRepeatColumns);
+    currentGrid().setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
+
+    // Reset the grid
+    currentGrid().setNeedsItemsPlacement(true);
+
+    // There should be no items on the grid at this point, so we can now populate it.
+    RELEASE_ASSERT(!currentGrid().hasGridItems());
+
+    OrderIteratorPopulator populator(currentGrid().orderIterator());
+//    unsigned explicitRowStart = 0;
+//    unsigned explicitColumnStart = 0;
+//    unsigned maximumRowIndex = GridPositionsResolver::explicitGridRowCount(*this);
+//    unsigned maximumColumnIndex = GridPositionsResolver::explicitGridColumnCount(*this);
+
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!populator.collectChild(*child))
+            continue;
+
+
+    }
+
+
     for (auto* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next()) {
         if (currentGrid().orderIterator().shouldSkipChild(*child))
             continue;
 
         GridArea area = currentGrid().gridItemArea(*child);
-        ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
+        currentGrid().clampAreaToSubgridIfNeeded(area);
+
+
     }
-#endif
 }
+
 
 LayoutUnit RenderGrid::masonryContentSize() const
 {

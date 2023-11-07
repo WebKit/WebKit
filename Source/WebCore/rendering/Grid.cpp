@@ -209,6 +209,11 @@ void Grid::setupGridForMasonryLayout()
     m_gridItemArea.clear();
 }
 
+// setNeedsItemPlacement serves three main purposes.
+//
+// 1. Keeps track of whether an item placement is needed.
+// 2. Resets all internal variables when item placement is needed.
+// 3. When item placement is not needed resize the grid to fit the items.
 void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 {
     m_needsItemsPlacement = needsItemsPlacement;

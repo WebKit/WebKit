@@ -89,6 +89,7 @@ public:
     // keeping the logic in the same function was leading to a messy amount of if statements being added to handle
     // specific masonry cases.
     void layoutGrid(bool);
+
     void layoutMasonry(bool);
 
     // Computes the span relative to this RenderGrid, even if the RenderBox is a child
@@ -161,6 +162,8 @@ private:
     void performGridItemsPreLayout(const GridTrackSizingAlgorithm&, const ShouldUpdateGridAreaLogicalSize) const;
 
     void placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth);
+    void placeItemsOnMasonry(std::optional<LayoutUnit> availableLogicalWidth);
+
     void populateExplicitGridAndOrderIterator();
     GridArea createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
@@ -273,6 +276,7 @@ private:
     ContentAlignmentData m_offsetBetweenRows;
 
     mutable GridMasonryLayout m_masonryLayout;
+    Vector<RenderBox*> indefiniteMasonryItems;
 
     typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
