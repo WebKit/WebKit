@@ -63,6 +63,7 @@ struct CGFontHMetrics {
 
 typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
 {
+    deDrawPath = 6,
     deDrawImage = 7,
     deDrawGlyphs = 8,
     deBeginLayer = 17,

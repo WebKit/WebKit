@@ -63,6 +63,7 @@ public:
     void recordEndLayer(CGRenderingStateRef, CGGStateRef);
     void recordDrawGlyphs(CGRenderingStateRef, CGGStateRef, const CGAffineTransform*, const CGGlyph[], const CGPoint positions[], size_t count);
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
+    void recordDrawPath(CGRenderingStateRef, CGGStateRef, CGPathDrawingMode, CGPathRef);
 #endif
 
 private:
