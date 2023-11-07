@@ -32,7 +32,7 @@
     (allow system-mac-syscall (mac-syscall-number 2 4 6 7 67)))
 
 (with-filter (mac-policy-name "AMFI")
-    (allow system-mac-syscall (mac-syscall-number 90)))
+    (allow system-mac-syscall (mac-syscall-number 90 102)))
 #endif
 
 (define-once (allow-read-and-issue-generic-extensions . filters)
