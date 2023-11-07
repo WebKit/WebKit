@@ -745,10 +745,10 @@ fn testTrigonometric()
 fn testTrigonometricHyperbolic()
 {
   {
-    _ = acosh(0.0);
-    _ = acosh(vec2(0.0, 0.0));
-    _ = acosh(vec3(0.0, 0.0, 0.0));
-    _ = acosh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = acosh(1.0);
+    _ = acosh(vec2(1.0, 1.0));
+    _ = acosh(vec3(1.0, 1.0, 1.0));
+    _ = acosh(vec4(1.0, 1.0, 1.0, 1.0));
   }
 
   {
@@ -1511,14 +1511,14 @@ fn testLog()
         _ = log(vec2(2f));
     }
     {
-        _ = log(vec3(-2));
-        _ = log(vec3(-2.0));
-        _ = log(vec3(-2f));
+        _ = log(vec3(2));
+        _ = log(vec3(2.0));
+        _ = log(vec3(2f));
     }
     {
-        _ = log(vec4(-2));
-        _ = log(vec4(-2.0));
-        _ = log(vec4(-2f));
+        _ = log(vec4(2));
+        _ = log(vec4(2.0));
+        _ = log(vec4(2f));
     }
 }
 
@@ -1538,14 +1538,14 @@ fn testLog2() {
         _ = log2(vec2(2f));
     }
     {
-        _ = log2(vec3(-2));
-        _ = log2(vec3(-2.0));
-        _ = log2(vec3(-2f));
+        _ = log2(vec3(2));
+        _ = log2(vec3(2.0));
+        _ = log2(vec3(2f));
     }
     {
-        _ = log2(vec4(-2));
-        _ = log2(vec4(-2.0));
-        _ = log2(vec4(-2f));
+        _ = log2(vec4(2));
+        _ = log2(vec4(2.0));
+        _ = log2(vec4(2f));
     }
 }
 
@@ -1673,8 +1673,8 @@ fn testNormalize()
 {
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = normalize(vec2(0));
-        _ = normalize(vec2(0.0));
+        _ = normalize(vec2(1));
+        _ = normalize(vec2(1.0));
         _ = normalize(vec2(1f));
     }
     {
@@ -1975,19 +1975,19 @@ fn testSmoothstep()
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        _ = smoothstep(vec2(0), vec2(0), vec2(0));
-        _ = smoothstep(vec2(0), vec2(0), vec2(0.0));
-        _ = smoothstep(vec2(0), vec2(0), vec2(0f));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1.0));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1f));
     }
     {
-        _ = smoothstep(vec3(0), vec3(0), vec3(0));
-        _ = smoothstep(vec3(0), vec3(0), vec3(0.0));
-        _ = smoothstep(vec3(0), vec3(0), vec3(0f));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1.0));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1f));
     }
     {
-        _ = smoothstep(vec4(0), vec4(0), vec4(0));
-        _ = smoothstep(vec4(0), vec4(0), vec4(0.0));
-        _ = smoothstep(vec4(0), vec4(0), vec4(0f));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1.0));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1f));
     }
 }
 
@@ -2008,14 +2008,14 @@ fn testSqrt()
         _ = sqrt(vec2(1f));
     }
     {
-        _ = sqrt(vec3(-1));
-        _ = sqrt(vec3(-1.0));
-        _ = sqrt(vec3(-1f));
+        _ = sqrt(vec3(1));
+        _ = sqrt(vec3(1.0));
+        _ = sqrt(vec3(1f));
     }
     {
-        _ = sqrt(vec4(-1));
-        _ = sqrt(vec4(-1.0));
-        _ = sqrt(vec4(-1f));
+        _ = sqrt(vec4(1));
+        _ = sqrt(vec4(1.0));
+        _ = sqrt(vec4(1f));
     }
 }
 

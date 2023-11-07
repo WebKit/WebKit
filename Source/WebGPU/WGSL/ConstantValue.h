@@ -142,6 +142,8 @@ std::optional<To> convertFloat(From value)
         return std::nullopt;
     if (value < std::numeric_limits<To>::lowest())
         return std::nullopt;
+    if (std::isnan(value))
+        return std::nullopt;
     if (std::abs(value) < std::numeric_limits<To>::min())
         return { 0 };
 
