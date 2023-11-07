@@ -1209,10 +1209,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _isDisplayingContextMenuWithAnimation = NO;
 #endif
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    _contextMenuWasTriggeredByImageAnalysisTimeout = NO;
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
@@ -1269,10 +1265,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
-
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    _contextMenuWasTriggeredByImageAnalysisTimeout = NO;
-#endif
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -2764,7 +2756,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == _imageAnalysisGestureRecognizer || gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+    if (gestureRecognizer == _imageAnalysisGestureRecognizer)
         return YES;
 #endif
 
@@ -2785,11 +2777,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && [self _isContextMenuGestureRecognizerForFailureRelationships:otherGestureRecognizer])
-        return YES;
-#endif
-
     return NO;
 }
 
@@ -2797,11 +2784,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
-
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if ([self _isContextMenuGestureRecognizerForFailureRelationships:gestureRecognizer] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
-        return YES;
-#endif
 
     return NO;
 }
@@ -9107,7 +9089,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-        if (gestureRecognizer == _imageAnalysisGestureRecognizer || gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+        if (gestureRecognizer == _imageAnalysisGestureRecognizer)
             return YES;
 #endif
 
@@ -11404,11 +11386,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _elementPendingImageAnalysis = std::nullopt;
     _imageAnalysisGestureRecognizer = adoptNS([[WKImageAnalysisGestureRecognizer alloc] initWithImageAnalysisGestureDelegate:self]);
     [self addGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
-    _imageAnalysisTimeoutGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureDidTimeOut:)]);
-    [_imageAnalysisTimeoutGestureRecognizer setMinimumPressDuration:2.0];
-    [_imageAnalysisTimeoutGestureRecognizer setName:@"Image analysis timeout"];
-    [_imageAnalysisTimeoutGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_imageAnalysisTimeoutGestureRecognizer.get()];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     _removeBackgroundData = std::nullopt;
 #endif
@@ -11424,9 +11401,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [_imageAnalysisGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
     _imageAnalysisGestureRecognizer = nil;
-    [_imageAnalysisTimeoutGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_imageAnalysisTimeoutGestureRecognizer.get()];
-    _imageAnalysisTimeoutGestureRecognizer = nil;
     _pendingImageAnalysisRequestIdentifier = std::nullopt;
     _isProceedingWithTextSelectionInImage = NO;
     _elementPendingImageAnalysis = std::nullopt;
@@ -11734,82 +11708,6 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (void)imageAnalysisGestureDidFail:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
 {
     [self _endImageAnalysisGestureDeferral:WebKit::ShouldPreventGestures::No];
-}
-
-- (void)imageAnalysisGestureDidTimeOut:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
-{
-    if (!self._shouldUseContextMenus)
-        return;
-
-    if (self.hasPendingImageAnalysisRequest)
-        return;
-
-    if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
-        return;
-
-    auto location = WebCore::roundedIntPoint([gestureRecognizer locationInView:self]);
-    WebKit::InteractionInformationRequest request { location };
-    request.includeImageData = true;
-    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), location] (WebKit::InteractionInformationAtPosition info) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        if (!info.image)
-            return;
-
-        if ((!info.isImageOverlayText || !info.isSelected) && !strongSelf->_isProceedingWithTextSelectionInImage)
-            return;
-
-        auto cgImage = info.image->makeCGImageCopy();
-        if (!cgImage)
-            return;
-
-        RELEASE_LOG(ImageAnalysis, "Image analysis timeout gesture initiated.");
-        // FIXME: We need to implement some way to cache image analysis results per element, so that we don't end up
-        // making redundant image analysis requests for the same image data.
-
-        auto data = Box<WebKit::ImageAnalysisContextMenuActionData>::create();
-        auto aggregator = MainRunLoopCallbackAggregator::create([weakSelf, location, data]() mutable {
-            auto strongSelf = weakSelf.get();
-            if (!strongSelf)
-                return;
-
-            strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
-            strongSelf->_imageAnalysisContextMenuActionData = WTFMove(*data);
-            [strongSelf presentContextMenu:[strongSelf contextMenuInteraction] atLocation:location];
-        });
-
-        auto visualSearchAnalysisStartTime = MonotonicTime::now();
-        auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
-        if (info.isPausedVideo)
-            [requestForContextMenu setImageSource:VKImageAnalyzerRequestImageSourceVideoFrame];
-
-        [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data] (CocoaImageAnalysis *result, NSError *error) {
-            auto strongSelf = weakSelf.get();
-            if (!strongSelf)
-                return;
-
-#if USE(QUICK_LOOK)
-            BOOL hasVisualSearchResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
-            RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - visualSearchAnalysisStartTime).milliseconds(), hasVisualSearchResults);
-            data->hasSelectableText = true;
-            data->hasVisualSearchResults = hasVisualSearchResults;
-#else
-            UNUSED_PARAM(visualSearchAnalysisStartTime);
-#endif
-            [strongSelf updateImageAnalysisForContextMenuPresentation:result];
-        }];
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        if (strongSelf->_page->preferences().removeBackgroundEnabled()) {
-            WebKit::requestBackgroundRemoval(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef(), data](CGImageRef result) mutable {
-                if (auto strongSelf = weakSelf.get())
-                    data->copySubjectResult = result;
-            });
-        }
-#endif
-    } forRequest:request];
 }
 
 - (void)captureTextFromCameraForWebView:(id)sender
@@ -12638,19 +12536,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _useContextMenuInteractionDismissalPreview = YES;
 
-#if ENABLE(IMAGE_ANALYSIS)
-    BOOL triggeredByImageAnalysisTimeout = std::exchange(_contextMenuWasTriggeredByImageAnalysisTimeout, NO);
-#else
-    BOOL triggeredByImageAnalysisTimeout = NO;
-#endif
-
     if (!_webView)
         return completion(nil);
 
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageAnalysisTimeout] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || proceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
             completion(nil);
@@ -12664,7 +12556,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
-        request.disallowUserAgentShadowContent = triggeredByImageAnalysisTimeout;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
         request.gatherAnimations = [strongSelf->_webView _allowAnimationControls];
 

@@ -3334,9 +3334,6 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
     };
 
-    if (request.disallowUserAgentShadowContent)
-        hitTestRequestTypes.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
-
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (request.gatherAnimations) {
         hitTestRequestTypes.add(HitTestRequest::Type::IncludeAllElementsUnderPoint);

@@ -534,13 +534,9 @@ struct ImageAnalysisContextMenuActionData {
 
 #if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<WKImageAnalysisGestureRecognizer> _imageAnalysisGestureRecognizer;
-    RetainPtr<UILongPressGestureRecognizer> _imageAnalysisTimeoutGestureRecognizer;
     std::optional<WebKit::ImageAnalysisRequestIdentifier> _pendingImageAnalysisRequestIdentifier;
     std::optional<WebCore::ElementContext> _elementPendingImageAnalysis;
     Vector<BlockPtr<void(WebKit::ProceedWithTextSelectionInImage)>> _actionsToPerformAfterPendingImageAnalysis;
-#if USE(UICONTEXTMENU)
-    BOOL _contextMenuWasTriggeredByImageAnalysisTimeout;
-#endif // USE(UICONTEXTMENU)
     BOOL _isProceedingWithTextSelectionInImage;
     RetainPtr<CocoaImageAnalyzer> _imageAnalyzer;
 #if USE(QUICK_LOOK)
