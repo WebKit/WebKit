@@ -30,8 +30,8 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 
@@ -54,11 +54,11 @@ void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObjec
     m_globalScope.addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
 }
 
-InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript WorkerDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for workers as there is only one execution context"_s;
-        return InjectedScript();
+        return InspectorInjectedScript();
     }
 
     // FIXME: What guarantees m_globalScope.script() is non-null?

@@ -38,7 +38,7 @@ class Debugger;
 
 namespace Inspector {
 
-class InjectedScript;
+class InspectorInjectedScript;
 class InjectedScriptManager;
 
 class JS_EXPORT_PRIVATE InspectorAuditAgent : public InspectorAgentBase, public AuditBackendDispatcherHandler {
@@ -63,7 +63,7 @@ protected:
 
     InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 
-    virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
+    virtual InspectorInjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
 
     virtual void populateAuditObject(JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>& auditObject);
 

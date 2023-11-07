@@ -29,8 +29,8 @@
 #include "JSDOMGlobalObject.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -46,11 +46,11 @@ WorkerAuditAgent::WorkerAuditAgent(WorkerAgentContext& context)
 
 WorkerAuditAgent::~WorkerAuditAgent() = default;
 
-InjectedScript WorkerAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript WorkerAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for workers as there is only one execution context"_s;
-        return InjectedScript();
+        return InspectorInjectedScript();
     }
 
     // FIXME: What guarantees m_globalScope.script() is non-null?

@@ -64,7 +64,7 @@ void WebInjectedScriptManager::discardInjectedScripts()
         m_commandLineAPIHost->clearAllWrappers();
 }
 
-void WebInjectedScriptManager::didCreateInjectedScript(const Inspector::InjectedScript& injectedScript)
+void WebInjectedScriptManager::didCreateInjectedScript(const Inspector::InspectorInjectedScript& injectedScript)
 {
     CommandLineAPIModule::injectIfNeeded(this, injectedScript);
 }

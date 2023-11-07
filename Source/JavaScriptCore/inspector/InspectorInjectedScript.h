@@ -45,11 +45,11 @@ namespace Inspector {
 class InjectedScriptModule;
 class InspectorEnvironment;
 
-class JS_EXPORT_PRIVATE InjectedScript final : public InjectedScriptBase {
+class JS_EXPORT_PRIVATE InspectorInjectedScript final : public InjectedScriptBase {
 public:
-    InjectedScript();
-    InjectedScript(JSC::JSGlobalObject*, JSC::JSObject*, InspectorEnvironment*);
-    ~InjectedScript() final;
+    InspectorInjectedScript();
+    InspectorInjectedScript(JSC::JSGlobalObject*, JSC::JSObject*, InspectorEnvironment*);
+    ~InspectorInjectedScript() final;
 
     struct ExecuteOptions {
         String objectGroup;

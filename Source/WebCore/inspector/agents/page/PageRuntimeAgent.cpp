@@ -44,8 +44,8 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "UserGestureEmulationScope.h"
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 
 namespace WebCore {
@@ -103,20 +103,20 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
     notifyContextCreated(pageAgent->frameId(&frame), frame.script().globalObject(world), world);
 }
 
-InjectedScript PageRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript PageRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame());
         if (!localMainFrame)
-            return InjectedScript();
+            return InspectorInjectedScript();
 
-        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
+        InspectorInjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
         return result;
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
+    InspectorInjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = "Missing injected script for given executionContextId"_s;
     return injectedScript;

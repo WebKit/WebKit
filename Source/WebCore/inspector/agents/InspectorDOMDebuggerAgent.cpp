@@ -42,9 +42,9 @@
 #include "ScriptDisallowedScope.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/JSONValues.h>
 

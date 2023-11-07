@@ -130,7 +130,7 @@ function max(a, b) {
 
 // -------
 
-let InjectedScript = class InjectedScript extends PrototypelessObjectBase
+let InspectorInjectedScript = class InspectorInjectedScript extends PrototypelessObjectBase
 {
     constructor()
     {
@@ -145,7 +145,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         this._savedResults = @createArrayWithoutPrototype();
     }
 
-    // InjectedScript C++ API
+    // InspectorInjectedScript C++ API
 
     execute(functionString, objectGroup, includeCommandLineAPI, returnByValue, generatePreview, saveResult, args)
     {

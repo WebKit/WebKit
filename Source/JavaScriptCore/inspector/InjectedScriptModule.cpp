@@ -32,8 +32,8 @@
 #include "config.h"
 #include "InjectedScriptModule.h"
 
-#include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorInjectedScript.h"
 #include "ScriptFunctionCall.h"
 
 namespace Inspector {
@@ -49,17 +49,17 @@ InjectedScriptModule::~InjectedScriptModule()
 
 void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject* globalObject)
 {
-    InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(globalObject);
+    InspectorInjectedScript injectedScript = injectedScriptManager->injectedScriptFor(globalObject);
     ensureInjected(injectedScriptManager, injectedScript);
 }
 
-void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, const InjectedScript& injectedScript)
+void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, const InspectorInjectedScript& injectedScript)
 {
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
         return;
 
-    // FIXME: Make the InjectedScript a module itself.
+    // FIXME: Make the InspectorInjectedScript a module itself.
     JSC::JSLockHolder locker(injectedScript.globalObject());
     ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "hasInjectedModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());

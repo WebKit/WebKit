@@ -27,7 +27,7 @@
 #include "InspectorAuditAgent.h"
 
 #include "Debugger.h"
-#include "InjectedScript.h"
+#include "InspectorInjectedScript.h"
 #include "JSLock.h"
 #include "ObjectConstructor.h"
 #include <wtf/RefPtr.h>
@@ -63,7 +63,7 @@ Protocol::ErrorStringOr<void> InspectorAuditAgent::setup(std::optional<Protocol:
     if (hasActiveAudit())
         return makeUnexpected("Must call teardown before calling setup again"_s);
 
-    InjectedScript injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
+    InspectorInjectedScript injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
@@ -88,13 +88,13 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
+    InspectorInjectedScript injectedScript = injectedScriptForEval(errorString, WTFMove(executionContextId));
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
     auto functionString = makeString("(function(WebInspectorAudit) { \"use strict\"; return eval(`("_s, makeStringByReplacingAll(test, '`', "\\`"_s), ")`)(WebInspectorAudit); })"_s);
 
-    InjectedScript::ExecuteOptions options;
+    InspectorInjectedScript::ExecuteOptions options;
     options.objectGroup = "audit"_s;
     if (m_injectedWebInspectorAuditValue)
         options.args = { m_injectedWebInspectorAuditValue.get() };

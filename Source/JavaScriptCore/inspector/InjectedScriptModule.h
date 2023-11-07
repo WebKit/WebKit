@@ -40,7 +40,7 @@ class JSValue;
 
 namespace Inspector {
 
-class InjectedScript;
+class InspectorInjectedScript;
 class InjectedScriptManager;
 
 class JS_EXPORT_PRIVATE InjectedScriptModule : public InjectedScriptBase {
@@ -55,7 +55,7 @@ protected:
     // and call its ensureInjected() method immediately.
     explicit InjectedScriptModule(const String& name);
     void ensureInjected(InjectedScriptManager*, JSC::JSGlobalObject*);
-    void ensureInjected(InjectedScriptManager*, const InjectedScript&);
+    void ensureInjected(InjectedScriptManager*, const InspectorInjectedScript&);
 };
 
 } // namespace Inspector

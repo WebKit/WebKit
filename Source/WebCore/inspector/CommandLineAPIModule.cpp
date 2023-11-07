@@ -30,14 +30,14 @@
 #include "WebCoreJSBuiltinInternals.h"
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 
 namespace WebCore {
 
 using namespace JSC;
 using namespace Inspector;
 
-void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptManager, const InjectedScript& injectedScript)
+void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptManager, const InspectorInjectedScript& injectedScript)
 {
     CommandLineAPIModule module;
     module.ensureInjected(injectedScriptManager, injectedScript);

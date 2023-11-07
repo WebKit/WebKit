@@ -47,7 +47,7 @@
 namespace Inspector {
 
 class AsyncStackTrace;
-class InjectedScript;
+class InspectorInjectedScript;
 class InjectedScriptManager;
 
 class JS_EXPORT_PRIVATE InspectorDebuggerAgent
@@ -165,10 +165,10 @@ protected:
     virtual void internalEnable();
     virtual void internalDisable(bool isBeingDestroyed);
 
-    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(InjectedScript&, const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
+    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(InspectorInjectedScript&, const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
 
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
-    virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
+    virtual InspectorInjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
 
     JSC::Debugger& debugger() { return m_debugger; }
 
@@ -183,7 +183,7 @@ protected:
 private:
     bool shouldBlackboxURL(const String&) const;
 
-    Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
+    Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InspectorInjectedScript&);
 
     class ProtocolBreakpoint {
         WTF_MAKE_FAST_ALLOCATED;
@@ -239,7 +239,7 @@ private:
     void updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data);
 
     RefPtr<JSON::Object> buildBreakpointPauseReason(JSC::BreakpointID);
-    RefPtr<JSON::Object> buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript&);
+    RefPtr<JSON::Object> buildExceptionPauseReason(JSC::JSValue exception, const InspectorInjectedScript&);
 
     using AsyncCallIdentifier = std::pair<unsigned, uint64_t>;
     static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, uint64_t callbackId);

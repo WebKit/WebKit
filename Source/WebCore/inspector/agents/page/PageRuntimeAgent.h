@@ -64,7 +64,7 @@ public:
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
+    Inspector::InspectorInjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
     void muteConsole();
     void unmuteConsole();
     void reportExecutionContextCreation();

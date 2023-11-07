@@ -28,9 +28,9 @@
 
 #include "HeapProfiler.h"
 #include "HeapSnapshot.h"
-#include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorEnvironment.h"
+#include "InspectorInjectedScript.h"
 #include "JSBigInt.h"
 #include "VM.h"
 #include <wtf/Stopwatch.h>
@@ -208,7 +208,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    InspectorInjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Unable to get object details - InjectedScript"_s);
 
@@ -248,7 +248,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    InspectorInjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Unable to get object details - InjectedScript"_s);
 

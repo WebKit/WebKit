@@ -60,10 +60,10 @@
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
@@ -329,7 +329,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(JSON::Object& keyRange)
 
 class OpenCursorCallback final : public EventListener {
 public:
-    static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
+    static Ref<OpenCursorCallback> create(InspectorInjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
     {
         return adoptRef(*new OpenCursorCallback(injectedScript, WTFMove(requestCallback), skipCount, pageSize));
     }
@@ -407,7 +407,7 @@ public:
     }
 
 private:
-    OpenCursorCallback(InjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
+    OpenCursorCallback(InspectorInjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
         , m_requestCallback(WTFMove(requestCallback))
@@ -416,7 +416,7 @@ private:
         , m_pageSize(pageSize)
     {
     }
-    InjectedScript m_injectedScript;
+    InspectorInjectedScript m_injectedScript;
     Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback> m_requestCallback;
     Ref<JSON::ArrayOf<Protocol::IndexedDB::DataEntry>> m_result;
     int m_skipCount;
@@ -425,7 +425,7 @@ private:
 
 class DataLoader final : public ExecutableWithDatabase {
 public:
-    static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
+    static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InspectorInjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
     {
         return adoptRef(*new DataLoader(context, WTFMove(requestCallback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize));
     }
@@ -477,7 +477,7 @@ public:
     }
 
     BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
-    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
+    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InspectorInjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(WTFMove(requestCallback))
         , m_injectedScript(injectedScript)
@@ -487,7 +487,7 @@ public:
         , m_skipCount(skipCount)
         , m_pageSize(pageSize) { }
     Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback> m_requestCallback;
-    InjectedScript m_injectedScript;
+    InspectorInjectedScript m_injectedScript;
     String m_objectStoreName;
     String m_indexName;
     RefPtr<IDBKeyRange> m_idbKeyRange;

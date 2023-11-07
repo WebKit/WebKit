@@ -49,7 +49,7 @@ public:
     void discardInjectedScriptsFor(LocalDOMWindow&);
 
 private:
-    void didCreateInjectedScript(const Inspector::InjectedScript&) override;
+    void didCreateInjectedScript(const Inspector::InspectorInjectedScript&) override;
 
     RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
 };

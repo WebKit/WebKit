@@ -30,8 +30,8 @@
 #pragma once
 
 #include "Exception.h"
-#include "InjectedScript.h"
 #include "InspectorEnvironment.h"
+#include "InspectorInjectedScript.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -60,18 +60,18 @@ public:
     InjectedScriptHost& injectedScriptHost();
     InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
-    InjectedScript injectedScriptFor(JSC::JSGlobalObject*);
-    InjectedScript injectedScriptForId(int);
+    InspectorInjectedScript injectedScriptFor(JSC::JSGlobalObject*);
+    InspectorInjectedScript injectedScriptForId(int);
     int injectedScriptIdFor(JSC::JSGlobalObject*);
-    InjectedScript injectedScriptForObjectId(const String& objectId);
+    InspectorInjectedScript injectedScriptForObjectId(const String& objectId);
     void releaseObjectGroup(const String& objectGroup);
     void clearEventValue();
     void clearExceptionValue();
 
 protected:
-    virtual void didCreateInjectedScript(const InjectedScript&);
+    virtual void didCreateInjectedScript(const InspectorInjectedScript&);
 
-    HashMap<int, InjectedScript> m_idToInjectedScript;
+    HashMap<int, InspectorInjectedScript> m_idToInjectedScript;
     HashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
 
 private:

@@ -45,8 +45,8 @@
 #include "PageDebugger.h"
 #include "ScriptExecutionContext.h"
 #include "UserGestureEmulationScope.h"
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
@@ -142,16 +142,16 @@ void PageDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalOb
     m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
 }
 
-InjectedScript PageDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript PageDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame());
     if (!localMainFrame)
-        return InjectedScript();
+        return InspectorInjectedScript();
 
     if (!executionContextId)
         return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
+    InspectorInjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = "Missing injected script for given executionContextId."_s;
 

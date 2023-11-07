@@ -833,7 +833,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ConsoleMessage.h
     inspector/ContentSearchUtilities.h
     inspector/IdentifiersFactory.h
-    inspector/InjectedScript.h
     inspector/InjectedScriptBase.h
     inspector/InjectedScriptHost.h
     inspector/InjectedScriptManager.h
@@ -842,6 +841,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorAgentRegistry.h
     inspector/InspectorBackendDispatcher.h
     inspector/InspectorEnvironment.h
+    inspector/InspectorInjectedScript.h
     inspector/InspectorFrontendChannel.h
     inspector/InspectorFrontendRouter.h
     inspector/InspectorProtocolTypes.h

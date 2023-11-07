@@ -32,9 +32,9 @@
 #include "ConsoleMessage.h"
 
 #include "IdentifiersFactory.h"
-#include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendDispatchers.h"
+#include "InspectorInjectedScript.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
@@ -259,7 +259,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
         messageObject->setTimestamp(m_timestamp.secondsSinceEpoch().value());
 
     if ((m_arguments && m_arguments->argumentCount()) || m_jsonLogValues.size()) {
-        InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(globalObject());
+        InspectorInjectedScript injectedScript = injectedScriptManager.injectedScriptFor(globalObject());
         if (!injectedScript.hasNoValue()) {
             auto argumentsObject = JSON::ArrayOf<Protocol::Runtime::RemoteObject>::create();
             if (m_arguments && m_arguments->argumentCount()) {

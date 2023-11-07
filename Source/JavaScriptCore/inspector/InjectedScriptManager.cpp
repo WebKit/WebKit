@@ -75,7 +75,7 @@ InjectedScriptHost& InjectedScriptManager::injectedScriptHost()
     return m_injectedScriptHost.get();
 }
 
-InjectedScript InjectedScriptManager::injectedScriptForId(int id)
+InspectorInjectedScript InjectedScriptManager::injectedScriptForId(int id)
 {
     auto it = m_idToInjectedScript.find(id);
     if (it != m_idToInjectedScript.end())
@@ -86,7 +86,7 @@ InjectedScript InjectedScriptManager::injectedScriptForId(int id)
             return injectedScriptFor(it->key);
     }
 
-    return InjectedScript();
+    return InspectorInjectedScript();
 }
 
 int InjectedScriptManager::injectedScriptIdFor(JSGlobalObject* globalObject)
@@ -100,19 +100,19 @@ int InjectedScriptManager::injectedScriptIdFor(JSGlobalObject* globalObject)
     return id;
 }
 
-InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
+InspectorInjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
 {
     auto parsedObjectId = JSON::Value::parseJSON(objectId);
     if (!parsedObjectId)
-        return InjectedScript();
+        return InspectorInjectedScript();
 
     auto resultObject = parsedObjectId->asObject();
     if (!resultObject)
-        return InjectedScript();
+        return InspectorInjectedScript();
 
     auto injectedScriptId = resultObject->getInteger("injectedScriptId"_s);
     if (!injectedScriptId)
-        return InjectedScript();
+        return InspectorInjectedScript();
 
     return m_idToInjectedScript.get(*injectedScriptId);
 }
@@ -163,7 +163,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
     return result.getObject();
 }
 
-InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalObject)
+InspectorInjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalObject)
 {
     auto it = m_scriptStateToId.find(globalObject);
     if (it != m_scriptStateToId.end()) {
@@ -173,7 +173,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
     }
 
     if (!m_environment.canAccessInspectedScriptState(globalObject))
-        return InjectedScript();
+        return InspectorInjectedScript();
 
     int id = injectedScriptIdFor(globalObject);
     auto createResult = createInjectedScript(globalObject, id);
@@ -182,7 +182,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         ASSERT(error);
 
         if (globalObject->vm().isTerminationException(error))
-            return InjectedScript();
+            return InspectorInjectedScript();
 
         unsigned line = 0;
         unsigned column = 0;
@@ -197,13 +197,13 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    InjectedScript result(globalObject, createResult.value(), &m_environment);
+    InspectorInjectedScript result(globalObject, createResult.value(), &m_environment);
     m_idToInjectedScript.set(id, result);
     didCreateInjectedScript(result);
     return result;
 }
 
-void InjectedScriptManager::didCreateInjectedScript(const InjectedScript&)
+void InjectedScriptManager::didCreateInjectedScript(const InspectorInjectedScript&)
 {
     // Intentionally empty. This allows for subclasses to inject additional scripts.
 }

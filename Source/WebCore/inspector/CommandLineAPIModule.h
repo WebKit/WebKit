@@ -36,7 +36,7 @@ public:
     JSC::JSFunction* injectModuleFunction(JSC::JSGlobalObject*) const override;
     JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::JSGlobalObject*) const override;
 
-    static void injectIfNeeded(Inspector::InjectedScriptManager*, const Inspector::InjectedScript&);
+    static void injectIfNeeded(Inspector::InjectedScriptManager*, const Inspector::InspectorInjectedScript&);
 };
 
 } // namespace WebCore

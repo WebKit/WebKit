@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSGlobalObjectAuditAgent.h"
 
-#include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorInjectedScript.h"
 
 namespace Inspector {
 
@@ -41,14 +41,14 @@ JSGlobalObjectAuditAgent::JSGlobalObjectAuditAgent(JSAgentContext& context)
 
 JSGlobalObjectAuditAgent::~JSGlobalObjectAuditAgent() = default;
 
-InjectedScript JSGlobalObjectAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript JSGlobalObjectAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_s;
-        return InjectedScript();
+        return InspectorInjectedScript();
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
+    InspectorInjectedScript injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
         errorString = "Internal error: main world execution context not found"_s;
 

@@ -1505,7 +1505,7 @@
 		A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */; };
 		A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */; };
-		A513E5B8185B8BD3007E95AD /* InjectedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5B6185B8BD3007E95AD /* InjectedScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A513E5B8185B8BD3007E95AD /* InspectorInjectedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5B6185B8BD3007E95AD /* InspectorInjectedScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A513E5BE185BFACC007E95AD /* InjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5B9185BFACC007E95AD /* InjectedScriptHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5BB185BFACC007E95AD /* JSInjectedScriptHost.h */; };
 		A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5BD185BFACC007E95AD /* JSInjectedScriptHostPrototype.h */; };
@@ -4867,8 +4867,8 @@
 		A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectRuntimeAgent.h; sourceTree = "<group>"; };
 		A51007BE187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectInspectorController.cpp; sourceTree = "<group>"; };
 		A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectInspectorController.h; sourceTree = "<group>"; };
-		A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
-		A513E5B6185B8BD3007E95AD /* InjectedScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScript.h; sourceTree = "<group>"; };
+		A513E5B5185B8BD3007E95AD /* InspectorInjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInjectedScript.cpp; sourceTree = "<group>"; };
+		A513E5B6185B8BD3007E95AD /* InspectorInjectedScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInjectedScript.h; sourceTree = "<group>"; };
 		A513E5B9185BFACC007E95AD /* InjectedScriptHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptHost.h; sourceTree = "<group>"; };
 		A513E5BA185BFACC007E95AD /* JSInjectedScriptHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInjectedScriptHost.cpp; sourceTree = "<group>"; };
 		A513E5BB185BFACC007E95AD /* JSInjectedScriptHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInjectedScriptHost.h; sourceTree = "<group>"; };
@@ -9659,8 +9659,6 @@
 				A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */,
 				A5FD0072189B038C00633231 /* IdentifiersFactory.cpp */,
 				A5FD0073189B038C00633231 /* IdentifiersFactory.h */,
-				A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */,
-				A513E5B6185B8BD3007E95AD /* InjectedScript.h */,
 				A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */,
 				A514B2C1185A684400F3C7CB /* InjectedScriptBase.h */,
 				A58E35901860DEC7001F24FE /* InjectedScriptHost.cpp */,
@@ -9679,6 +9677,8 @@
 				A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */,
 				99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */,
 				99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */,
+				A513E5B5185B8BD3007E95AD /* InspectorInjectedScript.cpp */,
+				A513E5B6185B8BD3007E95AD /* InspectorInjectedScript.h */,
 				A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */,
 				F3459D7423973ABD00DCD27A /* InspectorTarget.cpp */,
 				A555FF382159D2D600FCD826 /* InspectorTarget.h */,
@@ -10923,7 +10923,6 @@
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
 				0F4AE0431FE0D25700E20839 /* InferredValueInlines.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
-				A513E5B8185B8BD3007E95AD /* InjectedScript.h in Headers */,
 				A514B2C3185A684400F3C7CB /* InjectedScriptBase.h in Headers */,
 				A513E5BE185BFACC007E95AD /* InjectedScriptHost.h in Headers */,
 				A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */,
@@ -10950,6 +10949,7 @@
 				A532438A18568335002ED692 /* InspectorFrontendDispatchers.h in Headers */,
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */,
+				A513E5B8185B8BD3007E95AD /* InspectorInjectedScript.h in Headers */,
 				A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */,
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,

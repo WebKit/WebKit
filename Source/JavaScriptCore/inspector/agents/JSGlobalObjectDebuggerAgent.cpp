@@ -44,11 +44,11 @@ JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context
 
 JSGlobalObjectDebuggerAgent::~JSGlobalObjectDebuggerAgent() = default;
 
-InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_s;
-        return InjectedScript();
+        return InspectorInjectedScript();
     }
 
     JSGlobalObject& globalObject = static_cast<JSGlobalObjectDebugger&>(debugger()).globalObject();

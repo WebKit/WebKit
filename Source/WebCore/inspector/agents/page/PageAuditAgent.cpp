@@ -36,8 +36,8 @@
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include <JavaScriptCore/CallFrame.h>
-#include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorInjectedScript.h>
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -56,18 +56,18 @@ PageAuditAgent::PageAuditAgent(PageAgentContext& context)
 
 PageAuditAgent::~PageAuditAgent() = default;
 
-InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId)
         return injectedScriptManager().injectedScriptForId(*executionContextId);
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame()))
         return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
-    return InjectedScript();
+    return InspectorInjectedScript();
 }
 
-InjectedScript PageAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InspectorInjectedScript PageAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
-    InjectedScript injectedScript = injectedScriptForEval(WTFMove(executionContextId));
+    InspectorInjectedScript injectedScript = injectedScriptForEval(WTFMove(executionContextId));
     if (injectedScript.hasNoValue()) {
         if (executionContextId)
             errorString = "Missing injected script for given executionContextId"_s;
