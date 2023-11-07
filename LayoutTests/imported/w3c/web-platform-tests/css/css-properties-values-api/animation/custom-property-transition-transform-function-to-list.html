@@ -7,11 +7,11 @@
 <script>
 
 transition_test({
-  syntax: "<transform-function>",
+  syntax: "<transform-function>|<transform-list>",
   from: "translateX(100px)",
-  to: "translateX(200px)",
-  expected: "translateX(150px)",
+  to: "translateX(200px) rotate(90deg)",
+  expected: "translateX(200px) rotate(90deg)",
   behavior: 'allow-discrete',
-}, 'A custom property of type <transform-function> can yield a CSS Transition');
+}, 'A custom property cannot yield a CSS Transition from <transform-function> to <transform-list>');
 
 </script>
