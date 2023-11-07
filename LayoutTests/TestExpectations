@@ -1350,6 +1350,8 @@ http/tests/media/fairplay [ Skip ]
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/52669 animations/dynamic-stylesheet-loading.html [ Pass Failure ]
+
 webkit.org/b/111612 animations/animation-delay-changed.html [ Pass Failure ]
 
 # media/video-seek-after-end.html is flaky
