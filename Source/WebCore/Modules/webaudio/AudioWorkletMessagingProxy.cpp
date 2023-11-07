@@ -77,6 +77,7 @@ AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
 AudioWorkletMessagingProxy::~AudioWorkletMessagingProxy()
 {
     m_workletThread->stop();
+    m_workletThread->clearProxies();
 }
 
 bool AudioWorkletMessagingProxy::postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
