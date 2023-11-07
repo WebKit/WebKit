@@ -215,7 +215,6 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
-        m_callGraph.ast().clearUsesWorkgroupUniformLoad();
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -230,7 +229,6 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_callGraph.ast().usesDivision()) {
-        m_callGraph.ast().clearUsesDivision();
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");

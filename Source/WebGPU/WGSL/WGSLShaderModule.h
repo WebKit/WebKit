@@ -78,11 +78,9 @@ public:
 
     bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
-    void clearUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = false; }
 
     bool usesDivision() const { return m_usesDivision; }
     void setUsesDivision() { m_usesDivision = true; }
-    void clearUsesDivision() { m_usesDivision = false; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
