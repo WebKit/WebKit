@@ -452,7 +452,7 @@ public:
     bool isLegacySVGViewportContainer() const { return type() == Type::LegacySVGViewportContainer; }
     bool isSVGGradientStop() const { return type() == Type::SVGGradientStop; }
     virtual bool isLegacySVGHiddenContainer() const { return false; }
-    bool isSVGHiddenContainer() const { return type() == Type::SVGHiddenContainer; }
+    bool isSVGHiddenContainer() const { return type() == Type::SVGHiddenContainer || isSVGResourceContainer(); }
     bool isLegacySVGPath() const { return type() == Type::LegacySVGPath; }
     bool isSVGPath() const { return type() == Type::SVGPath; }
     virtual bool isSVGShape() const { return false; }
@@ -467,7 +467,7 @@ public:
     bool isLegacySVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }
     bool isSVGForeignObject() const { return type() == Type::SVGForeignObject; }
     virtual bool isLegacySVGResourceContainer() const { return false; }
-    virtual bool isSVGResourceContainer() const { return false; }
+    bool isSVGResourceContainer() const { return type() == Type::SVGResourceClipper; }
     bool isSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
     bool isLegacySVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
     bool isSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
