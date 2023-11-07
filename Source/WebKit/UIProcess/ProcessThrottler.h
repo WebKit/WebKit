@@ -168,6 +168,9 @@ private:
     void numberOfPagesAllowedToRunInTheBackgroundChanged();
     void clearAssertion();
 
+    class ProcessAssertionCache;
+
+    UniqueRef<ProcessAssertionCache> m_assertionCache;
     ProcessThrottlerClient& m_process;
     ProcessID m_processID { 0 };
     RefPtr<ProcessAssertion> m_assertion;
@@ -181,7 +184,7 @@ private:
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
     PageAllowedToRunInTheBackgroundCounter m_pageAllowedToRunInTheBackgroundCounter;
     bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
-    bool m_shouldTakeUIBackgroundAssertion { false };
+    const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
     bool m_allowsActivities { true };
 };
