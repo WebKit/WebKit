@@ -1227,6 +1227,27 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 #endif
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+@interface UIAsyncTextInteraction (Staging_117831560)
+
+- (void)presentEditMenuForSelection;
+- (void)dismissEditMenuForSelection;
+
+- (void)selectionChanged;
+- (void)editabilityChanged;
+
+@property (nonatomic, readonly) UITextSelectionDisplayInteraction *textSelectionDisplayInteraction;
+
+#if USE(UICONTEXTMENU)
+@property (nonatomic, weak) id<UIContextMenuInteractionDelegate> contextMenuInteractionDelegate;
+@property (nonatomic, readonly) UIContextMenuInteraction *contextMenuInteraction;
+#endif
+
+@end
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
