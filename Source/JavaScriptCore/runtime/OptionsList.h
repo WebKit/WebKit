@@ -573,7 +573,7 @@ bool canUseHandlerIC();
     \
     /* Feature Flags */\
     \
-    v(Bool, useArrayBufferTransfer, false, Normal, "Expose ArrayBuffer.transfer feature.") \
+    v(Bool, useArrayBufferTransfer, true, Normal, "Expose ArrayBuffer.transfer feature.") \
     v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync.") \
     v(Bool, useArrayGroupMethod, false, Normal, "Expose the Object.groupBy() and Map.groupBy() methods.") \
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
