@@ -116,6 +116,7 @@ $(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/Modules/iOS_Private.modulemap
 $(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyData.serialization.in
 $(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in
+$(PROJECT_DIR)/NetworkProcess/Classifier/StorageAccessStatus.serialization.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
@@ -127,6 +128,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoadParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkTransportChannel.messages.in
+$(PROJECT_DIR)/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
@@ -134,6 +136,7 @@ $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messa
 $(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
+$(PROJECT_DIR)/NetworkProcess/storage/FileSystemStorageError.serialization.in
 $(PROJECT_DIR)/NetworkProcess/storage/NetworkStorageManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in

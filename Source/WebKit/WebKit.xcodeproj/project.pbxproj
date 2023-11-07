@@ -4100,6 +4100,9 @@
 		2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewGestureController.messages.in; sourceTree = "<group>"; };
 		2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureControllerMessages.h; sourceTree = "<group>"; };
+		2D1DE3592AFA465300D955D4 /* StorageAccessStatus.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageAccessStatus.serialization.in; path = Classifier/StorageAccessStatus.serialization.in; sourceTree = "<group>"; };
+		2D1DE35A2AFA469000D955D4 /* PrivateClickMeasurementManagerInterface.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrivateClickMeasurementManagerInterface.serialization.in; sourceTree = "<group>"; };
+		2D1DE35B2AFA46BA00D955D4 /* FileSystemStorageError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = FileSystemStorageError.serialization.in; sourceTree = "<group>"; };
 		2D1E8221216FFF5000A15265 /* WKWebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKWebEvent.h; path = ios/WKWebEvent.h; sourceTree = "<group>"; };
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
 		2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemoteIOSurfaceBackend.h; sourceTree = "<group>"; };
@@ -11612,6 +11615,7 @@
 				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
 				5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */,
 				5CB930FA26E802150032B1C0 /* PrivateClickMeasurementManagerInterface.h */,
+				2D1DE35A2AFA469000D955D4 /* PrivateClickMeasurementManagerInterface.serialization.in */,
 				5CB930FB26E802150032B1C0 /* PrivateClickMeasurementManagerProxy.cpp */,
 				5CB930F526E802150032B1C0 /* PrivateClickMeasurementManagerProxy.h */,
 				57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */,
@@ -11863,6 +11867,7 @@
 				7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */,
 				7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */,
 				7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */,
+				2D1DE3592AFA465300D955D4 /* StorageAccessStatus.serialization.in */,
 				7A843A1A21E41FB200DEF663 /* WebResourceLoadStatisticsStore.cpp */,
 				7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */,
 			);
@@ -12085,6 +12090,7 @@
 				935BF8062936C9FC00B41326 /* CacheStorageRegistry.h */,
 				935BF7F52936BF1800B41326 /* CacheStorageStore.h */,
 				931A1BE026F85C320081A7E5 /* FileSystemStorageError.h */,
+				2D1DE35B2AFA46BA00D955D4 /* FileSystemStorageError.serialization.in */,
 				931A075226F06AB4004474CD /* FileSystemStorageHandle.cpp */,
 				931A075326F06AB4004474CD /* FileSystemStorageHandle.h */,
 				935B579926F5192F008B48AC /* FileSystemStorageHandleRegistry.cpp */,

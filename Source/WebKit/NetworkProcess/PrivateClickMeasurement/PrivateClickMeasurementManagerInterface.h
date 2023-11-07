@@ -27,7 +27,6 @@
 
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 class CertificateInfo;
@@ -117,31 +116,3 @@ void initializePCMStorageInDirectory(const String&);
 } // namespace PCM
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::PCM::MessageType> {
-    using values = EnumValues<
-        WebKit::PCM::MessageType,
-        WebKit::PCM::MessageType::StoreUnattributed,
-        WebKit::PCM::MessageType::HandleAttribution,
-        WebKit::PCM::MessageType::Clear,
-        WebKit::PCM::MessageType::ClearForRegistrableDomain,
-        WebKit::PCM::MessageType::MigratePrivateClickMeasurementFromLegacyStorage,
-        WebKit::PCM::MessageType::SetDebugModeIsEnabled,
-        WebKit::PCM::MessageType::ToStringForTesting,
-        WebKit::PCM::MessageType::SetOverrideTimerForTesting,
-        WebKit::PCM::MessageType::SetTokenPublicKeyURLForTesting,
-        WebKit::PCM::MessageType::SetTokenSignatureURLForTesting,
-        WebKit::PCM::MessageType::SetAttributionReportURLsForTesting,
-        WebKit::PCM::MessageType::MarkAllUnattributedAsExpiredForTesting,
-        WebKit::PCM::MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting,
-        WebKit::PCM::MessageType::SetPCMFraudPreventionValuesForTesting,
-        WebKit::PCM::MessageType::StartTimerImmediatelyForTesting,
-        WebKit::PCM::MessageType::SetPrivateClickMeasurementAppBundleIDForTesting,
-        WebKit::PCM::MessageType::DestroyStoreForTesting,
-        WebKit::PCM::MessageType::AllowTLSCertificateChainForLocalPCMTesting
-    >;
-};
-
-} // namespace WTF
