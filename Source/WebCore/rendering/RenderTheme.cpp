@@ -234,6 +234,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
         auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
             return appearance == StyleAppearance::Button
+#if ENABLE(INPUT_TYPE_COLOR)
+                || appearance == StyleAppearance::ColorWell
+#endif
                 || appearance == StyleAppearance::DefaultButton
                 || appearance == StyleAppearance::SquareButton
                 || appearance == StyleAppearance::PushButton;
