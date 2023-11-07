@@ -76,9 +76,6 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
 CallLinkInfo::~CallLinkInfo()
 {
     clearStub();
-    
-    if (isOnList())
-        remove();
 }
 
 void CallLinkInfo::clearStub()
@@ -92,7 +89,7 @@ void CallLinkInfo::clearStub()
 #endif
 }
 
-void CallLinkInfo::unlink(VM& vm)
+void CallLinkInfo::unlinkImpl(VM& vm)
 {
     // We could be called even if we're not linked anymore because of how polymorphic calls
     // work. Each callsite within the polymorphic call stub may separately ask us to unlink().

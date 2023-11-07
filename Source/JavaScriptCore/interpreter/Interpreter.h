@@ -161,7 +161,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
         
-        void prepareForCachedCall(CachedCall&, JSFunction*, int argumentCountIncludingThis, const ArgList&);
+        CodeBlock* prepareForCachedCall(CachedCall&, JSFunction*);
 
         JSValue executeCachedCall(CachedCall&);
         JSValue executeBoundCall(VM&, JSBoundFunction*, const ArgList&);

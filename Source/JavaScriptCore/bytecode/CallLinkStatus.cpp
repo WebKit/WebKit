@@ -146,7 +146,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     
     // Note that despite requiring that the locker is held, this code is racy with respect
     // to the CallLinkInfo: it may get cleared while this code runs! This is because
-    // CallLinkInfo::unlink() may be called from a different CodeBlock than the one that owns
+    // CallLinkInfoBase::unlink() may be called from a different CodeBlock than the one that owns
     // the CallLinkInfo and currently we save space by not having CallLinkInfos know who owns
     // them. So, there is no way for either the caller of CallLinkInfo::unlock() or unlock()
     // itself to figure out which lock to lock.

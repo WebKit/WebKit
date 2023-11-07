@@ -282,10 +282,7 @@ public:
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();
-    void linkIncomingCall(CallFrame* callerFrame, CallLinkInfo*);
-#if ENABLE(JIT)
-    void linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode*);
-#endif // ENABLE(JIT)
+    void linkIncomingCall(CallFrame* callerFrame, CallLinkInfoBase*);
 
     const JSInstruction* outOfLineJumpTarget(const JSInstruction* pc);
     int outOfLineJumpOffset(JSInstructionStream::Offset offset)
@@ -955,10 +952,7 @@ private:
     VM* const m_vm;
 
     const void* const m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
-#if ENABLE(JIT)
-    SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
-#endif
+    SentinelLinkedList<CallLinkInfoBase, PackedRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)

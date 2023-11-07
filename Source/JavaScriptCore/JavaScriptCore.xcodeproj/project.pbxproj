@@ -1973,6 +1973,7 @@
 		E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34F930E2322D882002B8DB4 /* JSGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F930C2322D881002B8DB4 /* JSGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = E35070891DC49BB60089BCD6 /* DOMJITSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E352576A2AF97DE400BD4754 /* CallLinkInfoBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E35257682AF97DE300BD4754 /* CallLinkInfoBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E353C11D24AA4CB7003FBDF3 /* IntlDisplayNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E353C11724AA4CB6003FBDF3 /* IntlDisplayNames.h */; };
 		E353C11E24AA4CB7003FBDF3 /* IntlDisplayNamesConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E353C11824AA4CB6003FBDF3 /* IntlDisplayNamesConstructor.h */; };
 		E353C12124AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E353C11B24AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h */; };
@@ -5604,6 +5605,8 @@
 		E34F930B2322D881002B8DB4 /* JSGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGenerator.cpp; sourceTree = "<group>"; };
 		E34F930C2322D881002B8DB4 /* JSGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGenerator.h; sourceTree = "<group>"; };
 		E35070891DC49BB60089BCD6 /* DOMJITSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSignature.h; sourceTree = "<group>"; };
+		E35257672AF97DE300BD4754 /* CallLinkInfoBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfoBase.cpp; sourceTree = "<group>"; };
+		E35257682AF97DE300BD4754 /* CallLinkInfoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfoBase.h; sourceTree = "<group>"; };
 		E353C11624AA4CB5003FBDF3 /* IntlDisplayNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDisplayNames.cpp; sourceTree = "<group>"; };
 		E353C11724AA4CB6003FBDF3 /* IntlDisplayNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNames.h; sourceTree = "<group>"; };
 		E353C11824AA4CB6003FBDF3 /* IntlDisplayNamesConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNamesConstructor.h; sourceTree = "<group>"; };
@@ -9363,6 +9366,8 @@
 				0F64B2781A7957B2006E4E66 /* CallEdge.h */,
 				0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */,
 				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
+				E35257672AF97DE300BD4754 /* CallLinkInfoBase.cpp */,
+				E35257682AF97DE300BD4754 /* CallLinkInfoBase.h */,
 				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
 				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
 				627673211B680C1E00FD9F2E /* CallMode.cpp */,
@@ -10411,6 +10416,7 @@
 				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
 				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
+				E352576A2AF97DE400BD4754 /* CallLinkInfoBase.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
 				627673241B680C1E00FD9F2E /* CallMode.h in Headers */,
 				0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */,
