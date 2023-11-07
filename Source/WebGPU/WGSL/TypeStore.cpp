@@ -86,6 +86,13 @@ struct PointerKey {
     TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
+struct PrimitiveStructKey {
+    unsigned kind;
+    const Type* elementType;
+
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::PrimitiveStruct, kind, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+};
+
 template<typename Key>
 const Type* TypeCache::find(const Key& key) const
 {
@@ -225,6 +232,21 @@ const Type* TypeStore::atomicType(const Type* type)
 const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ElaboratedTypeExpression&)>&& constructor)
 {
     return allocateType<TypeConstructor>(name, WTFMove(constructor));
+}
+
+const Type* TypeStore::frexpResultType(const Type* fract, const Type* exp)
+{
+    PrimitiveStructKey key { PrimitiveStruct::FrexpResult::kind, fract };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+
+    FixedVector<const Type*> values(2);
+    values[PrimitiveStruct::FrexpResult::fract] = fract;
+    values[PrimitiveStruct::FrexpResult::exp] = exp;
+    type = allocateType<PrimitiveStruct>("__frexp_result"_s, PrimitiveStruct::FrexpResult::kind, values);
+    m_cache.insert(key, type);
+    return type;
 }
 
 template<typename TypeKind, typename... Arguments>

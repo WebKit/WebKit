@@ -164,6 +164,15 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const Struct&) -> const Type* {
             return type;
         },
+        [&](const PrimitiveStruct& primitiveStruct) -> const Type* {
+            switch (primitiveStruct.kind) {
+            case PrimitiveStruct::FrexpResult::kind: {
+                auto* fract = concretize(primitiveStruct.values[PrimitiveStruct::FrexpResult::fract], types);
+                auto* exp = concretize(primitiveStruct.values[PrimitiveStruct::FrexpResult::exp], types);
+                return types.frexpResultType(fract, exp);
+            }
+            }
+        },
         [&](const Pointer&) -> const Type* {
             return type;
         },

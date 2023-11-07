@@ -245,6 +245,29 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
+
+    if (m_callGraph.ast().usesFrexp()) {
+        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
+        m_stringBuilder.append(m_indent, "struct __frexp_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T fract;\n");
+            m_stringBuilder.append(m_indent, "U exp;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n");
+        m_stringBuilder.append(m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "__frexp_result<T, U> result;\n");
+            m_stringBuilder.append(m_indent, "result.fract = frexp(value, result.exp);\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -743,6 +766,17 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(structure.structure.name());
             if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource)
                 m_stringBuilder.append("::PackedType");
+        },
+        [&](const PrimitiveStruct& structure) {
+            m_stringBuilder.append(structure.name, "<");
+            bool first = true;
+            for (auto& value : structure.values) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                visit(value);
+            }
+            m_stringBuilder.append(">");
         },
         [&](const Texture& texture) {
             const char* type;
@@ -1391,6 +1425,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
+            { "frexp", "__wgslFrexp"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
             { "inverseSqrt", "rsqrt"_s },
@@ -1867,6 +1902,10 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             m_stringBuilder.append(")");
         },
         [&](const Struct&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const PrimitiveStruct&) {
             // Not supported yet
             RELEASE_ASSERT_NOT_REACHED();
         },

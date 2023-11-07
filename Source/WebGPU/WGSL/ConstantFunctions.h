@@ -111,6 +111,11 @@ static ConstantValue zeroValue(const Type* type)
             // yet have ConstantStruct
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Types::PrimitiveStruct&) -> ConstantValue {
+            // FIXME: this is valid and needs to be implemented, but we don't
+            // yet have ConstantStruct
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Types::Matrix& matrix) -> ConstantValue {
             ConstantMatrix result(matrix.columns, matrix.rows);
             auto value = zeroValue(matrix.element);

@@ -1370,7 +1370,26 @@ fn testFract()
 // 17.5.32
 fn testFrexp()
 {
-    // FIXME: this needs the special return types __frexp_result_*
+    // FIXME: we don't support constant evaluation yet, update tests when it's supported
+    {
+      let x: f32 = 1.5;
+      let y = frexp(x);
+    }
+
+    {
+      let x: vec2<f32> = vec2(1.5);
+      let y = frexp(x);
+    }
+
+    {
+      let x: vec3<f32> = vec3(1.5);
+      let y = frexp(x);
+    }
+
+    {
+      let x: vec4<f32> = vec4(1.5);
+      let y = frexp(x);
+    }
 }
 
 // 17.5.33

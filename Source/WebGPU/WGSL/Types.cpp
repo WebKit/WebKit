@@ -64,6 +64,15 @@ void Type::dump(PrintStream& out) const
         [&](const Struct& structure) {
             out.print(structure.structure.name());
         },
+        [&](const PrimitiveStruct& structure) {
+            out.print(structure.name, "<");
+            switch (structure.kind) {
+            case PrimitiveStruct::FrexpResult::kind:
+                out.print(*structure.values[PrimitiveStruct::FrexpResult::fract]);
+                break;
+            }
+            out.print(">");
+        },
         [&](const Function& function) {
             out.print("(");
             bool first = true;
@@ -234,6 +243,19 @@ ConversionRank conversionRank(const Type* from, const Type* to)
         return conversionRank(fromArray->element, toArray->element);
     }
 
+    if (auto* fromPrimitiveStruct = std::get_if<PrimitiveStruct>(from)) {
+        auto* toPrimitiveStruct = std::get_if<PrimitiveStruct>(to);
+        if (!toPrimitiveStruct)
+            return std::nullopt;
+        auto kind = fromPrimitiveStruct->kind;
+        if (kind != toPrimitiveStruct->kind)
+            return std::nullopt;
+        switch (kind) {
+        case PrimitiveStruct::FrexpResult::kind:
+            return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract], toPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract]);
+        }
+    }
+
     // FIXME: add the abstract result conversion rules
     return std::nullopt;
 }
@@ -284,6 +306,9 @@ unsigned Type::size() const
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();
+        },
+        [&](const PrimitiveStruct&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -354,6 +379,9 @@ unsigned Type::alignment() const
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.alignment();
+        },
+        [&](const PrimitiveStruct&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
