@@ -20,5 +20,5 @@ FAIL Fallback must adhere to registered syntax [<length>, var(--length-1)] asser
 PASS Invalid fallback is not used [<length>, red]
 PASS Invalid fallback is not used [<length> | none, nolength]
 PASS Invalid fallback is not used [<color>, var(--length-1)]
-FAIL Empty universal custom property can be substituted with var() assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS Empty universal custom property can be substituted with var()
 
