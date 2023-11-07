@@ -1104,7 +1104,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
     if (!mainFrame)
         return false;
 
-    if (openerFrame() && preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+    if (openerFrame() && (preferences().processSwapOnCrossSiteWindowOpenEnabled() || preferences().siteIsolationEnabled())) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because it has an opener.", m_process->processID());
         return false;
     }
@@ -4331,7 +4331,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 bool WebPageProxy::shouldClosePreviousPage()
 {
     auto* opener = openerFrame();
-    return !preferences().processSwapOnCrossSiteWindowOpenEnabled()
+    return !(preferences().processSwapOnCrossSiteWindowOpenEnabled() || preferences().siteIsolationEnabled())
         || !opener
         || opener->process() != process();
 }

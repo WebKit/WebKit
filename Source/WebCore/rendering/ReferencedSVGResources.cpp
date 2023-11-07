@@ -146,6 +146,14 @@ RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeS
     return downcast<SVGElement>(WTFMove(element));
 }
 
+RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(TreeScope& treeScope, const ReferencePathOperation& clipPath)
+{
+    if (clipPath.fragment().isEmpty())
+        return nullptr;
+    RefPtr element = elementForResourceID(treeScope, clipPath.fragment(), SVGNames::clipPathTag);
+    return element ? downcast<SVGClipPathElement>(WTFMove(element)) : nullptr;
+}
+
 RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
 {
     if (referenceFilter.fragment().isEmpty())

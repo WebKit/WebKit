@@ -5472,7 +5472,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     if (style->display() == DisplayType::Contents)
         return false;
 
-    if (options.checkVisibilityCSS && style->visibility() != Visibility::Visible)
+    if ((options.visibilityProperty || options.checkVisibilityCSS) && style->visibility() != Visibility::Visible)
         return false;
 
     RefPtr parent = parentElementInComposedTree();
@@ -5491,7 +5491,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     if (isSkippedContentWithReason(ContentVisibility::Hidden))
         return false;
 
-    if (options.checkContentVisibilityAuto && isSkippedContentWithReason(ContentVisibility::Auto))
+    if (options.contentVisibilityAuto && isSkippedContentWithReason(ContentVisibility::Auto))
         return false;
 
     for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
@@ -5499,7 +5499,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
         if (ancestorStyle->display() == DisplayType::None)
             return false;
 
-        if (options.checkOpacity && ancestorStyle->opacity() == 0.0f)
+        if ((options.opacityProperty || options.checkOpacity) && ancestorStyle->opacity() == 0.0f)
             return false;
     }
 

@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, copy) NSDictionary *localizationDictionary;
 
 - (instancetype)initWithWebExtension:(WebKit::WebExtension&)webExtension;
+- (instancetype)initWithLocalizedDictionary:(nullable NSDictionary<NSString *, NSDictionary *> *)localizedDictionary uniqueIdentifier:(NSString *)uniqueIdentifier;
 - (instancetype)initWithRegionalLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)regionalLocalization languageLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)languageLocalization defaultLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)defaultLocalization withBestLocale:(nullable NSString *)localeString uniqueIdentifier:(nullable NSString *)uniqueIdentifier NS_DESIGNATED_INITIALIZER;
 
 - (NSDictionary<NSString *, id> *)localizedDictionaryForDictionary:(NSDictionary<NSString *, id> *)dictionary;

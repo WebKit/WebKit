@@ -517,18 +517,26 @@
         (literal "/private/var/run/syslog"))
 )
 
+(define (notifyd-message-numbers) (message-number 1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))
+
 (allow mach-lookup (global-name "com.apple.system.notification_center")
     (apply-message-filter
         (deny mach-message-send)
         (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (message-number
-            1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))))
+        (allow mach-message-send (notifyd-message-numbers))))
 
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center"))
 
+(with-filter (webcontent-process-launched)
+    (apply-message-filter
+        (deny mach-message-send)
+        (deny mach-message-send (with no-report) (message-number 1023))
+        (allow mach-message-send (with telemetry-backtrace) (notifyd-message-numbers))))
+
 (with-filter (state-flag "EnableExperimentalSandbox")
-    (deny mach-lookup (global-name "com.apple.system.notification_center")))
+    (allow mach-lookup (global-name "com.apple.system.notification_center")
+        (apply-message-filter (deny mach-message-send))))
 
 
 (managed-configuration-read-public)

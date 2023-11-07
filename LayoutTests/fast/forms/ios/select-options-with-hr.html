@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+    <hr>
+    <option>D</option>
+    <option>E</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that choosing options in a &lt;select&gt; with an &lt;hr&gt; child works as expected.");
+
+    shouldBeEqualToString("select.value", "A");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(3);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "D");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(4);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "E");
+
+    finishJSTest();
+});
+</script>
+</html>

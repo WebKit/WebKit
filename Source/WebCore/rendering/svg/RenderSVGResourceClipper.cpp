@@ -32,6 +32,7 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "Logging.h"
+#include "ReferencedSVGResources.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
@@ -141,14 +142,14 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    // FIXME: [LBSE] Fix clip paths referencing another clip path.
-#if 0
     if (style().clipPath()) {
-        auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-        if (auto* clipper = resources ? resources->clipper() : nullptr)
-            clipper->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
+        auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style().clipPath());
+
+        if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), referenceClipPathOperation)) {
+            if (auto* referencedClipperRenderer = dynamicDowncast<RenderSVGResourceClipper>(referencedClipPathElement->renderer()))
+                referencedClipperRenderer->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
+        }
     }
-#endif
 
     AffineTransform contentTransform;
 

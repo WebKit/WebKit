@@ -20,8 +20,8 @@ import argparse
 import os
 import sys
 
-VALID_EXTENSIONS = {'.html', '.js', '.css', '.svg', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf'}
-COMPRESSIBLE_EXTENSIONS = {'.html', '.js', '.css', '.svg', '.properties'}
+VALID_EXTENSIONS = {'.html', '.js', '.mjs', '.css', '.svg', '.json', '.ftl', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf'}
+COMPRESSIBLE_EXTENSIONS = {'.html', '.js', '.mjs', '.css', '.svg', '.json', '.ftl', '.properties'}
 BASE_DIRS = {'pdfjs/', 'pdfjs-extras/'}
 
 IGNORE = {'LICENSE',

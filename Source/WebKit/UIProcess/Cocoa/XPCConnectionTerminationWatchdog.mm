@@ -47,7 +47,7 @@ XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProc
     
 void XPCConnectionTerminationWatchdog::watchdogTimerFired()
 {
-    if (m_process && m_process->connection())
+    if (m_process && m_process->hasConnection())
         terminateWithReason(m_process->connection()->xpcConnection(), ReasonCode::WatchdogTimerFired, "XPCConnectionTerminationWatchdog::watchdogTimerFired");
     delete this;
 }

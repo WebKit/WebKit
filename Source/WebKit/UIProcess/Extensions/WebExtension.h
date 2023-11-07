@@ -84,6 +84,7 @@ public:
 
     enum class CacheResult : bool { No, Yes };
     enum class SuppressNotification : bool { No, Yes };
+    enum class SuppressNotFoundErrors : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -164,8 +165,8 @@ public:
 
     UTType *resourceTypeForPath(NSString *);
 
-    NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No);
-    NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);
+    NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     _WKWebExtensionLocalization *localization();
     NSLocale *defaultLocale();

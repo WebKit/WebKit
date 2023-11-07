@@ -5698,6 +5698,20 @@ ScrollAnimatorEnabled:
     WebCore:
       default: false
 
+ScrollDrivenAnimationsEnabled:
+  type: bool
+  status: testable
+  category: animation
+  humanReadableName: "Scroll-driven Animations"
+  humanReadableDescription: "Enable Scroll-driven Animations"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ScrollToTextFragmentEnabled:
   type: bool
   status: stable

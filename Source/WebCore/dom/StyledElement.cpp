@@ -276,6 +276,25 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     });
 }
 
+Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+{
+    if (replacementURLStrings.isEmpty())
+        return attribute;
+
+    if (attribute.name() != styleAttr)
+        return attribute;
+
+    RefPtr properties = this->inlineStyle();
+    if (!properties)
+        return attribute;
+
+    auto mutableProperties = properties->mutableCopy();
+    mutableProperties->setReplacementURLForSubresources(replacementURLStrings);
+    auto inlineStyleString = mutableProperties->asText();
+    mutableProperties->clearReplacementURLForSubresources();
+    return Attribute { styleAttr, AtomString { inlineStyleString } };
+}
+
 const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 {
     if (!elementData())

@@ -1938,11 +1938,11 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
 
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.
     // The issue is that the opener has a handle to the WindowProxy.
-    if (navigation.openedByDOMWithOpener() && !!page.openerFrame() && !page.preferences().processSwapOnCrossSiteWindowOpenEnabled())
+    if (navigation.openedByDOMWithOpener() && !!page.openerFrame() && !(page.preferences().processSwapOnCrossSiteWindowOpenEnabled() || page.preferences().siteIsolationEnabled()))
         return { WTFMove(sourceProcess), nullptr, "Browsing context been opened by DOM without 'noopener'"_s };
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.
-    if (navigation.hasOpenedFrames() && page.hasOpenedPage() && !page.preferences().processSwapOnCrossSiteWindowOpenEnabled())
+    if (navigation.hasOpenedFrames() && page.hasOpenedPage() && !(page.preferences().processSwapOnCrossSiteWindowOpenEnabled() || page.preferences().siteIsolationEnabled()))
         return { WTFMove(sourceProcess), nullptr, "Browsing context has opened other windows"_s };
 
     if (RefPtr targetItem = navigation.targetItem()) {

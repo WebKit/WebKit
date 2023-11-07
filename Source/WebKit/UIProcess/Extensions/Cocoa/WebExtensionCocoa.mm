@@ -335,7 +335,7 @@ UTType *WebExtension::resourceTypeForPath(NSString *path)
     return result;
 }
 
-NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheResult)
+NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(path);
 
@@ -349,7 +349,7 @@ NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheR
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return generatedBackgroundContent();
 
-    NSData *data = resourceDataForPath(path, CacheResult::No);
+    NSData *data = resourceDataForPath(path, CacheResult::No, suppressErrors);
 
     NSString *string;
     [NSString stringEncodingForData:data encodingOptions:nil convertedString:&string usedLossyConversion:nil];
@@ -365,7 +365,7 @@ NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheR
     return string;
 }
 
-NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult)
+NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(path);
 
@@ -403,14 +403,16 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 
     NSURL *resourceURL = resourceFileURLForPath(path);
     if (!resourceURL) {
-        recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
+        if (suppressErrors == SuppressNotFoundErrors::No)
+            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
         return nil;
     }
 
     NSError *fileReadError;
     NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
     if (!resultData) {
-        recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), fileReadError));
+        if (suppressErrors == SuppressNotFoundErrors::No)
+            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), fileReadError));
         return nil;
     }
 

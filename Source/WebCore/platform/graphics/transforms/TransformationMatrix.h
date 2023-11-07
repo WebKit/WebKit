@@ -267,15 +267,20 @@ public:
     WEBCORE_EXPORT TransformationMatrix& scaleNonUniform(double sx, double sy);
     TransformationMatrix& scale3d(double sx, double sy, double sz);
 
+    enum class RotationSnapping {
+        None,
+        Snap90degRotations,
+    };
+
     // Angle is in degrees.
-    WEBCORE_EXPORT TransformationMatrix& rotate(double);
-    WEBCORE_EXPORT TransformationMatrix& rotateRadians(double);
+    WEBCORE_EXPORT TransformationMatrix& rotate(double, RotationSnapping = RotationSnapping::Snap90degRotations);
+    WEBCORE_EXPORT TransformationMatrix& rotateRadians(double, RotationSnapping = RotationSnapping::Snap90degRotations);
     TransformationMatrix& rotateFromVector(double x, double y);
-    WEBCORE_EXPORT TransformationMatrix& rotate3d(double rx, double ry, double rz);
-    
+    WEBCORE_EXPORT TransformationMatrix& rotate3d(double rx, double ry, double rz, RotationSnapping = RotationSnapping::Snap90degRotations);
+
     // The vector (x,y,z) is normalized if it's not already. A vector of (0,0,0) uses a vector of (0,0,1).
-    TransformationMatrix& rotate3d(double x, double y, double z, double angle);
-    
+    TransformationMatrix& rotate3d(double x, double y, double z, double angle, RotationSnapping = RotationSnapping::Snap90degRotations);
+
     WEBCORE_EXPORT TransformationMatrix& translate(double tx, double ty);
     WEBCORE_EXPORT TransformationMatrix& translate3d(double tx, double ty, double tz);
 

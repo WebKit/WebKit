@@ -456,6 +456,8 @@ imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [
 # AXObjectCache::announce not implemented.
 accessibility/announcement-notification.html [ Skip ]
 
+# Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=263715
+accessibility/focus-inside-modal.html [ Skip ]
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=249283.
 accessibility/progress-element-value-changes.html [ Skip ]
 

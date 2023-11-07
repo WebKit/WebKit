@@ -25,7 +25,10 @@
 
 // https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface
 dictionary CheckVisibilityOptions {
-    boolean checkOpacity = false;
-    boolean checkVisibilityCSS = false;
-    boolean checkContentVisibilityAuto = false;
+    boolean opacityProperty = false;
+    boolean visibilityProperty = false;
+    boolean contentVisibilityAuto = false;
+
+    boolean checkOpacity = false; // Historical alias of .opacityProperty.
+    boolean checkVisibilityCSS = false; // Historical alias of .visibilityProperty.
 };

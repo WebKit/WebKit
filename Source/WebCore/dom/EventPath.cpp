@@ -133,6 +133,9 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
         if (!shouldEventCrossShadowBoundary(event, shadowRoot, originalTarget))
             return;
         node = shadowRoot->host();
+        ASSERT(node);
+        if (!node)
+            return;
         if (shadowRoot->mode() != ShadowRootMode::Open)
             closedShadowDepth--;
         if (exitingShadowTreeOfTarget)

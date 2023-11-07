@@ -49,17 +49,6 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
-static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
-{
-    auto preferences = [configuration preferences];
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"ProcessSwapOnCrossSiteWindowOpenEnabled"]) {
-            [preferences _setEnabled:YES forFeature:feature];
-            break;
-        }
-    }
-}
-
 static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server)
 {
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -299,7 +288,7 @@ TEST(SiteIsolation, BasicPostMessageWindowOpen)
     };
 
     auto configuration = server.httpsProxyConfiguration();
-    enableWindowOpenPSON(configuration);
+    enableSiteIsolation(configuration);
 
     __block RetainPtr<NSString> alert;
     auto uiDelegate = adoptNS([TestUIDelegate new]);
@@ -347,13 +336,11 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
-    enableWindowOpenPSON(configuration);
     opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     opener.webView.get().navigationDelegate = opener.navigationDelegate.get();
     opener.uiDelegate = adoptNS([TestUIDelegate new]);
     opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         enableSiteIsolation(configuration);
-        enableWindowOpenPSON(configuration);
         opened.webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [opened.navigationDelegate allowAnyTLSCertificate];

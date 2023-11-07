@@ -75,7 +75,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
     auto updateProperties = [&](WebExtensionContextProxy& context) {
         context.m_baseURL = parameters.baseURL;
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
-        context.m_localization = parseLocalization(parameters.localizationJSON.get());
+        context.m_localization = parseLocalization(parameters.localizationJSON.get(), parameters.baseURL);
         context.m_manifest = parseJSON(parameters.manifestJSON.get());
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_testingMode = parameters.testingMode;
@@ -120,13 +120,9 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
     return result.releaseNonNull();
 }
 
-_WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json)
+_WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json, const URL& baseURL)
 {
-    NSDictionary *localizedDictionary = parseJSON(json);
-    if (!localizedDictionary)
-        return nil;
-
-    return [[_WKWebExtensionLocalization alloc] initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localizedDictionary[@"@@ui_locale"][@"message"] uniqueIdentifier:nil];
+    return [[_WKWebExtensionLocalization alloc] initWithLocalizedDictionary:parseJSON(json) uniqueIdentifier:baseURL.host().toString()];
 }
 
 } // namespace WebKit
