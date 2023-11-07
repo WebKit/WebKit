@@ -5043,19 +5043,6 @@ PerElementSpeakerSelectionEnabled:
     WebCore:
       default: false
 
-PerformanceNavigationTimingAPIEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "PerformanceNavigationTiming"
-  humanReadableDescription: "Enable PerformanceNavigationTiming API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 PermissionsAPIEnabled:
   type: bool
   status: stable

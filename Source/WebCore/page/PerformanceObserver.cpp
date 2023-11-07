@@ -149,10 +149,8 @@ Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& 
     Vector<String> entryTypes = {
         "mark"_s,
         "measure"_s,
+        "navigation"_s,
     };
-
-    if (context.settingsValues().performanceNavigationTimingAPIEnabled)
-        entryTypes.append("navigation"_s);
 
     if (is<Document>(context) && downcast<Document>(context).supportsPaintTiming())
         entryTypes.append("paint"_s);
