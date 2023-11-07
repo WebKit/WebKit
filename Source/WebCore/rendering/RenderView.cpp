@@ -512,18 +512,22 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         return;
 
     // FIXME: enclosingRect is needed as long as we integral snap ScrollView/FrameView/RenderWidget size/position.
-    IntRect enclosingRect = enclosingIntRect(repaintRect);
+    auto enclosingRect = enclosingIntRect(repaintRect);
     if (auto ownerElement = document().ownerElement()) {
-        RenderBox* ownerBox = ownerElement->renderBox();
+        auto* ownerBox = ownerElement->renderBox();
         if (!ownerBox)
             return;
         LayoutRect viewRect = this->viewRect();
 #if PLATFORM(IOS_FAMILY)
         // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
+        // FIXME: This statement is wrong for iframes.
         LayoutRect adjustedRect = enclosingRect;
 #else
         LayoutRect adjustedRect = intersection(enclosingRect, viewRect);
 #endif
+        if (adjustedRect.isEmpty())
+            return;
+
         adjustedRect.moveBy(-viewRect.location());
         adjustedRect.moveBy(ownerBox->contentBoxRect().location());
 
