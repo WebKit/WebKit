@@ -36,10 +36,12 @@ SOFT_LINK_FRAMEWORK(UIKit) // NOLINT
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 
 @implementation WKTextInteractionWrapper {
+    __weak WKContentView *_view;
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     RetainPtr<UIAsyncTextInteraction> _asyncTextInteraction;
 #endif
+    BOOL _shouldRestoreEditMenuAfterOverflowScrolling;
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -55,7 +57,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     } else
 #endif
         _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
-
+    _view = view;
     return self;
 }
 
@@ -100,6 +102,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 {
     [_textInteractionAssistant willStartScrollingOverflow];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
 #endif
@@ -109,7 +112,8 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 {
     [_textInteractionAssistant didEndScrollingOverflow];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    [_asyncTextInteraction presentEditMenuForSelection];
+    if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
+        [_asyncTextInteraction presentEditMenuForSelection];
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
 #endif
 }
@@ -118,6 +122,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 {
     [_textInteractionAssistant willStartScrollingOrZooming];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
 #endif
 }
@@ -126,7 +131,8 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 {
     [_textInteractionAssistant didEndScrollingOrZooming];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    [_asyncTextInteraction presentEditMenuForSelection];
+    if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
+        [_asyncTextInteraction presentEditMenuForSelection];
 #endif
 }
 

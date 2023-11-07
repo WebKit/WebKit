@@ -1512,8 +1512,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _page->unobscuredContentRect();
 }
 
-
 #pragma mark - UITextAutoscrolling
+
 - (void)startAutoscroll:(CGPoint)pointInDocument
 {
     _page->startAutoscrollAtPosition(pointInDocument);
@@ -1528,7 +1528,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     // Used to scroll selection on keyboard up; we already scroll to visible.
 }
-
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -6502,7 +6501,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (UITextInteractionAssistant *)interactionAssistant
 {
-    return [_textInteractionWrapper textInteractionAssistant];
+    if (!self.shouldUseAsyncInteractions)
+        return [_textInteractionWrapper textInteractionAssistant];
+    return super.interactionAssistant;
 }
 
 // NSRange support.  Would like to deprecate to the extent possible, although some support
@@ -11910,6 +11911,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (void)willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        if (auto strongSelf = weakSelf.get())
+            strongSelf->_isPresentingEditMenu = YES;
+    }];
+
     auto delegate = self.webView.UIDelegate;
     if (![delegate respondsToSelector:@selector(webView:willPresentEditMenuWithAnimator:)])
         return;
@@ -11919,6 +11925,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (void)willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        if (auto strongSelf = weakSelf.get())
+            strongSelf->_isPresentingEditMenu = NO;
+    }];
+
     auto delegate = self.webView.UIDelegate;
     if (![delegate respondsToSelector:@selector(webView:willDismissEditMenuWithAnimator:)])
         return;
@@ -11928,9 +11939,14 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
+- (BOOL)isPresentingEditMenu
+{
+    return _isPresentingEditMenu;
+}
+
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
-#pragma mark - UIAsyncTextInput (and related)
+#pragma mark - UIAsyncTextInputClient (and related)
 
 - (id<UIAsyncTextInputDelegate>)asyncSystemInputDelegate
 {
@@ -11979,6 +11995,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (UIView *)textInputView
 {
     return self;
+}
+
+- (void)autoscrollToPoint:(CGPoint)pointInDocument
+{
+    _page->startAutoscrollAtPosition(pointInDocument);
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

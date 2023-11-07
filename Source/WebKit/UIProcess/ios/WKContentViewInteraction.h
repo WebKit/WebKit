@@ -480,6 +480,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _waitingForKeyboardAppearanceAnimationToStart;
     BOOL _isHidingKeyboard;
     BOOL _isPreparingEditMenu;
+    BOOL _isPresentingEditMenu;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
@@ -608,6 +609,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) UIGestureRecognizer *imageAnalysisGestureRecognizer;
 @property (nonatomic, readonly, getter=isKeyboardScrollingAnimationRunning) BOOL keyboardScrollingAnimationRunning;
 @property (nonatomic, readonly) UIView *unscaledView;
+@property (nonatomic, readonly) BOOL isPresentingEditMenu;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

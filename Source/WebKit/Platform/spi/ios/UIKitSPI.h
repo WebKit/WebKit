@@ -1169,6 +1169,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)pasteAndMatchStyle:(id)sender;
 - (void)makeTextWritingDirectionNatural:(id)sender;
 @property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
+@property (nonatomic, readonly) UITextInteractionAssistant *interactionAssistant;
 @end
 
 @interface _UINavigationInteractiveTransitionBase ()
