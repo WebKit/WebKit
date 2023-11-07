@@ -222,7 +222,7 @@ void VideoPresentationModelContext::setVideoDimensions(const WebCore::FloatSize&
         return;
 
     m_videoDimensions = videoDimensions;
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions, ", clients=", m_clients.size());
     for (auto& client : copyToVector(m_clients))
         client->videoDimensionsChanged(videoDimensions);
 }
@@ -691,6 +691,9 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
         [playerLayer layoutIfNeeded];
     }
 
+    if (m_page)
+        m_page->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize));
+
     return model->playerLayer();
 }
 
@@ -764,6 +767,9 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
         model->setPlayerView(playerView.get());
         model->setVideoView(videoView.get());
     }
+
+    if (m_page)
+        m_page->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize));
 
     return model->videoView();
 }

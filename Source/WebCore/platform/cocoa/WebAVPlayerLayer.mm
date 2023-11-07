@@ -126,14 +126,14 @@ private:
         model->removeClient(*_presentationModelClient);
 
     _presentationModel = presentationModel;
+#if !RELEASE_LOG_DISABLED
+    _logIdentifier = presentationModel ? presentationModel->nextChildIdentifier() : nullptr;
+#endif
 
     if (presentationModel)
         presentationModel->addClient(*_presentationModelClient);
 
     self.videoDimensions = presentationModel ? presentationModel->videoDimensions() : CGSizeZero;
-#if !RELEASE_LOG_DISABLED
-    _logIdentifier = presentationModel ? presentationModel->nextChildIdentifier() : nullptr;
-#endif
 }
 
 - (AVPlayerController *)playerController
@@ -167,6 +167,7 @@ private:
     if (CGSizeEqualToSize(_videoDimensions, videoDimensions))
         return;
 
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, FloatSize { videoDimensions });
     _videoDimensions = videoDimensions;
     [self setNeedsLayout];
 }
