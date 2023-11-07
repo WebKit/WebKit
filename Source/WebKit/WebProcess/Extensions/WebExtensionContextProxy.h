@@ -155,7 +155,7 @@ private:
     void dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContext::WindowIsClosing);
 
     // Web Navigation
-    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebExtensionTabIdentifier, WebExtensionFrameIdentifier, const URL&);
 
     // Windows
     void dispatchWindowsEvent(WebExtensionEventListenerType, const std::optional<WebExtensionWindowParameters>&);

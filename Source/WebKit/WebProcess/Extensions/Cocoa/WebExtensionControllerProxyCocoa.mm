@@ -38,6 +38,7 @@
 #include "WebExtensionAPINamespace.h"
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -107,22 +108,22 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 
 void WebExtensionControllerProxy::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), frame.frameID(), url), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
 }
 
 void WebExtensionControllerProxy::didCommitLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), frame.frameID(), url), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
 }
 
 void WebExtensionControllerProxy::didFinishLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), frame.frameID(), url), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
 }
 
 void WebExtensionControllerProxy::didFailLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), frame.frameID(), url), identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
 }
 
 } // namespace WebKit

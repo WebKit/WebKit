@@ -99,14 +99,14 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred
     return *m_onErrorOccurredEvent;
 }
 
-void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListenerType type, WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListenerType type, WebExtensionTabIdentifier tabID, WebExtensionFrameIdentifier frameID, const URL& frameURL)
 {
     auto *navigationDetails = @{
         @"url": (NSString *)frameURL.string(),
 
-        // FIXME: <https://webkit.org/b/260160> We should be passing more arguments here and these arguments should have the correct values.
-        @"tabId": @(pageID.toUInt64()),
-        @"frameId": @(frameID.object().toUInt64())
+        // FIXME: <https://webkit.org/b/260160> We should be passing more arguments here.
+        @"tabId": @(toWebAPI(tabID)),
+        @"frameId": @(toWebAPI(frameID))
     };
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {

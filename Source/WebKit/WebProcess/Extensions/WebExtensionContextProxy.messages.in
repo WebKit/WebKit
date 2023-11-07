@@ -62,7 +62,7 @@ messages -> WebExtensionContextProxy {
     DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionContext::WindowIsClosing windowIsClosing)
 
     // Web Navigation
-    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionTabIdentifier tabID, WebKit::WebExtensionFrameIdentifier frameID, URL targetURL)
 
     // Windows
     DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)
