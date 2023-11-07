@@ -518,6 +518,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
+        NetworkProcess/Classifier/ITPThirdPartyData.serialization.in \
+	NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \

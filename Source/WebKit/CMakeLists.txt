@@ -364,6 +364,9 @@ set(WebKit_SERIALIZATION_IN_FILES
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
 
+    NetworkProcess/Classifier/ITPThirdPartyData.serialization.in
+    NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in
+
     Platform/IPC/StreamServerConnection.serialization.in
 
     Platform/SharedMemory.serialization.in

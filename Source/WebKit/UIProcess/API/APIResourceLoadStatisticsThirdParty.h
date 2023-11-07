@@ -26,14 +26,15 @@
 #pragma once
 
 #include "APIObject.h"
-#include "WebResourceLoadStatisticsStore.h"
+#include "ITPThirdPartyData.h"
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
 
 class ResourceLoadStatisticsThirdParty final : public ObjectImpl<Object::Type::ResourceLoadStatisticsThirdParty> {
 public:
-    static Ref<ResourceLoadStatisticsThirdParty> create(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& thirdPartyData)
+    static Ref<ResourceLoadStatisticsThirdParty> create(WebKit::ITPThirdPartyData&& thirdPartyData)
     {
         RELEASE_ASSERT(RunLoop::isMain());
         return adoptRef(*new ResourceLoadStatisticsThirdParty(WTFMove(thirdPartyData)));
@@ -45,15 +46,15 @@ public:
     }
 
     const WTF::String& thirdPartyDomain() const { return m_thirdPartyData.thirdPartyDomain.string(); }
-    const Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& underFirstParties() const { return m_thirdPartyData.underFirstParties; }
+    const Vector<WebKit::ITPThirdPartyDataForSpecificFirstParty>& underFirstParties() const { return m_thirdPartyData.underFirstParties; }
 
 private:
-    explicit ResourceLoadStatisticsThirdParty(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& thirdPartyData)
+    explicit ResourceLoadStatisticsThirdParty(WebKit::ITPThirdPartyData&& thirdPartyData)
         : m_thirdPartyData(WTFMove(thirdPartyData))
     {
     }
 
-    const WebKit::WebResourceLoadStatisticsStore::ThirdPartyData m_thirdPartyData;
+    const WebKit::ITPThirdPartyData m_thirdPartyData;
 };
 
 } // namespace API

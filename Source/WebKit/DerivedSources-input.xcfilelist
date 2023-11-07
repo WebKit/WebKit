@@ -114,6 +114,8 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
 $(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/Modules/iOS_Private.modulemap
+$(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyData.serialization.in
+$(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in

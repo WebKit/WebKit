@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,24 @@
 
 #pragma once
 
-#include "APIObject.h"
-#include "ITPThirdPartyDataForSpecificFirstParty.h"
-#include <wtf/RunLoop.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(TRACKING_PREVENTION)
 
-namespace API {
+#include <WebCore/RegistrableDomain.h>
+#include <wtf/Forward.h>
 
-class ResourceLoadStatisticsFirstParty final : public ObjectImpl<Object::Type::ResourceLoadStatisticsFirstParty> {
-public:
-    static Ref<ResourceLoadStatisticsFirstParty> create(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-        return adoptRef(*new ResourceLoadStatisticsFirstParty(firstPartyData));
-    }
+namespace WebKit {
 
-    ~ResourceLoadStatisticsFirstParty()
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-    }
+struct ITPThirdPartyDataForSpecificFirstParty {
+    WebCore::RegistrableDomain firstPartyDomain;
+    bool storageAccessGranted;
+    Seconds timeLastUpdated;
 
-    const WTF::String& firstPartyDomain() const { return m_firstPartyData.firstPartyDomain.string(); }
-    bool storageAccess() const { return m_firstPartyData.storageAccessGranted; }
-    double timeLastUpdated() const { return m_firstPartyData.timeLastUpdated.value(); }
+    String toString() const;
 
-private:
-    explicit ResourceLoadStatisticsFirstParty(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-        : m_firstPartyData(firstPartyData)
-    {
-    }
-
-    const WebKit::ITPThirdPartyDataForSpecificFirstParty m_firstPartyData;
+    // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
+    bool operator==(const ITPThirdPartyDataForSpecificFirstParty&) const;
 };
 
-} // namespace API
+} // namespace WebKit
+
+#endif // ENABLE(TRACKING_PREVENTION)

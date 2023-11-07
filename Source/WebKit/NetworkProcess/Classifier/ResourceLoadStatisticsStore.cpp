@@ -1405,7 +1405,7 @@ static ASCIILiteral joinSubStatisticsForSorting()
         "GROUP BY domainID) ORDER BY sum DESC;"_s;
 }
 
-Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsStore::getThirdPartyDataForSpecificFirstPartyDomains(unsigned thirdPartyDomainID, const RegistrableDomain& thirdPartyDomain) const
+Vector<ITPThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsStore::getThirdPartyDataForSpecificFirstPartyDomains(unsigned thirdPartyDomainID, const RegistrableDomain& thirdPartyDomain) const
 {
     auto scopedStatement = this->scopedStatement(m_getAllSubStatisticsStatement, getAllSubStatisticsUnderDomainQuery, "getThirdPartyDataForSpecificFirstPartyDomains"_s);
     if (!scopedStatement
@@ -1415,10 +1415,10 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> Reso
         RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsStore::getThirdPartyDataForSpecificFirstPartyDomain, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         return { };
     }
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
+    Vector<ITPThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
     while (scopedStatement->step() == SQLITE_ROW) {
         RegistrableDomain firstPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(m_getAllSubStatisticsStatement->columnInt(0)));
-        thirdPartyDataForSpecificFirstPartyDomains.appendIfNotContains(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty { firstPartyDomain, hasStorageAccess(firstPartyDomain, thirdPartyDomain), getMostRecentlyUpdatedTimestamp(thirdPartyDomain, firstPartyDomain) });
+        thirdPartyDataForSpecificFirstPartyDomains.appendIfNotContains(ITPThirdPartyDataForSpecificFirstParty { firstPartyDomain, hasStorageAccess(firstPartyDomain, thirdPartyDomain), getMostRecentlyUpdatedTimestamp(thirdPartyDomain, firstPartyDomain) });
     }
     return thirdPartyDataForSpecificFirstPartyDomains;
 }
@@ -1428,11 +1428,11 @@ static bool hasBeenThirdParty(unsigned timesUnderFirstParty)
     return timesUnderFirstParty > 0;
 }
 
-Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsStore::aggregatedThirdPartyData() const
+Vector<ITPThirdPartyData> ResourceLoadStatisticsStore::aggregatedThirdPartyData() const
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
+    Vector<ITPThirdPartyData> thirdPartyDataList;
     const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%"_s : "1"_s;
     auto sortedStatistics = m_database.prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
@@ -1445,7 +1445,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsSto
         if (hasBeenThirdParty(sortedStatistics->columnInt(1))) {
             auto thirdPartyDomainID = sortedStatistics->columnInt(0);
             auto thirdPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(thirdPartyDomainID));
-            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { thirdPartyDomain, getThirdPartyDataForSpecificFirstPartyDomains(thirdPartyDomainID, thirdPartyDomain) });
+            thirdPartyDataList.append(ITPThirdPartyData { thirdPartyDomain, getThirdPartyDataForSpecificFirstPartyDomains(thirdPartyDomainID, thirdPartyDomain) });
         }
     }
     return thirdPartyDataList;

@@ -572,7 +572,7 @@ void webkit_network_session_get_itp_summary(WebKitNetworkSession* session, GCanc
 
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
     GRefPtr<GTask> task = adoptGRef(g_task_new(session, cancellable, callback, userData));
-    websiteDataStore.getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& thirdPartyList) {
+    websiteDataStore.getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
         GList* result = nullptr;
         while (!thirdPartyList.isEmpty())
             result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));

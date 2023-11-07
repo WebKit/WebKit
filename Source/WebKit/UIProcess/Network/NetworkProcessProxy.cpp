@@ -1030,7 +1030,7 @@ void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, C
     sendWithAsyncReply(Messages::NetworkProcess::GetAllStorageAccessEntries(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::getResourceLoadStatisticsDataSummary(PAL::SessionID sessionID, CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&& completionHandler)
+void NetworkProcessProxy::getResourceLoadStatisticsDataSummary(PAL::SessionID sessionID, CompletionHandler<void(Vector<ITPThirdPartyData>&&)>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler({ });

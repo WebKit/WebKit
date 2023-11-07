@@ -1033,6 +1033,8 @@
 		46C916AA2799D0A2001A4E7C /* WebSharedWorkerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */; };
 		46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */; };
 		46D48FCE2799D7E1007D2014 /* WebSharedWorkerServerToContextConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */; };
+		46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */; };
+		46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28B2AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h */; };
 		46DC53C328EB3D99005376B0 /* WebScreenOrientationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DC53C028EB3D90005376B0 /* WebScreenOrientationManager.h */; };
 		46DC53C728EB3DC8005376B0 /* WebScreenOrientationManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DC53C628EB3DBE005376B0 /* WebScreenOrientationManagerProxy.h */; };
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
@@ -4922,6 +4924,12 @@
 		46D48FCC2799D7DD007D2014 /* WebSharedWorkerServerToContextConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServerToContextConnection.cpp; sourceTree = "<group>"; };
 		46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServerToContextConnection.h; sourceTree = "<group>"; };
 		46DA285727B73E760089D339 /* WebGeolocationManagerProxyCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxyCocoa.cpp; sourceTree = "<group>"; };
+		46DBC2862AF96B9600E6B63A /* ITPThirdPartyDataForSpecificFirstParty.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = ITPThirdPartyDataForSpecificFirstParty.serialization.in; path = Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in; sourceTree = "<group>"; };
+		46DBC2872AF96B9600E6B63A /* ITPThirdPartyData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ITPThirdPartyData.cpp; path = Classifier/ITPThirdPartyData.cpp; sourceTree = "<group>"; };
+		46DBC2882AF96B9600E6B63A /* ITPThirdPartyData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = ITPThirdPartyData.serialization.in; path = Classifier/ITPThirdPartyData.serialization.in; sourceTree = "<group>"; };
+		46DBC2892AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ITPThirdPartyDataForSpecificFirstParty.cpp; path = Classifier/ITPThirdPartyDataForSpecificFirstParty.cpp; sourceTree = "<group>"; };
+		46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ITPThirdPartyData.h; path = Classifier/ITPThirdPartyData.h; sourceTree = "<group>"; };
+		46DBC28B2AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ITPThirdPartyDataForSpecificFirstParty.h; path = Classifier/ITPThirdPartyDataForSpecificFirstParty.h; sourceTree = "<group>"; };
 		46DC53C028EB3D90005376B0 /* WebScreenOrientationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebScreenOrientationManager.h; sourceTree = "<group>"; };
 		46DC53C128EB3D90005376B0 /* WebScreenOrientationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebScreenOrientationManager.cpp; sourceTree = "<group>"; };
 		46DC53C228EB3D90005376B0 /* WebScreenOrientationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebScreenOrientationManager.messages.in; sourceTree = "<group>"; };
@@ -11841,6 +11849,12 @@
 		7A843A1D21E41FD900DEF663 /* Classifier */ = {
 			isa = PBXGroup;
 			children = (
+				46DBC2872AF96B9600E6B63A /* ITPThirdPartyData.cpp */,
+				46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */,
+				46DBC2882AF96B9600E6B63A /* ITPThirdPartyData.serialization.in */,
+				46DBC2892AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.cpp */,
+				46DBC28B2AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h */,
+				46DBC2862AF96B9600E6B63A /* ITPThirdPartyDataForSpecificFirstParty.serialization.in */,
 				7ACE82E8221CAE07000DA94C /* ResourceLoadStatisticsStore.cpp */,
 				7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */,
 				7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */,
@@ -14907,6 +14921,8 @@
 				A73E66BD2AB107C3005FC327 /* IPCEvent.h in Headers */,
 				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */,
+				46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */,
+				46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				1CC94E542AC92F190045F269 /* JSWebExtensionAPIAction.h in Headers */,
 				1C386F352AF409F9004108F0 /* JSWebExtensionAPINotifications.h in Headers */,

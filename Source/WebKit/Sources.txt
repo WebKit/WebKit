@@ -116,6 +116,8 @@ NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
+NetworkProcess/Classifier/ITPThirdPartyData.cpp
+NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/WebCookieManager.cpp

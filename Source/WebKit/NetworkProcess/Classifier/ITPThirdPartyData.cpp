@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
-#include "APIObject.h"
-#include "ITPThirdPartyDataForSpecificFirstParty.h"
-#include <wtf/RunLoop.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(TRACKING_PREVENTION)
+#include "ITPThirdPartyData.h"
 
-namespace API {
+namespace WebKit {
 
-class ResourceLoadStatisticsFirstParty final : public ObjectImpl<Object::Type::ResourceLoadStatisticsFirstParty> {
-public:
-    static Ref<ResourceLoadStatisticsFirstParty> create(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-        return adoptRef(*new ResourceLoadStatisticsFirstParty(firstPartyData));
-    }
+String ITPThirdPartyData::toString() const
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n    {");
+    for (auto firstParty : underFirstParties)
+        stringBuilder.append("{ ", firstParty.toString(), " },");
+    stringBuilder.append('}');
+    return stringBuilder.toString();
+}
 
-    ~ResourceLoadStatisticsFirstParty()
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-    }
+bool ITPThirdPartyData::operator<(const ITPThirdPartyData& other) const
+{
+    return underFirstParties.size() < other.underFirstParties.size();
+}
 
-    const WTF::String& firstPartyDomain() const { return m_firstPartyData.firstPartyDomain.string(); }
-    bool storageAccess() const { return m_firstPartyData.storageAccessGranted; }
-    double timeLastUpdated() const { return m_firstPartyData.timeLastUpdated.value(); }
+} // namespace WebKit
 
-private:
-    explicit ResourceLoadStatisticsFirstParty(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-        : m_firstPartyData(firstPartyData)
-    {
-    }
-
-    const WebKit::ITPThirdPartyDataForSpecificFirstParty m_firstPartyData;
-};
-
-} // namespace API
+#endif // ENABLE(TRACKING_PREVENTION)

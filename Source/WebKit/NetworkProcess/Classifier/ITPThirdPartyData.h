@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,24 @@
 
 #pragma once
 
-#include "APIObject.h"
+#if ENABLE(TRACKING_PREVENTION)
+
 #include "ITPThirdPartyDataForSpecificFirstParty.h"
-#include <wtf/RunLoop.h>
-#include <wtf/text/WTFString.h>
+#include <WebCore/RegistrableDomain.h>
+#include <wtf/Forward.h>
 
-namespace API {
+namespace WebKit {
 
-class ResourceLoadStatisticsFirstParty final : public ObjectImpl<Object::Type::ResourceLoadStatisticsFirstParty> {
-public:
-    static Ref<ResourceLoadStatisticsFirstParty> create(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-        return adoptRef(*new ResourceLoadStatisticsFirstParty(firstPartyData));
-    }
+struct ITPThirdPartyData {
+    WebCore::RegistrableDomain thirdPartyDomain;
+    Vector<ITPThirdPartyDataForSpecificFirstParty> underFirstParties;
 
-    ~ResourceLoadStatisticsFirstParty()
-    {
-        RELEASE_ASSERT(RunLoop::isMain());
-    }
+    String toString() const;
 
-    const WTF::String& firstPartyDomain() const { return m_firstPartyData.firstPartyDomain.string(); }
-    bool storageAccess() const { return m_firstPartyData.storageAccessGranted; }
-    double timeLastUpdated() const { return m_firstPartyData.timeLastUpdated.value(); }
-
-private:
-    explicit ResourceLoadStatisticsFirstParty(const WebKit::ITPThirdPartyDataForSpecificFirstParty& firstPartyData)
-        : m_firstPartyData(firstPartyData)
-    {
-    }
-
-    const WebKit::ITPThirdPartyDataForSpecificFirstParty m_firstPartyData;
+    // FIXME: This sorts by number of underFirstParties, so it probably should be a named function, not operator<.
+    bool operator<(const ITPThirdPartyData&) const;
 };
 
-} // namespace API
+} // namespace WebKit
+
+#endif // ENABLE(TRACKING_PREVENTION)
