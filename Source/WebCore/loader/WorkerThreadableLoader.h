@@ -93,7 +93,7 @@ private:
     class MainThreadBridge : public ThreadableLoaderClient {
     public:
         // All executed on the worker context's thread.
-        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy&, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
+        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
         void cancel();
         void destroy();
         void computeIsDone();
@@ -120,7 +120,7 @@ private:
         RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
 
         // May be used on either thread.
-        WorkerLoaderProxy& m_loaderProxy;
+        WorkerLoaderProxy* m_loaderProxy;
 
         // For use on the main thread.
         String m_taskMode;

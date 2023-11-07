@@ -775,9 +775,11 @@ void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Documen
 
     auto* thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
     if (thread) {
-        thread->workerLoaderProxy().postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
-            callback(downcast<Document>(context));
-        });
+        if (auto* workerLoaderProxy = thread->workerLoaderProxy()) {
+            workerLoaderProxy->postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
+                callback(downcast<Document>(context));
+            });
+        }
         return;
     }
 
