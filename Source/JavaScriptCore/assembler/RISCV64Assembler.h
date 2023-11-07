@@ -1673,6 +1673,12 @@ public:
         cacheFlush(from, sizeof(uint32_t) * 2);
     }
 
+    static void replaceWithNops(void* from, size_t memoryToFillWithNopsInBytes)
+    {
+        fillNops<memcpy>(from, memoryToFillWithNopsInBytes);
+        cacheFlush(from, memoryToFillWithNopsInBytes);
+    }
+
     static void revertJumpReplacementToPatch(void* from, void* valuePtr)
     {
         uint32_t* location = reinterpret_cast<uint32_t*>(from);

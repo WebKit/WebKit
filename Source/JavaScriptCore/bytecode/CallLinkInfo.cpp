@@ -556,12 +556,7 @@ void OptimizingCallLinkInfo::initializeDirectCall()
     ASSERT(u.codeIC.m_codeBlockLocation);
     if (isTailCall()) {
         RELEASE_ASSERT(fastPathStart());
-        CCallHelpers::emitJITCodeOver(fastPathStart(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
-            auto jump = jit.jump();
-            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(jump, slowPathStart());
-            });
-        }), "initialize direct call");
+        CCallHelpers::replaceWithJump(fastPathStart(), slowPathStart());
     } else
         MacroAssembler::repatchNearCall(m_callLocation, slowPathStart());
 }
@@ -572,11 +567,9 @@ void OptimizingCallLinkInfo::setDirectCallTarget(CodeBlock* codeBlock, CodeLocat
 
     if (isTailCall()) {
         RELEASE_ASSERT(fastPathStart());
-        CCallHelpers::emitJITCodeOver(fastPathStart(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
-            // We reserved this many bytes for the jump at fastPathStart(). Make that
-            // code nops now so we fall through to the jump to the fast path.
-            jit.emitNops(CCallHelpers::patchableJumpSize());
-        }), "Setting direct call target");
+        // We reserved this many bytes for the jump at fastPathStart(). Make that
+        // code nops now so we fall through to the jump to the fast path.
+        CCallHelpers::replaceWithNops(fastPathStart(), CCallHelpers::patchableJumpSize());
     }
 
     MacroAssembler::repatchNearCall(m_callLocation, target);

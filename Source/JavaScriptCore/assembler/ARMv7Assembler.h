@@ -2762,7 +2762,13 @@ public:
         cacheFlush(ptr - 2, sizeof(uint16_t) * 2);
 #endif
     }
-    
+
+    static void replaceWithNops(void* instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        fillNops<performJITMemcpy>(instructionStart, memoryToFillWithNopsInBytes);
+        cacheFlush(instructionStart, memoryToFillWithNopsInBytes);
+    }
+
     static ptrdiff_t maxJumpReplacementSize()
     {
 #if OS(LINUX)

@@ -3473,7 +3473,13 @@ public:
         performJITMemcpy(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
-    
+
+    static void replaceWithNops(void* where, size_t memoryToFillWithNopsInBytes)
+    {
+        fillNops<performJITMemcpy>(where, memoryToFillWithNopsInBytes);
+        cacheFlush(where, memoryToFillWithNopsInBytes);
+    }
+
     static ptrdiff_t maxJumpReplacementSize()
     {
         return 4;
