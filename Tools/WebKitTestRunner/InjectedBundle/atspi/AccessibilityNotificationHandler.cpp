@@ -44,6 +44,7 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
     , m_element(element)
 {
     WKAccessibilityEnable();
+#if ENABLE(DEVELOPER_MODE)
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(jsContext, m_callback);
@@ -89,15 +90,18 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
             JSObjectCallAsFunction(jsContext, const_cast<JSObjectRef>(m_callback), 0, 3, arguments, 0);
         }
     });
+#endif
 }
 
 AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 {
+#if ENABLE(DEVELOPER_MODE)
     WebCore::AccessibilityAtspi::singleton().removeNotificationObserver(this);
 
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueUnprotect(jsContext, m_callback);
+#endif
 }
 
 } // namespace WTR
