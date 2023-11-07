@@ -66,7 +66,14 @@ TEST(WKWebExtensionAPIWebNavigation, EventFiringTest)
 
     auto *backgroundScript = Util::constructScript(@[
         // Setup
-        @"function passListener() { browser.test.notifyPass() }",
+        @"function passListener(details) {",
+
+        // This event was fired on a main frame load, so the frameId should be 0 and we shouldn't have a parent frame.
+        @"  browser.test.assertEq(details.frameId, 0)",
+        @"  browser.test.assertEq(details.parentFrameId, -1)",
+
+        @"  browser.test.notifyPass()",
+        @"}",
 
         // The passListener firing will consider the test passed.
         @"browser.webNavigation.onCommitted.addListener(passListener)",
@@ -86,6 +93,8 @@ TEST(WKWebExtensionAPIWebNavigation, EventFiringTest)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWebNavigation, AllowedFilterTest)
@@ -118,6 +127,8 @@ TEST(WKWebExtensionAPIWebNavigation, AllowedFilterTest)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWebNavigation, DeniedFilterTest)
@@ -152,7 +163,57 @@ TEST(WKWebExtensionAPIWebNavigation, DeniedFilterTest)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
+
+TEST(WKWebExtensionAPIWebNavigation, AllEventsFiredTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{ @"manifest_version": @3, @"permissions": @[ @"webNavigation" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"let beforeNavigateEventFired = false",
+        @"let onCommittedEventFired = false",
+        @"let onDOMContentLoadedEventFired = false",
+        @"function beforeNavigateHandler() { beforeNavigateEventFired = true }",
+        @"function onCommittedHandler() { onCommittedEventFired = true }",
+        @"function onDOMContentLoadedHandler() { onDOMContentLoadedEventFired = true }",
+        @"function onCompletedHandler() {",
+        @"  browser.test.assertTrue(beforeNavigateEventFired)",
+        @"  browser.test.assertTrue(onCommittedEventFired)",
+        @"  browser.test.assertTrue(onDOMContentLoadedEventFired)",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.webNavigation.onBeforeNavigate.addListener(beforeNavigateHandler)",
+        @"browser.webNavigation.onCommitted.addListener(onCommittedHandler)",
+        @"browser.webNavigation.onDOMContentLoaded.addListener(onDOMContentLoadedHandler)",
+        @"browser.webNavigation.onCompleted.addListener(onCompletedHandler)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 
 TEST(WKWebExtensionAPIWebNavigation, URLFilterTestMatchAllPredicates)
 {

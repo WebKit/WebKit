@@ -108,22 +108,26 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 
 void WebExtensionControllerProxy::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
+    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didCommitLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
+    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFinishLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
+    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFailLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
-    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), url), identifier());
+    WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
+    WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 } // namespace WebKit
