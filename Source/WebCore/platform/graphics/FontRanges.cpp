@@ -94,7 +94,7 @@ GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceD
                         resultFont = font;
                 } else {
                     auto glyphData = font->glyphDataForCharacter(character);
-                    if (glyphData.font) {
+                    if (glyphData.isValid()) {
                         CheckedPtr glyphDataFont = glyphData.font;
                         if (glyphDataFont && glyphDataFont->visibility() == Font::Visibility::Visible && resultFont && resultFont->visibility() == Font::Visibility::Invisible)
                             return GlyphData(glyphData.glyph, &glyphDataFont->invisibleFont());
