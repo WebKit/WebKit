@@ -31,6 +31,7 @@
 #include <fstream>
 #include <string>
 #include <wtf/StdFilesystem.h>
+#include <wtf/URL.h>
 
 namespace WTR {
 
