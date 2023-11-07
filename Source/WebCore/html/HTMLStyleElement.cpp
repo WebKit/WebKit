@@ -183,23 +183,8 @@ String HTMLStyleElement::textContentWithReplacementURLs(const HashMap<String, St
     if (!styleSheet)
         return TextNodeTraversal::contentsAsString(*this);
 
-    auto ruleList = styleSheet->cssRules();
-    if (!ruleList)
-        return TextNodeTraversal::contentsAsString(*this);
-
-    StringBuilder result;
-    for (unsigned index = 0; index < ruleList->length(); ++index) {
-        auto rule = ruleList->item(index);
-        if (!rule)
-            continue;
-
-        auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings);
-        if (!result.isEmpty() && !ruleText.isEmpty())
-            result.append(" ");
-
-        result.append(ruleText);
-    }
-    return result.toString();
+    auto result = styleSheet->cssTextWithReplacementURLs(replacementURLStrings);
+    return result.isNull() ? TextNodeTraversal::contentsAsString(*this) : result;
 }
 
 }

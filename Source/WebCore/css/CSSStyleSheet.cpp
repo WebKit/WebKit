@@ -479,6 +479,27 @@ String CSSStyleSheet::debugDescription() const
     return makeString("CSSStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
+String CSSStyleSheet::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings)
+{
+    auto ruleList = cssRules();
+    if (!ruleList)
+        return { };
+
+    StringBuilder result;
+    for (unsigned index = 0; index < ruleList->length(); ++index) {
+        auto rule = ruleList->item(index);
+        if (!rule)
+            continue;
+
+        auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings);
+        if (!result.isEmpty() && !ruleText.isEmpty())
+            result.append(" ");
+
+        result.append(ruleText);
+    }
+    return result.toString();
+}
+
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-replace
 void CSSStyleSheet::replace(String&& text, Ref<DeferredPromise>&& promise)
 {
