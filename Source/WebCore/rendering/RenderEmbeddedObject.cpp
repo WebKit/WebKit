@@ -107,12 +107,7 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return false;
-#if PLATFORM(IOS_FAMILY)
-    // The timing of layer creation is different on the phone, since the plugin can only be manipulated from the main thread.
-    return pluginViewBase->willProvidePluginLayer();
-#else
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
-#endif
 }
 
 #if !PLATFORM(IOS_FAMILY)

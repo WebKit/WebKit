@@ -62,10 +62,6 @@ public:
     explicit RenderLayerBacking(RenderLayer&);
     ~RenderLayerBacking();
 
-#if PLATFORM(IOS_FAMILY)
-    void layerWillBeDestroyed();
-#endif
-
     // Do cleanup while layer->backing() is still valid.
     void willBeDestroyed();
 

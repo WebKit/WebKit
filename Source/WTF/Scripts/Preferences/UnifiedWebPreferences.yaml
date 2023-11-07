@@ -6744,6 +6744,7 @@ UnifiedPDFEnabled:
   category: security
   humanReadableName: "Unified PDF Viewer"
   humanReadableDescription: "Enable Unified PDF Viewer"
+  condition: ENABLE(UNIFIED_PDF)
   defaultValue:
     WebKitLegacy:
       default: false

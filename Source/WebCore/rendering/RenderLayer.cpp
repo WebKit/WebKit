@@ -2387,14 +2387,6 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
     }
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RenderLayer::willBeDestroyed()
-{
-    if (RenderLayerBacking* layerBacking = backing())
-        layerBacking->layerWillBeDestroyed();
-}
-#endif
-
 bool RenderLayer::isDescendantOf(const RenderLayer& layer) const
 {
     for (auto* ancestor = this; ancestor; ancestor = ancestor->parent()) {
