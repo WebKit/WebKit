@@ -553,7 +553,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID) && decoder->decode(checkAssumedReadAccessToResourceURL)) {
             if (RefPtr page = WebProcessProxy::webPage(pageID)) {
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-                send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
+                send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), decoder->destinationID());
             }
         } else
             ASSERT_NOT_REACHED();
@@ -578,7 +578,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             if (RefPtr item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), parameters->sandboxExtensionHandle);
         }
-        send(Messages::WebPage::GoToBackForwardItem(*parameters), decoder->destinationID());
+        send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), decoder->destinationID());
         return false;
     }
     return true;

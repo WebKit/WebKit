@@ -114,7 +114,7 @@ void DownloadProxy::publishProgress(const URL& URL)
     if (!handle)
         return;
 
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, *handle), 0);
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, WTFMove(*handle)), 0);
 }
 #endif // PLATFORM(COCOA)
 

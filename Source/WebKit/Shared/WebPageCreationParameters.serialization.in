@@ -22,7 +22,7 @@
 
 headers: "ArgumentCoders.h"
 
-struct WebKit::WebPageCreationParameters {
+[RValue] struct WebKit::WebPageCreationParameters {
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;

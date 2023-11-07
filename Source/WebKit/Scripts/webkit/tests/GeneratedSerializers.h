@@ -75,6 +75,7 @@ namespace WebCore { class ScrollingStateFrameHostingNode; }
 namespace WebCore { class ScrollingStateFrameHostingNodeWithStuffAfterTuple; }
 #if USE(CFBAR)
 #endif
+namespace WebKit { class RValueWithFunctionCalls; }
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
 #endif
@@ -254,6 +255,11 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
     static std::optional<RetainPtr<CFBarRef>> decode(Decoder&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebKit::RValueWithFunctionCalls> {
+    static void encode(Encoder&, WebKit::RValueWithFunctionCalls&&);
+    static std::optional<WebKit::RValueWithFunctionCalls> decode(Decoder&);
+};
 
 } // namespace IPC
 

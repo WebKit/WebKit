@@ -995,7 +995,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
             sampleLogFilePath = WTFMove(handleAndFilePath->second);
         }
         
-        process.send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
+        process.send(Messages::WebProcess::StartMemorySampler(WTFMove(sampleLogSandboxHandle), sampleLogFilePath, m_memorySamplerInterval), 0);
     }
 
     if (m_configuration->fullySynchronousModeIsAllowedForTesting())
@@ -1494,16 +1494,21 @@ void WebProcessPool::startMemorySampler(const double interval)
     WebMemorySampler::singleton()->start(interval);
 #endif
     
-    // For WebProcess
-    SandboxExtension::Handle sampleLogSandboxHandle;    
-    WallTime now = WallTime::now();
-    auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()));
-    if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite)) {
-        sampleLogSandboxHandle = WTFMove(handleAndFilePath->first);
-        sampleLogFilePath = WTFMove(handleAndFilePath->second);
+    for (auto& process : m_processes) {
+        if (!process->canSendMessage())
+            continue;
+
+        // For WebProcess
+        SandboxExtension::Handle sampleLogSandboxHandle;
+        WallTime now = WallTime::now();
+        auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()));
+        if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite)) {
+            sampleLogSandboxHandle = WTFMove(handleAndFilePath->first);
+            sampleLogFilePath = WTFMove(handleAndFilePath->second);
+        }
+
+        process->send(Messages::WebProcess::StartMemorySampler(WTFMove(sampleLogSandboxHandle), sampleLogFilePath, interval), 0);
     }
-    
-    sendToAllProcesses(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval));
 }
 
 void WebProcessPool::stopMemorySampler()

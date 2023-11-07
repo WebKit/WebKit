@@ -58,7 +58,7 @@ public:
                     sandboxExtensionHandles.append(WTFMove(*handle));
             }
         }
-        encoder << sandboxExtensionHandles;
+        encoder << WTFMove(sandboxExtensionHandles);
     }
 
     static std::optional<FormDataReference> decode(Decoder& decoder)

@@ -36,9 +36,7 @@ namespace WebKit {
 class MediaDeviceSandboxExtensions {
     WTF_MAKE_NONCOPYABLE(MediaDeviceSandboxExtensions);
 public:
-    MediaDeviceSandboxExtensions()
-    {
-    }
+    MediaDeviceSandboxExtensions() = default;
     MediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&) = default;
     MediaDeviceSandboxExtensions& operator=(MediaDeviceSandboxExtensions&&) = default;
 
@@ -47,9 +45,9 @@ public:
     std::pair<String, RefPtr<SandboxExtension>> operator[](size_t i);
     size_t size() const;
 
-    const Vector<String>& ids() const { return m_ids; }
-    const Vector<SandboxExtension::Handle>& handles() const { return m_handles; }
-    const SandboxExtension::Handle& machBootstrapHandle() const { return m_machBootstrapHandle; }
+    Vector<String> takeIDs() { return std::exchange(m_ids, { }); }
+    Vector<SandboxExtension::Handle> takeHandles() { return std::exchange(m_handles, { }); }
+    SandboxExtensionHandle takeMachBootstrapHandle() { return std::exchange(m_machBootstrapHandle, { }); }
 
     RefPtr<SandboxExtension> machBootstrapExtension() { return SandboxExtension::create(WTFMove(m_machBootstrapHandle)); }
 

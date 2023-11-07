@@ -147,7 +147,7 @@ SandboxExtensionHandle::~SandboxExtensionHandle()
         m_sandboxExtension->invalidate();
 }
 
-void SandboxExtensionHandle::encode(IPC::Encoder& encoder) const
+void SandboxExtensionHandle::encode(IPC::Encoder& encoder) &&
 {
     if (!m_sandboxExtension) {
         encoder << IPC::DataReference();

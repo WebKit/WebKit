@@ -77,7 +77,7 @@ void GPUProcessProxy::enablePowerLogging()
     auto handle = SandboxExtension::createHandleForMachLookup("com.apple.powerlog.plxpclogger.xpc"_s, std::nullopt);
     if (!handle)
         return;
-    send(Messages::GPUProcess::EnablePowerLogging(*handle), 0);
+    send(Messages::GPUProcess::EnablePowerLogging(WTFMove(*handle)), 0);
 }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY)
 

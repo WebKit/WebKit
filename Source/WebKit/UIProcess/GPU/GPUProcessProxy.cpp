@@ -180,12 +180,12 @@ GPUProcessProxy::GPUProcessProxy()
 
     platformInitializeGPUProcessParameters(parameters);
 
-    // Initialize the GPU process.
-    send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
-
 #if PLATFORM(COCOA)
     m_hasSentGPUToolsSandboxExtensions = !parameters.gpuToolsExtensionHandles.isEmpty();
 #endif
+
+    // Initialize the GPU process.
+    send(Messages::GPUProcess::InitializeGPUProcess(WTFMove(parameters)), 0);
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS) && ENABLE(AUDIO_COMPONENT_SERVER_REGISTRATIONS_IN_GPU_PROCESS)
     auto registrations = fetchAudioComponentServerRegistrations();
@@ -368,7 +368,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
     if (!extensions.isEmpty())
-        send(Messages::GPUProcess::UpdateSandboxAccess { extensions }, 0);
+        send(Messages::GPUProcess::UpdateSandboxAccess { WTFMove(extensions) }, 0);
 #endif // PLATFORM(COCOA)
 }
 

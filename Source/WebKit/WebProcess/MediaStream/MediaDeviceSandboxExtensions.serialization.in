@@ -22,10 +22,10 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-class WebKit::MediaDeviceSandboxExtensions {
-    Vector<String> ids();
-    [Validator='ids->size() == handles->size()'] Vector<WebKit::SandboxExtension::Handle> handles();
-    WebKit::SandboxExtension::Handle machBootstrapHandle();
+[RValue] class WebKit::MediaDeviceSandboxExtensions {
+    Vector<String> takeIDs();
+    [Validator='takeIDs->size() == takeHandles->size()'] Vector<WebKit::SandboxExtension::Handle> takeHandles();
+    WebKit::SandboxExtension::Handle takeMachBootstrapHandle();
 }
 
 #endif

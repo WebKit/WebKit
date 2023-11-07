@@ -256,7 +256,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 #endif
 
-    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(handleArray), 0);
+    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(WTFMove(handleArray)), 0);
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 

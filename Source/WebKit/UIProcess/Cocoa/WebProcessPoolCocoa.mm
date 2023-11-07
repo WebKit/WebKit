@@ -371,7 +371,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated()) {
             if (!gpuProcess->hasSentGPUToolsSandboxExtensions()) {
                 auto gpuToolsHandle = GPUProcessProxy::createGPUToolsSandboxExtensionHandlesIfNeeded();
-                gpuProcess->send(Messages::GPUProcess::UpdateSandboxAccess(gpuToolsHandle), 0);
+                gpuProcess->send(Messages::GPUProcess::UpdateSandboxAccess(WTFMove(gpuToolsHandle)), 0);
             }
         }
 #endif
@@ -768,7 +768,7 @@ void WebProcessPool::registerNotificationObservers()
             if (!handle)
                 return;
             if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
-                gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(*handle), 0);
+                gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(WTFMove(*handle)), 0);
 #endif
             for (auto& process : m_processes) {
                 if (!process->canSendMessage())
@@ -777,7 +777,7 @@ void WebProcessPool::registerNotificationObservers()
                 if (!handle)
                     continue;
                 auto bootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
-                process->send(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle, bootstrapHandle), 0);
+                process->send(Messages::WebProcess::OpenDirectoryCacheInvalidated(WTFMove(*handle), WTFMove(bootstrapHandle)), 0);
             }
         });
         m_openDirectoryNotifyTokens.append(notifyToken);

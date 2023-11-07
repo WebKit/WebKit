@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
@@ -56,7 +57,7 @@ public:
 #endif
     ~SandboxExtensionHandle();
 
-    void encode(IPC::Encoder&) const;
+    void encode(IPC::Encoder&) &&;
     static std::optional<SandboxExtensionHandle> decode(IPC::Decoder&);
 
 private:
@@ -135,7 +136,7 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
 
 inline SandboxExtensionHandle::SandboxExtensionHandle() { }
 inline SandboxExtensionHandle::~SandboxExtensionHandle() { }
-inline void SandboxExtensionHandle::encode(IPC::Encoder&) const { }
+inline void SandboxExtensionHandle::encode(IPC::Encoder&) && { }
 inline std::optional<SandboxExtensionHandle> SandboxExtensionHandle::decode(IPC::Decoder&) { return SandboxExtensionHandle { }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline auto SandboxExtension::createHandle(StringView, Type) -> std::optional<Handle> { return Handle { }; }
