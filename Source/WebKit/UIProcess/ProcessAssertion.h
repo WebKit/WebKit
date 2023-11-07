@@ -42,8 +42,9 @@ OBJC_CLASS RBSAssertion;
 OBJC_CLASS WKRBSAssertionDelegate;
 #endif // USE(RUNNINGBOARD)
 
-#if USE(EXTENSIONKIT_ASSERTIONS)
+#if USE(EXTENSIONKIT)
 OBJC_CLASS _SEExtensionProcess;
+OBJC_CLASS _SECapabilities;
 OBJC_PROTOCOL(_SEGrant);
 #endif
 
@@ -67,7 +68,7 @@ class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode : bool { Sync, Async };
-#if USE(EXTENSIONKIT_ASSERTIONS)
+#if USE(EXTENSIONKIT)
     static Ref<ProcessAssertion> create(RetainPtr<_SEExtensionProcess>, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
 #endif
     static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
@@ -111,8 +112,10 @@ private:
 #endif
     Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
-#if USE(EXTENSIONKIT_ASSERTIONS)
+#if USE(EXTENSIONKIT)
+    RetainPtr<_SECapabilities> m_capabilities;
     RetainPtr<_SEGrant> m_grant;
+    RetainPtr<_SEExtensionProcess> m_process;
 #endif
 };
 
