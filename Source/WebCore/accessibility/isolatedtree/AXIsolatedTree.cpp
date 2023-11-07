@@ -643,6 +643,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::CellScope:
             propertyMap.set(AXPropertyName::CellScope, axObject.cellScope().isolatedCopy());
             break;
+        case AXPropertyName::SelectedTextRange:
+            propertyMap.set(AXPropertyName::SelectedTextRange, axObject.selectedTextRange());
+            break;
         case AXPropertyName::SetSize:
             propertyMap.set(AXPropertyName::SetSize, axObject.setSize());
             break;

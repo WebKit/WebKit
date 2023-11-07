@@ -57,12 +57,15 @@ hello<br>
         var sel = window.getSelection();
         sel.addRange(range);
 
-        testOutput += `Selected text range: ${textArea.selectedTextRange}\n`;
-        testOutput += `Selected text: ${textArea.stringAttributeValue("AXSelectedText")}\n`;
+        setTimeout(async () => {
+            await waitFor(() => textArea.selectedTextRange == "{0, 3}");
+            testOutput += `Selected text range: ${textArea.selectedTextRange}\n`;
+            testOutput += `Selected text: ${textArea.stringAttributeValue("AXSelectedText")}\n`;
 
-        // Send a value change.
-        document.getElementById("content").focus();
-        eventSender.keyDown(targetCharacter, []);
+            // Send a value change.
+            document.getElementById("content").focus();
+            eventSender.keyDown(targetCharacter, []);
+        }, 0);
     }
 </script>
 </body>

@@ -342,7 +342,7 @@ private:
 #endif
 
     // CharacterRange support.
-    CharacterRange selectedTextRange() const final;
+    CharacterRange selectedTextRange() const final { return propertyValue<CharacterRange>(AXPropertyName::SelectedTextRange); }
     int insertionPointLineNumber() const final;
     CharacterRange doAXRangeForLine(unsigned) const final;
     String doAXStringForRange(const CharacterRange&) const final;
