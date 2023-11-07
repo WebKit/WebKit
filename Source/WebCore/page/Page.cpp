@@ -3096,6 +3096,18 @@ Color Page::sampledPageTopColor() const
     return valueOrDefault(m_sampledPageTopColor);
 }
 
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+void Page::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
+{
+    m_appUsesCustomAccentColor = appUsesCustomAccentColor;
+}
+
+bool Page::appUsesCustomAccentColor() const
+{
+    return m_appUsesCustomAccentColor;
+}
+#endif
+
 void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
 {
     if (underPageBackgroundColorOverride == m_underPageBackgroundColorOverride)

@@ -141,6 +141,9 @@ headers: "ArgumentCoders.h"
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
 #endif
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    bool appUsesCustomAccentColor;
+#endif
 #if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor;
 #endif

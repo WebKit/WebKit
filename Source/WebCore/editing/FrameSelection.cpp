@@ -1893,7 +1893,13 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
         return { };
     return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
 #elif HAVE(REDESIGNED_TEXT_CURSOR)
-    if (elementStyle.hasAutoCaretColor() && !elementStyle.hasExplicitlySetColor()) {
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    auto appUsesCustomAccentColor = node && node->document().page() && node->document().page()->appUsesCustomAccentColor();
+#else
+    auto appUsesCustomAccentColor = false;
+#endif
+
+    if (elementStyle.hasAutoCaretColor() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor)) {
 #if PLATFORM(MAC)
         auto cssColorValue = CSSValueAppleSystemControlAccent;
 #else

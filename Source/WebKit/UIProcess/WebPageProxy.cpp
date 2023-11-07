@@ -9650,6 +9650,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = pageClient().accentColor();
+#if PLATFORM(MAC)
+    parameters.appUsesCustomAccentColor = pageClient().appUsesCustomAccentColor();
+#endif
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = pageClient().userInterfaceLayoutDirection();
