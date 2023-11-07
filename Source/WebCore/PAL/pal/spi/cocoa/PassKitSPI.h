@@ -341,6 +341,13 @@ typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 @end
 #endif
 
+#if HAVE(PKPAYMENTREQUEST_USERAGENT)
+// FIXME: <rdar://116640656> Remove `PKPaymentRequest.userAgent` staging code
+@interface PKPaymentRequest (Staging_110687914)
+@property (nonatomic, copy) NSString *userAgent;
+@end
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #define PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
