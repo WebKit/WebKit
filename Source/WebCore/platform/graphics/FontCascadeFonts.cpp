@@ -67,7 +67,7 @@ private:
     }
 
     Glyph m_glyphs[GlyphPage::size] { };
-    CheckedPtr<const Font> m_fonts[GlyphPage::size] { };
+    WeakPtr<const Font> m_fonts[GlyphPage::size] { };
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
@@ -338,12 +338,12 @@ static const Font* findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, cons
         auto& fontRanges = fontCascadeFonts.realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())
             break;
-        CheckedPtr currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font;
+        auto* currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font.get();
         if (!currentFont)
             currentFont = &fontRanges.fontForFirstRange();
 
         if (!currentFont->isInterstitial())
-            return currentFont.get();
+            return currentFont;
     }
 
     return nullptr;

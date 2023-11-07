@@ -1224,7 +1224,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    WeakPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1238,7 +1238,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    WeakPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1402,7 +1402,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     if (!markGlyphData)
         return;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    WeakPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return;

@@ -51,11 +51,11 @@ struct GlyphData {
     {
     }
 
-    bool isValid() const { return font; }
+    bool isValid() const { return !!font; }
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
-    CheckedPtr<const Font> font;
+    WeakPtr<const Font> font;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
