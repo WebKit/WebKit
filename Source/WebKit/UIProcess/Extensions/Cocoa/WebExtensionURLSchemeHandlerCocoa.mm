@@ -59,7 +59,7 @@ WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionControlle
 
 void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, &page, protectedThis = Ref { *this }, protectedTask = Ref { task }, protectedPage = Ref { page }]() {
+    auto *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, &page, protectedThis = Ref { *this }, protectedTask = Ref { task }, protectedPage = Ref { page }]() {
         // If a frame is loading, the frame request URL will be an empty string, since the request is actually the frame URL being loaded.
         // In this case, consider the firstPartyForCookies() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.
@@ -84,7 +84,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         // FIXME: <https://webkit.org/b/246485> Support devtools' exception to web accessible resources.
 
         if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL)) {
-            if (!extensionContext->extension().isAccessibleResourcePath(requestURL.path().toString(), frameDocumentURL)) {
+            if (!extensionContext->extension().isWebAccessibleResource(requestURL, frameDocumentURL)) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:noPermissionErrorCode userInfo:nil]);
                 return;
             }

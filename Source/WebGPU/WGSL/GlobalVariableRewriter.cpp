@@ -976,6 +976,8 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             .hasDynamicOffset = false,
             .minBindingSize = 0
         };
+    }, [&](const PrimitiveStruct&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {

@@ -158,6 +158,7 @@ void ProcessLauncher::launchProcess()
                 launcher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
                 launcher->finishLaunchingProcess(name);
             });
+            return;
         }
         callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher, name = name, process = RetainPtr<_SEExtensionProcess>(process)] {
             auto connection = [process makeLibXPCConnectionError:nil];

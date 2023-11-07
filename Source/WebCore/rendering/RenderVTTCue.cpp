@@ -49,6 +49,7 @@ RenderVTTCue::RenderVTTCue(VTTCueBox& element, RenderStyle&& style)
     , m_cue(downcast<VTTCue>(element.getCue()))
 {
     ASSERT(m_cue);
+    ASSERT(isRenderVTTCue());
 }
 
 void RenderVTTCue::layout()

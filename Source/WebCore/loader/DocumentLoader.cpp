@@ -439,10 +439,8 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
 #endif
 
     if (RefPtr document = this->document()) {
-        if (RefPtr domWindow = document->domWindow()) {
-            if (document->settings().performanceNavigationTimingAPIEnabled())
-                domWindow->performance().navigationFinished(metrics);
-        }
+        if (RefPtr domWindow = document->domWindow())
+            domWindow->performance().navigationFinished(metrics);
     }
 
     ASSERT_UNUSED(resource, m_mainResource == &resource);
@@ -1346,7 +1344,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         if (auto* window = document.domWindow()) {
             window->prewarmLocalStorageIfNecessary();
 
-            if (document.settings().performanceNavigationTimingAPIEnabled() && m_mainResource) {
+            if (m_mainResource) {
                 auto* metrics = m_response.deprecatedNetworkLoadMetricsOrNull();
                 window->performance().addNavigationTiming(*this, document, *m_mainResource, timing(), metrics ? *metrics : NetworkLoadMetrics::emptyMetrics());
             }

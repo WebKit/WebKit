@@ -34,6 +34,7 @@
 #import "WebProcessPool.h"
 #import <wtf/HashMap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/ThreadSafeWeakHashSet.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
@@ -48,6 +49,9 @@ using WebKit::ProcessAndUIAssertion;
 
 #if USE(EXTENSIONKIT)
 #import "ExtensionKitSPI.h"
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
+SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SECapabilities);
 #endif
 
 static WorkQueue& assertionsWorkQueue()
@@ -367,6 +371,25 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     init(environmentIdentifier);
 }
 
+ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
+    : m_assertionType(assertionType)
+    , m_pid(process.processID())
+    , m_reason(reason)
+{
+#if USE(EXTENSIONKIT)
+    if (AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
+        NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
+        NSString *runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
+        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName];
+        m_process = process.extensionProcess();
+        if (m_capabilities)
+            return;
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %@", this, runningBoardAssertionName);
+    }
+#endif
+    init(process.environmentIdentifier());
+}
+
 void ProcessAssertion::init(const String& environmentIdentifier)
 {
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
@@ -396,25 +419,6 @@ void ProcessAssertion::init(const String& environmentIdentifier)
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, m_pid);
         processAssertionWillBeInvalidated();
     };
-}
-
-ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
-    : m_assertionType(assertionType)
-    , m_pid(process.processID())
-    , m_reason(reason)
-{
-#if USE(EXTENSIONKIT_ASSERTIONS)
-    NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
-    NSString *runningBoardDomain = runningBoardDomainForAssertionType(assertionType);
-    auto capability = adoptNS([_SECapabilities assertionWithDomain:runningBoardDomain name:runningBoardAssertionName]);
-    auto extensionProcess = process.extensionProcess();
-    NSError* error = nil;
-    m_grant = [extensionProcess.get() grantCapabilities:capability.get() error:&error];
-    if (!m_grant)
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability with error %@", this, error);
-#else
-    init(process.environmentIdentifier());
-#endif
 }
 
 double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
@@ -449,7 +453,17 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
 void ProcessAssertion::acquireSync()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
-
+#if USE(EXTENSIONKIT)
+    if (m_process) {
+        NSError *error = nil;
+        m_grant = [m_process.get() grantCapabilities:m_capabilities.get() error:&error];
+        if (m_grant) {
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
+            return;
+        }
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability with error %@", this, error);
+    }
+#endif
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
@@ -473,7 +487,7 @@ ProcessAssertion::~ProcessAssertion()
         [m_rbsAssertion invalidate];
     }
 
-#if USE(EXTENSIONKIT_ASSERTIONS)
+#if USE(EXTENSIONKIT)
     [m_grant invalidateWithError:nil];
 #endif
 }

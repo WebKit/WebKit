@@ -42,6 +42,7 @@
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "Image.h"
@@ -615,6 +616,34 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 }
 
                 subresources.append(resource.releaseNonNull());
+            }
+
+            if (!subresourcesDirectoryName.isNull() && is<HTMLLinkElement>(node)) {
+                auto& element = downcast<HTMLLinkElement>(node.get());
+                if (!element.sheet())
+                    continue;
+                auto index = subresources.findIf([&](auto& resource) {
+                    return resource->url() == element.href();
+                });
+                if (index == notFound)
+                    continue;
+
+                HashMap<String, String> uniqueSubresourcesInElement;
+                for (auto [urlString, path] : uniqueSubresources) {
+                    if (subresourceURLs.contains(URL { urlString })) {
+                        // The linked file is placed in subresource directory as other subresource files.
+                        uniqueSubresourcesInElement.add(urlString, FileSystem::lastComponentOfPathIgnoringTrailingSlash(path));
+                    }
+                }
+
+                auto contentString = element.styleSheetContentWithReplacementURLs(uniqueSubresourcesInElement);
+                if (contentString.isEmpty())
+                    continue;
+
+                if (auto newResource = ArchiveResource::create(utf8Buffer(contentString), subresources[index]->url(), subresources[index]->mimeType(), subresources[index]->textEncoding(), subresources[index]->frameName(), ResourceResponse(), subresources[index]->relativeFilePath())) {
+                    subresources.remove(index);
+                    subresources.append(newResource.releaseNonNull());
+                }
             }
         }
     }

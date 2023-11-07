@@ -36,10 +36,12 @@ SOFT_LINK_FRAMEWORK(UIKit) // NOLINT
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 
 @implementation WKTextInteractionWrapper {
+    __weak WKContentView *_view;
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     RetainPtr<UIAsyncTextInteraction> _asyncTextInteraction;
 #endif
+    BOOL _shouldRestoreEditMenuAfterOverflowScrolling;
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -55,7 +57,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     } else
 #endif
         _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
-
+    _view = view;
     return self;
 }
 
@@ -67,41 +69,71 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 - (void)activateSelection
 {
     [_textInteractionAssistant activateSelection];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+#endif
 }
 
 - (void)deactivateSelection
 {
     [_textInteractionAssistant deactivateSelection];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+#endif
 }
 
 - (void)selectionChanged
 {
     [_textInteractionAssistant selectionChanged];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [_asyncTextInteraction selectionChanged];
+#endif
 }
 
 - (void)setGestureRecognizers
 {
     [_textInteractionAssistant setGestureRecognizers];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [_asyncTextInteraction editabilityChanged];
+#endif
 }
 
 - (void)willStartScrollingOverflow
 {
     [_textInteractionAssistant willStartScrollingOverflow];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
+    [_asyncTextInteraction dismissEditMenuForSelection];
+    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+#endif
 }
 
 - (void)didEndScrollingOverflow
 {
     [_textInteractionAssistant didEndScrollingOverflow];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
+        [_asyncTextInteraction presentEditMenuForSelection];
+    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+#endif
 }
 
 - (void)willStartScrollingOrZooming
 {
     [_textInteractionAssistant willStartScrollingOrZooming];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
+    [_asyncTextInteraction dismissEditMenuForSelection];
+#endif
 }
 
 - (void)didEndScrollingOrZooming
 {
     [_textInteractionAssistant didEndScrollingOrZooming];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
+        [_asyncTextInteraction presentEditMenuForSelection];
+#endif
 }
 
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags
@@ -190,12 +222,19 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 
 - (UIContextMenuInteraction *)contextMenuInteraction
 {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (_asyncTextInteraction)
+        return [_asyncTextInteraction contextMenuInteraction];
+#endif
     return [_textInteractionAssistant contextMenuInteraction];
 }
 
 - (void)setExternalContextMenuInteractionDelegate:(id<UIContextMenuInteractionDelegate>)delegate
 {
     [_textInteractionAssistant setExternalContextMenuInteractionDelegate:delegate];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [_asyncTextInteraction setContextMenuInteractionDelegate:delegate];
+#endif
 }
 
 #endif // USE(UICONTEXTMENU)

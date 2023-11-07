@@ -42,6 +42,7 @@
 #include "PCToCodeOriginMap.h"
 #include "ThunkGenerators.h"
 #include <wtf/RecursableLambda.h>
+#include <wtf/SetForScope.h>
 
 namespace JSC { namespace FTL {
 
@@ -61,8 +62,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
         graph.freeDFGIRAfterLowering();
 
-    state.graph.m_frozenValuesAreFinalized = true;
     {
+        SetForScope disallowFreeze { state.graph.m_frozenValuesAreFinalized, true };
         GraphSafepoint safepoint(state.graph, safepointResult);
         B3::prepareForGeneration(*state.proc);
     }
@@ -124,6 +125,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     CCallHelpers jit(codeBlock);
     {
+        SetForScope disallowFreeze { state.graph.m_frozenValuesAreFinalized, true };
         GraphSafepoint safepoint(state.graph, safepointResult);
         B3::generate(*state.proc, jit);
     }

@@ -1188,6 +1188,8 @@ webkit.org/b/180645 accessibility/color-input-value-changes.html [ Timeout ]
 webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 
+webkit.org/b/180645 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-computed-style.html [ Failure ]
+
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]

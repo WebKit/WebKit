@@ -68,12 +68,14 @@ RenderInline::RenderInline(Type type, Element& element, RenderStyle&& style)
     : RenderBoxModelObject(type, element, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
+    ASSERT(isRenderInline());
 }
 
 RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
     : RenderBoxModelObject(type, document, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
+    ASSERT(isRenderInline());
 }
 
 void RenderInline::willBeDestroyed()

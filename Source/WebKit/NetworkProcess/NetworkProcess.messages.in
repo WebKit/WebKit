@@ -118,7 +118,7 @@ messages -> NetworkProcess LegacyReceiver {
     StatisticsDatabaseHasAllTables(PAL::SessionID sessionID) -> (bool hasAllTables)
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds) -> ()
     SetGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, bool isGrandfathered) -> ()
-    GetResourceLoadStatisticsDataSummary(PAL::SessionID sessionID) -> (Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyData)
+    GetResourceLoadStatisticsDataSummary(PAL::SessionID sessionID) -> (Vector<WebKit::ITPThirdPartyData> thirdPartyData)
     SetGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds) -> ()
     SetMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> ()
     SetMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sessionID, Seconds seconds) -> ()

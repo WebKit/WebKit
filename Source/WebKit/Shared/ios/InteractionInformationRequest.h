@@ -47,7 +47,6 @@ struct InteractionInformationRequest {
 
     bool gatherAnimations { false };
     bool linkIndicatorShouldHaveLegacyMargins { false };
-    bool disallowUserAgentShadowContent { false };
 
     InteractionInformationRequest() { }
     explicit InteractionInformationRequest(WebCore::IntPoint point)
@@ -56,7 +55,7 @@ struct InteractionInformationRequest {
     }
 
     explicit InteractionInformationRequest(WebCore::IntPoint point, bool includeSnapshot, bool includeLinkIndicator, bool includeCaretContext, bool includeHasDoubleClickHandler,
-        bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins, bool disallowUserAgentShadowContent)
+        bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins)
         : point(point)
         , includeSnapshot(includeSnapshot)
         , includeLinkIndicator(includeLinkIndicator)
@@ -65,7 +64,6 @@ struct InteractionInformationRequest {
         , includeImageData(includeImageData)
         , gatherAnimations(gatherAnimations)
         , linkIndicatorShouldHaveLegacyMargins(linkIndicatorShouldHaveLegacyMargins)
-        , disallowUserAgentShadowContent(disallowUserAgentShadowContent)
     {
     }
 

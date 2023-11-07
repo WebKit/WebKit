@@ -170,11 +170,13 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
 RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(type, element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
+    ASSERT(isBoxModelObject());
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(type, document, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
+    ASSERT(isBoxModelObject());
 }
 
 RenderBoxModelObject::~RenderBoxModelObject()

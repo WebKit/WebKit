@@ -786,10 +786,9 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     // - the "filter" property applies to the element and it has a computed value other than none
     // - a property defined in another specification is applied and that property is defined to establish a stacking context in SVG
     //
-    // Some of the rules above were already enforced in StyleResolver::adjustRenderStyle() - for those cases assertions were added.
+    // Some of the rules above were already enforced in StyleResolver::adjust() - for those cases assertions were added.
     if (svgElement.document().settings().layerBasedSVGEngineEnabled() && style.hasAutoUsedZIndex()) {
-        // adjustRenderStyle() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
-        ASSERT(!style.hasClip());
+        // adjust() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
         ASSERT(!style.clipPath());
         ASSERT(!style.hasFilter());
 

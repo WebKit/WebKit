@@ -73,11 +73,6 @@
     // Asserts the function does not thow an exception and the result promise is resolved.
     [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
 
-    // Temporary webNavigation event for bring-up.
-    // FIXME: Remove this.
-    readonly attribute WebExtensionAPIWebNavigationEvent testWebNavigationEvent;
-    void fireTestWebNavigationEvent(DOMString targetUrl);
-
     // FIXME: Temporary Event for bring-up. Remove this.
     readonly attribute WebExtensionAPIEvent testEvent;
     void fireTestEvent();

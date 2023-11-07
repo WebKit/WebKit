@@ -909,6 +909,91 @@ TEST(WKWebExtension, ContentSecurityPolicyParsing)
     EXPECT_EQ(testExtension.errors.count, 1ul);
 }
 
+TEST(WKWebExtension, WebAccessibleResourcesV2)
+{
+    NSMutableDictionary *testManifestDictionary = [@{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"web_accessible_resources": @[ @"images/*.png", @"styles/*.css" ]
+    } mutableCopy];
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"web_accessible_resources"] = @"bad";
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"web_accessible_resources"] = @{ };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+}
+
+TEST(WKWebExtension, WebAccessibleResourcesV3)
+{
+    NSMutableDictionary *testManifestDictionary = [@{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"images/*.png", @"styles/*.css" ],
+            @"matches": @[ @"<all_urls>" ]
+        },
+        @{
+            @"resources": @[ @"scripts/*.js" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ]
+    } mutableCopy];
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ @{
+        @"resources": @[ ],
+        @"matches": @[ ]
+    } ];
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ @{
+        @"resources": @"bad",
+        @"matches": @[ @"<all_urls>" ]
+    } ];
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ @{
+        @"resources": @[ @"images/*.png" ],
+        @"matches": @"bad"
+    } ];
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ @{
+        @"matches": @[ @"<all_urls>" ]
+    } ];
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"web_accessible_resources"] = @[ @{
+        @"resources": @[ ]
+    } ];
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

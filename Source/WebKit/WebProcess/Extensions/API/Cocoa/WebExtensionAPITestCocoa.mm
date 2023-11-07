@@ -271,22 +271,6 @@ JSValue *WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValue *f
     return assertResolves(context, result, message);
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPITest::testWebNavigationEvent()
-{
-    if (!m_webNavigationEvent)
-        m_webNavigationEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCompleted);
-
-    return *m_webNavigationEvent;
-}
-
-void WebExtensionAPITest::fireTestWebNavigationEvent(NSString *urlString)
-{
-    NSURL *targetURL = [NSURL URLWithString:urlString];
-
-    WebExtensionAPIWebNavigationEvent& testEvent = testWebNavigationEvent();
-    testEvent.invokeListenersWithArgument(@{ @"url": urlString }, targetURL);
-}
-
 WebExtensionAPIEvent& WebExtensionAPITest::testEvent()
 {
     if (!m_event)

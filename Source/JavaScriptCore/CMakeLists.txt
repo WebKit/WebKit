@@ -652,6 +652,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/BytecodeIntrinsicRegistry.h
     bytecode/CallEdge.h
     bytecode/CallLinkInfo.h
+    bytecode/CallLinkInfoBase.h
     bytecode/CallMode.h
     bytecode/CallVariant.h
     bytecode/CallVariantInlines.h

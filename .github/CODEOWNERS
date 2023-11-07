@@ -215,11 +215,10 @@ wpe/ @WebKit/glib-reviewers @zdobersek
 # ================================================================================
 # WebGPU
 
-/Source/WebCore/Modules/webgpu @litherum @mwyrzykowski
-/Source/WebCore/PAL/pal/graphics/WebGPU @litherum @mwyrzykowski
-/Source/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/Shared/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/WebProcess/GPU/graphics/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/GPUProcess/graphics/WebGPU @litherum @mwyrzykowski
+/Source/WebCore/Modules/webgpu @tadeuzagallo @mwyrzykowski
+/Source/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/Shared/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/WebProcess/GPU/graphics/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/GPUProcess/graphics/WebGPU @tadeuzagallo @mwyrzykowski
 
-/Source/WebGPU/WGSL @litherum @djg @tadeuzagallo
+/Source/WebGPU/WGSL @mwyrzykowski @djg @tadeuzagallo

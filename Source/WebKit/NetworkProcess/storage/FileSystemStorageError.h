@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/ExceptionOr.h>
-#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
@@ -74,21 +73,3 @@ inline WebCore::ExceptionOr<void> convertToExceptionOr(std::optional<FileSystemS
 }
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::FileSystemStorageError> {
-    using values = EnumValues<
-        WebKit::FileSystemStorageError,
-        WebKit::FileSystemStorageError::AccessHandleActive,
-        WebKit::FileSystemStorageError::BackendNotSupported,
-        WebKit::FileSystemStorageError::FileNotFound,
-        WebKit::FileSystemStorageError::InvalidModification,
-        WebKit::FileSystemStorageError::InvalidName,
-        WebKit::FileSystemStorageError::InvalidState,
-        WebKit::FileSystemStorageError::TypeMismatch,
-        WebKit::FileSystemStorageError::Unknown
-    >;
-};
-
-} // namespace WTF

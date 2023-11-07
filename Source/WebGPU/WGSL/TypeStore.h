@@ -49,6 +49,7 @@ public:
         TextureStorage,
         Reference,
         Pointer,
+        PrimitiveStruct,
     };
 
     using EncodedKey = std::tuple<uint8_t, uint8_t, uint16_t, uint32_t, uintptr_t>;
@@ -101,6 +102,7 @@ public:
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
     const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
+    const Type* frexpResultType(const Type*, const Type*);
 
 private:
     template<typename TypeKind, typename... Arguments>

@@ -34,6 +34,7 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
@@ -132,10 +133,10 @@ private:
     void removeUserContentController(WebUserContentControllerProxy&);
 
     // Web Navigation
-    void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL targetURL);
-    void didCommitLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void didFinishLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void didFailLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+    void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didFinishLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didFailLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
 
     Ref<WebExtensionControllerConfiguration> m_configuration;
     WebExtensionControllerIdentifier m_identifier;

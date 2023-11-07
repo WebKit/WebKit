@@ -429,11 +429,13 @@ public:
         return p;
     }
 
-    using AllPromiseType = NativePromise<Vector<ResolveValueType>, RejectValueType, options>;
+    using AllPromiseType = NativePromise<std::conditional_t<std::is_void_v<ResolveValueType>, void, Vector<ResolveValueType>>, RejectValueType, options>;
     using AllSettledPromiseType = NativePromise<Vector<Result>, bool, options>;
 
 private:
     friend class Producer;
+    struct VoidPlaceholder {
+    };
 
     template<typename SettleValueType>
     inline void settleImpl(SettleValueType&& result, Locker<Lock>& lock)
@@ -517,7 +519,8 @@ private:
             , m_outstandingPromises(dependentPromisesCount)
         {
             ASSERT(dependentPromisesCount);
-            m_resolveValues.resize(dependentPromisesCount);
+            if constexpr (!std::is_void_v<ResolveValueT>)
+                m_resolveValues.resize(dependentPromisesCount);
         }
 
         template<typename ResolveValueType_>
@@ -528,11 +531,16 @@ private:
                 return;
             }
 
-            m_resolveValues[index] = std::forward<ResolveValueType_>(resolveValue);
+            if constexpr (!std::is_void_v<ResolveValueT>)
+                m_resolveValues[index] = std::forward<ResolveValueType_>(resolveValue);
             if (!--m_outstandingPromises) {
-                m_producer->resolve(WTF::map(std::exchange(m_resolveValues, { }), [](auto&& resolveValue) {
-                    return WTFMove(*resolveValue);
-                }));
+                if constexpr (std::is_void_v<ResolveValueT>)
+                    m_producer->resolve();
+                else {
+                    m_producer->resolve(WTF::map(std::exchange(m_resolveValues, { }), [](auto&& resolveValue) {
+                        return WTFMove(*resolveValue);
+                    }));
+                }
                 m_producer = nullptr;
             }
         }
@@ -546,13 +554,14 @@ private:
             }
             m_producer->reject(std::forward<RejectValueType_>(rejectValue));
             m_producer = nullptr;
-            m_resolveValues.clear();
+            if constexpr (!std::is_void_v<ResolveValueT>)
+                m_resolveValues.clear();
         }
 
         Ref<AllPromiseType> promise() { return static_cast<Ref<AllPromiseType>>(*m_producer); }
 
     private:
-        Vector<std::optional<ResolveValueType>> m_resolveValues;
+        NO_UNIQUE_ADDRESS std::conditional_t<!std::is_void_v<ResolveValueT>, Vector<std::optional<ResolveValueType>>, VoidPlaceholder> m_resolveValues;
         std::unique_ptr<typename AllPromiseType::Producer> m_producer;
         size_t m_outstandingPromises;
     };
@@ -593,19 +602,25 @@ private:
 
 public:
     template <class Dispatcher>
-    static Ref<AllPromiseType> all(Dispatcher& targetQueue, Vector<Ref<NativePromise>>& promises)
+    static Ref<AllPromiseType> all(Dispatcher& targetQueue, const Vector<Ref<NativePromise>>& promises)
     {
         static_assert(LooksLikeRCSerialDispatcher<typename RemoveSmartPointer<Dispatcher>::type>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
-        if (promises.isEmpty())
-            return AllPromiseType::createAndResolve(Vector<ResolveValueType>());
-
+        if (promises.isEmpty()) {
+            if constexpr (std::is_void_v<ResolveValueT>)
+                return AllPromiseType::createAndResolve();
+            else
+                return AllPromiseType::createAndResolve(typename AllPromiseType::ResolveValueType());
+        }
         auto producer = adoptRef(new AllPromiseProducer(promises.size()));
         auto promise = producer->promise();
         for (size_t i = 0; i < promises.size(); ++i) {
             promises[i]->whenSettled(targetQueue, [producer, i] (ResultParam result) {
-                if (result)
-                    producer->resolve(i, maybeMove(result.value()));
-                else
+                if (result) {
+                    if constexpr (std::is_void_v<ResolveValueT>)
+                        producer->resolve(i, VoidPlaceholder());
+                    else
+                        producer->resolve(i, maybeMove(result.value()));
+                } else
                     producer->reject(maybeMove(result.error()));
             });
         }
@@ -613,7 +628,7 @@ public:
     }
 
     template <class Dispatcher>
-    static Ref<AllSettledPromiseType> allSettled(Dispatcher& targetQueue, Vector<Ref<NativePromise>>& promises)
+    static Ref<AllSettledPromiseType> allSettled(Dispatcher& targetQueue, const Vector<Ref<NativePromise>>& promises)
     {
         static_assert(LooksLikeRCSerialDispatcher<typename RemoveSmartPointer<Dispatcher>::type>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
         if (promises.isEmpty())
@@ -768,8 +783,8 @@ private:
         }
 #endif
 
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, std::monostate> m_lock;
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, std::monostate> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
+        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, VoidPlaceholder> m_lock;
+        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, VoidPlaceholder> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
     private:
         CallBackType m_settleFunction WTF_GUARDED_BY_CAPABILITY(*ThenCallbackBase::m_targetQueue);
     };
@@ -949,7 +964,7 @@ public:
         using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
         static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
 
-        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, std::nullptr_t, ResolveValueT>>()))>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, VoidPlaceholder, ResolveValueType>>()))>::type;
         using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<RejectFunction>(rejectFunction), std::declval<RejectValueT>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
@@ -958,7 +973,7 @@ public:
         return whenSettled(targetQueue, [resolveFunction = std::forward<ResolveFunction>(resolveFunction), rejectFunction = std::forward<RejectFunction>(rejectFunction)] (ResultParam result) mutable -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), std::nullptr_t());
+                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), VoidPlaceholder());
                 else
                     return invokeWithVoidOrWithArg(WTFMove(resolveFunction), maybeMove(result.value()));
             }
@@ -970,7 +985,7 @@ public:
     auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
-        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, std::nullptr_t, ResolveValueT>>()))>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, VoidPlaceholder, ResolveValueType>>()))>::type;
         using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, rejectMethod, std::declval<RejectValueT>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
@@ -979,7 +994,7 @@ public:
         return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveMethod, rejectMethod] (ResultParam result) -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, std::nullptr_t());
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, VoidPlaceholder());
                 else
                     return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(result.value()));
             }

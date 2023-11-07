@@ -195,7 +195,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem, m_player.get()->requiresRemotePlayback()), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, WTFMove(sandboxExtensionHandle), contentType, keySystem, m_player.get()->requiresRemotePlayback()), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
         if (!weakThis)
             return;
 

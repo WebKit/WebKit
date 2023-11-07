@@ -27,6 +27,7 @@
 #define WKFrameHandleRef_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {

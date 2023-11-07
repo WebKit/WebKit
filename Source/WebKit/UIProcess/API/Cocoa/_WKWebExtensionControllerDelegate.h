@@ -159,7 +159,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  called when the web view for the popup is fully loaded and ready to display. Implementing this method is needed if the app intends to support
  programmatically showing the popup by the extension, although it is recommended for handling both programmatic and user-initiated cases.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller presentActionPopup:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)webExtensionController:(_WKWebExtensionController *)controller presentPopupForAction:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when an extension context wants to send a one-time message to an application.

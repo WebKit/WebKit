@@ -582,16 +582,6 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RenderLayerBacking::layerWillBeDestroyed()
-{
-    auto& renderer = this->renderer();
-    if (RenderLayerCompositor::isCompositedPlugin(renderer)) {
-        auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer).widget());
-        if (pluginViewBase && m_graphicsLayer->contentsLayerForMedia())
-            pluginViewBase->detachPluginLayer();
-    }
-}
-
 bool RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer& layer) const
 {
     if (m_isMainFrameRenderViewLayer && IOSApplication::isDumpRenderTree()) {
@@ -1155,13 +1145,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         if (!pluginViewBase)
             return;
 
-#if PLATFORM(IOS_FAMILY)
-        // FIXME: This code can probably be removed: webkit.org/b/262808
-        if (pluginViewBase && !m_graphicsLayer->contentsLayerForMedia()) {
-            pluginViewBase->detachPluginLayer();
-            pluginViewBase->attachPluginLayer();
-        }
-#else
         switch (pluginViewBase->layerHostingStrategy()) {
         case PluginLayerHostingStrategy::None:
             break;
@@ -1172,7 +1155,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
             // layer is parented in RenderLayerCompositor::updateBackingAndHierarchy().
             break;
         }
-#endif
     };
 
     if (RenderLayerCompositor::isCompositedPlugin(renderer()))

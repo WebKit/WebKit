@@ -108,6 +108,7 @@ enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
+struct ITPThirdPartyData;
 struct NetworkProcessConnectionInfo;
 struct WebPushMessage;
 struct WebsiteDataRecord;
@@ -220,7 +221,7 @@ public:
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
-    void getResourceLoadStatisticsDataSummary(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
+    void getResourceLoadStatisticsDataSummary(CompletionHandler<void(Vector<ITPThirdPartyData>&&)>&&);
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void setGrandfathered(const URL&, bool, CompletionHandler<void()>&&);
     void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);

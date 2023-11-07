@@ -256,13 +256,8 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
                     weakThis->uiAssertionWillExpireImminently();
             });
             m_assertion = WTFMove(assertion);
-        } else {
-#if USE(EXTENSIONKIT_ASSERTIONS)
+        } else
             m_assertion = ProcessAssertion::create(*m_processProxy, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
-#else
-            m_assertion = ProcessAssertion::create(m_processProxy->processID(), assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
-#endif
-        }
     }
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
         if (weakThis)

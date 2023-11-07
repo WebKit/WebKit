@@ -854,7 +854,7 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 void WebPageProxy::grantAccessToAssetServices()
 {
     auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.mobileassetd.v2"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(handles), 0);
+    process().send(Messages::WebProcess::GrantAccessToAssetServices(WTFMove(handles)), 0);
 }
 
 void WebPageProxy::revokeAccessToAssetServices()

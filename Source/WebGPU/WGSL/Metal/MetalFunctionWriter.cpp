@@ -215,7 +215,6 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
-        m_callGraph.ast().clearUsesWorkgroupUniformLoad();
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -230,7 +229,6 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_callGraph.ast().usesDivision()) {
-        m_callGraph.ast().clearUsesDivision();
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -243,6 +241,29 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 m_stringBuilder.append(m_indent, "predicate = predicate || (V(lhs) == V(numeric_limits<T>::lowest()) && V(rhs) == V(-1));\n");
             }
             m_stringBuilder.append(m_indent, "return lhs / select(V(rhs), V(1), predicate);\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
+
+    if (m_callGraph.ast().usesFrexp()) {
+        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
+        m_stringBuilder.append(m_indent, "struct __frexp_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T fract;\n");
+            m_stringBuilder.append(m_indent, "U exp;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n");
+        m_stringBuilder.append(m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "__frexp_result<T, U> result;\n");
+            m_stringBuilder.append(m_indent, "result.fract = frexp(value, result.exp);\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
         }
         m_stringBuilder.append(m_indent, "}\n\n");
     }
@@ -745,6 +766,17 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(structure.structure.name());
             if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource)
                 m_stringBuilder.append("::PackedType");
+        },
+        [&](const PrimitiveStruct& structure) {
+            m_stringBuilder.append(structure.name, "<");
+            bool first = true;
+            for (auto& value : structure.values) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                visit(value);
+            }
+            m_stringBuilder.append(">");
         },
         [&](const Texture& texture) {
             const char* type;
@@ -1393,6 +1425,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
+            { "frexp", "__wgslFrexp"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
             { "inverseSqrt", "rsqrt"_s },
@@ -1748,26 +1781,26 @@ void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
 {
     const auto& visitClause = [&](AST::SwitchClause& clause, bool isDefault = false) {
-        bool first = true;
         for (auto& selector : clause.selectors) {
-            if (!first)
-                m_stringBuilder.append("\n");
-            first = false;
+            m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "case ");
             visit(selector);
             m_stringBuilder.append(":");
         }
         if (isDefault) {
-            if (!first)
-                m_stringBuilder.append("\n");
+            m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "default:");
         }
+        m_stringBuilder.append(" ");
         visit(clause.body);
+
+        IndentationScope scope(m_indent);
+        m_stringBuilder.append("\n", m_indent, "break;");
     };
 
     m_stringBuilder.append("switch (");
     visit(statement.value());
-    m_stringBuilder.append(") {\n");
+    m_stringBuilder.append(") {");
     for (auto& clause : statement.clauses())
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
@@ -1869,6 +1902,10 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             m_stringBuilder.append(")");
         },
         [&](const Struct&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const PrimitiveStruct&) {
             // Not supported yet
             RELEASE_ASSERT_NOT_REACHED();
         },

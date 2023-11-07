@@ -148,10 +148,10 @@ WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext)
     : m_extensionContext(extensionContext)
 {
     auto delegate = extensionContext.extensionController()->delegate();
-    m_respondsToPresentPopup = [delegate respondsToSelector:@selector(webExtensionController:presentActionPopup:forExtensionContext:completionHandler:)];
+    m_respondsToPresentPopup = [delegate respondsToSelector:@selector(webExtensionController:presentPopupForAction:forExtensionContext:completionHandler:)];
 
     if (!m_respondsToPresentPopup)
-        RELEASE_LOG_ERROR(Extensions, "%{public}@ does not implement the webExtensionController:presentActionPopup:forExtensionContext:completionHandler: method", delegate.debugDescription);
+        RELEASE_LOG_ERROR(Extensions, "%{public}@ does not implement the webExtensionController:presentPopupForAction:forExtensionContext:completionHandler: method", delegate.debugDescription);
 }
 
 WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext, WebExtensionTab& tab)
@@ -233,7 +233,7 @@ void WebExtensionAction::setPopupPath(String path)
 
 WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
 {
-    if (!hasPopup())
+    if (!presentsPopup())
         return nil;
 
     if (m_popupWebView || loadOnFirstAccess == LoadOnFirstAccess::No)
@@ -311,7 +311,7 @@ void WebExtensionAction::readyToPresentPopup()
         auto* extensionController = extensionContext()->extensionController();
         auto delegate = extensionController->delegate();
 
-        [delegate webExtensionController:extensionController->wrapper() presentActionPopup:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSError *error) {
+        [delegate webExtensionController:extensionController->wrapper() presentPopupForAction:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSError *error) {
             if (error)
                 closePopupWebView();
         }).get()];
@@ -336,7 +336,7 @@ void WebExtensionAction::closePopupWebView()
     m_popupPresented = false;
 }
 
-String WebExtensionAction::displayLabel(FallbackWhenEmpty fallback) const
+String WebExtensionAction::label(FallbackWhenEmpty fallback) const
 {
     if (!extensionContext())
         return emptyString();
@@ -349,10 +349,10 @@ String WebExtensionAction::displayLabel(FallbackWhenEmpty fallback) const
     }
 
     if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->displayLabel();
+        return extensionContext()->getAction(m_tab->window().get())->label();
 
     if (m_window)
-        return extensionContext()->defaultAction().displayLabel();
+        return extensionContext()->defaultAction().label();
 
     if (auto *defaultLabel = extensionContext()->extension().displayActionLabel(); defaultLabel.length || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
@@ -360,7 +360,7 @@ String WebExtensionAction::displayLabel(FallbackWhenEmpty fallback) const
     return extensionContext()->extension().displayName();
 }
 
-void WebExtensionAction::setDisplayLabel(String label)
+void WebExtensionAction::setLabel(String label)
 {
     m_customLabel = label;
 

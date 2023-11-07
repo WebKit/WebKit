@@ -36,8 +36,52 @@ namespace WebCore {
 
 class AuthenticatorResponse;
 
+struct AuthenticatorResponseBaseData {
+    RefPtr<ArrayBuffer> rawId;
+    std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
+};
+
+struct AuthenticatorAttestationResponseData {
+    RefPtr<ArrayBuffer> rawId;
+    std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<ArrayBuffer> attestationObject;
+    Vector<WebCore::AuthenticatorTransport> transports;
+};
+
+struct AuthenticatorAssertionResponseData {
+    RefPtr<ArrayBuffer> rawId;
+    std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<ArrayBuffer> authenticatorData;
+    RefPtr<ArrayBuffer> signature;
+    RefPtr<ArrayBuffer> userHandle;
+};
+
+using AuthenticatorResponseDataSerializableForm = std::variant<std::nullptr_t, AuthenticatorResponseBaseData, AuthenticatorAttestationResponseData, AuthenticatorAssertionResponseData>;
+
 struct AuthenticatorResponseData {
-    bool isAuthenticatorAttestationResponse;
+    AuthenticatorResponseData() = default;
+    AuthenticatorResponseData(const AuthenticatorResponseDataSerializableForm& data)
+    {
+        WTF::switchOn(data, [](std::nullptr_t) {
+        }, [&](const AuthenticatorResponseBaseData& v) {
+            rawId = v.rawId;
+            extensionOutputs = v.extensionOutputs;
+        }, [&](const AuthenticatorAttestationResponseData& v) {
+            isAuthenticatorAttestationResponse = true;
+            rawId = v.rawId;
+            extensionOutputs = v.extensionOutputs;
+            attestationObject = v.attestationObject;
+            transports = v.transports;
+        }, [&](const AuthenticatorAssertionResponseData& v) {
+            rawId = v.rawId;
+            extensionOutputs = v.extensionOutputs;
+            authenticatorData = v.authenticatorData;
+            signature = v.signature;
+            userHandle = v.userHandle;
+        });
+    }
+
+    bool isAuthenticatorAttestationResponse { false };
 
     // AuthenticatorResponse
     RefPtr<ArrayBuffer> rawId;
@@ -55,120 +99,20 @@ struct AuthenticatorResponseData {
 
     Vector<WebCore::AuthenticatorTransport> transports;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<AuthenticatorResponseData> decode(Decoder&);
+    AuthenticatorResponseDataSerializableForm getSerializableForm() const
+    {
+        if (!rawId)
+            return nullptr;
+
+        if (isAuthenticatorAttestationResponse && attestationObject)
+            return AuthenticatorAttestationResponseData { rawId, extensionOutputs, attestationObject, transports };
+
+        if (!authenticatorData || !signature)
+            return AuthenticatorResponseBaseData { rawId, extensionOutputs };
+
+        return AuthenticatorAssertionResponseData { rawId, extensionOutputs, authenticatorData, signature, userHandle };
+    }
 };
-
-template<class Encoder>
-static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
-{
-    encoder << std::span(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.byteLength());
-}
-
-template<class Decoder>
-RefPtr<ArrayBuffer> WARN_UNUSED_RETURN decodeArrayBuffer(Decoder& decoder)
-{
-    std::optional<std::span<const uint8_t>> buffer;
-    decoder >> buffer;
-    if (!buffer)
-        return nullptr;
-    return ArrayBuffer::tryCreate(buffer->data(), buffer->size_bytes());
-}
-
-template<class Encoder>
-void AuthenticatorResponseData::encode(Encoder& encoder) const
-{
-    if (!rawId) {
-        encoder << true;
-        return;
-    }
-    encoder << false;
-    encodeArrayBuffer(encoder, *rawId);
-    encoder << extensionOutputs;
-
-    encoder << isAuthenticatorAttestationResponse;
-
-    if (isAuthenticatorAttestationResponse && attestationObject) {
-        encodeArrayBuffer(encoder, *attestationObject);
-        encoder << transports;
-        return;
-    }
-
-    if (!authenticatorData || !signature)
-        return;
-    encodeArrayBuffer(encoder, *authenticatorData);
-    encodeArrayBuffer(encoder, *signature);
-
-    if (!userHandle) {
-        encoder << false;
-        return;
-    }
-    encoder << true;
-    encodeArrayBuffer(encoder, *userHandle);
-}
-
-template<class Decoder>
-std::optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& decoder)
-{
-    AuthenticatorResponseData result;
-
-    std::optional<bool> isEmpty;
-    decoder >> isEmpty;
-    if (!isEmpty)
-        return std::nullopt;
-    if (isEmpty.value())
-        return result;
-
-    result.rawId = decodeArrayBuffer(decoder);
-    if (!result.rawId)
-        return std::nullopt;
-    
-    std::optional<std::optional<AuthenticationExtensionsClientOutputs>> extensionOutputs;
-    decoder >> extensionOutputs;
-    if (!extensionOutputs)
-        return std::nullopt;
-    result.extensionOutputs = WTFMove(*extensionOutputs);
-
-    std::optional<bool> isAuthenticatorAttestationResponse;
-    decoder >> isAuthenticatorAttestationResponse;
-    if (!isAuthenticatorAttestationResponse)
-        return std::nullopt;
-    result.isAuthenticatorAttestationResponse = isAuthenticatorAttestationResponse.value();
-
-    if (result.isAuthenticatorAttestationResponse) {
-        result.attestationObject = decodeArrayBuffer(decoder);
-        if (!result.attestationObject)
-            return std::nullopt;
-
-        std::optional<Vector<AuthenticatorTransport>> transports;
-        decoder >> transports;
-        if (!transports)
-            return std::nullopt;
-        result.transports = WTFMove(*transports);
-        return result;
-    }
-
-    result.authenticatorData = decodeArrayBuffer(decoder);
-    if (!result.authenticatorData)
-        return std::nullopt;
-
-    result.signature = decodeArrayBuffer(decoder);
-    if (!result.signature)
-        return std::nullopt;
-
-    std::optional<bool> hasUserHandle;
-    decoder >> hasUserHandle;
-    if (!hasUserHandle)
-        return std::nullopt;
-    if (!*hasUserHandle)
-        return result;
-
-    result.userHandle = decodeArrayBuffer(decoder);
-    if (!result.userHandle)
-        return std::nullopt;
-
-    return result;
-}
     
 } // namespace WebCore
 

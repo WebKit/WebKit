@@ -745,6 +745,16 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
             return it->value;
         }
 
+        if (auto* primitiveStruct = std::get_if<Types::PrimitiveStruct>(baseType)) {
+            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct->kind];
+            auto* key = keys.tryGet(access.fieldName().id());
+            if (!key) {
+                typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
+                return nullptr;
+            }
+            return primitiveStruct->values[*key];
+        }
+
         if (std::holds_alternative<Types::Vector>(*baseType)) {
             auto& vector = std::get<Types::Vector>(*baseType);
             auto* result = vectorFieldAccess(vector, access);
@@ -961,6 +971,8 @@ void TypeChecker::visit(AST::CallExpression& call)
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
+            else if (targetName == "frexp"_s)
+                m_shaderModule.setUsesFrexp();
             target.m_inferredType = result;
             return;
         }
@@ -1632,6 +1644,10 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             return Success;
         },
         [&](const Types::Struct&) -> Conversion {
+            // FIXME: this should be supported
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::PrimitiveStruct&) -> Conversion {
             // FIXME: this should be supported
             RELEASE_ASSERT_NOT_REACHED();
         },

@@ -1169,6 +1169,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)pasteAndMatchStyle:(id)sender;
 - (void)makeTextWritingDirectionNatural:(id)sender;
 @property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
+@property (nonatomic, readonly) UITextInteractionAssistant *interactionAssistant;
 @end
 
 @interface _UINavigationInteractiveTransitionBase ()
@@ -1226,6 +1227,27 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, copy) NSArray<NSValue *> *autocorrectedRanges;
 @end
 #endif
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+@interface UIAsyncTextInteraction (Staging_117831560)
+
+- (void)presentEditMenuForSelection;
+- (void)dismissEditMenuForSelection;
+
+- (void)selectionChanged;
+- (void)editabilityChanged;
+
+@property (nonatomic, readonly) UITextSelectionDisplayInteraction *textSelectionDisplayInteraction;
+
+#if USE(UICONTEXTMENU)
+@property (nonatomic, weak) id<UIContextMenuInteractionDelegate> contextMenuInteractionDelegate;
+@property (nonatomic, readonly) UIContextMenuInteraction *contextMenuInteraction;
+#endif
+
+@end
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 WTF_EXTERN_C_BEGIN
 

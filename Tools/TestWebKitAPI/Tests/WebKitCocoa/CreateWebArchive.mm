@@ -1245,6 +1245,96 @@ TEST(WebArchive, SaveResourcesInlineStyle)
     Util::run(&saved);
 }
 
+static const char* htmlDataBytesForLink = R"TESTRESOURCE(
+<head>
+<link href="style.css" rel="stylesheet">
+</head>
+<div id="div">Hello</div>
+<script>
+img = null;
+function onImageLoad() {
+    img = null;
+    window.webkit.messageHandlers.testHandler.postMessage("done");
+}
+div = document.getElementById("div");
+var img = document.createElement("img");
+img.src = "files/image.png";
+img.onload = onImageLoad;
+</script>
+)TESTRESOURCE";
+static const char* cssDataBytesForLink = R"TESTRESOURCE(
+div {
+    height: 50%;
+    width: 50%;
+    background-image: url("files/image.png");
+}
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesLink)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForLink length:strlen(htmlDataBytesForLink)];
+    NSData *cssData = [NSData dataWithBytes:cssDataBytesForLink length:strlen(cssDataBytesForLink)];
+    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/files/image.png"]) {
+            mimeType = @"image/png";
+            data = imageData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/style.css"]) {
+            mimeType = @"text/css";
+            data = cssData;
+        }
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *resourceDirectoryPath =[directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:nil];
+        NSSet *savedFileNames = [NSSet setWithArray:resourceFileNames];
+        NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:@"image.png", @"style.css", nil]];
+        EXPECT_TRUE([savedFileNames isEqualToSet:expectedFileNames]);
+
+        NSString *styleResourceFileName = [resourceDirectoryName stringByAppendingPathComponent:@"style.css"];
+        EXPECT_TRUE([savedMainResource containsString:styleResourceFileName]);
+        NSString *styleResourceFilePath = [resourceDirectoryPath stringByAppendingPathComponent:@"style.css"];
+        NSString *savedStyleResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:styleResourceFilePath] encoding:NSUTF8StringEncoding];
+        EXPECT_TRUE([savedStyleResource containsString:@"url(\"image.png\")"]);
+
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

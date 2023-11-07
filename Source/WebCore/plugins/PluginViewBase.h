@@ -53,12 +53,6 @@ public:
 
     virtual void layerHostingStrategyDidChange() { }
 
-#if PLATFORM(IOS_FAMILY)
-    virtual bool willProvidePluginLayer() const { return false; }
-    virtual void attachPluginLayer() { }
-    virtual void detachPluginLayer() { }
-#endif
-
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
     virtual ScrollPosition scrollPositionForTesting() const { return { }; }
 

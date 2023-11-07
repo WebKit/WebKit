@@ -104,7 +104,7 @@ public:
 
     void clear(CompletionHandler<void()>&&);
     bool isEmpty() const;
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const;
+    Vector<ITPThirdPartyData> aggregatedThirdPartyData() const;
     void updateCookieBlocking(CompletionHandler<void()>&&);
     void processStatisticsAndDataRecords();
     void cancelPendingStatisticsProcessingRequest();
@@ -232,7 +232,7 @@ private:
     bool shouldExemptFromWebsiteDataDeletion(const RegistrableDomain&) const;
 
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
+    Vector<ITPThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     String getDomainStringFromDomainID(unsigned) const final;
     void resourceToString(StringBuilder&, const String&) const;
     ASCIILiteral getSubStatisticStatement(ASCIILiteral) const;

@@ -67,9 +67,6 @@ public:
 
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
 
-    WebExtensionAPIWebNavigationEvent& testWebNavigationEvent();
-    void fireTestWebNavigationEvent(NSString *urlString);
-
     WebExtensionAPIEvent& testEvent();
     void fireTestEvent();
 

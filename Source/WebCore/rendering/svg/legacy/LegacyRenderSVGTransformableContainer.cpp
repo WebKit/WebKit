@@ -39,6 +39,7 @@ LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVG
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)
 {
+    ASSERT(isLegacySVGTransformableContainer());
 }
 
 bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()

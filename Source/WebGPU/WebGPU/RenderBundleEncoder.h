@@ -95,7 +95,7 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_indirectCommandBuffer; }
-    bool replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
+    void replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
 
 private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
@@ -109,6 +109,8 @@ private:
     void endCurrentICB();
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
+    bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
+    void finalizeRenderCommand();
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -140,7 +142,8 @@ private:
     Vector<BufferAndOffset> m_fragmentBuffers;
     const Ref<Device> m_device;
     const RenderPipeline* m_pipeline { nullptr };
-    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    using BindGroupDynamicOffsetsContainer = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    std::optional<BindGroupDynamicOffsetsContainer> m_bindGroupDynamicOffsets;
     NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
@@ -148,6 +151,9 @@ private:
     uint64_t m_fragmentDynamicOffset { 0 };
 
     id<MTLRenderCommandEncoder> m_commandEncoder { nil };
+    id<MTLIndirectRenderCommand> m_currentCommand { nil };
+    bool m_requiresCommandReplay { false };
+    bool m_requiresMetalWorkaround { true };
 };
 
 } // namespace WebGPU

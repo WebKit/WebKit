@@ -1096,6 +1096,9 @@ public:
     inline void setMinHeight(Length&&);
     inline void setMaxHeight(Length&&);
 
+    inline void setLogicalMinWidth(Length&&);
+    inline void setLogicalMaxWidth(Length&&);
+
     inline void resetBorder();
     inline void resetBorderExceptRadius();
     inline void resetBorderTop();
@@ -1301,6 +1304,8 @@ public:
     inline void setMarginRight(Length&&);
     void setMarginStart(Length&&);
     void setMarginEnd(Length&&);
+    void setMarginBefore(Length&&);
+    void setMarginAfter(Length&&);
 
     inline void resetPadding();
     inline void setPaddingBox(LengthBox&&);

@@ -1566,7 +1566,6 @@ html/canvas/WebGLRenderingContextBase.cpp
 html/canvas/WebGLSampler.cpp
 html/canvas/WebGLShader.cpp
 html/canvas/WebGLShaderPrecisionFormat.cpp
-html/canvas/WebGLStateTracker.cpp
 html/canvas/WebGLStencilTexturing.cpp
 html/canvas/WebGLSync.cpp
 html/canvas/WebGLTexture.cpp

@@ -224,7 +224,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
     parameters.isProcessSwap = true;
     if (sendPageCreationParameters) {
-        m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
+        m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(parameters)), 0);
         m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
     }
 
@@ -283,9 +283,9 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 
     GoToBackForwardItemParameters parameters { navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, topPrivatelyControlledDomain, WTFMove(sandboxExtensionHandle) };
     if (!m_process->isLaunching() || !itemURL.protocolIsFile())
-        send(Messages::WebPage::GoToBackForwardItem(parameters));
+        send(Messages::WebPage::GoToBackForwardItem(WTFMove(parameters)));
     else
-        send(Messages::WebPage::GoToBackForwardItemWaitingForProcessLaunch(parameters, m_page->identifier()));
+        send(Messages::WebPage::GoToBackForwardItemWaitingForProcessLaunch(WTFMove(parameters), m_page->identifier()));
 
     m_process->startResponsivenessTimer();
 }

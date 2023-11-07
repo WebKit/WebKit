@@ -1597,10 +1597,6 @@ void RenderLayer::updateAncestorDependentState()
     m_enclosingSVGHiddenOrResourceContainer = nullptr;
     auto determineSVGAncestors = [&] (const RenderElement& renderer) {
         for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
-            if (auto* container = dynamicDowncast<RenderSVGResourceContainer>(ancestor)) {
-                m_enclosingSVGHiddenOrResourceContainer = container;
-                return;
-            }
             if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
                 m_enclosingSVGHiddenOrResourceContainer = container;
                 return;
@@ -2390,14 +2386,6 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
 #endif
     }
 }
-
-#if PLATFORM(IOS_FAMILY)
-void RenderLayer::willBeDestroyed()
-{
-    if (RenderLayerBacking* layerBacking = backing())
-        layerBacking->layerWillBeDestroyed();
-}
-#endif
 
 bool RenderLayer::isDescendantOf(const RenderLayer& layer) const
 {

@@ -854,8 +854,6 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::switchAttr:
         if (document().settings().switchControlEnabled()) {
             auto hasSwitchAttribute = !newValue.isNull();
-            if (hasSwitchAttribute == isSwitch())
-                return;
             m_hasSwitchAttribute = hasSwitchAttribute;
             if (isSwitch())
                 m_inputType->createShadowSubtreeIfNeeded();

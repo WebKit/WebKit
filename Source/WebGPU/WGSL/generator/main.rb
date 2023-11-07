@@ -500,6 +500,25 @@ module DSL
         texture_storage_2d = texture_storage[TextureStorage2d]
         texture_storage_2d_array = texture_storage[TextureStorage2dArray]
         texture_storage_3d = texture_storage[TextureStorage3d]
+
+        # primitive structs
+
+        __frexp_result_abstract = Constructor.new(:frexpResult, [abstract_float, abstract_int])
+        # __frexp_result_f16 = Constructor.new(:frexpResult, [f16, i32])
+        __frexp_result_f32 = Constructor.new(:frexpResult, [f32, i32])
+
+        __frexp_result_vec2_abstract = Constructor.new(:frexpResult, [vec2[abstract_float], vec2[abstract_int]])
+        # __frexp_result_vec2_f16 = Constructor.new(:frexpResult, [vec2[f16], vec2[i32]])
+        __frexp_result_vec2_f32 = Constructor.new(:frexpResult, [vec2[f32], vec2[i32]])
+
+        __frexp_result_vec3_abstract = Constructor.new(:frexpResult, [vec3[abstract_float], vec3[abstract_int]])
+        # __frexp_result_vec3_f16 = Constructor.new(:frexpResult, [vec3[f16], vec3[i32]])
+        __frexp_result_vec3_f32 = Constructor.new(:frexpResult, [vec3[f32], vec3[i32]])
+
+        __frexp_result_vec4_abstract = Constructor.new(:frexpResult, [vec4[abstract_float], vec4[abstract_int]])
+        # __frexp_result_vec4_f16 = Constructor.new(:frexpResult, [vec4[f16], vec4[i32]])
+        __frexp_result_vec4_f32 = Constructor.new(:frexpResult, [vec4[f32], vec4[i32]])
+
         EOS
     end
 

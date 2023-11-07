@@ -85,9 +85,9 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return _webExtensionAction->icon(size);
 }
 
-- (NSString *)displayLabel
+- (NSString *)label
 {
-    return _webExtensionAction->displayLabel();
+    return _webExtensionAction->label();
 }
 
 - (NSString *)badgeText
@@ -100,9 +100,9 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return _webExtensionAction->isEnabled();
 }
 
-- (BOOL)hasPopup
+- (BOOL)presentsPopup
 {
-    return _webExtensionAction->hasPopup();
+    return _webExtensionAction->presentsPopup();
 }
 
 - (WKWebView *)popupWebView
@@ -144,7 +144,7 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return nil;
 }
 
-- (NSString *)displayLabel
+- (NSString *)label
 {
     return nil;
 }
@@ -159,7 +159,7 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return NO;
 }
 
-- (BOOL)hasPopup
+- (BOOL)presentsPopup
 {
     return NO;
 }

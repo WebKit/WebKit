@@ -27,6 +27,7 @@
 
 #include "BaselineJITRegisters.h"
 #include "CallFrameShuffleData.h"
+#include "CallLinkInfoBase.h"
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeOrigin.h"
@@ -55,7 +56,7 @@ struct BaselineUnlinkedCallLinkInfo;
 
 using CompileTimeCallLinkInfo = std::variant<OptimizingCallLinkInfo*, BaselineUnlinkedCallLinkInfo*, DFG::UnlinkedCallLinkInfo*>;
 
-class CallLinkInfo : public PackedRawSentinelNode<CallLinkInfo> {
+class CallLinkInfo : public CallLinkInfoBase {
 public:
     friend class LLIntOffsetsExtractor;
 
@@ -178,7 +179,7 @@ public:
     }
 
     bool isLinked() const { return stub() || m_calleeOrCodeBlock; }
-    void unlink(VM&);
+    void unlinkImpl(VM&);
 
     enum class UseDataIC : bool { No, Yes };
 
@@ -369,7 +370,8 @@ public:
 
 protected:
     CallLinkInfo(Type type, UseDataIC useDataIC)
-        : m_hasSeenShouldRepatch(false)
+        : CallLinkInfoBase(CallSiteType::CallLinkInfo)
+        , m_hasSeenShouldRepatch(false)
         , m_hasSeenClosure(false)
         , m_clearedByGC(false)
         , m_clearedByVirtual(false)
@@ -382,7 +384,16 @@ protected:
         ASSERT(useDataIC == this->useDataIC());
     }
 
-    uint32_t m_slowPathCount { 0 };
+    bool m_hasSeenShouldRepatch : 1;
+    bool m_hasSeenClosure : 1;
+    bool m_clearedByGC : 1;
+    bool m_clearedByVirtual : 1;
+    bool m_allowStubs : 1;
+    unsigned m_callType : 4; // CallType
+    unsigned m_useDataIC : 1; // UseDataIC
+    unsigned m_type : 1; // Type
+    uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
+
     CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
     CodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     union UnionType {
@@ -406,15 +417,7 @@ protected:
 #if ENABLE(JIT)
     RefPtr<PolymorphicCallStubRoutine> m_stub;
 #endif
-    bool m_hasSeenShouldRepatch : 1;
-    bool m_hasSeenClosure : 1;
-    bool m_clearedByGC : 1;
-    bool m_clearedByVirtual : 1;
-    bool m_allowStubs : 1;
-    unsigned m_callType : 4; // CallType
-    unsigned m_useDataIC : 1; // UseDataIC
-    unsigned m_type : 1; // Type
-    uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
+    uint32_t m_slowPathCount { 0 };
 };
 
 class BaselineCallLinkInfo final : public CallLinkInfo {

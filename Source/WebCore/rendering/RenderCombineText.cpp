@@ -38,6 +38,7 @@ RenderCombineText::RenderCombineText(Text& textNode, const String& string)
     , m_isCombined(false)
     , m_needsFontUpdate(false)
 {
+    ASSERT(isCombineText());
 }
 
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

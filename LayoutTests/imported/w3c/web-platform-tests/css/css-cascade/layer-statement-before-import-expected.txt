@@ -6,5 +6,4 @@ PASS insert other rules to pre-import layer statements fails
 PASS insert other rules before the first layer statement without imports
 PASS deleteRule before imports
 PASS deleteRule after imports
-PASS replaceSync clears stale layer statements
 

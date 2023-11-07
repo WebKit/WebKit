@@ -286,7 +286,6 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             mtlAttachment.resolveLevel = 0;
             mtlAttachment.resolveSlice = 0;
             mtlAttachment.resolveDepthPlane = 0;
-            mtlAttachment.storeAction = MTLStoreActionMultisampleResolve;
         }
     }
 

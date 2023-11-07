@@ -420,15 +420,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
         return;
     }
 
-    auto target = handler.callTarget();
-    CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
-        // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
-        auto jump = jit.jump();
-        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(jump, CodeLocationLabel { target });
-        });
-    }), "InlineAccess: linking constant jump");
-
+    CCallHelpers::replaceWithJump(stubInfo.startLocation.retagged<JSInternalPtrTag>(), CodeLocationLabel { handler.callTarget() });
 }
 
 void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)

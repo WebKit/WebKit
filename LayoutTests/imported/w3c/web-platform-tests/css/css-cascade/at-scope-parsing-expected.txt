@@ -1,0 +1,31 @@
+
+FAIL @scope (.a) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a + .b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a:hover) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a:hover, #b, div) is valid assert_equals: expected 1 but got 0
+FAIL @scope (:is(div, span)) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (.b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a)to (.b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (.b:hover, #c, div) is valid assert_equals: expected 1 but got 0
+FAIL @scope is valid assert_equals: expected 1 but got 0
+FAIL @scope to (.a) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (&) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (& > &) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (> .b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (+ .b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (~ .b) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.c <> .d) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a, .c <> .d) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a <> .b, .c) is valid assert_equals: expected 1 but got 0
+FAIL @scope (div::before) is valid assert_equals: expected 1 but got 0
+FAIL @scope (div::after) is valid assert_equals: expected 1 but got 0
+FAIL @scope (slotted(div)) is valid assert_equals: expected 1 but got 0
+FAIL @scope (.a) to (div::before) is valid assert_equals: expected 1 but got 0
+PASS @scope (.a) unknown (.c) is not valid
+PASS @scope (.a) to unknown (.c) is not valid
+PASS @scope (.a) 1px (.c) is not valid
+PASS @scope (.a) to unknown(c) is not valid
+PASS @scope unknown(.a) is not valid
+PASS @scope 1px is not valid
+PASS @scope creep is not valid
+

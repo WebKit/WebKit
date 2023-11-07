@@ -22,7 +22,7 @@
 
 headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.h" "CacheModel.h" "WebsiteDataStoreParameters.h"
 
-struct WebKit::NetworkProcessCreationParameters {
+[RValue] struct WebKit::NetworkProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters
 
     WebKit::CacheModel cacheModel

@@ -68,6 +68,8 @@
 #include "SliderTrackPart.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
+#include "SwitchThumbPart.h"
+#include "SwitchTrackPart.h"
 #include "TextAreaPart.h"
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
@@ -223,6 +225,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case StyleAppearance::Radio:
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
+    case StyleAppearance::Switch:
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
 #endif
@@ -234,6 +237,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
         auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
             return appearance == StyleAppearance::Button
+#if ENABLE(INPUT_TYPE_COLOR)
+                || appearance == StyleAppearance::ColorWell
+#endif
                 || appearance == StyleAppearance::DefaultButton
                 || appearance == StyleAppearance::SquareButton
                 || appearance == StyleAppearance::PushButton;
@@ -394,7 +400,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
             return StyleAppearance::Button;
 
         if (input.isSwitch())
-            return StyleAppearance::Auto;
+            return StyleAppearance::Switch;
 
         if (input.isCheckbox())
             return StyleAppearance::Checkbox;
@@ -681,9 +687,14 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::SliderThumbVertical:
         return SliderThumbPart::create(appearance);
 
-    case StyleAppearance::SwitchThumb:
-    case StyleAppearance::SwitchTrack:
+    case StyleAppearance::Switch:
         break;
+
+    case StyleAppearance::SwitchThumb:
+        return SwitchThumbPart::create();
+
+    case StyleAppearance::SwitchTrack:
+        return SwitchTrackPart::create();
     }
 
     ASSERT_NOT_REACHED();

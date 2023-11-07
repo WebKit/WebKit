@@ -490,6 +490,22 @@ inline void RenderStyle::setLogicalWidth(Length&& width)
         setHeight(WTFMove(width));
 }
 
+inline void RenderStyle::setLogicalMinWidth(Length&& width)
+{
+    if (isHorizontalWritingMode())
+        setMinWidth(WTFMove(width));
+    else
+        setMinHeight(WTFMove(width));
+}
+
+inline void RenderStyle::setLogicalMaxWidth(Length&& width)
+{
+    if (isHorizontalWritingMode())
+        setMaxWidth(WTFMove(width));
+    else
+        setMaxHeight(WTFMove(width));
+}
+
 inline void RenderStyle::setOpacity(float opacity)
 {
     float clampedOpacity = clampTo(opacity, 0.f, 1.f);

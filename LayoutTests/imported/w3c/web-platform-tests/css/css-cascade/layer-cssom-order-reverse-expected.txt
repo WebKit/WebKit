@@ -5,6 +5,4 @@ PASS Insert layer invalidates style
 PASS Delete layer invalidates style
 PASS Insert layer invalidates @font-face
 PASS Delete layer invalidates @font-face
-PASS Insert layer invalidates @property
-PASS Delete layer invalidates @property
 

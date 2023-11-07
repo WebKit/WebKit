@@ -60,11 +60,13 @@ bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(type, element, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
+    ASSERT(isRenderLayerModelObject());
 }
 
 RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(type, document, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
+    ASSERT(isRenderLayerModelObject());
 }
 
 RenderLayerModelObject::~RenderLayerModelObject()
@@ -100,9 +102,6 @@ void RenderLayerModelObject::destroyLayer()
 {
     ASSERT(!hasLayer());
     ASSERT(m_layer);
-#if PLATFORM(IOS_FAMILY)
-    m_layer->willBeDestroyed();
-#endif
     m_layer = nullptr;
 }
 

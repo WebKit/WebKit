@@ -183,6 +183,14 @@ LocalFrame* HitTestResult::innerNodeFrame() const
     return 0;
 }
 
+LocalFrame* HitTestResult::frame() const
+{
+    if (m_innerNonSharedNode)
+        return m_innerNonSharedNode->document().frame();
+
+    return nullptr;
+}
+
 LocalFrame* HitTestResult::targetFrame() const
 {
     if (!m_innerURLElement)

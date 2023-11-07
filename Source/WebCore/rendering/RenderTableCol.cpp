@@ -51,12 +51,14 @@ RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
     // init RenderObject attributes
     setInline(true); // our object is not Inline
     updateFromElement();
+    ASSERT(isRenderTableCol());
 }
 
 RenderTableCol::RenderTableCol(Document& document, RenderStyle&& style)
     : RenderBox(Type::TableCol, document, WTFMove(style), 0)
 {
     setInline(true);
+    ASSERT(isRenderTableCol());
 }
 
 void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -1,0 +1,3 @@
+
+FAIL @scope with external stylesheet assert_equals: expected "1" but got "auto"
+

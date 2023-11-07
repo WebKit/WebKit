@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
+void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) &&
 {
     encoder << sessionID;
     encoder << dataStoreIdentifier;
@@ -54,10 +54,10 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 #if HAVE(ALTERNATIVE_SERVICE)
     encoder << alternativeServiceDirectory;
-    encoder << alternativeServiceDirectoryExtensionHandle;
+    encoder << WTFMove(alternativeServiceDirectoryExtensionHandle);
 #endif
     encoder << hstsStorageDirectory;
-    encoder << hstsStorageDirectoryExtensionHandle;
+    encoder << WTFMove(hstsStorageDirectoryExtensionHandle);
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
@@ -70,7 +70,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookiePersistentStorageFile;
     encoder << proxySettings;
 #endif
-    encoder << networkCacheDirectory << networkCacheDirectoryExtensionHandle;
+    encoder << networkCacheDirectory << WTFMove(networkCacheDirectoryExtensionHandle);
 
     encoder << deviceManagementRestrictionsEnabled;
     encoder << allLoadsBlockedByDeviceManagementRestrictionsForTesting;
@@ -101,14 +101,14 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << unifiedOriginStorageLevel;
     encoder << perOriginStorageQuota << originQuotaRatio << totalQuotaRatio << standardVolumeCapacity << volumeCapacityOverride;
-    encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
-    encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
-    encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
-    encoder << generalStorageDirectory << generalStorageDirectoryHandle;
+    encoder << localStorageDirectory << WTFMove(localStorageDirectoryExtensionHandle);
+    encoder << indexedDBDirectory << WTFMove(indexedDBDirectoryExtensionHandle);
+    encoder << cacheStorageDirectory << WTFMove(cacheStorageDirectoryExtensionHandle);
+    encoder << generalStorageDirectory << WTFMove(generalStorageDirectoryHandle);
 #if ENABLE(SERVICE_WORKER)
-    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled << inspectionForServiceWorkersAllowed;
+    encoder << serviceWorkerRegistrationDirectory << WTFMove(serviceWorkerRegistrationDirectoryExtensionHandle) << serviceWorkerProcessTerminationDelayEnabled << inspectionForServiceWorkersAllowed;
 #endif
-    encoder << resourceLoadStatisticsParameters;
+    encoder << WTFMove(resourceLoadStatisticsParameters);
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     encoder << isDeclarativeWebPushEnabled;
 #endif

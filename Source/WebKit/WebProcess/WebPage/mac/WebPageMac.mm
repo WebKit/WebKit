@@ -1092,6 +1092,13 @@ void WebPage::setAccentColor(WebCore::Color color)
     [NSApp _setAccentColor:cocoaColorOrNil(color).get()];
 }
 
+#if PLATFORM(MAC)
+void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
+{
+    corePage()->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
+}
+#endif
+
 #endif // HAVE(APP_ACCENT_COLORS)
 
 #if ENABLE(PDF_PLUGIN)

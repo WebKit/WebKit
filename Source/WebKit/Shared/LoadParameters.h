@@ -52,7 +52,7 @@ typedef int SandboxFlags;
 namespace WebKit {
 
 struct LoadParameters {
-    void encode(IPC::Encoder&) const;
+    void encode(IPC::Encoder&) &&;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LoadParameters&);
 
     void platformEncode(IPC::Encoder&) const;

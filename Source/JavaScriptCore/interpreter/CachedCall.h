@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "CallLinkInfoBase.h"
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
-#include "ProtoCallFrame.h"
+#include "ProtoCallFrameInlines.h"
 #include "VMEntryScope.h"
 #include "VMInlines.h"
 #include <wtf/ForbidHeapAllocation.h>
@@ -36,12 +37,13 @@
 
 namespace JSC {
 
-class CachedCall {
+class CachedCall : public CallLinkInfoBase {
     WTF_MAKE_NONCOPYABLE(CachedCall);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
-        : m_vm(globalObject->vm())
+        : CallLinkInfoBase(CallSiteType::CachedCall)
+        , m_vm(globalObject->vm())
         , m_entryScope(m_vm, function->scope()->globalObject())
         , m_functionExecutable(function->jsExecutable())
         , m_scope(function->scope())
@@ -65,8 +67,15 @@ public:
             return;
         }
 
-        scope.release();
-        m_vm.interpreter.prepareForCachedCall(*this, function, argumentCount + 1, m_arguments);
+        auto* newCodeBlock = m_vm.interpreter.prepareForCachedCall(*this, function);
+        if (UNLIKELY(scope.exception()))
+            return;
+        m_protoCallFrame.init(newCodeBlock, function->globalObject(), function, jsUndefined(), argumentCount + 1, const_cast<EncodedJSValue*>(m_arguments.data()));
+    }
+
+    ~CachedCall()
+    {
+        m_addressForCall = nullptr;
     }
 
     ALWAYS_INLINE JSValue call()
@@ -89,6 +98,22 @@ public:
     void clearArguments() { m_arguments.clear(); }
     void appendArgument(JSValue v) { m_arguments.append(v); }
     bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
+
+    void unlinkImpl(VM&)
+    {
+        m_addressForCall = nullptr;
+        if (isOnList())
+            remove();
+    }
+
+    void relink()
+    {
+        VM& vm = m_vm;
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        auto* codeBlock = m_vm.interpreter.prepareForCachedCall(*this, this->function());
+        RETURN_IF_EXCEPTION(scope, void());
+        m_protoCallFrame.setCodeBlock(codeBlock);
+    }
 
 private:
     VM& m_vm;

@@ -167,10 +167,6 @@ public:
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
-#if PLATFORM(IOS_FAMILY)
-    // Called before the renderer's widget (if any) has been nulled out.
-    void willBeDestroyed();
-#endif
     String name() const;
 
     Page& page() const { return renderer().page(); }

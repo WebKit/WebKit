@@ -351,6 +351,7 @@ if (isWinCairo() || isPlayStation()) {
     push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
+    push @local_options, XcodeExportCompileCommandsOptions() if $exportCompileCommands;
     # FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
     # happen in the workspace. When this is only passed on the command line, it
     # invalidates build results made in the IDE (rdar://88135402).

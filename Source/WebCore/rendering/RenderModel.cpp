@@ -39,6 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderModel);
 RenderModel::RenderModel(HTMLModelElement& element, RenderStyle&& style)
     : RenderReplaced { Type::Model, element, WTFMove(style) }
 {
+    ASSERT(isRenderModel());
 }
 
 // Do not add any code to the destructor, instead, add it to willBeDestroyed().

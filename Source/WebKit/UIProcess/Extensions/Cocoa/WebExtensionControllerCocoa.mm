@@ -261,30 +261,32 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
 
 // MARK: Web Navigation
 
-void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {
     auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
-        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
         if (!context->hasPermission(targetURL))
             continue;
 
+        auto tab = context->getTab(pageID);
+        if (!tab)
+            continue;
+
         context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, pageID, frameID, targetURL));
+            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
         });
     }
 }
 
-void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto completedEventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
+    auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
     auto contentLoadedtype = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { completedEventType, contentLoadedtype };
+    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { committedEventType, contentLoadedtype };
 
     for (auto& context : m_extensionContexts) {
-        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
         if (!context->hasPermission(frameURL))
             continue;
 
@@ -296,41 +298,51 @@ void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID
 
         context->dynamicallyInjectedUserStyleSheets().clear();
 
+        auto tab = context->getTab(pageID);
+        if (!tab)
+            continue;
+
         context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(completedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(completedEventType, pageID, frameID, frameURL));
-            context->sendToProcessesForEvent(contentLoadedtype, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentLoadedtype, pageID, frameID, frameURL));
+            context->sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+            context->sendToProcessesForEvent(contentLoadedtype, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentLoadedtype, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
 }
 
-void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
     auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
-        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
         if (!context->hasPermission(frameURL))
             continue;
 
+        auto tab = context->getTab(pageID);
+        if (!tab)
+            continue;
+
         context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, pageID, frameID, frameURL));
+            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
 }
 
-void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
     auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
-        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
         if (!context->hasPermission(frameURL))
             continue;
 
+        auto tab = context->getTab(pageID);
+        if (!tab)
+            continue;
+
         context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, pageID, frameID, frameURL));
+            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
 }

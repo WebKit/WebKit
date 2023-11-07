@@ -112,23 +112,10 @@ ALWAYS_INLINE JSValue Interpreter::executeCachedCall(CachedCall& cachedCall)
             return throwScope.exception();
     }
 
-    auto* codeBlock = cachedCall.functionExecutable()->codeBlockForCall();
-    void* addressForCall = codeBlock ? codeBlock->jitCode()->addressForCall() : nullptr;
-    if (cachedCall.m_addressForCall != addressForCall) {
+    if (UNLIKELY(!cachedCall.m_addressForCall)) {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
-
-        // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
-        CodeBlock* codeBlock;
-        cachedCall.functionExecutable()->prepareForExecution<FunctionExecutable>(vm, cachedCall.function(), cachedCall.scope(), CodeForCall, codeBlock);
+        cachedCall.relink();
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
-        ASSERT(codeBlock);
-        codeBlock->m_shouldAlwaysBeInlined = false;
-        {
-            DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-            cachedCall.m_protoCallFrame.setCodeBlock(codeBlock);
-            cachedCall.m_addressForCall = codeBlock->jitCode()->addressForCall();
-        }
     }
 
     // Execute the code:

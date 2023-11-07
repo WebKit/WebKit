@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void LoadParameters::encode(IPC::Encoder& encoder) const
+void LoadParameters::encode(IPC::Encoder& encoder) &&
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     encoder << topPrivatelyControlledDomain;
@@ -47,7 +47,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
         encoder << IPC::FormDataReference { request.httpBody() };
     }
 
-    encoder << sandboxExtensionHandle;
+    encoder << WTFMove(sandboxExtensionHandle);
     encoder << data;
     encoder << MIMEType;
     encoder << encodingName;

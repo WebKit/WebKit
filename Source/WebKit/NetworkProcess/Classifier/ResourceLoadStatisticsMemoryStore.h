@@ -51,7 +51,7 @@ public:
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
 
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const override;
+    Vector<ITPThirdPartyData> aggregatedThirdPartyData() const override;
     const HashMap<RegistrableDomain, UniqueRef<WebCore::ResourceLoadStatistics>>& data() const { return m_resourceStatisticsMap; }
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;

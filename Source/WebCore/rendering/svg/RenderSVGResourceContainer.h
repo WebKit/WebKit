@@ -37,8 +37,6 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    bool isSVGResourceContainer() const final { return true; }
-
     void idChanged();
 
 protected:

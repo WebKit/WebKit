@@ -50,6 +50,7 @@ struct WebKit::WebHitTestResultData {
     bool isOverTextInsideFormControlElement;
     bool isDownloadableMedia;
     WebKit::WebHitTestResultData::ElementType elementType;
+    std::optional<WebKit::FrameInfoData> frameInfo;
     String lookupText;
     String toolTipText;
     String imageText;

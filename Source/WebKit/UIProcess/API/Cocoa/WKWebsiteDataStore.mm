@@ -805,8 +805,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_getResourceLoadStatisticsDataSummary:(void (^)(NSArray<_WKResourceLoadStatisticsThirdParty *> *))completionHandler
 {
 #if ENABLE(TRACKING_PREVENTION)
-    _websiteDataStore->getResourceLoadStatisticsDataSummary([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyData>&& thirdPartyDomains) {
-        completionHandler(createNSArray(WTFMove(thirdPartyDomains), [] (WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& domain) {
+    _websiteDataStore->getResourceLoadStatisticsDataSummary([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebKit::ITPThirdPartyData>&& thirdPartyDomains) {
+        completionHandler(createNSArray(WTFMove(thirdPartyDomains), [] (WebKit::ITPThirdPartyData&& domain) {
             return wrapper(API::ResourceLoadStatisticsThirdParty::create(WTFMove(domain)));
         }).get());
     });

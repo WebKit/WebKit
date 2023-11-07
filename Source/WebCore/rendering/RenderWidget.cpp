@@ -103,11 +103,6 @@ RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyl
 
 void RenderWidget::willBeDestroyed()
 {
-#if PLATFORM(IOS_FAMILY)
-    if (hasLayer())
-        layer()->willBeDestroyed();
-#endif
-
     if (AXObjectCache* cache = document().existingAXObjectCache()) {
         cache->childrenChanged(this->parent());
         cache->remove(this);

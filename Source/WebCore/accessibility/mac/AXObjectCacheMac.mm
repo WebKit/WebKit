@@ -762,6 +762,13 @@ bool AXObjectCache::shouldSpellCheck()
 #endif
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+Seconds AXObjectCache::platformSelectedTextRangeDebounceInterval() const
+{
+    return 100_ms;
+}
+#endif
+
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
 

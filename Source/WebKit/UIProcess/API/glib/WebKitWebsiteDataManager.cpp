@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitWebsiteDataManager.h"
 
+#include "ITPThirdPartyData.h"
+#include "ITPThirdPartyDataForSpecificFirstParty.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitMemoryPressureSettings.h"
@@ -1377,7 +1379,7 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
  */
 struct _WebKitITPFirstParty {
 #if ENABLE(TRACKING_PREVENTION)
-    explicit _WebKitITPFirstParty(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
+    explicit _WebKitITPFirstParty(ITPThirdPartyDataForSpecificFirstParty&& data)
         : domain(data.firstPartyDomain.string().utf8())
         , storageAccessGranted(data.storageAccessGranted)
         , lastUpdated(adoptGRef(g_date_time_new_from_unix_utc(data.timeLastUpdated.secondsAs<gint64>())))
@@ -1422,7 +1424,7 @@ void webkit_website_data_manager_set_memory_pressure_settings(WebKitMemoryPressu
 G_DEFINE_BOXED_TYPE(WebKitITPFirstParty, webkit_itp_first_party, webkit_itp_first_party_ref, webkit_itp_first_party_unref)
 
 #if ENABLE(TRACKING_PREVENTION)
-static WebKitITPFirstParty* webkitITPFirstPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
+static WebKitITPFirstParty* webkitITPFirstPartyCreate(ITPThirdPartyDataForSpecificFirstParty&& data)
 {
     auto* firstParty = static_cast<WebKitITPFirstParty*>(fastMalloc(sizeof(WebKitITPFirstParty)));
     new (firstParty) WebKitITPFirstParty(WTFMove(data));
@@ -1540,7 +1542,7 @@ GDateTime* webkit_itp_first_party_get_last_update_time(WebKitITPFirstParty* firs
 
 struct _WebKitITPThirdParty {
 #if ENABLE(TRACKING_PREVENTION)
-    explicit _WebKitITPThirdParty(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
+    explicit _WebKitITPThirdParty(ITPThirdPartyData&& data)
         : domain(data.thirdPartyDomain.string().utf8())
     {
         while (!data.underFirstParties.isEmpty())
@@ -1561,7 +1563,7 @@ struct _WebKitITPThirdParty {
 G_DEFINE_BOXED_TYPE(WebKitITPThirdParty, webkit_itp_third_party, webkit_itp_third_party_ref, webkit_itp_third_party_unref)
 
 #if ENABLE(TRACKING_PREVENTION)
-WebKitITPThirdParty* webkitITPThirdPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
+WebKitITPThirdParty* webkitITPThirdPartyCreate(ITPThirdPartyData&& data)
 {
     auto* thirdParty = static_cast<WebKitITPThirdParty*>(fastMalloc(sizeof(WebKitITPThirdParty)));
     new (thirdParty) WebKitITPThirdParty(WTFMove(data));
@@ -1668,7 +1670,7 @@ void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manag
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
-    manager->priv->websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& thirdPartyList) {
+    manager->priv->websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
         GList* result = nullptr;
         while (!thirdPartyList.isEmpty())
             result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));

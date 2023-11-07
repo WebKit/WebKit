@@ -43,6 +43,7 @@ public:
 
 protected:
     static bool userPrefersContrast();
+    static bool userPrefersWithoutColorDifferentiation();
     static FloatRect inflatedRect(const FloatRect& bounds, const FloatSize&, const IntOutsets&, const ControlStyle&);
 
     static void updateCheckedState(NSCell *, const ControlStyle&);

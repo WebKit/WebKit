@@ -55,6 +55,7 @@ RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
     : RenderMedia(Type::Video, element, WTFMove(style))
 {
     setIntrinsicSize(calculateIntrinsicSize());
+    ASSERT(isVideo());
 }
 
 RenderVideo::~RenderVideo()

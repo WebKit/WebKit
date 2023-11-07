@@ -1385,7 +1385,7 @@ void WebGL2RenderingContext::vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint 
     if (isContextLost())
         return;
     m_context->vertexAttribI4i(index, x, y, z, w);
-    if (index < m_maxVertexAttribs) {
+    if (index < m_vertexAttribValue.size()) {
         m_vertexAttribValue[index].type = GraphicsContextGL::INT;
         m_vertexAttribValue[index].iValue[0] = x;
         m_vertexAttribValue[index].iValue[1] = y;
@@ -1409,7 +1409,7 @@ void WebGL2RenderingContext::vertexAttribI4iv(GCGLuint index, Int32List&& list)
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "array too small");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "index out of range");
         return;
     }
@@ -1423,7 +1423,7 @@ void WebGL2RenderingContext::vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLui
     if (isContextLost())
         return;
     m_context->vertexAttribI4ui(index, x, y, z, w);
-    if (index < m_maxVertexAttribs) {
+    if (index < m_vertexAttribValue.size()) {
         m_vertexAttribValue[index].type = GraphicsContextGL::UNSIGNED_INT;
         m_vertexAttribValue[index].uiValue[0] = x;
         m_vertexAttribValue[index].uiValue[1] = y;
@@ -1447,7 +1447,7 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "array too small");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "index out of range");
         return;
     }
@@ -1476,7 +1476,7 @@ void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, 
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "vertexAttribIPointer", "invalid type");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribIPointer", "index out of range");
         return;
     }
@@ -1571,7 +1571,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
             continue;
         default:
             if (bufs[i] > GraphicsContextGL::COLOR_ATTACHMENT0
-                && bufs[i] < GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()) {
+                && bufs[i] < GraphicsContextGL::COLOR_ATTACHMENT0 + maxColorAttachments()) {
                 continue;
             }
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "drawBuffers", "invalid buffer");
@@ -1592,7 +1592,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
         m_context->drawBuffers(value);
         setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > getMaxDrawBuffers()) {
+        if (n > maxDrawBuffers()) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffers", "more than max draw buffers");
             return;
         }
@@ -2818,7 +2818,7 @@ bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char*
     case GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT:
         return true;
     default:
-        if (attachment >= GraphicsContextGL::COLOR_ATTACHMENT0 && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+        if (attachment >= GraphicsContextGL::COLOR_ATTACHMENT0 && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + maxColorAttachments()))
             return true;
     }
 
@@ -2826,14 +2826,14 @@ bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char*
     return false;
 }
 
-GCGLint WebGL2RenderingContext::getMaxDrawBuffers()
+GCGLint WebGL2RenderingContext::maxDrawBuffers()
 {
     if (!m_maxDrawBuffers)
         m_maxDrawBuffers = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS);
     return m_maxDrawBuffers;
 }
 
-GCGLint WebGL2RenderingContext::getMaxColorAttachments()
+GCGLint WebGL2RenderingContext::maxColorAttachments()
 {
     // DrawBuffers requires MAX_COLOR_ATTACHMENTS == MAX_DRAW_BUFFERS
     if (!m_maxColorAttachments)
@@ -3054,7 +3054,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_CLIENT_WAIT_TIMEOUT_WEBGL:
         return static_cast<long long>(MaxClientWaitTimeout);
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS:
-        return getIntParameter(pname);
+        return maxColorAttachments();
     case GraphicsContextGL::MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_COMBINED_UNIFORM_BLOCKS:
@@ -3062,7 +3062,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_DRAW_BUFFERS:
-        return getIntParameter(pname);
+        return maxDrawBuffers();
     case GraphicsContextGL::MAX_ELEMENT_INDEX:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_ELEMENTS_INDICES:
@@ -3078,7 +3078,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_PROGRAM_TEXEL_OFFSET:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_SAMPLES:
-        return getIntParameter(pname);
+        return maxSamples();
     case GraphicsContextGL::MAX_SERVER_WAIT_TIMEOUT:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_TEXTURE_LOD_BIAS:

@@ -1,0 +1,6 @@
+
+
+PASS select[style="writing-mode: horizontal-tb"] block size should match height and inline size should match width
+FAIL select[style="writing-mode: vertical-lr"] block size should match width and inline size should match height assert_equals: expected "88px" but got "30px"
+FAIL select[style="writing-mode: vertical-rl"] block size should match width and inline size should match height assert_equals: expected "88px" but got "30px"
+

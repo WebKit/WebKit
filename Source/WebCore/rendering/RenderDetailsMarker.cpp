@@ -40,6 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderDetailsMarker);
 RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, RenderStyle&& style)
     : RenderBlockFlow(Type::DetailsMarker, element, WTFMove(style))
 {
+    ASSERT(isDetailsMarker());
 }
 
 static Path createPath(const FloatPoint* path)

@@ -167,7 +167,6 @@ class UserStyleSheet;
 class ValidationMessageClient;
 class VisibleSelection;
 class VisitedLinkStore;
-class WebGLStateTracker;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
@@ -777,6 +776,11 @@ public:
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
     WEBCORE_EXPORT Color sampledPageTopColor() const;
 
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    WEBCORE_EXPORT void setAppUsesCustomAccentColor(bool);
+    WEBCORE_EXPORT bool appUsesCustomAccentColor() const;
+#endif
+
     Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
     WEBCORE_EXPORT void setUnderPageBackgroundColorOverride(Color&&);
 
@@ -941,10 +945,6 @@ public:
 
     std::optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
     void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
-
-#if ENABLE(WEBGL)
-    WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
-#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
@@ -1166,10 +1166,6 @@ private:
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
-
-#if ENABLE(WEBGL)
-    std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
-#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
@@ -1459,6 +1455,10 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;
+#endif
+
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    bool m_appUsesCustomAccentColor { false };
 #endif
 };
 

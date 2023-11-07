@@ -41,6 +41,7 @@ RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quot
     , m_type(quote)
     , m_text(emptyString())
 {
+    ASSERT(isQuote());
 }
 
 RenderQuote::~RenderQuote()

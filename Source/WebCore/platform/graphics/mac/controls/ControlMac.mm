@@ -57,6 +57,11 @@ bool ControlMac::userPrefersContrast()
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
+bool ControlMac::userPrefersWithoutColorDifferentiation()
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldDifferentiateWithoutColor];
+}
+
 FloatRect ControlMac::inflatedRect(const FloatRect& bounds, const FloatSize& size, const IntOutsets& outsets, const ControlStyle& style)
 {
     auto scaledOutsets = FloatBoxExtent {

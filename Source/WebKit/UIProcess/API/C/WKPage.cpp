@@ -980,7 +980,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
         {
             if (m_client.base.version >= 4 && m_client.getContextMenuFromProposedMenuAsync) {
                 auto proposedMenuItems = toAPIObjectVector(proposedMenuVector);
-                auto webHitTestResult = API::HitTestResult::create(hitTestResultData);
+                Ref webHitTestResult = API::HitTestResult::create(hitTestResultData, page);
                 m_client.getContextMenuFromProposedMenuAsync(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), toAPI(&contextMenuListener), toAPI(webHitTestResult.ptr()), toAPI(userData), m_client.base.clientInfo);
                 return;
             }
@@ -999,7 +999,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
             WKArrayRef newMenu = nullptr;
             if (m_client.base.version >= 2) {
-                auto webHitTestResult = API::HitTestResult::create(hitTestResultData);
+                Ref webHitTestResult = API::HitTestResult::create(hitTestResultData, page);
                 m_client.getContextMenuFromProposedMenu(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), &newMenu, toAPI(webHitTestResult.ptr()), toAPI(userData), m_client.base.clientInfo);
             } else
                 m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), &newMenu, toAPI(userData), m_client.base.clientInfo);
@@ -1805,7 +1805,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return;
             }
 
-            auto apiHitTestResult = API::HitTestResult::create(data);
+            Ref apiHitTestResult = API::HitTestResult::create(data, page);
             m_client.mouseDidMoveOverElement(toAPI(&page), toAPI(apiHitTestResult.ptr()), toAPI(modifiers), toAPI(userData), m_client.base.clientInfo);
         }
 

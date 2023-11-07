@@ -122,6 +122,7 @@ RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& styl
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
 {
+    ASSERT(isRenderBlockFlow());
     setChildrenInline(true);
 }
 
@@ -132,6 +133,7 @@ RenderBlockFlow::RenderBlockFlow(Type type, Document& document, RenderStyle&& st
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
 {
+    ASSERT(isRenderBlockFlow());
     setChildrenInline(true);
 }
 

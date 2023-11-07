@@ -4371,6 +4371,12 @@ public:
     {
         X86Assembler::replaceWithJump(instructionStart.taggedPtr(), destination.taggedPtr());
     }
+
+    template<PtrTag startTag>
+    static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        X86Assembler::replaceWithNops(instructionStart.taggedPtr(), memoryToFillWithNopsInBytes);
+    }
     
     static ptrdiff_t maxJumpReplacementSize()
     {

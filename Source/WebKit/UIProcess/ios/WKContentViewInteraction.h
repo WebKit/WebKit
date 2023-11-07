@@ -480,6 +480,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _waitingForKeyboardAppearanceAnimationToStart;
     BOOL _isHidingKeyboard;
     BOOL _isPreparingEditMenu;
+    BOOL _isPresentingEditMenu;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
@@ -534,13 +535,9 @@ struct ImageAnalysisContextMenuActionData {
 
 #if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<WKImageAnalysisGestureRecognizer> _imageAnalysisGestureRecognizer;
-    RetainPtr<UILongPressGestureRecognizer> _imageAnalysisTimeoutGestureRecognizer;
     std::optional<WebKit::ImageAnalysisRequestIdentifier> _pendingImageAnalysisRequestIdentifier;
     std::optional<WebCore::ElementContext> _elementPendingImageAnalysis;
     Vector<BlockPtr<void(WebKit::ProceedWithTextSelectionInImage)>> _actionsToPerformAfterPendingImageAnalysis;
-#if USE(UICONTEXTMENU)
-    BOOL _contextMenuWasTriggeredByImageAnalysisTimeout;
-#endif // USE(UICONTEXTMENU)
     BOOL _isProceedingWithTextSelectionInImage;
     RetainPtr<CocoaImageAnalyzer> _imageAnalyzer;
 #if USE(QUICK_LOOK)
@@ -612,6 +609,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) UIGestureRecognizer *imageAnalysisGestureRecognizer;
 @property (nonatomic, readonly, getter=isKeyboardScrollingAnimationRunning) BOOL keyboardScrollingAnimationRunning;
 @property (nonatomic, readonly) UIView *unscaledView;
+@property (nonatomic, readonly) BOOL isPresentingEditMenu;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

@@ -36,6 +36,7 @@
 #include "FooWrapper.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
+#include "RValueWithFunctionCalls.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -1121,6 +1122,25 @@ std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(De
 }
 
 #endif
+
+void ArgumentCoder<WebKit::RValueWithFunctionCalls>::encode(Encoder& encoder, WebKit::RValueWithFunctionCalls&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.callFunction())>, SandboxExtensionHandle>);
+
+    encoder << instance.callFunction();
+}
+
+std::optional<WebKit::RValueWithFunctionCalls> ArgumentCoder<WebKit::RValueWithFunctionCalls>::decode(Decoder& decoder)
+{
+    auto callFunction = decoder.decode<SandboxExtensionHandle>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::RValueWithFunctionCalls {
+            WTFMove(*callFunction)
+        }
+    };
+}
 
 } // namespace IPC
 

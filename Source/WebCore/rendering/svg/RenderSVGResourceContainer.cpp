@@ -39,6 +39,7 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& el
     : RenderSVGHiddenContainer(type, element, WTFMove(style))
     , m_id(element.getIdAttribute())
 {
+    ASSERT(isSVGResourceContainer());
 }
 
 RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;

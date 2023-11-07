@@ -335,6 +335,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (descriptor.length())
         setProperty(AXPropertyName::ExtendedDescription, descriptor.isolatedCopy());
 
+    if (object.isTextControl())
+        setProperty(AXPropertyName::SelectedTextRange, object.selectedTextRange());
+
     // These properties are only needed on the AXCoreObject interface due to their use in ATSPI,
     // so only cache them for ATSPI.
 #if PLATFORM(ATSPI)
@@ -1259,18 +1262,6 @@ bool AXIsolatedObject::isNativeTextControl() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-CharacterRange AXIsolatedObject::selectedTextRange() const
-{
-    if (shouldReturnEmptySelectedText())
-        return { };
-
-    return Accessibility::retrieveValueFromMainThread<CharacterRange>([this] () -> CharacterRange {
-        if (auto* object = associatedAXObject())
-            return object->selectedTextRange();
-        return { };
-    });
 }
 
 int AXIsolatedObject::insertionPointLineNumber() const

@@ -56,6 +56,7 @@ RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
     , m_trackSizingAlgorithm(this, currentGrid())
     , m_masonryLayout(*this)
 {
+    ASSERT(isRenderGrid());
     // All of our children must be block level.
     setChildrenInline(false);
 }

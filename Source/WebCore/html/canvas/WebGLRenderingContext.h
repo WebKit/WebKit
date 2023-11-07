@@ -50,8 +50,8 @@ public:
 
     long long getInt64Parameter(GCGLenum) final;
 
-    GCGLint getMaxDrawBuffers() final;
-    GCGLint getMaxColorAttachments() final;
+    GCGLint maxDrawBuffers() final;
+    GCGLint maxColorAttachments() final;
     void initializeDefaultObjects() final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
 

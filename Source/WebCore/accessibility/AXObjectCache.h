@@ -586,6 +586,11 @@ private:
     bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
     void passwordNotificationPostTimerFired();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void selectedTextRangeTimerFired();
+    Seconds platformSelectedTextRangeDebounceInterval() const;
+#endif
+
     void deferRowspanChange(AccessibilityObject*);
     void handleChildrenChanged(AccessibilityObject&);
     void handleAllDeferredChildrenChanged();
@@ -707,6 +712,8 @@ private:
     Timer m_buildIsolatedTreeTimer;
     bool m_deferredRegenerateIsolatedTree { false };
     Ref<AXGeometryManager> m_geometryManager;
+    DeferrableOneShotTimer m_selectedTextRangeTimer;
+    AXID m_lastDebouncedTextRangeObject;
 #endif
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };

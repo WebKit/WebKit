@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKPDFView.h"
+#import "WKPreferencesInternal.h"
 #import "WKUSDPreviewView.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -51,9 +52,10 @@
         return nil;
 
 #if ENABLE(WKPDFVIEW)
-    // FIXME: When the UnifiedPDF Plugin is available, we need to undo this registration.
-    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
-        [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
+    if (!configuration.preferences->_preferences->unifiedPDFEnabled()) {
+        for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
+            [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
+    }
 #endif
 
 #if USE(SYSTEM_PREVIEW)

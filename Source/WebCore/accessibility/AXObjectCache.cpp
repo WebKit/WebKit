@@ -244,6 +244,7 @@ AXObjectCache::AXObjectCache(Document& document)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     , m_buildIsolatedTreeTimer(*this, &AXObjectCache::buildIsolatedTree)
     , m_geometryManager(AXGeometryManager::create(*this))
+    , m_selectedTextRangeTimer(*this, &AXObjectCache::selectedTextRangeTimerFired, platformSelectedTextRangeDebounceInterval())
 #endif
 {
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
@@ -279,6 +280,8 @@ AXObjectCache::~AXObjectCache()
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_selectedTextRangeTimer.stop();
+
     if (m_pageID) {
         if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
             tree->setPageActivityState({ });
@@ -1997,6 +2000,12 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
     if (object) {
         const AXTextStateChangeIntent& newIntent = (intent.type == AXTextStateChangeTypeUnknown || (m_isSynchronizingSelection && m_textSelectionIntent.type != AXTextStateChangeTypeUnknown)) ? m_textSelectionIntent : intent;
         postTextStateChangePlatformNotification(object, newIntent, selection);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        m_lastDebouncedTextRangeObject = object->objectID();
+        if (!m_selectedTextRangeTimer.isActive())
+            m_selectedTextRangeTimer.restart();
+#endif
     }
 #if PLATFORM(MAC)
     onSelectedTextChanged(selection);
@@ -4200,6 +4209,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXPopoverTargetChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::SupportsExpanded, AXPropertyName::IsExpanded });
             break;
+        case AXSelectedTextChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SelectedTextRange);
+            break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
@@ -4874,6 +4886,25 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     }
     ASSERT_NOT_REACHED();
     return AXTextInserted;
+}
+#endif
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::selectedTextRangeTimerFired()
+{
+    if (!accessibilityEnabled())
+        return;
+
+    m_selectedTextRangeTimer.stop();
+
+    if (m_lastDebouncedTextRangeObject.isValid()) {
+        for (auto* axObject = objectForID(m_lastDebouncedTextRangeObject); axObject; axObject = axObject->parentObject()) {
+            if (axObject->isTextControl())
+                postNotification(axObject, nullptr, AXSelectedTextChanged);
+        }
+    }
+
+    m_lastDebouncedTextRangeObject = { };
 }
 #endif
 

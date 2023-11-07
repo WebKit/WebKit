@@ -435,6 +435,7 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
     : RenderText(Type::Counter, document, emptyString())
     , m_counter(counter)
 {
+    ASSERT(isCounter());
     view().addCounterNeedingUpdate(*this);
 }
 

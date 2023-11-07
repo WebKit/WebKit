@@ -58,8 +58,7 @@ bool CheckboxInputType::valueMissing(const String&) const
 
 String CheckboxInputType::valueMissingText() const
 {
-    ASSERT(element());
-    if (element()->isSwitch())
+    if (isSwitch())
         return validationMessageValueMissingForSwitchText();
     return validationMessageValueMissingForCheckboxText();
 }

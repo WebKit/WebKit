@@ -58,6 +58,7 @@ RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& styl
     : RenderBox(Type::FrameSet, frameSet, WTFMove(style), 0)
     , m_isResizing(false)
 {
+    ASSERT(isFrameSet());
     setInline(false);
 }
 

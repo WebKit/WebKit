@@ -184,6 +184,7 @@ public:
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> extensionProcess() const;
     static void setManageProcessesAsExtensions(bool manageProcessesAsExtensions) { s_manageProcessesAsExtensions = manageProcessesAsExtensions; }
+    static bool manageProcessesAsExtensions() { return s_manageProcessesAsExtensions; }
 #endif
 
 protected:

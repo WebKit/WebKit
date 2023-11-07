@@ -143,6 +143,8 @@
 #include <WebCore/SourceAlpha.h>
 #include <WebCore/SourceGraphic.h>
 #include <WebCore/SpotLightSource.h>
+#include <WebCore/SwitchThumbPart.h>
+#include <WebCore/SwitchTrackPart.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextAreaPart.h>
@@ -1259,6 +1261,7 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
     case WebCore::StyleAppearance::SearchFieldCancelButton:
     case WebCore::StyleAppearance::SliderThumbHorizontal:
     case WebCore::StyleAppearance::SliderThumbVertical:
+    case WebCore::StyleAppearance::Switch:
     case WebCore::StyleAppearance::SwitchThumb:
     case WebCore::StyleAppearance::SwitchTrack:
         break;
@@ -1383,9 +1386,14 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::StyleAppearance::SliderThumbVertical:
         return WebCore::SliderThumbPart::create(*type);
 
-    case WebCore::StyleAppearance::SwitchThumb:
-    case WebCore::StyleAppearance::SwitchTrack:
+    case WebCore::StyleAppearance::Switch:
         break;
+
+    case WebCore::StyleAppearance::SwitchThumb:
+        return WebCore::SwitchThumbPart::create();
+
+    case WebCore::StyleAppearance::SwitchTrack:
+        return WebCore::SwitchTrackPart::create();
     }
 
     ASSERT_NOT_REACHED();

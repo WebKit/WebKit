@@ -210,6 +210,7 @@ bytecode/BytecodeRewriter.cpp
 bytecode/BytecodeUseDef.cpp
 bytecode/CallEdge.cpp
 bytecode/CallLinkInfo.cpp
+bytecode/CallLinkInfoBase.cpp
 bytecode/CallLinkStatus.cpp
 bytecode/CallMode.cpp
 bytecode/CallVariant.cpp

@@ -68,7 +68,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
         context.graphicsContextGL()->drawBuffersEXT(value);
         context.setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > context.getMaxDrawBuffers()) {
+        if (n > context.maxDrawBuffers()) {
             context.synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
             return;
         }

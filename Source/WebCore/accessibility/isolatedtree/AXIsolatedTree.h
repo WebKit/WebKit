@@ -203,6 +203,7 @@ enum class AXPropertyName : uint16_t {
     RowIndexRange,
     ScreenRelativePosition,
     SelectedChildren,
+    SelectedTextRange,
     SetSize,
     SortDirection,
     SpeechHint,

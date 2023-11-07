@@ -297,7 +297,6 @@
 #include <WebCore/ViolationReportType.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
-#include <WebCore/WebGLStateTracker.h>
 #include <WebCore/WritingDirection.h>
 #include <WebCore/markup.h>
 #include <pal/SessionID.h>
@@ -701,12 +700,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.performanceLoggingClient = makeUnique<WebPerformanceLoggingClient>(*this);
     pageConfiguration.screenOrientationManager = m_screenOrientationManager.get();
 
-#if ENABLE(WEBGL)
-    pageConfiguration.webGLStateTracker = makeUnique<WebGLStateTracker>([this](bool isUsingHighPerformanceWebGL) {
-        send(Messages::WebPageProxy::SetIsUsingHighPerformanceWebGL(isUsingHighPerformanceWebGL));
-    });
-#endif
-
 #if ENABLE(SPEECH_SYNTHESIS) && !USE(GSTREAMER)
     pageConfiguration.speechSynthesisClient = makeUnique<WebSpeechSynthesisClient>(*this);
 #endif
@@ -967,6 +960,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
+#if PLATFORM(MAC)
+    setAppUsesCustomAccentColor(parameters.appUsesCustomAccentColor);
+#endif
 #endif
 
     m_needsFontAttributes = parameters.needsFontAttributes;
@@ -1220,6 +1216,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
+#if PLATFORM(MAC)
+    setAppUsesCustomAccentColor(parameters.appUsesCustomAccentColor);
+#endif
 #endif
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);

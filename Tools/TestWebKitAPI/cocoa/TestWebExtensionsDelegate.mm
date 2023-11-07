@@ -121,10 +121,10 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.connectNative() not implemneted" }]);
 }
 
-- (void)webExtensionController:(_WKWebExtensionController *)controller presentActionPopup:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)webExtensionController:(_WKWebExtensionController *)controller presentPopupForAction:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    if (_presentActionPopup) {
-        _presentActionPopup(action);
+    if (_presentPopupForAction) {
+        _presentPopupForAction(action);
         completionHandler(nil);
     } else
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"action.showPopup() not implemneted" }]);

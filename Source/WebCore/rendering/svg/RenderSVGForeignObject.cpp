@@ -49,6 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGForeignObject);
 RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGForeignObject, element, WTFMove(style))
 {
+    ASSERT(isSVGForeignObject());
 }
 
 RenderSVGForeignObject::~RenderSVGForeignObject() = default;
