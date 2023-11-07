@@ -1459,6 +1459,33 @@ struct WebCore::WebLockManagerSnapshot {
 };
 
 #if ENABLE(WEB_AUTHN)
+
+[CustomHeader] struct WebCore::AuthenticatorResponseBaseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+};
+
+[CustomHeader] struct WebCore::AuthenticatorAttestationResponseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<JSC::ArrayBuffer> attestationObject;
+    Vector<WebCore::AuthenticatorTransport> transports;
+};
+
+[CustomHeader] struct WebCore::AuthenticatorAssertionResponseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<JSC::ArrayBuffer> authenticatorData;
+    RefPtr<JSC::ArrayBuffer> signature;
+    RefPtr<JSC::ArrayBuffer> userHandle;
+};
+
+using WebCore::AuthenticatorResponseDataSerializableForm = std::variant<std::nullptr_t, WebCore::AuthenticatorResponseDataBase, WebCore::AuthenticatorAttestationResponseData, WebCore::AuthenticatorAssertionResponseData>;
+
+struct WebCore::AuthenticatorResponseData {
+    WebCore::AuthenticatorResponseDataSerializableForm getSerializableForm();
+};
+
 [Nested] struct WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs {
     String support;
     std::optional<bool> read;
