@@ -39,6 +39,7 @@ LegacyRenderSVGViewportContainer::LegacyRenderSVGViewportContainer(SVGSVGElement
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)
 {
+    ASSERT(isLegacySVGViewportContainer());
 }
 
 SVGSVGElement& LegacyRenderSVGViewportContainer::svgSVGElement() const

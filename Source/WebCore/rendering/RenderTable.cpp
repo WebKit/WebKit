@@ -84,6 +84,7 @@ RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
     , m_columnOffsetHeight(-1)
 {
     setChildrenInline(false);
+    ASSERT(isTable());
 }
 
 RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
@@ -101,6 +102,7 @@ RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
     , m_borderEnd(0)
 {
     setChildrenInline(false);
+    ASSERT(isTable());
 }
 
 RenderTable::~RenderTable() = default;

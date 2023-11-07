@@ -65,6 +65,7 @@ LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& s
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasBoxDecorations(false)
 {
+    ASSERT(isLegacySVGRoot());
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
         intrinsicSize.setWidth(defaultWidth);

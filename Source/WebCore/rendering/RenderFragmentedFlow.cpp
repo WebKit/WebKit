@@ -64,6 +64,7 @@ RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Render
     , m_pageLogicalSizeChanged(false)
 {
     setIsRenderFragmentedFlow(true);
+    ASSERT(isRenderFragmentedFlow());
 }
 
 void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

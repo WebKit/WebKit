@@ -51,6 +51,7 @@ RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& sty
     : RenderMathMLRow(Type::MathMLRoot, element, WTFMove(style))
 {
     m_radicalOperator.setOperator(RenderMathMLRoot::style(), gRadicalCharacter, MathOperator::Type::VerticalOperator);
+    ASSERT(isRenderMathMLRoot());
 }
 
 MathMLRootElement& RenderMathMLRoot::element() const

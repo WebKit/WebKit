@@ -49,6 +49,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
 {
+    ASSERT(isRenderMultiColumnSet());
 }
 
 RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const

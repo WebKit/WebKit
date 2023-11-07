@@ -52,6 +52,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderHTMLCanvas);
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
     : RenderReplaced(Type::HTMLCanvas, element, WTFMove(style), element.size())
 {
+    ASSERT(isCanvas());
 }
 
 HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const

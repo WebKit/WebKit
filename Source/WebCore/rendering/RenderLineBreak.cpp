@@ -55,6 +55,7 @@ RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
     , m_cachedLineHeight(invalidLineHeight)
     , m_isWBR(is<HTMLWBRElement>(element))
 {
+    ASSERT(isLineBreak());
 }
 
 RenderLineBreak::~RenderLineBreak()

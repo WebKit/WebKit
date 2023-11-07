@@ -95,6 +95,8 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     
     setPositionState(PositionType::Absolute); // to 0,0 :)
+
+    ASSERT(isRenderView());
 }
 
 RenderView::~RenderView()

@@ -59,6 +59,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTFMove(style))
     , m_imageResource(makeUnique<RenderImageResource>())
 {
+    ASSERT(isSVGImage());
     imageResource().initialize(*this);
 }
 

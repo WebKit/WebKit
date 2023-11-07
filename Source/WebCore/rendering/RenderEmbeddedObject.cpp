@@ -86,6 +86,7 @@ RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Rende
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
+    ASSERT(isEmbeddedObject());
 }
 
 RenderEmbeddedObject::~RenderEmbeddedObject()

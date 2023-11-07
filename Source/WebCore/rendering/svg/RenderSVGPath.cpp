@@ -47,6 +47,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGPath, element, WTFMove(style))
 {
+    ASSERT(isSVGPath());
 }
 
 RenderSVGPath::~RenderSVGPath() = default;

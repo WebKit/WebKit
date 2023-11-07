@@ -52,6 +52,7 @@ RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
+    ASSERT(isTableRow());
 }
 
 RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
@@ -59,6 +60,7 @@ RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
+    ASSERT(isTableRow());
 }
 
 void RenderTableRow::willBeRemovedFromTree(IsInternalMove isInternalMove)

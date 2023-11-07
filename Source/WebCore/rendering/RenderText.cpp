@@ -251,6 +251,7 @@ inline RenderText::RenderText(Type type, Node& node, const String& text)
     ASSERT(!m_text.isNull());
     setIsText();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
+    ASSERT(isText());
 }
 
 RenderText::RenderText(Type type, Text& textNode, const String& text)

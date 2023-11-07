@@ -52,6 +52,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListItem);
 RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::ListItem, element, WTFMove(style))
 {
+    ASSERT(isListItem());
     setInline(false);
 }
 

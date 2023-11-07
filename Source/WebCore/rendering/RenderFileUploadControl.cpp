@@ -72,6 +72,7 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Render
     : RenderBlockFlow(Type::FileUploadControl, input, WTFMove(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {
+    ASSERT(isFileUploadControl());
 }
 
 RenderFileUploadControl::~RenderFileUploadControl() = default;

@@ -47,6 +47,7 @@ RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, Rende
     , m_operatorFlags(flags)
 {
     updateOperatorContent(operatorString);
+    ASSERT(isRenderMathMLFencedOperator());
 }
 
 void RenderMathMLFencedOperator::updateOperatorContent(const String& operatorString)

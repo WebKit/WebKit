@@ -81,6 +81,7 @@ RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
     // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
     // so we need to set their initial values here in case something asks for colSpan()/rowSpan() before then.
     updateColAndRowSpanFlags();
+    ASSERT(isTableCell());
 }
 
 RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
@@ -94,6 +95,7 @@ RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
     , m_hasEmptyCollapsedStartBorder(false)
     , m_hasEmptyCollapsedEndBorder(false)
 {
+    ASSERT(isTableCell());
 }
 
 void RenderTableCell::willBeRemovedFromTree(IsInternalMove isInternalMove)

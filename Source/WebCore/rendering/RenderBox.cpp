@@ -156,12 +156,14 @@ RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, BaseTypeF
     : RenderBoxModelObject(type, element, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
+    ASSERT(isBox());
 }
 
 RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBoxModelObject(type, document, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
+    ASSERT(isBox());
 }
 
 RenderBox::~RenderBox()

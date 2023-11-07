@@ -45,6 +45,7 @@ RenderScrollbarPart::RenderScrollbarPart(Document& document, RenderStyle&& style
     , m_scrollbar(scrollbar)
     , m_part(part)
 {
+    ASSERT(isRenderScrollbarPart());
 }
 
 RenderScrollbarPart::~RenderScrollbarPart() = default;

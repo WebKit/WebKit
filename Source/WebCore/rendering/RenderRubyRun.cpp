@@ -56,6 +56,7 @@ RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
 {
     setReplacedOrInlineBlock(true);
     setInline(true);
+    ASSERT(isRubyRun());
 }
 
 RenderRubyRun::~RenderRubyRun() = default;

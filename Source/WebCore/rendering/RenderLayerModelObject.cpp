@@ -60,11 +60,13 @@ bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(type, element, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
+    ASSERT(isRenderLayerModelObject());
 }
 
 RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(type, document, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
+    ASSERT(isRenderLayerModelObject());
 }
 
 RenderLayerModelObject::~RenderLayerModelObject()

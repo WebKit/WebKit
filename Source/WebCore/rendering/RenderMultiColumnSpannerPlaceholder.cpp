@@ -53,6 +53,7 @@ RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderM
     , m_spanner(spanner)
     , m_fragmentedFlow(fragmentedFlow)
 {
+    ASSERT(isRenderMultiColumnSpannerPlaceholder());
 }
 
 ASCIILiteral RenderMultiColumnSpannerPlaceholder::renderName() const

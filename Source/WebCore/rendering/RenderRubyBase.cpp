@@ -49,6 +49,7 @@ RenderRubyBase::RenderRubyBase(Document& document, RenderStyle&& style)
     , m_isAfterExpansion(true)
 {
     setInline(false);
+    ASSERT(isRubyBase());
 }
 
 RenderRubyBase::~RenderRubyBase() = default;

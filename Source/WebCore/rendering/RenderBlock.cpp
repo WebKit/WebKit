@@ -307,11 +307,13 @@ private:
 RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
+    ASSERT(isRenderBlock());
 }
 
 RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
+    ASSERT(isRenderBlock());
 }
 
 static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& block)

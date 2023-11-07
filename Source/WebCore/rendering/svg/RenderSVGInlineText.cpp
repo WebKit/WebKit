@@ -76,6 +76,7 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
+    ASSERT(isSVGInlineText());
 }
 
 String RenderSVGInlineText::originalText() const

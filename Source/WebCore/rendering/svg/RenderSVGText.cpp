@@ -62,6 +62,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGText);
 RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTFMove(style))
 {
+    ASSERT(isSVGText());
 }
 
 RenderSVGText::~RenderSVGText()

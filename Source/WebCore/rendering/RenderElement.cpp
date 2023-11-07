@@ -137,6 +137,7 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
     , m_style(WTFMove(style))
 {
+    ASSERT(RenderObject::isRenderElement());
 }
 
 RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)

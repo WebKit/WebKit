@@ -70,6 +70,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize)
@@ -77,6 +78,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style,
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize)
@@ -84,6 +86,7 @@ RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& styl
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::~RenderReplaced() = default;

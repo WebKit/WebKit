@@ -422,7 +422,7 @@ public:
 
 #if ENABLE(MATHML)
     virtual bool isRenderMathMLBlock() const { return false; }
-    virtual bool isRenderMathMLTable() const { return type() == Type::MathMLTable; }
+    bool isRenderMathMLTable() const { return type() == Type::MathMLTable; }
     virtual bool isRenderMathMLOperator() const { return false; }
     bool isRenderMathMLRow() const;
     bool isRenderMathMLMath() const { return type() == Type::MathMLMath; }

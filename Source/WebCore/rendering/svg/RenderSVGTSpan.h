@@ -33,8 +33,8 @@ public:
     explicit RenderSVGTSpan(SVGTextPositioningElement& element, RenderStyle&& style)
         : RenderSVGInline(Type::SVGTSpan, element, WTFMove(style))
     {
+        ASSERT(isSVGTSpan());
     }
-
 
 private:
     void graphicsElement() const = delete;
