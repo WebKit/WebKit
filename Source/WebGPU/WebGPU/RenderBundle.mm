@@ -62,9 +62,10 @@ void RenderBundle::setLabel(String&& label)
     m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label;
 }
 
-bool RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) const
+void RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) const
 {
-    return m_renderBundleEncoder ? m_renderBundleEncoder->replayCommands(commandEncoder) : false;
+    if (m_renderBundleEncoder)
+        m_renderBundleEncoder->replayCommands(commandEncoder);
 }
 
 } // namespace WebGPU

@@ -33,7 +33,7 @@
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
 
-#define ENABLE_WEBGPU_USE_ICB_REPLAY 0
+#define ENABLE_WEBGPU_ALWAYS_USE_ICB_REPLAY 0
 
 @implementation RenderBundleICBWithResources {
     Vector<WebGPU::BindableResources> _resources;
@@ -114,6 +114,10 @@ RenderBundleEncoder::RenderBundleEncoder(MTLIndirectCommandBufferDescriptor *ind
     , m_device(device)
 {
     m_icbArray = [NSMutableArray array];
+    m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();
+#if ENABLE(WEBGPU_ALWAYS_USE_ICB_REPLAY)
+    m_requiresCommandReplay = true;
+#endif
 }
 
 RenderBundleEncoder::RenderBundleEncoder(Device& device)
@@ -128,14 +132,19 @@ id<MTLIndirectRenderCommand> RenderBundleEncoder::currentRenderCommand()
     if (m_commandEncoder)
         return (id<MTLIndirectRenderCommand>)m_commandEncoder;
 
+    if (m_currentCommand)
+        return m_currentCommand;
+
     ASSERT(!m_indirectCommandBuffer || m_currentCommandIndex < m_indirectCommandBuffer.size);
-    return m_currentCommandIndex < m_indirectCommandBuffer.size ? [m_indirectCommandBuffer indirectRenderCommandAtIndex:m_currentCommandIndex] : nil;
+    m_currentCommand = m_currentCommandIndex < m_indirectCommandBuffer.size ? [m_indirectCommandBuffer indirectRenderCommandAtIndex:m_currentCommandIndex] : nil;
+    return m_currentCommand;
 }
 
 void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, ResourceUsageAndRenderStage *resource)
 {
     if (m_commandEncoder) {
-        [m_commandEncoder useResource:mtlResource usage:resource.usage stages:resource.renderStages];
+        if (resource.renderStages)
+            [m_commandEncoder useResource:mtlResource usage:resource.usage stages:resource.renderStages];
         return;
     }
 
@@ -182,35 +191,37 @@ void RenderBundleEncoder::executePreDrawCommands()
             [icbCommand setFragmentBuffer:m_fragmentBuffers[i].buffer offset:m_fragmentBuffers[i].offset atIndex:i];
     }
 
-    for (auto& kvp : m_bindGroupDynamicOffsets) {
-        auto& pipelineLayout = m_pipeline->pipelineLayout();
-        auto bindGroupIndex = kvp.key;
+    if (m_bindGroupDynamicOffsets) {
+        for (auto& kvp : *m_bindGroupDynamicOffsets) {
+            auto& pipelineLayout = m_pipeline->pipelineLayout();
+            auto bindGroupIndex = kvp.key;
 
-        if (m_dynamicOffsetsVertexBuffer) {
-            auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
-            auto bufferOffset = vertexDynamicOffset;
-            uint8_t* vertexBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents) + bufferOffset;
-            auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
-            if (pvertexOffsets && pvertexOffsets->size()) {
-                auto& vertexOffsets = *pvertexOffsets;
-                auto startIndex = sizeof(uint32_t) * pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
-                auto bytesToCopy = sizeof(vertexOffsets[0]) * vertexOffsets.size();
-                RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
-                memcpy(&vertexBufferContents[startIndex], &vertexOffsets[0], bytesToCopy);
+            if (m_dynamicOffsetsVertexBuffer) {
+                auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
+                auto bufferOffset = vertexDynamicOffset;
+                uint8_t* vertexBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents) + bufferOffset;
+                auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
+                if (pvertexOffsets && pvertexOffsets->size()) {
+                    auto& vertexOffsets = *pvertexOffsets;
+                    auto startIndex = sizeof(uint32_t) * pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
+                    auto bytesToCopy = sizeof(vertexOffsets[0]) * vertexOffsets.size();
+                    RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
+                    memcpy(&vertexBufferContents[startIndex], &vertexOffsets[0], bytesToCopy);
+                }
             }
-        }
 
-        if (m_dynamicOffsetsFragmentBuffer) {
-            auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
-            auto bufferOffset = fragmentDynamicOffset;
-            uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset;
-            auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
-            if (pfragmentOffsets && pfragmentOffsets->size()) {
-                auto& fragmentOffsets = *pfragmentOffsets;
-                auto startIndex = sizeof(uint32_t) * pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
-                auto bytesToCopy = sizeof(fragmentOffsets[0]) * fragmentOffsets.size();
-                RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
-                memcpy(&fragmentBufferContents[startIndex], &fragmentOffsets[0], bytesToCopy);
+            if (m_dynamicOffsetsFragmentBuffer) {
+                auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
+                auto bufferOffset = fragmentDynamicOffset;
+                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset;
+                auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
+                if (pfragmentOffsets && pfragmentOffsets->size()) {
+                    auto& fragmentOffsets = *pfragmentOffsets;
+                    auto startIndex = sizeof(uint32_t) * pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
+                    auto bytesToCopy = sizeof(fragmentOffsets[0]) * fragmentOffsets.size();
+                    RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
+                    memcpy(&fragmentBufferContents[startIndex], &fragmentOffsets[0], bytesToCopy);
+                }
             }
         }
     }
@@ -221,7 +232,8 @@ void RenderBundleEncoder::executePreDrawCommands()
     if (m_dynamicOffsetsFragmentBuffer)
         [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size()];
 
-    m_bindGroupDynamicOffsets.clear();
+    if (m_bindGroupDynamicOffsets)
+        m_bindGroupDynamicOffsets->clear();
 }
 
 void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
@@ -241,6 +253,12 @@ void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uin
         });
     }
 
+    finalizeRenderCommand();
+}
+
+void RenderBundleEncoder::finalizeRenderCommand()
+{
+    m_currentCommand = nil;
     ++m_currentCommandIndex;
 }
 
@@ -262,20 +280,29 @@ void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCoun
         });
     }
 
-    ++m_currentCommandIndex;
+    finalizeRenderCommand();
 }
 
 void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     UNUSED_PARAM(indirectOffset);
 
-    auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-    if (!contents || !contents->indexCount || !contents->instanceCount)
+    m_requiresCommandReplay = true;
+    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
         return;
 
     executePreDrawCommands();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!m_indexBuffer.length)
+            return;
+
+        if (m_commandEncoder) {
+            [m_commandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
+            return;
+        }
+
+        auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+        if (!contents || !contents->indexCount || !contents->instanceCount)
             return;
 
         ASSERT(m_indexBufferOffset == contents->indexStart);
@@ -289,21 +316,28 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
         });
     }
 
-    ++m_currentCommandIndex;
+    finalizeRenderCommand();
 }
 
 void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    UNUSED_PARAM(indirectOffset);
-
-    auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-    if (!contents || !contents->instanceCount || !contents->vertexCount)
+    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments))
         return;
 
+    m_requiresCommandReplay = true;
     executePreDrawCommands();
-    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand())
+    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
+        if (m_commandEncoder) {
+            [m_commandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
+            return;
+        }
+
+        auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+        if (!contents || !contents->instanceCount || !contents->vertexCount)
+            return;
+
         [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
-    else {
+    } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDraw;
 
         m_recordedCommands.append([&indirectBuffer, indirectOffset, protectedThis = Ref { *this }] {
@@ -312,32 +346,33 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
         });
     }
 
-    ++m_currentCommandIndex;
+    finalizeRenderCommand();
 }
 
 void RenderBundleEncoder::endCurrentICB()
 {
     auto commandCount = m_currentCommandIndex;
     m_currentCommandIndex = 0;
+    RELEASE_ASSERT(!commandCount || !!m_icbDescriptor.commandTypes);
 
-    ASSERT(!m_indirectCommandBuffer);
     m_icbDescriptor.maxVertexBufferBindCount = m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
     m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
     if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount + 1)
         m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount + 1);
-    if (m_vertexDynamicOffset) {
+    if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
         m_dynamicOffsetsVertexBuffer = [m_device->device() newBufferWithLength:m_vertexDynamicOffset options:MTLResourceStorageModeShared];
         addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex);
-        m_vertexDynamicOffset = 0;
     }
+    m_vertexDynamicOffset = 0;
 
-    if (m_fragmentDynamicOffset) {
+    if (m_fragmentDynamicOffset && !m_dynamicOffsetsFragmentBuffer) {
         m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset options:MTLResourceStorageModeShared];
         addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment);
-        m_fragmentDynamicOffset = 0;
     }
+    m_fragmentDynamicOffset = 0;
 
-    m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
+    if (!m_commandEncoder)
+        m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
 
     uint64_t completedDraws = 0, lastIndexOfRecordedCommand = 0;
     for (auto& command : m_recordedCommands) {
@@ -351,18 +386,19 @@ void RenderBundleEncoder::endCurrentICB()
     if (m_commandEncoder)
         return;
 
-    if (lastIndexOfRecordedCommand == m_recordedCommands.size())
+    if (lastIndexOfRecordedCommand == m_recordedCommands.size()) {
         m_recordedCommands.clear();
-    else
+        m_icbDescriptor.commandTypes = 0;
+    } else
         m_recordedCommands.remove(0, lastIndexOfRecordedCommand);
 
     [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp)];
     m_indirectCommandBuffer = nil;
-
+    m_currentCommand = nil;
     m_currentPipelineState = nil;
+    m_dynamicOffsetsFragmentBuffer = nil;
+    m_dynamicOffsetsVertexBuffer = nil;
     m_resources = [NSMapTable strongToStrongObjectsMapTable];
-
-    m_icbDescriptor.commandTypes = 0;
 }
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
@@ -370,30 +406,35 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
     if (!m_currentCommandIndex)
         return RenderBundle::createInvalid(m_device);
 
-#if ENABLE(WEBGPU_USE_ICB_REPLAY)
-    auto renderBundle = RenderBundle::create(m_icbArray, this, m_device);
-#else
-    endCurrentICB();
-    auto renderBundle = RenderBundle::create(m_icbArray, nullptr, m_device);
-    m_vertexBuffers.clear();
-    m_fragmentBuffers.clear();
-    m_icbDescriptor.maxVertexBufferBindCount = 0;
-    m_icbDescriptor.maxFragmentBufferBindCount = 0;
-#endif
+    m_requiresCommandReplay = m_requiresCommandReplay ?: m_requiresMetalWorkaround;
+
+    auto createRenderBundle = ^{
+        if (m_requiresCommandReplay)
+            return RenderBundle::create(m_icbArray, this, m_device);
+
+        endCurrentICB();
+        m_vertexBuffers.clear();
+        m_fragmentBuffers.clear();
+        m_icbDescriptor.maxVertexBufferBindCount = 0;
+        m_icbDescriptor.maxFragmentBufferBindCount = 0;
+
+        return RenderBundle::create(m_icbArray, nullptr, m_device);
+    };
+
+    auto renderBundle = createRenderBundle();
     renderBundle->setLabel(String::fromUTF8(descriptor.label));
 
     return renderBundle;
 }
 
-bool RenderBundleEncoder::replayCommands(id<MTLRenderCommandEncoder> commandEncoder)
+void RenderBundleEncoder::replayCommands(id<MTLRenderCommandEncoder> commandEncoder)
 {
     m_commandEncoder = commandEncoder;
     endCurrentICB();
     m_commandEncoder = nil;
     m_currentPipelineState = nil;
     m_depthStencilState = nil;
-
-    return true;
+    m_bindGroupDynamicOffsets = std::nullopt;
 }
 
 void RenderBundleEncoder::insertDebugMarker(String&&)
@@ -448,6 +489,9 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         if (group.fragmentArgumentBuffer())
             m_icbDescriptor.maxFragmentBufferBindCount = std::max<NSUInteger>(m_icbDescriptor.maxFragmentBufferBindCount, 1 + groupIndex);
 
+        if (group.vertexArgumentBuffer())
+            m_requiresMetalWorkaround = false;
+
         m_recordedCommands.append([groupIndex, &group, protectedThis = Ref { *this }, dynamicOffsets = WTFMove(dynamicOffsets)]() mutable {
             protectedThis->setBindGroup(groupIndex, group, WTFMove(dynamicOffsets));
             return false;
@@ -456,8 +500,8 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
     }
 
     uint32_t dynamicOffsetCount = dynamicOffsets ? dynamicOffsets->size() : 0;
-    if (dynamicOffsetCount)
-        m_bindGroupDynamicOffsets.set(groupIndex, WTFMove(*dynamicOffsets));
+    if (dynamicOffsetCount && m_bindGroupDynamicOffsets)
+        m_bindGroupDynamicOffsets->set(groupIndex, WTFMove(*dynamicOffsets));
 
     for (const auto& resource : group.resources()) {
         ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages];
@@ -493,13 +537,11 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
         addResource(m_resources, m_indexBuffer, MTLRenderStageVertex);
 }
 
-static bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
+bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
 {
-#if ENABLE(WEBGPU_USE_ICB_REPLAY)
-    UNUSED_PARAM(a);
-    UNUSED_PARAM(b);
-    return false;
-#else
+    if (m_requiresCommandReplay || m_commandEncoder)
+        return false;
+
     if (&a == &b)
         return false;
 
@@ -525,7 +567,6 @@ static bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
         return true;
 
     return false;
-#endif
 }
 
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
@@ -571,7 +612,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
                 [m_commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
         }
     } else {
-        if (m_pipeline && icbNeedsToBeSplit(*m_pipeline, pipeline))
+        if (m_pipeline && icbNeedsToBeSplit(*m_pipeline, pipeline) && !m_requiresMetalWorkaround)
             endCurrentICB();
 
         m_recordedCommands.append([&pipeline, protectedThis = Ref { *this }] {
@@ -590,6 +631,7 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, u
         addResource(m_resources, buffer.buffer(), MTLRenderStageVertex);
         m_vertexBuffers[slot] = { buffer.buffer(), offset };
     } else {
+        m_requiresMetalWorkaround = false;
         m_recordedCommands.append([slot, &buffer, offset, size, protectedThis = Ref { *this }] {
             protectedThis->setVertexBuffer(slot, buffer, offset, size);
             return false;

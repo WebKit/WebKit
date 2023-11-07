@@ -72,7 +72,8 @@ public:
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
 
-    bool replayCommands(id<MTLRenderCommandEncoder>) const;
+    void replayCommands(id<MTLRenderCommandEncoder>) const;
+
 private:
     RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, Device&);
     RenderBundle(Device&);
