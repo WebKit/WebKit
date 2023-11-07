@@ -129,7 +129,7 @@ LayoutUnit MathOperator::stretchSize() const
 bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
-    return glyph.font && glyph.font == &style.fontCascade().primaryFont();
+    return glyph.isValid() && glyph.font == &style.fontCascade().primaryFont();
 }
 
 void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
