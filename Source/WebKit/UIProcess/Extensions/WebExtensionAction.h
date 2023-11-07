@@ -74,8 +74,8 @@ public:
     CocoaImage *icon(CGSize);
     void setIconsDictionary(NSDictionary *);
 
-    String displayLabel(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
-    void setDisplayLabel(String);
+    String label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
+    void setLabel(String);
 
     String badgeText() const;
     void setBadgeText(String);
@@ -83,7 +83,7 @@ public:
     bool isEnabled() const;
     void setEnabled(std::optional<bool>);
 
-    bool hasPopup() const { return !popupPath().isEmpty(); }
+    bool presentsPopup() const { return !popupPath().isEmpty(); }
     bool canProgrammaticallyPresentPopup() const { return m_respondsToPresentPopup; }
 
     String popupPath() const;

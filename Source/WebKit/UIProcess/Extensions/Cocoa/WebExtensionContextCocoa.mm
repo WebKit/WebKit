@@ -1693,7 +1693,7 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
         userGesturePerformed(*tab);
 
     auto action = getOrCreateAction(tab);
-    if (action->hasPopup()) {
+    if (action->presentsPopup()) {
         action->presentPopupWhenReady();
         return;
     }

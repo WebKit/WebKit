@@ -489,7 +489,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @discussion The returned object represents the action specific to the tab when provided; otherwise, it returns the default action. The default
  action is useful when the context is unrelated to a specific tab. When possible, specify the tab to get the most context-relevant action.
  */
-- (_WKWebExtensionAction *)actionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:));
+- (nullable _WKWebExtensionAction *)actionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:));
 
 /*!
  @abstract Performs the extension action associated with the specified tab or performs the default action if `nil` is passed.

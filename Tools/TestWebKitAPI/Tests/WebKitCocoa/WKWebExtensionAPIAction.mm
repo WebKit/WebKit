@@ -125,7 +125,7 @@ TEST(WKWebExtensionAPIAction, ClickedEvent)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIAction, PresentActionPopup)
+TEST(WKWebExtensionAPIAction, presentPopupForAction)
 {
     auto *popupPage = @"<b>Hello World!</b>";
 
@@ -146,12 +146,12 @@ TEST(WKWebExtensionAPIAction, PresentActionPopup)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
-        EXPECT_TRUE(action.hasPopup);
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+        EXPECT_TRUE(action.presentsPopup);
         EXPECT_TRUE(action.isEnabled);
         EXPECT_NULL(action.badgeText);
 
-        EXPECT_NS_EQUAL(action.displayLabel, @"Test Action");
+        EXPECT_NS_EQUAL(action.label, @"Test Action");
 
         auto *smallIcon = [action iconForSize:CGSizeMake(16, 16)];
         EXPECT_NOT_NULL(smallIcon);
@@ -203,25 +203,25 @@ TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
-        EXPECT_TRUE(defaultAction.hasPopup);
+        EXPECT_TRUE(defaultAction.presentsPopup);
         EXPECT_FALSE(defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(defaultAction.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(defaultAction.label, @"Modified Title");
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
 
         EXPECT_NULL(action.associatedTab);
 
         EXPECT_FALSE(action.isEnabled);
-        EXPECT_NS_EQUAL(action.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(action.label, @"Modified Title");
         EXPECT_NS_EQUAL(action.badgeText, @"42");
 
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
 
-        EXPECT_TRUE(action.hasPopup);
+        EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
 
         EXPECT_NOT_NULL(action.popupWebView);
@@ -272,12 +272,12 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
-        EXPECT_TRUE(defaultAction.hasPopup);
+        EXPECT_TRUE(defaultAction.presentsPopup);
         EXPECT_TRUE(defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(defaultAction.displayLabel, @"Test Action");
+        EXPECT_NS_EQUAL(defaultAction.label, @"Test Action");
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"");
 
         auto *defaultIcon = [defaultAction iconForSize:CGSizeMake(32, 32)];
@@ -285,14 +285,14 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
         EXPECT_TRUE(CGSizeEqualToSize(defaultIcon.size, CGSizeMake(32, 32)));
 
         EXPECT_FALSE(action.isEnabled);
-        EXPECT_NS_EQUAL(action.displayLabel, @"Tab Title");
+        EXPECT_NS_EQUAL(action.label, @"Tab Title");
         EXPECT_NS_EQUAL(action.badgeText, @"42");
 
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
 
-        EXPECT_TRUE(action.hasPopup);
+        EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
 
         EXPECT_NOT_NULL(action.popupWebView);
@@ -304,9 +304,9 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
 
         auto *secondTabAction = [manager.get().context actionForTab:manager.get().defaultWindow.tabs.lastObject];
 
-        EXPECT_EQ(secondTabAction.hasPopup, defaultAction.hasPopup);
+        EXPECT_EQ(secondTabAction.presentsPopup, defaultAction.presentsPopup);
         EXPECT_EQ(secondTabAction.isEnabled, defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(secondTabAction.displayLabel, defaultAction.displayLabel);
+        EXPECT_NS_EQUAL(secondTabAction.label, defaultAction.label);
         EXPECT_NS_EQUAL(secondTabAction.badgeText, defaultAction.badgeText);
 
         icon = [secondTabAction iconForSize:CGSizeMake(32, 32)];
@@ -318,9 +318,9 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
         EXPECT_NS_EQUAL(webViewURL.path, @"/popup.html");
 
         auto *secondWindowAction = [manager.get().context actionForTab:manager.get().windows[1].tabs[0]];
-        EXPECT_EQ(secondWindowAction.hasPopup, defaultAction.hasPopup);
+        EXPECT_EQ(secondWindowAction.presentsPopup, defaultAction.presentsPopup);
         EXPECT_EQ(secondWindowAction.isEnabled, defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(secondWindowAction.displayLabel, defaultAction.displayLabel);
+        EXPECT_NS_EQUAL(secondWindowAction.label, defaultAction.label);
         EXPECT_NS_EQUAL(secondWindowAction.badgeText, defaultAction.badgeText);
 
         icon = [secondWindowAction iconForSize:CGSizeMake(32, 32)];
@@ -375,12 +375,12 @@ TEST(WKWebExtensionAPIAction, WindowSpecificActionProperties)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
-        EXPECT_TRUE(defaultAction.hasPopup);
+        EXPECT_TRUE(defaultAction.presentsPopup);
         EXPECT_TRUE(defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(defaultAction.displayLabel, @"Test Action");
+        EXPECT_NS_EQUAL(defaultAction.label, @"Test Action");
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"");
 
         auto *defaultIcon = [defaultAction iconForSize:CGSizeMake(32, 32)];
@@ -388,22 +388,22 @@ TEST(WKWebExtensionAPIAction, WindowSpecificActionProperties)
         EXPECT_TRUE(CGSizeEqualToSize(defaultIcon.size, CGSizeMake(32, 32)));
 
         EXPECT_TRUE(action.isEnabled);
-        EXPECT_NS_EQUAL(action.displayLabel, @"Window Title");
+        EXPECT_NS_EQUAL(action.label, @"Window Title");
         EXPECT_NS_EQUAL(action.badgeText, @"W");
 
         auto *windowIcon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(windowIcon);
         EXPECT_TRUE(CGSizeEqualToSize(windowIcon.size, CGSizeMake(48, 48)));
 
-        EXPECT_TRUE(action.hasPopup);
+        EXPECT_TRUE(action.presentsPopup);
         NSURL *webViewURL = action.popupWebView.URL;
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/window-popup.html");
 
         auto *secondWindowAction = [manager.get().context actionForTab:manager.get().windows[1].tabs[0]];
-        EXPECT_EQ(secondWindowAction.hasPopup, defaultAction.hasPopup);
+        EXPECT_EQ(secondWindowAction.presentsPopup, defaultAction.presentsPopup);
         EXPECT_EQ(secondWindowAction.isEnabled, defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(secondWindowAction.displayLabel, defaultAction.displayLabel);
+        EXPECT_NS_EQUAL(secondWindowAction.label, defaultAction.label);
         EXPECT_NS_EQUAL(secondWindowAction.badgeText, defaultAction.badgeText);
 
         auto *secondWindowIcon = [secondWindowAction iconForSize:CGSizeMake(32, 32)];
@@ -443,7 +443,7 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePath)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -476,7 +476,7 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizes)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -520,7 +520,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageData)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
 
         EXPECT_NOT_NULL(icon);
@@ -555,7 +555,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -604,7 +604,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithSVGDataURL)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -646,7 +646,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon48);
 #if USE(APPKIT)
@@ -713,25 +713,25 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:browserActionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
-        EXPECT_TRUE(defaultAction.hasPopup);
+        EXPECT_TRUE(defaultAction.presentsPopup);
         EXPECT_FALSE(defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(defaultAction.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(defaultAction.label, @"Modified Title");
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
 
         EXPECT_NULL(action.associatedTab);
 
         EXPECT_FALSE(action.isEnabled);
-        EXPECT_NS_EQUAL(action.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(action.label, @"Modified Title");
         EXPECT_NS_EQUAL(action.badgeText, @"42");
 
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
 
-        EXPECT_TRUE(action.hasPopup);
+        EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
 
         EXPECT_NOT_NULL(action.popupWebView);
@@ -797,25 +797,25 @@ TEST(WKWebExtensionAPIAction, PageAction)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:pageActionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
-        EXPECT_TRUE(defaultAction.hasPopup);
+        EXPECT_TRUE(defaultAction.presentsPopup);
         EXPECT_FALSE(defaultAction.isEnabled);
-        EXPECT_NS_EQUAL(defaultAction.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(defaultAction.label, @"Modified Title");
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
 
         EXPECT_NULL(action.associatedTab);
 
         EXPECT_FALSE(action.isEnabled);
-        EXPECT_NS_EQUAL(action.displayLabel, @"Modified Title");
+        EXPECT_NS_EQUAL(action.label, @"Modified Title");
         EXPECT_NS_EQUAL(action.badgeText, @"42");
 
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
 
-        EXPECT_TRUE(action.hasPopup);
+        EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
 
         EXPECT_NOT_NULL(action.popupWebView);

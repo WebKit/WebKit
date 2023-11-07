@@ -207,7 +207,7 @@ TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromPopup)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentActionPopup = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         // Do nothing so the popup web view will stay loaded.
     };
 

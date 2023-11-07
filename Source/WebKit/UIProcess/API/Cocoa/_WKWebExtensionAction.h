@@ -59,6 +59,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 NS_SWIFT_NAME(_WKWebExtension.Action)
 @interface _WKWebExtensionAction : NSObject
 
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)new NS_UNAVAILABLE;
+
 /*! @abstract The extension context to which this action is related. */
 @property (nonatomic, readonly, weak) _WKWebExtensionContext *webExtensionContext;
 
@@ -82,10 +85,10 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 #endif
 
 /*! @abstract The localized display label for the action. */
-@property (nonatomic, readonly, copy) NSString *displayLabel;
+@property (nonatomic, readonly, copy) NSString *label;
 
 /*! @abstract The badge text for the action. */
-@property (nonatomic, nullable, readonly, copy) NSString *badgeText;
+@property (nonatomic, readonly, copy) NSString *badgeText;
 
 /*! @abstract A Boolean value indicating whether the action is enabled. */
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
@@ -95,7 +98,7 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
  @discussion Use this property to check if the action has a popup before attempting to access the `popupWebView` property.
  @seealso popupWebView
  */
-@property (nonatomic, readonly) BOOL hasPopup;
+@property (nonatomic, readonly) BOOL presentsPopup;
 
 /*!
  @abstract A web view loaded with the popup page for this action, or `nil` if no popup is specified.
