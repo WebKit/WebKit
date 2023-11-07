@@ -699,6 +699,32 @@ TEST(NativePromise, PromiseAllResolve)
     });
 }
 
+TEST(NativePromise, PromiseVoidAllResolve)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+    queue->dispatch([queue] {
+        Vector<Ref<GenericPromise>> promises;
+        promises.append(GenericPromise::createAndResolve());
+        promises.append(GenericPromise::createAndResolve());
+        promises.append(GenericPromise::createAndResolve());
+
+        GenericPromise::all(queue, promises)->then(queue,
+            [] () {
+                EXPECT_TRUE(true);
+            },
+            doFail());
+
+        GenericPromise::all(queue, Vector<Ref<GenericPromise>>(10, [](size_t) {
+            return GenericPromise::createAndResolve();
+        }))->then(queue,
+            [queue] () {
+                queue->beginShutdown();
+            },
+            doFail());
+    });
+}
+
 TEST(NativePromise, PromiseAllResolveAsync)
 {
     AutoWorkQueue awq;
