@@ -122,6 +122,8 @@ SharedWorkerThreadProxy::~SharedWorkerThreadProxy()
 {
     ASSERT(allSharedWorkerThreadProxies().contains(m_contextIdentifier));
     allSharedWorkerThreadProxies().remove(m_contextIdentifier);
+
+    m_workerThread->clearProxies();
 }
 
 SharedWorkerIdentifier SharedWorkerThreadProxy::identifier() const

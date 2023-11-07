@@ -97,6 +97,8 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
     auto functionalEventTasks = WTFMove(m_ongoingFunctionalEventTasks);
     for (auto& callback : functionalEventTasks.values())
         callback(false);
+
+    m_serviceWorkerThread->clearProxies();
 }
 
 void ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated(bool wasAppInitiated)

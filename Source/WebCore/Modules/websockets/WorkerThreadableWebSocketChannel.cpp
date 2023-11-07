@@ -346,7 +346,7 @@ void WorkerThreadableWebSocketChannel::Peer::didUpgradeURL()
 WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& socketProvider)
     : m_workerClientWrapper(WTFMove(workerClientWrapper))
     , m_workerGlobalScope(WTFMove(workerGlobalScope))
-    , m_loaderProxy(m_workerGlobalScope->thread().workerLoaderProxy())
+    , m_loaderProxy(*m_workerGlobalScope->thread().workerLoaderProxy())
     , m_taskMode(taskMode)
     , m_socketProvider(WTFMove(socketProvider))
 {
@@ -374,10 +374,12 @@ void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecut
             ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
             if (clientWrapper->failedWebSocketChannelCreation()) {
                 // If Bridge::initialize() quitted earlier, we need to kick mainThreadDestroy() to delete the peer.
-                downcast<WorkerOrWorkletGlobalScope>(context).workerOrWorkletThread()->workerLoaderProxy().postTaskToLoader([peer = WTFMove(peer)](ScriptExecutionContext& context) {
-                    ASSERT(isMainThread());
-                    ASSERT_UNUSED(context, context.isDocument());
-                });
+                if (auto* workerLoaderProxy = downcast<WorkerOrWorkletGlobalScope>(context).workerOrWorkletThread()->workerLoaderProxy()) {
+                    workerLoaderProxy->postTaskToLoader([peer = WTFMove(peer)](ScriptExecutionContext& context) {
+                        ASSERT(isMainThread());
+                        ASSERT_UNUSED(context, context.isDocument());
+                    });
+                }
             } else
                 clientWrapper->didCreateWebSocketChannel(peer.release());
         }
