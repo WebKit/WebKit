@@ -501,6 +501,9 @@ platform/graphics/mac/controls/SearchFieldMac.mm
 platform/graphics/mac/controls/SearchFieldResultsMac.mm
 platform/graphics/mac/controls/SliderThumbMac.mm
 platform/graphics/mac/controls/SliderTrackMac.mm
+platform/graphics/mac/controls/SwitchMacUtilities.mm
+platform/graphics/mac/controls/SwitchThumbMac.mm
+platform/graphics/mac/controls/SwitchTrackMac.mm
 platform/graphics/mac/controls/TextAreaMac.mm
 platform/graphics/mac/controls/TextFieldMac.mm
 platform/graphics/mac/controls/ToggleButtonMac.mm

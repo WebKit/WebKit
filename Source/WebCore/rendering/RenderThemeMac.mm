@@ -171,6 +171,8 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
     case StyleAppearance::SliderThumbVertical:
     case StyleAppearance::SliderHorizontal:
     case StyleAppearance::SliderVertical:
+    case StyleAppearance::SwitchThumb:
+    case StyleAppearance::SwitchTrack:
     case StyleAppearance::SquareButton:
     case StyleAppearance::TextArea:
     case StyleAppearance::TextField:
@@ -215,7 +217,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == StyleAppearance::SliderThumbVertical
         || type == StyleAppearance::SliderHorizontal
         || type == StyleAppearance::SliderVertical
-        || type == StyleAppearance::SquareButton;
+        || type == StyleAppearance::SquareButton
+        || type == StyleAppearance::SwitchThumb
+        || type == StyleAppearance::SwitchTrack;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
@@ -799,6 +803,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::InnerSpinButton:
+    case StyleAppearance::Switch:
             return RenderTheme::adjustRepaintRect(renderer, rect);
     default:
             break;

@@ -26,8 +26,10 @@
 
 input[type="checkbox"][switch] {
     margin: initial;
+    display: inline-grid;
 }
 
 input[type="checkbox"][switch]::thumb, input[type="checkbox"][switch]::track {
     appearance: inherit !important;
+    grid-area: 1/1;
 }

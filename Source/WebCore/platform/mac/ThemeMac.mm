@@ -510,6 +510,42 @@ void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
     focusRingClipRect = rect;
 }
 
+// Switch
+
+static const std::array<IntSize, 4>& switchSizes()
+{
+    static const std::array<IntSize, 4> sizes =
+    {
+        IntSize { 38, 22 },
+        IntSize { 32, 18 },
+        IntSize { 26, 15 },
+        IntSize { 38, 22 }
+    };
+    return sizes;
+}
+
+static const int* switchMargins(NSControlSize controlSize)
+{
+    static const int margins[4][4] =
+    {
+        // top right bottom left
+        { 2, 2, 1, 2 },
+        { 2, 2, 1, 2 },
+        { 1, 1, 0, 1 },
+        { 2, 2, 1, 2 },
+    };
+    return margins[controlSize];
+}
+
+static LengthSize switchSize(const LengthSize& zoomedSize, float zoomFactor)
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
+        return zoomedSize;
+
+    return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, switchSizes());
+}
+
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(StyleAppearance appearance) const
@@ -544,6 +580,8 @@ LengthSize ThemeMac::controlSize(StyleAppearance appearance, const FontCascade& 
         return checkboxSize(zoomedSize, zoomFactor);
     case StyleAppearance::Radio:
         return radioSize(zoomedSize, zoomFactor);
+    case StyleAppearance::Switch:
+        return switchSize(zoomedSize, zoomFactor);
     case StyleAppearance::PushButton:
         // Height is reset to auto so that specified heights can be ignored.
         return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
@@ -633,6 +671,14 @@ void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, const Control
         zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
         zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
         zoomedRect = inflateRect(zoomedRect, zoomedSize, radioMargins(controlSize), zoomFactor);
+        break;
+    }
+    case StyleAppearance::Switch: {
+        NSControlSize controlSize = controlSizeFromPixelSize(switchSizes(), zoomRectSize, zoomFactor);
+        IntSize zoomedSize = switchSizes()[controlSize];
+        zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+        zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
+        zoomedRect = inflateRect(zoomedRect, zoomedSize, switchMargins(controlSize), zoomFactor);
         break;
     }
     case StyleAppearance::PushButton:
