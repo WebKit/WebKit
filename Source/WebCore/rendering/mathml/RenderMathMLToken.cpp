@@ -508,7 +508,7 @@ void RenderMathMLToken::computePreferredLogicalWidths()
 
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-        if (mathVariantGlyph.font) {
+        if (mathVariantGlyph.isValid()) {
             m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph);
             setPreferredLogicalWidthsDirty(false);
             return;
@@ -561,7 +561,7 @@ std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-        if (mathVariantGlyph.font)
+        if (mathVariantGlyph.isValid())
             return LayoutUnit { static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())) };
     }
     return RenderMathMLBlock::firstLineBaseline();
@@ -583,7 +583,7 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     if (m_mathVariantCodePoint)
         mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
 
-    if (!mathVariantGlyph.font) {
+    if (!mathVariantGlyph.isValid()) {
         RenderMathMLBlock::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }
@@ -608,7 +608,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         return;
 
     auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-    if (!mathVariantGlyph.font)
+    if (!mathVariantGlyph.isValid())
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
@@ -624,7 +624,7 @@ void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-        if (mathVariantGlyph.font)
+        if (mathVariantGlyph.isValid())
             return;
     }
 
