@@ -20,6 +20,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "FrameInfoData.h"
 #include "ShareableBitmap.h"
 #include "SharedMemory.h"
 #include <WebCore/DictionaryPopupInfo.h>
@@ -86,6 +87,7 @@ struct WebHitTestResultData {
     bool isDownloadableMedia;
     enum class ElementType : uint8_t { None, Audio, Video };
     ElementType elementType;
+    std::optional<FrameInfoData> frameInfo;
 
     String lookupText;
     String toolTipText;
@@ -109,7 +111,7 @@ struct WebHitTestResultData {
     WebHitTestResultData& operator=(const WebHitTestResultData&) = default;
     WebHitTestResultData(const WebCore::HitTestResult&, const String& toolTipText);
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
-    WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const WebKit::WebHitTestResultData::ElementType&, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
+    WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const WebKit::WebHitTestResultData::ElementType&, std::optional<FrameInfoData>&&, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
 #if PLATFORM(MAC)
         const WebHitTestResultPlatformData&,
 #endif
@@ -117,6 +119,8 @@ struct WebHitTestResultData {
     ~WebHitTestResultData();
 
     WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
+
+    static std::optional<FrameInfoData> frameInfoDataFromHitTestResult(const WebCore::HitTestResult&);
 
     std::optional<WebKit::SharedMemory::Handle> getImageSharedMemoryHandle() const;
 

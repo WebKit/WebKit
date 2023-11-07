@@ -92,6 +92,7 @@ public:
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
+    WEBCORE_EXPORT LocalFrame* frame() const;
     WEBCORE_EXPORT LocalFrame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT String selectedText() const;

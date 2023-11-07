@@ -234,7 +234,7 @@ UIDelegate::ContextMenuClient::~ContextMenuClient()
 {
 }
 
-void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *menu, const ContextMenuContextData& data, API::Object* userInfo, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler)
+void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy& page, NSMenu *menu, const ContextMenuContextData& data, API::Object* userInfo, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler(menu);
@@ -248,7 +248,7 @@ void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *
     if (!delegate)
         return completionHandler(menu);
 
-    auto contextMenuElementInfo = API::ContextMenuElementInfoMac::create(data);
+    auto contextMenuElementInfo = API::ContextMenuElementInfoMac::create(data, page);
     if (m_uiDelegate->m_delegateMethods.webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:));
         [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() getContextMenuFromProposedMenu:menu forElement:wrapper(contextMenuElementInfo.get()) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (NSMenu *menu) mutable {
@@ -279,7 +279,7 @@ UIDelegate::UIClient::~UIClient()
 }
 
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers, API::Object* userInfo)
+void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy& page, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers, API::Object* userInfo)
 {
     if (!m_uiDelegate)
         return;
@@ -291,7 +291,7 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTe
     if (!delegate)
         return;
 
-    auto apiHitTestResult = API::HitTestResult::create(data);
+    auto apiHitTestResult = API::HitTestResult::create(data, page);
 #if PLATFORM(MAC)
     auto modifierFlags = WebEventFactory::toNSEventModifierFlags(modifiers);
 #else
