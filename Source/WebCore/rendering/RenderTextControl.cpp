@@ -96,7 +96,7 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
         return RenderBox::computeLogicalHeight(LayoutUnit(), LayoutUnit());
 
     if (RenderBox* innerTextBox = innerText->renderBox()) {
-        LayoutUnit nonContentHeight = innerTextBox->verticalBorderAndPaddingExtent() + innerTextBox->verticalMarginExtent();
+        LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingLogicalHeight() + innerTextBox->marginLogicalHeight();
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
@@ -112,7 +112,7 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
         // before calling computeLogicalHeight to avoid this hack.
         cacheIntrinsicContentLogicalHeightForFlexItem(logicalHeight);
         
-        logicalHeight += verticalBorderAndPaddingExtent();
+        logicalHeight += borderAndPaddingLogicalHeight();
     }
 
     return RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
