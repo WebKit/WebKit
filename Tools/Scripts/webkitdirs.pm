@@ -63,6 +63,7 @@ BEGIN {
    @ISA         = qw(Exporter);
    @EXPORT      = qw(
        &XcodeCoverageSupportOptions
+       &XcodeExportCompileCommandsOptions
        &XcodeOptionString
        &XcodeOptionStringNoConfig
        &XcodeOptions
@@ -1292,6 +1293,11 @@ sub XcodeOptionStringNoConfig
 sub XcodeCoverageSupportOptions()
 {
     return ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig");
+}
+
+sub XcodeExportCompileCommandsOptions()
+{
+    return ("OTHER_CFLAGS=\$(inherited) -gen-cdb-fragment-path \$(BUILT_PRODUCTS_DIR)/compile_commands", "GCC_PRECOMPILE_PREFIX_HEADER=NO", "CLANG_ENABLE_MODULE_DEBUGGING=NO", "COMPILER_INDEX_STORE_ENABLE=NO");
 }
 
 sub XcodeStaticAnalyzerOption()
