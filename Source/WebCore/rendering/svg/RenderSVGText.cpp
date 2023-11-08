@@ -62,7 +62,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGText);
 RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTFMove(style))
 {
-    ASSERT(isSVGText());
+    ASSERT(isRenderSVGText());
 }
 
 RenderSVGText::~RenderSVGText()
@@ -149,7 +149,7 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
     // cache, as the next buildLayoutAttributesForTextRenderer() call rebuilds it.
     m_layoutAttributesBuilder.clearTextPositioningElements();
 
-    if (!child->isSVGInlineText() && !child->isSVGInline())
+    if (!child->isRenderSVGInlineText() && !child->isRenderSVGInline())
         return;
 
     // Detect changes in layout attributes and only measure those text parts that have changed!
@@ -222,7 +222,7 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
     // The positioning elements cache depends on the size of each text renderer in the
     // subtree. If this changes, clear the cache. It's going to be rebuilt below.
     m_layoutAttributesBuilder.clearTextPositioningElements();
-    if (m_layoutAttributes.isEmpty() || !child->isSVGInlineText())
+    if (m_layoutAttributes.isEmpty() || !child->isRenderSVGInlineText())
         return;
 
     // This logic requires that the 'text' child is still inserted in the tree.

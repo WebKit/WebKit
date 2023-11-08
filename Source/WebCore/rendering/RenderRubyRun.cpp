@@ -56,7 +56,7 @@ RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
 {
     setReplacedOrInlineBlock(true);
     setInline(true);
-    ASSERT(isRubyRun());
+    ASSERT(isRenderRubyRun());
 }
 
 RenderRubyRun::~RenderRubyRun() = default;
@@ -65,14 +65,14 @@ bool RenderRubyRun::hasRubyText() const
 {
     // The only place where a ruby text can be is in the first position
     // Note: As anonymous blocks, ruby runs do not have ':before' or ':after' content themselves.
-    return firstChild() && firstChild()->isRubyText();
+    return firstChild() && firstChild()->isRenderRubyText();
 }
 
 bool RenderRubyRun::hasRubyBase() const
 {
     // The only place where a ruby base can be is in the last position
     // Note: As anonymous blocks, ruby runs do not have ':before' or ':after' content themselves.
-    return lastChild() && lastChild()->isRubyBase();
+    return lastChild() && lastChild()->isRenderRubyBase();
 }
 
 RenderRubyText* RenderRubyRun::rubyText() const
@@ -80,19 +80,19 @@ RenderRubyText* RenderRubyRun::rubyText() const
     RenderObject* child = firstChild();
     // If in future it becomes necessary to support floating or positioned ruby text,
     // layout will have to be changed to handle them properly.
-    ASSERT(!child || !child->isRubyText() || !child->isFloatingOrOutOfFlowPositioned());
-    return child && child->isRubyText() ? static_cast<RenderRubyText*>(child) : nullptr;
+    ASSERT(!child || !child->isRenderRubyText() || !child->isFloatingOrOutOfFlowPositioned());
+    return child && child->isRenderRubyText() ? static_cast<RenderRubyText*>(child) : nullptr;
 }
 
 RenderRubyBase* RenderRubyRun::rubyBase() const
 {
     RenderObject* child = lastChild();
-    return child && child->isRubyBase() ? static_cast<RenderRubyBase*>(child) : nullptr;
+    return child && child->isRenderRubyBase() ? static_cast<RenderRubyBase*>(child) : nullptr;
 }
 
 bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isInline() || child.isRubyText();
+    return child.isInline() || child.isRenderRubyText();
 }
 
 RenderPtr<RenderRubyBase> RenderRubyRun::createRubyBase() const
@@ -217,7 +217,7 @@ LayoutUnit RenderRubyRun::baselinePosition(FontBaseline baselineType, bool first
 
 static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const RenderRubyBase& rubyBase)
 {
-    if (!renderer || !renderer->isText())
+    if (!renderer || !renderer->isRenderText())
         return false;
     const RenderStyle& rubyBaseStyle = firstLine ? rubyBase.firstLineStyle() : rubyBase.style();
     const RenderStyle& style = firstLine ? renderer->firstLineStyle() : renderer->style();

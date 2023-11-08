@@ -1334,11 +1334,8 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
 
 bool PDFPlugin::hudEnabled() const
 {
-    if (auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
-        if (auto* page = coreFrame->page())
-            return page->settings().pdfPluginHUDEnabled();
-    }
-
+    if (CheckedPtr page = this->page())
+        return page->settings().pdfPluginHUDEnabled();
     return false;
 }
 
@@ -1390,7 +1387,7 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     if (!coreFrame)
         return JSValueMakeUndefined(ctx);
 
-    auto* page = coreFrame->page();
+    CheckedPtr page = coreFrame->page();
     if (!page)
         return JSValueMakeUndefined(ctx);
 
@@ -1653,7 +1650,7 @@ void PDFPlugin::createPDFDocument()
 void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef context)
 {
 #if PLATFORM(MAC)
-    auto* page = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->page() : nullptr;
+    CheckedPtr page = this->page();
     if (!page)
         return;
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
@@ -1737,16 +1734,9 @@ IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
 FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
 {
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
-        auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr;
-        if (!coreFrame)
-            return { };
-        auto* frameView = coreFrame->view();
-        if (!frameView)
-            return { };
-
         FloatRect updatedRect = rect;
         updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
-        auto* page = coreFrame->page();
+        CheckedPtr page = this->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
@@ -1756,13 +1746,9 @@ FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
 IntRect PDFPlugin::boundsOnScreen() const
 {
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&] () -> WebCore::IntRect {
-        auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
-        if (!frameView)
-            return { };
-
         FloatRect bounds = FloatRect(FloatPoint(), size());
         FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
-        auto* page = m_frame->coreLocalFrame()->page();
+        CheckedPtr page = this->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));

@@ -139,3 +139,5 @@ void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase*, bool);
 void webkitWebViewBaseToplevelWindowIsActiveChanged(WebKitWebViewBase*, bool);
 void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase*, uint32_t, uint32_t);
 void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase*, GdkMonitor*);
+
+void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase*, CompletionHandler<void()>&&);

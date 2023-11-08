@@ -65,7 +65,7 @@ LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& s
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasBoxDecorations(false)
 {
-    ASSERT(isLegacySVGRoot());
+    ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
         intrinsicSize.setWidth(defaultWidth);
@@ -247,7 +247,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     GraphicsContext& context = paintInfo.context();
     if (context.detectingContentfulPaint()) {
         for (auto& current : childrenOfType<RenderObject>(*this)) {
-            if (!current.isLegacySVGHiddenContainer()) {
+            if (!current.isLegacyRenderSVGHiddenContainer()) {
                 context.setContentfulPaintDetected();
                 return;
             }

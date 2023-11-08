@@ -32,7 +32,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableCaption);
 RenderTableCaption::RenderTableCaption(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::TableCaption, element, WTFMove(style))
 {
-    ASSERT(isTableCaption());
+    ASSERT(isRenderTableCaption());
 }
 
 RenderTableCaption::~RenderTableCaption() = default;

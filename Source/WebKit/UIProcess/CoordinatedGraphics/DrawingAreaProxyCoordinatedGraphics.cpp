@@ -303,17 +303,9 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
 
 DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
     : m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
-#if PLATFORM(GTK)
-    , m_webPage(webPage)
-#endif
 {
 #if USE(GLIB_EVENT_LOOP)
-#if PLATFORM(GTK)
-    // Give redraws more priority.
-    m_timer.setPriority(GDK_PRIORITY_REDRAW - 10);
-#else
     m_timer.setPriority(RunLoopSourcePriority::RunLoopDispatcher);
-#endif
 #endif
 }
 
@@ -324,49 +316,17 @@ DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::~DrawingMonitor()
     stop();
 }
 
-int DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::webViewDrawCallback(DrawingAreaProxyCoordinatedGraphics::DrawingMonitor* monitor)
-{
-    monitor->didDraw();
-    return false;
-}
-
 void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(CompletionHandler<void()>&& callback)
 {
-    m_startTime = MonotonicTime::now();
     m_callback = WTFMove(callback);
-#if PLATFORM(GTK)
-    gtk_widget_queue_draw(m_webPage.viewWidget());
-#if USE(GTK4)
-    m_timer.startOneShot(16_ms);
-#else
-    g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
-    m_timer.startOneShot(100_ms);
-#endif
-#else
     m_timer.startOneShot(0_s);
-#endif
 }
 
 void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::stop()
 {
     m_timer.stop();
-#if PLATFORM(GTK) && !USE(GTK4)
-    g_signal_handlers_disconnect_by_func(m_webPage.viewWidget(), reinterpret_cast<gpointer>(webViewDrawCallback), this);
-#endif
-    m_startTime = MonotonicTime();
     if (m_callback)
         m_callback();
-}
-
-void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
-{
-    // We wait up to 100 milliseconds for draw events. If there are several draw events queued quickly,
-    // we want to wait until all of them have been processed, so after receiving a draw, we wait
-    // for the next frame or stop.
-    if (MonotonicTime::now() - m_startTime > 100_ms)
-        stop();
-    else
-        m_timer.startOneShot(16_ms);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callbackFunction)

@@ -554,7 +554,7 @@ Node* LocalFrame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLo
             if (!renderer)
                 continue;
 
-            if ((renderer->isTextField() || renderer->isTextArea()) && downcast<RenderTextControl>(*renderer).canScroll()) {
+            if ((renderer->isRenderTextControlSingleLine() || renderer->isRenderTextControlMultiLine()) && downcast<RenderTextControl>(*renderer).canScroll()) {
                 scrollingAncestor = node;
                 continue;
             }

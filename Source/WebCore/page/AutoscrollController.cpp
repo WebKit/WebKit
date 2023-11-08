@@ -78,7 +78,7 @@ void AutoscrollController::startAutoscrollForSelection(RenderObject* renderer)
         return;
     auto* scrollable = RenderBox::findAutoscrollable(renderer);
     if (!scrollable)
-        scrollable = renderer->isListBox() ? downcast<RenderListBox>(renderer) : nullptr;
+        scrollable = renderer->isRenderListBox() ? downcast<RenderListBox>(renderer) : nullptr;
     if (!scrollable)
         return;
     m_autoscrollType = AutoscrollForSelection;

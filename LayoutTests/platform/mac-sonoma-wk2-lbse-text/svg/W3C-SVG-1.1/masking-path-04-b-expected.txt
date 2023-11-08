@@ -7,9 +7,7 @@ layer at (0,0) size 480x360
 layer at (20,20) size 420x310
   RenderSVGTransformableContainer {g} at (20,20) size 420x310
 layer at (45,169.11) size 355x123
-  RenderSVGHiddenContainer {defs} at (25,149.11) size 354.45x121.98
-layer at (45,169.11) size 355x122
-  RenderSVGResourceClipper {clipPath} at (0,0) size 354.45x121.98
+  RenderSVGResourceClipper {clipPath} at (45,169.11) size 354.45x121.98
 layer at (45,169.11) size 354x122
   RenderSVGText {text} at (0,0) size 355x122 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 355x122

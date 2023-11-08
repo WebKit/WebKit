@@ -517,7 +517,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->shouldApplyLayoutContainment() && object->shouldApplySizeContainment())
         return true;
 
-    if (object->isSVGRootOrLegacySVGRoot())
+    if (object->isRenderOrLegacyRenderSVGRoot())
         return true;
 
     if (!object->hasNonVisibleOverflow())
@@ -633,7 +633,7 @@ void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBeh
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
     m_bitfields.setPreferredLogicalWidthsDirty(shouldBeDirty);
-    if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isText() || !style().hasOutOfFlowPosition()))
+    if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isRenderText() || !style().hasOutOfFlowPosition()))
         invalidateContainerPreferredLogicalWidths();
 }
 
@@ -641,11 +641,11 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 {
     // In order to avoid pathological behavior when inlines are deeply nested, we do include them
     // in the chain that we mark dirty (even though they're kind of irrelevant).
-    CheckedPtr o = isTableCell() ? containingBlock() : container();
+    CheckedPtr o = isRenderTableCell() ? containingBlock() : container();
     while (o && !o->preferredLogicalWidthsDirty()) {
         // Don't invalidate the outermost object of an unrooted subtree. That object will be 
         // invalidated when the subtree is added to the document.
-        CheckedPtr container = o->isTableCell() ? o->containingBlock() : o->container();
+        CheckedPtr container = o->isRenderTableCell() ? o->containingBlock() : o->container();
         if (!container && !o->isRenderView())
             break;
 

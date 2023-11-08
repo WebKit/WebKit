@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMeter);
 RenderMeter::RenderMeter(HTMLElement& element, RenderStyle&& style)
     : RenderBlockFlow(Type::Meter, element, WTFMove(style))
 {
-    ASSERT(isMeter());
+    ASSERT(isRenderMeter());
 }
 
 RenderMeter::~RenderMeter() = default;

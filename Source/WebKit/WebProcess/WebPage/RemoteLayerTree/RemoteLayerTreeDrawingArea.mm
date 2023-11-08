@@ -357,6 +357,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     // FIXME: Minimize these transactions if nothing changed.
     auto transactionID = takeNextTransactionID();
     auto transactions = WTF::map(m_rootLayers, [&](auto& rootLayer) -> std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction> {
+        backingStoreCollection.willBuildTransaction();
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
         RemoteLayerTreeTransaction layerTransaction;
@@ -364,8 +365,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
 
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer(), rootLayer.frameID);
-
-        backingStoreCollection.willCommitLayerTree(layerTransaction);
 
         // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames. <rdar://116202678>
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
@@ -384,8 +383,12 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         if (webPage->scrollingCoordinator())
             scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->scrollingCoordinator()).buildTransaction();
 #endif
+
         return { WTFMove(layerTransaction), WTFMove(scrollingTransaction) };
     });
+
+    for (auto& transaction : transactions)
+        backingStoreCollection.willCommitLayerTree(transaction.first);
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());

@@ -131,7 +131,6 @@ public:
     void setBufferedDirty(bool flag);
 
     MediaTime highestPresentationTimestamp() const;
-    void readyStateChanged();
 
     size_t memoryCost() const;
 

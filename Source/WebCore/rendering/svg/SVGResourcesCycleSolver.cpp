@@ -46,7 +46,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceCont
 
     RenderObject* node = &resource;
     while (node) {
-        if (node != &resource && node->isLegacySVGResourceContainer()) {
+        if (node != &resource && node->isLegacyRenderSVGResourceContainer()) {
             node = node->nextInPreOrderAfterChildren(&resource);
             continue;
         }

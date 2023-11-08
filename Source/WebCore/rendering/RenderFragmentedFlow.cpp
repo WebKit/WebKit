@@ -744,7 +744,7 @@ bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject
         && !fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
     
-    return object->isBox() || object->isRenderInline();
+    return object->isRenderBox() || object->isRenderInline();
 }
 
 bool RenderFragmentedFlow::objectInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
@@ -767,7 +767,7 @@ bool RenderFragmentedFlow::objectInFlowFragment(const RenderObject* object, cons
     if (!fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
 
-    if (object->isBox())
+    if (object->isRenderBox())
         return true;
 
     LayoutRect objectABBRect = object->absoluteBoundingBoxRect(true);

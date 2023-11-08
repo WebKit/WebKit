@@ -312,7 +312,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLayer);
 
 RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     : m_isRenderViewLayer(renderer.isRenderView())
-    , m_forcedStackingContext(renderer.isMedia())
+    , m_forcedStackingContext(renderer.isRenderMedia())
     , m_isNormalFlowOnly(false)
     , m_isCSSStackingContext(false)
     , m_canBeBackdropRoot(false)
@@ -599,9 +599,9 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         return false;
 
     return renderer().hasNonVisibleOverflow()
-        || renderer().isCanvas()
-        || renderer().isVideo()
-        || renderer().isEmbeddedObject()
+        || renderer().isRenderHTMLCanvas()
+        || renderer().isRenderVideo()
+        || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
         || renderer().isRenderFragmentedFlow();
@@ -1351,7 +1351,7 @@ FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const Lay
 
     // FIXME: Support different reference boxes for inline content.
     // https://bugs.webkit.org/show_bug.cgi?id=129047
-    if (!renderer().isBox())
+    if (!renderer().isRenderBox())
         return rootRelativeBounds;
 
     auto referenceBoxRect = renderer().referenceBoxRect(boxType);
@@ -2284,7 +2284,7 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
     // current transparencyClipBox to catch all child layers.
     // FIXME: Accelerated compositing will eventually want to do something smart here to avoid incorporating this
     // size into the parent layer.
-    if (layer.renderer().isBox() && layer.renderer().hasReflection()) {
+    if (layer.renderer().isRenderBox() && layer.renderer().hasReflection()) {
         LayoutSize delta = layer.offsetFromAncestor(rootLayer);
         clipRect.move(-delta);
         clipRect.unite(layer.renderBox()->reflectedRect(clipRect));
@@ -2368,7 +2368,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         context.clip(snappedClipRect);
 
 #if ENABLE(CSS_COMPOSITING)
-        bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacySVGRoot() && parent() && parent()->isRenderViewLayer());
+        bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacyRenderSVGRoot() && parent() && parent()->isRenderViewLayer());
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
 #endif
@@ -2556,7 +2556,7 @@ LayoutPoint RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, 
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Pixel snap the whole SVG subtree as one "block" -- not individual layers down the SVG render tree.
-    if (renderer().isSVGRoot())
+    if (renderer().isRenderSVGRoot())
         return LayoutPoint(roundPointToDevicePixels(locationInLayerCoords, renderer().document().deviceScaleFactor()));
 #endif
 
@@ -2570,7 +2570,7 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
 
 bool RenderLayer::shouldTryToScrollForScrollIntoView() const
 {
-    if (!renderer().isBox() || !renderer().hasNonVisibleOverflow())
+    if (!renderer().isRenderBox() || !renderer().hasNonVisibleOverflow())
         return false;
 
     // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
@@ -3567,7 +3567,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     // of a SVG subtree, where no pixel snapping is applied -- only the outermost <svg> layer
     // is pixel-snapped "as whole", if it's part of a compound document, e.g. inline SVG in HTML.
     LayoutSize adjustedSubpixelOffset;
-    if (rendererNeedsPixelSnapping(renderer()) && !renderer().isSVGRoot())
+    if (rendererNeedsPixelSnapping(renderer()) && !renderer().isRenderSVGRoot())
         adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(alignedOffsetForThisLayer);
 
     // Now do a paint with the root layer shifted to be us.
@@ -4123,7 +4123,7 @@ RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
 RenderLayer* RenderLayer::enclosingSVGRootLayer() const
 {
     auto* curr = parent();
-    while (curr && !curr->renderer().isSVGRoot())
+    while (curr && !curr->renderer().isRenderSVGRoot())
         curr = curr->parent();
     return curr;
 }
@@ -4845,7 +4845,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             // FIXME: Does not do the right thing with CSS regions yet, since we don't yet factor in the
             // individual region boxes as overflow.
             LayoutRect layerBoundsWithVisualOverflow = rendererVisualOverflowRect();
-            if (renderer().isBox())
+            if (renderer().isRenderBox())
                 renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
             layerBoundsWithVisualOverflow.move(offsetFromRootLocal);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip())
@@ -5031,7 +5031,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
 {    
     LayoutRect result = localBoundingBox(flags);
     if (renderer().view().frameView().hasFlippedBlockRenderers()) {
-        if (renderer().isBox())
+        if (renderer().isRenderBox())
             renderBox()->flipForWritingMode(result);
         else
             renderer().containingBlock()->flipForWritingMode(result);
@@ -5404,10 +5404,10 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
 
     return hasOverlayScrollbars()
         || hasCompositedScrollableOverflow()
-        || renderer().isTableRow()
-        || renderer().isCanvas()
-        || renderer().isVideo()
-        || renderer().isEmbeddedObject()
+        || renderer().isRenderTableRow()
+        || renderer().isRenderHTMLCanvas()
+        || renderer().isRenderVideo()
+        || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
         || renderer().isRenderFragmentedFlow();
 }

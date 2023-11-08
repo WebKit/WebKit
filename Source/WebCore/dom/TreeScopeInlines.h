@@ -25,9 +25,15 @@
 
 #pragma once
 
+#include "ContainerNode.h"
 #include "TreeScopeOrderedMap.h"
 
 namespace WebCore {
+
+inline Ref<ContainerNode> TreeScope::protectedRootNode() const
+{
+    return rootNode();
+}
 
 inline bool TreeScope::hasElementWithId(const AtomString& id) const
 {

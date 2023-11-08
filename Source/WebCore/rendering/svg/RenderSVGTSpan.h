@@ -33,7 +33,7 @@ public:
     explicit RenderSVGTSpan(SVGTextPositioningElement& element, RenderStyle&& style)
         : RenderSVGInline(Type::SVGTSpan, element, WTFMove(style))
     {
-        ASSERT(isSVGTSpan());
+        ASSERT(isRenderSVGTSpan());
     }
 
 private:
@@ -43,4 +43,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTSpan, isSVGTSpan())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTSpan, isRenderSVGTSpan())

@@ -58,7 +58,7 @@ RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& styl
     : RenderBox(Type::FrameSet, frameSet, WTFMove(style), 0)
     , m_isResizing(false)
 {
-    ASSERT(isFrameSet());
+    ASSERT(isRenderFrameSet());
     setInline(false);
 }
 
@@ -444,7 +444,7 @@ void RenderFrameSet::layout()
         oldBounds = clippedOverflowRectForRepaint(repaintContainer.get());
     }
 
-    if (!parent()->isFrameSet() && !document().printing()) {
+    if (!parent()->isRenderFrameSet() && !document().printing()) {
         setWidth(view().viewWidth());
         setHeight(view().viewHeight());
     }
@@ -646,7 +646,7 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
 
 bool RenderFrameSet::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isFrame() || child.isFrameSet();
+    return child.isRenderFrame() || child.isRenderFrameSet();
 }
 
 CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& cursor) const

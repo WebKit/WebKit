@@ -79,7 +79,7 @@ bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability
     if (isDisabledFormControl())
         return false;
     auto renderer = this->renderer();
-    return renderer && renderer->isWidget();
+    return renderer && renderer->isRenderWidget();
 }
 
 void HTMLPlugInElement::willDetachRenderers()

@@ -55,7 +55,7 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style
 {
     setInline(true);
     setReplacedOrInlineBlock(true); // pretend to be replaced
-    ASSERT(isListMarker());
+    ASSERT(isRenderListMarker());
 }
 
 RenderListMarker::~RenderListMarker()
@@ -260,7 +260,7 @@ RenderBox* RenderListMarker::parentBox(RenderBox& box)
 void RenderListMarker::addOverflowFromListMarker()
 {
     ASSERT(m_listItem);
-    if (!parent() || !parent()->isBox())
+    if (!parent() || !parent()->isRenderBox())
         return;
 
     if (isInside() || !inlineBoxWrapper())

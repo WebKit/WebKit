@@ -3216,7 +3216,7 @@ static bool canForceCaretForPosition(const VisiblePosition& position)
     if (!renderer)
         return false;
 
-    return renderer->isText() && node->canStartSelection();
+    return renderer->isRenderText() && node->canStartSelection();
 }
 
 static void populateCaretContext(const HitTestResult& hitTestResult, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)

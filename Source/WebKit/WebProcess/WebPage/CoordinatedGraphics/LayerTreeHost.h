@@ -101,6 +101,8 @@ public:
 
     void deviceOrPageScaleFactorChanged();
 
+    void didCompleteRenderingUpdateDisplay();
+
 #if !HAVE(DISPLAY_LINK)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
@@ -114,10 +116,9 @@ private:
 #if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();
     void didChangeViewport();
-#if HAVE(DISPLAY_LINK)
-    void didRenderFrameTimerFired();
-#endif
+#if !HAVE(DISPLAY_LINK)
     void renderNextFrame(bool);
+#endif
 
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
@@ -156,8 +157,10 @@ private:
 #if USE(COORDINATED_GRAPHICS)
     bool m_layerFlushSchedulingEnabled { true };
     bool m_isSuspended { false };
+#if !HAVE(DISPLAY_LINK)
     bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };
+#endif
     float m_lastPageScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
@@ -166,12 +169,11 @@ private:
     SimpleViewportController m_viewportController;
     struct {
         CompletionHandler<void()> callback;
+#if !HAVE(DISPLAY_LINK)
         bool needsFreshFlush { false };
+#endif
     } m_forceRepaintAsync;
     RunLoop::Timer m_layerFlushTimer;
-#if HAVE(DISPLAY_LINK)
-    RunLoop::Timer m_didRenderFrameTimer;
-#endif
     CompositingCoordinator m_coordinator;
 #endif // USE(COORDINATED_GRAPHICS)
 #if !HAVE(DISPLAY_LINK)

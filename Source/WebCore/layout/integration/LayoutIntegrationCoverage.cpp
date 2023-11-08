@@ -57,7 +57,7 @@ namespace LayoutIntegration {
 static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 {
     if (is<RenderText>(child)) {
-        if (child.isSVGInlineText())
+        if (child.isRenderSVGInlineText())
             return AvoidanceReason::ContentIsSVG;
         return { };
     }
@@ -66,7 +66,7 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
         return { };
 
     auto& renderer = downcast<RenderElement>(child);
-    if (renderer.isRubyRun())
+    if (renderer.isRenderRubyRun())
         return AvoidanceReason::ContentIsRuby;
 
     if (is<RenderBlockFlow>(renderer)
@@ -84,9 +84,9 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
         return { };
 
     if (is<RenderInline>(renderer)) {
-        if (renderer.isSVGInline())
+        if (renderer.isRenderSVGInline())
             return AvoidanceReason::ContentIsSVG;
-        if (renderer.isRubyInline())
+        if (renderer.isRenderRubyAsInline())
             return AvoidanceReason::ContentIsRuby;
         return { };
     }
@@ -104,7 +104,7 @@ static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const Render
         ASSERT(is<RenderSVGBlock>(flow));
         return AvoidanceReason::ContentIsSVG;
     }
-    if (flow.isRubyText() || flow.isRubyBase())
+    if (flow.isRenderRubyText() || flow.isRenderRubyBase())
         return AvoidanceReason::ContentIsRuby;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
@@ -123,7 +123,7 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
-        if (renderer.isText())
+        if (renderer.isRenderText())
             continue;
         if (is<RenderLineBreak>(renderer))
             continue;
@@ -262,14 +262,14 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
             return false;
         if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
             return false;
-        if (flexItem.isSVGRootOrLegacySVGRoot())
+        if (flexItem.isRenderOrLegacyRenderSVGRoot())
             return false;
         // FIXME: No nested flexbox support.
         if (flexItem.isFlexibleBoxIncludingDeprecated())
             return false;
         if (flexItem.isFieldset() || flexItem.isRenderTextControl())
             return false;
-        if (flexItem.isTable())
+        if (flexItem.isRenderTable())
             return false;
         auto& flexItemStyle = flexItem.style();
         if (!flexItemStyle.isHorizontalWritingMode() || !flexItemStyle.isLeftToRightDirection())

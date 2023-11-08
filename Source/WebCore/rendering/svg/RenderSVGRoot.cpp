@@ -69,7 +69,7 @@ const int defaultHeight = 150;
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(Type::SVGRoot, element, WTFMove(style))
 {
-    ASSERT(isSVGRoot());
+    ASSERT(isRenderSVGRoot());
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
         intrinsicSize.setWidth(defaultWidth);
@@ -141,7 +141,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 {
     // If our frame has an owner renderer, we're embedded through eg. object/embed/iframe,
     // but we only negotiate if we're in an SVG document inside object/embed, not iframe.
-    if (!frame().ownerRenderer() || !frame().ownerRenderer()->isEmbeddedObject() || !isDocumentElementRenderer())
+    if (!frame().ownerRenderer() || !frame().ownerRenderer()->isRenderEmbeddedObject() || !isDocumentElementRenderer())
         return false;
     return frame().document()->isSVGDocument();
 }
@@ -342,7 +342,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
     GraphicsContext& context = paintInfo.context();
     if (context.detectingContentfulPaint()) {
         for (auto& current : childrenOfType<RenderObject>(*this)) {
-            if (!current.isSVGHiddenContainer()) {
+            if (!current.isRenderSVGHiddenContainer()) {
                 context.setContentfulPaintDetected();
                 return;
             }

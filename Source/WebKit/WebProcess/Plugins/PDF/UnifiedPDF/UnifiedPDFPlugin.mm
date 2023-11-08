@@ -93,8 +93,7 @@ void UnifiedPDFPlugin::installPDFDocument()
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
-    RefPtr frame = m_view->frame();
-    CheckedPtr page = frame->page();
+    CheckedPtr page = this->page();
     if (!page)
         return nullptr;
 
@@ -106,8 +105,7 @@ RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, 
 
 void UnifiedPDFPlugin::scheduleRenderingUpdate()
 {
-    RefPtr frame = m_view->frame();
-    CheckedPtr page = frame->page();
+    CheckedPtr page = this->page();
     if (!page)
         return;
 

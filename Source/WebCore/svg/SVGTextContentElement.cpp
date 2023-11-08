@@ -214,7 +214,7 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     if (!renderer)
         return nullptr;
 
-    if (!renderer->isSVGText() && !renderer->isSVGInline())
+    if (!renderer->isRenderSVGText() && !renderer->isRenderSVGInline())
         return nullptr;
 
     SVGElement* element = downcast<SVGElement>(renderer->node());

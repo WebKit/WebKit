@@ -64,6 +64,7 @@ public:
     bool paintReachableBackingStoreContents();
 
     void willFlushLayers();
+    void willBuildTransaction();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> didFlushLayers(RemoteLayerTreeTransaction&);
 

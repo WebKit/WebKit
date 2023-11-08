@@ -42,7 +42,7 @@ inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode()
 inline bool RenderLayer::canUseOffsetFromAncestor() const
 {
     // FIXME: This really needs to know if there are transforms on this layer and any of the layers between it and the ancestor in question.
-    return !isTransformed() && !renderer().isSVGRootOrLegacySVGRoot();
+    return !isTransformed() && !renderer().isRenderOrLegacyRenderSVGRoot();
 }
 
 inline bool RenderLayer::paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const

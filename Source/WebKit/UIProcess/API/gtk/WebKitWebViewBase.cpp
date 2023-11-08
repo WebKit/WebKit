@@ -244,10 +244,12 @@ struct _WebKitWebViewBasePrivate {
 #if GTK_CHECK_VERSION(3, 24, 0)
         , releaseEmojiChooserTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired)
 #endif
+        , nextPresentationUpdateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::nextPresentationUpdateTimerFired)
     {
 #if GTK_CHECK_VERSION(3, 24, 0)
         releaseEmojiChooserTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 #endif
+        nextPresentationUpdateTimer.setPriority(GDK_PRIORITY_REDRAW - 10);
     }
 
     void updateActivityStateTimerFired()
@@ -271,6 +273,14 @@ struct _WebKitWebViewBasePrivate {
 #endif
     }
 #endif
+
+    void nextPresentationUpdateTimerFired()
+    {
+        while (!nextPresentationUpdateCallbacks.isEmpty()) {
+            auto callback = nextPresentationUpdateCallbacks.takeLast();
+            callback();
+        }
+    }
 
 #if !USE(GTK4)
     WebKitWebViewChildrenMap children;
@@ -354,6 +364,10 @@ struct _WebKitWebViewBasePrivate {
     bool pageGrabbedTouch;
 
     std::unique_ptr<PointerLockManager> pointerLockManager;
+
+    Vector<CompletionHandler<void()>> nextPresentationUpdateCallbacks;
+    RunLoop::Timer nextPresentationUpdateTimer;
+    MonotonicTime nextPresentationUpdateStartTime;
 };
 
 /**
@@ -758,9 +772,40 @@ static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webV
 }
 #endif
 
+static void webkitWebViewBaseNextPresentationUpdateMonitorStart(WebKitWebViewBase* webViewBase, CompletionHandler<void()>&& callback)
+{
+    auto* priv = webViewBase->priv;
+    priv->nextPresentationUpdateCallbacks.insert(0, WTFMove(callback));
+    priv->nextPresentationUpdateStartTime = MonotonicTime::now();
+    priv->nextPresentationUpdateTimer.startOneShot(100_ms);
+}
+
+static void webkitWebViewBaseNextPresentationUpdateMonitorStop(WebKitWebViewBase* webViewBase)
+{
+    auto* priv = webViewBase->priv;
+    priv->nextPresentationUpdateTimer.stop();
+    priv->nextPresentationUpdateTimerFired();
+}
+
+static void webkitWebViewBaseNextPresentationUpdateFrame(WebKitWebViewBase* webViewBase)
+{
+    auto* priv = webViewBase->priv;
+    if (priv->nextPresentationUpdateCallbacks.isEmpty())
+        return;
+
+    // We wait up to 100 milliseconds for new frames. If there are several frames queued quickly,
+    // we want to wait until all of them have been processed, so after receiving a frame, we wait
+    // for the next frame (1 frame time and a half to make sure) or stop.
+    if (MonotonicTime::now() - priv->nextPresentationUpdateStartTime > 100_ms)
+        webkitWebViewBaseNextPresentationUpdateMonitorStop(webViewBase);
+    else
+        priv->nextPresentationUpdateTimer.startOneShot(24_ms);
+}
+
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
+    webkitWebViewBaseNextPresentationUpdateMonitorStop(webView);
 #if USE(GTK4)
     webkitWebViewBaseRemoveDialog(webView, webView->priv->dialog);
     webkitWebViewBaseRemoveWebInspector(webView, webView->priv->inspectorView);
@@ -833,6 +878,8 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 
     if (webViewBase->priv->dialog)
         gtk_widget_snapshot_child(widget, webViewBase->priv->dialog, snapshot);
+
+    webkitWebViewBaseNextPresentationUpdateFrame(webViewBase);
 }
 #else
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
@@ -867,6 +914,8 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     }
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
+
+    webkitWebViewBaseNextPresentationUpdateFrame(webViewBase);
 
     return FALSE;
 }
@@ -3361,4 +3410,9 @@ void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webViewBase)
 void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase* webViewBase, bool shouldNotifyFocusEvents)
 {
     webViewBase->priv->shouldNotifyFocusEvents = shouldNotifyFocusEvents;
+}
+
+void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase* webViewBase, CompletionHandler<void()>&& callback)
+{
+    webkitWebViewBaseNextPresentationUpdateMonitorStart(webViewBase, WTFMove(callback));
 }

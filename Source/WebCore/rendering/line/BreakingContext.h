@@ -99,7 +99,7 @@ public:
         , m_floatsFitOnLine(true)
         , m_collapseWhiteSpace(false)
         , m_startingNewParagraph(m_lineInfo.previousLineBrokeCleanly())
-        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrAuto())
+        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrAuto())
         , m_atEnd(false)
         , m_hadUncommittedWidthBeforeCurrent(false)
         , m_lineWhitespaceCollapsingState(resolver.whitespaceCollapsingState())
@@ -230,7 +230,7 @@ inline void BreakingContext::initializeForCurrentObject()
     m_lastObjectTextWrap = m_lastObject->isReplacedOrInlineBlock() ? m_lastObject->parent()->style().textWrapMode() : m_lastObject->style().textWrapMode();
     m_lastObjectWhitespaceCollapse = m_lastObject->isReplacedOrInlineBlock() ? m_lastObject->parent()->style().whiteSpaceCollapse() : m_lastObject->style().whiteSpaceCollapse();
 
-    bool isSVGText = renderer.isSVGInlineText();
+    bool isSVGText = renderer.isRenderSVGInlineText();
     m_autoWrap = !isSVGText && m_currentTextWrap != TextWrapMode::NoWrap;
     m_autoWrapWasEverTrueOnLine = m_autoWrapWasEverTrueOnLine || m_autoWrap;
 
@@ -642,7 +642,7 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
 inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool& hyphenated,  unsigned& consecutiveHyphenatedLines)
 {
     auto& renderer = downcast<RenderText>(*m_current.renderer());
-    bool isSVGText = renderer.isSVGInlineText();
+    bool isSVGText = renderer.isRenderSVGInlineText();
 
     // If we have left a no-wrap inline and entered an autowrap inline while ignoring spaces
     // then we need to mark the start of the autowrap inline as a potential linebreak now.
@@ -1106,7 +1106,7 @@ inline bool BreakingContext::canBreakAtThisPosition()
     RenderText& nextRenderText = downcast<RenderText>(*m_nextObject);
     bool currentIsTextOrEmptyInline = is<RenderText>(*m_current.renderer()) || (is<RenderInline>(*m_current.renderer()) && isEmptyInline(downcast<RenderInline>(*m_current.renderer())));
     if (!currentIsTextOrEmptyInline)
-        return m_autoWrap && !m_current.renderer()->isRubyRun();
+        return m_autoWrap && !m_current.renderer()->isRenderRubyRun();
 
     bool canBreakHere = !m_currentCharacterIsSpace && textBeginsWithBreakablePosition(nextRenderText);
 
@@ -1154,7 +1154,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
 
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
-        if (m_lastObject->isReplacedOrInlineBlock() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
+        if (m_lastObject->isReplacedOrInlineBlock() && m_autoWrap && !m_lastObject->isRenderRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
             if (m_nextObject)
                 commitLineBreakAtCurrentWidth(*m_nextObject);
             else
@@ -1178,7 +1178,7 @@ inline TrailingObjects::CollapseFirstSpace checkWhitespaceCollapsingTransitions(
         if (currpoint == lBreak) {
             // We hit the line break before the start point. Shave off the start point.
             lineWhitespaceCollapsingState.decrementNumTransitions();
-            if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText()) {
+            if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isRenderText()) {
                 lineWhitespaceCollapsingState.decrementTransitionAt(lineWhitespaceCollapsingState.numTransitions() - 1);
                 return TrailingObjects::CollapseFirstSpace::No;
             }
@@ -1194,7 +1194,7 @@ inline LegacyInlineIterator BreakingContext::handleEndOfLine()
             // we just add as much as possible
             if (m_blockStyle.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && m_blockStyle.textWrapMode() == TextWrapMode::NoWrap && !m_current.offset()) {
                 if (m_lastObject)
-                    commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
+                    commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isRenderText() ? m_lastObject->length() : 0);
                 else
                     commitLineBreakClear();
             } else if (m_lineBreak.renderer()) {

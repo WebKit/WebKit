@@ -132,7 +132,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (child->renderer().isReplacedOrInlineBlock())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
-            if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
+            if (child->renderer().isRenderLineBreak() || child->renderer().parent() != &renderer()) {
                 if (!parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
@@ -141,7 +141,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMark::None)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
-            if (child->renderer().isLineBreak()) {
+            if (child->renderer().isRenderLineBreak()) {
                 // FIXME: This isn't ideal. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
                 // Other than making a zillion tests have to regenerate results, there's no reason to ditch the optimization here.
                 auto childIsHardLinebreak = child->renderer().isBR();
@@ -178,7 +178,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             const RenderBox& box = downcast<RenderBox>(child->renderer());
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
-        } else if (!child->renderer().isLineBreak() && (childStyle.boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
+        } else if (!child->renderer().isRenderLineBreak() && (childStyle.boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
             || (is<RenderListMarker>(child->renderer()) && !downcast<RenderListMarker>(child->renderer()).isInside())
             || childStyle.hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
@@ -502,10 +502,10 @@ static bool verticalAlignApplies(const RenderObject& renderer)
 {
     // http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align - vertical-align only applies to inline level and table-cell elements.
     // FIXME: Ideally we would only align inline level boxes which means that text inside an inline box would just sit on the box itself.
-    if (!renderer.isText())
+    if (!renderer.isRenderText())
         return true;
     auto& parentRenderer = *renderer.parent();
-    return (parentRenderer.isInline() && parentRenderer.style().display() != DisplayType::InlineBlock) || parentRenderer.isTableCell();
+    return (parentRenderer.isInline() && parentRenderer.style().display() != DisplayType::InlineBlock) || parentRenderer.isRenderTableCell();
 }
 
 void LegacyInlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit& maxDescent, LayoutUnit maxPositionTop, LayoutUnit maxPositionBottom)
@@ -1135,7 +1135,7 @@ void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     // Paint our children.
     if (paintPhase != PaintPhase::SelfOutline) {
         for (auto* curr = firstChild(); curr; curr = curr->nextOnLine()) {
-            if (curr->renderer().isText() || !curr->boxModelObject()->hasSelfPaintingLayer())
+            if (curr->renderer().isRenderText() || !curr->boxModelObject()->hasSelfPaintingLayer())
                 curr->paint(childInfo, paintOffset, lineTop, lineBottom);
         }
     }

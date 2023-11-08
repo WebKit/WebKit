@@ -168,6 +168,13 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                 state.rootLayer = m_nicosia.state.rootLayer;
             });
 
+        for (auto& compositionLayer : m_nicosia.state.layers) {
+            compositionLayer->accessStaging([](const Nicosia::CompositionLayer::LayerState& state) {
+                if (state.backingStore)
+                    state.backingStore->waitUntilPaintingComplete();
+            });
+        }
+
         m_client.commitSceneState(m_nicosia.scene);
 #if !HAVE(DISPLAY_LINK)
         m_forceFrameSync = false;

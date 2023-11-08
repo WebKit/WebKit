@@ -138,7 +138,7 @@ float LegacyInlineBox::logicalHeight() const
         return 0;
 
     const RenderStyle& lineStyle = this->lineStyle();
-    if (renderer().isTextOrLineBreak())
+    if (renderer().isRenderTextOrLineBreak())
         return lineStyle.metricsOfPrimaryFont().height();
     if (is<RenderBox>(renderer()) && parent())
         return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();

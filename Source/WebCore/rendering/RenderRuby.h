@@ -85,5 +85,5 @@ inline bool isRuby(const RenderObject* renderer) { return (renderer && isRuby(*r
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsInline, isRubyInline())
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsBlock, isRubyBlock())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsInline, isRenderRubyAsInline())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsBlock, isRenderRubyAsBlock())

@@ -627,8 +627,6 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
-        for (auto& sourceBuffer : *m_sourceBuffers)
-            sourceBuffer->setMediaSourceEnded(true);
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
     } else if (error == EndOfStreamError::Network) {
         m_private->markEndOfStream(MediaSourcePrivate::EosNetworkError);
@@ -1109,12 +1107,11 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "old state = ", oldState, ", new state = ", newState);
 
-    for (auto& buffer : *m_sourceBuffers)
-        buffer->readyStateChanged();
-
     if (isOpen()) {
         m_sourceopenPending = false;
         scheduleEvent(eventNames().sourceopenEvent);
+        for (auto& sourceBuffer : *m_sourceBuffers)
+            sourceBuffer->setMediaSourceEnded(false);
         monitorSourceBuffers();
         return;
     }
@@ -1128,6 +1125,8 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         // We need to force the recalculation of the buffered range as its value depends
         // on the readyState.
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
+        for (auto& sourceBuffer : *m_sourceBuffers)
+            sourceBuffer->setMediaSourceEnded(true);
         updateBufferedIfNeeded(true /* force */);
     } else {
         ASSERT(isClosed());

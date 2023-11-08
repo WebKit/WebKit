@@ -161,7 +161,7 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
             }
             return;
         }
-        if (renderer.isLineBreak()) {
+        if (renderer.isRenderLineBreak()) {
             if (!styleToAdjust.hasOutOfFlowPosition()) {
                 // Force in-flow display value to inline (see webkit.org/b/223151).
                 styleToAdjust.setDisplay(DisplayType::Inline);

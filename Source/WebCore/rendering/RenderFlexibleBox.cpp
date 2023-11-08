@@ -237,7 +237,7 @@ private:
 
 void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childObject, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
-    ASSERT(childObject.isBox());
+    ASSERT(childObject.isRenderBox());
     RenderBox& child = downcast<RenderBox>(childObject);
 
     // If the item cross size should use the definite container cross size then set the overriding size now so
@@ -692,7 +692,7 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
 // plus this extra check. See wkb.ug/231955.
 static bool isSVGRootWithIntrinsicAspectRatio(const RenderBox& child)
 {
-    if (!child.isSVGRootOrLegacySVGRoot())
+    if (!child.isRenderOrLegacyRenderSVGRoot())
         return false;
     // It's common for some replaced elements, such as SVGs, to have intrinsic aspect ratios but no intrinsic sizes.
     // That's why it isn't enough just to check for intrinsic sizes in those cases.
@@ -1086,7 +1086,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
 
     double ratio;
     LayoutUnit borderAndPadding;
-    if (child.isSVGRootOrLegacySVGRoot())
+    if (child.isRenderOrLegacyRenderSVGRoot())
         ratio = downcast<RenderReplaced>(child).computeIntrinsicAspectRatio();
     else {
         auto childIntrinsicSize = child.intrinsicSize();
@@ -1560,7 +1560,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
     if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child))) {
         auto minExtent = computeMainAxisExtentForChild(child, MinSize, min).value_or(0_lu);
         // We must never return a min size smaller than the min preferred size for tables.
-        if (child.isTable() && mainAxisIsChildInlineAxis(child))
+        if (child.isRenderTable() && mainAxisIsChildInlineAxis(child))
             minExtent = std::max(minExtent, child.minPreferredLogicalWidth());
         return { minExtent, maxExtent.value_or(LayoutUnit::max()) };
     }

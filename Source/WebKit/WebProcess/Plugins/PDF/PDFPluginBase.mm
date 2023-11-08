@@ -82,6 +82,13 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
 {
 }
 
+Page* PDFPluginBase::page() const
+{
+    if (RefPtr coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr)
+        return coreFrame->page();
+    return nullptr;
+}
+
 void PDFPluginBase::setView(PluginView& view)
 {
     ASSERT(!m_view);
@@ -243,20 +250,16 @@ void PDFPluginBase::setScrollOffset(const ScrollOffset& offset)
 
 bool PDFPluginBase::isActive() const
 {
-    if (RefPtr coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
-        if (CheckedPtr page = coreFrame->page())
-            return page->focusController().isActive();
-    }
+    if (CheckedPtr page = this->page())
+        return page->focusController().isActive();
 
     return false;
 }
 
 bool PDFPluginBase::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    if (RefPtr coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
-        if (CheckedPtr page = coreFrame->page())
-            return page->settings().scrollingPerformanceTestingEnabled();
-    }
+    if (CheckedPtr page = this->page())
+        return page->settings().scrollingPerformanceTestingEnabled();
 
     return false;
 }
@@ -283,12 +286,8 @@ ScrollPosition PDFPluginBase::maximumScrollPosition() const
 
 float PDFPluginBase::deviceScaleFactor() const
 {
-    if (m_frame) {
-        if (RefPtr coreFrame = m_frame->coreLocalFrame()) {
-            if (CheckedPtr page = coreFrame->page())
-                return page->deviceScaleFactor();
-        }
-    }
+    if (CheckedPtr page = this->page())
+        return page->deviceScaleFactor();
     return 1;
 }
 
@@ -414,15 +413,11 @@ Ref<Scrollbar> PDFPluginBase::createScrollbar(ScrollbarOrientation orientation)
     Ref widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarWidth::Auto);
     didAddScrollbar(widget.ptr(), orientation);
 
-    if (RefPtr frame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
-        if (CheckedPtr page = frame->page()) {
-            if (page->isMonitoringWheelEvents())
-                scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
-        }
+    if (CheckedPtr page = this->page()) {
+        if (page->isMonitoringWheelEvents())
+            scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     }
 
-    // Is it ever possible that the code above and the code below can ever get at different Frames?
-    // Can't we settle on one Frame accessor?
     if (RefPtr frame = m_view->frame()) {
         if (RefPtr frameView = frame->view())
             frameView->addChild(widget);

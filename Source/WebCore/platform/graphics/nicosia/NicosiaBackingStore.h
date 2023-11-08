@@ -113,6 +113,8 @@ public:
     void updateTile(uint32_t, const WebCore::SurfaceUpdateInfo&, const WebCore::IntRect&) override;
     void removeTile(uint32_t) override;
 
+    void waitUntilPaintingComplete();
+
 private:
     LayerState m_layerState;
     CompositionState m_compositionState;

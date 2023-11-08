@@ -265,7 +265,7 @@ void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded
 void LegacyRenderSVGResource::fillAndStrokePathOrShape(GraphicsContext& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape) const
 {
     if (shape) {
-        ASSERT(shape->isSVGShapeOrLegacySVGShape());
+        ASSERT(shape->isRenderOrLegacyRenderSVGShape());
 
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
             if (is<LegacyRenderSVGShape>(shape))

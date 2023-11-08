@@ -527,7 +527,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     auto offset = getOffsetComputedLength(style, propertyID);
 
     // If the element is not displayed; return the "computed value".
-    if (!renderer || !renderer->isBox())
+    if (!renderer || !renderer->isRenderBox())
         return zoomAdjustedPixelValueForLength(offset, style);
 
     auto& box = downcast<RenderBox>(*renderer);
@@ -2279,12 +2279,12 @@ static RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(const RenderStyle&
 template<RenderStyleLengthGetter lengthGetter>
 static bool paddingOrMarginIsRendererDependent(const RenderStyle* style, RenderObject* renderer)
 {
-    return renderer && style && renderer->isBox() && !(style->*lengthGetter)().isFixed();
+    return renderer && style && renderer->isRenderBox() && !(style->*lengthGetter)().isFixed();
 }
 
 static bool positionOffsetValueIsRendererDependent(const RenderStyle* style, RenderObject* renderer)
 {
-    return renderer && style && renderer->isBox();
+    return renderer && style && renderer->isRenderBox();
 }
 
 static CSSValueID convertToPageBreak(BreakBetween value)
@@ -2814,7 +2814,7 @@ static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 
 static inline bool isFlexOrGridItem(RenderObject* renderer)
 {
-    if (!renderer || !renderer->isBox())
+    if (!renderer || !renderer->isRenderBox())
         return false;
     auto& box = downcast<RenderBox>(*renderer);
     return box.isFlexItem() || box.isGridItem();

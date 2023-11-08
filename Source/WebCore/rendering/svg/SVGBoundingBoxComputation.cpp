@@ -138,7 +138,7 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());
-        ASSERT(!child.isSVGRoot());
+        ASSERT(!child.isRenderSVGRoot());
 
         auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(&m_renderer, TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));

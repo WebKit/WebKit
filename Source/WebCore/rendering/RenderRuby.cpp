@@ -51,7 +51,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyAsBlock);
 RenderRubyAsInline::RenderRubyAsInline(Element& element, RenderStyle&& style)
     : RenderInline(Type::RubyAsInline, element, WTFMove(style))
 {
-    ASSERT(isRubyInline());
+    ASSERT(isRenderRubyAsInline());
 }
 
 RenderRubyAsInline::~RenderRubyAsInline() = default;
@@ -67,7 +67,7 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
 RenderRubyAsBlock::RenderRubyAsBlock(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::RubyAsBlock, element, WTFMove(style))
 {
-    ASSERT(isRubyBlock());
+    ASSERT(isRenderRubyAsBlock());
 }
 
 RenderRubyAsBlock::~RenderRubyAsBlock() = default;

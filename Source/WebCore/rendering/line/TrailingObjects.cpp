@@ -59,7 +59,7 @@ void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(Line
             currentTransition += 2;
         }
     } else if (!lBreak.renderer()) {
-        ASSERT(m_whitespace->isText());
+        ASSERT(m_whitespace->isRenderText());
         ASSERT(collapseFirstSpace == CollapseFirstSpace::Yes);
         // Add a new end transition that stops right at the very end.
         unsigned length = m_whitespace->text().length();

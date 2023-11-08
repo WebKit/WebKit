@@ -233,12 +233,12 @@ void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    SourceBufferPrivate::appendCompleted(true, m_mediaSource ? m_mediaSource->isEnded() : true);
+    SourceBufferPrivate::appendCompleted(true);
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    SourceBufferPrivate::appendCompleted(false, m_mediaSource ? m_mediaSource->isEnded() : true);
+    SourceBufferPrivate::appendCompleted(false);
 }
 
 #if !RELEASE_LOG_DISABLED

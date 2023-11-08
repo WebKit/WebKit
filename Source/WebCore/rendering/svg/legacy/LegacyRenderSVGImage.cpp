@@ -55,7 +55,7 @@ LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle
     , m_imageResource(makeUnique<RenderImageResource>())
 {
     imageResource().initialize(*this);
-    ASSERT(isLegacySVGImage());
+    ASSERT(isLegacyRenderSVGImage());
 }
 
 LegacyRenderSVGImage::~LegacyRenderSVGImage() = default;

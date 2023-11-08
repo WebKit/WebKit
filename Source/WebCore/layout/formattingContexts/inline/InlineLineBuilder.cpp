@@ -627,7 +627,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     }
 
     auto appendRubyContainerIfApplicable = [&] {
-        auto isRubyContent = currentInlineItemIndex < layoutRange.endIndex() && (m_inlineItemList[currentInlineItemIndex].layoutBox().isRuby() || m_inlineItemList[currentInlineItemIndex].layoutBox().isRubyBase());
+        auto isRubyContent = currentInlineItemIndex < layoutRange.endIndex() && (m_inlineItemList[currentInlineItemIndex].layoutBox().isRuby() || m_inlineItemList[currentInlineItemIndex].layoutBox().isRenderRubyBase());
         if (!isRubyContent)
             return false;
         // We must be at a ruby container/base and we should let the ruby formatting context handle the rest of the ruby content.

@@ -43,7 +43,7 @@ private:
 
     bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
-    bool isTextField() const final { return true; }
+    bool isRenderTextControlSingleLine() const final { return true; }
 
     void layout() override;
 
@@ -101,5 +101,5 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlSingleLine, isTextField())
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlInnerBlock, isTextControlInnerBlock())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlSingleLine, isRenderTextControlSingleLine())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlInnerBlock, isRenderTextControlInnerBlock())

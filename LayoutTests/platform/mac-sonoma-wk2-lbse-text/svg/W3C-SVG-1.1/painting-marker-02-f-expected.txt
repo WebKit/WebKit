@@ -6,8 +6,6 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 416x273
   RenderSVGTransformableContainer {g} at (0,0) size 415.03x272.13
-layer at (0,0) size 4x4
-  RenderSVGHiddenContainer {defs} at (0,0) size 4x4
 layer at (0,0) size 2x2
   RenderSVGResourceClipper {clipPath} at (0,0) size 2x2
 layer at (0,0) size 2x2

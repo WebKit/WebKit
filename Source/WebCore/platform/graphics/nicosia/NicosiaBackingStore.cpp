@@ -103,4 +103,11 @@ auto BackingStore::takeUpdate() -> TileUpdate
     return WTFMove(m_update.pending);
 }
 
+void BackingStore::waitUntilPaintingComplete()
+{
+    Locker locker { m_update.lock };
+    for (auto& update : m_update.pending.tilesToUpdate)
+        update.updateInfo.buffer->waitUntilPaintingComplete();
+}
+
 } // namespace Nicosia

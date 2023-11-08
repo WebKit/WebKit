@@ -127,7 +127,7 @@ void createImageControls(HTMLElement& element)
     controlLayer->appendChild(button);
     controlLayer->setPseudo(ShadowPseudoIds::appleAttachmentControlsContainer());
     
-    if (auto* renderObject = element.renderer(); is<RenderImage>(renderObject))
+    if (CheckedPtr renderObject = element.renderer(); is<RenderImage>(renderObject))
         downcast<RenderImage>(*renderObject).setHasShadowControls(true);
 }
 
@@ -151,7 +151,7 @@ bool handleEvent(HTMLElement& element, Event& event)
     if (!frame)
         return false;
 
-    Page* page = element.document().page();
+    CheckedPtr page = element.document().page();
     if (!page)
         return false;
     
@@ -176,7 +176,7 @@ bool handleEvent(HTMLElement& element, Event& event)
         auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
 
         if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(node.shadowHost())) {
-            auto* image = imageFromImageElementNode(*shadowHost);
+            RefPtr image = imageFromImageElementNode(*shadowHost);
             if (!image)
                 return false;
             page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);

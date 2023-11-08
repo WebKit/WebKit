@@ -103,7 +103,7 @@ void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 
 static inline bool rendererCanHaveResources(RenderObject& renderer)
 {
-    return renderer.node() && renderer.node()->isSVGElement() && !renderer.isSVGInlineText();
+    return renderer.node() && renderer.node()->isSVGElement() && !renderer.isRenderSVGInlineText();
 }
 
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
@@ -123,7 +123,7 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     // so we don't return early just when diff == StyleDifference::Equal. But
     // this isn't necessary for filter primitives, to which the filter property
     // doesn't apply, so we check for it here too.
-    if (renderer.isSVGResourceFilterPrimitive() && (diff == StyleDifference::Equal || diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
+    if (renderer.isRenderSVGResourceFilterPrimitive() && (diff == StyleDifference::Equal || diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
         return;
 
     auto& cache = resourcesCacheFromRenderer(renderer);

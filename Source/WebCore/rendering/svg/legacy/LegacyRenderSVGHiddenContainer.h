@@ -36,7 +36,7 @@ protected:
     void layout() override;
 
 private:
-    bool isLegacySVGHiddenContainer() const final { return true; }
+    bool isLegacyRenderSVGHiddenContainer() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;
@@ -48,3 +48,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGHiddenContainer, isLegacyRenderSVGHiddenContainer())

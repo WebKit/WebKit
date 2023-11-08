@@ -14,5 +14,5 @@ function test(script) {
 }
 
 assert(test("class C1 { async constructor() { } }"), "SyntaxError: Cannot declare an async method named 'constructor'.");
-assert(test("class C1 { *constructor() { } }"), "SyntaxError: Cannot declare a generator function named 'constructor'.");
+assert(test("class C1 { *constructor() { } }"), "SyntaxError: Cannot declare a generator method named 'constructor'.");
 assert(test("class C1 { async *constructor() { } }"), "SyntaxError: Cannot declare an async generator method named 'constructor'.");

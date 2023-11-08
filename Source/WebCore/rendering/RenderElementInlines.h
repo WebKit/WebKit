@@ -49,7 +49,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned(isDocumentElementRenderer()))
-        || isSVGForeignObjectOrLegacySVGForeignObject()
+        || isRenderOrLegacyRenderSVGForeignObject()
         || shouldApplyLayoutOrPaintContainment();
 }
 
@@ -59,7 +59,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned(isDocumentElementRenderer()))
-        || isSVGForeignObjectOrLegacySVGForeignObject()
+        || isRenderOrLegacyRenderSVGForeignObject()
         || shouldApplyLayoutOrPaintContainment();
 }
 
@@ -85,7 +85,7 @@ inline bool RenderElement::shouldApplyLayoutContainment() const
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isRenderBlockFlow());
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRenderRubyText() && (!isTablePart() || isRenderBlockFlow());
 }
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
@@ -110,7 +110,7 @@ inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRenderRubyText() && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const

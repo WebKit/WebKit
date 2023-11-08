@@ -45,7 +45,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
 LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTFMove(style))
 {
-    ASSERT(isLegacySVGPath());
+    ASSERT(isLegacyRenderSVGPath());
 }
 
 LegacyRenderSVGPath::~LegacyRenderSVGPath() = default;

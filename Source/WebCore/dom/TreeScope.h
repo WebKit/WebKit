@@ -132,6 +132,7 @@ public:
     RefPtr<Element> findAnchor(StringView name);
 
     ContainerNode& rootNode() const { return m_rootNode; }
+    Ref<ContainerNode> protectedRootNode() const;
 
     IdTargetObserverRegistry& idTargetObserverRegistry() { return m_idTargetObserverRegistry.get(); }
     const IdTargetObserverRegistry& idTargetObserverRegistry() const { return m_idTargetObserverRegistry.get(); }

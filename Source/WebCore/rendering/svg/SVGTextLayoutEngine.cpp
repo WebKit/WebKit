@@ -141,7 +141,7 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
                 return true;
         }
 
-        if (currentParent->isSVGText())
+        if (currentParent->isRenderSVGText())
             return false;
 
         currentParent = currentParent->parent();

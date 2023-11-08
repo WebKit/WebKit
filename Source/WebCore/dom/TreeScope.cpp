@@ -362,8 +362,8 @@ const Vector<CheckedRef<Element>>* TreeScope::labelElementsForId(const AtomStrin
         // Populate the map on first access.
         m_labelsByForAttribute = makeUnique<TreeScopeOrderedMap>();
 
-        for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
-            const AtomString& forValue = label.attributeWithoutSynchronization(forAttr);
+        for (Ref label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
+            const AtomString& forValue = label->attributeWithoutSynchronization(forAttr);
             if (!forValue.isEmpty())
                 addLabel(forValue, label);
         }
@@ -425,8 +425,7 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
 
 RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY)
 {
-    Document& document = documentScope();
-    if (!document.hasLivingRenderTree())
+    if (!protectedDocumentScope()->hasLivingRenderTree())
         return nullptr;
 
     auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr);
@@ -510,8 +509,9 @@ RefPtr<Element> TreeScope::findAnchor(StringView name)
         return nullptr;
     if (RefPtr element = getElementById(name))
         return element;
-    for (Ref anchor : descendantsOfType<HTMLAnchorElement>(m_rootNode)) {
-        if (m_rootNode.document().inQuirksMode()) {
+    auto inQuirksMode = documentScope().inQuirksMode();
+    for (Ref anchor : descendantsOfType<HTMLAnchorElement>(protectedRootNode())) {
+        if (inQuirksMode) {
             // Quirks mode, ASCII case-insensitive comparison of names.
             // FIXME: This behavior is not mentioned in the HTML specification.
             // We should either remove this or get this into the specification.

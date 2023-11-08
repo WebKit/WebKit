@@ -110,7 +110,7 @@ using namespace HTMLNames;
 
 CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer)
 {
-    ASSERT(renderer.isCanvas());
+    ASSERT(renderer.isRenderHTMLCanvas());
     
     const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer.node());
     auto* context = canvas->renderingContext();
@@ -543,7 +543,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
 
 #if PLATFORM(COCOA) && USE(CA)
-    if (!compositor().acceleratedDrawingEnabled() && renderer().isCanvas()) {
+    if (!compositor().acceleratedDrawingEnabled() && renderer().isRenderHTMLCanvas()) {
         const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (canvas->shouldAccelerate(canvas->size()))
             m_graphicsLayer->setAcceleratesDrawing(true);
@@ -568,7 +568,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 
 bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 {
-    if (!renderer().isCanvas())
+    if (!renderer().isRenderHTMLCanvas())
         return false;
 
     if (canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
@@ -818,7 +818,7 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 #if ENABLE(VIDEO)
 void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
 {
-    if (!renderer().isVideo())
+    if (!renderer().isRenderVideo())
         return;
 
     MediaPlayerVideoGravity videoGravity;
@@ -843,7 +843,7 @@ void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
 
 void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 {
-    if (!renderer().isCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
+    if (!renderer().isRenderHTMLCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
         return;
     auto minificationFilter = GraphicsLayer::ScalingFilter::Linear;
     auto magnificationFilter = GraphicsLayer::ScalingFilter::Linear;
@@ -3201,7 +3201,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
-    if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
+    if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && renderer().isRenderHTMLCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
         if (changeType == CanvasChanged)
             compositor().scheduleCompositingLayerUpdate();
 
@@ -3958,7 +3958,7 @@ void RenderLayerBacking::verifyNotPainting()
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
-    bool shouldApplyAnimationsToTargetRenderer = renderer().isBox() || renderer().isSVGLayerAwareRenderer();
+    bool shouldApplyAnimationsToTargetRenderer = renderer().isRenderBox() || renderer().isSVGLayerAwareRenderer();
 
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
     bool hasRotate = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyRotate);

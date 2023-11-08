@@ -99,7 +99,7 @@ LineLayout::~LineLayout()
 static inline bool isContentRenderer(const RenderObject& renderer)
 {
     // FIXME: These fake renderers have their parent set but are not actually in the tree.
-    return !renderer.isReplica() && !renderer.isRenderScrollbarPart();
+    return !renderer.isRenderReplica() && !renderer.isRenderScrollbarPart();
 }
 
 RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
@@ -128,7 +128,7 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
             // SVG content inside svg root shows up as block (see RenderSVGBlock). We only support inline root svg as "atomic content".
             return nullptr;
         }
-        if (renderer.isFrameSet()) {
+        if (renderer.isRenderFrameSet()) {
             // Since RenderFrameSet is not a RenderBlock, finding container for nested framesets can't use containingBlock ancestor walk.
             if (auto* parent = renderer.parent(); is<RenderBlockFlow>(parent))
                 return downcast<RenderBlockFlow>(*parent).modernLineLayout();

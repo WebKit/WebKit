@@ -730,7 +730,7 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true, [this, weakThis = WeakPtr { *this }] {
+    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, [this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         if (m_abortSemaphore) {

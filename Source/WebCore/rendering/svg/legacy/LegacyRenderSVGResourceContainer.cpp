@@ -223,7 +223,7 @@ float LegacyRenderSVGResourceContainer::computeTextPaintingScale(const RenderEle
     return 1;
 #else
     // This method should only be called for RenderObjects that deal with text rendering. Cmp. RenderObject.h's is*() methods.
-    ASSERT(renderer.isSVGText() || renderer.isSVGTextPath() || renderer.isSVGInline());
+    ASSERT(renderer.isRenderSVGText() || renderer.isRenderSVGTextPath() || renderer.isRenderSVGInline());
 
     // In text drawing, the scaling part of the graphics context CTM is removed, compare SVGInlineTextBox::paintTextWithShadows.
     // So, we use that scaling factor here, too, and then push it down to pattern or gradient space
@@ -235,7 +235,7 @@ float LegacyRenderSVGResourceContainer::computeTextPaintingScale(const RenderEle
 // FIXME: This does not belong here.
 AffineTransform LegacyRenderSVGResourceContainer::transformOnNonScalingStroke(RenderObject* object, const AffineTransform& resourceTransform)
 {
-    if (!object->isSVGShapeOrLegacySVGShape())
+    if (!object->isRenderOrLegacyRenderSVGShape())
         return resourceTransform;
 
     SVGGraphicsElement* element = downcast<SVGGraphicsElement>(object->node());

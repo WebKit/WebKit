@@ -50,4 +50,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderHTMLCanvas, isCanvas())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderHTMLCanvas, isRenderHTMLCanvas())

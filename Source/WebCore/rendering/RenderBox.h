@@ -894,4 +894,4 @@ LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle,
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBox, isBox())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBox, isRenderBox())

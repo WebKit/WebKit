@@ -89,7 +89,7 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     , m_popupIsVisible(false)
 #endif
 {
-    ASSERT(isMenuList());
+    ASSERT(isRenderMenuList());
 }
 
 RenderMenuList::~RenderMenuList()

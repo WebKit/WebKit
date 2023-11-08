@@ -758,7 +758,7 @@ bool RenderElement::layerCreationAllowedForSubtree() const
 
     RenderElement* parentRenderer = parent();
     while (parentRenderer) {
-        if (parentRenderer->isLegacySVGHiddenContainer())
+        if (parentRenderer->isLegacyRenderSVGHiddenContainer())
             return false;
         parentRenderer = parentRenderer->parent();
     }
@@ -2123,7 +2123,7 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendant) && !descendant->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+        if (is<RenderBlockFlow>(*descendant) && !descendant->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
             downcast<RenderBlockFlow>(*descendant).adjustComputedFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
@@ -2153,7 +2153,7 @@ void RenderElement::resetTextAutosizing()
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendant) && !descendant->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+        if (is<RenderBlockFlow>(*descendant) && !descendant->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
             downcast<RenderBlockFlow>(*descendant).resetComputedFontSize();
         newFixedDepth = 0;
     }
@@ -2207,7 +2207,7 @@ bool RenderElement::createsNewFormattingContext() const
     if (isWritingModeRoot() && isBlockContainer())
         return true;
     return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isSVGForeignObject()
+        || isRenderTableCell() || isRenderTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderSVGForeignObject()
         || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
 }
 
@@ -2245,7 +2245,7 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
         // including a translation to the enclosing transformed ancestor ('offsetFromAncestor').
         // Avoid that, and move by -nominalSVGLayoutLocation().
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (isSVGLayerAwareRenderer() && !isSVGRoot() && document().settings().layerBasedSVGEngineEnabled())
+        if (isSVGLayerAwareRenderer() && !isRenderSVGRoot() && document().settings().layerBasedSVGEngineEnabled())
             referenceBox.moveBy(-downcast<RenderLayerModelObject>(*this).nominalSVGLayoutLocation());
 #endif
         return referenceBox;
