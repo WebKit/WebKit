@@ -150,6 +150,8 @@ public:
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
+    WebCore::Page* page() const;
+
     virtual void teardown() = 0;
 
     virtual void createPDFDocument() = 0;
