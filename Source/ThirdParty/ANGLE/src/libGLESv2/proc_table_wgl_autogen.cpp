@@ -67,6 +67,7 @@ const ProcEntry g_procTable[] = {
     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
     {"glBindImageTexture", P(GL_BindImageTexture)},
     {"glBindImageTextures", P(GL_BindImageTextures)},
+    {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},

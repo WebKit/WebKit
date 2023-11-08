@@ -5794,6 +5794,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                 mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                             }
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                            // Nothing to do until ANGLE_variable_rasterization_rate_metal is
+                            // implemented.
+                            break;
                         default:
                             UNREACHABLE();
                     }

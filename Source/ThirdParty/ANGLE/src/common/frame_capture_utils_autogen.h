@@ -74,6 +74,7 @@ enum class ParamType
     TFramebufferIDPointer,
     TGLDEBUGPROC,
     TGLDEBUGPROCKHR,
+    TGLMTLRasterizationRateMapANGLE,
     TGLbitfield,
     TGLboolean,
     TGLbooleanConstPointer,
@@ -191,7 +192,7 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
-constexpr uint32_t kParamTypeCount = 172;
+constexpr uint32_t kParamTypeCount = 173;
 
 union ParamValue
 {
@@ -252,6 +253,7 @@ union ParamValue
     gl::FramebufferID *FramebufferIDPointerVal;
     GLDEBUGPROC GLDEBUGPROCVal;
     GLDEBUGPROCKHR GLDEBUGPROCKHRVal;
+    GLMTLRasterizationRateMapANGLE GLMTLRasterizationRateMapANGLEVal;
     GLbitfield GLbitfieldVal;
     GLboolean GLbooleanVal;
     const GLboolean *GLbooleanConstPointerVal;
@@ -743,6 +745,14 @@ inline GLDEBUGPROCKHR GetParamVal<ParamType::TGLDEBUGPROCKHR, GLDEBUGPROCKHR>(
     const ParamValue &value)
 {
     return value.GLDEBUGPROCKHRVal;
+}
+
+template <>
+inline GLMTLRasterizationRateMapANGLE
+GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, GLMTLRasterizationRateMapANGLE>(
+    const ParamValue &value)
+{
+    return value.GLMTLRasterizationRateMapANGLEVal;
 }
 
 template <>
@@ -1629,6 +1639,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TGLDEBUGPROC, T>(value);
         case ParamType::TGLDEBUGPROCKHR:
             return GetParamVal<ParamType::TGLDEBUGPROCKHR, T>(value);
+        case ParamType::TGLMTLRasterizationRateMapANGLE:
+            return GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, T>(value);
         case ParamType::TGLbitfield:
             return GetParamVal<ParamType::TGLbitfield, T>(value);
         case ParamType::TGLboolean:
@@ -2225,6 +2237,14 @@ template <>
 inline void SetParamVal<ParamType::TGLDEBUGPROCKHR>(GLDEBUGPROCKHR valueIn, ParamValue *valueOut)
 {
     valueOut->GLDEBUGPROCKHRVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(
+    GLMTLRasterizationRateMapANGLE valueIn,
+    ParamValue *valueOut)
+{
+    valueOut->GLMTLRasterizationRateMapANGLEVal = valueIn;
 }
 
 template <>
@@ -3148,6 +3168,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
             break;
         case ParamType::TGLDEBUGPROCKHR:
             SetParamVal<ParamType::TGLDEBUGPROCKHR>(valueIn, valueOut);
+            break;
+        case ParamType::TGLMTLRasterizationRateMapANGLE:
+            SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(valueIn, valueOut);
             break;
         case ParamType::TGLbitfield:
             SetParamVal<ParamType::TGLbitfield>(valueIn, valueOut);

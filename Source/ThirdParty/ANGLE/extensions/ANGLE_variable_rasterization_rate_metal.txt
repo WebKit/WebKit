@@ -1,0 +1,95 @@
+Name
+
+    ANGLE_variable_rasterization_rate_metal
+
+Name Strings
+
+    GL_ANGLE_variable_rasterization_rate_metal
+
+Contributors
+
+    Dan Glastonbury, Apple Inc.
+
+Contact
+
+    Dan Glastonbury, Apple Inc. (djg 'at' apple 'dot' com)
+
+Status
+
+    Incomplete
+
+Version
+
+    Last Modified Date: May 5, 2023
+    Author Revision: 1
+
+Number
+
+    OpenGL ES Extension XX
+
+Dependencies
+
+Overview
+
+IP Status
+
+    No known IP claims.
+
+New Types
+
+    /*
+     * GLMTLRasterizationRateMapANGLE is an opaque handle to an id<MTLRasterizationRateMap>
+     */
+    typedef void* GLMTLRasterizationRateMapANGLE;
+
+New Procedures and Functions
+
+    void BindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map);
+
+New Tokens
+
+    Accepted by the <cap> parameter of Enable, Disable, and IsEnabled, by the
+    <target> parameter of Enablei, Disablei, IsEnabledi, GetBooleani_v, GetIntegeri_v, GetInteger64i_v, and by the <pname> parameter
+    of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, 
+
+        VARIABLE_RASTERIZATION_RATE_ANGLE            0x96BC
+
+    Accepted by the <pname> parameter of GetPointerv:
+
+        METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE   0x96BD
+
+Issues
+
+    1) Specify behavior of BindMetalRaterizationRateMap(...)
+
+        - Though this extension's incomplete and being prototyped, would you
+          like to mention anything about the semantics of this new binding
+          point?
+
+        - Should this define ownership of the MTLRasterizationRateMap?
+
+        - MTLRasterizationRateMap needs to define multiple layer maps if
+          performing layered rendering - which I assume would mean using
+          multiple draw buffers in OpenGL ES semantics.
+
+        - Should this mention errors, for example that subsequent draw calls
+          will fail with INVALID_OPERATION if the number of color attachments on
+          the bound framebuffer doesn't match the number of layer maps in the
+          rasterization rate map?
+
+        - Does passing nullptr restore the GL state to its original value?
+
+        - Does binding a rasterization rate map created with a different Metal
+          device to that of ANGLE cause an error? If not, should it?
+
+    2) Specify behavior of glEnable(GL_VARIABLE_RASTERIZATION_RATE_ANGLE)
+
+        - What happens if GL_VARIABLE_RASTERIZATION_RATE_ANGLE is enabled, but
+          no rasterization rate map is bound?
+
+        In the current implementation, if the feature is enable but no map is
+        bound the GL renders as normal and no error is generated.
+
+    3) Does this feature require a GLSL extension to allow access to
+       rasterization_rate_map_decoder when rendering with an enabled map? Should
+       gl_FragCoord automatically be adjusted when rendering with a map?
