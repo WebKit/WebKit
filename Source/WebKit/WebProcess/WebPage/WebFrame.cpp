@@ -1104,9 +1104,9 @@ void WebFrame::setTextDirection(const String& direction)
         localFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
-void WebFrame::documentLoaderDetached(uint64_t navigationID)
+void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess)
 {
-    if (auto* page = this->page())
+    if (auto* page = this->page(); page && !loadWillContinueInAnotherProcess)
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 

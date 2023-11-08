@@ -38,12 +38,12 @@ WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const Subst
 {
 }
 
-void WebDocumentLoader::detachFromFrame()
+void WebDocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (auto navigationID = std::exchange(m_navigationID, 0))
-        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(navigationID);
+        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(navigationID, loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::Yes);
 
-    DocumentLoader::detachFromFrame();
+    DocumentLoader::detachFromFrame(loadWillContinueInAnotherProcess);
 }
 
 void WebDocumentLoader::setNavigationID(uint64_t navigationID)

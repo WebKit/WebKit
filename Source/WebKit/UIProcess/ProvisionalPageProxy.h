@@ -125,6 +125,8 @@ public:
 
     void processDidTerminate();
 
+    bool needsCookieAccessAddedInNetworkProcess() const { return m_needsCookieAccessAddedInNetworkProcess; }
+
 private:
     RefPtr<WebFrameProxy> protectedMainFrame() const;
 
@@ -189,6 +191,7 @@ private:
     ProcessSwapRequestedByClient m_processSwapRequestedByClient;
     bool m_wasCommitted { false };
     bool m_isProcessSwappingOnNavigationResponse { false };
+    bool m_needsCookieAccessAddedInNetworkProcess { false };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 

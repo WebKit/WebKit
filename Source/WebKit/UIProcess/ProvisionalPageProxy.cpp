@@ -214,6 +214,10 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
                 };
                 m_process->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
                 sendPageCreationParameters = false;
+            } else if (RefPtr existingRemotePageProxy = openerPage->remotePageProxyForRegistrableDomain(navigationDomain)) {
+                ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
+                openerPage->addOpenedRemotePageProxy(m_page->identifier(), existingRemotePageProxy.releaseNonNull());
+                m_needsCookieAccessAddedInNetworkProcess = true;
             } else {
                 auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
                 remotePageProxy->injectPageIntoNewProcess();

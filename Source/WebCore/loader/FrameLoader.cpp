@@ -2033,12 +2033,12 @@ void FrameLoader::setDocumentLoader(RefPtr<DocumentLoader>&& loader)
         return;
 
     if (RefPtr documentLoader = m_documentLoader)
-        documentLoader->detachFromFrame();
+        documentLoader->detachFromFrame(LoadWillContinueInAnotherProcess::No);
 
     m_documentLoader = WTFMove(loader);
 }
 
-void FrameLoader::setPolicyDocumentLoader(RefPtr<DocumentLoader>&& loader)
+void FrameLoader::setPolicyDocumentLoader(RefPtr<DocumentLoader>&& loader, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (m_policyDocumentLoader == loader)
         return;
@@ -2051,7 +2051,7 @@ void FrameLoader::setPolicyDocumentLoader(RefPtr<DocumentLoader>&& loader)
     if (RefPtr policyDocumentLoader = m_policyDocumentLoader; policyDocumentLoader
         && policyDocumentLoader != m_provisionalDocumentLoader
         && policyDocumentLoader != m_documentLoader) {
-        policyDocumentLoader->detachFromFrame();
+        policyDocumentLoader->detachFromFrame(loadWillContinueInAnotherProcess);
     }
 
     m_policyDocumentLoader = WTFMove(loader);
@@ -2068,7 +2068,7 @@ void FrameLoader::setProvisionalDocumentLoader(RefPtr<DocumentLoader>&& loader)
     RELEASE_ASSERT(!loader || loader->frameLoader() == this);
 
     if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader; provisionalDocumentLoader && provisionalDocumentLoader != m_documentLoader)
-        provisionalDocumentLoader->detachFromFrame();
+        provisionalDocumentLoader->detachFromFrame(LoadWillContinueInAnotherProcess::No);
 
     m_provisionalDocumentLoader = WTFMove(loader);
 }
@@ -3712,7 +3712,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             m_checkTimer.stop();
         }
 
-        setPolicyDocumentLoader(nullptr);
+        setPolicyDocumentLoader(nullptr, navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess ? LoadWillContinueInAnotherProcess::Yes : LoadWillContinueInAnotherProcess::No);
         if (frame->isMainFrame() || navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
             checkCompleted();
         else {
