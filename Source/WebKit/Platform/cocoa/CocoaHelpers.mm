@@ -383,10 +383,10 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
 
 NSDate *toAPI(const WallTime& time)
 {
-    if (std::isnan(time))
+    if (time.isNaN())
         return nil;
 
-    if (std::isinf(time))
+    if (time.isInfinity())
         return NSDate.distantFuture;
 
     return [NSDate dateWithTimeIntervalSince1970:time.secondsSinceEpoch().value()];

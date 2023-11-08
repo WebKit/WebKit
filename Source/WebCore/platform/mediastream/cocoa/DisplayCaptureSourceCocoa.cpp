@@ -195,7 +195,7 @@ void DisplayCaptureSourceCocoa::stopProducingData()
 
 Seconds DisplayCaptureSourceCocoa::elapsedTime()
 {
-    if (std::isnan(m_startTime))
+    if (m_startTime.isNaN())
         return m_elapsedTime;
 
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);

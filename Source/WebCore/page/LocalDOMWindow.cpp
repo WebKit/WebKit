@@ -1613,7 +1613,7 @@ bool LocalDOMWindow::consumeTransientActivation()
 
 void LocalDOMWindow::consumeLastActivationIfNecessary()
 {
-    if (!std::isinf(m_lastActivationTimestamp))
+    if (!m_lastActivationTimestamp.isInfinity())
         m_lastActivationTimestamp = -MonotonicTime::infinity();
 }
 
