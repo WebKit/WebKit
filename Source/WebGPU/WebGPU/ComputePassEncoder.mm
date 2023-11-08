@@ -29,15 +29,19 @@
 #import "APIConversions.h"
 #import "BindGroup.h"
 #import "Buffer.h"
+#import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "QuerySet.h"
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
+    , m_parentEncoder(&parentEncoder)
 {
+    m_parentEncoder->lock(true);
+
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
         for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
             const auto& timestampWrite = descriptor.timestampWrites[i];
@@ -109,12 +113,18 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
 
 void ComputePassEncoder::endPass()
 {
+    if (!m_parentEncoder) {
+        ASSERT(!m_computeCommandEncoder);
+        return;
+    }
+
     ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_computeCommandEncoder endEncoding];
     m_computeCommandEncoder = nil;
+    m_parentEncoder->lock(false);
 }
 
 void ComputePassEncoder::endPipelineStatisticsQuery()

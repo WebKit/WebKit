@@ -29,19 +29,23 @@
 #import "APIConversions.h"
 #import "BindGroup.h"
 #import "Buffer.h"
+#import "CommandEncoder.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
     , m_depthReadOnly(depthReadOnly)
     , m_stencilReadOnly(stencilReadOnly)
+    , m_parentEncoder(&parentEncoder)
 {
+    m_parentEncoder->lock(true);
+
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
         for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
             const auto& timestampWrite = descriptor.timestampWrites[i];
@@ -168,12 +172,19 @@ void RenderPassEncoder::endOcclusionQuery()
 
 void RenderPassEncoder::endPass()
 {
+    if (!m_parentEncoder) {
+        ASSERT(!m_renderCommandEncoder);
+        return;
+    }
+
     ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_renderCommandEncoder endEncoding];
     m_renderCommandEncoder = nil;
+
+    m_parentEncoder->lock(false);
 }
 
 void RenderPassEncoder::endPipelineStatisticsQuery()

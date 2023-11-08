@@ -76,6 +76,7 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_commandBuffer; }
+    void lock(bool);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
