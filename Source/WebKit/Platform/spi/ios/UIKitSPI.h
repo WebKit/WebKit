@@ -978,16 +978,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
-typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
-    _UIContextMenuLayoutCompactMenu = 3,
-};
-
-@interface _UIContextMenuStyle : NSObject <NSCopying>
-@property (nonatomic) _UIContextMenuLayout preferredLayout;
-@property (nonatomic) UIEdgeInsets preferredEdgeInsets;
-+ (instancetype)defaultStyle;
-@end
-
 #if USE(UICONTEXTMENU)
 
 @interface UIContextMenuInteraction ()

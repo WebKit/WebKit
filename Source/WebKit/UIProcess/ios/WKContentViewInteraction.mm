@@ -9735,7 +9735,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView.get() parameters:parameters.get() target:target.get()]);
 }
 
-- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement:(WebKit::TargetedPreviewPositioning)positioning
 {
     auto backgroundColor = [&]() -> UIColor * {
         switch (_focusedElementInformation.elementType) {
@@ -9749,7 +9749,39 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         }
     }();
 
-    auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect, backgroundColor);
+    auto previewRect = _focusedElementInformation.interactionRect;
+    if (positioning == WebKit::TargetedPreviewPositioning::LeadingOrTrailingEdge) {
+        static constexpr auto defaultMenuWidth = 250;
+        auto unobscuredRect = WebCore::IntRect { self.unobscuredContentRect };
+        std::optional<int> previewOffsetX;
+
+        auto leftEdge = previewRect.x() - defaultMenuWidth;
+        bool hasSpaceAfterRightEdge = previewRect.maxX() + defaultMenuWidth <= unobscuredRect.maxX();
+        bool hasSpaceBeforeLeftEdge = leftEdge > unobscuredRect.x();
+
+        switch (self.effectiveUserInterfaceLayoutDirection) {
+        case UIUserInterfaceLayoutDirectionLeftToRight:
+            if (hasSpaceAfterRightEdge)
+                previewOffsetX = previewRect.maxX();
+            else if (hasSpaceBeforeLeftEdge)
+                previewOffsetX = leftEdge;
+            break;
+        case UIUserInterfaceLayoutDirectionRightToLeft:
+            if (hasSpaceBeforeLeftEdge)
+                previewOffsetX = leftEdge;
+            else if (hasSpaceAfterRightEdge)
+                previewOffsetX = previewRect.maxX();
+            break;
+        }
+
+        if (previewOffsetX) {
+            static constexpr auto additionalOffsetToDockPresentedMenuToEdge = 20;
+            previewRect.setX(additionalOffsetToDockPresentedMenuToEdge + *previewOffsetX);
+            previewRect.setWidth(1);
+        }
+    }
+
+    auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, previewRect, backgroundColor);
 
     [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 

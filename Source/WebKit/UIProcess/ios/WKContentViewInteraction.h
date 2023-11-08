@@ -229,6 +229,11 @@ enum class InputViewUpdateDeferralSource : uint8_t {
     ChangingFocusedElement = 1 << 2,
 };
 
+enum class TargetedPreviewPositioning : uint8_t {
+    Default,
+    LeadingOrTrailingEdge,
+};
+
 using InputViewUpdateDeferralSources = OptionSet<InputViewUpdateDeferralSource>;
 
 struct WKSelectionDrawingInfo {
@@ -799,7 +804,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)presentContextMenu:(UIContextMenuInteraction *)contextMenuInteraction atLocation:(CGPoint)location;
 
-- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement;
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement:(WebKit::TargetedPreviewPositioning)positioning;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_removeContextMenuHintContainerIfPossible;
 - (void)_targetedPreviewContainerDidRemoveLastSubview:(WKTargetedPreviewContainer *)containerView;
