@@ -6568,3 +6568,79 @@ struct WebCore::KeypressCommand {
     String text;
 }
 #endif
+
+header: <WebCore/CredentialRequestOptions.h>
+enum class WebCore::MediationRequirement : uint8_t {
+    Silent,
+    Optional,
+    Required,
+    Conditional,
+};
+
+header: <WebCore/CrossOriginAccessControl.h>
+[OptionSet] enum class WebCore::HTTPHeadersToKeepFromCleaning : uint8_t {
+    ContentType,
+    Referer,
+    Origin,
+    UserAgent,
+    AcceptEncoding,
+    CacheControl
+};
+
+header: <WebCore/ContextMenuContext.h>
+enum class WebCore::ContextMenuContextType : uint8_t {
+    ContextMenu,
+#if ENABLE(SERVICE_CONTROLS)
+    ServicesMenu,
+#endif
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    MediaControls,
+#endif
+};
+
+header: <WebCore/CrossSiteNavigationDataTransfer.h>
+[OptionSet] enum class WebCore::CrossSiteNavigationDataTransferFlag : uint8_t {
+    DestinationLinkDecoration,
+    ReferrerLinkDecoration
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested, OptionSet] enum class WebCore::SynchronousScrollingReason : uint8_t {
+    ForcedOnMainThread,
+    HasViewportConstrainedObjectsWithoutSupportingFixedLayers,
+    HasNonLayerViewportConstrainedObjects,
+    IsImageDocument,
+    HasSlowRepaintObjects,
+    DescendantScrollersHaveSynchronousScrolling
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested] enum class WebCore::ScrollRequestType : uint8_t {
+    PositionUpdate,
+    DeltaUpdate,
+    CancelAnimatedScroll
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested] enum class WebCore::KeyboardScrollAction : uint8_t {
+    StartAnimation,
+    StopWithAnimation,
+    StopImmediately
+};
+
+header: <WebCore/BackgroundFetchFailureReason.h>
+enum class WebCore::BackgroundFetchFailureReason : uint8_t {
+    EmptyString,
+    Aborted,
+    BadStatus,
+    FetchError,
+    QuotaExceeded,
+    DownloadTotalExceeded
+};
+
+header: <WebCore/BackgroundFetchResult.h>
+enum class WebCore::BackgroundFetchResult : uint8_t {
+    EmptyString,
+    Success,
+    Failure
+};
