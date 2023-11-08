@@ -145,12 +145,4 @@ namespace WTF {
         static const bool hasIsEmptyValueFunction = true;
         static bool isEmptyValue(const WebCore::Cookie& slot) { return slot.isNull(); }
     };
-    template<> struct EnumTraits<WebCore::Cookie::SameSitePolicy> {
-    using values = EnumValues<
-        WebCore::Cookie::SameSitePolicy,
-        WebCore::Cookie::SameSitePolicy::None,
-        WebCore::Cookie::SameSitePolicy::Lax,
-        WebCore::Cookie::SameSitePolicy::Strict
-    >;
-};
 }
