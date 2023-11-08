@@ -60,9 +60,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
-#if HAVE(DISPLAY_LINK)
-    , m_didRenderFrameTimer(RunLoop::main(), this, &LayerTreeHost::didRenderFrameTimerFired)
-#endif
     , m_coordinator(webPage, *this)
 #if !HAVE(DISPLAY_LINK)
     , m_displayID(displayID)
@@ -129,10 +126,12 @@ void LayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
+#if !HAVE(DISPLAY_LINK)
     if (m_isWaitingForRenderer) {
         m_scheduledWhileWaitingForRenderer = true;
         return;
     }
+#endif
 
     if (!m_layerFlushTimer.isActive())
         m_layerFlushTimer.startOneShot(0_s);
@@ -148,8 +147,10 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isSuspended)
         return;
 
+#if !HAVE(DISPLAY_LINK)
     if (m_isWaitingForRenderer)
         return;
+#endif
 
     if (!m_coordinator.rootCompositingLayer())
         return;
@@ -213,7 +214,13 @@ void LayerTreeHost::forceRepaint()
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
     scheduleLayerFlush();
 
-    if (!m_isWaitingForRenderer) {
+#if HAVE(DISPLAY_LINK)
+    bool shouldFlushPendingLayerChanges = true;
+#else
+    bool shouldFlushPendingLayerChanges = !m_isWaitingForRenderer;
+#endif
+
+    if (shouldFlushPendingLayerChanges) {
         OptionSet<FinalizeRenderingUpdateFlags> flags;
 #if PLATFORM(GTK)
         if (!m_transientZoom)
@@ -236,7 +243,9 @@ void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
     // to finish an update, we'll have to schedule another flush when it's done.
     ASSERT(!m_forceRepaintAsync.callback);
     m_forceRepaintAsync.callback = WTFMove(callback);
+#if !HAVE(DISPLAY_LINK)
     m_forceRepaintAsync.needsFreshFlush = m_scheduledWhileWaitingForRenderer;
+#endif
 }
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
@@ -352,7 +361,9 @@ void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 
 void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
 {
+#if !HAVE(DISPLAY_LINK)
     m_isWaitingForRenderer = true;
+#endif
     m_compositor->updateSceneState(state);
 }
 
@@ -404,26 +415,23 @@ void LayerTreeHost::willRenderFrame()
 void LayerTreeHost::didRenderFrame()
 {
     m_surface->didRenderFrame();
-#if HAVE(DISPLAY_LINK)
-    if (!m_didRenderFrameTimer.isActive())
-        m_didRenderFrameTimer.startOneShot(0_s);
-#endif
     RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
         if (auto* drawingArea = webPage->drawingArea())
             drawingArea->didCompleteRenderingUpdateDisplay();
     });
 }
 
-#if HAVE(DISPLAY_LINK)
-void LayerTreeHost::didRenderFrameTimerFired()
-{
-    renderNextFrame(false);
-}
-#endif
-
 void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
 {
     WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
+}
+
+void LayerTreeHost::didCompleteRenderingUpdateDisplay()
+{
+#if HAVE(DISPLAY_LINK)
+    if (m_forceRepaintAsync.callback)
+        m_forceRepaintAsync.callback();
+#endif
 }
 
 #if !HAVE(DISPLAY_LINK)
@@ -442,7 +450,6 @@ void LayerTreeHost::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
     // that will cause the display refresh notification to come.
     renderNextFrame(hasBeenRescheduled);
 }
-#endif
 
 void LayerTreeHost::renderNextFrame(bool forceRepaint)
 {
@@ -465,13 +472,12 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive() || forceRepaint) {
         m_layerFlushTimer.stop();
-#if !HAVE(DISPLAY_LINK)
         if (forceRepaint)
             m_coordinator.forceFrameSync();
-#endif
         layerFlushTimerFired();
     }
 }
+#endif
 
 #if PLATFORM(GTK)
 FloatPoint LayerTreeHost::constrainTransientZoomOrigin(double scale, FloatPoint origin) const
