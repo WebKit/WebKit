@@ -75,6 +75,10 @@ void RemoteLayerBackingStoreCollection::willFlushLayers()
 
     m_inLayerFlush = true;
     m_reachableBackingStoreInLatestFlush.clear();
+}
+
+void RemoteLayerBackingStoreCollection::willBuildTransaction()
+{
     m_backingStoresNeedingDisplay.clear();
 }
 
