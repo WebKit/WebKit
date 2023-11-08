@@ -33,7 +33,7 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation} from '/assets/js/drawer.js';
+import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {SearchBar} from '/assets/js/search.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
@@ -42,6 +42,7 @@ import {DOM, REF, EventStream} from '/library/js/Ref.js';
 
 const DEFAULT_LIMIT = 100;
 const SUITES = JSON.parse('{{ suites|safe }}');
+const onCommitSearch = new EventStream();
 
 class SearchView {
     constructor() {    
@@ -57,7 +58,11 @@ class SearchView {
                 state.children.push({
                     suite: this.currentParams.suite[i],
                     test: this.currentParams.test[i],
-                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i], this.currentParams.test[i]),
+                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, {
+                        suite: this.currentParams.suite[i], 
+                        test: this.currentParams.test[i], 
+                        searchEvent: onCommitSearch
+                    }),
                 });
             }
         }
@@ -171,7 +176,11 @@ class SearchView {
                     newChildren.push({
                         suite: params.suite[i],
                         test: params.test[i],
-                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`, params.suite[i], params.test[i]),
+                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`, {
+                            suite: params.suite[i], 
+                            test: params.test[i],
+                            searchEvent: onCommitSearch,
+                        }),
                     });
                 }
             }
@@ -228,6 +237,7 @@ DOM.inject(
     `${ToolTip}
     ${InvestigateDrawer}
     ${Drawer([
+        CommitSearchBar((searchValue) => onCommitSearch.add(searchValue)),
         Legend(() => {
             view.ref.state.children.forEach((child) => {
                 child.timeline.update();
@@ -269,7 +279,12 @@ DOM.inject(
                     let child = {
                         suite: arguments[i].suite,
                         test: arguments[i].test,
-                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, arguments[i].suite, arguments[i].test, viewport),
+                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, {
+                            suite: arguments[i].suite, 
+                            test: arguments[i].test, 
+                            searchEvent: onCommitSearch,
+                            viewport,
+                        }),
                     }
 
                     view.ref.setState({prepending: [child]});

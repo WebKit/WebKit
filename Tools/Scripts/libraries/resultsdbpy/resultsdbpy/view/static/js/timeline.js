@@ -192,6 +192,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
     return Timeline.CanvasXAxisComponent(scaleForRepository(scale), {
         isTop: isTop,
         height: 130,
+        compareFunc: (a, b) => {return b.uuid - a.uuid;},
         onScaleClick: onScaleClick,
         onScaleEnter: (node, event, canvas) => {
             const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
@@ -219,6 +220,11 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
         },
         getLabelFunc: (commit) => {return commit && commit.label ? commit.label() : '?';},
         getScaleFunc: (commit) => commit.uuid,
+        getDotScaleFunc: (value) => {
+            if (value && value.uuid)
+                return {uuid: value.uuid};
+            return {};
+        },
         exporter: (updateFunction) => {
             updatesArray.push((scale) => {updateFunction(scaleForRepository(scale));});
         },
@@ -354,7 +360,7 @@ function combineResults() {
 }
 
 class TimelineFromEndpoint {
-    constructor(endpoint, suite = null, test = null, viewport = null) {
+    constructor(endpoint, {suite = null, test = null, viewport = null, searchEvent = null}) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
@@ -376,6 +382,8 @@ class TimelineFromEndpoint {
         const self = this;
 
         this.latestDispatch = Date.now();
+        searchEvent.action( (val) => this.onSearch(val));
+
         this.ref = REF.createRef({
             state: {},
             onStateUpdate: (element, state) => {
@@ -404,7 +412,7 @@ class TimelineFromEndpoint {
             this.selectedDotsButtonGroupRef.setState({show: false});
         const params = queryToParams(document.URL.split('?')[1]);
         const commits = commitsForResults(this.results, params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT, this.allCommits);
-        const scale = scaleForCommits(commits);
+        this.scale = scaleForCommits(commits);
 
         const newRepositories = repositoriesForCommits(commits);
         let haveNewRepos = this.repositories.length !== newRepositories.length;
@@ -416,7 +424,7 @@ class TimelineFromEndpoint {
             let components = [];
 
             newRepositories.forEach(repository => {
-                components.push(xAxisFromScale(scale, repository, this.xaxisUpdates, top, this.viewport));
+                components.push(xAxisFromScale(this.scale, repository, this.xaxisUpdates, top, this.viewport));
                 top = false;
             });
 
@@ -424,8 +432,8 @@ class TimelineFromEndpoint {
             this.repositories = newRepositories;
         }
 
-        this.updates.forEach(func => {func(scale);})
-        this.xaxisUpdates.forEach(func => {func(scale);});
+        this.updates.forEach(func => {func(this.scale);})
+        this.xaxisUpdates.forEach(func => {func(this.scale);});
     }
     rerender() {
         const params = queryToParams(document.URL.split('?')[1]);
@@ -635,11 +643,31 @@ class TimelineFromEndpoint {
             </div>`);
     }
 
+    onSearch(searchValue) {
+        for (let currentScale of this.scale) {
+            let found = false;
+            for (let repo of this.repositories) {
+                if (!currentScale[repo]) {
+                    continue;
+                }
+                if (currentScale[repo].hash && currentScale[repo].hash.indexOf(searchValue) === 0 || 
+                    currentScale[repo].identifier && currentScale[repo].identifier.indexOf(searchValue) === 0) {
+                    found = true;
+                    this.searchScale(currentScale[repo]);
+                    break;
+                }
+            }
+            if (found)
+                break;
+        }
+    };
+
     render(limit) {
         const branch = queryToParams(document.URL.split('?')[1]).branch;
         const self = this;
         const commits = commitsForResults(this.results, limit, this.allCommits);
-        const scale = scaleForCommits(commits);
+        this.scale = scaleForCommits(commits);
+        this.repositories = repositoriesForCommits(commits);
 
         this.selectedDotsButtonGroupRef = REF.createRef({
             state: {
@@ -703,6 +731,9 @@ class TimelineFromEndpoint {
                 return {};
             },
             compareFunc: (a, b) => {return b.uuid - a.uuid;},
+            shouldHighLightFunc: (myScale, commit) => {
+                return this.repositories.filter(repo_id => myScale[repo_id].uuid === commit.uuid).length >= 1;
+            },
             renderFactory: (drawDot) => (data, context, x, y) => {
                 if (!data)
                     return drawDot(context, x, y, true);
@@ -880,6 +911,7 @@ class TimelineFromEndpoint {
         }
 
         let children = [];
+        let allConfigResults = [];
         this.configurations.forEach(configuration => {
             if (!this.results[configuration.toKey()] || Object.keys(this.results[configuration.toKey()]).length === 0)
                 return;
@@ -921,9 +953,10 @@ class TimelineFromEndpoint {
                     queueParams['branch'];
                 let myTimeline = Timeline.SeriesWithHeaderComponent(
                     `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
-                    Timeline.CanvasSeriesComponent(resultsForConfig, scale, {
+                    Timeline.CanvasSeriesComponent(resultsForConfig, this.scale, {
                         getScaleFunc: options.getScaleFunc,
                         compareFunc: options.compareFunc,
+                        shouldHighLightFunc: options.shouldHighLightFunc,
                         renderFactory: options.renderFactory,
                         exporter: options.exporter,
                         onDotClick: onDotClickFactory(config),
@@ -943,9 +976,10 @@ class TimelineFromEndpoint {
                     childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
                         timelinesBySDK.push(
                             Timeline.SeriesWithHeaderComponent(`${Configuration.integerToVersion(sdkConfig.version)} (${sdkConfig.sdk})`,
-                                Timeline.CanvasSeriesComponent(resultsByKey[sdkConfig.toKey()], scale, {
+                                Timeline.CanvasSeriesComponent(resultsByKey[sdkConfig.toKey()], this.scale, {
                                     getScaleFunc: options.getScaleFunc,
                                     compareFunc: options.compareFunc,
+                                    shouldHighLightFunc: options.shouldHighLightFunc,
                                     renderFactory: options.renderFactory,
                                     exporter: options.exporter,
                                     onDotClick: onDotClickFactory(sdkConfig),
@@ -974,12 +1008,14 @@ class TimelineFromEndpoint {
                 return;
             }
 
+            allConfigResults = combineResults(allConfigResults, allResults);
             children.push(
                 Timeline.ExpandableSeriesWithHeaderExpanderComponent(
                 Timeline.SeriesWithHeaderComponent(` ${configuration}`,
-                    Timeline.CanvasSeriesComponent(allResults, scale, {
+                    Timeline.CanvasSeriesComponent(allResults, this.scale, {
                         getScaleFunc: options.getScaleFunc,
                         compareFunc: options.compareFunc,
+                        shouldHighLightFunc: options.shouldHighLightFunc,
                         renderFactory: options.renderFactory,
                         onDotClick: onDotClickFactory(configuration),
                         onDotEnter: onDotEnterFactory(configuration),
@@ -1001,15 +1037,16 @@ class TimelineFromEndpoint {
         self.xaxisUpdates = [];
         this.repositories = repositoriesForCommits(commits);
         this.repositories.forEach(repository => {
-            const xAxisComponent = xAxisFromScale(scale, repository, self.xaxisUpdates, top, self.viewport);
+            const xAxisComponent = xAxisFromScale(this.scale, repository, self.xaxisUpdates, top, self.viewport);
             if (top)
                 children.unshift(xAxisComponent);
             else
                 children.push(xAxisComponent);
             top = false;
         });
-
-        const composer = FP.composer(FP.currying((updateTimeline, notifyRerender) => {
+        this.searchScale = null;
+        let searchDot = null;
+        const composer = FP.composer(FP.currying((updateTimeline, notifyRerender, exportedSearchScale, exportedSearchDot) => {
             self.timelineUpdate = (xAxises) => {
                 children.splice(0, 1);
                 if (self.repositories.length > 1)
@@ -1026,21 +1063,107 @@ class TimelineFromEndpoint {
                 updateTimeline(children);
             };
             self.notifyRerender = notifyRerender;
+            this.searchScale = exportedSearchScale;
+            searchDot = exportedSearchDot;
         }));
-        return Timeline.CanvasContainer({
-            customizedLayer: `<div style="position:absolute" ref="${this.selectedDotsButtonGroupRef}"></div>`,
-            onSelecting: (e) => {
-                this.selectedDotsButtonGroupRef.setState({show: false});
+
+        let currentResultIndex = 0;
+        const jumpNextRegressPoint = () => {
+            const lastResultStatus = this.getTestResultStatus(allConfigResults[currentResultIndex], InvestigateDrawer.willFilterExpected);
+            for(let i = currentResultIndex + 1; i < allConfigResults.length; i++) {
+                const currentTestStatus = this.getTestResultStatus(allConfigResults[i], InvestigateDrawer.willFilterExpected);
+                if (currentTestStatus.failureType !== lastResultStatus.failureType || currentTestStatus.failureNumber !== lastResultStatus.failureNumber) {
+                    currentResultIndex = i;
+                    searchDot(allConfigResults[i]);
+                    break;
+                }
+            }
+        };
+
+        const nextRegressButtonRef = REF.createRef({});
+        const nextRegressButtonClickEventStream = nextRegressButtonRef.fromEvent("click");
+        nextRegressButtonClickEventStream.action((e) => {
+            jumpNextRegressPoint();
+        });
+
+        const searchBarRef = REF.createRef({
+            state: {
+                float: false
             },
-            onSelect: (dots, selectedDotRect, seriesRect, e) => {
-                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
-                this.selectedDotsButtonGroupRef.setState({show: true, top: selectedDotRect.bottom, left: selectedDotRect.right});
+            onStateUpdate: (element, stateDiff, state) => {
+                if (stateDiff.float === state.float)
+                    return;
+                const float = ("float" in stateDiff) ? stateDiff.float : state.float;
+                if (float !== false) {
+                    element.style.position = "fixed";
+                    element.style.top = `60px`;
+                } else {
+                    element.style.removeProperty("position");
+                    element.style.removeProperty("top");   
+                }
+            }
+        });
+        const placeHolderRef = REF.createRef({
+            state: {
+                show: false
             },
-            onSelectionScroll: (dots, selectedDotRect) => {
-                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
-                this.selectedDotsButtonGroupRef.setState({top: selectedDotRect.bottom, left: selectedDotRect.right});
+            onStateUpdate: (element, stateDiff, state) => {
+                const show = ("show" in stateDiff) ? stateDiff.show : state.show;
+                if (show)
+                    element.style.display = "block";
+                else
+                    element.style.display = "none";
+            }
+        });
+
+        const onScrollAction = (e) => {
+            const rect = containnerRef.element.getBoundingClientRect();
+            if (rect.top < 60 && 0 - rect.top < rect.height - 120) {
+                searchBarRef.setState({float: true});
+                placeHolderRef.setState({show: true});
+            } else {
+                searchBarRef.setState({float: false});
+                placeHolderRef.setState({show: false});
+            }
+        };
+        const onResizeAction = (e) => {
+            searchBarRef.element.style.width = `${containnerRef.element.getBoundingClientRect().width}px`;
+        };
+        const containnerRef = REF.createRef({
+            onElementMount: (element) => {
+                window.addEventListener("scroll", onScrollAction);
+                window.addEventListener("resize", onResizeAction);
+                onResizeAction();
             },
-        }, composer, ...children);
+            onElementUnmount: (element) => {
+                window.removeEventListener("scroll", onScrollAction);
+                window.addEventListener("resize", onResizeAction);
+            }
+        });
+        return `<div ref="${containnerRef}" style="position: relative">
+            <div ref="${searchBarRef}" style="width:100%; background: var(--blurBackgroundColor); -webkit-backdrop-filter: blur(5px); z-index:10">
+                <button class="button" ref="${nextRegressButtonRef}">
+                    Next Regress Point
+                </button>
+            </div>
+            <div class="row" ref="${placeHolderRef}">
+                <div class="col-12" style="height: 40px; padding: 0"></div>
+            </div>
+            ${Timeline.CanvasContainer({
+                customizedLayer: `<div style="position:absolute" ref="${this.selectedDotsButtonGroupRef}"></div>`,
+                onSelecting: (e) => {
+                    this.selectedDotsButtonGroupRef.setState({show: false});
+                },
+                onSelect: (dots, selectedDotRect, seriesRect, e) => {
+                    // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                    this.selectedDotsButtonGroupRef.setState({show: true, top: selectedDotRect.bottom, left: selectedDotRect.right});
+                },
+                onSelectionScroll: (dots, selectedDotRect) => {
+                    // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                    this.selectedDotsButtonGroupRef.setState({top: selectedDotRect.bottom, left: selectedDotRect.right});
+                },
+            }, composer, ...children)}
+        </div>`;
     }
 }
 
