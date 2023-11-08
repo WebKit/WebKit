@@ -176,7 +176,7 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
 
     auto& nextKeyFrame = m_keyframes[m_keyframeIndex];
     auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
-    SimulatedInputSource& inputSource = postStateEntry.first;
+    Ref inputSource = postStateEntry.first;
 
     transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
         if (error) {

@@ -40,8 +40,9 @@
 
 namespace WebKit {
 
-static inline WebProcessProxy& connectionToWebProcessProxy(const IPC::Connection& connection)
+static inline Ref<WebProcessProxy> connectionToWebProcessProxy(const IPC::Connection& connection)
 {
+    // FIXME: Check the type.
     return static_cast<WebProcessProxy&>(*connection.client());
 }
 

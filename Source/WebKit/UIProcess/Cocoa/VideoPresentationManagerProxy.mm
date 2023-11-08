@@ -531,9 +531,9 @@ void VideoPresentationManagerProxy::requestRouteSharingPolicyAndContextUID(Playb
 
 VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
-    auto& playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
+    Ref playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
     auto model = VideoPresentationModelContext::create(*this, playbackSessionModel, contextId);
-    auto& playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
+    Ref playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
     Ref<PlatformVideoFullscreenInterface> interface = PlatformVideoFullscreenInterface::create(playbackSessionInterface);
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
@@ -591,9 +591,9 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
     clientCount--;
 
     if (clientCount <= 0) {
-        auto& interface = ensureInterface(contextId);
-        interface.setVideoPresentationModel(nullptr);
-        interface.invalidate();
+        Ref interface = ensureInterface(contextId);
+        interface->setVideoPresentationModel(nullptr);
+        interface->invalidate();
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
@@ -635,7 +635,7 @@ void VideoPresentationManagerProxy::requestBitmapImageForCurrentTime(PlaybackSes
         return;
     }
 
-    auto* interface = findInterface(identifier);
+    RefPtr interface = findInterface(identifier);
     if (!interface) {
         completionHandler(std::nullopt);
         return;
@@ -864,8 +864,8 @@ void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdenti
         return;
     }
 
-    auto& interface = ensureInterface(contextId);
-    interface.enterFullscreen();
+    Ref interface = ensureInterface(contextId);
+    interface->enterFullscreen();
 
     // Only one context can be in a given full screen mode at a time:
     for (auto& contextPair : m_contextMap) {
@@ -874,7 +874,7 @@ void VideoPresentationManagerProxy::enterFullscreen(PlaybackSessionContextIdenti
             continue;
 
         auto& otherInterface = std::get<1>(contextPair.value);
-        if (otherInterface->hasMode(interface.mode()))
+        if (otherInterface->hasMode(interface->mode()))
             otherInterface->requestHideAndExitFullscreen();
     }
 }

@@ -131,7 +131,7 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::acce
 
 void WebPasteboardProxy::didModifyContentsOfPasteboard(IPC::Connection& connection, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount)
 {
-    auto* process = webProcessProxyForConnection(connection);
+    RefPtr process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK(process);
 
     auto changeCountAndProcesses = m_pasteboardNameToAccessInformationMap.find(pasteboardName);
@@ -311,7 +311,7 @@ void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const Pas
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
 
-    auto* process = webProcessProxyForConnection(connection);
+    RefPtr process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK_COMPLETION(process, completionHandler(0));
 
     if (!pasteboardURL.url.isValid())
@@ -629,7 +629,7 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
 {
     MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), std::nullopt);
 
-    auto* process = webProcessProxyForConnection(connection);
+    RefPtr process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK_WITH_RETURN_VALUE(process, std::nullopt);
 
     if (!pageID)

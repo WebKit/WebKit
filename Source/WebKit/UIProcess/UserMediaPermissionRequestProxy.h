@@ -82,6 +82,8 @@ public:
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
     const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
     const WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() const { return m_userMediaDocumentSecurityOrigin.get(); }
+    Ref<WebCore::SecurityOrigin> protectedTopLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
+    Ref<WebCore::SecurityOrigin> protectedUserMediaDocumentSecurityOrigin() const { return m_userMediaDocumentSecurityOrigin.get(); }
 
     const WebCore::MediaStreamRequest& userRequest() const { return m_request; }
 
