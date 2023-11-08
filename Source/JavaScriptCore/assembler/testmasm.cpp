@@ -1357,7 +1357,7 @@ void testExtractUnsignedBitfield64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto ubfx64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1381,7 +1381,7 @@ void testInsertUnsignedBitfieldInZero32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto ubfiz32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1406,7 +1406,7 @@ void testInsertUnsignedBitfieldInZero64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto ubfiz64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1432,7 +1432,7 @@ void testInsertBitField32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto bfi32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1462,7 +1462,7 @@ void testInsertBitField64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto bfi64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1492,7 +1492,7 @@ void testExtractInsertBitfieldAtLowEnd32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto bfxil32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1522,7 +1522,7 @@ void testExtractInsertBitfieldAtLowEnd64()
     Vector<uint64_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto bfxil64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1551,7 +1551,7 @@ void testClearBitField32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto bfc32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1576,7 +1576,7 @@ void testClearBitField64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto bfc64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1673,7 +1673,7 @@ void testInsertSignedBitfieldInZero32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto insertSignedBitfieldInZero32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1703,7 +1703,7 @@ void testInsertSignedBitfieldInZero64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto insertSignedBitfieldInZero64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1732,7 +1732,7 @@ void testExtractSignedBitfield32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto extractSignedBitfield32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1762,7 +1762,7 @@ void testExtractSignedBitfield64()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+            if (width > 0 && lsb + width < 64) {
                 auto extractSignedBitfield64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
@@ -1793,7 +1793,7 @@ void testExtractRegister32()
     for (auto n : int32Operands()) {
         for (auto m : int32Operands()) {
             for (auto lsb : imms) {
-                if (0 <= lsb && lsb < datasize) {
+                if (lsb < datasize) {
                     auto extractRegister32 = compile([=] (CCallHelpers& jit) {
                         emitFunctionPrologue(jit);
 
@@ -1830,7 +1830,7 @@ void testExtractRegister64()
     for (auto n : int64Operands()) {
         for (auto m : int64Operands()) {
             for (auto lsb : imms) {
-                if (0 <= lsb && lsb < datasize) {
+                if (lsb < datasize) {
                     auto extractRegister64 = compile([=] (CCallHelpers& jit) {
                         emitFunctionPrologue(jit);
 
@@ -3010,7 +3010,7 @@ void testZeroExtend48ToWord()
     });
 
     auto zeroTop16Bits = [] (int64_t value) -> int64_t {
-        return value & (1ull << 48) - 1;
+        return value & ((1ull << 48) - 1);
     };
 
     for (auto a : int64Operands())
