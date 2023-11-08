@@ -328,8 +328,11 @@ workers/wasm-references.html [ Skip ]
 fast/url/user-visible [ Skip ]
 
 # These tests reference specific fonts on Mac port.
-Bug(GTK) fast/text/font-weights.html [ WontFix ]
-Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
+fast/text/font-weights.html [ Skip ]
+fast/text/font-weights-zh.html [ Skip ]
+
+# SoftBank emoji isn't supported
+fast/text/softbank-emoji.html [ Skip ]
 
 # This requires a specific font on Mac
 fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
@@ -2676,3 +2679,8 @@ webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
 webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
 
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
+
+webkit.org/b/264433 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Skip ] # Timeout
+webkit.org/b/264433 http/tests/websocket/tests/hybi/simple-wss.html [ Skip ] # Failure
+webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-websockets.sub.tentative.html [ Skip ] # Failure
+webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Skip ] # Failure

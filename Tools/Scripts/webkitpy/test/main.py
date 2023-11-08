@@ -66,8 +66,7 @@ def main():
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitbugspy'), 'webkitbugspy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
-    if sys.version_info > (3, 0):
-        tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
 
     # AppleWin is the only platform that does not support Modern WebKit
     # FIXME: Find a better way to detect this currently assuming cygwin means AppleWin
@@ -113,6 +112,245 @@ def main():
     if skip_tests is not None:
         tester.skip(skip_tests, 'are not relevant for the platform running tests', 222066)
 
+    # Only run allowlisted tests on Python 2.
+    py2_tests = {
+        "webkit.messages_unittest",
+        "webkit.model_unittest",
+        "webkit.parser_unittest",
+        "webkitbugspy.tests.bugzilla_unittest",
+        "webkitbugspy.tests.github_unittest",
+        "webkitbugspy.tests.radar_unittest",
+        "webkitbugspy.tests.user_unittest",
+        "webkitcorepy.tests.call_by_need_unittest",
+        "webkitcorepy.tests.decorators_unittest",
+        "webkitcorepy.tests.environment_unittest",
+        "webkitcorepy.tests.file_lock_unittest",
+        "webkitcorepy.tests.filtered_call_unittest",
+        "webkitcorepy.tests.measure_time_unittest",
+        "webkitcorepy.tests.mocks.context_stack_unittest",
+        "webkitcorepy.tests.mocks.requests_unittest",
+        "webkitcorepy.tests.mocks.subprocess_unittest",
+        "webkitcorepy.tests.mocks.time_unittest",
+        "webkitcorepy.tests.nested_fuzzy_dict_unittest",
+        "webkitcorepy.tests.null_context_unittest",
+        "webkitcorepy.tests.output_capture_unittest",
+        "webkitcorepy.tests.partial_proxy_unittest",
+        "webkitcorepy.tests.string_utils_unittest",
+        "webkitcorepy.tests.subprocess_utils_unittest",
+        "webkitcorepy.tests.task_pool_unittest",
+        "webkitcorepy.tests.terminal_unittest",
+        "webkitcorepy.tests.timeout_unittest",
+        "webkitcorepy.tests.version_unittest",
+        "webkitflaskpy.tests.database_unittest",
+        "webkitflaskpy.tests.ipc_manager_unittest",
+        "webkitflaskpy.tests.util_unittest",
+        "webkitpy.api_tests.manager_unittest",
+        "webkitpy.benchmark_runner.benchmark_results_unittest",
+        "webkitpy.browserperfdash.browserperfdash_unittest",
+        "webkitpy.common.attribute_saver_unittest",
+        "webkitpy.common.checkout.changelog_unittest",
+        "webkitpy.common.checkout.checkout_unittest",
+        "webkitpy.common.checkout.commitinfo_unittest",
+        "webkitpy.common.checkout.diff_parser_unittest",
+        "webkitpy.common.checkout.scm.detection_unittest",
+        "webkitpy.common.checkout.scm.scm_unittest",
+        "webkitpy.common.checkout.scm.stub_repository_unittest",
+        "webkitpy.common.config.committers_unittest",
+        "webkitpy.common.config.contributionareas_unittest",
+        "webkitpy.common.config.contributors_json_unittest",
+        "webkitpy.common.config.ports_unittest",
+        "webkitpy.common.config.urls_unittest",
+        "webkitpy.common.editdistance_unittest",
+        "webkitpy.common.find_files_unittest",
+        "webkitpy.common.lru_cache_unittest",
+        "webkitpy.common.memoized_unittest",
+        "webkitpy.common.net.abstracttestresults_unittest",
+        "webkitpy.common.net.bugzilla.attachment_unittest",
+        "webkitpy.common.net.bugzilla.bug_unittest",
+        "webkitpy.common.net.bugzilla.bugzilla_unittest",
+        "webkitpy.common.net.bugzilla.results_fetcher_unittest",
+        "webkitpy.common.net.bugzilla.test_expectation_updater_unittest",
+        "webkitpy.common.net.buildbot.buildbot_unittest",
+        "webkitpy.common.net.credentials_unittest",
+        "webkitpy.common.net.ewsserver_unittest",
+        "webkitpy.common.net.failuremap_unittest",
+        "webkitpy.common.net.jsctestresults_unittest",
+        "webkitpy.common.net.layouttestresults_unittest",
+        "webkitpy.common.net.networktransaction_unittest",
+        "webkitpy.common.net.resultsjsonparser_unittest",
+        "webkitpy.common.net.unittestresults_unittest",
+        "webkitpy.common.prettypatch_unittest",
+        "webkitpy.common.read_checksum_from_png_unittest",
+        "webkitpy.common.system.crashlogs_unittest",
+        "webkitpy.common.system.environment_unittest",
+        "webkitpy.common.system.executive_unittest",
+        "webkitpy.common.system.filesystem_mock_unittest",
+        "webkitpy.common.system.filesystem_unittest",
+        "webkitpy.common.system.logutils_unittest",
+        "webkitpy.common.system.outputtee_unittest",
+        "webkitpy.common.system.path_unittest",
+        "webkitpy.common.system.pemfile_unittest",
+        "webkitpy.common.system.platforminfo_unittest",
+        "webkitpy.common.system.profiler_unittest",
+        "webkitpy.common.system.stack_utils_unittest",
+        "webkitpy.common.system.user_unittest",
+        "webkitpy.common.system.workspace_unittest",
+        "webkitpy.common.system.zipfileset_unittest",
+        "webkitpy.common.test_expectations_unittest",
+        "webkitpy.common.thread.messagepump_unittest",
+        "webkitpy.common.thread.threadedmessagequeue_unittest",
+        "webkitpy.common.version_name_map_unittest",
+        "webkitpy.common.watchlist.amountchangedpattern_unittest",
+        "webkitpy.common.watchlist.changedlinepattern_unittest",
+        "webkitpy.common.watchlist.filenamepattern_unittest",
+        "webkitpy.common.watchlist.watchlist_unittest",
+        "webkitpy.common.watchlist.watchlistparser_unittest",
+        "webkitpy.common.watchlist.watchlistrule_unittest",
+        "webkitpy.featuredefines.matcher_unittest",
+        "webkitpy.layout_tests.controllers.layout_test_finder_legacy_unittest",
+        "webkitpy.layout_tests.controllers.layout_test_runner_unittest",
+        "webkitpy.layout_tests.controllers.manager_unittest",
+        "webkitpy.layout_tests.controllers.single_test_runner_unittest",
+        "webkitpy.layout_tests.controllers.test_result_writer_unittest",
+        "webkitpy.layout_tests.layout_package.json_results_generator_unittest",
+        "webkitpy.layout_tests.lint_test_expectations_unittest",
+        "webkitpy.layout_tests.models.test_configuration_unittest",
+        "webkitpy.layout_tests.models.test_expectations_unittest",
+        "webkitpy.layout_tests.models.test_failures_unittest",
+        "webkitpy.layout_tests.models.test_results_unittest",
+        "webkitpy.layout_tests.models.test_run_results_unittest",
+        "webkitpy.layout_tests.run_webkit_tests_integrationtest",
+        "webkitpy.layout_tests.servers.apache_http_server_unittest",
+        "webkitpy.layout_tests.servers.http_server_base_unittest",
+        "webkitpy.layout_tests.servers.http_server_integrationtest",
+        "webkitpy.layout_tests.servers.http_server_unittest",
+        "webkitpy.layout_tests.servers.web_platform_test_server_unittest",
+        "webkitpy.layout_tests.views.buildbot_results_unittest",
+        "webkitpy.layout_tests.views.metered_stream_unittest",
+        "webkitpy.layout_tests.views.printing_unittest",
+        "webkitpy.performance_tests.perftest_unittest",
+        "webkitpy.performance_tests.perftestsrunner_integrationtest",
+        "webkitpy.performance_tests.perftestsrunner_unittest",
+        "webkitpy.port.base_unittest",
+        "webkitpy.port.config_unittest",
+        "webkitpy.port.driver_unittest",
+        "webkitpy.port.factory_unittest",
+        "webkitpy.port.gtk_unittest",
+        "webkitpy.port.headlessdriver_unittest",
+        "webkitpy.port.ios_device_unittest",
+        "webkitpy.port.ios_simulator_unittest",
+        "webkitpy.port.leakdetector_unittest",
+        "webkitpy.port.leakdetector_valgrind_unittest",
+        "webkitpy.port.linux_get_crash_log_unittest",
+        "webkitpy.port.mac_unittest",
+        "webkitpy.port.server_process_unittest",
+        "webkitpy.port.watch_simulator_unittest",
+        "webkitpy.port.waylanddriver_unittest",
+        "webkitpy.port.westondriver_unittest",
+        "webkitpy.port.win_unittest",
+        "webkitpy.port.wpe_unittest",
+        "webkitpy.port.xorgdriver_unittest",
+        "webkitpy.port.xvfbdriver_unittest",
+        "webkitpy.results.upload_unittest",
+        "webkitpy.style.checker_unittest",
+        "webkitpy.style.checkers.basexcconfig_unittest",
+        "webkitpy.style.checkers.changelog_unittest",
+        "webkitpy.style.checkers.cmake_unittest",
+        "webkitpy.style.checkers.common_unittest",
+        "webkitpy.style.checkers.cpp_unittest",
+        "webkitpy.style.checkers.js_unittest",
+        "webkitpy.style.checkers.jsonchecker_unittest",
+        "webkitpy.style.checkers.jstest_unittest",
+        "webkitpy.style.checkers.messagesin_unittest",
+        "webkitpy.style.checkers.png_unittest",
+        "webkitpy.style.checkers.python_unittest",
+        "webkitpy.style.checkers.test_expectations_unittest",
+        "webkitpy.style.checkers.text_unittest",
+        "webkitpy.style.checkers.watchlist_unittest",
+        "webkitpy.style.checkers.xcodeproj_unittest",
+        "webkitpy.style.checkers.xml_unittest",
+        "webkitpy.style.error_handlers_unittest",
+        "webkitpy.style.filereader_unittest",
+        "webkitpy.style.filter_unittest",
+        "webkitpy.style.main_unittest",
+        "webkitpy.style.optparser_unittest",
+        "webkitpy.style.patchreader_unittest",
+        "webkitpy.test.finder_unittest",
+        "webkitpy.test.main_unittest",
+        "webkitpy.test.runner_unittest",
+        "webkitpy.tool.bot.botinfo_unittest",
+        "webkitpy.tool.bot.flakytestreporter_unittest",
+        "webkitpy.tool.bot.layouttestresultsreader_unittest",
+        "webkitpy.tool.bot.queueengine_unittest",
+        "webkitpy.tool.bot.retrylogic_unittest",
+        "webkitpy.tool.commands.applywatchlistlocal_unittest",
+        "webkitpy.tool.commands.download_unittest",
+        "webkitpy.tool.commands.queues_unittest",
+        "webkitpy.tool.commands.suggestnominations_unittest",
+        "webkitpy.tool.commands.upload_unittest",
+        "webkitpy.tool.mocktool_unittest",
+        "webkitpy.tool.multicommandtool_unittest",
+        "webkitpy.tool.servers.gardeningserver_unittest",
+        "webkitpy.tool.servers.rebaselineserver_unittest",
+        "webkitpy.tool.servers.reflectionhandler_unittest",
+        "webkitpy.tool.steps.applywatchlist_unittest",
+        "webkitpy.tool.steps.cleanworkingdirectory_unittest",
+        "webkitpy.tool.steps.closebugforlanddiff_unittest",
+        "webkitpy.tool.steps.commit_unittest",
+        "webkitpy.tool.steps.discardlocalchanges_unittest",
+        "webkitpy.tool.steps.haslanded_unittest",
+        "webkitpy.tool.steps.preparechangelog_unittest",
+        "webkitpy.tool.steps.preparechangelogforrevert_unittest",
+        "webkitpy.tool.steps.steps_unittest",
+        "webkitpy.tool.steps.suggestreviewers_unittest",
+        "webkitpy.tool.steps.update_unittest",
+        "webkitpy.tool.steps.updatechangelogswithreview_unittest",
+        "webkitpy.tool.steps.validatechangelogs_unittest",
+        "webkitpy.w3c.test_converter_unittest",
+        "webkitpy.w3c.test_exporter_unittest",
+        "webkitpy.w3c.test_importer_unittest",
+        "webkitpy.w3c.test_parser_unittest",
+        "webkitpy.w3c.wpt_github_unittest",
+        "webkitpy.w3c.wpt_runner_unittest",
+        "webkitpy.xcode.device_type_unittest",
+        "webkitpy.xcode.sdk_unittest",
+        "webkitpy.xcode.simulated_device_unittest",
+        "webkitscmpy.test.branch_unittest",
+        "webkitscmpy.test.canonicalize_unittest",
+        "webkitscmpy.test.checkout_unittest",
+        "webkitscmpy.test.cherry_pick_unittest",
+        "webkitscmpy.test.classify_unittest",
+        "webkitscmpy.test.clean_unittest",
+        "webkitscmpy.test.clone_unittest",
+        "webkitscmpy.test.commit_unittest",
+        "webkitscmpy.test.contributor_unittest",
+        "webkitscmpy.test.find_unittest",
+        "webkitscmpy.test.git_unittest",
+        "webkitscmpy.test.install_git_lfs_unittest",
+        "webkitscmpy.test.install_hooks_unittest",
+        "webkitscmpy.test.land_unittest",
+        "webkitscmpy.test.log_unittest",
+        "webkitscmpy.test.pickable_unittest",
+        "webkitscmpy.test.publish_unittest",
+        "webkitscmpy.test.pull_request_unittest",
+        "webkitscmpy.test.revert_unittest",
+        "webkitscmpy.test.scm_unittest",
+        "webkitscmpy.test.setup_git_svn_unittest",
+        "webkitscmpy.test.setup_unittest",
+        "webkitscmpy.test.show_unittest",
+        "webkitscmpy.test.squash_unittest",
+        "webkitscmpy.test.svn_unittest",
+        "webkitscmpy.test.trace_unittest",
+        "webkitscmpy.test.track_unittest",
+    }
+
+    all_tests = set(tester.finder.find_names([], True))
+
+    if sys.version_info < (3,):
+        tester.expect_error_on_import(
+            sorted(all_tests - py2_tests), "aren't in the Python 2 allowlist", 264431
+        )
+
     return not tester.run()
 
 
@@ -134,12 +372,17 @@ class Tester(object):
         self.printer = Printer(sys.stderr)
         self._options = None
         self.upload_style = 'release'
+        self._expect_error_on_import_tests = []
 
     def add_tree(self, top_directory, starting_subdirectory):
         self.finder.add_tree(top_directory, starting_subdirectory)
 
     def skip(self, names, reason, bugid):
         self.finder.skip(names, reason, bugid)
+
+    def expect_error_on_import(self, names, reason, bugid):
+        self.finder.skip(names, reason, bugid)
+        self._expect_error_on_import_tests.extend(names)
 
     def _parse_args(self, argv=None):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
@@ -216,7 +459,7 @@ class Tester(object):
             cov.start()
 
         self.printer.write_update("Checking imports ...")
-        if not self._check_imports(names):
+        if not self._check_imports(names, self._expect_error_on_import_tests):
             return False
 
         self.printer.write_update("Finding the individual test methods ...")
@@ -292,7 +535,7 @@ class Tester(object):
 
         return not self.printer.num_errors and not self.printer.num_failures and not failed_uploads
 
-    def _check_imports(self, names):
+    def _check_imports(self, names, non_importable_names):
         for name in names:
             if self.finder.is_module(name):
                 # if we failed to load a name and it looks like a module,
@@ -304,6 +547,26 @@ class Tester(object):
                     _log.fatal('Failed to import %s:' % name)
                     self._log_exception()
                     return False
+
+        for name in non_importable_names:
+            try:
+                __import__(name)
+            except (ImportError, SyntaxError):
+                pass
+            except Exception as e:
+                _log.fatal(
+                    "Importing %s expected to fail with (ImportError, SyntaxError)"
+                    % name
+                )
+                self._log_exception()
+                return False
+            else:
+                _log.fatal(
+                    "Importing %s expected to fail with (ImportError, SyntaxError), but did not raise"
+                    % name
+                )
+                return False
+
         return True
 
     def _test_names(self, loader, names):

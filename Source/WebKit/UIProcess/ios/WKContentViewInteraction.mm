@@ -5330,15 +5330,10 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     [self applyAutocorrection:correction toString:input isCandidate:shouldUnderline withCompletionHandler:completionHandler];
 }
 
-- (void)_invokePendingAutocorrectionContextHandler:(WKAutocorrectionContext *)context
-{
-    if (auto handler = WTFMove(_pendingAutocorrectionContextHandler))
-        handler(context);
-}
-
 - (void)_cancelPendingAutocorrectionContextHandler
 {
-    [self _invokePendingAutocorrectionContextHandler:WKAutocorrectionContext.emptyAutocorrectionContext];
+    if (auto handler = WTFMove(_pendingAutocorrectionContextHandler))
+        handler(WebKit::RequestAutocorrectionContextResult::Empty);
 }
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
@@ -5348,6 +5343,23 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return;
     }
 
+    [self _internalRequestAutocorrectionContextWithCompletionHandler:[completionHandler = makeBlockPtr(completionHandler), strongSelf = retainPtr(self)](WebKit::RequestAutocorrectionContextResult result) {
+        switch (result) {
+        case WebKit::RequestAutocorrectionContextResult::Empty:
+            completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
+            break;
+        case WebKit::RequestAutocorrectionContextResult::LastContext:
+            completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:strongSelf->_lastAutocorrectionContext]);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }];
+}
+
+- (void)_internalRequestAutocorrectionContextWithCompletionHandler:(CompletionHandler<void(WebKit::RequestAutocorrectionContextResult)>&&)completionHandler
+{
     // FIXME: We can remove this code and unconditionally ignore autocorrection context requests when
     // out-of-process keyboard is enabled, once rdar://111936621 is addressed; we'll also be able to
     // remove `EditorState::PostLayoutData::hasGrammarDocumentMarkers` then.
@@ -5356,20 +5368,14 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return state.hasPostLayoutData() && state.postLayoutData->hasGrammarDocumentMarkers;
     }();
 
-    if ([UIKeyboard usesInputSystemUI] && !requiresContextToShowGrammarCheckingResults) {
-        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
-        return;
-    }
+    if (UIKeyboard.usesInputSystemUI && !requiresContextToShowGrammarCheckingResults)
+        return completionHandler(WebKit::RequestAutocorrectionContextResult::Empty);
 
-    if ([self _disableAutomaticKeyboardUI]) {
-        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
-        return;
-    }
+    if (self._disableAutomaticKeyboardUI)
+        return completionHandler(WebKit::RequestAutocorrectionContextResult::Empty);
 
-    if (!_page->hasRunningProcess()) {
-        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
-        return;
-    }
+    if (!_page->hasRunningProcess())
+        return completionHandler(WebKit::RequestAutocorrectionContextResult::Empty);
 
     bool respondWithLastKnownAutocorrectionContext = ([&] {
         if (_page->shouldAvoidSynchronouslyWaitingToPreventDeadlock())
@@ -5384,32 +5390,22 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return !_autocorrectionContextNeedsUpdate;
     })();
 
-    if (respondWithLastKnownAutocorrectionContext) {
-        completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
-        return;
-    }
+    if (respondWithLastKnownAutocorrectionContext)
+        return completionHandler(WebKit::RequestAutocorrectionContextResult::LastContext);
 
-    // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
-    const bool useSyncRequest = true;
+    if (_pendingAutocorrectionContextHandler)
+        return completionHandler(WebKit::RequestAutocorrectionContextResult::Empty);
 
-    if (useSyncRequest && _pendingAutocorrectionContextHandler) {
-        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
-        return;
-    }
-
-    _pendingAutocorrectionContextHandler = completionHandler;
+    _pendingAutocorrectionContextHandler = WTFMove(completionHandler);
     _page->requestAutocorrectionContext();
-
-    if (!useSyncRequest)
-        return;
 
     if (_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) != IPC::Error::NoError)
         RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
 
     if (_autocorrectionContextNeedsUpdate)
         [self _cancelPendingAutocorrectionContextHandler];
-    else
-        [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]];
+    else if (auto handler = WTFMove(_pendingAutocorrectionContextHandler))
+        handler(WebKit::RequestAutocorrectionContextResult::LastContext);
 }
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
@@ -12032,6 +12028,31 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (void)autoscrollToPoint:(CGPoint)pointInDocument
 {
     _page->startAutoscrollAtPosition(pointInDocument);
+}
+
+- (void)requestTextContextForAutocorrectionWithCompletionHandler:(void (^)(UIWKDocumentContext *context))completion
+{
+    if (!completion) {
+        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
+        return;
+    }
+
+    [self _internalRequestAutocorrectionContextWithCompletionHandler:[completion = makeBlockPtr(completion), strongSelf = retainPtr(self)](WebKit::RequestAutocorrectionContextResult result) {
+        auto context = adoptNS([[UIWKDocumentContext alloc] init]);
+        switch (result) {
+        case WebKit::RequestAutocorrectionContextResult::Empty:
+            break;
+        case WebKit::RequestAutocorrectionContextResult::LastContext:
+            auto& webContext = strongSelf->_lastAutocorrectionContext;
+            [context setContextBefore:webContext.contextBefore];
+            [context setMarkedText:webContext.markedText];
+            [context setSelectedText:webContext.selectedText];
+            [context setContextAfter:webContext.contextAfter];
+            [context setSelectedRangeInMarkedText:webContext.markedTextRange];
+            break;
+        }
+        completion(context.get());
+    }];
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

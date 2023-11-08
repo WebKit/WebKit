@@ -29,7 +29,6 @@
 
 #include "Decoder.h"
 #include "RemoteRenderingBackend.h"
-#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ControlFactory.h>
@@ -43,6 +42,7 @@ namespace WebKit {
 
 class RemoteRenderingBackend;
 class RemoteResourceCache;
+class SharedVideoFrameReader;
 
 class RemoteDisplayListRecorder : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteDisplayListRecorder> {
 public:
@@ -155,6 +155,8 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
+    SharedVideoFrameReader& sharedVideoFrameReader();
+
     void paintVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect&, bool shouldDiscardAlpha);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
@@ -165,7 +167,7 @@ private:
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
     std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameReader m_sharedVideoFrameReader;
+    std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
 #endif
 };
 

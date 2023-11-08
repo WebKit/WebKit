@@ -128,6 +128,9 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
     const selectingEventStream = new EventStream();
     const clickSelectionDoneEventStream = new EventStream();
     const selectedDotsScrollEventStream = new EventStream();
+    const searchScaleEventStream = new EventStream();
+    const searchDotEventStream = new EventStream();
+    const scrollToEventStream = new EventStream();
     const resizeEventStream = new EventStream();
 
     const containerRef = REF.createRef({
@@ -242,6 +245,10 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
             onSelectionScroll(dots, selectedDotRect, seriesRect);
     });
 
+    scrollToEventStream.action(scrollLeft => {
+        scrollRef.element.scrollTo({left: scrollLeft, behavior: "smooth"});
+    });
+
     containerMouseDownEventStream.action(e => {
         if (e.buttons != 1)
             return; 
@@ -319,14 +326,27 @@ function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
                                     resizeEventStream.add(width);
                                 else
                                     layoutSizeMayChange.add();
-                            }
+                            },
+                            /**
+                             * Search and scroll to scale
+                             */
+                            (scale) => {
+                                searchScaleEventStream.add(scale);
+                            },
+                            /**
+                             * Search and scroll to dot
+                             */
+                            (dot) => {
+                                searchDotEventStream.add(dot);
+                            },
                         );
                     }
                 }, [
                     resizeContainerWidth, scrollEventStream, resizeEventStream, 
+                    searchScaleEventStream, searchDotEventStream, scrollToEventStream,
                     layoutSizeMayChange, selectionBoxChangeEventStream, 
                     selectionBoxDoneEventStream, selectedDotsScrollEventStream, 
-                    selectingEventStream, clickSelectionDoneEventStream
+                    selectingEventStream, clickSelectionDoneEventStream, 
                 ], ...childrenFunctions)
             }</div>
             ${customizedLayer}
@@ -410,12 +430,17 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     const reversed = typeof option.reversed === "boolean" ? option.reversed : false;
     const getScale = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
+    const shouldHighLight = typeof option.shouldHighLightFunc === "function" ? option.shouldHighLightFunc : (myScale, inputData) => comp(myScale, inputData) === 0
     const onDotClick = typeof option.onDotClick === "function" ? option.onDotClick : null;
     const onDotEnter = typeof option.onDotEnter === "function" ? option.onDotEnter : null;
     const onDotLeave = typeof option.onDotLeave === "function" ? option.onDotLeave : null;
     const onDotsSelected = typeof option.onDotsSelected === "function" ? option.onDotsSelected : null;
     const tagHeight = defaultFontSize;
-    const height = option.height ? option.height : 2 * radius + tagHeight + selectedOutLineSize;
+    let height = option.height ? option.height : 2 * radius + tagHeight + selectedOutLineSize;
+    const headerHeight = parseInt(computedStyle.getPropertyValue('--mediumSize')) + 8;
+    if (height !== headerHeight ) {
+        height = headerHeight;
+    }
     const colorBatchRender = new ColorBatchRender();
     let drawLabelsSeqs = [];
 
@@ -519,11 +544,14 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         const scrollLeft = typeof stateDiff.scrollLeft === 'number' ? stateDiff.scrollLeft : state.scrollLeft;
         const scales = stateDiff.scales ? stateDiff.scales : state.scales;
         const dots = stateDiff.dots ? stateDiff.dots : state.dots;
+        const highLightScale = stateDiff.highLightScale ? stateDiff.highLightScale : state.highLightScale;
+        const highLightDot = stateDiff.highLightDot ? stateDiff.highLightDot : state.highLightDot;
         if ('dots' in stateDiff)
             dots.forEach((dot, index) => dot._index = index);
         // This color maybe change when switch dark/light mode
         const defaultLineColor = getComputedStyle(document.body).getPropertyValue('--borderColorInlineElement');
         const defaultSelectedBackgroundColor = getComputedStyle(document.body).getPropertyValue('--blue');
+        const defaultHighLightBackgroundColor = getComputedStyle(document.body).getPropertyValue('--blueHighLight');
         const context = element.getContext("2d", { alpha: false });
         // Clear pervious batchRender
         colorBatchRender.clear();
@@ -580,6 +608,14 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         inCacheDots = [];
         for (let i = startScalesIndex; i <= endScalesIndex; i++) {
             let x = i * dotWidth - scrollLeft;
+            if ((highLightScale && shouldHighLight(scales[i], highLightScale))) {
+                context.fillStyle = defaultHighLightBackgroundColor;
+                context.fillRect(x, 0, (radius + dotMargin) * 2, height + 10);
+            }
+            if (highLightDot && comp(getScale(highLightDot), scales[i]) === 0) {
+                context.fillStyle = defaultHighLightBackgroundColor;
+                context.fillRect(x, 0, (radius + dotMargin) * 2, height + 10);
+            }
             if (currentDotIndex < dots.length && comp(scales[i], getScale(dots[currentDotIndex])) === 0) {
                 if(dots[currentDotIndex]._selected) {
                     colorBatchRender.addSeq(defaultSelectedBackgroundColor, (context, color) => {
@@ -600,6 +636,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
 
     return ListProviderReceiver((
             updateContainerWidth, onContainerScroll, onResize, 
+            onSearchScale, onSearchDot, onScrollTo,
             layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
             onSelectionScroll, onSelecting, onClickSelectionDone
     ) => {
@@ -633,6 +670,21 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         };
         const onResizeAction = (width) => {
             canvasRef.setState({width: width});
+        };
+        const onSearchScaleAction = (scale) => {
+            let clearHighLight = true;
+            canvasRef.state.scales.forEach((currentScale) => {
+                if (comp(currentScale, scale) === 0) {
+                    canvasRef.setState({highLightScale: scale});
+                    clearHighLight = false;
+                }
+            });
+            if (clearHighLight)
+                canvasRef.setState({highLightScale: false});
+        };
+
+        const onSearchDotAction = (dot) => {
+            canvasRef.setState({highLightDot: dot});
         };
 
         const xScrollStreamRender = xScrollStreamRenderFactory(height, (element, stateDiff, state) => {
@@ -696,6 +748,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                 width: 0,
                 onScreen: false,
                 hasDotSelected: false,
+                highLightScale: null,
+                highLightDot: null,
             },
             onElementMount: (element) => {
                 setupCanvasHeightWithDpr(element, height);
@@ -754,6 +808,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                 onResize.stopAction(onResizeAction);
                 onContainerScroll.stopAction(onScrollAction);
                 onSelectionBoxDone.stopAction(onSelectionBoxDoneAction);
+                onSearchScale.stopAction(onSearchScaleAction);
+                onSearchDot.stopAction(onSearchDotAction);
                 window.removeEventListener('keydown',globalKeyDownAction);
                 window.removeEventListener('keyup', globalKeyUpAction);
                 // Clean the canvas, free its memory
@@ -763,7 +819,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             onStateUpdate: (element, stateDiff, state) => {
                 if (!state.onScreen && !stateDiff.onScreen)
                     return;
-                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen || stateDiff.hasDotSelected) {
+                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen || stateDiff.hasDotSelected || stateDiff.highLightScale || stateDiff.highLightDot) {
                     if (stateDiff.scales)
                         stateDiff.scales = stateDiff.scales.map(x => x);
                     if (stateDiff.dots)
@@ -787,6 +843,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         onResize.action(onResizeAction);
         onSelectionBoxChange.action(onSelectionBoxChangeAction);
         onSelectionBoxDone.action(onSelectionBoxDoneAction);
+        onSearchScale.action(onSearchScaleAction);
+        onSearchDot.action(onSearchDotAction);
         return `<div class="series" style="user-select: none; -webkit-user-select: none;">
             <canvas ref="${canvasRef}" width="0" height="0">
         </div>`;
@@ -815,6 +873,7 @@ Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter
         exporter((expanded) => ref.setState({expanded: expanded}));
     return ListProviderReceiver((
         updateContainerWidth, onContainerScroll, onResize, 
+        onSearchScale, onSearchDot, onScrollTo,
         layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
         onSelectionScroll, onSelecting, onClickSelectionDone
     ) => {
@@ -822,11 +881,13 @@ Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter
         return `<div class="groupSeries" ref="${ref}">
             <div class="series" style="display:none;"></div>
             <div>${mainSeries(updateContainerWidth, onContainerScroll, onResize, 
+                onSearchScale, onSearchDot, onScrollTo,
                 layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
                 onSelectionScroll, onSelecting, onClickSelectionDone
             )}</div>
             <div style="display:none">${subSerieses.map((subSeries) => subSeries(
                 updateContainerWidth, onContainerScroll, onResize, 
+                onSearchScale, onSearchDot, onScrollTo,
                 layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
                 onSelectionScroll, onSelecting, onClickSelectionDone
             )).join("")}</div>
@@ -899,6 +960,7 @@ Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, opt
 Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     // Get configuration
     const getScaleKey = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
+    const getDotScale = typeof option.getDotScaleFunc === "function" ? option.getDotScaleFunc : (a) => a;
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => b - a;
     const onScaleClick = typeof option.onScaleClick === "function" ? option.onScaleClick : null;
     const onScaleEnter = typeof option.onScaleEnter === "function" ? option.onScaleEnter : null;
@@ -1102,7 +1164,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
 
 
     return {
-        series: ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+        series: ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize, onSearchScale, onSearchDot, onScrollTo) => {
             const mouseMove = (e) => {
                 let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, canvasRef.element);
                 if (scales.length) {
@@ -1131,6 +1193,27 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
             const onResizeAction = (width) => {
                 canvasRef.setState({width: width});
             };
+            const onSearchScaleAction = (scale) => {
+                canvasRef.state.scales.forEach((currentScale, index) => {
+                    if (comp(currentScale, scale) === 0) {
+                        const scaleLeft = index * scaleWidth;
+                        const width = canvasRef.state.width;
+                        const scrollLeft = scaleLeft - width / 2;
+                        onScrollTo.add(scrollLeft * getDevicePixelRatio());
+                    }
+                });
+            };
+
+            const onSearchDotAction = (dot) => {
+                canvasRef.state.scales.forEach((currentScale, index) => {
+                    if (comp(getDotScale(dot), currentScale) === 0) {
+                        const scaleLeft = index * scaleWidth;
+                        const width = canvasRef.state.width;
+                        const scrollLeft = scaleLeft - width / 2;
+                        onScrollTo.add(scrollLeft * getDevicePixelRatio());
+                    }
+                });
+            }
 
             const canvasRef = REF.createRef({
                 state: {
@@ -1158,6 +1241,8 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                 onElementUnmount: (element) => {
                     onContainerScroll.stopAction(onScrollAction);
                     onResize.stopAction(onResizeAction);
+                    onSearchScale.stopAction(onSearchScaleAction);
+                    onSearchDot.stopAction(onSearchDotAction);
                 },
                 onStateUpdate: (element, stateDiff, state) => {
                     if (stateDiff.scales || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
@@ -1180,6 +1265,8 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                 option.exporter(updateData);
             onContainerScroll.action(onScrollAction);
             onResize.action(onResizeAction);
+            onSearchScale.action(onSearchScaleAction);
+            onSearchDot.action(onSearchDotAction);
             return `<div class="x-axis" style="user-select: none; -webkit-user-select: none;">
                 <canvas ref="${canvasRef}">
             </div>`;
@@ -1211,13 +1298,13 @@ Timeline.CanvasContainer = (props, exporter, ...children) => {
         return {headers, serieses};
     };
     const {headers, serieses} = upackChildren(children);
-    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses, notifyRerender) => {
+    let composer = FP.composer(FP.currying((updateHeaders, updateSerieses, notifyRerender, searchScale, searchDot) => {
         if (exporter)
             exporter((newChildren) => {
                 const {headers, serieses} = upackChildren(newChildren);
                 updateHeaders(headers);
                 updateSerieses(serieses);
-            }, notifyRerender);
+            }, notifyRerender, searchScale, searchDot);
     }));
     return (
         `<div class="timeline">
