@@ -197,7 +197,6 @@ imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-f
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-merge-no-inputs.tentative.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/filters-sepia-001-test.html [ Pass ]
