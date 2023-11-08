@@ -1261,12 +1261,17 @@ sub XcodeOptions
 
     my @features = webkitperl::FeatureList::getFeatureOptionList();
     foreach (@features) {
+        if ("$_->{option}" eq "export-compile-commands"
+            and (defined(${$_->{value}}) or checkForArgumentAndRemoveFromARGV("--$_->{option}"))) {
+            push @options, XcodeExportCompileCommandsOptions();
+            next
+        }
         if (checkForArgumentAndRemoveFromARGV("--no-$_->{option}")) {
             push @options, "$_->{define}=";
-        } 
+        }
         if (checkForArgumentAndRemoveFromARGV("--$_->{option}")) {
             push @options, "$_->{define}=$_->{define}";
-        }   
+        }
     }
 
     # When this environment variable is set Tools/Scripts/check-for-weak-vtables-and-externals
@@ -1282,7 +1287,7 @@ sub XcodeOptions
 
 sub XcodeOptionString
 {
-    return join " ", XcodeOptions();
+    return join " ", map { /\s/ ? "\'$_\'" : $_ } XcodeOptions()
 }
 
 sub XcodeOptionStringNoConfig

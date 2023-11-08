@@ -83,7 +83,6 @@ my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
 my $useCCache = -1;
-my $exportCompileCommands = 0;
 
 my @features = getFeatureOptionList();
 
@@ -149,8 +148,6 @@ Usage: $programName [options] [options to pass to build system]
 
   --[no-]use-ccache                 Enable (or disable) CCache, if available
 
-  --export-compile-commands         Generate compile_commands.json (Apple platforms only)
-
 EOF
 
 my %options = (
@@ -171,7 +168,6 @@ my %options = (
     'use-workspace!' => \$useWorkspace,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
-    'export-compile-commands' => \$exportCompileCommands
 );
 
 # Build usage text and options list from features
@@ -195,8 +191,6 @@ if ($useCCache == 1) {
 } elsif ($useCCache == 0) {
     $ENV{'WK_USE_CCACHE'} = "NO";
 }
-
-$ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 my $productDir = productDir();
 
@@ -251,7 +245,7 @@ if (isAppleCocoaWebKit()) {
     }
 
     foreach (@features) {
-        my $option = option($_->{define}, ${$_->{value}});
+        my $option = option($_->{define}, ${$_->{value}}) unless $_->{option} eq "export-compile-commands";
         push @options, $option unless $option eq "";
     }
 
@@ -351,7 +345,6 @@ if (isWinCairo() || isPlayStation()) {
     push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
-    push @local_options, XcodeExportCompileCommandsOptions() if $exportCompileCommands;
     # FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
     # happen in the workspace. When this is only passed on the command line, it
     # invalidates build results made in the IDE (rdar://88135402).
