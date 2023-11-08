@@ -541,8 +541,8 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
     }
 
     // Calculate destination length based on the sample-rates.
-    int sourceLength = resamplerSourceBus->length();
-    int destinationLength = sourceLength / sampleRateRatio;
+    size_t sourceLength = resamplerSourceBus->length();
+    size_t destinationLength = sourceLength / sampleRateRatio;
 
     // Create destination bus with same number of channels.
     unsigned numberOfDestinationChannels = resamplerSourceBus->numberOfChannels();
@@ -550,10 +550,9 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
 
     // Sample-rate convert each channel.
     for (unsigned i = 0; i < numberOfDestinationChannels; ++i) {
-        const float* source = resamplerSourceBus->channel(i)->data();
-        float* destination = destinationBus->channel(i)->mutableData();
-
-        SincResampler::processBuffer(source, destination, sourceLength, sampleRateRatio);
+        auto* sourceChannel = resamplerSourceBus->channel(i);
+        auto* destinationChannel = destinationBus->channel(i);
+        SincResampler::processBuffer(sourceChannel->span(), destinationChannel->mutableSpan(), sampleRateRatio);
     }
 
     destinationBus->clearSilentFlag();
