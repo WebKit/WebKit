@@ -2265,11 +2265,11 @@ static const char* stringForFunctionMode(SourceParseMode mode)
         return "function";
     case SourceParseMode::MethodMode:
         return "method";
-    case SourceParseMode::GeneratorBodyMode:
-        return "generator";
     case SourceParseMode::GeneratorWrapperFunctionMode:
-    case SourceParseMode::GeneratorWrapperMethodMode:
+    case SourceParseMode::GeneratorBodyMode:
         return "generator function";
+    case SourceParseMode::GeneratorWrapperMethodMode:
+        return "generator method";
     case SourceParseMode::ArrowFunctionMode:
         return "arrow function";
     case SourceParseMode::AsyncFunctionMode:
