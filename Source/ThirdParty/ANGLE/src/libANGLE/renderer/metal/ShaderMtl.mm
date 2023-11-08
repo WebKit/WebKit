@@ -19,89 +19,37 @@
 
 namespace rx
 {
+namespace
+{
+class ShaderTranslateTaskMtl final : public ShaderTranslateTask
+{
+  public:
+    ShaderTranslateTaskMtl(const SharedCompiledShaderStateMtl &shader) : mShader(shader) {}
+    ~ShaderTranslateTaskMtl() override = default;
+
+    void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) override
+    {
+        sh::TranslatorMSL *translatorMSL =
+            static_cast<sh::TShHandleBase *>(compiler)->getAsTranslatorMSL();
+        if (translatorMSL != nullptr)
+        {
+            // Copy reflection data from translation
+            mShader->translatorMetalReflection = *translatorMSL->getTranslatorMetalReflection();
+            translatorMSL->getTranslatorMetalReflection()->reset();
+        }
+    }
+
+  private:
+    SharedCompiledShaderStateMtl mShader;
+};
+}  // anonymous namespace
 
 ShaderMtl::ShaderMtl(const gl::ShaderState &state) : ShaderImpl(state) {}
 
 ShaderMtl::~ShaderMtl() {}
 
-class TranslateTask : public angle::Closure
-{
-  public:
-    TranslateTask(ShHandle handle, const ShCompileOptions &options, const std::string &source)
-        : mHandle(handle), mOptions(options), mSource(source), mResult(false)
-    {}
-
-    void operator()() override
-    {
-        ANGLE_TRACE_EVENT1("gpu.angle", "TranslateTaskMetal::run", "source", mSource);
-        const char *source = mSource.c_str();
-        mResult            = sh::Compile(mHandle, &source, 1, mOptions);
-    }
-
-    bool getResult() { return mResult; }
-
-    ShHandle getHandle() { return mHandle; }
-
-  private:
-    ShHandle mHandle;
-    ShCompileOptions mOptions;
-    std::string mSource;
-    bool mResult;
-};
-
-class MTLWaitableCompileEventImpl final : public WaitableCompileEvent
-{
-  public:
-    MTLWaitableCompileEventImpl(const SharedCompiledShaderStateMtl &shader,
-                                std::shared_ptr<angle::WaitableEvent> waitableEvent,
-                                std::shared_ptr<TranslateTask> translateTask)
-        : WaitableCompileEvent(waitableEvent), mTranslateTask(translateTask), mShader(shader)
-    {}
-
-    bool getResult() override { return mTranslateTask->getResult(); }
-
-    bool postTranslate(std::string *infoLog) override
-    {
-        sh::TShHandleBase *base    = static_cast<sh::TShHandleBase *>(mTranslateTask->getHandle());
-        auto translatorMetalDirect = base->getAsTranslatorMSL();
-        if (translatorMetalDirect != nullptr)
-        {
-            // Copy reflection from translation.
-            mShader->translatorMetalReflection =
-                *(translatorMetalDirect->getTranslatorMetalReflection());
-            translatorMetalDirect->getTranslatorMetalReflection()->reset();
-        }
-        return true;
-    }
-
-  private:
-    std::shared_ptr<TranslateTask> mTranslateTask;
-    SharedCompiledShaderStateMtl mShader;
-};
-
-std::shared_ptr<WaitableCompileEvent> ShaderMtl::compileImplMtl(
-    const gl::Context *context,
-    gl::ShCompilerInstance *compilerInstance,
-    const std::string &source,
-    ShCompileOptions *compileOptions)
-{
-// TODO(jcunningham): Remove this workaround once correct fix to move validation to the very end is
-// in place. See: https://bugs.webkit.org/show_bug.cgi?id=224991
-#if defined(ANGLE_ENABLE_ASSERTS) && 0
-    compileOptions->validateAst = true;
-#endif
-
-    auto workerThreadPool = context->getShaderCompileThreadPool();
-    auto translateTask =
-        std::make_shared<TranslateTask>(compilerInstance->getHandle(), *compileOptions, source);
-
-    return std::make_shared<MTLWaitableCompileEventImpl>(
-        mCompiledState, workerThreadPool->postWorkerTask(translateTask), translateTask);
-}
-
-std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *context,
-                                                         gl::ShCompilerInstance *compilerInstance,
-                                                         ShCompileOptions *options)
+std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *context,
+                                                        ShCompileOptions *options)
 {
     ContextMtl *contextMtl = mtl::GetImpl(context);
     DisplayMtl *displayMtl = contextMtl->getDisplay();
@@ -109,6 +57,10 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     // Create a new compiled shader state.  Currently running program link jobs will use the
     // previous state.
     mCompiledState = std::make_shared<CompiledShaderStateMtl>();
+
+    // TODO(jcunningham): Remove this workaround once correct fix to move validation to the very end
+    // is in place. https://bugs.webkit.org/show_bug.cgi?id=224991
+    options->validateAST = false;
 
     options->initializeUninitializedLocals = true;
 
@@ -149,7 +101,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
 
     options->rescopeGlobalVariables = displayMtl->getFeatures().rescopeGlobalVariables.enabled;
 
-    return compileImplMtl(context, compilerInstance, getState().getSource(), options);
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskMtl(mCompiledState));
 }
 
 std::string ShaderMtl::getDebugInfo() const

@@ -365,6 +365,9 @@ using CallVector = std::vector<std::vector<CallCapture> *>;
 // A map from API entry point to calls
 using CallResetMap = std::map<angle::EntryPoint, std::vector<CallCapture>>;
 
+using TextureBinding  = std::pair<size_t, gl::TextureType>;
+using TextureResetMap = std::map<TextureBinding, gl::TextureID>;
+
 // StateResetHelper provides a simple way to track whether an entry point has been called during the
 // trace, along with the reset calls to get it back to starting state.  This is useful for things
 // that are one dimensional, like context bindings or context state.
@@ -382,12 +385,33 @@ class StateResetHelper final : angle::NonCopyable
 
     void setDefaultResetCalls(const gl::Context *context, angle::EntryPoint);
 
+    const std::set<TextureBinding> &getDirtyTextureBindings() const
+    {
+        return mDirtyTextureBindings;
+    }
+    void setTextureBindingDirty(size_t unit, gl::TextureType target)
+    {
+        mDirtyTextureBindings.emplace(unit, target);
+    }
+
+    TextureResetMap &getResetTextureBindings() { return mResetTextureBindings; }
+
+    void setResetActiveTexture(size_t textureID) { mResetActiveTexture = textureID; }
+    size_t getResetActiveTexture() { return mResetActiveTexture; }
+
   private:
     // Dirty state per entry point
     std::set<angle::EntryPoint> mDirtyEntryPoints;
 
     // Reset calls per API entry point
     CallResetMap mResetCalls;
+
+    // Dirty state per texture binding
+    std::set<TextureBinding> mDirtyTextureBindings;
+
+    // Texture bindings and active texture to restore
+    TextureResetMap mResetTextureBindings;
+    size_t mResetActiveTexture = 0;
 };
 
 class FrameCapture final : angle::NonCopyable

@@ -121,23 +121,6 @@ void CollectGarbage(std::vector<vk::GarbageObject> *garbageOut, ArgT object, Arg
 // Recursive function to process variable arguments for garbage destroy
 inline void DestroyGarbage(RendererVk *renderer) {}
 
-class WaitableCompressEvent
-{
-  public:
-    WaitableCompressEvent(std::shared_ptr<angle::WaitableEvent> waitableEvent)
-        : mWaitableEvent(waitableEvent)
-    {}
-
-    virtual ~WaitableCompressEvent() {}
-
-    void wait() { return mWaitableEvent->wait(); }
-
-    bool isReady() { return mWaitableEvent->isReady(); }
-
-  private:
-    std::shared_ptr<angle::WaitableEvent> mWaitableEvent;
-};
-
 class OneOffCommandPool : angle::NonCopyable
 {
   public:
@@ -1024,7 +1007,7 @@ class RendererVk : angle::NonCopyable
     VkShaderStageFlags mSupportedVulkanShaderStageMask;
 
     // Use thread pool to compress cache data.
-    std::shared_ptr<rx::WaitableCompressEvent> mCompressEvent;
+    std::shared_ptr<angle::WaitableEvent> mCompressEvent;
 
     VulkanLayerVector mEnabledDeviceLayerNames;
     vk::ExtensionNameList mEnabledInstanceExtensions;

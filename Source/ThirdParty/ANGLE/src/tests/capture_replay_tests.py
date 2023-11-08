@@ -25,6 +25,7 @@ import argparse
 import difflib
 import distutils.util
 import fnmatch
+import getpass
 import json
 import logging
 import math
@@ -885,7 +886,7 @@ def main(args):
     logger = multiprocessing.log_to_stderr()
     logger.setLevel(level=args.log.upper())
 
-    is_bot = bool(args.goma_dir)  # flag set in recipes/recipe_modules/angle/api.py
+    is_bot = getpass.getuser() == 'chrome-bot'
     if sys.platform == 'linux' and is_bot:
         logger.warning('Test is currently a no-op https://anglebug.com/6085')
         return EXIT_SUCCESS

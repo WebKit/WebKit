@@ -686,13 +686,13 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     ANGLE_TRY(mProvokingVertexHelper.generateIndexBuffer(
         mtl::GetImpl(context), first, count, mode, convertedType, outIndexCount, outIndexOffset,
         outIndexMode, drawIdxBuffer));
-    GLsizei outIndexCounti32     = static_cast<GLsizei>(outIndexCount);
-    const uint8_t *mappedIndices = drawIdxBuffer->mapReadOnly(this);
-    if (!mappedIndices)
-    {
-        return angle::Result::Stop;
-    }
+    GLsizei outIndexCounti32 = static_cast<GLsizei>(outIndexCount);
 
+    // Note: we don't need to pass the generated index buffer to ContextMtl::setupDraw.
+    // Because setupDraw only needs to operate on the original vertex buffers & PrimitiveMode.
+    // setupDraw might convert vertex attributes if the offset & alignment are not natively
+    // supported by Metal. However, the converted attributes have the same order as the original
+    // vertices. Hence the conversion doesn't need to know about the newly generated index buffer.
 #define DRAW_PROVOKING_VERTEX_ARRAY(xfbPass)                                                       \
     if (xfbPass)                                                                                   \
     {                                                                                              \
@@ -724,8 +724,8 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     else                                                                                           \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, outIndexMode, 0, outIndexCounti32, instances, convertedType,  \
-                            mappedIndices + outIndexOffset, xfbPass, &isNoOp));                    \
+        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
+                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
                                                                                                    \
         if (!isNoOp)                                                                               \
         {                                                                                          \
@@ -754,7 +754,6 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     }
 
     ANGLE_MTL_XFB_DRAW(DRAW_PROVOKING_VERTEX_ARRAY)
-    drawIdxBuffer->unmapNoFlush(this);
     return angle::Result::Continue;
 }
 

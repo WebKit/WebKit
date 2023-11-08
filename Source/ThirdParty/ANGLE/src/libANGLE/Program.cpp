@@ -912,13 +912,6 @@ angle::Result Program::linkImpl(const Context *context)
 
     mState.mInfoLog.reset();
 
-    // Validate we have properly attached shaders before checking the cache.
-    if (!linkValidateShaders())
-    {
-        return angle::Result::Continue;
-    }
-    linkShaders();
-
     egl::BlobCache::Key programHash = {0};
     MemoryProgramCache *cache       = context->getMemoryProgramCache();
 
@@ -987,7 +980,14 @@ angle::Result Program::linkJobImpl(const Caps &caps,
     // Cache load failed, fall through to normal linking.
     unlink();
 
-    // Re-link shaders after the unlink call.
+    // Validate we have properly attached shaders after checking the cache.  Since the input to the
+    // shaders is part of the cache key, if there was a cache hit, the shaders would have linked
+    // correctly.
+    if (!linkValidateShaders())
+    {
+        return angle::Result::Stop;
+    }
+
     linkShaders();
 
     linkingVariables->initForProgram(mState);

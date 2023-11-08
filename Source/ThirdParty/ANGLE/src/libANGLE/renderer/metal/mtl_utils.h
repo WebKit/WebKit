@@ -157,8 +157,8 @@ MTLSamplerMinMagFilter GetFilter(GLenum filter);
 MTLSamplerMipFilter GetMipmapFilter(GLenum filter);
 MTLSamplerAddressMode GetSamplerAddressMode(GLenum wrap);
 
-MTLBlendFactor GetBlendFactor(GLenum factor);
-MTLBlendOperation GetBlendOp(GLenum op);
+MTLBlendFactor GetBlendFactor(gl::BlendFactorType factor);
+MTLBlendOperation GetBlendOp(gl::BlendEquationType op);
 
 MTLCompareFunction GetCompareFunc(GLenum func);
 MTLStencilOperation GetStencilOp(GLenum op);

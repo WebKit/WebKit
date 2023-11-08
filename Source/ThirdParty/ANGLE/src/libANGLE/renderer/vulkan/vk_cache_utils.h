@@ -173,6 +173,8 @@ class alignas(4) RenderPassDesc final
     bool isColorAttachmentEnabled(size_t colorIndexGL) const;
     bool hasYUVResolveAttachment() const { return mIsYUVResolve; }
     bool hasDepthStencilAttachment() const;
+    bool hasDepthAttachment() const;
+    bool hasStencilAttachment() const;
     gl::DrawBufferMask getColorResolveAttachmentMask() const { return mColorResolveAttachmentMask; }
     bool hasColorResolveAttachment(size_t colorIndexGL) const
     {

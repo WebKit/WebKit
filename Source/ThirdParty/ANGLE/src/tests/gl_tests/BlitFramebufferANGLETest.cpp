@@ -3687,7 +3687,7 @@ TEST_P(BlitFramebufferTest, ResolveIntoSmallerFramebuffer)
     glViewport(0, 0, kSize[0], kSize[0]);
 
     GLRenderbuffer rbo[2];
-    GLRenderbuffer fbo[2];
+    GLFramebuffer fbo[2];
 
     for (int i = 0; i < 2; ++i)
     {
@@ -3725,7 +3725,7 @@ TEST_P(BlitFramebufferTest, ResolveIntoBiggerFramebuffer)
     glViewport(0, 0, kSize[0], kSize[0]);
 
     GLRenderbuffer rbo[2];
-    GLRenderbuffer fbo[2];
+    GLFramebuffer fbo[2];
 
     for (int i = 0; i < 2; ++i)
     {
@@ -3765,7 +3765,7 @@ TEST_P(BlitFramebufferTest, ResolveWithRotation)
     glViewport(0, 0, w, h);
 
     GLRenderbuffer rbo;
-    GLRenderbuffer fbo;
+    GLFramebuffer fbo;
 
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, w, h);

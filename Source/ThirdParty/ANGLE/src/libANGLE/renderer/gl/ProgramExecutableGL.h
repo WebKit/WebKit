@@ -85,6 +85,8 @@ class ProgramExecutableGL : public ProgramExecutableImpl
 
     void updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const;
 
+    void updateEmulatedClipOrigin(gl::ClipOrigin origin) const;
+
     void enableLayeredRenderingPath(int baseViewIndex) const;
 
     GLuint getProgramID() const { return mProgramID; }
@@ -107,6 +109,8 @@ class ProgramExecutableGL : public ProgramExecutableImpl
     bool mHasAppliedTransformFeedbackVaryings;
 
     GLint mClipDistanceEnabledUniformLocation;
+
+    GLint mClipOriginUniformLocation;
 
     GLint mMultiviewBaseViewLayerIndexUniformLocation;
 

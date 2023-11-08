@@ -37,17 +37,24 @@ TEST_P(ObjectAllocationTestES3, BindFramebufferBeforeGen)
 // Test that we don't re-allocate a bound framebuffer ID, other pattern.
 TEST_P(ObjectAllocationTestES3, BindFramebufferAfterGen)
 {
+    GLuint reservedFBO1 = 1;
+    GLuint reservedFBO2 = 2;
+
     GLuint firstFBO = 0;
     glGenFramebuffers(1, &firstFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, 1);
+    glBindFramebuffer(GL_FRAMEBUFFER, reservedFBO1);
     glDeleteFramebuffers(1, &firstFBO);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 2);
+    glBindFramebuffer(GL_FRAMEBUFFER, reservedFBO2);
     GLuint secondFBOs[2] = {0};
     glGenFramebuffers(2, secondFBOs);
-    EXPECT_NE(2u, secondFBOs[0]);
-    EXPECT_NE(2u, secondFBOs[1]);
+    EXPECT_NE(reservedFBO2, secondFBOs[0]);
+    EXPECT_NE(reservedFBO2, secondFBOs[1]);
     glDeleteFramebuffers(2, secondFBOs);
+
+    // Clean up
+    glDeleteFramebuffers(1, &reservedFBO1);
+    glDeleteFramebuffers(1, &reservedFBO2);
 
     EXPECT_GL_NO_ERROR();
 }

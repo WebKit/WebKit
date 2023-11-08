@@ -972,9 +972,6 @@ void SerializeShader(const gl::Context *context,
     // Do not serialize mType because it is already serialized in SerializeCompiledShaderState.
     json->addString("InfoLogString", shader->getInfoLogString());
     // Do not serialize compiler resources string because it can vary between test modes.
-    json->addScalar("CurrentMaxComputeWorkGroupInvocations",
-                    shader->getCurrentMaxComputeWorkGroupInvocations());
-    json->addScalar("MaxComputeSharedMemory", shader->getMaxComputeSharedMemory());
 }
 
 void SerializeVariableLocationsVector(JsonSerializer *json,

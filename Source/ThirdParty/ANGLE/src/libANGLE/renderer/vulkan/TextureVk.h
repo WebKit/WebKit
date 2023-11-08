@@ -492,9 +492,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         gl::LevelIndex previousFirstAllocateLevel,
                                         vk::ImageHelper *srcImage,
                                         vk::ImageHelper *dstImage);
-    angle::Result reinitImageAsRenderable(ContextVk *contextVk,
-                                          const vk::Format &format,
-                                          gl::TexLevelMask skipLevelsMask);
+    angle::Result reinitImageAsRenderable(ContextVk *contextVk, const vk::Format &format);
     angle::Result initImageViews(ContextVk *contextVk, uint32_t levelCount);
     void initSingleLayerRenderTargets(ContextVk *contextVk,
                                       GLuint layerCount,
@@ -641,16 +639,19 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // If an image level is incompatibly redefined, the image lives through the call that did this
     // (i.e. set and copy levels), because the image may be used by the framebuffer in the very same
     // call.  As a result, updates to this redefined level are staged (in both the call that
-    // redefines it, and any future calls such as subimage updates).  This bitset flags redefined
-    // levels so that their updates will be force-staged until image is recreated.
+    // redefines it, and any future calls such as subimage updates).  This array flags redefined
+    // levels so that their updates will be force-staged until image is recreated.  Each member of
+    // the array is a bitmask per level, and it's an array of cube faces because GL allows
+    // redefining each cube map face separately.  For other texture types, only index 0 is
+    // meaningful as all array levels are redefined simultaneously.
     //
     // In common cases with mipmapped textures, the base/max level would need adjusting as the
     // texture is no longer mip-complete.  However, if every level is redefined such that at the end
-    // the image becomes mip-complete again, no reinitialization of the image is done.  This bitset
+    // the image becomes mip-complete again, no reinitialization of the image is done.  This array
     // is additionally used to ensure the image is recreated in the next syncState, if not already.
     //
-    // Note: this bitmask is for gl::LevelIndex, not vk::LevelIndex
-    gl::TexLevelMask mRedefinedLevels;
+    // Note: the elements of this array are bitmasks indexed by gl::LevelIndex, not vk::LevelIndex
+    gl::CubeFaceArray<gl::TexLevelMask> mRedefinedLevels;
 
     angle::ObserverBinding mImageObserverBinding;
 

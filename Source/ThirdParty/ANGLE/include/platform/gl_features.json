@@ -636,6 +636,13 @@
             ]
         },
         {
+            "name": "emulate_clip_origin",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers incorrectly apply GL_CLIP_ORIGIN_EXT state."
+            ]
+        },
+        {
             "name": "bind_complete_framebuffer_for_timer_queries",
             "category": "Workarounds",
             "description": [

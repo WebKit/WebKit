@@ -68,14 +68,18 @@ void MemoryProgramCache::ComputeHash(const Context *context,
 {
     // Compute the program hash. Start with the shader hashes.
     BinaryOutputStream hashStream;
+    ShaderBitSet shaders;
     for (ShaderType shaderType : AllShaderTypes())
     {
         Shader *shader = program->getAttachedShader(shaderType);
         if (shader)
         {
+            shaders.set(shaderType);
             shader->writeShaderKey(&hashStream);
         }
     }
+
+    hashStream.writeInt(shaders.bits());
 
     // Add some ANGLE metadata and Context properties, such as version and back-end.
     hashStream.writeString(angle::GetANGLEShaderProgramVersion());

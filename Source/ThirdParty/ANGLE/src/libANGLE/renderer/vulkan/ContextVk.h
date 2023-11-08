@@ -1478,6 +1478,14 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                                                   DIRTY_BIT_DESCRIPTOR_SETS};
     static constexpr DirtyBits kXfbBuffersAndDescSetDirtyBits{DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS,
                                                               DIRTY_BIT_DESCRIPTOR_SETS};
+    static constexpr DirtyBits kDepthDynamicStateDirtyBits =
+        DirtyBits{DIRTY_BIT_DYNAMIC_DEPTH_BIAS, DIRTY_BIT_DYNAMIC_DEPTH_TEST_ENABLE,
+                  DIRTY_BIT_DYNAMIC_DEPTH_WRITE_ENABLE, DIRTY_BIT_DYNAMIC_DEPTH_COMPARE_OP,
+                  DIRTY_BIT_DYNAMIC_DEPTH_BIAS_ENABLE};
+    static constexpr DirtyBits kStencilDynamicStateDirtyBits =
+        DirtyBits{DIRTY_BIT_DYNAMIC_STENCIL_COMPARE_MASK, DIRTY_BIT_DYNAMIC_STENCIL_WRITE_MASK,
+                  DIRTY_BIT_DYNAMIC_STENCIL_REFERENCE, DIRTY_BIT_DYNAMIC_STENCIL_TEST_ENABLE,
+                  DIRTY_BIT_DYNAMIC_STENCIL_OP};
 
     // The offset we had the last time we bound the index buffer.
     const GLvoid *mLastIndexBufferOffset;

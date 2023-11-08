@@ -27,25 +27,17 @@ class ShaderGL : public ShaderImpl
 
     void destroy() override;
 
-    std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
-                                                  gl::ShCompilerInstance *compilerInstance,
-                                                  ShCompileOptions *options) override;
+    std::shared_ptr<ShaderTranslateTask> compile(const gl::Context *context,
+                                                 ShCompileOptions *options) override;
 
     std::string getDebugInfo() const override;
 
     GLuint getShaderID() const;
 
   private:
-    void compileAndCheckShader(const char *source);
-    void compileShader(const char *source);
-    void checkShader();
-    bool peekCompletion();
-
     GLuint mShaderID;
     MultiviewImplementationTypeGL mMultiviewImplementationType;
     std::shared_ptr<RendererGL> mRenderer;
-    GLint mCompileStatus;
-    std::string mInfoLog;
 };
 
 }  // namespace rx

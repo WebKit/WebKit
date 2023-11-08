@@ -689,8 +689,10 @@ bool BlendModeSupportsDither(const gl::State &state, size_t colorIndex)
     // Specific combinations of color blend modes are known to work with our dithering emulation.
     // Note we specifically don't check alpha blend, as dither isn't applied to alpha.
     // See http://b/232574868 for more discussion and reasoning.
-    return state.getBlendStateExt().getSrcColorIndexed(colorIndex) == GL_SRC_ALPHA &&
-           state.getBlendStateExt().getDstColorIndexed(colorIndex) == GL_ONE_MINUS_SRC_ALPHA;
+    return state.getBlendStateExt().getSrcColorIndexed(colorIndex) ==
+               gl::BlendFactorType::SrcAlpha &&
+           state.getBlendStateExt().getDstColorIndexed(colorIndex) ==
+               gl::BlendFactorType::OneMinusSrcAlpha;
 }
 
 bool ShouldUseGraphicsDriverUniformsExtended(const vk::Context *context)
@@ -1370,7 +1372,8 @@ angle::Result ContextVk::initialize()
     // Initialize current value/default attribute buffers.
     for (vk::DynamicBuffer &buffer : mStreamedVertexBuffers)
     {
-        buffer.init(mRenderer, kVertexBufferUsage, 1, kDynamicVertexDataSize, true);
+        buffer.init(mRenderer, kVertexBufferUsage, vk::kVertexBufferAlignment,
+                    kDynamicVertexDataSize, true);
     }
 
 #if ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS
@@ -1559,6 +1562,16 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
         mXfbBaseVertex             = firstVertexOrInvalid;
         mXfbVertexCountPerInstance = vertexOrIndexCount;
         invalidateGraphicsDriverUniforms();
+    }
+
+    // Process depth stencil dynamic state only if there is there depth stencil attachment
+    if (!mGraphicsPipelineDesc->getRenderPassDesc().hasDepthAttachment())
+    {
+        dirtyBitMask = dirtyBitMask & ~kDepthDynamicStateDirtyBits;
+    }
+    if (!mGraphicsPipelineDesc->getRenderPassDesc().hasStencilAttachment())
+    {
+        dirtyBitMask = dirtyBitMask & ~kStencilDynamicStateDirtyBits;
     }
 
     DirtyBits dirtyBits = mGraphicsDirtyBits & dirtyBitMask;
@@ -6854,8 +6867,8 @@ angle::Result ContextVk::handleDirtyGraphicsDriverUniforms(DirtyBits::Iterator *
         const gl::BlendStateExt &blendStateExt = mState.getBlendStateExt();
         if (blendStateExt.getUsesAdvancedBlendEquationMask().test(0))
         {
-            advancedBlendEquation = static_cast<uint32_t>(gl::FromGLenum<gl::BlendEquationType>(
-                getState().getBlendStateExt().getEquationColorIndexed(0)));
+            advancedBlendEquation =
+                static_cast<uint32_t>(getState().getBlendStateExt().getEquationColorIndexed(0));
         }
     }
 

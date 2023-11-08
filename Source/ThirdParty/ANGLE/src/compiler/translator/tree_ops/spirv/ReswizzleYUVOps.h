@@ -21,7 +21,8 @@ class TSymbolTable;
 
 [[nodiscard]] bool ReswizzleYUVOps(TCompiler *compiler,
                                    TIntermBlock *root,
-                                   TSymbolTable *symbolTable);
+                                   TSymbolTable *symbolTable,
+                                   const TIntermSymbol *yuvOutput);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SPIRV_RESWIZZLEYUVOPS_H_
