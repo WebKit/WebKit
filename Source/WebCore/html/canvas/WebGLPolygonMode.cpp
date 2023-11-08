@@ -38,6 +38,7 @@ WebGLPolygonMode::WebGLPolygonMode(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_polygon_mode"_s);
+    context.printToConsole(MessageLevel::Warning, "WebGL: non-portable extension enabled: WEBGL_polygon_mode"_s);
 }
 
 WebGLPolygonMode::~WebGLPolygonMode() = default;

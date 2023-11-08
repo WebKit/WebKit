@@ -468,6 +468,7 @@ protected:
     friend class WebGLDrawInstancedBaseVertexBaseInstance;
     friend class WebGLMultiDraw;
     friend class WebGLMultiDrawInstancedBaseVertexBaseInstance;
+    friend class WebGLPolygonMode;
 
     friend class WebGLFramebuffer;
     friend class WebGLObject;
