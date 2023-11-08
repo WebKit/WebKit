@@ -371,11 +371,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     if (!parent)
         newFrame->takeWindowProxyFrom(*localFrame);
-    auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
-    // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle. <rdar://116200737>
-    newFrame->setView(remoteFrameView.ptr());
     if (ownerRenderer)
-        ownerRenderer->setWidget(remoteFrameView.ptr());
+        ownerRenderer->setWidget(newFrame->view());
 
     m_coreFrame = newFrame.get();
 
