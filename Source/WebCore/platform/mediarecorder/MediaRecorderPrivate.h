@@ -29,6 +29,7 @@
 #include "RealtimeMediaSource.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if ENABLE(MEDIA_RECORDER)
 
@@ -48,10 +49,11 @@ class FragmentedSharedBuffer;
 struct MediaRecorderPrivateOptions;
 
 class MediaRecorderPrivate
-    : public RealtimeMediaSource::AudioSampleObserver
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>
+    , public RealtimeMediaSource::AudioSampleObserver
     , public RealtimeMediaSource::VideoFrameObserver {
 public:
-    ~MediaRecorderPrivate();
+    virtual ~MediaRecorderPrivate();
 
     struct AudioVideoSelectedTracks {
         MediaStreamTrackPrivate* audioTrack { nullptr };
@@ -80,6 +82,7 @@ public:
     static BitRates computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
 
 protected:
+    MediaRecorderPrivate() = default;
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
     void setVideoSource(RefPtr<RealtimeMediaSource>&&);
 
@@ -93,7 +96,6 @@ private:
     virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
     virtual void resumeRecording(CompletionHandler<void()>&&) = 0;
 
-private:
     bool m_shouldMuteAudio { false };
     bool m_shouldMuteVideo { false };
     RefPtr<RealtimeMediaSource> m_audioSource;
