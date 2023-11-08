@@ -186,9 +186,9 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
             copiedAttributes.setTarget(attributeValue);
     }
 
-    auto& document = form.document();
+    Ref document = form.document();
     auto encodingType = copiedAttributes.encodingType();
-    auto actionURL = document.completeURL(copiedAttributes.action().isEmpty() ? document.url().string() : copiedAttributes.action());
+    auto actionURL = document->completeURL(copiedAttributes.action().isEmpty() ? document->url().string() : copiedAttributes.action());
 
     if (copiedAttributes.method() == Method::Dialog) {
         String returnValue = submitter ? submitter->resultForDialogSubmit() : emptyString();
@@ -200,7 +200,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     bool isMailtoForm = actionURL.protocolIs("mailto"_s);
     bool isMultiPartForm = false;
 
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(actionURL, ContentSecurityPolicy::InsecureRequestType::FormSubmission);
+    document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(actionURL, ContentSecurityPolicy::InsecureRequestType::FormSubmission);
 
     if (copiedAttributes.method() == Method::Post) {
         isMultiPartForm = copiedAttributes.isMultiPartForm();
@@ -211,7 +211,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     }
 
     auto dataEncoding = isMailtoForm ? PAL::UTF8Encoding() : encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
-    auto domFormData = DOMFormData::create(&document, dataEncoding.encodingForFormSubmissionOrURLParsing());
+    auto domFormData = DOMFormData::create(document.ptr(), dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
     auto result = form.constructEntryList(submitter.copyRef(), WTFMove(domFormData), &formValues);

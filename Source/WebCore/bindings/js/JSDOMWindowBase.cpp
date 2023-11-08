@@ -271,12 +271,12 @@ JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalO
 void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSString* source)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    ContentSecurityPolicy* contentSecurityPolicy = nullptr;
+    CheckedPtr<ContentSecurityPolicy> contentSecurityPolicy;
     if (auto* element = thisObject->wrapped().frameElement())
         contentSecurityPolicy = element->document().contentSecurityPolicy();
 
     if (!contentSecurityPolicy) {
-        if (auto *document = thisObject->wrapped().document())
+        if (auto* document = thisObject->wrapped().document())
             contentSecurityPolicy = document->contentSecurityPolicy();
     }
 

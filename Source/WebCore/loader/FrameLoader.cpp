@@ -721,12 +721,12 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     if (clearScriptObjects)
         m_frame->checkedScript()->clearScriptObjects();
 
-    if (newDocument->contentSecurityPolicy()) {
-        bool enableEvalValue = newDocument->contentSecurityPolicy()->evalErrorMessage().isNull();
-        bool enableWASMValue = newDocument->contentSecurityPolicy()->webAssemblyErrorMessage().isNull();
+    if (CheckedPtr newDocumentCSP = newDocument->contentSecurityPolicy()) {
+        bool enableEvalValue = newDocumentCSP->evalErrorMessage().isNull();
+        bool enableWASMValue = newDocumentCSP->webAssemblyErrorMessage().isNull();
         CheckedRef script = m_frame->script();
-        script->setEvalEnabled(enableEvalValue, newDocument->contentSecurityPolicy()->evalErrorMessage());
-        script->setWebAssemblyEnabled(enableWASMValue, newDocument->contentSecurityPolicy()->webAssemblyErrorMessage());
+        script->setEvalEnabled(enableEvalValue, newDocumentCSP->evalErrorMessage());
+        script->setWebAssemblyEnabled(enableWASMValue, newDocumentCSP->webAssemblyErrorMessage());
     }
 
     m_frame->navigationScheduler().clear();
@@ -801,13 +801,13 @@ void FrameLoader::didBeginDocument(bool dispatch)
             document->parseDNSPrefetchControlHeader(dnsPrefetchControl);
 
         // The DocumentLoader may have already parsed the CSP header to do some checks. If so, reuse the already parsed version instead of parsing again.
-        if (auto* contentSecurityPolicy = documentLoader->contentSecurityPolicy())
-            document->contentSecurityPolicy()->didReceiveHeaders(*contentSecurityPolicy, ContentSecurityPolicy::ReportParsingErrors::No);
+        if (CheckedPtr contentSecurityPolicy = documentLoader->contentSecurityPolicy())
+            document->checkedContentSecurityPolicy()->didReceiveHeaders(*contentSecurityPolicy, ContentSecurityPolicy::ReportParsingErrors::No);
         else
-            document->contentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(documentLoader->response()), referrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+            document->checkedContentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(documentLoader->response()), referrer(), ContentSecurityPolicy::ReportParsingErrors::No);
 
         if (document->url().protocolIsBlob())
-            document->contentSecurityPolicy()->updateSourceSelf(SecurityOrigin::create(document->url()));
+            document->checkedContentSecurityPolicy()->updateSourceSelf(SecurityOrigin::create(document->url()));
 
         if (document->url().protocolIsInHTTPFamily() || document->url().protocolIsBlob())
             document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), document.ptr()));
@@ -1098,7 +1098,7 @@ bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveR
         return true;
 
     auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
-    return m_frame->protectedDocument()->contentSecurityPolicy()->allowFormAction(url, redirectResponseReceived, preRedirectURL);
+    return m_frame->protectedDocument()->checkedContentSecurityPolicy()->allowFormAction(url, redirectResponseReceived, preRedirectURL);
 }
 
 void FrameLoader::setOpener(RefPtr<Frame>&& opener)
@@ -3253,7 +3253,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, willOpenInNewWindow, &request.requester());
 
     if (RefPtr document = frame->document())
-        document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
+        document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
     NavigationAction action { request.requester(), workingResourceRequest, request.initiatedByMainFrame(), loadType, true, event, request.shouldOpenExternalURLsPolicy(), { } };
     action.setLockHistory(lockHistory);
@@ -3341,7 +3341,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
     }
 #endif
 
-    m_frame->protectedDocument()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newRequest, ContentSecurityPolicy::InsecureRequestType::Load);
+    m_frame->protectedDocument()->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
@@ -3817,7 +3817,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
 
     Ref frame = m_frame.get();
 
-    if (request.url().protocolIsJavaScript() && !frame->document()->contentSecurityPolicy()->allowJavaScriptURLs(frame->document()->url().string(), { }, request.url().string(), nullptr))
+    if (request.url().protocolIsJavaScript() && !frame->protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(frame->document()->url().string(), { }, request.url().string(), nullptr))
         return;
 
     RefPtr mainFrame = m_client->dispatchCreatePage(action, openerPolicy);
@@ -4376,7 +4376,7 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
     created = false;
 
     // FIXME: Provide line number information with respect to the opener's document.
-    if (request.resourceRequest().url().protocolIsJavaScript() && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url().string(), { }, request.resourceRequest().url().string(), nullptr))
+    if (request.resourceRequest().url().protocolIsJavaScript() && !openerFrame.protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url().string(), { }, request.resourceRequest().url().string(), nullptr))
         return nullptr;
 
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {

@@ -71,7 +71,7 @@ ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& contex
         return Exception { SyntaxError };
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is resolved.
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
+    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.checkedContentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         return Exception { SecurityError };
     }

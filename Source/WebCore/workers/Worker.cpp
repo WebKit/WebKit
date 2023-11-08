@@ -213,7 +213,7 @@ void Worker::notifyFinished()
         return;
     }
 
-    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->contentSecurityPolicy()->responseHeaders();
+    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->checkedContentSecurityPolicy()->responseHeaders();
     ReferrerPolicy referrerPolicy = ReferrerPolicy::EmptyString;
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;

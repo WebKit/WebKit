@@ -34,6 +34,7 @@
 #include "BlobRegistry.h"
 #include "ContentFilter.h"
 #include "ContentSecurityPolicy.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -73,8 +74,8 @@ static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* owne
 
     ASSERT(ownerElement->document().contentSecurityPolicy());
     if (is<HTMLPlugInElement>(ownerElement))
-        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, redirectResponseReceived);
-    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, redirectResponseReceived);
+        return ownerElement->protectedDocument()->checkedContentSecurityPolicy()->allowObjectFromSource(url, redirectResponseReceived);
+    return ownerElement->protectedDocument()->checkedContentSecurityPolicy()->allowChildFrameFromSource(url, redirectResponseReceived);
 }
 
 static bool shouldExecuteJavaScriptURLSynchronously(const URL& url)

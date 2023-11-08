@@ -1889,7 +1889,7 @@ ExceptionOr<int> LocalDOMWindow::setTimeout(std::unique_ptr<ScheduledAction> act
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes, action->code()))
+        if (!context->checkedContentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -1912,7 +1912,7 @@ ExceptionOr<int> LocalDOMWindow::setInterval(std::unique_ptr<ScheduledAction> ac
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes, action->code()))
+        if (!context->checkedContentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -2477,7 +2477,7 @@ void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& comple
         return;
 
     // Check the CSP of the embedder to determine if we allow execution of javascript: URLs via child frame navigation.
-    if (completedURL.protocolIsJavaScript() && frameElement() && !frameElement()->document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, completedURL.string(), frameElement()))
+    if (completedURL.protocolIsJavaScript() && frameElement() && !frameElement()->protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, completedURL.string(), frameElement()))
         return;
 
     // We want a new history item if we are processing a user gesture.

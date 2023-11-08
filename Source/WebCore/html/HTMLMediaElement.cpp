@@ -2357,7 +2357,7 @@ static inline bool isAllowedToLoadMediaURL(const HTMLMediaElement& element, cons
         return true;
 
     ASSERT(element.document().contentSecurityPolicy());
-    return element.document().contentSecurityPolicy()->allowMediaFromSource(url);
+    return element.protectedDocument()->checkedContentSecurityPolicy()->allowMediaFromSource(url);
 }
 
 bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIfInvalid, bool shouldLog) const

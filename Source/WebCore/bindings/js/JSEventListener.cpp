@@ -155,13 +155,14 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
         if (wasCreatedFromMarkup()) {
-            auto* element = dynamicDowncast<Element>(*event.target());
-            if (!scriptExecutionContext.contentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element))
+            RefPtr element = dynamicDowncast<Element>(*event.target());
+            if (!scriptExecutionContext.checkedContentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element.get()))
                 return;
         }
         // FIXME: Is this check needed for other contexts?
-        auto& script = window->wrapped().frame()->script();
-        if (!script.canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script.isPaused())
+        RefPtr frame = window->wrapped().frame();
+        CheckedRef script = frame->script();
+        if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script->isPaused())
             return;
     }
 

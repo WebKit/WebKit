@@ -154,7 +154,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     jobData.scriptURL = context->completeURL(relativeScriptURL);
 
-    auto* contentSecurityPolicy = is<Document>(context) ? downcast<Document>(context)->contentSecurityPolicy() : nullptr;
+    CheckedPtr contentSecurityPolicy = is<Document>(context) ? downcast<Document>(context)->contentSecurityPolicy() : nullptr;
     if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(jobData.scriptURL)) {
         promise->reject(Exception { SecurityError });
         return;

@@ -262,6 +262,7 @@ void HTMLLinkElement::process()
     if (m_isHandlingBeforeLoad)
         return;
 
+    Ref document = this->document();
     LinkLoadParameters params {
         m_relAttribute,
         m_url,
@@ -276,7 +277,7 @@ void HTMLLinkElement::process()
         fetchPriorityHint(),
     };
 
-    m_linkLoader.loadLink(params, document());
+    m_linkLoader.loadLink(params, document);
 
     bool treatAsStyleSheet = false;
     if (m_relAttribute.isStyleSheet) {
@@ -286,19 +287,18 @@ void HTMLLinkElement::process()
             treatAsStyleSheet = equalLettersIgnoringASCIICase(parsedContentType->mimeType(), "text/css"_s);
     }
     if (!treatAsStyleSheet)
-        treatAsStyleSheet = document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"_s);
+        treatAsStyleSheet = document->settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"_s);
 
     LOG_WITH_STREAM(StyleSheets, stream << "HTMLLinkElement " << this << " process() - treatAsStyleSheet " << treatAsStyleSheet);
 
-    if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && m_url.isValid()) {
+    if (m_disabledState != Disabled && treatAsStyleSheet && document->frame() && m_url.isValid()) {
         String charset = attributeWithoutSynchronization(charsetAttr);
         if (!PAL::TextEncoding { charset }.isValid())
-            charset = document().charset();
+            charset = document->charset();
 
-        if (m_cachedSheet) {
+        if (CachedResourceHandle cachedSheet = std::exchange(m_cachedSheet, nullptr)) {
             removePendingSheet();
-            m_cachedSheet->removeClient(*this);
-            m_cachedSheet = nullptr;
+            cachedSheet->removeClient(*this);
         }
 
         {
@@ -326,22 +326,22 @@ void HTMLLinkElement::process()
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.nonce = nonce();
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
-        if (document().contentSecurityPolicy()->allowStyleWithNonce(options.nonce))
+        if (document->checkedContentSecurityPolicy()->allowStyleWithNonce(options.nonce))
             options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
         options.integrity = m_integrityMetadataForPendingSheetRequest;
         options.referrerPolicy = params.referrerPolicy;
         options.fetchPriorityHint = fetchPriorityHint();
 
-        auto request = createPotentialAccessControlRequest(m_url, WTFMove(options), document(), crossOrigin());
+        auto request = createPotentialAccessControlRequest(m_url, WTFMove(options), document, crossOrigin());
         request.setPriority(WTFMove(priority));
         request.setCharset(WTFMove(charset));
         request.setInitiator(*this);
 
         ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
-        m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request)).value_or(nullptr);
+        m_cachedSheet = document->protectedCachedResourceLoader()->requestCSSStyleSheet(WTFMove(request)).value_or(nullptr);
 
-        if (m_cachedSheet)
-            m_cachedSheet->addClient(*this);
+        if (CachedResourceHandle cachedSheet = m_cachedSheet)
+            cachedSheet->addClient(*this);
         else {
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.
             m_loading = false;
@@ -361,7 +361,7 @@ void HTMLLinkElement::process()
 
 #if ENABLE(APPLICATION_MANIFEST)
     if (isApplicationManifest()) {
-        if (RefPtr loader = document().loader())
+        if (RefPtr loader = document->loader())
             loader->loadApplicationManifest({ });
         return;
     }

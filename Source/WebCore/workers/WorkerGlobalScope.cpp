@@ -190,7 +190,7 @@ bool WorkerGlobalScope::isSecureContext() const
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
 {
-    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
+    checkedContentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
 }
 
 URL WorkerGlobalScope::completeURL(const String& url, ForceUTF8) const
@@ -334,7 +334,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> 
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
+        if (!checkedContentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -352,7 +352,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction>
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
+        if (!checkedContentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -401,7 +401,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
     for (auto& url : completedURLs) {
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
         bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
-        if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !checkedContentSecurityPolicy()->allowScriptFromSource(url))
             return Exception { NetworkError };
 
         auto scriptLoader = WorkerScriptLoader::create();

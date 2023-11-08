@@ -379,8 +379,7 @@ void Element::hideNonceSlow()
     ASSERT(isConnected());
     ASSERT(hasAttributeWithoutSynchronization(nonceAttr));
 
-    const auto& csp = document().contentSecurityPolicy();
-    if (!csp->isHeaderDelivered())
+    if (!protectedDocument()->checkedContentSecurityPolicy()->isHeaderDelivered())
         return;
 
     // Retain previous IDL nonce.

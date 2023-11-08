@@ -1506,6 +1506,7 @@ public:
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) final;
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
+    inline Ref<SecurityOrigin> protectedSecurityOrigin() const; // Defined in DocumentInlines.h.
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
     inline ClientOrigin clientOrigin() const;
 

@@ -253,9 +253,9 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     }
 
     ASSERT(context.contentSecurityPolicy());
-    auto& contentSecurityPolicy = *context.contentSecurityPolicy();
+    CheckedRef contentSecurityPolicy = *context.contentSecurityPolicy();
 
-    contentSecurityPolicy.upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
+    contentSecurityPolicy->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     if (!portAllowed(m_url)) {
         String message;
@@ -269,7 +269,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(m_url)) {
+    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(m_url)) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?

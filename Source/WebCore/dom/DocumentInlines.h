@@ -196,6 +196,11 @@ inline CheckedRef<const DocumentMarkerController> Document::checkedMarkers() con
     return m_markers.get();
 }
 
+inline Ref<SecurityOrigin> Document::protectedSecurityOrigin() const
+{
+    return SecurityContext::protectedSecurityOrigin().releaseNonNull();
+}
+
 #if ENABLE(FULLSCREEN_API)
 inline CheckedRef<FullscreenManager> Document::checkedFullscreenManager()
 {

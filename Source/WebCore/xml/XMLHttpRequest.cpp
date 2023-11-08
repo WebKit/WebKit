@@ -383,7 +383,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     clearRequest();
 
     auto newURL = url;
-    context->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    context->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newURL, ContentSecurityPolicy::InsecureRequestType::Load);
     m_url = { WTFMove(newURL), context->topOrigin().data() };
 
     m_async = async;
@@ -426,7 +426,7 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     ASSERT(!m_loadingActivity);
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(m_url)) {
+    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.checkedContentSecurityPolicy()->allowConnectToSource(m_url)) {
         if (!m_async)
             return ExceptionOr<void> { Exception { NetworkError } };
         m_timeoutTimer.stop();

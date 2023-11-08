@@ -69,7 +69,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
         return Exception { SecurityError };
 
     ASSERT(context.contentSecurityPolicy());
-    if (!context.contentSecurityPolicy()->allowWorkerFromSource(scriptURL))
+    if (!context.checkedContentSecurityPolicy()->allowWorkerFromSource(scriptURL))
         return Exception { SecurityError };
 
     return scriptURL;

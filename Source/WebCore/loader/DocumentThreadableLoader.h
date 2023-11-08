@@ -111,6 +111,7 @@ namespace WebCore {
         SecurityOrigin& securityOrigin() const;
         Ref<SecurityOrigin> protectedSecurityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
+        CheckedRef<const ContentSecurityPolicy> checkedContentSecurityPolicy() const;
         const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const;
 
         Document& document() { return *m_document; }
