@@ -177,6 +177,7 @@ void CSSVariableReferenceValue::cacheSimpleReference()
     ASSERT(!m_simpleReference);
 
     auto range = m_data->tokenRange();
+
     auto functionId = range.peek().functionId();
     if (functionId != CSSValueVar && functionId != CSSValueEnv)
         return;
@@ -225,53 +226,20 @@ RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(Sty
     return CSSVariableData::create(*resolvedTokens, context());
 }
 
-template<typename ParseFunction>
-RefPtr<CSSValue> CSSVariableReferenceValue::resolveAndCacheValue(Style::BuilderState& builderState, CSSPropertyID propertyID, CSSPropertyID shorthandID, ParseFunction&& parseFunction) const
-{
-    if (auto data = tryResolveSimpleReference(builderState)) {
-        // FIXME: Also cache the complex case.
-        auto hasValidCachedValue = m_cachedResolvedValue
-            && arePointingToEqualData(m_cachedResolvedValue->dependencyData, data)
-            && m_cachedResolvedValue->propertyID == propertyID
-            && m_cachedResolvedValue->shorthandID == shorthandID;
-
-        if (hasValidCachedValue) {
-            // Update in case the object changed but data stayed the same.
-            m_cachedResolvedValue->dependencyData = data;
-        } else {
-            auto value = parseFunction(data->tokenRange());
-            m_cachedResolvedValue = makeUnique<ResolvedValue>(ResolvedValue { value, propertyID, shorthandID, data });
-        }
-        return m_cachedResolvedValue->value;
-    }
-
-    auto resolvedTokens = resolveTokenRange(m_data->tokenRange(), builderState);
-    if (!resolvedTokens)
-        return nullptr;
-
-    return parseFunction(CSSParserTokenRange { *resolvedTokens });
-}
-
 RefPtr<CSSValue> CSSVariableReferenceValue::resolveSingleValue(Style::BuilderState& builderState, CSSPropertyID propertyID) const
 {
-    return resolveAndCacheValue(builderState, propertyID, CSSPropertyInvalid, [&](auto tokens) -> RefPtr<CSSValue> {
-        return CSSPropertyParser::parseSingleValue(propertyID, tokens, context());
-    });
-}
+    auto cacheValue = [&](auto data) {
+        m_cachedValue = CSSPropertyParser::parseSingleValue(propertyID, data->tokens(), context());
+#if ASSERT_ENABLED
+        m_cachePropertyID = propertyID;
+#endif
+    };
 
-RefPtr<CSSValue> CSSVariableReferenceValue::resolveSubstitutionValue(Style::BuilderState& builderState, CSSPropertyID propertyID, CSSPropertyID shorthandID) const
-{
-    return resolveAndCacheValue(builderState, propertyID, shorthandID, [&](auto tokens) -> RefPtr<CSSValue> {
-        ParsedPropertyVector parsedProperties;
-        if (!CSSPropertyParser::parseValue(shorthandID, false, tokens, context(), parsedProperties, StyleRuleType::Style))
-            return nullptr;
-
-        for (auto& property : parsedProperties) {
-            if (property.id() == propertyID)
-                return property.value();
-        }
+    if (!resolveAndCacheValue(builderState, cacheValue))
         return nullptr;
-    });
+
+    ASSERT(m_cachePropertyID == propertyID);
+    return m_cachedValue;
 }
 
 } // namespace WebCore

@@ -859,6 +859,7 @@ css/CSSNamespaceRule.cpp
 css/CSSOffsetRotateValue.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
+css/CSSPendingSubstitutionValue.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertyRule.cpp
