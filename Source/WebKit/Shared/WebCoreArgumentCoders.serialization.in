@@ -5776,6 +5776,19 @@ struct WebCore::AcceleratedEffectValues {
 #endif
 }
 
+struct WebCore::AnimationEffectTiming {
+    RefPtr<WebCore::TimingFunction> timingFunction;
+    WebCore::FillMode fill;
+    WebCore::PlaybackDirection direction;
+    double iterationStart;
+    double iterations;
+    WTF::Seconds delay;
+    WTF::Seconds endDelay;
+    WTF::Seconds iterationDuration;
+    WTF::Seconds activeDuration;
+    WTF::Seconds endTime;
+};
+
 header: <WebCore/AcceleratedEffect.h>
 [CustomHeader] struct WebCore::AcceleratedEffectKeyframe {
     double offset;
@@ -5786,23 +5799,14 @@ header: <WebCore/AcceleratedEffect.h>
 };
 
 [RefCounted] class WebCore::AcceleratedEffect {
+    WebCore::AnimationEffectTiming timing();
     Vector<WebCore::AcceleratedEffectKeyframe> keyframes();
     WebCore::WebAnimationType animationType();
-    WebCore::FillMode fill();
-    WebCore::PlaybackDirection direction();
     WebCore::CompositeOperation compositeOperation();
-    RefPtr<WebCore::TimingFunction> timingFunction();
     RefPtr<WebCore::TimingFunction> defaultKeyframeTimingFunction();
     OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties();
     bool paused();
-    double iterationStart();
-    double iterations();
     double playbackRate();
-    WTF::Seconds delay();
-    WTF::Seconds endDelay();
-    WTF::Seconds iterationDuration();
-    WTF::Seconds activeDuration();
-    WTF::Seconds endTime();
     std::optional<WTF::Seconds> startTime();
     std::optional<WTF::Seconds> holdTime();
 };
