@@ -61,6 +61,16 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     return self;
 }
 
+- (void)dealloc
+{
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (_asyncTextInteraction)
+        [_view removeInteraction:_asyncTextInteraction.get()];
+#endif
+
+    [super dealloc];
+}
+
 - (UIWKTextInteractionAssistant *)textInteractionAssistant
 {
     return _textInteractionAssistant.get();

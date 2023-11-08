@@ -255,6 +255,8 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
+enum class RequestAutocorrectionContextResult : bool { Empty, LastContext };
+
 struct RemoveBackgroundData {
     WebCore::ElementContext element;
     RetainPtr<CGImageRef> image;
@@ -498,7 +500,7 @@ struct ImageAnalysisContextMenuActionData {
     NSInteger _suppressNonEditableSingleTapTextInteractionCount;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
     std::optional<WebCore::DOMPasteAccessCategory> _domPasteRequestCategory;
-    BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
+    CompletionHandler<void(WebKit::RequestAutocorrectionContextResult)> _pendingAutocorrectionContextHandler;
     CompletionHandler<void()> _pendingRunModalJavaScriptDialogCallback;
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
