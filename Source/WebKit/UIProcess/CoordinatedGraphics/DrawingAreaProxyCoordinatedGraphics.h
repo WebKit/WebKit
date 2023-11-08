@@ -99,17 +99,10 @@ private:
         void start(CompletionHandler<void()>&&);
 
     private:
-        static int webViewDrawCallback(DrawingMonitor*);
-
         void stop();
-        void didDraw();
 
-        MonotonicTime m_startTime;
         CompletionHandler<void()> m_callback;
         RunLoop::Timer m_timer;
-#if PLATFORM(GTK)
-        WebPageProxy& m_webPage;
-#endif
     };
 
     // The current layer tree context.
