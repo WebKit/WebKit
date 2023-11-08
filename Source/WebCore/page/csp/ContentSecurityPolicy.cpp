@@ -826,15 +826,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.left(40).toString() : emptyString();
 
     if (!m_client) {
-        if (!usesReportTo && !is<Document>(m_scriptExecutionContext))
+        // Unable to ref the document as it may have started destruction.
+        auto* document = dynamicDowncast<Document>(m_scriptExecutionContext);
+        if (!document || !document->frame())
             return;
 
-        auto& document = downcast<Document>(*m_scriptExecutionContext);
-        auto* frame = document.frame();
-        if (!frame)
-            return;
-
-        info.documentURI = shouldReportProtocolOnly(document.url()) ? document.url().protocol().toString() : document.url().strippedForUseAsReferrer();
+        info.documentURI = shouldReportProtocolOnly(document->url()) ? document->url().protocol().toString() : document->url().strippedForUseAsReferrer();
 
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
