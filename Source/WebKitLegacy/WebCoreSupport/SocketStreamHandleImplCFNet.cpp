@@ -331,7 +331,6 @@ void SocketStreamHandleImpl::createStreams()
     }
 
     if (shouldUseSSL()) {
-        // FIXME: rdar://86641948 Remove shouldAcceptInsecureCertificatesForWebSockets once HAVE(NSURLSESSION_WEBSOCKET) is supported on all Cocoa platforms.
         CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() || m_shouldAcceptInsecureCertificates ? kCFBooleanFalse : kCFBooleanTrue;
         const void* keys[] = {
             kCFStreamSSLPeerName,

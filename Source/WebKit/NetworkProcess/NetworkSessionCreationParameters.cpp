@@ -94,9 +94,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) &&
     encoder << webPushMachServiceName;
     encoder << webPushPartitionString;
     encoder << enablePrivateClickMeasurementDebugMode;
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    encoder << shouldAcceptInsecureCertificatesForWebSockets;
-#endif
     encoder << isBlobRegistryTopOriginPartitioningEnabled;
 
     encoder << unifiedOriginStorageLevel;
@@ -353,13 +350,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!enablePrivateClickMeasurementDebugMode)
         return std::nullopt;
 
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    std::optional<bool> shouldAcceptInsecureCertificatesForWebSockets;
-    decoder >> shouldAcceptInsecureCertificatesForWebSockets;
-    if (!shouldAcceptInsecureCertificatesForWebSockets)
-        return std::nullopt;
-#endif
-
     std::optional<bool> isBlobRegistryTopOriginPartitioningEnabled;
     decoder >> isBlobRegistryTopOriginPartitioningEnabled;
     if (!isBlobRegistryTopOriginPartitioningEnabled)
@@ -524,9 +514,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*webPushMachServiceName)
         , WTFMove(*webPushPartitionString)
         , WTFMove(*enablePrivateClickMeasurementDebugMode)
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-        , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)
-#endif
         , *isBlobRegistryTopOriginPartitioningEnabled
         , *unifiedOriginStorageLevel
         , WTFMove(*perOriginStorageQuota)

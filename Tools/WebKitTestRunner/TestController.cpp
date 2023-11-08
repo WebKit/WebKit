@@ -1433,7 +1433,6 @@ const char* TestController::gpuProcessName()
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
-    WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
 }
 
 void TestController::setBackgroundFetchPermission(bool)
