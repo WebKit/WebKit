@@ -1549,7 +1549,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     UChar32 baseCharacter = *stringView.codePoints().begin();
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
 
-    if (!baseCharacterGlyphData.isValid())
+    if (!baseCharacterGlyphData.glyph)
         return nullptr;
     return baseCharacterGlyphData.font;
 }

@@ -51,7 +51,7 @@ struct GlyphData {
     {
     }
 
-    bool isValid() const { return font; }
+    bool isValid() const { return glyph || font; }
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
