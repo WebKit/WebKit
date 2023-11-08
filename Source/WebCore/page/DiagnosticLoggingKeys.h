@@ -31,8 +31,6 @@ namespace WebCore {
 
 class DiagnosticLoggingKeys {
 public:
-    WEBCORE_EXPORT static String activeInForegroundTabKey();
-    WEBCORE_EXPORT static String activeInBackgroundTabOnlyKey();
     static String applicationCacheKey();
 #if ENABLE(APPLICATION_MANIFEST)
     static String applicationManifestKey();
@@ -77,7 +75,6 @@ public:
     static String fontKey();
     static String httpsNoStoreKey();
     static String imageKey();
-    WEBCORE_EXPORT static String inactiveKey();
     WEBCORE_EXPORT static String internalErrorKey();
     WEBCORE_EXPORT static String invalidSessionIDKey();
     WEBCORE_EXPORT static String isAttachmentKey();
@@ -115,7 +112,6 @@ public:
     static String visuallyEmptyKey();
     static String pageContainsAtLeastOneMediaEngineKey();
     static String pageContainsMediaEngineKey();
-    static String pageHandlesWebGLContextLossKey();
     static String pageLoadedKey();
     static String playedKey();
     static String postPageBackgroundingCPUUsageKey();

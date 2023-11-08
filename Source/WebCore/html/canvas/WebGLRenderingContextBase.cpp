@@ -659,13 +659,10 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     , m_generatedImageCache(4)
     , m_attributes(attributes)
     , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
-    , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
 #if ENABLE(WEBXR)
     , m_isXRCompatible(attributes.xrCompatible)
 #endif
 {
-    if (htmlCanvas())
-        m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 }
 
 WebGLCanvas WebGLRenderingContextBase::canvas()
@@ -687,25 +684,6 @@ OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
     return &downcast<OffscreenCanvas>(base);
 }
 #endif
-
-// We check for context loss handling after a few seconds to give the JS a chance to register the event listeners
-// and to discard temporary GL contexts (e.g. feature detection).
-void WebGLRenderingContextBase::checkForContextLossHandling()
-{
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    if (!canvas->renderer())
-        return;
-
-    auto* page = canvas->document().page();
-    if (!page)
-        return;
-
-    bool handlesContextLoss = canvas->hasEventListeners(eventNames().webglcontextlostEvent) && canvas->hasEventListeners(eventNames().webglcontextrestoredEvent);
-    page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey(), handlesContextLoss ? DiagnosticLoggingKeys::yesKey() : DiagnosticLoggingKeys::noKey(), ShouldSample::No);
-}
 
 void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> context)
 {

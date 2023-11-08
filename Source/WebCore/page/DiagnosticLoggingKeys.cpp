@@ -63,11 +63,6 @@ String DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey()
     return "postPageBackgroundingMemoryUsage"_s;
 }
 
-String DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey()
-{
-    return "pageHandlesWebGLContextLoss"_s;
-}
-
 String DiagnosticLoggingKeys::postPageLoadCPUUsageKey()
 {
     return "postPageLoadCPUUsage"_s;
@@ -233,11 +228,6 @@ String DiagnosticLoggingKeys::imageKey()
     return "image"_s;
 }
 
-String DiagnosticLoggingKeys::inactiveKey()
-{
-    return "inactive"_s;
-}
-
 String DiagnosticLoggingKeys::internalErrorKey()
 {
     return "internalError"_s;
@@ -346,16 +336,6 @@ String DiagnosticLoggingKeys::cpuUsageKey()
 String DiagnosticLoggingKeys::createSharedBufferFailedKey()
 {
     return "createSharedBufferFailed"_s;
-}
-
-String DiagnosticLoggingKeys::activeInForegroundTabKey()
-{
-    return "activeInForegroundTab"_s;
-}
-
-String DiagnosticLoggingKeys::activeInBackgroundTabOnlyKey()
-{
-    return "activeInBackgroundTabOnly"_s;
 }
 
 String DiagnosticLoggingKeys::applicationCacheKey()
