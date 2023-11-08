@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<body>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+indexedDB.open('abort-index-rename').onupgradeneeded = (event) => {
+    request = event.target;
+    transaction = request.transaction;
+    transaction.onabort = () => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    database = request.result;
+    objectStore = database.createObjectStore('os');
+    index = objectStore.createIndex('foo', 'foo');
+    index.name = 'bar';
+    database.deleteObjectStore('os');
+    objectStore2 = database.createObjectStore('os2');
+    objectStore2.add('value', 'key').onsuccess = () => {
+        transaction.abort();
+    }
+};
+</script>
+<p>This test passes if it doesn't crash.</p>
+</body>
