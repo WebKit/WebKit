@@ -69,13 +69,14 @@ UserGestureToken::UserGestureToken(IsProcessingUserGesture isProcessingUserGestu
             m_documentsImpactedByUserGesture.add(*ancestorDocument);
     }
 
-    auto& documentOrigin = document->securityOrigin();
+    Ref documentOrigin = document->securityOrigin();
     for (RefPtr frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         RefPtr frameDocument = localFrame->document();
-        if (frameDocument && documentOrigin.isSameOriginDomain(frameDocument->securityOrigin()))
+        Ref frameOrigin = frameDocument->securityOrigin();
+        if (frameDocument && documentOrigin->isSameOriginDomain(frameOrigin.get()))
             m_documentsImpactedByUserGesture.add(*frameDocument);
     }
 }

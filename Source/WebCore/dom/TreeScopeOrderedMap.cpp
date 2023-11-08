@@ -37,6 +37,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
+#include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
@@ -117,7 +118,7 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
     }
 
     // We know there's at least one node that matches; iterate to find the first one.
-    for (Ref element : descendantsOfType<Element>(scope.rootNode())) {
+    for (Ref element : descendantsOfType<Element>(scope.protectedRootNode().get())) {
         if (!element->isInTreeScope())
             continue;
         if (!keyMatches(key, element))
@@ -163,7 +164,7 @@ inline Vector<CheckedRef<Element>>* TreeScopeOrderedMap::getAll(const AtomString
 
     if (entry.orderedList.isEmpty()) {
         entry.orderedList.reserveCapacity(entry.count);
-        auto elementDescendants = descendantsOfType<Element>(scope.rootNode());
+        auto elementDescendants = descendantsOfType<Element>(scope.protectedRootNode().get());
         for (auto it = entry.element ? elementDescendants.beginAt(*entry.element) : elementDescendants.begin(); it; ++it) {
             if (keyMatches(key, *it))
                 entry.orderedList.append(*it);
