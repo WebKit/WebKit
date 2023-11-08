@@ -162,7 +162,7 @@ void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
         m_inputBuffer.remove(0, boxLength);
     }
 
-    SourceBufferPrivate::appendCompleted(parsingSucceeded, m_mediaSource->isEnded());
+    SourceBufferPrivate::appendCompleted(parsingSucceeded);
 }
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)

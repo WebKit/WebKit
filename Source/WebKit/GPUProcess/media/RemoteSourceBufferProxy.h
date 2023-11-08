@@ -98,9 +98,8 @@ private:
     void setMediaSourceEnded(bool);
     void setReadyState(WebCore::MediaPlayer::ReadyState);
     void startChangingType();
-    void clientReadyStateChanged(bool sourceIsEnded);
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
-    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
+    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
     void resetTrackBuffers();
     void clearTrackBuffers();
@@ -118,7 +117,7 @@ private:
     void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
     void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
     void enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
-    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
+    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
     void minimumUpcomingPresentationTimeForTrackID(const AtomString&, CompletionHandler<void(MediaTime)>&&);
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
 

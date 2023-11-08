@@ -93,14 +93,14 @@ private:
     void setGroupStartTimestamp(const MediaTime&) final;
     void setGroupStartTimestampToEndTimestamp() final;
     void setShouldGenerateTimestamps(bool) final;
-    void clientReadyStateChanged(bool) final;
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&&) final;
-    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded) final;
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&&) final;
+    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime) final;
     void resetTimestampOffsetInTrackBuffers() final;
     void startChangingType() final;
     void setTimestampOffset(const MediaTime&) final;
     void setAppendWindowStart(const MediaTime&) final;
     void setAppendWindowEnd(const MediaTime&) final;
+    Vector<WebCore::PlatformTimeRanges> trackBuffersRanges() const final { return m_trackBufferRanges; };
 
     void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
     void seekToTime(const MediaTime&) final;
@@ -108,7 +108,7 @@ private:
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;
     uint64_t totalTrackBufferSizeInBytes() const final;
 
-    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded) final;
+    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime) final;
 
     // Internals Utility methods
     void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
