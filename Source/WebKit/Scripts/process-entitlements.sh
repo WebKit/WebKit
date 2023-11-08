@@ -351,7 +351,6 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
-    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -359,7 +358,10 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+if [[ "${PRODUCT_NAME}" != WebContentExtension ]]; then
+    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+fi
     plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
     webcontent_sandbox_entitlements
 }
@@ -400,7 +402,6 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
-    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.mediaexperience.startrecordinginthebackground.allow bool YES
     plistbuddy Add :com.apple.private.mediaexperience.processassertionaudittokens.allow bool YES
     plistbuddy add :com.apple.private.mediaexperience.recordingWebsite.allow bool YES
@@ -421,7 +422,10 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.springboard.statusbarstyleoverrides.coordinator:0 string UIStatusBarStyleOverrideWebRTCAudioCapture
     plistbuddy Add :com.apple.springboard.statusbarstyleoverrides.coordinator:1 string UIStatusBarStyleOverrideWebRTCCapture
 
+if [[ "${PRODUCT_NAME}" != GPUExtension ]]; then
+    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.GPU
+fi
 
     plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
     plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
@@ -469,7 +473,9 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.appstored:0 string InstallWebAttribution
 
     plistbuddy Add :com.apple.private.pac.exception bool YES
+if [[ "${PRODUCT_NAME}" != NetworkingExtension ]]; then
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Networking
+fi
     plistbuddy Add :com.apple.symptom_analytics.configure bool YES
 
     plistbuddy Add :com.apple.private.assets.bypass-asset-types-check bool YES
