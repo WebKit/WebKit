@@ -287,6 +287,10 @@ class ContextImpl : public GLImplFactory
                                                           const gl::PixelLocalStoragePlane[],
                                                           const GLenum storeops[]);
 
+    // GL_ANGLE_variable_rasterization_rate_metal
+    virtual angle::Result bindMetalRasterizationRateMap(gl::Context *,
+                                                        GLMTLRasterizationRateMapANGLE map);
+
   protected:
     const gl::State &mState;
     gl::MemoryProgramCache *mMemoryProgramCache;

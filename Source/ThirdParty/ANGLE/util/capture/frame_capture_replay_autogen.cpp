@@ -105,6 +105,10 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                captures[3].value.GLbooleanVal, captures[4].value.GLintVal,
                                captures[5].value.GLenumVal, captures[6].value.GLenumVal);
             break;
+        case angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE:
+            glBindMetalRasterizationRateMapANGLE(
+                captures[0].value.GLMTLRasterizationRateMapANGLEVal);
+            break;
         case angle::EntryPoint::GLBindProgramPipeline:
             glBindProgramPipeline(gProgramPipelineMap[captures[0].value.GLuintVal]);
             break;

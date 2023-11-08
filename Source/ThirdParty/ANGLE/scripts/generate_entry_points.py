@@ -963,6 +963,7 @@ FORMAT_DICT = {
     "GLfloat": "%f",
     "GLint": "%d",
     "GLintptr": UNSIGNED_LONG_LONG_FORMAT,
+    "GLMTLRasterizationRateMapANGLE": POINTER_FORMAT,
     "GLshort": "%d",
     "GLsizei": "%d",
     "GLsizeiptr": UNSIGNED_LONG_LONG_FORMAT,

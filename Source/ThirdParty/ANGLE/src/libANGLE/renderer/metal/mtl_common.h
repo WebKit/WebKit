@@ -411,6 +411,8 @@ using SharedEventRef = AutoObjCPtr<id<MTLSharedEvent>>;
 using SharedEventRef = AutoObjCObj<NSObject>;
 #endif
 
+using RasterizationRateMapRef = AutoObjCPtr<id<MTLRasterizationRateMap>>;
+
 // The native image index used by Metal back-end,  the image index uses native mipmap level instead
 // of "virtual" level modified by OpenGL's base level.
 using MipmapNativeLevel = gl::LevelIndexWrapper<uint32_t>;

@@ -9768,6 +9768,12 @@ void Context::drawPixelLocalStorageEXTDisable(const PixelLocalStoragePlane plane
     ANGLE_CONTEXT_TRY(mImplementation->drawPixelLocalStorageEXTDisable(this, planes, storeops));
 }
 
+void Context::bindMetalRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    ANGLE_CONTEXT_TRY(mImplementation->bindMetalRasterizationRateMap(this, map));
+    getMutablePrivateState()->setVariableRasterizationRateMap(map);
+}
+
 // ErrorSet implementation.
 ErrorSet::ErrorSet(Debug *debug,
                    const angle::FrontendFeatures &frontendFeatures,

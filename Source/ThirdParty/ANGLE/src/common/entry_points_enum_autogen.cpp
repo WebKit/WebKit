@@ -538,6 +538,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glBindImageTexture";
         case EntryPoint::GLBindImageTextures:
             return "glBindImageTextures";
+        case EntryPoint::GLBindMetalRasterizationRateMapANGLE:
+            return "glBindMetalRasterizationRateMapANGLE";
         case EntryPoint::GLBindProgramPipeline:
             return "glBindProgramPipeline";
         case EntryPoint::GLBindProgramPipelineEXT:

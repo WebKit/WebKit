@@ -373,6 +373,8 @@ PrivateState::PrivateState(const EGLenum clientType,
       mLogicOp(LogicalOperation::Copy),
       mPatchVertices(3),
       mPixelLocalStorageActivePlanes(0),
+      mVariableRasterizationRateEnabled(false),
+      mVariableRasterizationRateMap(nullptr),
       mNoSimultaneousConstantColorAndAlphaBlendFunc(false),
       mSetBlendIndexedInvoked(false),
       mSetBlendFactorsIndexedInvoked(false),
@@ -1241,6 +1243,26 @@ void PrivateState::setLogicOp(LogicalOperation opcode)
     }
 }
 
+void PrivateState::setVariableRasterizationRateEnabled(bool enabled)
+{
+    if (mVariableRasterizationRateEnabled != enabled)
+    {
+        mVariableRasterizationRateEnabled = enabled;
+        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+    }
+}
+
+void PrivateState::setVariableRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    if (mVariableRasterizationRateMap != map)
+    {
+        mVariableRasterizationRateMap = map;
+        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+    }
+}
+
 void PrivateState::setVertexAttribf(GLuint index, const GLfloat values[4])
 {
     ASSERT(static_cast<size_t>(index) < mVertexAttribCurrentValues.size());
@@ -1369,6 +1391,9 @@ void PrivateState::setEnableFeature(GLenum feature, bool enabled)
             return;
         case GL_FETCH_PER_SAMPLE_ARM:
             mFetchPerSample = enabled;
+            return;
+        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
+            setVariableRasterizationRateEnabled(enabled);
             return;
         default:
             break;
@@ -1534,6 +1559,8 @@ bool PrivateState::getEnableFeature(GLenum feature) const
             return mShadingRatePreserveAspectRatio;
         case GL_FETCH_PER_SAMPLE_ARM:
             return mFetchPerSample;
+        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
+            return mVariableRasterizationRateEnabled;
     }
 
     ASSERT(mClientVersion.major == 1);
@@ -3400,6 +3427,9 @@ void State::getPointerv(const Context *context, GLenum pname, void **params) con
                                           context->vertexArrayIndex(ParamToVertexArrayType(pname))),
                                       GL_VERTEX_ATTRIB_ARRAY_POINTER, params);
             return;
+        case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
+            *params = privateState().getVariableRasterizationRateMap();
+            break;
         default:
             UNREACHABLE();
             break;
