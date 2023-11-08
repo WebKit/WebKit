@@ -1271,9 +1271,14 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         repaintContainer = &view();
 
     if (fullRepaint) {
-        repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
-        if (newClippedOverflowRect != oldClippedOverflowRect)
+        if (newClippedOverflowRect.contains(oldClippedOverflowRect))
             repaintUsingContainer(repaintContainer, newClippedOverflowRect);
+        else if (oldClippedOverflowRect.contains(newClippedOverflowRect))
+            repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
+        else {
+            repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
+            repaintUsingContainer(repaintContainer, newClippedOverflowRect);
+        }
         return true;
     }
 

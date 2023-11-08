@@ -1,5 +1,5 @@
 Pass if this line is properly repainted.
 (repaint rects
-  (rect 8 8 480 23)
+  (rect 8 8 480 21)
 )
 
