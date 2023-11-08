@@ -27,16 +27,25 @@
 
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
+#import <Metal/Metal.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class ARSession;
 
 @interface WKARPresentationSessionDescriptor : NSObject <NSCopying>
+@property (nonatomic, readwrite) MTLPixelFormat colorFormat;
+@property (nonatomic, readwrite) MTLTextureUsage colorUsage;
+@property (nonatomic, readwrite) NSUInteger rasterSampleCount;
 @property (nonatomic, nullable, weak, readwrite) UIViewController *presentingViewController;
 @end
 
 @protocol WKARPresentationSession <NSObject>
 @property (nonatomic, retain, readonly) ARSession *session;
+@property (nonatomic, nonnull, retain, readonly) id<MTLSharedEvent> completionEvent;
+@property (nonatomic, nullable, retain, readonly) id<MTLTexture> colorTexture;
+@property (nonatomic, readonly) NSUInteger renderingFrameIndex;
+
 - (NSUInteger)startFrame;
 - (void)present;
 - (void)terminate;

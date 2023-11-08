@@ -32,9 +32,23 @@
 #import "WKARPresentationSession.h"
 #import "WebPageProxy.h"
 
+#import <Metal/MTLEvent_Private.h>
+#import <Metal/MTLTexture_Private.h>
+
 #import "ARKitSoftLink.h"
 
 namespace WebKit {
+
+static std::tuple<MachSendRight, bool> makeMachSendRight(id<MTLTexture> texture)
+{
+    RetainPtr<MTLSharedTextureHandle> sharedTextureHandle = adoptNS([texture newSharedTextureHandle]);
+    if (sharedTextureHandle)
+        return { MachSendRight::adopt([sharedTextureHandle.get() createMachPort]), true };
+    auto surface = WebCore::IOSurface::createFromSurface(texture.iosurface, WebCore::DestinationColorSpace::SRGB());
+    if (!surface)
+        return { MachSendRight(), false };
+    return { surface->createSendRight(), false };
+}
 
 ARKitCoordinator::ARKitCoordinator()
 {
@@ -179,6 +193,9 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for session owned by another page");
                 return;
             }
+
+            // FIXME: What to do here? The frame is submitted on the signalling of
+            // of active.presentationSession.completionEvent
         },
         [&](Terminating&) {
             RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for a terminating session");
@@ -227,6 +244,21 @@ void ARKitCoordinator::renderLoop()
             [active.presentationSession startFrame];
 
             PlatformXR::Device::FrameData frameData = { };
+
+            auto colorTexture = makeMachSendRight([active.presentationSession colorTexture]);
+            auto renderingFrameIndex = [active.presentationSession renderingFrameIndex];
+            // FIXME: Send this event once at setup time, not every frame.
+            id<MTLSharedEvent> completionEvent = [active.presentationSession completionEvent];
+            RetainPtr<MTLSharedEventHandle> completionHandle = adoptNS([completionEvent newSharedEventHandle]);
+            auto completionPort = MachSendRight::create([completionHandle.get() eventPort]);
+
+            // FIXME: rdar://77858090 (Need to transmit color space information)
+            frameData.layers.set(defaultLayerHandle(), PlatformXR::Device::FrameData::LayerData {
+                .colorTexture = WTFMove(colorTexture),
+                .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
+            });
+            frameData.shouldRender = true;
+
             callOnMainRunLoop([callback = WTFMove(active.onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
                 callback(WTFMove(frameData));
             });
