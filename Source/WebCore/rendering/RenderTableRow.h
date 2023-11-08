@@ -129,4 +129,4 @@ inline RenderTableRow* RenderTableSection::lastRow() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isTableRow())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isRenderTableRow())

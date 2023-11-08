@@ -930,7 +930,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
 
     // Paint Indicators.
 
-    if (box.isMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
+    if (box.isRenderMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
         int size = 2;
         int count = 3;
         int padding = 3;
@@ -2464,7 +2464,7 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     Path glyphPath;
     FloatSize glyphSize;
 
-    if (box.isMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
+    if (box.isRenderMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
         constexpr int length = 18;
         constexpr int count = 3;
         constexpr int padding = 12;

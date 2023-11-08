@@ -674,9 +674,9 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     ASSERT(renderer());
 
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(renderer()->isListBox() || m_multiple);
+    ASSERT(renderer()->isRenderListBox() || m_multiple);
 #else
-    ASSERT(renderer()->isMenuList() || m_multiple);
+    ASSERT(renderer()->isRenderMenuList() || m_multiple);
 #endif
 
     ASSERT(!listItems().size() || m_activeSelectionAnchorIndex >= 0);
@@ -1165,7 +1165,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 {
     ASSERT(renderer());
-    ASSERT(renderer()->isMenuList());
+    ASSERT(renderer()->isRenderMenuList());
 
     auto& eventNames = WebCore::eventNames();
     if (event.type() == eventNames.keydownEvent) {
@@ -1568,7 +1568,7 @@ void HTMLSelectElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (renderer->isMenuList())
+    if (renderer->isRenderMenuList())
         menuListDefaultEventHandler(event);
     else 
         listBoxDefaultEventHandler(event);

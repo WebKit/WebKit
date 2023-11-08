@@ -102,6 +102,6 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceClipper)
-static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacySVGResourceClipper(); }
+static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceClipper(); }
 static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::ClipperResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

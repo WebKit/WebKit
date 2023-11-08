@@ -153,7 +153,7 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
     objectBoundingBoxValid = false;
     repaintBoundingBox = FloatRect();
     for (auto& current : childrenOfType<RenderObject>(container)) {
-        if (current.isLegacySVGHiddenContainer())
+        if (current.isLegacyRenderSVGHiddenContainer())
             continue;
 
         // Don't include elements in the union that do not render.
@@ -173,10 +173,10 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
 
 FloatRect SVGRenderSupport::computeContainerStrokeBoundingBox(const RenderElement& container)
 {
-    ASSERT(container.isLegacySVGRoot() || container.isLegacySVGContainer());
+    ASSERT(container.isLegacyRenderSVGRoot() || container.isLegacyRenderSVGContainer());
     FloatRect strokeBoundingBox = FloatRect();
     for (auto& current : childrenOfType<RenderObject>(container)) {
-        if (current.isLegacySVGHiddenContainer())
+        if (current.isLegacyRenderSVGHiddenContainer())
             continue;
 
         // Don't include elements in the union that do not render.
@@ -238,7 +238,7 @@ static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& rende
 
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
-    while (ancestor && !ancestor->isSVGRootOrLegacySVGRoot()) {
+    while (ancestor && !ancestor->isRenderOrLegacyRenderSVGRoot()) {
         if (is<LegacyRenderSVGTransformableContainer>(*ancestor))
             return downcast<LegacyRenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
         if (is<LegacyRenderSVGViewportContainer>(*ancestor))
@@ -474,7 +474,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
         float scaleFactor = 1;
 
         if (is<SVGGeometryElement>(element)) {
-            ASSERT(renderer.isSVGShapeOrLegacySVGShape());
+            ASSERT(renderer.isRenderOrLegacyRenderSVGShape());
             // FIXME: A value of zero is valid. Need to differentiate this case from being unspecified.
             if (float pathLength = downcast<SVGGeometryElement>(element)->pathLength()) {
                 if (is<LegacyRenderSVGShape>(renderer))

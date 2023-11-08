@@ -1162,7 +1162,7 @@ bool SVGElement::hasAssociatedSVGLayoutBox() const
         return false;
 
     // Legacy SVG engine specific condition.
-    if (renderer()->isLegacySVGRoot())
+    if (renderer()->isLegacyRenderSVGRoot())
         return false;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

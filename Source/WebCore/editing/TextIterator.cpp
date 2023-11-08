@@ -219,7 +219,7 @@ static inline bool fullyClipsContents(Node& node)
 static inline bool ignoresContainerClip(Node& node)
 {
     CheckedPtr renderer = node.renderer();
-    if (!renderer || renderer->isTextOrLineBreak())
+    if (!renderer || renderer->isRenderTextOrLineBreak())
         return false;
     return renderer->style().hasOutOfFlowPosition();
 }
@@ -269,9 +269,9 @@ bool isRendererReplacedElement(RenderObject* renderer, TextIteratorBehaviors beh
     
     bool isAttachment = false;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    isAttachment = renderer->isAttachment();
+    isAttachment = renderer->isRenderAttachment();
 #endif
-    if (renderer->isImage() || renderer->isWidget() || renderer->isMedia() || isAttachment)
+    if (renderer->isImage() || renderer->isRenderWidget() || renderer->isRenderMedia() || isAttachment)
         return true;
 
     if (is<Element>(renderer->node())) {
@@ -485,7 +485,7 @@ void TextIterator::advance()
                 m_handledChildren = true;
             } else {
                 // handle current node according to its type
-                if (renderer->isText() && m_currentNode->isTextNode())
+                if (renderer->isRenderText() && m_currentNode->isTextNode())
                     m_handledNode = handleTextNode();
                 else if (isRendererReplacedElement(renderer.get(), m_behaviors))
                     m_handledNode = handleReplacedElement();
@@ -898,7 +898,7 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
         && is<RenderBlock>(*renderer)
         && !renderer->isFloatingOrOutOfFlowPositioned()
         && !renderer->isBody()
-        && !renderer->isRubyText();
+        && !renderer->isRenderRubyText();
 }
 
 static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false)
@@ -976,7 +976,7 @@ static int maxOffsetIncludingCollapsedSpaces(Node& node)
 bool TextIterator::shouldRepresentNodeOffsetZero()
 {
     if (m_behaviors.contains(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions)) {
-        if (CheckedPtr renderer = m_currentNode->renderer(); renderer && renderer->isTable())
+        if (CheckedPtr renderer = m_currentNode->renderer(); renderer && renderer->isRenderTable())
             return true;
     }
 
@@ -1034,7 +1034,7 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
 
 bool TextIterator::shouldEmitSpaceBeforeAndAfterNode(Node& node)
 {
-    return node.renderer() && node.renderer()->isTable() && (node.renderer()->isInline() || m_behaviors.contains(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
+    return node.renderer() && node.renderer()->isRenderTable() && (node.renderer()->isInline() || m_behaviors.contains(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
 }
 
 void TextIterator::representNodeOffsetZero()
@@ -1251,7 +1251,7 @@ void SimplifiedBackwardsTextIterator::advance()
         // Don't handle node if we start iterating at [node, 0].
         if (!m_handledNode && !(m_node == m_endContainer && !m_endOffset)) {
             CheckedPtr renderer = m_node->renderer();
-            if (renderer && renderer->isText() && m_node->isTextNode()) {
+            if (renderer && renderer->isRenderText() && m_node->isTextNode()) {
                 if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
             } else if (isRendererReplacedElement(renderer.get(), m_behaviors)) {

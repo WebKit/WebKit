@@ -72,6 +72,6 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderTextFragment)
-    static bool isType(const WebCore::RenderText& renderer) { return renderer.isTextFragment(); }
+    static bool isType(const WebCore::RenderText& renderer) { return renderer.isRenderTextFragment(); }
     static bool isType(const WebCore::RenderObject& renderer) { return is<WebCore::RenderText>(renderer) && isType(downcast<WebCore::RenderText>(renderer)); }
 SPECIALIZE_TYPE_TRAITS_END()

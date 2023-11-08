@@ -188,7 +188,7 @@ public:
 
     void setSelectionState(HighlightState) override;
 
-    bool canHaveBoxInfoInFragment() const { return !isFloating() && !isReplacedOrInlineBlock() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
+    bool canHaveBoxInfoInFragment() const { return !isFloating() && !isReplacedOrInlineBlock() && !isInline() && !isRenderTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
@@ -269,4 +269,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isBoxModelObject())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isRenderBoxModelObject())

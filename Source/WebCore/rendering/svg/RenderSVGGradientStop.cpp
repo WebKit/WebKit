@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGGradientStop);
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, RenderStyle&& style)
     : RenderElement(Type::SVGGradientStop, element, WTFMove(style), 0)
 {
-    ASSERT(isSVGGradientStop());
+    ASSERT(isRenderSVGGradientStop());
 }
 
 RenderSVGGradientStop::~RenderSVGGradientStop() = default;

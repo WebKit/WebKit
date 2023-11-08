@@ -120,7 +120,7 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
 
         auto* renderer = parent->renderer();
-        if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+        if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
             return;
 
         if (is<SVGFEDiffuseLightingElement>(*parent)) {

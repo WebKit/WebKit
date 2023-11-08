@@ -468,7 +468,7 @@ HTMLMediaElement* HitTestResult::mediaElement() const
     if (!m_innerNonSharedNode)
         return nullptr;
 
-    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
+    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isRenderMedia()))
         return nullptr;
 
     if (is<HTMLMediaElement>(*m_innerNonSharedNode))

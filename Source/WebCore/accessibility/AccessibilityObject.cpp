@@ -1141,7 +1141,7 @@ bool AccessibilityObject::isMeter() const
         return true;
 
     RenderObject* renderer = this->renderer();
-    return renderer && renderer->isMeter();
+    return renderer && renderer->isRenderMeter();
 }
 
 static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange)

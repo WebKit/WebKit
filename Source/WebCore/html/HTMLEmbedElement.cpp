@@ -195,7 +195,7 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
         if (!parent->renderer())
             return false;
         if (!downcast<HTMLObjectElement>(*parent).useFallbackContent()) {
-            ASSERT(!parent->renderer()->isEmbeddedObject());
+            ASSERT(!parent->renderer()->isRenderEmbeddedObject());
             return false;
         }
     }

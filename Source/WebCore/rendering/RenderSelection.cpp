@@ -260,7 +260,7 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& quad : selectionGeometry->collectedSelectionQuads())
                 m_selectionGeometryGatherer.addQuad(selectionGeometry->repaintContainer(), quad);
-            if (!currentRenderer->isTextOrLineBreak())
+            if (!currentRenderer->isRenderTextOrLineBreak())
                 m_selectionGeometryGatherer.setTextOnly(false);
 #endif
             newSelectedRenderers.set(currentRenderer, WTFMove(selectionGeometry));

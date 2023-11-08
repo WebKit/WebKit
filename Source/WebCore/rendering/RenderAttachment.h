@@ -72,6 +72,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderAttachment, isAttachment())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderAttachment, isRenderAttachment())
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

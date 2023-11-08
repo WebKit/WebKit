@@ -109,7 +109,7 @@ RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeig
     bool isVertical = hasVerticalAppearance(input);
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (input.renderer()->isSlider() && !isVertical && input.list()) {
+    if (input.renderer()->isRenderSlider() && !isVertical && input.list()) {
         int offsetFromCenter = theme().sliderTickOffsetFromTrackCenter();
         LayoutUnit trackHeight;
         if (offsetFromCenter < 0)

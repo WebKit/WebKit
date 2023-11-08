@@ -90,4 +90,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGImage, isLegacySVGImage())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGImage, isLegacyRenderSVGImage())

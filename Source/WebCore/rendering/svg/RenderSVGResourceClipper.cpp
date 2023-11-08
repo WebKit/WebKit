@@ -61,7 +61,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceClipper);
 RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(Type::SVGResourceClipper, element, WTFMove(style))
 {
-    ASSERT(isSVGResourceClipper());
+    ASSERT(isRenderSVGResourceClipper());
 }
 
 RenderSVGResourceClipper::~RenderSVGResourceClipper() = default;

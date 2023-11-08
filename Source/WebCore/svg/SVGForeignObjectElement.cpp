@@ -130,7 +130,7 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
         return false;
 
     while (ancestor && ancestor->isSVGElement()) {
-        if (ancestor->renderer() && (ancestor->renderer()->isSVGHiddenContainer() || ancestor->renderer()->isLegacySVGHiddenContainer()))
+        if (ancestor->renderer() && (ancestor->renderer()->isRenderSVGHiddenContainer() || ancestor->renderer()->isLegacyRenderSVGHiddenContainer()))
             return false;
 
         ancestor = ancestor->parentElement();

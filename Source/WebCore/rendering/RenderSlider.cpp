@@ -55,7 +55,7 @@ RenderSlider::RenderSlider(HTMLInputElement& element, RenderStyle&& style)
 {
     // We assume RenderSlider works only with <input type=range>.
     ASSERT(element.isRangeControl());
-    ASSERT(isSlider());
+    ASSERT(isRenderSlider());
 }
 
 RenderSlider::~RenderSlider() = default;

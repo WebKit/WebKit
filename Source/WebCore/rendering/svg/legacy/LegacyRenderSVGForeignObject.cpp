@@ -46,7 +46,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
 LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::LegacySVGForeignObject, element, WTFMove(style))
 {
-    ASSERT(isLegacySVGForeignObject());
+    ASSERT(isLegacyRenderSVGForeignObject());
 }
 
 LegacyRenderSVGForeignObject::~LegacyRenderSVGForeignObject() = default;

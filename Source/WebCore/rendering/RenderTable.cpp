@@ -84,7 +84,7 @@ RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
     , m_columnOffsetHeight(-1)
 {
     setChildrenInline(false);
-    ASSERT(isTable());
+    ASSERT(isRenderTable());
 }
 
 RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
@@ -102,7 +102,7 @@ RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
     , m_borderEnd(0)
 {
     setChildrenInline(false);
-    ASSERT(isTable());
+    ASSERT(isRenderTable());
 }
 
 RenderTable::~RenderTable() = default;
@@ -753,7 +753,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.updateSubtreePaintRootForChildren(this);
 
     for (auto& box : childrenOfType<RenderBox>(*this)) {
-        if (!box.hasSelfPaintingLayer() && (box.isTableSection() || box.isTableCaption())) {
+        if (!box.hasSelfPaintingLayer() && (box.isRenderTableSection() || box.isRenderTableCaption())) {
             LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
             box.paint(info, childPoint);
         }
@@ -1614,7 +1614,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Check kids first.
     if (!hasNonVisibleOverflow() || locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-            if (is<RenderBox>(*child) && !downcast<RenderBox>(*child).hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
+            if (is<RenderBox>(*child) && !downcast<RenderBox>(*child).hasSelfPaintingLayer() && (child->isRenderTableSection() || child->isRenderTableCaption())) {
                 LayoutPoint childPoint = flipForWritingModeForChild(*downcast<RenderBox>(child), adjustedLocation);
                 if (child->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));

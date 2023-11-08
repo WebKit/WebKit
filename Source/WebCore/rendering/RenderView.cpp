@@ -184,7 +184,7 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
 
 bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isBox();
+    return child.isRenderBox();
 }
 
 void RenderView::layout()
@@ -210,7 +210,7 @@ void RenderView::layout()
                 || box.style().logicalHeight().isPercentOrCalculated()
                 || box.style().logicalMinHeight().isPercentOrCalculated()
                 || box.style().logicalMaxHeight().isPercentOrCalculated()
-                || box.isSVGRootOrLegacySVGRoot()
+                || box.isRenderOrLegacyRenderSVGRoot()
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);
         }

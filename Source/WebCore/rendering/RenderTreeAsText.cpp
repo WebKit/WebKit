@@ -254,7 +254,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     }
     
     RenderBlock* cb = o.containingBlock();
-    bool adjustForTableCells = cb ? cb->isTableCell() : false;
+    bool adjustForTableCells = cb ? cb->isRenderTableCell() : false;
 
     bool enableSubpixelPrecisionForTextDump = shouldEnableSubpixelPrecisionForTextDump(o.document());
     LayoutRect r;

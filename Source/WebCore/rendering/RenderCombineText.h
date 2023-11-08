@@ -58,4 +58,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCombineText, isCombineText())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCombineText, isRenderCombineText())

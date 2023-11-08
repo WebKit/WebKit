@@ -92,6 +92,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderSVGResourceFilter)
-    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isSVGResourceFilter(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderSVGResourceFilter(); }
     static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -67,6 +67,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGViewportContainer, isSVGViewportContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGViewportContainer, isRenderSVGViewportContainer())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

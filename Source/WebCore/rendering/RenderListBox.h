@@ -222,6 +222,6 @@ private:
 } // namepace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderListBox)
-    static bool isType(const WebCore::RenderObject& widget) { return widget.isListBox(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderListBox(); }
     static bool isType(const WebCore::ScrollableArea& area) { return area.isListBox(); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -698,7 +698,7 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityMediaObject::create(renderer);
 #endif
 
-    if (renderer->isSVGRootOrLegacySVGRoot())
+    if (renderer->isRenderOrLegacyRenderSVGRoot())
         return AccessibilitySVGRoot::create(renderer, this);
 
     if (is<SVGElement>(node))

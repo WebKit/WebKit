@@ -536,7 +536,7 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
 bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot())
+    if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isRenderSVGRoot())
         return false;
 #else
     UNUSED_PARAM(renderer);

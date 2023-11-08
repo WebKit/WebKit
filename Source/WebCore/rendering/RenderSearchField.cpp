@@ -61,7 +61,7 @@ RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& st
     , m_searchPopup(nullptr)
 {
     ASSERT(element.isSearchField());
-    ASSERT(isSearchField());
+    ASSERT(isRenderSearchField());
 }
 
 RenderSearchField::~RenderSearchField()

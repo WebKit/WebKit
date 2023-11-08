@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGTextPath);
 RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, RenderStyle&& style)
     : RenderSVGInline(Type::SVGTextPath, element, WTFMove(style))
 {
-    ASSERT(isSVGTextPath());
+    ASSERT(isRenderSVGTextPath());
 }
 
 SVGTextPathElement& RenderSVGTextPath::textPathElement() const

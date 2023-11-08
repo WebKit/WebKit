@@ -86,6 +86,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isSVGImage())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isRenderSVGImage())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

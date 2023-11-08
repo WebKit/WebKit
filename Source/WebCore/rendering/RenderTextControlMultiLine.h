@@ -54,4 +54,4 @@ inline RenderTextControlMultiLine* HTMLTextAreaElement::renderer() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlMultiLine, isTextArea())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlMultiLine, isRenderTextControlMultiLine())

@@ -249,9 +249,9 @@ inline RenderText::RenderText(Type type, Node& node, const String& text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
 {
     ASSERT(!m_text.isNull());
-    setIsText();
+    setIsRenderText();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-    ASSERT(isText());
+    ASSERT(isRenderText());
 }
 
 RenderText::RenderText(Type type, Text& textNode, const String& text)
@@ -432,7 +432,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             extentsRect = extentsRect.transposedRect();
         bool isFirstOnLine = !textBox->previousOnLine();
         bool isLastOnLine = !textBox->nextOnLine();
-        if (containingBlock->isRubyBase() || containingBlock->isRubyText())
+        if (containingBlock->isRenderRubyBase() || containingBlock->isRenderRubyText())
             isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
         bool containsStart = textBox->start() <= start && textBox->end() >= start;
@@ -451,7 +451,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             }
         }
 
-        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRenderRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
 }
 #endif
@@ -2053,7 +2053,7 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
         return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
     RenderBlock* containingBlock = renderer.containingBlock();
-    if (!containingBlock || !containingBlock->isRubyBase())
+    if (!containingBlock || !containingBlock->isRenderRubyBase())
         return isAbove; // This text is not inside a ruby base, so it does not have ruby text over it.
 
     if (!is<RenderRubyRun>(*containingBlock->parent()))

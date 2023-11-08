@@ -37,7 +37,7 @@ RenderProgress::RenderProgress(HTMLElement& element, RenderStyle&& style)
     , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationTimer(*this, &RenderProgress::animationTimerFired)
 {
-    ASSERT(isProgress());
+    ASSERT(isRenderProgress());
 }
 
 RenderProgress::~RenderProgress() = default;

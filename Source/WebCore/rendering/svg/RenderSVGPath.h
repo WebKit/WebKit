@@ -66,6 +66,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isRenderSVGPath())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

@@ -75,4 +75,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInlineText, isSVGInlineText())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInlineText, isRenderSVGInlineText())

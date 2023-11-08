@@ -41,13 +41,13 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, Re
     : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTFMove(style))
     , m_owningSVGRoot(parent)
 {
-    ASSERT(isSVGViewportContainer());
+    ASSERT(isRenderSVGViewportContainer());
 }
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
     : RenderSVGContainer(Type::SVGViewportContainer, element, WTFMove(style))
 {
-    ASSERT(isSVGViewportContainer());
+    ASSERT(isRenderSVGViewportContainer());
 }
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const

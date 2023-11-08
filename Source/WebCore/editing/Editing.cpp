@@ -314,7 +314,7 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
 // Whether or not content before and after this node will collapse onto the same line as it.
 bool isBlock(const Node& node)
 {
-    return node.renderer() && !node.renderer()->isInline() && !node.renderer()->isRubyText();
+    return node.renderer() && !node.renderer()->isInline() && !node.renderer()->isRenderRubyText();
 }
 
 bool isInline(const Node& node)
@@ -402,7 +402,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
 bool isTableStructureNode(const Node& node)
 {
     auto* renderer = node.renderer();
-    return renderer && (renderer->isTableCell() || renderer->isTableRow() || renderer->isTableSection() || renderer->isRenderTableCol());
+    return renderer && (renderer->isRenderTableCell() || renderer->isRenderTableRow() || renderer->isRenderTableSection() || renderer->isRenderTableCol());
 }
 
 const String& nonBreakingSpaceString()
@@ -418,7 +418,7 @@ RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition& position)
     if (!node)
         return nullptr;
     auto* renderer = node->renderer();
-    if (!renderer || !renderer->isTable() || !upstream.atLastEditingPositionForNode())
+    if (!renderer || !renderer->isRenderTable() || !upstream.atLastEditingPositionForNode())
         return nullptr;
     return downcast<Element>(node.releaseNonNull());
 }
@@ -430,7 +430,7 @@ RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition& position)
     if (!node)
         return nullptr;
     auto* renderer = node->renderer();
-    if (!renderer || !renderer->isTable() || !downstream.atFirstEditingPositionForNode())
+    if (!renderer || !renderer->isRenderTable() || !downstream.atFirstEditingPositionForNode())
         return nullptr;
     return downcast<Element>(node.releaseNonNull());
 }
@@ -488,7 +488,7 @@ bool isListHTMLElement(Node* node)
 
 bool isListItem(const Node& node)
 {
-    return isListHTMLElement(node.parentNode()) || (node.renderer() && node.renderer()->isListItem());
+    return isListHTMLElement(node.parentNode()) || (node.renderer() && node.renderer()->isRenderListItem());
 }
 
 Element* enclosingElementWithTag(const Position& position, const QualifiedName& tagName)
@@ -716,7 +716,7 @@ bool isRenderedTable(const Node* node)
     if (!is<HTMLElement>(node))
         return false;
     auto* renderer = downcast<HTMLElement>(*node).renderer();
-    return renderer && renderer->isTable();
+    return renderer && renderer->isRenderTable();
 }
 
 bool isTableCell(const Node& node)
@@ -724,7 +724,7 @@ bool isTableCell(const Node& node)
     auto* renderer = node.renderer();
     if (!renderer)
         return node.hasTagName(tdTag) || node.hasTagName(thTag);
-    return renderer->isTableCell();
+    return renderer->isRenderTableCell();
 }
 
 bool isEmptyTableCell(const Node* node)
@@ -874,7 +874,7 @@ bool isMailBlockquote(const Node& node)
 int caretMinOffset(const Node& node)
 {
     auto* renderer = node.renderer();
-    ASSERT(!node.isCharacterDataNode() || !renderer || renderer->isText());
+    ASSERT(!node.isCharacterDataNode() || !renderer || renderer->isRenderText());
     return renderer ? renderer->caretMinOffset() : 0;
 }
 
@@ -1052,7 +1052,7 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
     if (!node)
         return false;
     RenderObject* renderer = node->renderer();
-    return renderer && ((renderer->isTable() && !renderer->isInline()) || (renderer->isImage() && !renderer->isInline()) || renderer->isHR());
+    return renderer && ((renderer->isRenderTable() && !renderer->isInline()) || (renderer->isImage() && !renderer->isInline()) || renderer->isHR());
 }
 
 bool areIdenticalElements(const Node& first, const Node& second)

@@ -4068,7 +4068,7 @@ static RefPtr<Node> findFirstMarkable(Node* startingNode)
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
             if (!node->renderer())
                 return nullptr;
-            if (node->renderer()->isTextOrLineBreak())
+            if (node->renderer()->isRenderTextOrLineBreak())
                 return node;
         }
         if (is<HTMLTextFormControlElement>(*node) && downcast<Element>(*node).isTextField())

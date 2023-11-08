@@ -328,4 +328,4 @@ inline RenderPtr<RenderBox> RenderTable::createAnonymousBoxWithSameTypeAs(const 
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isTable())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isRenderTable())

@@ -303,8 +303,8 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
         // Create a box for our object.
         bool isOnlyRun = (runCount == 1);
-        if (runCount == 2 && !r->renderer().isListMarker())
-            isOnlyRun = (!style().isLeftToRightDirection() ? bidiRuns.lastRun() : bidiRuns.firstRun())->renderer().isListMarker();
+        if (runCount == 2 && !r->renderer().isRenderListMarker())
+            isOnlyRun = (!style().isLeftToRightDirection() ? bidiRuns.lastRun() : bidiRuns.firstRun())->renderer().isRenderListMarker();
 
         if (lineInfo.isEmpty())
             continue;
@@ -344,7 +344,7 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
     // paint borders/margins/padding. This knowledge will ultimately be used when
     // we determine the horizontal positions and widths of all the inline boxes on
     // the line.
-    bool isLogicallyLastRunWrapped = bidiRuns.logicallyLastRun()->renderer().isText() ? !reachedEndOfTextRenderer(bidiRuns) : !is<RenderInline>(bidiRuns.logicallyLastRun()->renderer());
+    bool isLogicallyLastRunWrapped = bidiRuns.logicallyLastRun()->renderer().isRenderText() ? !reachedEndOfTextRenderer(bidiRuns) : !is<RenderInline>(bidiRuns.logicallyLastRun()->renderer());
     lastRootBox()->determineSpacingForFlowBoxes(lineInfo.isLastLine(), isLogicallyLastRunWrapped, &bidiRuns.logicallyLastRun()->renderer());
 
     // Now mark the line boxes as being constructed.
@@ -1265,7 +1265,7 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     // contains reversed text or not. If we wouldn't do that editing and thus
     // text selection in RTL boxes would not work as expected.
     if (isSVGRootInlineBox) {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_flow.isSVGText());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_flow.isRenderSVGText());
         downcast<SVGRootInlineBox>(*lineBox).computePerCharacterLayoutInformation();
     }
     
@@ -1776,7 +1776,7 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
                     else
                         box.layoutIfNeeded();
                 }
-            } else if (o.isTextOrLineBreak() || is<RenderInline>(o)) {
+            } else if (o.isRenderTextOrLineBreak() || is<RenderInline>(o)) {
                 if (layoutState.isFullLayout() || o.selfNeedsLayout()) {
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
                     hasDirtyRenderCounterWithInlineBoxParent = hasDirtyRenderCounterWithInlineBoxParent || (is<RenderCounter>(o) && is<RenderInline>(o.parent()));

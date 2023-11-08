@@ -169,7 +169,7 @@ void SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(SVGEl
         return;
 
     RenderElement* renderer = parent->renderer();
-    if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+    if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
         return;
 
     downcast<SVGElement>(*parent).updateSVGRendererForElementChange();

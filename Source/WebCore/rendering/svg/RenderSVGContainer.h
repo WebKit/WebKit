@@ -70,11 +70,11 @@ protected:
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
 
 private:
-    bool isSVGContainer() const final { return true; }
+    bool isRenderSVGContainer() const final { return true; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isSVGContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isRenderSVGContainer())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

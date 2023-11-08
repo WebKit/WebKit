@@ -33,7 +33,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGHiddenContainer);
 RenderSVGHiddenContainer::RenderSVGHiddenContainer(Type type, SVGElement& element, RenderStyle&& style)
     : RenderSVGContainer(type, element, WTFMove(style))
 {
-    ASSERT(isSVGHiddenContainer());
+    ASSERT(isRenderSVGHiddenContainer());
 }
 
 void RenderSVGHiddenContainer::layout()

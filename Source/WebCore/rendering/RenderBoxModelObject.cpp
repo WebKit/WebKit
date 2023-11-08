@@ -170,13 +170,13 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
 RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(type, element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
-    ASSERT(isBoxModelObject());
+    ASSERT(isRenderBoxModelObject());
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(type, document, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
-    ASSERT(isBoxModelObject());
+    ASSERT(isRenderBoxModelObject());
 }
 
 RenderBoxModelObject::~RenderBoxModelObject()
@@ -259,7 +259,7 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     // ignoring table cell's attribute value, where it says that table cells
     // violate what the CSS spec says to do with heights. Basically we don't care
     // if the cell specified a height or not.
-    if (cb->isTableCell())
+    if (cb->isRenderTableCell())
         return nullptr;
     
     // Match RenderBox::availableLogicalHeightUsing by special casing the layout
@@ -275,11 +275,11 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     
 bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 {
-    const auto* thisBox = isBox() ? downcast<RenderBox>(this) : nullptr;
+    const auto* thisBox = isRenderBox() ? downcast<RenderBox>(this) : nullptr;
     Length logicalHeightLength = style().logicalHeight();
     auto* cb = containingBlockForAutoHeightDetection(logicalHeightLength);
     
-    if (logicalHeightLength.isPercentOrCalculated() && cb && isBox())
+    if (logicalHeightLength.isPercentOrCalculated() && cb && isRenderBox())
         cb->addPercentHeightDescendant(*const_cast<RenderBox*>(downcast<RenderBox>(this)));
 
     if (thisBox && thisBox->isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*thisBox))
@@ -551,7 +551,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // have already done a similar call to move from the containing block to the scrolling
     // ancestor above, but localToContainerQuad takes care of a lot of complex situations
     // involving inlines, tables, and transformations.
-    if (parent()->isBox())
+    if (parent()->isRenderBox())
         downcast<RenderBox>(parent())->flipForWritingMode(stickyBoxRect);
     auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
 

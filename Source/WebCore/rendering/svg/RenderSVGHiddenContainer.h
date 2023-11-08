@@ -59,6 +59,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isSVGHiddenContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isRenderSVGHiddenContainer())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

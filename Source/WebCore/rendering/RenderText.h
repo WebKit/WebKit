@@ -329,4 +329,4 @@ inline void RenderText::resetMinMaxWidth()
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isText())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isRenderText())

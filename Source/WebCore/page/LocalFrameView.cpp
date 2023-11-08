@@ -2559,7 +2559,7 @@ void LocalFrameView::scrollToFocusedElementInternal()
         updateTarget = updateTarget->shadowHost();
 
     auto* renderer = updateTarget->renderer();
-    if (!renderer || renderer->isWidget())
+    if (!renderer || renderer->isRenderWidget())
         return;
 
     bool insideFixed;

@@ -489,7 +489,7 @@ HTMLInputElement& RenderTextControlSingleLine::inputElement() const
 RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::TextControlInnerBlock, element, WTFMove(style))
 {
-    ASSERT(isTextControlInnerBlock());
+    ASSERT(isRenderTextControlInnerBlock());
 }
 
 }

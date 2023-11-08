@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGGradientStop, isSVGGradientStop())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGGradientStop, isRenderSVGGradientStop())

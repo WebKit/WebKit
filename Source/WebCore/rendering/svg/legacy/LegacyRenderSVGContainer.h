@@ -70,7 +70,7 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    bool isLegacySVGContainer() const final { return true; }
+    bool isLegacyRenderSVGContainer() const final { return true; }
 
     FloatRect m_objectBoundingBox;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
@@ -83,4 +83,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGContainer, isLegacySVGContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGContainer, isLegacyRenderSVGContainer())

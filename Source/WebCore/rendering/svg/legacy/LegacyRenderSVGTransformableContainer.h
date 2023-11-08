@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGTransformableContainer, isLegacySVGTransformableContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGTransformableContainer, isLegacyRenderSVGTransformableContainer())

@@ -7956,7 +7956,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             // will need to reference this chain.
             for (CheckedPtr curr = newActiveElement->renderer(); curr; curr = curr->parent()) {
                 RefPtr element = curr->element();
-                if (!element || curr->isTextOrLineBreak())
+                if (!element || curr->isRenderTextOrLineBreak())
                     continue;
                 m_userActionElements.setInActiveChain(*element, true);
             }

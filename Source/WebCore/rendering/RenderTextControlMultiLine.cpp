@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlMultiLine);
 RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
     : RenderTextControl(Type::TextControlMultiLine, element, WTFMove(style))
 {
-    ASSERT(isTextArea());
+    ASSERT(isRenderTextControlMultiLine());
 }
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()

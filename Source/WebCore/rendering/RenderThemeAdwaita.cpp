@@ -457,7 +457,7 @@ IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, cons
 
 bool RenderThemeAdwaita::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject.isProgress())
+    if (!renderObject.isRenderProgress())
         return true;
 
     auto& graphicsContext = paintInfo.context();

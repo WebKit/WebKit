@@ -47,7 +47,7 @@ public:
     virtual void extractLine() = 0;
     virtual void attachLine() = 0;
 
-    virtual bool isLineBreak() const { return renderer().isLineBreak(); }
+    virtual bool isLineBreak() const { return renderer().isRenderLineBreak(); }
 
     WEBCORE_EXPORT virtual void adjustPosition(float dx, float dy);
     void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)

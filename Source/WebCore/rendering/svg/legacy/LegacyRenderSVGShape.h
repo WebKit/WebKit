@@ -115,7 +115,7 @@ private:
     const AffineTransform& localToParentTransform() const final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 
-    bool isLegacySVGShape() const final { return true; }
+    bool isLegacyRenderSVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
     ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
 
@@ -161,4 +161,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGShape, isLegacySVGShape())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGShape, isLegacyRenderSVGShape())

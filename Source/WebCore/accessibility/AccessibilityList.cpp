@@ -162,7 +162,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
             listItemCount++;
         else if (child->roleValue() == AccessibilityRole::ListItem) {
             // Rendered list items always count.
-            if (auto* childRenderer = child->renderer(); childRenderer && childRenderer->isListItem()) {
+            if (auto* childRenderer = child->renderer(); childRenderer && childRenderer->isRenderListItem()) {
                 if (!hasVisibleMarkers && (childRenderer->style().listStyleType().type != ListStyleType::Type::None || childRenderer->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(childRenderer->node())))
                     hasVisibleMarkers = true;
                 listItemCount++;

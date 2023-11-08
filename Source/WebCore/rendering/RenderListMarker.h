@@ -91,4 +91,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListMarker, isListMarker())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListMarker, isRenderListMarker())

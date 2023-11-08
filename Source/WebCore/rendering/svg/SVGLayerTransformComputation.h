@@ -97,7 +97,7 @@ public:
 
         // When we've climbed the ancestor tree up to and including RenderSVGRoot, the CTM is aligned with the top-left of the renderers bounding box (= nominal SVG layout location).
         // However, for getCTM/getScreenCTM we're supposed to align by the top-left corner of the enclosing "viewport element" -- correct for that.
-        if (m_renderer.isSVGRoot())
+        if (m_renderer.isRenderSVGRoot())
             return ctm;
 
         ctm.translate(-toFloatSize(m_renderer.nominalSVGLayoutLocation()));

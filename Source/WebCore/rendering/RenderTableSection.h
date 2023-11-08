@@ -299,4 +299,4 @@ inline RenderPtr<RenderBox> RenderTableSection::createAnonymousBoxWithSameTypeAs
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableSection, isTableSection())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableSection, isRenderTableSection())
