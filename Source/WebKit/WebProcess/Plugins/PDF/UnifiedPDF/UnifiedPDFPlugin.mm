@@ -85,8 +85,7 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (!m_view)
         return;
 
-    m_documentLayout.updateLayout(size());
-    updateLayerHierarchy();
+    updateLayout();
 
     if (m_view)
         m_view->layerHostingStrategyDidChange();
@@ -95,14 +94,24 @@ void UnifiedPDFPlugin::installPDFDocument()
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
     RefPtr frame = m_view->frame();
-    auto* page = frame->page();
+    CheckedPtr page = frame->page();
     if (!page)
         return nullptr;
 
     auto* graphicsLayerFactory = page->chrome().client().graphicsLayerFactory();
-    auto graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
+    Ref graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
     graphicsLayer->setName(name);
     return graphicsLayer;
+}
+
+void UnifiedPDFPlugin::scheduleRenderingUpdate()
+{
+    RefPtr frame = m_view->frame();
+    CheckedPtr page = frame->page();
+    if (!page)
+        return;
+
+    page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
 void UnifiedPDFPlugin::updateLayerHierarchy()
@@ -189,12 +198,7 @@ CGFloat UnifiedPDFPlugin::scaleFactor() const
 
 float UnifiedPDFPlugin::deviceScaleFactor() const
 {
-    RefPtr frame = m_view->frame();
-    auto* page = frame->page();
-    if (!page)
-        return 1;
-
-    return page->deviceScaleFactor();
+    return PDFPluginBase::deviceScaleFactor();
 }
 
 void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
@@ -204,8 +208,33 @@ void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
 
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 
+    updateLayout();
+}
+
+void UnifiedPDFPlugin::updateLayout()
+{
     m_documentLayout.updateLayout(size());
     updateLayerHierarchy();
+    updateScrollbars();
+}
+
+bool UnifiedPDFPlugin::isLocked() const
+{
+    return !CGPDFDocumentIsUnlocked(m_documentLayout.pdfDocument());
+}
+
+IntSize UnifiedPDFPlugin::contentsSize() const
+{
+    if (isLocked())
+        return { 0, 0 };
+    return expandedIntSize(m_documentLayout.scaledContentsSize());
+}
+
+unsigned UnifiedPDFPlugin::firstPageHeight() const
+{
+    if (isLocked() || !m_documentLayout.pageCount())
+        return 0;
+    return static_cast<unsigned>(CGCeiling(m_documentLayout.boundsForPageAtIndex(0).height()));
 }
 
 RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const
@@ -223,14 +252,30 @@ RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
     return nullptr;
 }
 
+void UnifiedPDFPlugin::didChangeScrollOffset()
+{
+    // FIXME: Build up a layer hierarchy more like that of the root of web content
+    // instead of randomly moving the contents layer around.
+    m_contentsLayer->setPosition({ -static_cast<float>(m_scrollOffset.width()), -static_cast<float>(m_scrollOffset.height()) });
+    scheduleRenderingUpdate();
+}
+
+void UnifiedPDFPlugin::invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&)
+{
+}
+
+void UnifiedPDFPlugin::invalidateScrollCornerRect(const WebCore::IntRect&)
+{
+}
+
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent&)
 {
     return false;
 }
 
-bool UnifiedPDFPlugin::handleWheelEvent(const WebWheelEvent&)
+bool UnifiedPDFPlugin::handleWheelEvent(const WebWheelEvent& event)
 {
-    return false;
+    return ScrollableArea::handleWheelEventForScrolling(platform(event), { });
 }
 
 bool UnifiedPDFPlugin::handleMouseEnterEvent(const WebMouseEvent&)

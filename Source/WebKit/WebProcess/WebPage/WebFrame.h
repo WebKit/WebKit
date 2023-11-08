@@ -93,6 +93,7 @@ public:
     ScopeExit<Function<void()>> makeInvalidator();
 
     WebPage* page() const;
+    RefPtr<WebPage> protectedPage() const;
 
     static RefPtr<WebFrame> fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreLocalFrame() const;

@@ -200,6 +200,11 @@ WebPage* WebFrame::page() const
     return page ? WebPage::fromCorePage(*page) : nullptr;
 }
 
+RefPtr<WebPage> WebFrame::protectedPage() const
+{
+    return page();
+}
+
 RefPtr<WebFrame> WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
