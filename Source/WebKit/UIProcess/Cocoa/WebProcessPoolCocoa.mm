@@ -306,7 +306,8 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
     });
 
 #if USE(EXTENSIONKIT)
-    AuxiliaryProcessProxy::setManageProcessesAsExtensions(CFPreferencesGetAppBooleanValue(CFSTR("manageProcessesAsExtensions"), CFSTR("com.apple.WebKit"), nullptr));
+    bool manageProcessesAsExtensions = !CFPreferencesGetAppBooleanValue(CFSTR("disableProcessesAsExtensions"), kCFPreferencesCurrentApplication, nullptr);
+    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageProcessesAsExtensions);
 #endif
 }
 
