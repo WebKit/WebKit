@@ -48,6 +48,11 @@ void CommandBuffer::setLabel(String&& label)
     m_commandBuffer.label = label;
 }
 
+void CommandBuffer::makeInvalid()
+{
+    m_commandBuffer = nil;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

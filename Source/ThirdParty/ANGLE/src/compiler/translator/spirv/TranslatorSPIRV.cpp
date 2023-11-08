@@ -43,6 +43,7 @@
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindFunction.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/ReplaceClipCullDistanceVariable.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
@@ -1027,8 +1028,9 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 }
             }
 
-            bool hasGLSampleMask        = false;
-            bool hasGLSecondaryFragData = false;
+            bool hasGLSampleMask           = false;
+            bool hasGLSecondaryFragData    = false;
+            const TIntermSymbol *yuvOutput = nullptr;
 
             for (const ShaderVariable &outputVar : mOutputVariables)
             {
@@ -1042,6 +1044,13 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 {
                     ASSERT(!hasGLSecondaryFragData);
                     hasGLSecondaryFragData = true;
+                    continue;
+                }
+                if (outputVar.yuv)
+                {
+                    // We can only have one yuv output
+                    ASSERT(yuvOutput == nullptr);
+                    yuvOutput = FindSymbolNode(root, ImmutableString(outputVar.name));
                     continue;
                 }
             }
@@ -1166,7 +1175,7 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                     return false;
                 }
 
-                if (!ReswizzleYUVOps(this, root, &getSymbolTable()))
+                if (!ReswizzleYUVOps(this, root, &getSymbolTable(), yuvOutput))
                 {
                     return false;
                 }

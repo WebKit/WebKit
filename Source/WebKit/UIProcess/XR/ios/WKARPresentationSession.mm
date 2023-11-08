@@ -38,10 +38,28 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation WKARPresentationSessionDescriptor {
     WeakObjCPtr<UIViewController> _presentingViewController;
 }
+@synthesize colorFormat = _colorFormat;
+@synthesize colorUsage = _colorUsage;
+@synthesize rasterSampleCount = _rasterSampleCount;
+
+- (nonnull instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _colorFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+        _colorUsage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+        _rasterSampleCount = 1;
+    }
+
+    return self;
+}
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone
 {
     WKARPresentationSessionDescriptor *descriptor = [[[self class] allocWithZone:zone] init];
+    descriptor.colorFormat = self.colorFormat;
+    descriptor.colorUsage = self.colorUsage;
+    descriptor.rasterSampleCount = self.rasterSampleCount;
     descriptor.presentingViewController = self.presentingViewController;
 
     return descriptor;
@@ -72,10 +90,21 @@ NS_ASSUME_NONNULL_BEGIN
     // View state
     RetainPtr<UIView> _view;
     WeakObjCPtr<CALayer> _cameraLayer;
+    WeakObjCPtr<CAMetalLayer> _metalLayer;
+
+    // CAMetalLayer state
+    RetainPtr<id<CAMetalDrawable>> _currentDrawable;
+
+    // Metal state
+    RetainPtr<id<MTLDevice>> _device;
+    RetainPtr<id<MTLCommandQueue>> _commandQueue;
+    RetainPtr<id<MTLSharedEvent>> _completionEvent;
+    NSUInteger _renderingFrameIndex;
 
     // Camera image
     RetainPtr<CVPixelBufferRef> _capturedImage;
 }
+@synthesize renderingFrameIndex = _renderingFrameIndex;
 
 - (nullable instancetype)initWithSession:(ARSession *)session descriptor:(WKARPresentationSessionDescriptor *)descriptor
 {
@@ -83,7 +112,9 @@ NS_ASSUME_NONNULL_BEGIN
     if (self) {
         _session = session;
         _sessionDescriptor = adoptNS([descriptor copy]);
+        _device = adoptNS(MTLCreateSystemDefaultDevice());
 
+        [self _loadMetal];
         [self _enterFullscreen];
     }
 
@@ -96,6 +127,14 @@ NS_ASSUME_NONNULL_BEGIN
     return (ARSession *) _session;
 }
 
+-(nonnull id<MTLSharedEvent>)completionEvent {
+    return (id<MTLSharedEvent>) _completionEvent;
+}
+
+-(nullable id<MTLTexture>)colorTexture {
+    return [_currentDrawable texture];
+}
+
 - (NSUInteger)startFrame
 {
     ARFrame *currentFrame = [_session currentFrame];
@@ -105,20 +144,35 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     _capturedImage = currentFrame.capturedImage;
+    _renderingFrameIndex += 1;
 
     return 1;
 }
 
 - (void)present
 {
+    RetainPtr<id<MTLCommandBuffer>> currentCommandBuffer = [_commandQueue commandBuffer];
+    if (!currentCommandBuffer) {
+        RELEASE_LOG_ERROR(XR, "WKARPresentationSession: failed to obtain command buffer");
+        return;
+    }
+
+    [currentCommandBuffer setLabel:@"WKARPresentationSession"];
+    [currentCommandBuffer encodeWaitForEvent:_completionEvent.get() value:_renderingFrameIndex];
+    [currentCommandBuffer commit];
+    [currentCommandBuffer waitUntilScheduled];
+
     [CATransaction begin];
     {
         [_cameraLayer setContents:(id) _capturedImage.get()];
+        if (_currentDrawable)
+            [_currentDrawable present];
     }
     [CATransaction commit];
     [CATransaction flush];
 
     _capturedImage = nil;
+    _currentDrawable = nil;
 }
 
 - (void)terminate
@@ -140,9 +194,19 @@ NS_ASSUME_NONNULL_BEGIN
     RELEASE_LOG(XR, "%s", __FUNCTION__);
     [super viewDidLoad];
 
+    // FIXME(rdar://116570225): WebGL and Metal have inverted ideas of which
+    // direction in Y is "up". The metal layer transform needs to be set
+    // correctly for the WebGL to match the camera feed.
     _cameraLayer = [self.view layer];
     [_cameraLayer setBackgroundColor:UIColor.whiteColor.CGColor];
     [_cameraLayer setOpaque:YES];
+    [_cameraLayer addSublayer:[CAMetalLayer layer]];
+    _metalLayer = [_cameraLayer sublayers][0];
+    [_metalLayer setDevice:_device.get()];
+    [_metalLayer setOpaque:NO];
+    [_metalLayer setPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB];
+    [_metalLayer setPresentsWithTransaction:YES];
+    [_metalLayer setFrame:[_cameraLayer bounds]];
 }
 
 #if !PLATFORM(VISION)
@@ -179,6 +243,13 @@ NS_ASSUME_NONNULL_BEGIN
     [presentingViewController presentViewController:self animated:NO completion:^(void) {
         RELEASE_LOG(XR, "%s: presentViewController complete", __FUNCTION__);
     }];
+}
+
+- (void)_loadMetal
+{
+    _commandQueue = [_device newCommandQueue];
+    _completionEvent = adoptNS([_device newSharedEvent]);
+    _renderingFrameIndex = 0;
 }
 
 @end

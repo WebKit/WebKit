@@ -1970,22 +1970,22 @@ void PrivateState::getIntegerv(GLenum pname, GLint *params) const
             break;
         case GL_BLEND_SRC_RGB:
             // non-indexed get returns the state of draw buffer zero
-            *params = mBlendStateExt.getSrcColorIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getSrcColorIndexed(0));
             break;
         case GL_BLEND_SRC_ALPHA:
-            *params = mBlendStateExt.getSrcAlphaIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getSrcAlphaIndexed(0));
             break;
         case GL_BLEND_DST_RGB:
-            *params = mBlendStateExt.getDstColorIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getDstColorIndexed(0));
             break;
         case GL_BLEND_DST_ALPHA:
-            *params = mBlendStateExt.getDstAlphaIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getDstAlphaIndexed(0));
             break;
         case GL_BLEND_EQUATION_RGB:
-            *params = mBlendStateExt.getEquationColorIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getEquationColorIndexed(0));
             break;
         case GL_BLEND_EQUATION_ALPHA:
-            *params = mBlendStateExt.getEquationAlphaIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getEquationAlphaIndexed(0));
             break;
         case GL_STENCIL_WRITEMASK:
             *params = CastMaskValue(mDepthStencil.stencilWritemask);
@@ -2049,10 +2049,10 @@ void PrivateState::getIntegerv(GLenum pname, GLint *params) const
             break;
         case GL_BLEND_SRC:
             // non-indexed get returns the state of draw buffer zero
-            *params = mBlendStateExt.getSrcColorIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getSrcColorIndexed(0));
             break;
         case GL_BLEND_DST:
-            *params = mBlendStateExt.getDstColorIndexed(0);
+            *params = ToGLenum(mBlendStateExt.getDstColorIndexed(0));
             break;
         case GL_PERSPECTIVE_CORRECTION_HINT:
         case GL_POINT_SMOOTH_HINT:
@@ -2110,27 +2110,27 @@ void PrivateState::getIntegeri_v(GLenum target, GLuint index, GLint *data) const
     {
         case GL_BLEND_SRC_RGB:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getSrcColorIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getSrcColorIndexed(index));
             break;
         case GL_BLEND_SRC_ALPHA:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getSrcAlphaIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getSrcAlphaIndexed(index));
             break;
         case GL_BLEND_DST_RGB:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getDstColorIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getDstColorIndexed(index));
             break;
         case GL_BLEND_DST_ALPHA:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getDstAlphaIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getDstAlphaIndexed(index));
             break;
         case GL_BLEND_EQUATION_RGB:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getEquationColorIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getEquationColorIndexed(index));
             break;
         case GL_BLEND_EQUATION_ALPHA:
             ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
-            *data = mBlendStateExt.getEquationAlphaIndexed(index);
+            *data = ToGLenum(mBlendStateExt.getEquationAlphaIndexed(index));
             break;
         case GL_SAMPLE_MASK_VALUE:
             ASSERT(static_cast<size_t>(index) < mSampleMaskValues.size());

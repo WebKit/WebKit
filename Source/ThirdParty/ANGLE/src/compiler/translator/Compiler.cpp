@@ -1096,6 +1096,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     if (compileOptions.enforcePackingRestrictions)
     {
         int maxUniformVectors = GetMaxUniformVectorsForShaderType(mShaderType, mResources);
+        if (mShaderType == GL_VERTEX_SHADER && compileOptions.emulateClipOrigin)
+        {
+            --maxUniformVectors;
+        }
         // Returns true if, after applying the packing rules in the GLSL ES 1.00.17 spec
         // Appendix A, section 7, the shader does not use too many uniforms.
         if (!CheckVariablesInPackingLimits(maxUniformVectors, mUniforms))

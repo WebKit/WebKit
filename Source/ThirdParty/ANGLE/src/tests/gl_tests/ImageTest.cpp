@@ -15,13 +15,11 @@
 
 #include "common/android_util.h"
 
-#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
+#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 29
 #    define ANGLE_AHARDWARE_BUFFER_SUPPORT
 // NDK header file for access to Android Hardware Buffers
 #    include <android/hardware_buffer.h>
-#    if __ANDROID_API__ >= 29
-#        define ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
-#    endif
+#    define ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
 #endif
 
 #if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 33
@@ -667,19 +665,31 @@ void main()
     };
 
 #if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
-    void writeAHBData(AHardwareBuffer *aHardwareBuffer,
+    bool writeAHBData(AHardwareBuffer *aHardwareBuffer,
                       size_t width,
                       size_t height,
                       size_t depth,
                       bool isYUV,
                       const std::vector<AHBPlaneData> &data)
     {
+        ASSERT(!data.empty());
 #    if defined(ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT)
         AHardwareBuffer_Planes planeInfo;
         int res = AHardwareBuffer_lockPlanes(
             aHardwareBuffer, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY, -1, nullptr, &planeInfo);
-        EXPECT_EQ(res, 0);
+        if (res != 0)
+        {
+            WARN() << "AHardwareBuffer_lockPlanes failed";
+            return false;
+        }
+
         EXPECT_EQ(data.size(), planeInfo.planeCount);
+
+        if (planeInfo.planes[0].data == nullptr)
+        {
+            WARN() << "Driver bug: AHardwareBuffer_lockPlanes succeed but data pointer is nullptr";
+            return false;
+        }
 
         for (size_t planeIdx = 0; planeIdx < data.size(); planeIdx++)
         {
@@ -743,6 +753,7 @@ void main()
         res = AHardwareBuffer_unlock(aHardwareBuffer, nullptr);
         EXPECT_EQ(res, 0);
 #    endif
+        return true;
     }
 #endif
 
@@ -895,7 +906,11 @@ void main()
             angle::android::ClientBufferToANativeWindowBuffer(eglClientBuffer));
         if (!data.empty())
         {
-            writeAHBData(pAHardwareBuffer, width, height, depth, false, data);
+            bool success = writeAHBData(pAHardwareBuffer, width, height, depth, false, data);
+            if (!success)
+            {
+                return;
+            }
         }
 #endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
 
@@ -3161,10 +3176,6 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
 // sampling even if we can't verify the results.
 TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleNoData)
 {
-    // Multiple issues sampling AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420 in the Vulkan backend:
-    // http://issuetracker.google.com/172649538
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     EGLWindow *window = getEGLWindow();
 
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
@@ -4272,7 +4283,11 @@ TEST_P(ImageTestES3, RGBXAHBImportMultipleLayers)
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
 
-    constexpr size_t kLayerCount = 3;
+    // Limit the test to singke layer for now. writeAHBData is assuming alignment between layers
+    // being 4096 which may not true on some GPUs. There is no API to retrieve such alignment from
+    // driver. For now just limit to single layer so that we can still test single layer behavior
+    // here.
+    constexpr size_t kLayerCount = 1;
 
     ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
         1, 1, kLayerCount, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage));
@@ -4846,10 +4861,14 @@ TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
                        !IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
 
+    constexpr size_t kDepth = kCubeFaceCount * 2;
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+        kDefaultAHBUsage | kAHBUsageGPUCubeMap));
+
     // Create the Image
     AHardwareBuffer *source;
     EGLImageKHR image;
-    constexpr size_t kDepth = kCubeFaceCount * 2;
     createEGLImageAndroidHardwareBufferSource(1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
                                               kDefaultAHBUsage | kAHBUsageGPUCubeMap,
                                               kDefaultAttribs, {}, &source, &image);
@@ -5161,9 +5180,12 @@ void ImageTest::SourceNativeClientBufferTargetRenderbuffer_helper(const EGLint *
 
     // Create an Image backed by a native client buffer allocated using
     // EGL_ANDROID_create_native_client_buffer API
-    EGLImageKHR image;
+    EGLImageKHR image = EGL_NO_IMAGE_KHR;
     createEGLImageANWBClientBufferSource(1, 1, 1, kNativeClientBufferAttribs_RGBA8_Renderbuffer,
                                          attribs, {{kLinearColor, 4}}, &image);
+    // We are locking AHB to initialize AHB with data. The lock is allowed to fail, and may fail if
+    // driver decided to allocate with framebuffer compression enabled.
+    ANGLE_SKIP_TEST_IF(image == EGL_NO_IMAGE_KHR);
 
     // Create the target
     GLRenderbuffer target;

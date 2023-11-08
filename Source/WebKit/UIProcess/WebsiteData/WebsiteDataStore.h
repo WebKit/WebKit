@@ -310,8 +310,6 @@ public:
 
     void flushCookies(CompletionHandler<void()>&&);
 
-    void setAllowsAnySSLCertificateForWebSocket(bool);
-
     void dispatchOnQueue(Function<void()>&&);
 
 #if PLATFORM(COCOA)

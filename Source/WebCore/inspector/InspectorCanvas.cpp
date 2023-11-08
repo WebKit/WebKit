@@ -772,7 +772,7 @@ void InspectorCanvas::finalizeFrame()
 {
     appendActionSnapshotIfNeeded();
 
-    if (m_frames && m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
+    if (m_frames && m_frames->length() && !m_currentFrameStartTime.isNaN()) {
         auto currentFrame = static_reference_cast<Protocol::Recording::Frame>(m_frames->get(m_frames->length() - 1));
         currentFrame->setDuration((MonotonicTime::now() - m_currentFrameStartTime).milliseconds());
 

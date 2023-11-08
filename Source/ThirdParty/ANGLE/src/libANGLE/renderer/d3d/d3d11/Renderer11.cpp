@@ -2851,7 +2851,8 @@ angle::Result Renderer11::copyTexture(const gl::Context *context,
         ASSERT(sourceStorage11);
 
         const d3d11::SharedSRV *sourceSRV = nullptr;
-        ANGLE_TRY(sourceStorage11->getSRVLevels(context, sourceLevel, sourceLevel, &sourceSRV));
+        ANGLE_TRY(
+            sourceStorage11->getSRVLevels(context, sourceLevel, sourceLevel, true, &sourceSRV));
 
         gl::ImageIndex destIndex;
         if (destTarget == gl::TextureTarget::_2D || destTarget == gl::TextureTarget::_3D ||
@@ -3399,7 +3400,7 @@ angle::Result Renderer11::generateMipmapUsingD3D(const gl::Context *context,
 
     const d3d11::SharedSRV *srv = nullptr;
     ANGLE_TRY(storage11->getSRVLevels(context, textureState.getEffectiveBaseLevel(),
-                                      textureState.getEffectiveMaxLevel(), &srv));
+                                      textureState.getEffectiveMaxLevel(), false, &srv));
 
     mDeviceContext->GenerateMips(srv->get());
 

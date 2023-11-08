@@ -112,7 +112,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
     auto requests = map(generatedRequests.releaseReturnValue(), [&](auto&& fetchRequest) -> BackgroundFetchRequest {
         Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> responseHeaders;
         if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
-            if (auto* policy = context.contentSecurityPolicy())
+            if (CheckedPtr policy = context.contentSecurityPolicy())
                 responseHeaders = policy->responseHeaders();
         }
         return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTFMove(responseHeaders) };

@@ -165,7 +165,7 @@ void MockRealtimeAudioSource::stopProducingData()
 
 void MockRealtimeAudioSource::tick()
 {
-    if (std::isnan(m_lastRenderTime))
+    if (m_lastRenderTime.isNaN())
         m_lastRenderTime = MonotonicTime::now();
 
     MonotonicTime now = MonotonicTime::now();

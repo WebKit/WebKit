@@ -61,8 +61,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
 
-    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
-
     FlushCookies(PAL::SessionID sessionID) -> ()
 
 #if !PLATFORM(COCOA)

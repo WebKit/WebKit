@@ -31,6 +31,7 @@
 
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include <wtf/PointerComparison.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -58,13 +59,14 @@ public:
     const CSSParserContext& context() const;
 
     RefPtr<CSSValue> resolveSingleValue(Style::BuilderState&, CSSPropertyID) const;
-    RefPtr<CSSValue> resolveSubstitutionValue(Style::BuilderState&, CSSPropertyID, CSSPropertyID shorthandID) const;
 
     // The maximum number of tokens that may be produced by a var() reference or var() fallback value.
     // https://drafts.csswg.org/css-variables/#long-variables
     static constexpr size_t maxSubstitutionTokens = 65536;
     
     const CSSVariableData& data() const { return m_data.get(); }
+
+    template<typename CacheFunction> bool resolveAndCacheValue(Style::BuilderState&, CacheFunction&&) const;
 
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&);
@@ -77,8 +79,6 @@ private:
     void cacheSimpleReference();
     RefPtr<CSSVariableData> tryResolveSimpleReference(Style::BuilderState&) const;
 
-    template<typename ParseFunction> RefPtr<CSSValue> resolveAndCacheValue(Style::BuilderState&, CSSPropertyID, CSSPropertyID shorthandID, ParseFunction&&) const;
-
     Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
 
@@ -89,16 +89,34 @@ private:
     };
     std::optional<SimpleReference> m_simpleReference;
 
-    struct ResolvedValue {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-        RefPtr<CSSValue> value;
-        CSSPropertyID propertyID;
-        CSSPropertyID shorthandID;
-        RefPtr<CSSVariableData> dependencyData;
-    };
-    mutable std::unique_ptr<ResolvedValue> m_cachedResolvedValue;
+    mutable RefPtr<CSSVariableData> m_cacheDependencyData;
+    mutable RefPtr<CSSValue> m_cachedValue;
+#if ASSERT_ENABLED
+    mutable CSSPropertyID m_cachePropertyID { CSSPropertyInvalid };
+#endif
 };
+
+template<typename CacheFunction>
+bool CSSVariableReferenceValue::resolveAndCacheValue(Style::BuilderState& builderState, CacheFunction&& cacheFunction) const
+
+{
+    if (auto data = tryResolveSimpleReference(builderState)) {
+        if (!arePointingToEqualData(m_cacheDependencyData, data))
+            cacheFunction(data);
+        m_cacheDependencyData = WTFMove(data);
+        return true;
+    }
+
+    auto resolvedTokens = resolveTokenRange(m_data->tokenRange(), builderState);
+    if (!resolvedTokens)
+        return false;
+
+    if (!m_cacheDependencyData || m_cacheDependencyData->tokens() != *resolvedTokens) {
+        m_cacheDependencyData = CSSVariableData::create(*resolvedTokens, context());
+        cacheFunction(m_cacheDependencyData);
+    }
+    return true;
+}
 
 } // namespace WebCore
 

@@ -41,13 +41,18 @@ namespace WebCore {
 
 class ContentType;
 class SourceBufferPrivate;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+class LegacyCDMSession;
+#endif
 
-class MediaSourcePrivate : public RefCounted<MediaSourcePrivate> {
+class WEBCORE_EXPORT MediaSourcePrivate
+    : public RefCounted<MediaSourcePrivate>
+    , public CanMakeWeakPtr<MediaSourcePrivate> {
 public:
     typedef Vector<String> CodecsArray;
 
     MediaSourcePrivate() = default;
-    virtual ~MediaSourcePrivate() = default;
+    virtual ~MediaSourcePrivate();
 
     enum class AddStatus : uint8_t {
         Ok,
@@ -55,15 +60,21 @@ public:
         ReachedIdLimit
     };
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
+    virtual void removeSourceBuffer(SourceBufferPrivate&);
+    void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
+    virtual void notifyActiveSourceBuffersChanged() = 0;
     virtual void durationChanged(const MediaTime&) = 0;
     virtual void bufferedChanged(const PlatformTimeRanges&) { }
+
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    virtual void markEndOfStream(EndOfStreamStatus) = 0;
-    virtual void unmarkEndOfStream() = 0;
-    virtual bool isEnded() const = 0;
+    virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
+    virtual void unmarkEndOfStream() { m_isEnded = false; }
+    bool isEnded() const { return m_isEnded; }
 
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
+    virtual MediaTime currentMediaTime() const = 0;
+    virtual MediaTime duration() const = 0;
 
     virtual void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) = 0;
     virtual void seekToTime(const MediaTime&, CompletionHandler<void()>&&) = 0;
@@ -72,6 +83,17 @@ public:
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
 
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges&) const;
+    bool hasAudio() const;
+    bool hasVideo() const;
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setCDMSession(LegacyCDMSession*);
+#endif
+
+protected:
+    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
+    Vector<SourceBufferPrivate*> m_activeSourceBuffers;
+    bool m_isEnded { false };
 
 private:
     MediaTime m_timeFudgeFactor;

@@ -590,6 +590,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo emulateClipOrigin = {
+        "emulateClipOrigin",
+        FeatureCategory::OpenGLWorkarounds,
+        "Some drivers incorrectly apply GL_CLIP_ORIGIN_EXT state.",
+        &members,
+    };
+
     FeatureInfo bindCompleteFramebufferForTimerQueries = {
         "bindCompleteFramebufferForTimerQueries",
         FeatureCategory::OpenGLWorkarounds,

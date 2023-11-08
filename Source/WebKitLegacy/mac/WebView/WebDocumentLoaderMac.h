@@ -56,7 +56,7 @@ private:
     WebDocumentLoaderMac(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     virtual void attachToFrame();
-    virtual void detachFromFrame();
+    virtual void detachFromFrame(WebCore::LoadWillContinueInAnotherProcess);
 
     void retainDataSource();
     void releaseDataSource();

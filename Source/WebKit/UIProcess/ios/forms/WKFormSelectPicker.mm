@@ -647,7 +647,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
-    return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
+    return [_view _createTargetedContextMenuHintPreviewForFocusedElement:WebKit::TargetedPreviewPositioning::Default];
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location

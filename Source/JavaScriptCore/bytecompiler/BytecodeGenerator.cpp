@@ -331,7 +331,7 @@ ParserError BytecodeGenerator::generate(unsigned& size)
     }
     
 
-    if (m_isAsync)
+    if (m_needsGeneratorification)
         performGeneratorification(*this, m_codeBlock.get(), m_writer, m_generatorFrameSymbolTable.get(), m_generatorFrameSymbolTableIndex);
 
     RELEASE_ASSERT(m_codeBlock->numCalleeLocals() < static_cast<unsigned>(FirstConstantRegisterIndex));
@@ -447,7 +447,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     m_needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction())) && parseMode != SourceParseMode::ClassFieldInitializerMode;
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
-        m_isAsync = true;
+        m_needsGeneratorification = true;
         // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
         m_needsArguments = false;
     }
@@ -1004,7 +1004,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     };
 
     if (moduleProgramNode->usesAwait()) {
-        m_isAsync = true;
+        m_needsGeneratorification = true;
         initializeNextParameter(); // |this|
         for (unsigned i = 0; i < JSGenerator::Argument::NumberOfArguments; ++i)
             initializeNextParameter();

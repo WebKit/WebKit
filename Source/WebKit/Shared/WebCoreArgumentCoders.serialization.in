@@ -6557,6 +6557,11 @@ header: <WebCore/GraphicsContextState.h>
     WebCore::GraphicsContextState::Purpose m_purpose;
 };
 
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SourceBrushLogicalGradient {
+    std::variant<Ref<WebCore::Gradient>, WebCore::RenderingResourceIdentifier> serializableGradient();
+    WebCore::AffineTransform spaceTransform;
+};
+
 #if PLATFORM(COCOA)
 struct WebCore::KeypressCommand {
     String commandName;

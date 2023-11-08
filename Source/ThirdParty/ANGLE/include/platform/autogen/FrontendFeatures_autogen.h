@@ -161,6 +161,13 @@ struct FrontendFeatures : FeatureSetBase
         &members, "http://anglebug.com/8280"
     };
 
+    FeatureInfo compileJobIsThreadSafe = {
+        "compileJobIsThreadSafe",
+        FeatureCategory::FrontendFeatures,
+        "If false, parts of the compile job cannot be parallelized",
+        &members, "http://anglebug.com/8297"
+    };
+
     FeatureInfo linkJobIsThreadSafe = {
         "linkJobIsThreadSafe",
         FeatureCategory::FrontendFeatures,

@@ -239,7 +239,7 @@ ExceptionOr<void> ApplePayDeferredPaymentRequest::validate() const
     if (!URL { managementURL }.isValid())
         return Exception(TypeError, makeString('"', managementURL, "\" is not a valid URL."));
 
-    if (std::isnan(freeCancellationDate)) {
+    if (freeCancellationDate.isNaN()) {
         if (!freeCancellationDateTimeZone.isEmpty())
             return Exception(TypeError, "Unexpected 'freeCancellationDateTimeZone' when 'freeCancellationDate' is not set."_s);
     } else if (freeCancellationDateTimeZone.isEmpty())

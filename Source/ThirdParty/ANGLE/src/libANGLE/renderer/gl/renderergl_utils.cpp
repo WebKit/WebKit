@@ -81,6 +81,22 @@ int getAdrenoNumber(const FunctionsGL *functions)
     return number;
 }
 
+int GetQualcommVersion(const FunctionsGL *functions)
+{
+    static int version = -1;
+    if (version == -1)
+    {
+        const std::string nativeVersionString(GetString(functions, GL_VERSION));
+        const size_t pos = nativeVersionString.find("V@");
+        if (pos == std::string::npos ||
+            std::sscanf(nativeVersionString.c_str() + pos, "V@%d", &version) < 1)
+        {
+            version = 0;
+        }
+    }
+    return version;
+}
+
 int getMaliTNumber(const FunctionsGL *functions)
 {
     static int number = -1;
@@ -2209,6 +2225,12 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     std::array<int, 3> mesaVersion = {0, 0, 0};
     bool isMesa                    = IsMesa(functions, &mesaVersion);
 
+    int qualcommVersion = -1;
+    if (!isMesa && isQualcomm)
+    {
+        qualcommVersion = GetQualcommVersion(functions);
+    }
+
     // Don't use 1-bit alpha formats on desktop GL with AMD drivers.
     ANGLE_FEATURE_CONDITION(features, avoid1BitAlphaTextureFormats,
                             functions->standard == STANDARD_GL_DESKTOP && isAMD);
@@ -2541,6 +2563,11 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // https://anglebug.com/7880
     ANGLE_FEATURE_CONDITION(features, emulateClipDistanceState, isQualcomm);
 
+    // https://anglebug.com/8392
+    ANGLE_FEATURE_CONDITION(features, emulateClipOrigin,
+                            !isMesa && isQualcomm && qualcommVersion < 490 &&
+                                functions->hasGLESExtension("GL_EXT_clip_control"));
+
     // https://anglebug.com/8308
     ANGLE_FEATURE_CONDITION(features, explicitFragmentLocations, isQualcomm);
 
@@ -2613,13 +2640,14 @@ void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFea
     // Disable shader program cache to workaround PowerVR Rogue issues.
     ANGLE_FEATURE_CONDITION(features, disableProgramBinary, IsPowerVrRogue(functions));
 
-    // The link job needs a context, and previous experiments showed setting up temp contexts in
-    // threads for the sake of program link triggers too many driver bugs.  See
+    // The compile and link jobs need a context, and previous experiments showed setting up temp
+    // contexts in threads for the sake of program link triggers too many driver bugs.  See
     // https://chromium-review.googlesource.com/c/angle/angle/+/4774785 for context.
     //
-    // As a result, the link job is done in the same thread as the link call.  If the native driver
-    // supports parallel link, it's still done internally by the driver, and ANGLE supports delaying
-    // post-link operations until that is done.
+    // As a result, the compile and link jobs are done in the same thread as the call.  If the
+    // native driver supports parallel compile/link, it's still done internally by the driver, and
+    // ANGLE supports delaying post-compile and post-link operations until that is done.
+    ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, false);
     ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, false);
 }
 

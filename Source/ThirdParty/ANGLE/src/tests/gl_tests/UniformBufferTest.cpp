@@ -601,6 +601,105 @@ TEST_P(UniformBufferTest, VeryLargeReadback)
     glUnmapBuffer(GL_UNIFORM_BUFFER);
 }
 
+// Test drawing with different sized uniform blocks from the same UBO, drawing a smaller uniform
+// block before larger one.
+TEST_P(UniformBufferTest, MultipleSizesSmallBeforeBig)
+{
+    constexpr size_t kSizeOfVec4  = 4 * sizeof(float);
+    constexpr char kUniformName[] = "uni";
+    constexpr char kFS1[]         = R"(#version 300 es
+precision highp float;
+layout(std140) uniform uni {
+    bool b;
+};
+
+out vec4 fragColor;
+void main() {
+    fragColor = b ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
+})";
+
+    constexpr char kFS2[] = R"(#version 300 es
+precision highp float;
+layout(std140) uniform uni {
+    bool b[2];
+    vec4 v;
+};
+
+out vec4 fragColor;
+void main() {
+    fragColor = v;
+})";
+
+    GLint offsetAlignmentInBytes;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offsetAlignmentInBytes);
+    ASSERT_EQ(offsetAlignmentInBytes % kSizeOfVec4, 0U);
+    GLint offsetAlignmentInVec4 = offsetAlignmentInBytes / kSizeOfVec4;
+
+    // Insert padding required by implementation to have first unform block at a non-zero
+    // offset.
+    int initialPadding = rx::roundUp(3, offsetAlignmentInVec4);
+    std::vector<float> uboData;
+    for (int n = 0; n < initialPadding; ++n)
+    {
+        uboData.insert(uboData.end(), {0.0f, 0.0f, 0.0f, 0.0f});
+    }
+
+    // First uniform block - a single bool
+    uboData.insert(uboData.end(), {1.0f, 0.0f, 0.0f, 0.0f});
+
+    // Insert padding required by implementation to align second uniform block.
+    for (int n = 0; n < offsetAlignmentInVec4 - 1; ++n)
+    {
+        uboData.insert(uboData.end(), {0.0f, 0.0f, 0.0f, 0.0f});
+    }
+
+    // Second uniform block
+    uboData.insert(uboData.end(), {0.0f, 0.0f, 0.0f, 0.0f});
+    uboData.insert(uboData.end(), {1.0f, 0.0f, 0.0f, 0.0f});
+    uboData.insert(uboData.end(), {0.0f, 1.0f, 0.0f, 1.0f});
+
+    ANGLE_GL_PROGRAM(program1, essl3_shaders::vs::Simple(), kFS1);
+    ANGLE_GL_PROGRAM(program2, essl3_shaders::vs::Simple(), kFS2);
+
+    // UBO containing 2 different uniform blocks
+    GLBuffer ubo;
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, uboData.size() * sizeof(float), uboData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with first uniform block
+    GLuint index = glGetUniformBlockIndex(program1, kUniformName);
+    EXPECT_NE(GL_INVALID_INDEX, index);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, initialPadding * kSizeOfVec4, kSizeOfVec4);
+    ASSERT_GL_NO_ERROR();
+
+    glUniformBlockBinding(program1, index, 0);
+    drawQuad(program1, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_NEAR(0, 0, 0, 255, 0, 255, 1);
+
+    // Draw with second uniform block
+    index = glGetUniformBlockIndex(program2, kUniformName);
+    EXPECT_NE(GL_INVALID_INDEX, index);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo,
+                      (initialPadding + offsetAlignmentInVec4) * kSizeOfVec4, 3 * kSizeOfVec4);
+    ASSERT_GL_NO_ERROR();
+
+    glUniformBlockBinding(program2, index, 0);
+    drawQuad(program2, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_NEAR(0, 0, 0, 255, 0, 255, 1);
+}
+
 class UniformBufferTest31 : public ANGLETest<>
 {
   protected:

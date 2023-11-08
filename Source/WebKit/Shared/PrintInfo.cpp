@@ -26,58 +26,29 @@
 #include "config.h"
 #include "PrintInfo.h"
 
-#include "WebCoreArgumentCoders.h"
-
-#if PLATFORM(GTK)
-#include "ArgumentCodersGtk.h"
-#endif
-
 namespace WebKit {
 
-void PrintInfo::encode(IPC::Encoder& encoder) const
-{
-    encoder << pageSetupScaleFactor;
-    encoder << availablePaperWidth;
-    encoder << availablePaperHeight;
-    encoder << margin;
-
-#if PLATFORM(GTK)
-    IPC::encode(encoder, printSettings.get());
-    IPC::encode(encoder, pageSetup.get());
-    encoder << printMode;
-#endif
-
+PrintInfo::PrintInfo(float pageSetupScaleFactor, float availablePaperWidth, float availablePaperHeight, WebCore::FloatBoxExtent margin
 #if PLATFORM(IOS_FAMILY)
-    encoder << snapshotFirstPage;
+    , bool snapshotFirstPage
 #endif
-}
-
-bool PrintInfo::decode(IPC::Decoder& decoder, PrintInfo& info)
-{
-    if (!decoder.decode(info.pageSetupScaleFactor))
-        return false;
-    if (!decoder.decode(info.availablePaperWidth))
-        return false;
-    if (!decoder.decode(info.availablePaperHeight))
-        return false;
-    if (!decoder.decode(info.margin))
-        return false;
-
 #if PLATFORM(GTK)
-    if (!IPC::decode(decoder, info.printSettings))
-        return false;
-    if (!IPC::decode(decoder, info.pageSetup))
-        return false;
-    if (!decoder.decode(info.printMode))
-        return false;
+    , GRefPtr<GtkPrintSettings>&& printSettings, GRefPtr<GtkPageSetup>&& pageSetup, PrintMode printMode
 #endif
-
+    )
+    : pageSetupScaleFactor(pageSetupScaleFactor)
+    , availablePaperWidth(availablePaperWidth)
+    , availablePaperHeight(availablePaperHeight)
+    , margin(margin)
 #if PLATFORM(IOS_FAMILY)
-    if (!decoder.decode(info.snapshotFirstPage))
-        return false;
+    , snapshotFirstPage(snapshotFirstPage)
 #endif
-
-    return true;
+#if PLATFORM(GTK)
+    , printSettings(WTFMove(printSettings))
+    , pageSetup(WTFMove(pageSetup))
+    , printMode(printMode)
+#endif
+{
 }
 
 }

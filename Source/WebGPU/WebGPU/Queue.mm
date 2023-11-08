@@ -121,7 +121,7 @@ void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandl
     callbacks.append(WTFMove(completionHandler));
 }
 
-bool Queue::validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>& commands) const
+bool Queue::validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
         if (!isValidToUseWith(command.get(), *this))
@@ -140,6 +140,9 @@ bool Queue::validateSubmit(const Vector<std::reference_wrapper<const CommandBuff
 
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
+    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted)
+        return;
+
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
     [commandBuffer addScheduledHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
         protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
@@ -162,7 +165,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     ++m_submittedCommandBufferCount;
 }
 
-void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands)
+void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
 
@@ -173,8 +176,20 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 
     finalizeBlitCommandEncoder();
 
-    for (auto commandBuffer : commands)
-        commitMTLCommandBuffer(commandBuffer.get().commandBuffer());
+    NSMutableArray<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableArray arrayWithCapacity:commands.size()];
+    for (auto commandBuffer : commands) {
+        auto& command = commandBuffer.get();
+        if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer())
+            [commandBuffersToSubmit addObject:mtlBuffer];
+        else {
+            m_device.generateAValidationError("Command buffer appears twice."_s);
+            return;
+        }
+        command.makeInvalid();
+    }
+
+    for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
+        commitMTLCommandBuffer(commandBuffer);
 
     if ([MTLCaptureManager sharedCaptureManager].isCapturing)
         [[MTLCaptureManager sharedCaptureManager] stopCapture];
@@ -616,7 +631,7 @@ void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlo
 
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
-    Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
+    Vector<std::reference_wrapper<WebGPU::CommandBuffer>> commandsToForward;
     for (uint32_t i = 0; i < commandCount; ++i)
         commandsToForward.append(WebGPU::fromAPI(commands[i]));
     WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));

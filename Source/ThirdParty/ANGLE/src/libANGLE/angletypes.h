@@ -717,8 +717,16 @@ class BlendStateExt final
     void setEquationsIndexed(const size_t index,
                              const size_t otherIndex,
                              const BlendStateExt &other);
-    GLenum getEquationColorIndexed(size_t index) const;
-    GLenum getEquationAlphaIndexed(size_t index) const;
+    BlendEquationType getEquationColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return EquationStorage::GetValueIndexed(index, mEquationColor);
+    }
+    BlendEquationType getEquationAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return EquationStorage::GetValueIndexed(index, mEquationAlpha);
+    }
     DrawBufferMask compareEquations(const EquationStorage::Type color,
                                     const EquationStorage::Type alpha) const;
     DrawBufferMask compareEquations(const BlendStateExt &other) const
@@ -744,10 +752,26 @@ class BlendStateExt final
                            const GLenum srcAlpha,
                            const GLenum dstAlpha);
     void setFactorsIndexed(const size_t index, const size_t otherIndex, const BlendStateExt &other);
-    GLenum getSrcColorIndexed(size_t index) const;
-    GLenum getDstColorIndexed(size_t index) const;
-    GLenum getSrcAlphaIndexed(size_t index) const;
-    GLenum getDstAlphaIndexed(size_t index) const;
+    BlendFactorType getSrcColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mSrcColor);
+    }
+    BlendFactorType getDstColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mDstColor);
+    }
+    BlendFactorType getSrcAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mSrcAlpha);
+    }
+    BlendFactorType getDstAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mDstAlpha);
+    }
     DrawBufferMask compareFactors(const FactorStorage::Type srcColor,
                                   const FactorStorage::Type dstColor,
                                   const FactorStorage::Type srcAlpha,
@@ -947,6 +971,9 @@ template <typename T>
 using RenderToTextureImageMap = angle::PackedEnumMap<RenderToTextureImageIndex, T>;
 
 constexpr size_t kCubeFaceCount = 6;
+
+template <typename T>
+using CubeFaceArray = std::array<T, kCubeFaceCount>;
 
 template <typename T>
 using TextureTypeMap = angle::PackedEnumMap<TextureType, T>;

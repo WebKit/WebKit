@@ -82,9 +82,9 @@ void WebDocumentLoaderMac::attachToFrame()
     retainDataSource();
 }
 
-void WebDocumentLoaderMac::detachFromFrame()
+void WebDocumentLoaderMac::detachFromFrame(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
-    DocumentLoader::detachFromFrame();
+    DocumentLoader::detachFromFrame(loadWillContinueInAnotherProcess);
 
     if (m_loadingResources.isEmpty())
         releaseDataSource();

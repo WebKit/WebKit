@@ -2373,7 +2373,9 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     } else {
         float height = trackClip.height();
         trackClip.setHeight(height * valueRatio);
-        trackClip.setY(trackClip.y() + height - trackClip.height());
+
+        if (box.style().isHorizontalWritingMode() || !box.style().isLeftToRightDirection())
+            trackClip.setY(trackClip.y() + height - trackClip.height());
     }
 
     FloatRoundedRect fillRect(trackClip, cornerRadii);

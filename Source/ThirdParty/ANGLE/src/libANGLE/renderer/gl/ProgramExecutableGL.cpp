@@ -20,6 +20,7 @@ ProgramExecutableGL::ProgramExecutableGL(const gl::ProgramExecutable *executable
     : ProgramExecutableImpl(executable),
       mHasAppliedTransformFeedbackVaryings(false),
       mClipDistanceEnabledUniformLocation(-1),
+      mClipOriginUniformLocation(-1),
       mMultiviewBaseViewLayerIndexUniformLocation(-1),
       mProgramID(0),
       mFunctions(nullptr),
@@ -36,6 +37,7 @@ void ProgramExecutableGL::reset()
     mUniformBlockRealLocationMap.clear();
 
     mClipDistanceEnabledUniformLocation         = -1;
+    mClipOriginUniformLocation                  = -1;
     mMultiviewBaseViewLayerIndexUniformLocation = -1;
 }
 
@@ -92,6 +94,12 @@ void ProgramExecutableGL::postLink(const FunctionsGL *functions,
         ASSERT(mClipDistanceEnabledUniformLocation != -1);
     }
 
+    if (features.emulateClipOrigin.enabled)
+    {
+        ASSERT(functions->standard == STANDARD_GL_ES);
+        mClipOriginUniformLocation = functions->getUniformLocation(programID, "angle_ClipOrigin");
+    }
+
     if (mExecutable->usesMultiview())
     {
         mMultiviewBaseViewLayerIndexUniformLocation =
@@ -108,6 +116,26 @@ void ProgramExecutableGL::updateEnabledClipDistances(uint8_t enabledClipDistance
     ASSERT(mFunctions->programUniform1ui != nullptr);
     mFunctions->programUniform1ui(mProgramID, mClipDistanceEnabledUniformLocation,
                                   enabledClipDistancesPacked);
+}
+
+void ProgramExecutableGL::updateEmulatedClipOrigin(gl::ClipOrigin origin) const
+{
+    if (mClipOriginUniformLocation == -1)
+    {
+        // A driver may optimize away the uniform when gl_Position.y is always zero.
+        return;
+    }
+
+    const float originValue = (origin == gl::ClipOrigin::LowerLeft) ? 1.0f : -1.0f;
+    if (mFunctions->programUniform1f != nullptr)
+    {
+        mFunctions->programUniform1f(mProgramID, mClipOriginUniformLocation, originValue);
+    }
+    else
+    {
+        mStateManager->useProgram(mProgramID);
+        mFunctions->uniform1f(mClipOriginUniformLocation, originValue);
+    }
 }
 
 void ProgramExecutableGL::enableLayeredRenderingPath(int baseViewIndex) const

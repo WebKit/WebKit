@@ -36,6 +36,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
@@ -66,7 +67,7 @@ using namespace HTMLNames;
 static bool canLoadJavaScriptURL(HTMLFrameOwnerElement& ownerElement, const URL& url)
 {
     ASSERT(url.protocolIsJavaScript());
-    if (!ownerElement.document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, url.string(), &ownerElement))
+    if (!ownerElement.protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, url.string(), &ownerElement))
         return false;
     if (!ownerElement.canLoadScriptURL(url))
         return false;
@@ -207,13 +208,13 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
 
-    auto& document = ownerElement.document();
+    Ref document = ownerElement.document();
 
     URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
     // Historically, we haven't run javascript URLs in <embed> / <object> elements.
     if (completedURL.protocolIsJavaScript())
@@ -224,7 +225,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document.page(), mimeType, completedURL);
+        logPluginRequest(document->checkedPage().get(), mimeType, completedURL);
         return success;
     }
 
@@ -236,27 +237,28 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
 
 LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
-    auto& initiatingDocument = ownerElement.document();
+    Ref initiatingDocument = ownerElement.document();
 
     URL upgradedRequestURL = requestURL;
-    initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    initiatingDocument->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
     RefPtr frame = ownerElement.contentFrame();
     if (frame) {
         CompletionHandler<void()> stopDelayingLoadEvent = [] { };
         if (upgradedRequestURL.protocolIsJavaScript()) {
-            ownerElement.document().incrementLoadEventDelayCount();
-            stopDelayingLoadEvent = [ownerDocument = Ref { ownerElement.document() }] {
+            Ref ownerDocument = ownerElement.document();
+            ownerDocument->incrementLoadEventDelayCount();
+            stopDelayingLoadEvent = [ownerDocument = WTFMove(ownerDocument)] {
                 ownerDocument->decrementLoadEventDelayCount();
             };
         }
 
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame); localFrame && localFrame->loader().isComplete()) {
-            if (auto* page = localFrame->page())
+            if (CheckedPtr page = localFrame->page())
                 page->willChangeLocationInCompletelyLoadedSubframe();
         }
 
-        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
+        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument->securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
     } else
         frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());
 

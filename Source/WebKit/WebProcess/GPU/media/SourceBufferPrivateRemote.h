@@ -62,14 +62,15 @@ class SourceBufferPrivateRemote final
     , public IPC::MessageReceiver
 {
 public:
-    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
+    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
     virtual ~SourceBufferPrivateRemote();
 
-    void clearMediaSource() { m_mediaSourcePrivate = nullptr; }
+    constexpr PlatformType platformType() const final { return PlatformType::Remote; }
+
     void disconnect() { m_disconnected = true; }
 
 private:
-    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
+    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
@@ -109,8 +110,6 @@ private:
 
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded) final;
 
-    bool isActive() const final { return m_isActive; }
-
     // Internals Utility methods
     void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
     void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
@@ -132,14 +131,12 @@ private:
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
-    WeakPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
     HashMap<AtomString, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
     HashMap<AtomString, TrackPrivateRemoteIdentifier> m_prevTrackIdentifierMap;
     Vector<WebCore::PlatformTimeRanges> m_trackBufferRanges;
 
-    bool m_isActive { false };
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };
 
     bool isGPURunning() const { return !m_disconnected && m_gpuProcessConnection.get(); }

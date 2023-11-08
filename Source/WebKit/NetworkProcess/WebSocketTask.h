@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
+#if PLATFORM(COCOA)
 #include "WebSocketTaskCocoa.h"
 #elif USE(SOUP)
 #include "WebSocketTaskSoup.h"

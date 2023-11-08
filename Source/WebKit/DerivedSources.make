@@ -584,6 +584,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
+	Shared/PrintInfo.serialization.in \
 	Shared/PushMessageForTesting.serialization.in \
 	Shared/RTCNetwork.serialization.in \
 	Shared/RemoteWorkerInitializationData.serialization.in \

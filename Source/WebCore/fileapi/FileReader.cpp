@@ -163,7 +163,7 @@ void FileReader::didReceiveData()
 {
     enqueueTask([this] {
         auto now = MonotonicTime::now();
-        if (std::isnan(m_lastProgressNotificationTime)) {
+        if (m_lastProgressNotificationTime.isNaN()) {
             m_lastProgressNotificationTime = now;
             return;
         }

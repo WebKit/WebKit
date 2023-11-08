@@ -1333,7 +1333,7 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(
             }
             // Calculate offset in new block.
             size_t dstOffsetSource = srcOffset - conversion->initialSrcOffset();
-            assert(dstOffsetSource % conversionInfo.stdSize() == 0);
+            ASSERT(dstOffsetSource % conversionInfo.stdSize() == 0);
             unsigned int numBlocksToOffset =
                 (unsigned int)(dstOffsetSource / conversionInfo.stdSize());
             size_t bytesToOffset = numBlocksToOffset * conversionInfo.metalSize();

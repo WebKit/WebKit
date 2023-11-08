@@ -289,21 +289,22 @@ bool HTMLPlugInImageElement::canLoadPlugInContent(const String& relativeURL, con
     if (isInUserAgentShadowTree())
         return true;
 
+    Ref document = this->document();
     URL completedURL;
     if (!relativeURL.isEmpty())
-        completedURL = document().completeURL(relativeURL);
+        completedURL = document->completeURL(relativeURL);
 
-    ASSERT(document().contentSecurityPolicy());
-    const ContentSecurityPolicy& contentSecurityPolicy = *document().contentSecurityPolicy();
+    ASSERT(document->contentSecurityPolicy());
+    CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
 
-    contentSecurityPolicy.upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    contentSecurityPolicy->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    if (!shouldBypassCSPForPDFPlugin(mimeType) && !contentSecurityPolicy.allowObjectFromSource(completedURL))
+    if (!shouldBypassCSPForPDFPlugin(mimeType) && !contentSecurityPolicy->allowObjectFromSource(completedURL))
         return false;
 
-    auto& declaredMimeType = document().isPluginDocument() && document().ownerElement() ?
-        document().ownerElement()->attributeWithoutSynchronization(HTMLNames::typeAttr) : attributeWithoutSynchronization(HTMLNames::typeAttr);
-    return contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL);
+    auto& declaredMIMEType = document->isPluginDocument() && document->ownerElement() ?
+        document->ownerElement()->attributeWithoutSynchronization(HTMLNames::typeAttr) : attributeWithoutSynchronization(HTMLNames::typeAttr);
+    return contentSecurityPolicy->allowPluginType(mimeType, declaredMIMEType, completedURL);
 }
 
 bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)

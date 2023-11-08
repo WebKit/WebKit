@@ -63,20 +63,19 @@ bool SourceBufferPrivateGStreamer::isContentTypeSupported(const ContentType& typ
     return containerType == "audio/mpeg"_s || containerType.endsWith("mp4"_s) || containerType.endsWith("aac"_s) || containerType.endsWith("webm"_s);
 }
 
-Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
     return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType, playerPrivate));
 }
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
-    : SourceBufferPrivate()
-    , m_mediaSource(mediaSource)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+    : SourceBufferPrivate(mediaSource)
     , m_type(contentType)
     , m_playerPrivate(playerPrivate)
     , m_appendPipeline(makeUniqueRef<AppendPipeline>(*this, playerPrivate))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(mediaSource->logger())
-    , m_logIdentifier(mediaSource->nextSourceBufferLogIdentifier())
+    , m_logger(mediaSource.logger())
+    , m_logIdentifier(mediaSource.nextSourceBufferLogIdentifier())
 #endif
 {
 }
@@ -109,14 +108,14 @@ void SourceBufferPrivateGStreamer::resetParserStateInternal()
 void SourceBufferPrivateGStreamer::removedFromMediaSource()
 {
     ASSERT(isMainThread());
-    clearTrackBuffers();
-    m_mediaSource->removeSourceBuffer(this);
 
     for (auto& track : m_tracks.values())
         track->remove();
     m_hasBeenRemovedFromMediaSource = true;
 
     m_appendPipeline->stopParser();
+
+    SourceBufferPrivate::removedFromMediaSource();
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
@@ -135,7 +134,7 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
 
-    if (!m_mediaSource->hasAllTracks()) {
+    if (!static_cast<MediaSourcePrivateGStreamer*>(m_mediaSource.get())->hasAllTracks()) {
         GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
         MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
         track->clearQueue();
@@ -192,24 +191,12 @@ void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& t
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }
 
-void SourceBufferPrivateGStreamer::setActive(bool isActive)
-{
-    m_isActive = isActive;
-    m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
-}
-
-bool SourceBufferPrivateGStreamer::isActive() const
-{
-    return m_isActive;
-}
-
-void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(InitializationSegment&& initializationSegment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
+void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(InitializationSegment&& initializationSegment)
 {
     auto initCheckTask = [weakThis = WeakPtr { *this }, this] (InitializationSegment& segment) {
         if (!weakThis)
             return false;
 
-        m_hasReceivedInitializationSegment = true;
         for (auto& trackInfo : segment.videoTracks) {
             GRefPtr<GstCaps> initialCaps = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
             ASSERT(initialCaps);
@@ -229,10 +216,14 @@ void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(Initializatio
                 m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
         }
 
-        m_mediaSource->startPlaybackIfHasAllTracks();
         return true;
     };
-    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(initCheckTask), WTFMove(completionHandler));
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(initCheckTask), [weakThis = WeakPtr { *this }, this] (auto) {
+        if (!weakThis)
+            return;
+        if (m_mediaSource)
+            static_cast<MediaSourcePrivateGStreamer*>(m_mediaSource.get())->startPlaybackIfHasAllTracks();
+    });
 }
 
 void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)
@@ -248,22 +239,6 @@ void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
     SourceBufferPrivate::appendCompleted(false, m_mediaSource ? m_mediaSource->isEnded() : true);
-}
-
-MediaTime SourceBufferPrivateGStreamer::currentMediaTime() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->currentMediaTime();
-}
-
-MediaTime SourceBufferPrivateGStreamer::duration() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->duration();
 }
 
 #if !RELEASE_LOG_DISABLED

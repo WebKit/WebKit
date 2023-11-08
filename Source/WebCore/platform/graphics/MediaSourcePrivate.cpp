@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "PlatformTimeRanges.h"
+#include "SourceBufferPrivate.h"
 
 namespace WebCore {
 
@@ -51,6 +52,62 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const Media
 
     return localEnd - currentTime > timeFudgeFactor();
 }
+
+MediaSourcePrivate::~MediaSourcePrivate()
+{
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->clearMediaSource();
+}
+
+void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
+{
+    ASSERT(m_sourceBuffers.contains(&sourceBuffer));
+
+    size_t pos = m_activeSourceBuffers.find(&sourceBuffer);
+    if (pos != notFound) {
+        m_activeSourceBuffers.remove(pos);
+        notifyActiveSourceBuffersChanged();
+    }
+    m_sourceBuffers.removeFirst(&sourceBuffer);
+}
+
+void MediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate& sourceBuffer, bool active)
+{
+    size_t position = m_activeSourceBuffers.find(&sourceBuffer);
+    if (active && position == notFound) {
+        m_activeSourceBuffers.append(&sourceBuffer);
+        notifyActiveSourceBuffersChanged();
+        return;
+    }
+
+    if (active || position == notFound)
+        return;
+
+    m_activeSourceBuffers.remove(position);
+    notifyActiveSourceBuffersChanged();
+}
+
+bool MediaSourcePrivate::hasAudio() const
+{
+    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
+        return sourceBuffer->hasAudio();
+    });
+}
+
+bool MediaSourcePrivate::hasVideo() const
+{
+    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
+        return sourceBuffer->hasVideo();
+    });
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void MediaSourcePrivate::setCDMSession(LegacyCDMSession* session)
+{
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->setCDMSession(session);
+}
+#endif
 
 } // namespace WebCore
 

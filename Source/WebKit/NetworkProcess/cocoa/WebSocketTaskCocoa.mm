@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebSocketTaskCocoa.h"
 
-#if HAVE(NSURLSESSION_WEBSOCKET)
-
 #import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
@@ -183,4 +181,3 @@ NSURLSessionTask* WebSocketTask::task() const
 }
 
 }
-#endif

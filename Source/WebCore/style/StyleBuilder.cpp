@@ -376,7 +376,7 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
     auto variableValue = [&]() -> RefPtr<CSSValue> {
         if (is<CSSPendingSubstitutionValue>(value)) {
             auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
-            return substitution.shorthandValue().resolveSubstitutionValue(m_state, propertyID, substitution.shorthandPropertyId());
+            return substitution.resolveValue(m_state, propertyID);
         }
 
         auto& variableReferenceValue = downcast<CSSVariableReferenceValue>(value);

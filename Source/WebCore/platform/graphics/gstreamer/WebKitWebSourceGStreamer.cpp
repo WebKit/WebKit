@@ -1114,7 +1114,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     // Rough bandwidth calculation. We ignore here the first data package because we would have to reset the counters when we issue the request and
     // that first package delivery would include the time of sending out the request and getting the data back. Since we can't distinguish the
     // sending time from the receiving time, it is better to ignore it.
-    if (!std::isnan(members->downloadStartTime)) {
+    if (!members->downloadStartTime.isNaN()) {
         members->totalDownloadedBytes += data.size();
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
         GST_TRACE_OBJECT(src, "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart

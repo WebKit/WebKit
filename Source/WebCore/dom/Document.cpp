@@ -3814,7 +3814,7 @@ void Document::processBaseElement()
     if (!href.isNull())
         baseElementURL = completeURL(href, fallbackBaseURL());
     if (m_baseElementURL != baseElementURL) {
-        if (!contentSecurityPolicy()->allowBaseURI(baseElementURL))
+        if (!checkedContentSecurityPolicy()->allowBaseURI(baseElementURL))
             m_baseElementURL = { };
         else if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL)) {
             m_baseElementURL = { };
@@ -4165,7 +4165,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
 
     case HTTPHeaderName::ContentSecurityPolicy:
         if (isInDocumentHead)
-            contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer(), httpStatusCode);
+            checkedContentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer(), httpStatusCode);
         break;
 
     case HTTPHeaderName::ReportingEndpoints:
@@ -6785,7 +6785,7 @@ void Document::initSecurityContext()
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
     if (!overrideContentSecurityPolicy.isNull())
-        contentSecurityPolicy()->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API, referrer(), documentLoader ? documentLoader->response().httpStatusCode() : 0);
+        checkedContentSecurityPolicy()->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API, referrer(), documentLoader ? documentLoader->response().httpStatusCode() : 0);
 
 #if USE(QUICK_LOOK)
     if (shouldEnforceQuickLookSandbox())
@@ -6841,8 +6841,9 @@ void Document::initSecurityContext()
         return;
     }
 
-    contentSecurityPolicy()->copyStateFrom(ownerFrame->document()->contentSecurityPolicy());
-    contentSecurityPolicy()->updateSourceSelf(ownerFrame->document()->securityOrigin());
+    CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
+    contentSecurityPolicy->copyStateFrom(ownerFrame->protectedDocument()->checkedContentSecurityPolicy().get());
+    contentSecurityPolicy->updateSourceSelf(ownerFrame->document()->protectedSecurityOrigin());
 
     setCrossOriginEmbedderPolicy(ownerFrame->document()->crossOriginEmbedderPolicy());
 
@@ -6856,7 +6857,7 @@ void Document::initSecurityContext()
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
     if (RefPtr openerDocument = openerFrame ? openerFrame->document() : nullptr)
-        contentSecurityPolicy()->inheritInsecureNavigationRequestsToUpgradeFromOpener(*openerDocument->contentSecurityPolicy());
+        contentSecurityPolicy->inheritInsecureNavigationRequestsToUpgradeFromOpener(*openerDocument->checkedContentSecurityPolicy());
 
     if (isSandboxed(SandboxOrigin)) {
         // If we're supposed to inherit our security origin from our owner,
@@ -6880,7 +6881,7 @@ void Document::initContentSecurityPolicy()
         return;
     RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
     if (parentFrame)
-        contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*parentFrame->document()->contentSecurityPolicy());
+        checkedContentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*parentFrame->protectedDocument()->checkedContentSecurityPolicy());
 
     // FIXME: Remove this special plugin document logic. We are stricter than the CSP 3 spec. with regards to plugins: we prefer to
     // inherit the full policy unless the plugin document is opened in a new window. The CSP 3 spec. implies that only plugin documents
@@ -6893,9 +6894,9 @@ void Document::initContentSecurityPolicy()
         return;
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
     if (openerFrame)
-        contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*openerFrame->document()->contentSecurityPolicy());
+        checkedContentSecurityPolicy()->createPolicyForPluginDocumentFrom(*openerFrame->protectedDocument()->checkedContentSecurityPolicy());
     else
-        contentSecurityPolicy()->copyStateFrom(parentFrame->document()->contentSecurityPolicy());
+        checkedContentSecurityPolicy()->copyStateFrom(parentFrame->protectedDocument()->checkedContentSecurityPolicy().get());
 }
 
 void Document::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)
@@ -8426,7 +8427,7 @@ void Document::applyQuickLookSandbox()
     static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");
     RELEASE_ASSERT(contentSecurityPolicy());
     // The sandbox directive is only allowed if the policy is from an HTTP header.
-    contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
+    checkedContentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
 
     disableSandboxFlags(SandboxNavigation);
 

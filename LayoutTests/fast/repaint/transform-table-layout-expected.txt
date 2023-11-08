@@ -1,5 +1,4 @@
 (repaint rects
-  (rect 8 108 1 1)
   (rect 8 108 2 2)
   (rect 8 109 100 1)
   (rect 8 108 100 2)

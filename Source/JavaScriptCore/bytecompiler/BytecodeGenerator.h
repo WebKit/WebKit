@@ -1303,7 +1303,7 @@ namespace JSC {
         Vector<Ref<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         unsigned m_yieldPoints { 0 };
-        bool m_isAsync { false };
+        bool m_needsGeneratorification { false };
 
         Strong<SymbolTable> m_generatorFrameSymbolTable;
         int m_generatorFrameSymbolTableIndex { 0 };

@@ -493,8 +493,6 @@ private:
     void allowSpecificHTTPSCertificateForHost(PAL::SessionID, const WebCore::CertificateInfo&, const String& host);
 #endif
     void allowTLSCertificateChainForLocalPCMTesting(PAL::SessionID, const WebCore::CertificateInfo&);
-    void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
-
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void addWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier, WebPageNetworkParameters&&);

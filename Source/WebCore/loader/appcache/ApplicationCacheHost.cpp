@@ -407,9 +407,9 @@ bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const Resource
         return false;
 
     ResourceRequest request(originalRequest);
-    if (auto* loaderFrame = m_documentLoader->frame()) {
-        if (auto* document = loaderFrame->document())
-            document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+    if (RefPtr loaderFrame = m_documentLoader->frame()) {
+        if (RefPtr document = loaderFrame->document())
+            document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
     }
     
     // If the resource is not to be fetched using the HTTP GET mechanism or equivalent, or if its URL has a different

@@ -66,6 +66,8 @@
 6173 WIN INTEL OPENGL : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
 6217 WIN INTEL OPENGL : GLSLTest_ES31.StorageBufferBoolVectorPassedToFunctions/* = SKIP
 7143 WIN INTEL OPENGL : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
+8399 WIN INTEL OPENGL : TextureCubeTestES3.IncompatibleLayerABThenCompatibleLayerAB/* = SKIP
+8399 WIN INTEL OPENGL : TextureCubeTestES3.IncompatibleLayerABThenCompatibleLayerABSingleLevel/* = SKIP
 6826 WIN NVIDIA OPENGL : GLSLTest.VectorAndMatrixScalarizationDoesNotAffectRendering/* = SKIP
 6826 WIN NVIDIA GLES : GLSLTest.VectorAndMatrixScalarizationDoesNotAffectRendering/* = SKIP
 4716 WIN NVIDIA GLES : CopyTextureTest.CopyOutsideMipmap/* = SKIP
@@ -565,6 +567,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 b/305292977 PIXEL4ORXL VULKAN : FramebufferTest_ES31.ClearWithColorMasksRGB5A1/* = SKIP
 b/305311693 PIXEL4ORXL GLES : FramebufferTest_ES31.ClearColorMorePrecisionThanFBOFormatShouldNotApplyDithering/* = SKIP
+b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoData/* = SKIP
 
 8310 PIXEL4ORXL VULKAN : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP
 8310 LINUX SWIFTSHADER : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP
@@ -1043,8 +1046,9 @@ b/305311693 PIXEL4ORXL GLES : FramebufferTest_ES31.ClearColorMorePrecisionThanFB
 // On D3D: readonly image2D handles don't return the texture's existing contents.
 7611 D3D11 : GLSLTest_ES31.ReadOnlyImage2DAsFunctionArg/* = SKIP
 
-// Flaky timeout on Windows SwANGLE
+// Flaky timeouts - SwiftShader hits a heavy emulation path in this test
 7900 WIN SWIFTSHADER : InstancingTestES3.LargeDivisor/* = SKIP
+7900 LINUX ASAN SWIFTSHADER : InstancingTestES3.LargeDivisor/* = SKIP
 
 // Timeout with SwiftShader and MAC OpenGL due to large workloads
 7389 SWIFTSHADER : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
@@ -1374,13 +1378,16 @@ b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 8212 MALIG710 VULKAN : VulkanPerformanceCounterTest.RenderToTextureUninitializedAndUnusedDepthStencil/* = SKIP
 8212 MALIG710 VULKAN : WebGLCompatibilityTest.FramebufferFloatColorAttachmentMRT/* = SKIP
 
-
-// Pixel7 crashes:
-8212 PIXEL7 VULKAN : ImageTestES3.RGBXAHBImportMultipleLayers/* = SKIP
-
 // Pixel7 non-crash failures:
 8212 PIXEL7 VULKAN : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP
 8212 PIXEL7 VULKAN : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP
+
+8378 VULKAN : Texture2DBaseMaxTestES3.NotColorRenderableWithColorRenderableBeyondMaxLevel/* = SKIP
+8378 VULKAN : Texture2DBaseMaxTestES3.DepthRenderableWithColorRenderableBeyondMaxLevel/* = SKIP
+8378 VULKAN : Texture2DBaseMaxTestES3.NotColorRenderableAfterColorRenderableBelowBaseLevel/* = SKIP
+8378 VULKAN : Texture2DBaseMaxTestES3.DepthRenderableAfterColorRenderableBelowBaseLevel/* = SKIP
+8378 WIN INTEL OPENGL : Texture2DBaseMaxTestES3.NotColorRenderableAfterColorRenderableBelowBaseLevel/* = SKIP
+8378 WIN INTEL OPENGL : Texture2DBaseMaxTestES3.DepthRenderableAfterColorRenderableBelowBaseLevel/* = SKIP
 
 // Slow tests, should appear last in this file
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT
@@ -1389,10 +1396,6 @@ b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 
 // Workaround feature that is only supposed to be enabled on vulkan backend
 b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = SKIP
-
-// Work in progress.
-7907 D3D11 : CopyTextureTest.NoConvertSRGBToRGB/ES2_D3D11 = SKIP
-7907 D3D11 : CopyTextureTestES3.NoConvertSRGBToRGB/ES3_D3D11 = SKIP
 
 // Please do not add expectations below this line,
 // so that TIMEOUT expectations above don't override more precise SKIP expectations

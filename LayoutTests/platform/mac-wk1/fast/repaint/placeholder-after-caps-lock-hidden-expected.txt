@@ -1,0 +1,4 @@
+Tests that the placeholder text is repainted when the caps lock indicator is hidden.
+
+
+

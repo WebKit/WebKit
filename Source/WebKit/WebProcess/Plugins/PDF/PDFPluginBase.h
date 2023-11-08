@@ -32,6 +32,8 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PluginViewBase.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
@@ -48,6 +50,7 @@ class GraphicsContext;
 class Element;
 class HTMLPlugInElement;
 class ResourceResponse;
+class Scrollbar;
 class SharedBuffer;
 }
 
@@ -61,7 +64,7 @@ class WebMouseEvent;
 class WebWheelEvent;
 struct WebHitTestResultData;
 
-class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase> {
+class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase>, public WebCore::ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
 public:
@@ -80,13 +83,15 @@ public:
 
     virtual void setView(PluginView&);
 
-    virtual void willDetachRenderer() { }
+    virtual void willDetachRenderer();
 
     virtual bool isComposited() const { return false; }
 
     virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
 
     virtual CGFloat scaleFactor() const = 0;
+
+    virtual bool isLocked() const = 0;
 
     // FIXME: Can we use PDFDocument here?
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const = 0;
@@ -96,11 +101,11 @@ public:
     virtual void visibilityDidChange(bool) { }
     virtual void contentsScaleFactorChanged(float) { }
 
-    virtual void updateControlTints(WebCore::GraphicsContext&) { }
+    void updateControlTints(WebCore::GraphicsContext&);
 
     virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
 
-    virtual bool wantsWheelEvents() const { return false; }
+    virtual bool wantsWheelEvents() const { return true; }
     virtual bool handleMouseEvent(const WebMouseEvent&) = 0;
     virtual bool handleWheelEvent(const WebWheelEvent&) = 0;
     virtual bool handleMouseEnterEvent(const WebMouseEvent&) = 0;
@@ -138,6 +143,10 @@ public:
 
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
 
+    WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
+    WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
+    WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
+
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
@@ -151,10 +160,42 @@ protected:
     virtual bool incrementalPDFStreamDidFinishLoading() { return false; }
     virtual void incrementalPDFStreamDidFail() { }
 
+    virtual unsigned firstPageHeight() const = 0;
+
     void ensureDataBufferLength(uint64_t);
     void addArchiveResource();
 
     void invalidateRect(const WebCore::IntRect&);
+
+    // ScrollableArea functions.
+    WebCore::IntRect scrollCornerRect() const final;
+    WebCore::ScrollableArea* enclosingScrollableArea() const final;
+    bool isScrollableOrRubberbandable() final { return true; }
+    bool hasScrollableOrRubberbandableAncestor() final { return true; }
+    WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
+    void setScrollOffset(const WebCore::ScrollOffset&) final;
+    bool isActive() const final;
+    bool isScrollCornerVisible() const final { return false; }
+    WebCore::ScrollPosition scrollPosition() const final;
+    WebCore::ScrollPosition minimumScrollPosition() const final;
+    WebCore::ScrollPosition maximumScrollPosition() const final;
+    WebCore::IntSize visibleSize() const final { return m_size; }
+    float deviceScaleFactor() const override;
+    bool shouldSuspendScrollAnimations() const final { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
+    void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) final;
+    WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntRect& scrollbarRect) const final;
+    WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntRect& parentRect) const final;
+    WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const final;
+    WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    bool shouldPlaceVerticalScrollbarOnLeft() const final { return false; }
+    String debugDescription() const final;
+
+    // Scrolling, but not ScrollableArea:
+    virtual void didChangeScrollOffset() = 0;
+    virtual void updateScrollbars();
+    virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
+    virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
 
     WeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
@@ -166,6 +207,11 @@ protected:
 
     WebCore::IntSize m_size;
     WebCore::AffineTransform m_rootViewToPluginTransform;
+
+    WebCore::IntSize m_scrollOffset;
+
+    RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
+    RefPtr<WebCore::Scrollbar> m_verticalScrollbar;
 
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };

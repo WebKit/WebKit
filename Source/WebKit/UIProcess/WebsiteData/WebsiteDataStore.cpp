@@ -1813,11 +1813,6 @@ bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
     });
 }
 
-void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
-{
-    protectedNetworkProcess()->sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), 0);
-}
-
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     protectedQueue()->dispatch(WTFMove(function));
@@ -1930,9 +1925,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.pcmMachServiceName = m_configuration->pcmMachServiceName();
     networkSessionParameters.webPushMachServiceName = m_configuration->webPushMachServiceName();
     networkSessionParameters.webPushPartitionString = m_configuration->webPushPartitionString();
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    networkSessionParameters.shouldAcceptInsecureCertificatesForWebSockets = m_configuration->shouldAcceptInsecureCertificatesForWebSockets();
-#endif
     networkSessionParameters.isBlobRegistryTopOriginPartitioningEnabled = isBlobRegistryPartitioningEnabled();
     networkSessionParameters.unifiedOriginStorageLevel = m_configuration->unifiedOriginStorageLevel();
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();

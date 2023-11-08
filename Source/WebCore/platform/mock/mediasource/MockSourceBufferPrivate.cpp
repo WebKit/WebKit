@@ -117,21 +117,27 @@ private:
     MockTrackBox m_box;
 };
 
-Ref<MockSourceBufferPrivate> MockSourceBufferPrivate::create(MockMediaSourcePrivate* parent)
+Ref<MockSourceBufferPrivate> MockSourceBufferPrivate::create(MockMediaSourcePrivate& parent)
 {
     return adoptRef(*new MockSourceBufferPrivate(parent));
 }
 
-MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
-    : m_mediaSource(parent)
+MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate& parent)
+    : SourceBufferPrivate(parent)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(parent->logger())
-    , m_logIdentifier(parent->nextSourceBufferLogIdentifier())
+    , m_logger(parent.logger())
+    , m_logIdentifier(parent.nextSourceBufferLogIdentifier())
 #endif
 {
 }
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
+
+MockMediaSourcePrivate* MockSourceBufferPrivate::mediaSourcePrivate() const
+{
+    RELEASE_ASSERT(m_mediaSource);
+    return static_cast<MockMediaSourcePrivate*>(m_mediaSource.get());
+}
 
 void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
 {
@@ -205,33 +211,15 @@ void MockSourceBufferPrivate::resetParserStateInternal()
 {
 }
 
-void MockSourceBufferPrivate::removedFromMediaSource()
-{
-    if (m_mediaSource)
-        m_mediaSource->removeSourceBuffer(this);
-}
-
 MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
 {
-    return m_mediaSource ? m_mediaSource->player().readyState() : MediaPlayer::ReadyState::HaveNothing;
+    return m_mediaSource ? mediaSourcePrivate()->player().readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_mediaSource)
-        m_mediaSource->player().setReadyState(readyState);
-}
-
-void MockSourceBufferPrivate::setActive(bool isActive)
-{
-    m_isActive = isActive;
-    if (m_mediaSource)
-        m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
-}
-
-bool MockSourceBufferPrivate::isActive() const
-{
-    return m_isActive;
+        mediaSourcePrivate()->player().setReadyState(readyState);
 }
 
 void MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -272,22 +260,6 @@ bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
-MediaTime MockSourceBufferPrivate::currentMediaTime() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->currentMediaTime();
-}
-
-MediaTime MockSourceBufferPrivate::duration() const
-{
-    if (!m_mediaSource)
-        return { };
-
-    return m_mediaSource->duration();
-}
-
 void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
 {
     if (!m_mediaSource)
@@ -301,13 +273,13 @@ void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const Ato
     if (!box)
         return;
 
-    m_mediaSource->incrementTotalVideoFrames();
+    mediaSourcePrivate()->incrementTotalVideoFrames();
     if (box->isCorrupted())
-        m_mediaSource->incrementCorruptedFrames();
+        mediaSourcePrivate()->incrementCorruptedFrames();
     if (box->isDropped())
-        m_mediaSource->incrementDroppedFrames();
+        mediaSourcePrivate()->incrementDroppedFrames();
     if (box->isDelayed())
-        m_mediaSource->incrementTotalFrameDelayBy(MediaTime(1, 1));
+        mediaSourcePrivate()->incrementTotalFrameDelayBy(MediaTime(1, 1));
 
     m_enqueuedSamples.append(toString(sample.get()));
 }

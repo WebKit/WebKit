@@ -1,0 +1,10 @@
+Verifies window.open can successfully open a window with the same origin as an iframe of this window
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS received message from opened window: opened window received: initial reply
+PASS successfullyParsed is true
+
+TEST COMPLETE
+click to run test manually in a browser

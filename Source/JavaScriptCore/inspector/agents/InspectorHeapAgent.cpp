@@ -286,7 +286,7 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
         return;
     }
 
-    if (std::isnan(m_gcStartTime)) {
+    if (m_gcStartTime.isNaN()) {
         // We were not enabled when the GC began.
         return;
     }

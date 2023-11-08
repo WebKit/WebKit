@@ -201,5 +201,6 @@ void ResetReplay(void)
     // Reset main context state
     glUseProgram(gShaderProgramMap[0]);
     UpdateCurrentProgram(0);
+    glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
 }
 

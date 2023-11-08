@@ -2264,7 +2264,8 @@ class ImageHelper final : public Resource, public angle::Subject
     // - Image respecification, where every level (other than those explicitly skipped) is staged
     void stageSelfAsSubresourceUpdates(ContextVk *contextVk,
                                        uint32_t levelCount,
-                                       gl::TexLevelMask skipLevelsMask);
+                                       gl::TextureType textureType,
+                                       const gl::CubeFaceArray<gl::TexLevelMask> &skipLevels);
 
     // Flush staged updates for a single subresource. Can optionally take a parameter to defer
     // clears to a subsequent RenderPass load op.
@@ -2283,7 +2284,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                      gl::LevelIndex levelGLEnd,
                                      uint32_t layerStart,
                                      uint32_t layerEnd,
-                                     gl::TexLevelMask skipLevelsMask);
+                                     const gl::CubeFaceArray<gl::TexLevelMask> &skipLevels);
 
     // Creates a command buffer and flushes all staged updates.  This is used for one-time
     // initialization of resources that we don't expect to accumulate further staged updates, such
@@ -2625,7 +2626,7 @@ class ImageHelper final : public Resource, public angle::Subject
     // Called from flushStagedUpdates, removes updates that are later superseded by another.  This
     // cannot be done at the time the updates were staged, as the image is not created (and thus the
     // extents are not known).
-    void removeSupersededUpdates(ContextVk *contextVk, gl::TexLevelMask skipLevelsMask);
+    void removeSupersededUpdates(ContextVk *contextVk, const gl::TexLevelMask skipLevelsAllFaces);
 
     void initImageMemoryBarrierStruct(Context *context,
                                       VkImageAspectFlags aspectMask,

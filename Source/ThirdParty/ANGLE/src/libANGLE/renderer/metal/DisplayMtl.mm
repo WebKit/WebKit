@@ -524,6 +524,9 @@ void DisplayMtl::generateCaps(egl::Caps *outCaps) const
 
 void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) const
 {
+    // The Metal backend's handling of compile is thread-safe
+    ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
+
     // The link job in this backend references gl::Context and ContextMtl, and thread-safety is not
     // guaranteed.  The link subtasks are safe however, they are still parallelized.
     //

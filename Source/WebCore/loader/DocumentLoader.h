@@ -95,6 +95,7 @@ class SubstituteResource;
 class UserContentURLPattern;
 
 enum class ClearSiteDataValue : uint8_t;
+enum class LoadWillContinueInAnotherProcess : bool;
 enum class ShouldContinue;
 
 using ResourceLoaderMap = HashMap<ResourceLoaderIdentifier, RefPtr<ResourceLoader>>;
@@ -185,7 +186,7 @@ public:
 
     void attachToFrame(LocalFrame&);
 
-    WEBCORE_EXPORT virtual void detachFromFrame();
+    WEBCORE_EXPORT virtual void detachFromFrame(LoadWillContinueInAnotherProcess);
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;

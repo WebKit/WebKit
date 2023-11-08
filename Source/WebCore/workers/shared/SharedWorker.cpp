@@ -79,7 +79,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&&
     if (!url.isValid())
         return Exception { SyntaxError, "Invalid script URL"_s };
 
-    auto* contentSecurityPolicy = document.contentSecurityPolicy();
+    CheckedPtr contentSecurityPolicy = document.contentSecurityPolicy();
     if (contentSecurityPolicy)
         contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
 

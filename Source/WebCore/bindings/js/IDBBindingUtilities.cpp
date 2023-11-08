@@ -210,7 +210,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
     if (value.inherits<DateInstance>()) {
         auto dateValue = valueToDate(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, { });
-        if (!std::isnan(dateValue))
+        if (!dateValue.isNaN())
             return IDBKey::createDate(dateValue.secondsSinceEpoch().milliseconds());
     }
 

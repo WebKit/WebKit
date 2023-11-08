@@ -13,6 +13,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/State.h"
 #include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 #include "platform/autogen/FeaturesGL_autogen.h"
 
@@ -299,6 +300,13 @@ class StateManagerGL final : angle::NonCopyable
         }
     }
 
+    ANGLE_INLINE void updateEmulatedClipOriginUniform(const gl::ProgramExecutable *executable,
+                                                      const gl::ClipOrigin origin) const
+    {
+        ASSERT(executable);
+        GetImplAs<ProgramExecutableGL>(executable)->updateEmulatedClipOrigin(origin);
+    }
+
     GLuint getProgramID() const { return mProgram; }
     GLuint getVertexArrayID() const { return mVAO; }
     GLuint getFramebufferID(angle::FramebufferBinding binding) const
@@ -320,6 +328,11 @@ class StateManagerGL final : angle::NonCopyable
 
   private:
     void setTextureCubemapSeamlessEnabled(bool enabled);
+
+    void setClipControlWithEmulatedClipOrigin(const gl::ProgramExecutable *executable,
+                                              GLenum frontFace,
+                                              gl::ClipOrigin origin,
+                                              gl::ClipDepthMode depth);
 
     angle::Result propagateProgramToVAO(const gl::Context *context,
                                         const gl::ProgramExecutable *executable,

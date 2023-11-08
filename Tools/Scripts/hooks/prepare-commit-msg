@@ -39,27 +39,27 @@ sys.path.append(SCRIPTS)
 from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitbugspy import radar
 
-
-BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], **ENCODING_KWARGS).strip()
-for name, variable in dict(
-    title='COMMIT_MESSAGE_TITLE',
-    bug='COMMIT_MESSAGE_BUG',
-    cherry_picked='GIT_WEBKIT_CHERRY_PICKED',
-).items():
-    if variable in os.environ:
-        continue
-    try:
-        value = subprocess.check_output(
-            ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
-            stderr=subprocess.PIPE,
-            **ENCODING_KWARGS
-        ).strip()
-        if value:
-            os.environ[variable] = value
-    except subprocess.CalledProcessError as error:
-        # `1` means that key did not exist, which is valid.
-        if error.returncode != 1:
-            sys.stderr.write(error.stderr)
+def set_env_variables_from_branch_config():
+    BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], **ENCODING_KWARGS).strip()
+    for name, variable in dict(
+        title='COMMIT_MESSAGE_TITLE',
+        bug='COMMIT_MESSAGE_BUG',
+        cherry_picked='GIT_WEBKIT_CHERRY_PICKED',
+    ).items():
+        if variable in os.environ:
+            continue
+        try:
+            value = subprocess.check_output(
+                ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
+                stderr=subprocess.PIPE,
+                **ENCODING_KWARGS
+            ).strip()
+            if value:
+                os.environ[variable] = value
+        except subprocess.CalledProcessError as error:
+            # `1` means that key did not exist, which is valid.
+            if error.returncode != 1:
+                sys.stderr.write(error.stderr)
 
 
 def get_bugs_string():
@@ -298,6 +298,13 @@ def main(file_name=None, source=None, sha=None):
     if source not in (None, 'commit', 'template', 'merge'):
         return 0
 
+    if os.environ.get('COMMIT_MESSAGE_TITLE', '').startswith('Unreviewed, reverting'):
+        pass  # TODO: Implement more useful revert commit message
+    elif source == 'merge' and content.startswith('Revert'):
+        return 0
+    else:
+        set_env_variables()
+
     for line in content.splitlines():
         if CHERRY_PICKING_RE.match(line):
             os.environ['GIT_REFLOG_ACTION'] = 'cherry-pick'
@@ -306,9 +313,6 @@ def main(file_name=None, source=None, sha=None):
     if source == 'merge' and os.environ.get('GIT_REFLOG_ACTION') == 'cherry-pick':
         with open(file_name, 'w') as commit_message_file:
             commit_message_file.write(cherry_pick(content))
-        return 0
-
-    if source == 'merge' and not content.startswith('Revert'):
         return 0
 
     if os.environ.get('GIT_EDITOR', '') == ':':

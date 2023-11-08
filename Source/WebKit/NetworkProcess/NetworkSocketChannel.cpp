@@ -59,7 +59,7 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 
     m_socket = m_session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy);
     if (m_socket) {
-#if HAVE(NSURLSESSION_WEBSOCKET)
+#if PLATFORM(COCOA)
         m_session->addWebSocketTask(webPageProxyID, *m_socket);
 #endif
         m_socket->resume();
@@ -69,7 +69,7 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 NetworkSocketChannel::~NetworkSocketChannel()
 {
     if (m_socket) {
-#if HAVE(NSURLSESSION_WEBSOCKET)
+#if PLATFORM(COCOA)
         if (RefPtr sessionSet = m_session ? m_socket->sessionSet() : nullptr)
             m_session->removeWebSocketTask(*sessionSet, *m_socket);
 #endif

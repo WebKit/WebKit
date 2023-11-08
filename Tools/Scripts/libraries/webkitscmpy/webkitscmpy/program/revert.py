@@ -39,8 +39,8 @@ from ..commit import Commit
 class Revert(Command):
     name = 'revert'
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
-    REVERT_TITLE_TEMPLATE = 'Revert [{}] {}'
-    REVERT_TITLE_RE = re.compile(r'^Revert \[{}\] [\s\S]*'.format(Commit.IDENTIFIER_RE.pattern))
+    REVERT_TITLE_TEMPLATE = 'Unreviewed, reverting {}'
+    REVERT_TITLE_RE = re.compile(r'^Unreviewed, reverting {}'.format(Commit.IDENTIFIER_RE.pattern))
 
     @classmethod
     def parser(cls, parser, loggers=None):

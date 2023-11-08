@@ -199,6 +199,13 @@
             "description": [
                 "Enable timestamp on GL_EXT_disjoint_timer_query extension"
             ]
+        },
+        {
+            "name": "supports_non_constant_loop_indexing",
+            "category": "Workarounds",
+            "description": [
+                "Whether the API supports non-constant loop indexing"
+            ]
         }
     ]
 }

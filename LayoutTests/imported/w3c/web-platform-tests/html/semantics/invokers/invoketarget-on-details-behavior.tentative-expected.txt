@@ -1,0 +1,20 @@
+
+
+FAIL invoking closed details with auto action opens assert_true: expected true got false
+PASS invoking closed details with auto action and preventDefault does not open
+FAIL invoking open details with auto action opens assert_false: expected false got true
+PASS invoking open details with auto action and preventDefault does not close
+FAIL invoking closed details with toggle action opens assert_true: expected true got false
+FAIL invoking closed details with toggle (case-insensitive) action opens assert_true: expected true got false
+PASS invoking closed details with toggle action and preventDefault does not open
+FAIL invoking open details with toggle action closes assert_false: expected false got true
+PASS invoking open details with toggle action and preventDefault does not close
+FAIL invoking closed details with open action opens assert_true: expected true got false
+FAIL invoking closed details with open (case insensitive) action opens assert_true: expected true got false
+PASS invoking open details with open action is noop
+PASS invoking closed popover with open action and preventDefault does not open
+PASS invoking closed details with close action is noop
+FAIL invoking open details with close action closes assert_false: expected false got true
+FAIL invoking open details with close (case insensitive) action closes assert_false: expected false got true
+PASS invoking open details with close action with preventDefault does not close
+

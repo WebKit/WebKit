@@ -117,6 +117,11 @@ void CompactContextMenuPresenter::dismiss()
     [[m_button contextMenuInteraction] dismissMenu];
 }
 
+void CompactContextMenuPresenter::updateVisibleMenu(UIMenu *(^updateBlock)(UIMenu *))
+{
+    [interaction() updateVisibleMenuWithBlock:updateBlock];
+}
+
 } // namespace WebKit
 
 #endif // USE(UICONTEXTMENU)

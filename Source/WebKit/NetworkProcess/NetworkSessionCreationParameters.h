@@ -112,9 +112,6 @@ struct NetworkSessionCreationParameters {
     String webPushMachServiceName;
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldAcceptInsecureCertificatesForWebSockets { false };
-#endif
     bool isBlobRegistryTopOriginPartitioningEnabled { false };
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Standard };

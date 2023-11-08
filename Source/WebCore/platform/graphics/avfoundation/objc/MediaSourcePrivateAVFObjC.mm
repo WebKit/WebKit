@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -56,7 +56,6 @@ Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPriv
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient& client)
     : m_player(parent)
     , m_client(client)
-    , m_isEnded(false)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_player->mediaPlayerLogger())
     , m_logIdentifier(m_player->mediaPlayerLogIdentifier())
@@ -71,9 +70,6 @@ MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSour
 MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    for (auto it = m_sourceBuffers.begin(), end = m_sourceBuffers.end(); it != end; ++it)
-        (*it)->clearMediaSource();
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, bool webMParserEnabled, RefPtr<SourceBufferPrivate>& outPrivate)
@@ -93,7 +89,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     parser->setLogger(m_logger, m_logIdentifier);
 #endif
 
-    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this, parser.releaseNonNull());
+    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(*this, parser.releaseNonNull());
 #if ENABLE(ENCRYPTED_MEDIA)
     newSourceBuffer->setCDMInstance(m_cdmInstance.get());
 #endif
@@ -103,23 +99,18 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     return AddStatus::Ok;
 }
 
-void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
+void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
 {
-    ASSERT(m_sourceBuffers.contains(buffer));
-
-    if (buffer == m_sourceBufferWithSelectedVideo)
+    if (downcast<SourceBufferPrivateAVFObjC>(&sourceBuffer) == m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo = nullptr;
 
-    size_t pos = m_activeSourceBuffers.find(buffer);
-    if (pos != notFound) {
-        m_activeSourceBuffers.remove(pos);
-        if (m_player)
-            m_player->notifyActiveSourceBuffersChanged();
-    }
+    MediaSourcePrivate::removeSourceBuffer(sourceBuffer);
+}
 
-    pos = m_sourceBuffers.find(buffer);
-    m_sourceBuffers[pos]->clearMediaSource();
-    m_sourceBuffers.remove(pos);
+void MediaSourcePrivateAVFObjC::notifyActiveSourceBuffersChanged()
+{
+    if (m_player)
+        m_player->notifyActiveSourceBuffersChanged();
 }
 
 MediaTime MediaSourcePrivateAVFObjC::duration() const
@@ -144,13 +135,7 @@ void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
 {
     if (status == EosNoError && m_player)
         m_player->setNetworkState(MediaPlayer::NetworkState::Loaded);
-    m_isEnded = true;
-}
-
-void MediaSourcePrivateAVFObjC::unmarkEndOfStream() 
-{
-    // FIXME(125159): implement unmarkEndOfStream()
-    m_isEnded = false;
+    MediaSourcePrivate::markEndOfStream(status);
 }
 
 MediaPlayer::ReadyState MediaSourcePrivateAVFObjC::readyState() const
@@ -169,24 +154,6 @@ MediaTime MediaSourcePrivateAVFObjC::currentMediaTime() const
     return m_player ? m_player->currentMediaTime() : MediaTime::invalidTime();
 }
 
-void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC* buffer, bool active)
-{
-    if (active && !m_activeSourceBuffers.contains(buffer)) {
-        m_activeSourceBuffers.append(buffer);
-        if (m_player)
-            m_player->notifyActiveSourceBuffersChanged();
-    }
-
-    if (!active) {
-        size_t position = m_activeSourceBuffers.find(buffer);
-        if (position != notFound) {
-            m_activeSourceBuffers.remove(position);
-            if (m_player)
-                m_player->notifyActiveSourceBuffersChanged();
-        }
-    }
-}
-
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC* buffer, const SharedBuffer& initData)
 {
@@ -197,34 +164,17 @@ void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC
 }
 #endif
 
-static bool MediaSourcePrivateAVFObjCHasAudio(SourceBufferPrivateAVFObjC* sourceBuffer)
-{
-    return sourceBuffer->hasAudio();
-}
-
-bool MediaSourcePrivateAVFObjC::hasAudio() const
-{
-    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MediaSourcePrivateAVFObjCHasAudio);
-}
-
-bool MediaSourcePrivateAVFObjC::hasVideo() const
-{
-    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivateAVFObjC* sourceBuffer) {
-        return sourceBuffer->hasVideo();
-    });
-}
-
 bool MediaSourcePrivateAVFObjC::hasSelectedVideo() const
 {
-    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivateAVFObjC* sourceBuffer) {
-        return sourceBuffer->hasSelectedVideo();
+    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (auto* sourceBuffer) {
+        return downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->hasSelectedVideo();
     });
 }
 
 void MediaSourcePrivateAVFObjC::willSeek()
 {
     for (auto* sourceBuffer : m_activeSourceBuffers)
-        sourceBuffer->willSeek();
+        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->willSeek();
 }
 
 void MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
@@ -250,7 +200,7 @@ FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
     FloatSize result;
 
     for (auto* sourceBuffer : m_activeSourceBuffers)
-        result = result.expandedTo(sourceBuffer->naturalSize());
+        result = result.expandedTo(downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->naturalSize());
 
     return result;
 }
@@ -279,7 +229,7 @@ void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSess
 void MediaSourcePrivateAVFObjC::flushActiveSourceBuffersIfNeeded()
 {
     for (auto* sourceBuffer : m_activeSourceBuffers)
-        sourceBuffer->flushIfNeeded();
+        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushIfNeeded();
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -350,6 +300,13 @@ void MediaSourcePrivateAVFObjC::failedToCreateRenderer(RendererType type)
 {
     if (m_client)
         m_client->failedToCreateRenderer(type);
+}
+
+bool MediaSourcePrivateAVFObjC::needsVideoLayer() const
+{
+    return anyOf(m_sourceBuffers, [] (auto& sourceBuffer) {
+        return downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->needsVideoLayer();
+    });
 }
 
 }

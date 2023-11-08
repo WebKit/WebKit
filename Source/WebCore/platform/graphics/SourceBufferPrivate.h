@@ -53,9 +53,17 @@
 
 namespace WebCore {
 
+class MediaSourcePrivate;
 class SharedBuffer;
 class TrackBuffer;
 class TimeRanges;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+class CDMInstance;
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+class LegacyCDMSession;
+#endif
 
 enum class SourceBufferAppendMode : uint8_t {
     Segments,
@@ -70,15 +78,27 @@ class SourceBufferPrivate
 #endif
 {
 public:
-    WEBCORE_EXPORT SourceBufferPrivate();
+    WEBCORE_EXPORT SourceBufferPrivate(MediaSourcePrivate&);
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
-    virtual void setActive(bool) = 0;
+    enum class PlatformType {
+        Mock,
+        AVFObjC,
+        GStreamer,
+        Remote
+    };
+    virtual constexpr PlatformType platformType() const = 0;
+
+    WEBCORE_EXPORT virtual void setActive(bool);
+
     WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
+
     virtual void abort();
     // Overrides must call the base class.
     virtual void resetParserState();
-    virtual void removedFromMediaSource() = 0;
+    virtual void removedFromMediaSource();
+    void clearMediaSource() { m_mediaSource = nullptr; }
+
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
     WEBCORE_EXPORT virtual void clientReadyStateChanged(bool endOfStream);
@@ -118,6 +138,7 @@ public:
     // Methods used by MediaSourcePrivate
     bool hasAudio() const { return m_hasAudio; }
     bool hasVideo() const { return m_hasVideo; }
+    bool hasReceivedFirstInitializationSegment() const { return m_receivedFirstInitializationSegment; }
 
     MediaTime timestampOffset() const { return m_timestampOffset; }
 
@@ -135,6 +156,15 @@ public:
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
     virtual const void* sourceBufferLogIdentifier() = 0;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    virtual void setCDMSession(LegacyCDMSession*) { }
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual void setCDMInstance(CDMInstance*) { }
+    virtual bool waitingForKey() const { return false; }
+    virtual void attemptToDecrypt() { }
 #endif
 
 protected:
@@ -160,13 +190,14 @@ protected:
     using Operation = std::variant<AppendBufferOperation, InitOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
     void queueOperation(Operation&&);
 
+    MediaTime currentMediaTime() const;
+    MediaTime duration() const;
+
     virtual void appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
-    virtual bool isActive() const { return false; }
+    bool isActive() const { return m_isActive; }
     virtual bool isSeeking() const { return false; }
-    virtual MediaTime currentMediaTime() const { return { }; }
-    virtual MediaTime duration() const { return { }; }
     virtual void flush(const AtomString&) { }
     virtual void enqueueSample(Ref<MediaSample>&&, const AtomString&) { }
     virtual void allSamplesInTrackEnqueued(const AtomString&) { }
@@ -194,6 +225,8 @@ protected:
 
     WeakPtr<SourceBufferPrivateClient> m_client;
 
+    WeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
+
 private:
     void updateHighestPresentationTimestamp();
     void updateMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
@@ -210,6 +243,7 @@ private:
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
+    bool m_isActive { false };
 
     MemoryCompactRobinHoodHashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 

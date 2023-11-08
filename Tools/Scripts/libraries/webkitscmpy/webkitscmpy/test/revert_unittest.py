@@ -51,13 +51,13 @@ class TestRevert(testing.PathTestCase):
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Revert [5@main] Patch Series' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'\n"
-            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -75,7 +75,6 @@ class TestRevert(testing.PathTestCase):
                 "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating pull-request for 'eng/pr-branch'...",
-                'Adding comment for reverted commits...'
             ],
         )
 
@@ -92,7 +91,7 @@ class TestRevert(testing.PathTestCase):
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Revert [5@main] Patch Series' in repo.head.message)
+            self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
             result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
@@ -100,7 +99,7 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'\n"
-            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -119,7 +118,6 @@ class TestRevert(testing.PathTestCase):
                 "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating pull-request for 'eng/pr-branch'...",
-                'Adding comment for reverted commits...'
             ],
         )
 
@@ -168,9 +166,9 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'\n"
-            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
+            "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
-            "Updated 'PR 1 | Revert [5@main] Patch Series'!\n"
+            "Updated 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -189,7 +187,6 @@ index 05e8751..0bf3c85 100644
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating 'eng/pr-branch-1' as a reference branch",
                 "Creating pull-request for 'eng/pr-branch'...",
-                'Adding comment for reverted commits...',
                 'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",

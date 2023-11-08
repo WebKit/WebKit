@@ -80,14 +80,14 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     ASSERT(request.hasAudioDevice() || request.hasVideoDevice());
 
 #if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-    auto& process = proxy.page().process();
+    Ref process = proxy.page().process();
     size_t extensionCount = 0;
 
-    bool needsAudioSandboxExtension = request.hasAudioDevice() && !process.hasAudioCaptureExtension() && !proxy.page().preferences().captureAudioInUIProcessEnabled() && !proxy.page().preferences().captureAudioInGPUProcessEnabled();
+    bool needsAudioSandboxExtension = request.hasAudioDevice() && !process->hasAudioCaptureExtension() && !proxy.page().preferences().captureAudioInUIProcessEnabled() && !proxy.page().preferences().captureAudioInGPUProcessEnabled();
     if (needsAudioSandboxExtension)
         extensionCount++;
 
-    bool needsVideoSandboxExtension = request.hasVideoDevice() && !process.hasVideoCaptureExtension() && !proxy.page().preferences().captureVideoInUIProcessEnabled() && !proxy.page().preferences().captureVideoInGPUProcessEnabled();
+    bool needsVideoSandboxExtension = request.hasVideoDevice() && !process->hasVideoCaptureExtension() && !proxy.page().preferences().captureVideoInUIProcessEnabled() && !proxy.page().preferences().captureVideoInGPUProcessEnabled();
     if (needsVideoSandboxExtension)
         extensionCount++;
 
@@ -125,7 +125,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 }
             }
 
-            auto auditToken = process.auditToken();
+            auto auditToken = process->auditToken();
             if (needsAppleCameraSandboxExtension) {
                 machBootstrapExtension = SandboxExtension::createHandleForMachBootstrapExtension();
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken)) {
@@ -168,10 +168,10 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8().data());
 
         if (needsAudioSandboxExtension)
-            process.grantAudioCaptureExtension();
+            process->grantAudioCaptureExtension();
         if (needsVideoSandboxExtension)
-            process.grantVideoCaptureExtension();
-        process.send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles), WTFMove(machBootstrapExtension))), 0);
+            process->grantVideoCaptureExtension();
+        process->send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles), WTFMove(machBootstrapExtension))), 0);
     }
 #else
     UNUSED_PARAM(proxy);

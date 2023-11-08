@@ -540,18 +540,6 @@ void BlendStateExt::setEquationsIndexed(const size_t index,
     mUsesAdvancedBlendEquationMask.set(index, IsAdvancedBlendEquation(colorEquation));
 }
 
-GLenum BlendStateExt::getEquationColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationColor));
-}
-
-GLenum BlendStateExt::getEquationAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationAlpha));
-}
-
 DrawBufferMask BlendStateExt::compareEquations(const EquationStorage::Type color,
                                                const EquationStorage::Type alpha) const
 {
@@ -673,30 +661,6 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
         IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
         IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
     mUsesExtendedBlendFactorMask.set(index, isExtended);
-}
-
-GLenum BlendStateExt::getSrcColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcColor));
-}
-
-GLenum BlendStateExt::getDstColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mDstColor));
-}
-
-GLenum BlendStateExt::getSrcAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcAlpha));
-}
-
-GLenum BlendStateExt::getDstAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mDstAlpha));
 }
 
 DrawBufferMask BlendStateExt::compareFactors(const FactorStorage::Type srcColor,

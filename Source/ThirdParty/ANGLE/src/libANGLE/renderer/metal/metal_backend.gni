@@ -91,7 +91,9 @@ metal_backend_sources = [
 
 # We can build the ANGLE internal shaders at build-time if we have access to the Mac SDK in the "build" dir.
 # Building internal shaders for iOS is not supported. The Chromium Mac SDK does not have all the required files.
-metal_internal_shader_compilation_supported = angle_has_build && !is_ios
+# This is also an issue when cross-compiling for mac.
+metal_internal_shader_compilation_supported =
+    angle_has_build && !is_ios && target_os == host_os
 
 metal_internal_shaders_header =
     "$root_gen_dir/angle/mtl_internal_shaders_metallib.h"

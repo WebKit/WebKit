@@ -200,6 +200,11 @@ WebPage* WebFrame::page() const
     return page ? WebPage::fromCorePage(*page) : nullptr;
 }
 
+RefPtr<WebPage> WebFrame::protectedPage() const
+{
+    return page();
+}
+
 RefPtr<WebFrame> WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
@@ -366,11 +371,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     if (!parent)
         newFrame->takeWindowProxyFrom(*localFrame);
-    auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
-    // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle. <rdar://116200737>
-    newFrame->setView(remoteFrameView.ptr());
     if (ownerRenderer)
-        ownerRenderer->setWidget(remoteFrameView.ptr());
+        ownerRenderer->setWidget(newFrame->view());
 
     m_coreFrame = newFrame.get();
 
@@ -1102,9 +1104,9 @@ void WebFrame::setTextDirection(const String& direction)
         localFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
-void WebFrame::documentLoaderDetached(uint64_t navigationID)
+void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess)
 {
-    if (auto* page = this->page())
+    if (auto* page = this->page(); page && !loadWillContinueInAnotherProcess)
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 

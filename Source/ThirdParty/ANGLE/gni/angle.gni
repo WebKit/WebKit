@@ -247,9 +247,13 @@ declare_args() {
   # Disable the layers in ubsan builds because of really slow builds.
   # Vulkan Validation Layers require Android NDK API level 26, i.e. Oreo, due to
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
+  # This is disabled in the Chromium build because the current build toolchain
+  # for APKs and bundles expect a single .so file in trichrome builds. See
+  # https://bugs.chromium.org/p/angleproject/issues/detail?id=8398 for details.
   angle_enable_vulkan_validation_layers =
       angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
-      angle_debug_layers_enabled && (!is_android || ndk_api_level_at_least_26)
+      angle_debug_layers_enabled &&
+      (!is_android || (ndk_api_level_at_least_26 && !build_with_chromium))
 
   # ISpriteVisual windows cannot be validated and can lead to crashes if an invalid window is
   # provided to ANGLE. Disable them for non-standalone ANGLE builds. crbug.com/1176118
@@ -323,7 +327,7 @@ if (angle_has_build) {
     angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
-  if (!is_debug) {
+  if (!is_debug && !is_fuchsia) {
     # default->optimize_max (e.g. Android defaults to -Oz, optimize_max is -O2)
     angle_remove_configs += [ "//build/config/compiler:default_optimization" ]
     angle_common_configs += [ "//build/config/compiler:optimize_max" ]

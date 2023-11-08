@@ -44,6 +44,8 @@ public:
     void present(CGPoint locationInRootView);
     void dismiss();
 
+    void updateVisibleMenu(UIMenu *(^)(UIMenu *));
+
     UIContextMenuInteraction *interaction() const;
 
 private:

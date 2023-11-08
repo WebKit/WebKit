@@ -248,8 +248,8 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
         return;
     }
 
-    auto& userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
-    auto& topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
+    Ref userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
+    Ref topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
     m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, weakThis = WeakPtr { *this }, request = Ref { request }](String&&) mutable {
         if (!weakThis)
             return;
@@ -303,7 +303,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
             if (!weakThis)
                 return;
             if (!--m_hasPendingCapture)
-                UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
+                UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().protectedProcess());
         });
 
         processNextUserMediaRequestIfNeeded();
@@ -448,7 +448,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     if (requestingScreenCapture)
         return RequestAction::Prompt;
 
-    return searchForGrantedRequest(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
+    return searchForGrantedRequest(request.frameID(), request.protectedUserMediaDocumentSecurityOrigin(), request.protectedTopLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
 }
 #endif
 
@@ -499,9 +499,9 @@ void UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionR
 {
     m_currentUserMediaRequest = WTFMove(request);
 
-    auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
-    auto& topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
-    getUserMediaPermissionInfo(m_currentUserMediaRequest->frameID(), userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, request = m_currentUserMediaRequest](auto permissionInfo) mutable {
+    Ref userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
+    Ref topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
+    getUserMediaPermissionInfo(m_currentUserMediaRequest->frameID(), WTFMove(userMediaDocumentSecurityOrigin), WTFMove(topLevelDocumentSecurityOrigin), [this, request = m_currentUserMediaRequest](auto permissionInfo) mutable {
         if (!request->isPending())
             return;
 
@@ -547,8 +547,8 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", persistent access: ", m_currentUserMediaRequest->hasPersistentAccess());
 
-    auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
-    auto& topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
+    Ref userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
+    Ref topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
     m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, request = m_currentUserMediaRequest] (String&& deviceIDHashSalt) mutable {
         if (!request->isPending())
             return;
@@ -679,8 +679,8 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
     }
 
     // FIXME: Remove webFrame, userMediaOrigin and topLevelOrigin from this uiClient API call.
-    auto userMediaOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->userMediaDocumentSecurityOrigin());
-    auto topLevelOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->topLevelDocumentSecurityOrigin());
+    auto userMediaOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->protectedUserMediaDocumentSecurityOrigin());
+    auto topLevelOrigin = API::SecurityOrigin::create(m_currentUserMediaRequest->protectedTopLevelDocumentSecurityOrigin());
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *m_currentUserMediaRequest);
 }
 
@@ -994,7 +994,7 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMe
 
 #if ENABLE(MEDIA_STREAM)
     if (!m_hasPendingCapture)
-        UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
+        UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().protectedProcess());
 
     if (m_captureState == (newState & activeCaptureMask))
         return;

@@ -488,12 +488,13 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
     if (options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::SkipPolicyCheck)
         return true;
 
-    ASSERT(m_document);
-    if (!m_document)
+    RefPtr document = m_document.get();
+    ASSERT(document);
+    if (!document)
         return true;
 
-    ASSERT(m_document->contentSecurityPolicy());
-    auto contentSecurityPolicy = m_document->contentSecurityPolicy();
+    ASSERT(document->contentSecurityPolicy());
+    CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy();
     if (!contentSecurityPolicy)
         return true;
 

@@ -116,36 +116,37 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 {
     ASSERT(is<Document>(executionContext));
 
-    auto& executionContextDocument = downcast<Document>(executionContext);
+    Ref executionContextDocument = downcast<Document>(executionContext);
 
     // As per the HTML specification [1], if this is an element's event handler, then document should be the
     // element's document. The script execution context may be different from the node's document if the
     // node's document was created by JavaScript.
     // [1] https://html.spec.whatwg.org/multipage/webappapis.html#getting-the-current-value-of-the-event-handler
-    auto& document = m_originalNode ? m_originalNode->document() : executionContextDocument;
-    if (!document.frame())
+    Ref document = m_originalNode ? m_originalNode->document() : executionContextDocument.get();
+    if (!document->frame())
         return nullptr;
 
-    auto* element =  dynamicDowncast<Element>(m_originalNode.get());
-    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element))
+    RefPtr element =  dynamicDowncast<Element>(m_originalNode.get());
+    if (!document->checkedContentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element.get()))
         return nullptr;
 
-    auto& script = document.frame()->script();
-    if (!script.canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener) || script.isPaused())
+    RefPtr frame = document->frame();
+    CheckedRef script = frame->script();
+    if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener) || script->isPaused())
         return nullptr;
 
-    ASSERT_WITH_MESSAGE(document.settings().scriptMarkupEnabled(), "Scripting element attributes should have been stripped during parsing");
-    if (UNLIKELY(!document.settings().scriptMarkupEnabled()))
+    ASSERT_WITH_MESSAGE(document->settings().scriptMarkupEnabled(), "Scripting element attributes should have been stripped during parsing");
+    if (UNLIKELY(!document->settings().scriptMarkupEnabled()))
         return nullptr;
 
-    if (!executionContextDocument.frame())
+    if (!executionContextDocument->frame())
         return nullptr;
 
-    auto* isolatedWorld = this->isolatedWorld();
+    RefPtr isolatedWorld = this->isolatedWorld();
     if (UNLIKELY(!isolatedWorld))
         return nullptr;
 
-    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument.frame(), *isolatedWorld);
+    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument->protectedFrame(), *isolatedWorld);
     if (!globalObject)
         return nullptr;
 
@@ -164,7 +165,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         lexicalGlobalObject, WTFMove(code), Identifier::fromString(vm, m_functionName),
-        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) },
+        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document->charset()) },
         m_sourceURL.string(), m_sourceTaintedOrigin, m_sourcePosition, overrideLineNumber, functionConstructorParametersEndPosition);
     if (UNLIKELY(scope.exception())) {
         reportCurrentException(lexicalGlobalObject);

@@ -2240,7 +2240,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (!m_inputSources.contains(sourceId))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Unknown 'sourceId' specified.");
 
-            SimulatedInputSource& inputSource = *m_inputSources.get(sourceId);
+            Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
@@ -2315,14 +2315,14 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         keyFrames.append(SimulatedInputKeyFrame(WTFMove(entries)));
     }
 
-    SimulatedInputDispatcher& inputDispatcher = inputDispatcherForPage(*page);
-    if (inputDispatcher.isActive()) {
+    Ref inputDispatcher = inputDispatcherForPage(*page);
+    if (inputDispatcher->isActive()) {
         ASSERT_NOT_REACHED();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "A previous interaction is still underway.");
     }
 
     // Delegate the rest of §17.4 Dispatching Actions to the dispatcher.
-    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
+    inputDispatcher->run(frameID, WTFMove(keyFrames), m_inputSources, [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else
@@ -2348,10 +2348,10 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
-    SimulatedInputDispatcher& inputDispatcher = inputDispatcherForPage(*page);
-    inputDispatcher.cancel();
+    Ref inputDispatcher = inputDispatcherForPage(*page);
+    inputDispatcher->cancel();
     
-    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
+    inputDispatcher->run(frameID, WTFMove(keyFrames), m_inputSources, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else

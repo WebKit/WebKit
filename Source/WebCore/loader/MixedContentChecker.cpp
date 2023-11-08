@@ -32,6 +32,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
@@ -88,14 +89,15 @@ bool MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(LocalFrame&
     if (!foundMixedContentInFrameTree(frame, url))
         return true;
 
-    if (!frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
+    RefPtr document = frame.document();
+    if (!document->checkedContentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
         return false;
 
-    bool allowed = !frame.document()->isStrictMixedContentMode() && (frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn) && !frame.document()->geolocationAccessed();
+    bool allowed = !document->isStrictMixedContentMode() && (frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn) && !frame.document()->geolocationAccessed();
     logWarning(frame, allowed, "display"_s, url);
 
     if (allowed) {
-        frame.document()->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
+        document->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
         frame.loader().client().didDisplayInsecureContent();
     }
 
@@ -107,15 +109,16 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
     if (!foundMixedContentInFrameTree(frame, url))
         return true;
 
-    if (!frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
+    RefPtr document = frame.document();
+    if (!document->checkedContentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
         return false;
 
-    bool allowed = !frame.document()->isStrictMixedContentMode() && frame.settings().allowRunningOfInsecureContent() && !frame.document()->geolocationAccessed() && !frame.document()->secureCookiesAccessed();
+    bool allowed = !document->isStrictMixedContentMode() && frame.settings().allowRunningOfInsecureContent() && !frame.document()->geolocationAccessed() && !frame.document()->secureCookiesAccessed();
     if (LIKELY(shouldLogWarning == ShouldLogWarning::Yes))
         logWarning(frame, allowed, "run"_s, url);
 
     if (allowed) {
-        frame.document()->setFoundMixedContent(SecurityContext::MixedContentType::Active);
+        document->setFoundMixedContent(SecurityContext::MixedContentType::Active);
         frame.loader().client().didRunInsecureContent(securityOrigin, url);
     }
 

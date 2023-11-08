@@ -403,6 +403,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/Pasteboard.serialization.in
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
+    Shared/PrintInfo.serialization.in
     Shared/RTCNetwork.serialization.in
     Shared/RemoteWorkerInitializationData.serialization.in
     Shared/RemoteWorkerType.serialization.in

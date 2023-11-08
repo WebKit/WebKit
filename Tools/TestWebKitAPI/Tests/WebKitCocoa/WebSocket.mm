@@ -127,7 +127,6 @@ TEST(WebSocket, PageWithAttributedBundleIdentifierDestroyed)
     EXPECT_EQ(originalNetworkProcessPID, configuration.get().websiteDataStore._networkProcessIdentifier);
 }
 
-#if HAVE(NSURLSESSION_WEBSOCKET)
 TEST(WebSocket, CloseCode)
 {
     bool receivedWebSocketClose { false };
@@ -208,7 +207,6 @@ TEST(WebSocket, CloseCode)
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 }
-#endif // HAVE(NSURLSESSION_WEBSOCKET)
 
 TEST(WebSocket, BlockedWithSubresources)
 {

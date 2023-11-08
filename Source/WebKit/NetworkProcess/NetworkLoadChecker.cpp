@@ -254,12 +254,13 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 {
     ResourceRequest originalRequest = request;
 
-    if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
+    if (CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy()) {
         if (this->isRedirected()) {
             auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
             contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
         }
         if (!this->isAllowedByContentSecurityPolicy(request, client)) {
+            contentSecurityPolicy = nullptr;
             handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
             return;
         }
@@ -298,7 +299,7 @@ void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRe
 
 bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest& request, WebCore::ContentSecurityPolicyClient* client)
 {
-    auto* contentSecurityPolicy = this->contentSecurityPolicy();
+    CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
     contentSecurityPolicy->setClient(client);
     auto clearContentSecurityPolicyClient = makeScopeExit([&] {
         contentSecurityPolicy->setClient(nullptr);

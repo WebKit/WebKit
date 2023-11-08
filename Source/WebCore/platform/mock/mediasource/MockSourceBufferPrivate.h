@@ -41,33 +41,27 @@ class VideoTrackPrivate;
 
 class MockSourceBufferPrivate final : public SourceBufferPrivate {
 public:
-    static Ref<MockSourceBufferPrivate> create(MockMediaSourcePrivate*);
+    static Ref<MockSourceBufferPrivate> create(MockMediaSourcePrivate&);
     virtual ~MockSourceBufferPrivate();
 
-    void clearMediaSource() { m_mediaSource = nullptr; }
-
-    bool isActive() const final;
-
+    constexpr PlatformType platformType() const final { return PlatformType::Mock; }
 private:
-    explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
+    explicit MockSourceBufferPrivate(MockMediaSourcePrivate&);
+    MockMediaSourcePrivate* mediaSourcePrivate() const;
 
     // SourceBufferPrivate overrides
     void appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
-    void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
     bool canSetMinimumUpcomingPresentationTime(const AtomString&) const final;
     void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
     void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const ContentType&) final;
-    MediaTime currentMediaTime() const final;
-    MediaTime duration() const final;
 
     void flush(const AtomString&) final { m_enqueuedSamples.clear(); m_minimumUpcomingPresentationTime = MediaTime::invalidTime(); }
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
-    void setActive(bool) final;
 
     void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
@@ -86,7 +80,6 @@ private:
     const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
-    MockMediaSourcePrivate* m_mediaSource;
     bool m_isActive { false };
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
