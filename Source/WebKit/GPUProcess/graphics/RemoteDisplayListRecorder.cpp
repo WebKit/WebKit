@@ -32,6 +32,7 @@
 #include "ImageBufferShareableAllocator.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBuffer.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
@@ -53,9 +54,6 @@ RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, R
     : m_imageBuffer(imageBuffer)
     , m_imageBufferIdentifier(imageBufferIdentifier)
     , m_renderingBackend(&renderingBackend)
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    , m_sharedVideoFrameReader(Ref { renderingBackend.gpuConnectionToWebProcess().videoFrameObjectHeap() }, renderingBackend.gpuConnectionToWebProcess().webProcessIdentity())
-#endif
 {
 }
 
@@ -505,20 +503,29 @@ void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identif
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
+SharedVideoFrameReader& RemoteDisplayListRecorder::sharedVideoFrameReader()
+{
+    if (!m_sharedVideoFrameReader)
+        m_sharedVideoFrameReader = makeUnique<SharedVideoFrameReader>(Ref { m_renderingBackend->gpuConnectionToWebProcess().videoFrameObjectHeap() }, m_renderingBackend->gpuConnectionToWebProcess().webProcessIdentity());
+
+    return *m_sharedVideoFrameReader;
+}
+
 void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
 {
-    if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
+    if (auto videoFrame = sharedVideoFrameReader().read(WTFMove(frame)))
         drawingContext().paintVideoFrame(*videoFrame, destination, shouldDiscardAlpha);
 }
 
+
 void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
-    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+    sharedVideoFrameReader().setSemaphore(WTFMove(semaphore));
 }
 
 void RemoteDisplayListRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
+    sharedVideoFrameReader().setSharedMemory(WTFMove(handle));
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
