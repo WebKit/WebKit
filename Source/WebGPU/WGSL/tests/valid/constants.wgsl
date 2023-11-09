@@ -80,6 +80,13 @@ fn testMixedConstantValue()
     _ = x;
 }
 
+fn testPrimitiveStructAccess()
+{
+  const f = frexp(1.25);
+  const fract = f.fract;
+  const exp = f.exp;
+}
+
 // Attribute constants
 const group = 0;
 const binding = 1;

@@ -754,6 +754,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
                 typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
                 return nullptr;
             }
+            if (auto constant = access.base().constantValue()) {
+                auto& constantStruct = std::get<ConstantStruct>(*constant);
+                access.setConstantValue(constantStruct.fields.get(access.fieldName().id()));
+            }
             return primitiveStruct->values[*key];
         }
 
