@@ -563,19 +563,6 @@ AriaTextRoleEnabled:
     WebCore:
       default: false
 
-AspectRatioOfImgFromWidthAndHeightEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Aspect ratio of <img> from width and height"
-  humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
   type: bool

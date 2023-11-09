@@ -179,7 +179,7 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         }
     }
 
-    auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, KeyframeValue* existingImplicitKeyframeValue) {
+    auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableCSSProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, KeyframeValue* existingImplicitKeyframeValue) {
         // If we're provided an existing implicit keyframe, we need to add all the styles for the implicit properties.
         if (existingImplicitKeyframeValue) {
             ASSERT(existingImplicitKeyframeValue->style());
@@ -220,7 +220,7 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         addImplicitKeyframe(1, oneKeyframeImplicitProperties, hundredPercentKeyframe(), implicitOneKeyframe);
 }
 
-bool KeyframeList::containsAnimatableProperty() const
+bool KeyframeList::containsAnimatableCSSProperty() const
 {
     for (auto property : m_properties) {
         if (CSSPropertyAnimation::isPropertyAnimatable(property))
@@ -247,13 +247,13 @@ bool KeyframeList::usesContainerUnits() const
     return false;
 }
 
-void KeyframeList::addProperty(const AnimatableProperty& property)
+void KeyframeList::addProperty(const AnimatableCSSProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeList::containsProperty(const AnimatableProperty& property) const
+bool KeyframeList::containsProperty(const AnimatableCSSProperty& property) const
 {
     return m_properties.contains(property);
 }
@@ -278,7 +278,7 @@ bool KeyframeList::hasPropertySetToCurrentColor() const
     return !m_propertiesSetToCurrentColor.isEmpty();
 }
 
-const HashSet<AnimatableProperty>& KeyframeList::propertiesSetToInherit() const
+const HashSet<AnimatableCSSProperty>& KeyframeList::propertiesSetToInherit() const
 {
     return m_propertiesSetToInherit;
 }
@@ -310,13 +310,13 @@ void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
     }
 }
 
-void KeyframeValue::addProperty(const AnimatableProperty& property)
+void KeyframeValue::addProperty(const AnimatableCSSProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeValue::containsProperty(const AnimatableProperty& property) const
+bool KeyframeValue::containsProperty(const AnimatableCSSProperty& property) const
 {
     return m_properties.contains(property);
 }

@@ -306,24 +306,6 @@ webkit.org/b/103926 media/track/opera [ Skip ]
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
-# We don't support Wasm.
-imported/w3c/web-platform-tests/wasm [ Skip ]
-js/dom/webassembly-memory-normal-fail.html [ Failure ]
-js/dom/webassembly-memory-shared-basic.html [ Failure ]
-js/dom/webassembly-memory-shared-fail.html [ Failure ]
-storage/indexeddb/wasm-exceptions.html [ Skip ]
-wasm/iframe-parent-postmessage.html [ Skip ]
-wasm/iframe-postmessage.html [ Skip ]
-wasm/window-postmessage.html [ Skip ]
-webgl/2.0.y/conformance2/wasm [ Skip ]
-workers/wasm-hashset-many-2.html [ Skip ]
-workers/wasm-hashset-many.html [ Skip ]
-workers/wasm-hashset.html [ Skip ]
-workers/wasm-long-compile-many.html [ Skip ]
-workers/wasm-long-compile.html [ Skip ]
-workers/wasm-mem-post-message.html [ Skip ]
-workers/wasm-references.html [ Skip ]
-
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 
@@ -1815,6 +1797,8 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests [ Skip ]
 imported/w3c/web-platform-tests/url [ Skip ]
 imported/w3c/web-platform-tests/user-timing [ Skip ]
 imported/w3c/web-platform-tests/visual-viewport [ Skip ]
+imported/w3c/web-platform-tests/wasm/jsapi [ Skip ]
+imported/w3c/web-platform-tests/wasm/webapi [ Skip ]
 imported/w3c/web-platform-tests/web-animations [ Skip ]
 imported/w3c/web-platform-tests/web-locks [ Skip ]
 imported/w3c/web-platform-tests/web-share [ Skip ]
@@ -2684,3 +2668,12 @@ webkit.org/b/264433 http/tests/websocket/tests/hybi/secure-cookie-secure-connect
 webkit.org/b/264433 http/tests/websocket/tests/hybi/simple-wss.html [ Skip ] # Failure
 webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-websockets.sub.tentative.html [ Skip ] # Failure
 webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Skip ] # Failure
+
+imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.worker.html [ Skip ] # Failure
+
+workers/wasm-hashset-many-2.html [ Skip ] # Timeout
+workers/wasm-hashset-many.html [ Skip ] # Timeout
+workers/wasm-hashset.html [ Skip ] # Timeout
+workers/wasm-references.html [ Skip ] # Timeout

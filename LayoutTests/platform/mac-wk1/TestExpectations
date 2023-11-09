@@ -74,6 +74,7 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
+media/now-playing-status-for-video-conference-web-page.html [ Skip ]
 
 # Payment request API is not supported on WK1.
 imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
@@ -2689,3 +2690,6 @@ webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration
 # rdar://117432620 [ arm64 ] 2 tests in imported/w3c/web-platform-tests/css/css-backgrounds/background-size have constant image failure
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+
+# webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]

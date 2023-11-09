@@ -59,7 +59,7 @@ AcceleratedEffectKeyframe AcceleratedEffectKeyframe::clone() const
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AcceleratedEffect);
 
-static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableProperty property, const Settings& settings)
+static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCSSProperty property, const Settings& settings)
 {
 #if ASSERT_ENABLED
     ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));

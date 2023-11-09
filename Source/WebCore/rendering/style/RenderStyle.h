@@ -1098,6 +1098,8 @@ public:
 
     inline void setLogicalMinWidth(Length&&);
     inline void setLogicalMaxWidth(Length&&);
+    inline void setLogicalMinHeight(Length&&);
+    inline void setLogicalMaxHeight(Length&&);
 
     inline void resetBorder();
     inline void resetBorderExceptRadius();
@@ -2140,6 +2142,8 @@ public:
     static constexpr BlockStepInsert initialBlockStepInsert();
     inline BlockStepInsert blockStepInsert() const;
     inline void setBlockStepInsert(BlockStepInsert);
+    bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
+    bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
 
 private:
     struct NonInheritedFlags {

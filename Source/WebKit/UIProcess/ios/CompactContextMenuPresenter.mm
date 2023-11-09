@@ -28,7 +28,15 @@
 
 #if USE(UICONTEXTMENU)
 
-#import "UIKitSPI.h"
+@interface UIContextMenuInteraction (SPI)
+- (void)_presentMenuAtLocation:(CGPoint)location;
+@end
+
+#if HAVE(UI_BUTTON_PERFORM_PRIMARY_ACTION)
+@interface UIButton (Staging_112292156)
+- (void)performPrimaryAction;
+@end
+#endif
 
 @interface WKCompactContextMenuPresenterButton : UIButton
 @property (nonatomic, weak) id<UIContextMenuInteractionDelegate> externalDelegate;
@@ -81,6 +89,7 @@ CompactContextMenuPresenter::CompactContextMenuPresenter(UIView *rootView, id<UI
     [m_button setHidden:YES];
     [m_button setUserInteractionEnabled:NO];
     [m_button setContextMenuInteractionEnabled:YES];
+    [m_button setShowsMenuAsPrimaryAction:YES];
 }
 
 CompactContextMenuPresenter::~CompactContextMenuPresenter()
@@ -108,7 +117,14 @@ void CompactContextMenuPresenter::present(CGRect rectInRootView)
     if (![m_button superview])
         [m_rootView addSubview:m_button.get()];
 
-    // FIXME: This should present from the button itself instead of using `-_presentMenuAtLocation:`.
+#if HAVE(UI_BUTTON_PERFORM_PRIMARY_ACTION)
+    static BOOL canPerformPrimaryAction = [UIButton instancesRespondToSelector:@selector(performPrimaryAction)];
+    if (canPerformPrimaryAction) {
+        [m_button performPrimaryAction];
+        return;
+    }
+#endif
+
     [interaction() _presentMenuAtLocation:CGPointMake(CGRectGetMidX(rectInRootView), CGRectGetMidY(rectInRootView))];
 }
 

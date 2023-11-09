@@ -62,7 +62,7 @@ static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url
     auto contents = StyleSheetContents::create(url.string(), CSSParserContext(document, url));
     auto styleSheet = CSSStyleSheet::create(contents.get(), document, true);
 
-    contents->setIsUserStyleSheet(level == UserStyleUserLevel);
+    contents->setIsUserStyleSheet(level == UserStyleLevel::User);
     contents->parseString(text);
 
     return styleSheet;
@@ -81,7 +81,7 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (userSheetText.isEmpty())
         return 0;
     
-    m_pageUserSheet = createExtensionsStyleSheet(m_document, m_document.settings().userStyleSheetLocation(), userSheetText, UserStyleUserLevel);
+    m_pageUserSheet = createExtensionsStyleSheet(m_document, m_document.settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
 
     return m_pageUserSheet.get();
 }

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/Forward.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -86,5 +87,9 @@ inline void populateJITOperations() { populateDisassemblyLabels(); }
 #else
 inline void populateJITOperations() { }
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+
+#if ENABLE(WEB_AUDIO)
+void testSincResamplerProcessBuffer(std::span<const float> source, std::span<float> destination, double scaleFactor) TEST_SUPPORT_EXPORT;
+#endif
 
 } // namespace WebCoreTestSupport

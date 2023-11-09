@@ -1063,8 +1063,8 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
         auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
         if (signature.expand().is<FunctionSignature>()) {
             WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
-            // Static type-checking should ensure this jsDynamicCast always succeeds.
-            ASSERT(funcRef);
+            if (!funcRef)
+                return false;
             auto funcRTT = funcRef->rtt();
             if (funcRTT.get() == signatureRTT.get())
                 return true;

@@ -50,75 +50,9 @@ struct DragItem final {
     IntRect dragPreviewFrameInRootViewCoordinates;
     bool containsSelection { false };
 
-    PasteboardWriterData data;
     PromisedAttachmentInfo promisedAttachmentInfo;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, DragItem&);
+    PasteboardWriterData data { };
 };
-
-template<class Encoder>
-void DragItem::encode(Encoder& encoder) const
-{
-    // FIXME(173815): We should encode and decode PasteboardWriterData and platform drag image data
-    // here too, as part of moving off of the legacy dragging codepath.
-    encoder << sourceAction;
-    encoder << imageAnchorPoint << eventPositionInContentCoordinates << dragLocationInContentCoordinates << dragLocationInWindowCoordinates << title << url << dragPreviewFrameInRootViewCoordinates << containsSelection;
-    bool hasIndicatorData = image.hasIndicatorData();
-    encoder << hasIndicatorData;
-    if (hasIndicatorData)
-        encoder << image.indicatorData().value();
-    bool hasVisiblePath = image.hasVisiblePath();
-    encoder << hasVisiblePath;
-    if (hasVisiblePath)
-        encoder << image.visiblePath().value();
-    encoder << promisedAttachmentInfo;
-}
-
-template<class Decoder>
-bool DragItem::decode(Decoder& decoder, DragItem& result)
-{
-    if (!decoder.decode(result.sourceAction))
-        return false;
-    if (!decoder.decode(result.imageAnchorPoint))
-        return false;
-    if (!decoder.decode(result.eventPositionInContentCoordinates))
-        return false;
-    if (!decoder.decode(result.dragLocationInContentCoordinates))
-        return false;
-    if (!decoder.decode(result.dragLocationInWindowCoordinates))
-        return false;
-    if (!decoder.decode(result.title))
-        return false;
-    if (!decoder.decode(result.url))
-        return false;
-    if (!decoder.decode(result.dragPreviewFrameInRootViewCoordinates))
-        return false;
-    if (!decoder.decode(result.containsSelection))
-        return false;
-    bool hasIndicatorData;
-    if (!decoder.decode(hasIndicatorData))
-        return false;
-    if (hasIndicatorData) {
-        std::optional<TextIndicatorData> indicatorData;
-        decoder >> indicatorData;
-        if (!indicatorData)
-            return false;
-        result.image.setIndicatorData(*indicatorData);
-    }
-    bool hasVisiblePath;
-    if (!decoder.decode(hasVisiblePath))
-        return false;
-    if (hasVisiblePath) {
-        std::optional<Path> visiblePath;
-        decoder >> visiblePath;
-        if (!visiblePath)
-            return false;
-        result.image.setVisiblePath(*visiblePath);
-    }
-    if (!decoder.decode(result.promisedAttachmentInfo))
-        return false;
-    return true;
-}
 
 }

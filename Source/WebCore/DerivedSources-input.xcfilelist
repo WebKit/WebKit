@@ -1141,6 +1141,9 @@ $(PROJECT_DIR)/animation/KeyframeEffect.idl
 $(PROJECT_DIR)/animation/KeyframeEffectOptions.idl
 $(PROJECT_DIR)/animation/OptionalEffectTiming.idl
 $(PROJECT_DIR)/animation/PlaybackDirection.idl
+$(PROJECT_DIR)/animation/ScrollAxis.idl
+$(PROJECT_DIR)/animation/ScrollTimeline.idl
+$(PROJECT_DIR)/animation/ScrollTimelineOptions.idl
 $(PROJECT_DIR)/animation/TransitionEvent.idl
 $(PROJECT_DIR)/animation/WebAnimation.idl
 $(PROJECT_DIR)/bindings/js/JSDOMBindingInternals.js

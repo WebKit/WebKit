@@ -33,6 +33,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -47,6 +48,16 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 template<typename, typename> struct ArgumentCoder;
 template<typename, typename, typename> struct HasLegacyDecoder;
 template<typename, typename, typename> struct HasModernDecoder;
+
+#ifdef __OBJC__
+template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
+template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decodeWithAllowedClasses(Decoder&, NSArray<Class> *);
+
+template<typename T, typename = IsObjCObject<T>> Class getClass()
+{
+    return [T class];
+}
+#endif
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -146,6 +157,14 @@ public:
             return std::nullopt;
         }
     }
+
+#ifdef __OBJC__
+    template<typename T, typename = IsObjCObject<T>>
+    std::optional<RetainPtr<T>> decodeWithAllowedClasses(NSArray<Class> *allowedClasses = @[ getClass<T>() ])
+    {
+        return IPC::decodeWithAllowedClasses<T>(*this, allowedClasses);
+    }
+#endif
 
     std::optional<Attachment> takeLastAttachment();
 

@@ -1,49 +1,47 @@
-This tests that the 'figure' element is accessible on the Mac.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
+This test exercises 'figure' element AX properties.
 
 Test figure with aria-label.
-figure1 role: AXRole: AXGroup
-figure1 roleDescription: AXRoleDescription: figure
-figure1 description: AXDescription: aria-label attribute
+figure1 AXRole: AXGroup
+figure1 AXRoleDescription: figure
+figure1 AXDescription: aria-label attribute
 figure1 customContent:
-PASS !titleUIElement is true
+PASS: !titleUIElement === true
 
 Test figure with title attribute.
-figure2 role: AXRole: AXGroup
-figure2 roleDescription: AXRoleDescription: figure
-figure2 description: AXDescription: title attribute
+figure2 AXRole: AXGroup
+figure2 AXRoleDescription: figure
+figure2 AXDescription: title attribute
 figure2 customContent:
-PASS !titleUIElement is true
+PASS: !titleUIElement === true
 
 Test figure with aria-describedby.
-figure3 role: AXRole: AXGroup
-figure3 roleDescription: AXRoleDescription: figure
-figure3 description: AXDescription:
+figure3 AXRole: AXGroup
+figure3 AXRoleDescription: figure
+figure3 AXDescription:
 figure3 customContent: description: p referenced by aria-describedby
-PASS !titleUIElement is true
+PASS: !titleUIElement === true
 
 Test figure with figcaption element.
-figure4 role: AXRole: AXGroup
-figure4 roleDescription: AXRoleDescription: figure
-figure4 description: AXDescription: Figcaption element
+figure4 AXRole: AXGroup
+figure4 AXRoleDescription: figure
+figure4 AXDescription: Figcaption element
 figure4 customContent:
-PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
+PASS: titleUIElement.isEqual(figureCaption) === true
 
 Test figure with figcaption element and title attribute.
-figure5 role: AXRole: AXGroup
-figure5 roleDescription: AXRoleDescription: figure
-figure5 description: AXDescription: Figcaption element
+figure5 AXRole: AXGroup
+figure5 AXRoleDescription: figure
+figure5 AXDescription: Figcaption element
 figure5 customContent:
-PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
+PASS: titleUIElement.isEqual(figureCaption) === true
 
 Test display:contents figure with figcaption element.
-figure6 role: AXRole: AXGroup
-figure6 roleDescription: AXRoleDescription: figure
-figure6 description: AXDescription: Figcaption element (display:contents)
+figure6 AXRole: AXGroup
+figure6 AXRoleDescription: figure
+figure6 AXDescription: Figcaption element (display:contents)
 figure6 customContent:
-PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
+PASS: titleUIElement.isEqual(figureCaption) === true
+
 
 PASS successfullyParsed is true
 

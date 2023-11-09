@@ -196,6 +196,11 @@ const PlatformTimeRanges& MediaSourcePrivateGStreamer::buffered()
     return PlatformTimeRanges::emptyRanges();
 }
 
+void MediaSourcePrivateGStreamer::notifyActiveSourceBuffersChanged()
+{
+    m_playerPrivate.notifyActiveSourceBuffersChanged();
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaSourcePrivateGStreamer::logChannel() const
 {

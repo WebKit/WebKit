@@ -486,7 +486,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
     BOOL _waitingForKeyboardAppearanceAnimationToStart;
     BOOL _isHidingKeyboard;
-    BOOL _isPreparingEditMenu;
+    BOOL _isInterpretingKeyEvent;
     BOOL _isPresentingEditMenu;
 
     BOOL _focusRequiresStrongPasswordAssistance;
@@ -803,9 +803,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if USE(UICONTEXTMENU)
 - (UIView *)textEffectsWindow;
-
-- (void)presentContextMenu:(UIContextMenuInteraction *)contextMenuInteraction atLocation:(CGPoint)location;
-
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement:(WebKit::TargetedPreviewPositioning)positioning;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_removeContextMenuHintContainerIfPossible;

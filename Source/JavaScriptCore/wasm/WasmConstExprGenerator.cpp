@@ -255,8 +255,11 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result)
     {
-        if (m_mode == Mode::Evaluate)
-            result = ConstExprValue(JSValue::encode(JSValue(static_cast<int>(value.getValue() & 0x7fffffff))));
+        if (m_mode == Mode::Evaluate) {
+            JSValue i31 = JSValue((((static_cast<int32_t>(value.getValue()) & 0x7fffffff) << 1) >> 1));
+            ASSERT(i31.isInt32());
+            result = ConstExprValue(JSValue::encode(i31));
+        }
         return { };
     }
 

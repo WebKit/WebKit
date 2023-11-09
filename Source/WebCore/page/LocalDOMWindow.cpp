@@ -2336,22 +2336,18 @@ void LocalDOMWindow::dispatchLoadEvent()
         protectedLoader->timing().setLoadEventStart(now);
         if (RefPtr navigationTiming = performance().navigationTiming())
             navigationTiming->documentLoadTiming().setLoadEventStart(now);
+        WTFEmitSignpost(document(), NavigationAndPaintTiming, "loadEventBegin");
     }
 
-    bool isMainFrame = frame() && frame()->isMainFrame();
-    if (isMainFrame)
-        WTFBeginSignpost(document(), "Page Load: Load Event");
-
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), protectedDocument().get());
-
-    if (isMainFrame)
-        WTFEndSignpost(document(), "Page Load: Load Event");
 
     if (shouldMarkLoadEventTimes) {
         auto now = MonotonicTime::now();
         protectedLoader->timing().setLoadEventEnd(now);
         if (RefPtr navigationTiming = performance().navigationTiming())
             navigationTiming->documentLoadTiming().setLoadEventEnd(now);
+        WTFEmitSignpost(document(), NavigationAndPaintTiming, "loadEventEnd");
+        WTFEndSignpost(document(), NavigationAndPaintTiming);
     }
 
     // Send a separate load event to the element that owns this frame.

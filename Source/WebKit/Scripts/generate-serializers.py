@@ -632,7 +632,7 @@ def decode_type(type):
         if len(decodable_classes) == 1:
             match = re.search("RetainPtr<(.*)>", member.type)
             assert match
-            result.append('    auto ' + sanitized_variable_name + ' = IPC::decode<' + match.groups()[0] + '>(decoder, @[ ' + decodable_classes[0] + ' ]);')
+            result.append('    auto ' + sanitized_variable_name + ' = decoder.decodeWithAllowedClasses<' + match.groups()[0] + '>(@[ ' + decodable_classes[0] + ' ]);')
         elif member.is_subclass:
             result.append('    if (type == ' + type.subclass_enum_name() + "::" + member.name + ') {')
             typename = member.namespace + "::" + member.name

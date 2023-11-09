@@ -1697,7 +1697,6 @@ public:
             Location resultLocation = allocate(result);
             switch (type.kind) {
             case TypeKind::I32:
-            case TypeKind::I31ref:
                 m_jit.load32(Address(wasmScratchGPR), resultLocation.asGPR());
                 break;
             case TypeKind::I64:
@@ -1724,6 +1723,7 @@ public:
             case TypeKind::Externref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::I31ref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
@@ -1815,7 +1815,6 @@ public:
 
             switch (type.kind) {
             case TypeKind::I32:
-            case TypeKind::I31ref:
                 m_jit.store32(valueLocation.asGPR(), Address(wasmScratchGPR));
                 break;
             case TypeKind::I64:
@@ -1842,6 +1841,7 @@ public:
             case TypeKind::Externref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::I31ref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
@@ -3662,7 +3662,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result)
     {
         if (value.isConst()) {
-            result = Value::fromI64((value.asI32() & 0x7fffffff) | JSValue::NumberTag);
+            result = Value::fromI64((((value.asI32() & 0x7fffffff) << 1) >> 1) | JSValue::NumberTag);
             LOG_INSTRUCTION("RefI31", value, RESULT(result));
             return { };
         }
@@ -3676,6 +3676,8 @@ public:
         LOG_INSTRUCTION("RefI31", value, RESULT(result));
 
         m_jit.and32(TrustedImm32(0x7fffffff), initialValue.asGPR(), resultLocation.asGPR());
+        m_jit.lshift32(TrustedImm32(1), resultLocation.asGPR());
+        m_jit.rshift32(TrustedImm32(1), resultLocation.asGPR());
         m_jit.or64(TrustedImm64(JSValue::NumberTag), resultLocation.asGPR());
         return { };
     }
@@ -3707,8 +3709,6 @@ public:
         m_jit.move(initialValue.asGPR(), resultLocation.asGPR());
         emitThrowOnNullReference(ExceptionType::NullI31Get, resultLocation);
 
-        m_jit.lshift32(TrustedImm32(1), resultLocation.asGPR());
-        m_jit.rshift32(TrustedImm32(1), resultLocation.asGPR());
         return { };
     }
 
@@ -3716,7 +3716,7 @@ public:
     {
         if (value.isConst()) {
             if (JSValue::decode(value.asI64()).isNumber())
-                result = Value::fromI32(value.asI64());
+                result = Value::fromI32(value.asI64() & 0x7fffffffu);
             else {
                 emitThrowException(ExceptionType::NullI31Get);
                 result = Value::fromI32(0);
@@ -3738,6 +3738,7 @@ public:
 
         m_jit.move(initialValue.asGPR(), resultLocation.asGPR());
         emitThrowOnNullReference(ExceptionType::NullI31Get, resultLocation);
+        m_jit.and32(TrustedImm32(0x7fffffff), resultLocation.asGPR(), resultLocation.asGPR());
 
         return { };
     }

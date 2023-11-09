@@ -47,7 +47,7 @@
     // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleLevel::User }, API::ContentWorld::pageContentWorld());
 
     return self;
 }

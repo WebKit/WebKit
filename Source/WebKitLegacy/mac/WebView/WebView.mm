@@ -4274,7 +4274,7 @@ IGNORE_WARNINGS_END
     if (!world)
         return;
 
-    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
+    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleLevel::User);
     viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), WebCore::InjectInExistingDocuments);
 }
 

@@ -60,6 +60,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -2344,6 +2345,22 @@ Vector<FloatRect> RenderObject::absoluteBorderAndTextRects(const SimpleRange& ra
 Vector<FloatRect> RenderObject::clientBorderAndTextRects(const SimpleRange& range)
 {
     return borderAndTextRects(range, CoordinateSpace::Client, { });
+}
+
+ScrollAnchoringController* RenderObject::findScrollAnchoringControllerForRenderer(const RenderObject& renderer)
+{
+    if (renderer.hasLayer()) {
+        if (auto* scrollableArea = downcast<RenderLayerModelObject>(renderer).layer()->scrollableArea())
+            return scrollableArea->scrollAnchoringController();
+    }
+    for (auto* enclosingLayer = renderer.enclosingLayer(); enclosingLayer; enclosingLayer = enclosingLayer->parent()) {
+        if (RenderLayerScrollableArea* scrollableArea = enclosingLayer->scrollableArea()) {
+            auto controller = scrollableArea->scrollAnchoringController();
+            if (controller && controller->anchorElement())
+                return controller;
+        }
+    }
+    return renderer.view().frameView().scrollAnchoringController();
 }
 
 #if PLATFORM(IOS_FAMILY)

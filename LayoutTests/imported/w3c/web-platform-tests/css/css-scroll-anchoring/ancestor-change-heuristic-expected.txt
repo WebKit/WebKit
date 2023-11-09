@@ -1,4 +1,4 @@
 
-FAIL Ancestor changes in document scroller. assert_equals: expected 150 but got 220
-FAIL Ancestor changes in scrollable <div>. assert_equals: expected 150 but got 220
+PASS Ancestor changes in document scroller.
+PASS Ancestor changes in scrollable <div>.
 

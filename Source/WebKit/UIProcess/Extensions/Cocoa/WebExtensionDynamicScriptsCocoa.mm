@@ -106,7 +106,7 @@ void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::Con
         if (!styleSheet)
             continue;
 
-        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, WebCore::UserStyleUserLevel, pageID }, executionWorld);
+        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, WebCore::UserStyleLevel::User, pageID }, executionWorld);
 
         for (auto& controller : context.extensionController()->allUserContentControllers())
             controller.addUserStyleSheet(userStyleSheet);

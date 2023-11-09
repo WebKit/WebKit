@@ -245,20 +245,20 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSData: {
-        RetainPtr<NSData> data;
-        if (!IPC::decode(decoder, data))
+        std::optional<RetainPtr<NSData>> data = decoder.decode<RetainPtr<NSData>>();
+        if (!data)
             return false;
 
-        result = WTFMove(data);
+        result = WTFMove(*data);
         return true;
     }
 
     case ObjCType::NSDate: {
-        RetainPtr<NSDate> date;
-        if (!IPC::decode(decoder, date))
+        std::optional<RetainPtr<NSDate>> date = decoder.decode<RetainPtr<NSDate>>();
+        if (!date)
             return false;
 
-        result = WTFMove(date);
+        result = WTFMove(*date);
         return true;
     }
 
@@ -289,20 +289,20 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::NSNumber: {
-        RetainPtr<NSNumber> number;
-        if (!IPC::decode(decoder, number))
+        std::optional<RetainPtr<NSNumber>> number = decoder.decode<RetainPtr<NSNumber>>();
+        if (!number)
             return false;
 
-        result = WTFMove(number);
+        result = WTFMove(*number);
         return true;
     }
 
     case ObjCType::NSString: {
-        RetainPtr<NSString> string;
-        if (!IPC::decode(decoder, string))
+        std::optional<RetainPtr<NSString>> string = decoder.decode<RetainPtr<NSString>>();
+        if (!string)
             return false;
 
-        result = WTFMove(string);
+        result = WTFMove(*string);
         return true;
     }
 

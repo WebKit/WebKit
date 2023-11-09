@@ -1581,7 +1581,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
-    auto commitProperty = [&](AnimatableProperty property) {
+    auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.
@@ -1620,7 +1620,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one
     // animation effect associated with animation whose effect target is target.
-    HashSet<AnimatableProperty> targetedProperties;
+    HashSet<AnimatableCSSProperty> targetedProperties;
     for (auto property : effect->animatedProperties()) {
         if (std::holds_alternative<CSSPropertyID>(property)) {
             for (auto longhand : shorthandForProperty(std::get<CSSPropertyID>(property)))

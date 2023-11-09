@@ -81,7 +81,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, OptionSet<PropertyCascade::PropertyType> includedProperties, const HashSet<AnimatableProperty>* animatedPropertes)
+Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, OptionSet<PropertyCascade::PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* animatedPropertes)
     : m_cascade(matchResult, cascadeLevel, includedProperties, animatedPropertes)
     , m_state(*this, style, WTFMove(context))
 {

@@ -4548,14 +4548,14 @@ const AnimationCollection* Element::animations(PseudoId pseudoId) const
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
+bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableCSSProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
+bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableCSSProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->runningTransitionsByProperty().contains(property);
@@ -4569,14 +4569,14 @@ bool Element::hasRunningTransitions(PseudoId pseudoId) const
     return false;
 }
 
-const AnimatablePropertyToTransitionMap* Element::completedTransitionsByProperty(PseudoId pseudoId) const
+const AnimatableCSSPropertyToTransitionMap* Element::completedTransitionsByProperty(PseudoId pseudoId) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return &animationData->completedTransitionsByProperty();
     return nullptr;
 }
 
-const AnimatablePropertyToTransitionMap* Element::runningTransitionsByProperty(PseudoId pseudoId) const
+const AnimatableCSSPropertyToTransitionMap* Element::runningTransitionsByProperty(PseudoId pseudoId) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return &animationData->runningTransitionsByProperty();
@@ -4600,12 +4600,12 @@ void Element::setAnimationsCreatedByMarkup(PseudoId pseudoId, CSSAnimationCollec
     ensureAnimationRareData(pseudoId).setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
-AnimatablePropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(PseudoId pseudoId)
+AnimatableCSSPropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(PseudoId pseudoId)
 {
     return ensureAnimationRareData(pseudoId).completedTransitionsByProperty();
 }
 
-AnimatablePropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(PseudoId pseudoId)
+AnimatableCSSPropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(PseudoId pseudoId)
 {
     return ensureAnimationRareData(pseudoId).runningTransitionsByProperty();
 }

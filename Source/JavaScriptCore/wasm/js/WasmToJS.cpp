@@ -459,18 +459,26 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         default:  {
             if (Wasm::isRefType(returnType)) {
                 if (Wasm::isExternref(returnType))
-                    ASSERT(returnType.isNullable());
-                else if (Wasm::isFuncref(returnType)) {
-                    ASSERT(returnType.isNullable());
+                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
+                else if (Wasm::isFuncref(returnType) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(returnType))) {
+                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-                    jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
+                    jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR);
                     auto call = jit.call(OperationPtrTag);
                     exceptionChecks.append(jit.emitJumpIfException(vm));
                     jit.addLinkTask([=](LinkBuffer& linkBuffer) {
                         linkBuffer.link<OperationPtrTag>(call, operationConvertToFuncref);
                     });
-                } else if (Wasm::isI31ref(returnType))
-                    RELEASE_ASSERT_NOT_REACHED();
+                } else {
+                    ASSERT(Options::useWebAssemblyGC());
+                    jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+                    jit.setupArguments<decltype(operationConvertToAnyref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR);
+                    auto call = jit.call(OperationPtrTag);
+                    exceptionChecks.append(jit.emitJumpIfException(vm));
+                    jit.addLinkTask([=](LinkBuffer& linkBuffer) {
+                        linkBuffer.link<OperationPtrTag>(call, operationConvertToAnyref);
+                    });
+                }
                 jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].location.jsr());
             } else
                 // For the JavaScript embedding, imports with these types in their type definition return are a WebAssembly.Module validation error.

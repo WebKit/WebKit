@@ -1,6 +1,8 @@
 
-FAIL Animation start and current times are correct for each animation state. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
-FAIL Animation start and current times are correct for each animation state when the animation starts playing with advanced scroller. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
-FAIL Finished animation plays on reverse scrolling. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
-FAIL Sending animation finished events by finished animation on reverse scrolling. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ScrollTimeline"
+Harness Error (TIMEOUT), message = null
+
+FAIL Animation start and current times are correct for each animation state. assert_equals: The current time remains null while in the pending state. expected (object) null but got (number) 0
+FAIL Animation start and current times are correct for each animation state when the animation starts playing with advanced scroller. assert_equals: The current time remains unresolved while play-pending. expected (object) null but got (number) 0
+TIMEOUT Finished animation plays on reverse scrolling. Test timed out
+NOTRUN Sending animation finished events by finished animation on reverse scrolling.
 

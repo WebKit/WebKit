@@ -85,9 +85,9 @@ static TextStream& operator<<(TextStream& stream, CSSPropertyID property)
 
 struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient& client;
-    AnimatableProperty property;
+    AnimatableCSSProperty property;
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, const AnimatableProperty& property, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, const AnimatableCSSProperty& property, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
         , property(property)
@@ -4374,7 +4374,7 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
     destination.setCustomPropertyValue(blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext), isInherited);
 }
 
-void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, const AnimatableProperty& property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, const AnimatableCSSProperty& property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4385,7 +4385,7 @@ void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client
     );
 }
 
-bool CSSPropertyAnimation::isPropertyAnimatable(const AnimatableProperty& property)
+bool CSSPropertyAnimation::isPropertyAnimatable(const AnimatableCSSProperty& property)
 {
     return WTF::switchOn(property,
         [] (CSSPropertyID propertyId) {
@@ -4398,7 +4398,7 @@ bool CSSPropertyAnimation::isPropertyAnimatable(const AnimatableProperty& proper
     );
 }
 
-bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(const AnimatableProperty& property)
+bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(const AnimatableCSSProperty& property)
 {
     return WTF::switchOn(property,
         [] (CSSPropertyID propertyId) {
@@ -4423,7 +4423,7 @@ static bool syntaxValuesRequireBlendingForAccumulativeIteration(const CSSCustomP
     });
 }
 
-bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, const AnimatableProperty& property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4458,7 +4458,7 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
     );
 }
 
-bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(const AnimatableProperty& property, const Settings& settings)
+bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(const AnimatableCSSProperty& property, const Settings& settings)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID cssProperty) {
@@ -4469,7 +4469,7 @@ bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(const AnimatableProp
     );
 }
 
-bool CSSPropertyAnimation::propertiesEqual(const AnimatableProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
+bool CSSPropertyAnimation::propertiesEqual(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4515,7 +4515,7 @@ static bool typeOfSyntaxValueCanBeInterpolated(const CSSCustomPropertyValue::Syn
     );
 }
 
-bool CSSPropertyAnimation::canPropertyBeInterpolated(const AnimatableProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
+bool CSSPropertyAnimation::canPropertyBeInterpolated(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {

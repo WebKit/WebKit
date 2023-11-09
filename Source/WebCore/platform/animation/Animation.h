@@ -107,7 +107,7 @@ public:
 
     struct TransitionProperty {
         TransitionMode mode;
-        AnimatableProperty animatableProperty;
+        AnimatableCSSProperty animatableProperty;
     };
 
     enum class Direction : uint8_t {

@@ -1037,27 +1037,14 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         
         auto oldRects = repaintRects();
         computeRepaintRects(repaintContainer.get(), geometryMap);
-        
         auto newRects = repaintRects();
 
-        // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
-        // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
-        if ((flags & CheckForRepaint) && newRects) {
-            if (!renderer().view().printing()) {
-                if (m_repaintStatus == RepaintStatus::NeedsFullRepaint) {
-                    if (oldRects)
-                        renderer().repaintUsingContainer(repaintContainer.get(), oldRects->clippedOverflowRect);
-
-                    if (!oldRects || newRects->clippedOverflowRect != oldRects->clippedOverflowRect)
-                        renderer().repaintUsingContainer(repaintContainer.get(), newRects->clippedOverflowRect);
-
-                } else if (shouldRepaintAfterLayout()) {
-                    // FIXME: We will convert this to just take the old and new RepaintLayoutRects once
-                    // we change other callers to use RepaintLayoutRects.
-                    auto resolvedOldRects = valueOrDefault(oldRects);
-                    renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), RenderElement::RequiresFullRepaint::No, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect,
-                        &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
-                }
+        if (flags.contains(CheckForRepaint) && newRects) {
+            ASSERT(isSelfPaintingLayer());
+            if (shouldRepaintAfterLayout()) {
+                auto needsFullRepaint = m_repaintStatus == RepaintStatus::NeedsFullRepaint ? RenderElement::RequiresFullRepaint::Yes : RenderElement::RequiresFullRepaint::No;
+                auto resolvedOldRects = valueOrDefault(oldRects);
+                renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), needsFullRepaint, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect, &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
             }
         }
     } else
@@ -2047,7 +2034,7 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
         return false;
 #endif
 
-    if (m_repaintStatus == RepaintStatus::NeedsNormalRepaint)
+    if (m_repaintStatus == RepaintStatus::NeedsNormalRepaint || m_repaintStatus == RepaintStatus::NeedsFullRepaint)
         return true;
 
     // Composited layers that were moved during a positioned movement only

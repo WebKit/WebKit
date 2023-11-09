@@ -215,20 +215,25 @@ function testI31Get() {
 }
 
 function testI31JS() {
-  // JS API behavior not specified yet, import errors for now.
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (func (export "f") (param i31ref) (result i32)
-            (i31.get_u (local.get 0)))
-        )
-      `);
-      m.exports.f(42);
-    },
-    TypeError,
-    "I31ref import from JS currently unsupported"
-  )
+  {
+    let m = instantiate(`
+      (module
+        (func (export "f") (param i31ref) (result i32)
+          (i31.get_u (local.get 0)))
+      )
+    `);
+    assert.eq(m.exports.f(42), 42);
+    assert.throws(
+      () => m.exports.f(m.exports.f),
+      TypeError,
+      "Argument value did not match reference type"
+    );
+    assert.throws(
+      () => m.exports.f(null),
+      WebAssembly.RuntimeError,
+      "i31.get_<sx> to a null reference"
+    );
+  }
 
   // JS API behavior not specified yet, i31 global errors for now.
   assert.throws(
@@ -237,19 +242,14 @@ function testI31JS() {
     "WebAssembly.Global expects its 'value' field to be the string"
   )
 
-  // JS API behavior not specified yet, setting global errors for now.
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (global (export "g") (mut i31ref) (ref.null i31))
-        )
-      `);
-      m.exports.g.value = 42;
-    },
-    TypeError,
-    "I31ref import from JS currently unsupported"
-  )
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (mut i31ref) (ref.null i31))
+      )
+    `);
+    m.exports.g.value = 42;
+  }
 }
 
 function testI31Table() {

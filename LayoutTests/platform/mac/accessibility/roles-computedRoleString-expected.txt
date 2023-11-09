@@ -66,6 +66,7 @@ PASS option -> option.
 PASS sub -> subscript.
 PASS sup -> superscript.
 PASS table -> table.
+PASS caption -> caption.
 PASS tr -> row.
 PASS th -> columnheader.
 PASS tr -> row.
@@ -73,6 +74,7 @@ PASS td -> cell.
 PASS tr -> row.
 PASS td -> cell.
 PASS table[role="grid"] -> grid.
+PASS caption -> caption.
 PASS tr -> row.
 PASS th -> columnheader.
 PASS tr -> row.

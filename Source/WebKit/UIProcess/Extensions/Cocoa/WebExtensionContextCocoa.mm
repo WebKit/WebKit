@@ -2357,7 +2357,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!styleSheetString)
                 continue;
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleUserLevel, std::nullopt }, executionWorld);
+            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleLevel::User, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
             for (auto& userContentController : userContentControllers)

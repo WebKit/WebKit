@@ -256,14 +256,14 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         }
 
         bindGroupLayoutEntries.add(entry.binding, BindGroupLayout::Entry {
-            entry.binding,
-            entry.visibility,
-            WTFMove(bindingLayout),
-            WTFMove(argumentBufferIndices),
-            WTFMove(bufferSizeArgumentBufferIndices),
-            WTFMove(dynamicOffsets[0]),
-            WTFMove(dynamicOffsets[1]),
-            WTFMove(dynamicOffsets[2])
+            .binding = entry.binding,
+            .visibility = entry.visibility,
+            .bindingLayout = WTFMove(bindingLayout),
+            .argumentBufferIndices = WTFMove(argumentBufferIndices),
+            .bufferSizeArgumentBufferIndices = WTFMove(bufferSizeArgumentBufferIndices),
+            .vertexDynamicOffset = WTFMove(dynamicOffsets[0]),
+            .fragmentDynamicOffset = WTFMove(dynamicOffsets[1]),
+            .computeDynamicOffset = WTFMove(dynamicOffsets[2])
         });
     }
 

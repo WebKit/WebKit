@@ -69,7 +69,7 @@ public:
     void endOcclusionQuery();
     void endPass();
     void endPipelineStatisticsQuery();
-    void executeBundles(Vector<std::reference_wrapper<const RenderBundle>>&& bundles);
+    void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
@@ -119,6 +119,8 @@ private:
     const RenderPipeline* m_pipeline { nullptr };
     RefPtr<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    float m_minDepth { 0.f };
+    float m_maxDepth { 1.f };
 };
 
 } // namespace WebGPU

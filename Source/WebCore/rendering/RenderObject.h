@@ -406,6 +406,8 @@ public:
 
     bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
+    static ScrollAnchoringController* findScrollAnchoringControllerForRenderer(const RenderObject&);
+
     bool childrenInline() const { return m_bitfields.childrenInline(); }
     virtual void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
     

@@ -147,9 +147,12 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
     static constexpr int arrowPaddingBefore = 6;
     static constexpr int arrowPaddingAfter = 6;
 
+    bool isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
+    auto logicalBounds = isVerticalWritingMode ? bounds.transposedRect() : bounds;
+
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
     float fontScale = std::min(style.fontSize / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
-    float centerY = bounds.y() + bounds.height() / 2.0f;
+    float centerY = logicalBounds.y() + logicalBounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
@@ -161,50 +164,39 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
 
     float leftEdge;
     if (isRightToLeft)
-        leftEdge = bounds.x() + arrowPaddingAfter * style.zoomFactor;
+        leftEdge = logicalBounds.x() + arrowPaddingAfter * style.zoomFactor;
     else
-        leftEdge = bounds.maxX() - arrowPaddingAfter * style.zoomFactor - arrowWidth;
+        leftEdge = logicalBounds.maxX() - arrowPaddingAfter * style.zoomFactor - arrowWidth;
 
     GraphicsContextStateSaver stateSaver(context);
 
     context.setFillColor(style.textColor);
     context.setStrokeStyle(StrokeStyle::NoStroke);
 
-    // Draw the top arrow
-    Vector<FloatPoint> arrow1 = {
+    Vector<FloatPoint> topArrow = {
         { leftEdge, centerY - spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth, centerY - spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth / 2.0f, centerY - spaceBetweenArrows / 2.0f - arrowHeight }
     };
-    context.fillPath(Path(arrow1));
 
-    // Draw the bottom arrow
-    Vector<FloatPoint> arrow2 = {
+    Vector<FloatPoint> bottomArrow = {
         { leftEdge, centerY + spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth, centerY + spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth / 2.0f, centerY + spaceBetweenArrows / 2.0f + arrowHeight }
     };
-    context.fillPath(Path(arrow2));
 
-    constexpr auto leftSeparatorColor = Color::black.colorWithAlphaByte(40);
-    constexpr auto rightSeparatorColor = Color::white.colorWithAlphaByte(40);
+    // Rotate the arrows for vertical writing mode since the popup appears to the side of the control instead of under it.
+    if (isVerticalWritingMode) {
+        auto transposePoint = [](const FloatPoint& point) {
+            return point.transposedPoint();
+        };
 
-    // FIXME: Should the separator thickness and space be scaled up by fontScale?
-    int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
-    int leftEdgeOfSeparator;
-    if (isRightToLeft)
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge + arrowWidth + arrowPaddingBefore * style.zoomFactor));
-    else
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge - arrowPaddingBefore * style.zoomFactor));
+        topArrow = topArrow.map(transposePoint);
+        bottomArrow = bottomArrow.map(transposePoint);
+    }
 
-    // Draw the separator to the left of the arrows
-    context.setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.
-    context.setStrokeStyle(StrokeStyle::SolidStroke);
-    context.setStrokeColor(leftSeparatorColor);
-    context.drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()), IntPoint(leftEdgeOfSeparator, bounds.maxY()));
-
-    context.setStrokeColor(rightSeparatorColor);
-    context.drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()), IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
+    context.fillPath(Path(topArrow));
+    context.fillPath(Path(bottomArrow));
 }
 
 } // namespace WebCore

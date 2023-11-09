@@ -1,82 +1,75 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div id="content">
 
 <p id="p1">Test figure with aria-label.</p>
 <figure id="figure1" aria-label="aria-label attribute">
-	<img src="" alt="image alt" width="20" height="20"/>
+    <img src="" alt="image alt" width="20" height="20"/>
 </figure>
 
 <p id="p2">Test figure with title attribute.</p>
 <figure id="figure2" title="title attribute">
-	<img src="" alt="image alt" width="20" height="20"/>
+    <img src="" alt="image alt" width="20" height="20"/>
 </figure>
 
 <p id="p3">Test figure with aria-describedby.</p>
 <figure id="figure3" aria-describedby="fg-describedby">
-	<img src="" alt="image alt" width="20" height="20"/>
-	<p id="fg-describedby">p referenced by aria-describedby</p>
+    <img src="" alt="image alt" width="20" height="20"/>
+    <p id="fg-describedby">p referenced by aria-describedby</p>
 </figure>
 
 <p id="p4">Test figure with figcaption element.</p>
 <figure id="figure4">
-	<img src="" alt="image alt" width="20" height="20"/>
-	<figcaption id="figCaption4">Figcaption element</figcaption>
+    <img src="" alt="image alt" width="20" height="20"/>
+    <figcaption id="figCaption4">Figcaption element</figcaption>
 </figure>
 
 <p id="p5">Test figure with figcaption element and title attribute.</p>
 <figure id="figure5" title="title attribute">
-	<img src="" alt="image alt" width="20" height="20"/>
-	<figcaption id="figCaption5">Figcaption element</figcaption>
+    <img src="" alt="image alt" width="20" height="20"/>
+    <figcaption id="figCaption5">Figcaption element</figcaption>
 </figure>
 
 <p id="p6">Test display:contents figure with figcaption element.</p>
 <figure id="figure6" style="display:contents">
-	<img src="" alt="image alt" width="20" height="20"/>
-	<figcaption id="figCaption6">Figcaption element (display:contents)</figcaption>
+    <img src="" alt="image alt" width="20" height="20"/>
+    <figcaption id="figCaption6">Figcaption element (display:contents)</figcaption>
 </figure>
 
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+let output = "This test exercises 'figure' element AX properties.\n\n";
 
-    function isIgnored(axElement) {
-        return !axElement || axElement.isIgnored;
+if (window.accessibilityController) {
+    for (let k = 1; k <= 6; k++) {
+        let figure = accessibilityController.accessibleElementById(`figure${k}`);
+        let p = document.getElementById(`p${k}`);
+        output += `${p.innerText}\n`;
+        output += `figure${k} ${figure.role}\n`;
+        output += `figure${k} ${figure.roleDescription}\n`;
+        output += `figure${k} ${figure.description}\n`;
+        output += `figure${k} customContent: ${figure.customContent}\n`;
+
+        var titleUIElement = figure.titleUIElement();
+        if (titleUIElement) {
+            var figureCaption = accessibilityController.accessibleElementById("figCaption" + k);
+            output += expect("titleUIElement.isEqual(figureCaption)", "true");
+        } else
+            output += expect("!titleUIElement", "true");
+
+        output += "\n";
     }
 
-    description("This tests that the 'figure' element is accessible on the Mac.");
-
-    if (window.accessibilityController) {
-
-        for (var k = 1; k <= 6; k++) {
-           var figure = accessibilityController.accessibleElementById("figure" + k);
-           var p = document.getElementById("p" + k);
-           debug(p.innerText);
-           debug("figure" + k + " role: " + figure.role);
-           debug("figure" + k + " roleDescription: " + figure.roleDescription);
-           debug("figure" + k + " description: " + figure.description);
-           debug("figure" + k + " customContent: " + figure.customContent);
-           var titleUIElement = figure.titleUIElement();
-           if (k >= 4) {
-               var figureCaption = accessibilityController.accessibleElementById("figCaption" + k);
-               shouldBeTrue("(isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption)");
-           } else
-               shouldBeTrue("!titleUIElement");
-           debug("");
-        }
-        document.getElementById("content").innerText = "";
-    }
-
+    document.getElementById("content").innerText = "";
+    debug(output);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

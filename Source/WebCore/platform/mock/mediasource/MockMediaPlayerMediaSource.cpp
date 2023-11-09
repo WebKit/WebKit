@@ -203,6 +203,12 @@ bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
     return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
+void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
+{
+    if (auto player = m_player.get())
+        player->activeSourceBuffersChanged();
+}
+
 MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
 {
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();

@@ -36,6 +36,7 @@
 #include "FontSelector.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
+#include "Logging.h"
 #include "MotionPath.h"
 #include "Pagination.h"
 #include "PathTraversalState.h"
@@ -1376,6 +1377,60 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
     if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr() && m_rareInheritedData->effectiveInert != other.m_rareInheritedData->effectiveInert)
         return true;
 
+    return false;
+}
+
+bool RenderStyle::scrollAnchoringSuppressionStyleDidChange(const RenderStyle* other) const
+{
+    // https://drafts.csswg.org/css-scroll-anchoring/#suppression-triggers
+    // Determine if there are any style changes that should result in an scroll anchoring suppression
+    if (!other)
+        return false;
+
+    if (m_nonInheritedData->boxData.ptr() != other->m_nonInheritedData->boxData.ptr()) {
+        if (m_nonInheritedData->boxData->width() != other->m_nonInheritedData->boxData->width()
+            || m_nonInheritedData->boxData->minWidth() != other->m_nonInheritedData->boxData->minWidth()
+            || m_nonInheritedData->boxData->maxWidth() != other->m_nonInheritedData->boxData->maxWidth()
+            || m_nonInheritedData->boxData->height() != other->m_nonInheritedData->boxData->height()
+            || m_nonInheritedData->boxData->minHeight() != other->m_nonInheritedData->boxData->minHeight()
+            || m_nonInheritedData->boxData->maxHeight() != other->m_nonInheritedData->boxData->maxHeight())
+            return true;
+    }
+
+    if (overflowAnchor() != other->overflowAnchor() && overflowAnchor() == OverflowAnchor::None)
+        return true;
+
+    if (position() != other->position())
+        return true;
+
+    if (m_nonInheritedData->surroundData.ptr() && other->m_nonInheritedData->surroundData.ptr() && m_nonInheritedData->surroundData != other->m_nonInheritedData->surroundData) {
+        if (m_nonInheritedData->surroundData->margin != other->m_nonInheritedData->surroundData->margin)
+            return true;
+
+        if (m_nonInheritedData->surroundData->padding != other->m_nonInheritedData->surroundData->padding)
+            return true;
+    }
+
+    if (position() != PositionType::Static) {
+        if (m_nonInheritedData->surroundData->offset != other->m_nonInheritedData->surroundData->offset)
+            return true;
+    }
+
+    if (hasTransformRelatedProperty() != other->hasTransformRelatedProperty())
+        return true;
+
+    return false;
+}
+
+bool RenderStyle::outOfFlowPositionStyleDidChange(const RenderStyle* other) const
+{
+    // https://drafts.csswg.org/css-scroll-anchoring/#suppression-triggers
+    // Determine if there is a style change that causes an element to become or stop
+    // being absolutely or fixed positioned
+    if (other && m_nonInheritedData.ptr() != other->m_nonInheritedData.ptr()) {
+        if (hasOutOfFlowPosition() != other->hasOutOfFlowPosition())
+            return true;
+    }
     return false;
 }
 

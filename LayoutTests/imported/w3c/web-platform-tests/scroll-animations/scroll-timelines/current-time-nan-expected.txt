@@ -1,6 +1,6 @@
 
-FAIL currentTime should be null for a display: inline source Can't find variable: ScrollTimeline
-FAIL currentTime should be null for a display: none source Can't find variable: ScrollTimeline
-FAIL currentTime should be null for an unattached source Can't find variable: ScrollTimeline
-FAIL currentTime should be null when the source is not a scroller Can't find variable: ScrollTimeline
+PASS currentTime should be null for a display: inline source
+PASS currentTime should be null for a display: none source
+PASS currentTime should be null for an unattached source
+PASS currentTime should be null when the source is not a scroller
 
