@@ -1419,16 +1419,23 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
+            { "countLeadingZeros", "clz"_s },
+            { "countOneBits", "popcount"_s },
+            { "countTrailingZeros", "ctz"_s },
             { "dpdx", "dfdx"_s },
             { "dpdxCoarse", "dfdx"_s },
             { "dpdxFine", "dfdx"_s },
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
+            { "extractBits", "extract_bits"_s },
+            { "faceForward", "faceforward"_s },
             { "frexp", "__wgslFrexp"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
+            { "insertBits", "insert_bits"_s },
             { "inverseSqrt", "rsqrt"_s },
+            { "reverseBits", "reverse_bits"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {

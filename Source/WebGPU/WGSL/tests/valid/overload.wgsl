@@ -919,39 +919,65 @@ fn testClamp()
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
 // 17.5.13-15 (Bit counting)
+// RUN: %metal-compile testBitCounting
+@compute @workgroup_size(1)
 fn testBitCounting()
 {
     // [T < ConcreteInteger].(T) => T,
     {
+        let i = 1i;
+        let u = 1u;
         _ = countLeadingZeros(1);
         _ = countLeadingZeros(1i);
         _ = countLeadingZeros(1u);
+        let r1: i32 = countLeadingZeros(i);
+        let r2: u32 = countLeadingZeros(u);
     }
     {
+        let i = 1i;
+        let u = 1u;
         _ = countOneBits(1);
         _ = countOneBits(1i);
         _ = countOneBits(1u);
+        let r1: i32 = countOneBits(i);
+        let r2: u32 = countOneBits(u);
     }
     {
+        let i = 1i;
+        let u = 1u;
         _ = countTrailingZeros(1);
         _ = countTrailingZeros(1i);
         _ = countTrailingZeros(1u);
+        let r1: i32 = countTrailingZeros(i);
+        let r2: u32 = countTrailingZeros(u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
+        let vi = vec2(1i);
+        let vu = vec2(1u);
         _ = countLeadingZeros(vec2(1, 1));
         _ = countLeadingZeros(vec2(1i, 1i));
         _ = countLeadingZeros(vec2(1u, 1u));
+        let r1: vec2i = countLeadingZeros(vi);
+        let r2: vec2u = countLeadingZeros(vu);
     }
     {
+        let vi = vec3(1i);
+        let vu = vec3(1u);
         _ = countOneBits(vec3(1, 1, 1));
         _ = countOneBits(vec3(1i, 1i, 1i));
         _ = countOneBits(vec3(1u, 1u, 1u));
+        let r1: vec3i = countOneBits(vi);
+        let r2: vec3u = countOneBits(vu);
     }
     {
+        let vi = vec4(1i);
+        let vu = vec4(1u);
         _ = countTrailingZeros(vec4(1, 1, 1, 1));
         _ = countTrailingZeros(vec4(1i, 1i, 1i, 1i));
         _ = countTrailingZeros(vec4(1u, 1u, 1u, 1u));
+        let r1: vec4i = countTrailingZeros(vi);
+        let r2: vec4u = countTrailingZeros(vu);
     }
 }
 
@@ -1138,76 +1164,102 @@ fn testExpAndExp2() {
 }
 
 // 17.5.23 & 17.5.24
+// RUN: %metal-compile testExtractBits
+@compute @workgroup_size(1)
 fn testExtractBits()
 {
     // signed
     // [].(I32, U32, U32) => I32,
     {
+        let i = 0i;
         _ = extractBits(0, 1, 1);
         _ = extractBits(0i, 1, 1);
         _ = extractBits(0i, 1u, 1u);
+        let r: i32 = extractBits(i, 1u, 1u);
     }
     // [N].(Vector[I32, N], U32, U32) => Vector[I32, N],
     {
+        let vi = vec2(0i);
         _ = extractBits(vec2(0), 1, 1);
         _ = extractBits(vec2(0i), 1, 1);
         _ = extractBits(vec2(0i), 1u, 1u);
+        let r: vec2i = extractBits(vi, 1u, 1u);
     }
     {
+        let vi = vec3(0i);
         _ = extractBits(vec3(0), 1, 1);
         _ = extractBits(vec3(0i), 1, 1);
         _ = extractBits(vec3(0i), 1u, 1u);
+        let r: vec3i = extractBits(vi, 1u, 1u);
     }
     {
+        let vi = vec4(0i);
         _ = extractBits(vec4(0), 1, 1);
         _ = extractBits(vec4(0i), 1, 1);
         _ = extractBits(vec4(0i), 1u, 1u);
+        let r: vec4i = extractBits(vi, 1u, 1u);
     }
 
     // unsigned
     // [].(U32, U32, U32) => U32,
     {
+        let u = 0u;
         _ = extractBits(0, 1, 1);
         _ = extractBits(0u, 1, 1);
         _ = extractBits(0u, 1u, 1u);
+        let r: u32 = extractBits(u, 1u, 1u);
     }
 
     // [N].(Vector[U32, N], U32, U32) => Vector[U32, N],
     {
+        let vu = vec2(0u);
         _ = extractBits(vec2(0), 1, 1);
         _ = extractBits(vec2(0u), 1, 1);
         _ = extractBits(vec2(0u), 1u, 1u);
+        let r: vec2u = extractBits(vu, 1u, 1u);
     }
     {
+        let vu = vec3(0u);
         _ = extractBits(vec3(0), 1, 1);
         _ = extractBits(vec3(0u), 1, 1);
         _ = extractBits(vec3(0u), 1u, 1u);
+        let r: vec3u = extractBits(vu, 1u, 1u);
     }
     {
+        let vu = vec4(0u);
         _ = extractBits(vec4(0), 1, 1);
         _ = extractBits(vec4(0u), 1, 1);
         _ = extractBits(vec4(0u), 1u, 1u);
+        let r: vec4u = extractBits(vu, 1u, 1u);
     }
 }
 
 // 17.5.25
+// RUN: %metal-compile testFaceForward
+@compute @workgroup_size(1)
 fn testFaceForward()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
+        let vf = vec2(2f);
         _ = faceForward(vec2(0), vec2(1),   vec2(2));
         _ = faceForward(vec2(0), vec2(1),   vec2(2.0));
         _ = faceForward(vec2(0), vec2(1.0), vec2(2f));
+        let r: vec2f = faceForward(vf, vf, vf);
     }
     {
+        let vf = vec3(2f);
         _ = faceForward(vec3(0), vec3(1),   vec3(2));
         _ = faceForward(vec3(0), vec3(1),   vec3(2.0));
         _ = faceForward(vec3(0), vec3(1.0), vec3(2f));
+        let r: vec3f = faceForward(vf, vf, vf);
     }
     {
+        let vf = vec4(2f);
         _ = faceForward(vec4(0), vec4(1),   vec4(2));
         _ = faceForward(vec4(0), vec4(1),   vec4(2.0));
         _ = faceForward(vec4(0), vec4(1.0), vec4(2f));
+        let r: vec4f = faceForward(vf, vf, vf);
     }
 }
 
@@ -1393,10 +1445,16 @@ fn testFrexp()
 }
 
 // 17.5.33
+// RUN: %metal-compile testInsertBits
+@compute @workgroup_size(1)
 fn testInsertBits()
 {
     // [T < ConcreteInteger].(T, T, U32, U32) => T,
     {
+        let i = 0i;
+        let u = 0u;
+        let r1: i32 = insertBits(i, i, 0, 0);
+        let r2: u32 = insertBits(u, u, 0, 0);
         _ = insertBits(0, 0, 0, 0);
         _ = insertBits(0, 0i, 0, 0);
         _ = insertBits(0, 0u, 0, 0);
@@ -1404,19 +1462,31 @@ fn testInsertBits()
 
     // [T < ConcreteInteger, N].(Vector[T, N], Vector[T, N], U32, U32) => Vector[T, N],
     {
+        let vi = vec2(0i);
+        let vu = vec2(0u);
         _ = insertBits(vec2(0), vec2(0), 0, 0);
         _ = insertBits(vec2(0), vec2(0i), 0, 0);
         _ = insertBits(vec2(0), vec2(0u), 0, 0);
+        let r1: vec2i = insertBits(vi, vi, 0, 0);
+        let r2: vec2u = insertBits(vu, vu, 0, 0);
     }
     {
+        let vi = vec3(0i);
+        let vu = vec3(0u);
         _ = insertBits(vec3(0), vec3(0), 0, 0);
         _ = insertBits(vec3(0), vec3(0i), 0, 0);
         _ = insertBits(vec3(0), vec3(0u), 0, 0);
+        let r1: vec3i = insertBits(vi, vi, 0, 0);
+        let r2: vec3u = insertBits(vu, vu, 0, 0);
     }
     {
+        let vi = vec4(0i);
+        let vu = vec4(0u);
         _ = insertBits(vec4(0), vec4(0), 0, 0);
         _ = insertBits(vec4(0), vec4(0i), 0, 0);
         _ = insertBits(vec4(0), vec4(0u), 0, 0);
+        let r1: vec4i = insertBits(vi, vi, 0, 0);
+        let r2: vec4u = insertBits(vu, vu, 0, 0);
     }
 }
 
@@ -1865,29 +1935,47 @@ fn testRefract()
 }
 
 // 17.5.49
+// RUN: %metal-compile testReverseBits
+@compute @workgroup_size(1)
 fn testReverseBits()
 {
     // [T < ConcreteInteger].(T) => T,
     {
+        let i = 0i;
+        let u = 0u;
         _ = reverseBits(0);
         _ = reverseBits(0i);
         _ = reverseBits(0u);
+        let r1: i32 = reverseBits(i);
+        let r2: u32 = reverseBits(u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
+        let vi = vec2(0i);
+        let vu = vec2(0u);
         _ = reverseBits(vec2(0));
         _ = reverseBits(vec2(0i));
         _ = reverseBits(vec2(0u));
+        let r1: vec2i = reverseBits(vi);
+        let r2: vec2u = reverseBits(vu);
     }
     {
+        let vi = vec3(0i);
+        let vu = vec3(0u);
         _ = reverseBits(vec3(0));
         _ = reverseBits(vec3(0i));
         _ = reverseBits(vec3(0u));
+        let r1: vec3i = reverseBits(vi);
+        let r2: vec3u = reverseBits(vu);
     }
     {
+        let vi = vec4(0i);
+        let vu = vec4(0u);
         _ = reverseBits(vec4(0));
         _ = reverseBits(vec4(0i));
         _ = reverseBits(vec4(0u));
+        let r1: vec4i = reverseBits(vi);
+        let r2: vec4u = reverseBits(vu);
     }
 }
 
