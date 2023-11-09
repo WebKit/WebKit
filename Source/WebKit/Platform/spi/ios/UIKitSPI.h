@@ -978,14 +978,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
-#if USE(UICONTEXTMENU)
-
-@interface UIContextMenuInteraction ()
-- (void)_presentMenuAtLocation:(CGPoint)location;
-@end
-
-#endif // USE(UICONTEXTMENU)
-
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 @interface _UIClickInteraction : NSObject <UIInteraction>
 @end

@@ -9850,14 +9850,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     [self _removeContainerForContextMenuHintPreviews];
 }
 
-- (void)presentContextMenu:(UIContextMenuInteraction *)contextMenuInteraction atLocation:(CGPoint) location
-{
-    if (!self.window)
-        return;
-
-    [contextMenuInteraction _presentMenuAtLocation:location];
-}
-
 #endif // USE(UICONTEXTMENU)
 
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
