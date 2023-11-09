@@ -1027,7 +1027,12 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
     else
         m_enclosingPaginationLayer = nullptr;
 
-    if (m_hasVisibleContent) {
+    auto repaintIfNecessary = [&](bool checkForRepaint) {
+        if (!m_hasVisibleContent || !isSelfPaintingLayer()) {
+            clearRepaintRects();
+            return;
+        }
+
         // FIXME: Paint offset cache does not work with RenderLayers as there is not a 1-to-1
         // mapping between them and the RenderObjects. It would be neat to enable
         // LayoutState outside the layout() phase and use it here.
@@ -1039,16 +1044,14 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         computeRepaintRects(repaintContainer.get(), geometryMap);
         auto newRects = repaintRects();
 
-        if (flags.contains(CheckForRepaint) && newRects) {
-            ASSERT(isSelfPaintingLayer());
-            if (shouldRepaintAfterLayout()) {
-                auto needsFullRepaint = m_repaintStatus == RepaintStatus::NeedsFullRepaint ? RenderElement::RequiresFullRepaint::Yes : RenderElement::RequiresFullRepaint::No;
-                auto resolvedOldRects = valueOrDefault(oldRects);
-                renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), needsFullRepaint, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect, &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
-            }
+        if (checkForRepaint && shouldRepaintAfterLayout() && newRects) {
+            auto needsFullRepaint = m_repaintStatus == RepaintStatus::NeedsFullRepaint ? RenderElement::RequiresFullRepaint::Yes : RenderElement::RequiresFullRepaint::No;
+            auto resolvedOldRects = valueOrDefault(oldRects);
+            renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), needsFullRepaint, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect, &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
         }
-    } else
-        clearRepaintRects();
+    };
+
+    repaintIfNecessary(flags.contains(CheckForRepaint));
 
     m_repaintStatus = RepaintStatus::NeedsNormalRepaint;
     m_hasFixedContainingBlockAncestor = flags.contains(SeenFixedContainingBlockLayer);
