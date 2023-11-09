@@ -2413,17 +2413,17 @@ EditableLinkBehavior:
 
 ElementCheckVisibilityEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "element.checkVisibility() API"
   humanReadableDescription: "Enable element.checkVisibility() API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 EmbedElementEnabled:
   type: bool
