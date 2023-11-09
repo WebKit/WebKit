@@ -71,7 +71,7 @@ private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
 
     // SourceBufferPrivateClient
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
+    Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>&) final;

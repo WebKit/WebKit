@@ -165,7 +165,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // SourceBufferPrivateClient
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
+    Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
     Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;

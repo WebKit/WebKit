@@ -74,7 +74,8 @@ public:
         BufferRemoved,
         IPCError,
     };
-    virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) = 0;
+    using ReceiveResultPromise = NativePromise<void, ReceiveResult>;
+    virtual Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) = 0;
     enum class AppendResult : uint8_t {
         Succeeded,
         ReadStreamFailed,

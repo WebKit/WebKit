@@ -782,8 +782,8 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
 
     advanceOperationState();
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(initOperation.completionHandler)] (auto result) mutable {
-        auto completeProcess = [this, weakThis = WeakPtr { *this }, result, completionHandler = WTFMove(completionHandler)] () mutable {
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::main(), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(initOperation.completionHandler)] (auto&& result) mutable {
+        auto completeProcess = [this, weakThis = WeakPtr { *this }, result = WTFMove(result), completionHandler = WTFMove(completionHandler)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 completionHandler(ReceiveResult::ClientDisconnected);
@@ -792,14 +792,14 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
 
             if (!m_errored) {
                 rewindOperationState();
-                m_didReceiveInitializationSegmentErrored |= result != ReceiveResult::Succeeded;
+                m_didReceiveInitializationSegmentErrored |= !result;
 
                 m_receivedFirstInitializationSegment = true;
                 m_pendingInitializationSegmentForChangeType = false;
             }
 
-            completionHandler(result);
-
+            completionHandler(result ? ReceiveResult::Succeeded : result.error());
+     
             processPendingOperations();
         };
         if (!m_client || !m_client->isAsync()) {

@@ -76,12 +76,10 @@ void RemoteSourceBufferProxy::disconnect()
     m_connectionToWebProcess = nullptr;
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
+Ref<RemoteSourceBufferProxy::ReceiveResultPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    if (!m_remoteMediaPlayerProxy) {
-        completionHandler(ReceiveResult::ClientDisconnected);
-        return;
-    }
+    if (!m_remoteMediaPlayerProxy)
+        ReceiveResultPromise::createAndReject(ReceiveResult::ClientDisconnected);
 
     InitializationSegmentInfo segmentInfo;
     segmentInfo.duration = segment.duration;
@@ -113,12 +111,12 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), identifier };
     });
 
-    if (!m_connectionToWebProcess) {
-        completionHandler(ReceiveResult::IPCError);
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return ReceiveResultPromise::createAndReject(ReceiveResult::IPCError);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        return ReceiveResultPromise::createAndSettle(!result ? makeUnexpected(ReceiveResult::IPCError) : WTFMove(*result));
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)

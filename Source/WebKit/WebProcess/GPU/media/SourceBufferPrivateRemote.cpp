@@ -411,10 +411,10 @@ void SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trac
     }, m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate) {
-        completionHandler(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected);
+        completionHandler(makeUnexpected(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected));
         return;
     }
 
@@ -449,7 +449,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         return info;
     });
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
