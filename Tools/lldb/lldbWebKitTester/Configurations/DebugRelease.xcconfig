@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Base.xcconfig"
+#include? "../../../LocalOverrides.xcconfig"
 
 ONLY_ACTIVE_ARCH = YES;
 
