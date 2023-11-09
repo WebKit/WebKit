@@ -430,6 +430,12 @@ bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
     return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
+void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()
+{
+    if (auto player = m_player.get())
+        player->activeSourceBuffersChanged();
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore.

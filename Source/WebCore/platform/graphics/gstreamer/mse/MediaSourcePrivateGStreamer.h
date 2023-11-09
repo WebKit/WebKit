@@ -70,7 +70,7 @@ public:
     MediaTime duration() const final;
     MediaTime currentMediaTime() const final;
 
-    void notifyActiveSourceBuffersChanged() final { }
+    void notifyActiveSourceBuffersChanged() final;
 
     void startPlaybackIfHasAllTracks();
     bool hasAllTracks() const { return m_hasAllTracks; }
