@@ -764,11 +764,12 @@ bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle
     if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
         return style.border() != userAgentStyle.border();
 
-    // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
+    // FIXME: This is horrible, but there is not much else that can be done. Menu lists cannot draw properly when
     // scaled.  They can't really draw properly when transformed either.  We can't detect the transform case at style
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
-    // is in effect we treat it like the control is styled.
-    if (appearance == StyleAppearance::Menulist && style.effectiveZoom() != 1.0f)
+    // is in effect we treat it like the control is styled. Additionally, treat the control like it is styled when
+    // using a vertical writing mode, since the AppKit control is not height resizable.
+    if (appearance == StyleAppearance::Menulist && (style.effectiveZoom() != 1.0f || !style.isHorizontalWritingMode()))
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
