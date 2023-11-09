@@ -696,7 +696,7 @@ void GraphicsContextCG::fillPath(const Path& path)
     CGContextRef context = platformContext();
 
     if (auto fillGradient = this->fillGradient()) {
-        if (hasShadow()) {
+        if (hasDropShadow()) {
             FloatRect rect = path.fastBoundingRect();
             FloatSize layerSize = getCTM().mapSize(rect.size());
 
@@ -755,7 +755,7 @@ void GraphicsContextCG::strokePath(const Path& path)
     CGContextRef context = platformContext();
 
     if (auto strokeGradient = this->strokeGradient()) {
-        if (hasShadow()) {
+        if (hasDropShadow()) {
             FloatRect rect = path.fastBoundingRect();
             float lineWidth = strokeThickness();
             float doubleLineWidth = lineWidth * 2;
@@ -823,7 +823,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
 
     if (auto fillGradient = this->fillGradient()) {
         CGContextStateSaver stateSaver(context);
-        if (hasShadow()) {
+        if (hasDropShadow()) {
             FloatSize layerSize = getCTM().mapSize(rect.size());
 
             auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
@@ -1090,16 +1090,16 @@ static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& x
 #endif
 }
 
-void GraphicsContextCG::setCGShadow(const GraphicsDropShadow& shadow, bool shadowsIgnoreTransforms)
+void GraphicsContextCG::setCGShadow(const std::optional<GraphicsDropShadow>& shadow, bool shadowsIgnoreTransforms)
 {
-    if (!shadow.color.isValid() || (shadow.offset.isZero() && !shadow.radius)) {
+    if (!shadow || !shadow->color.isValid() || (shadow->offset.isZero() && !shadow->radius)) {
         clearCGShadow();
         return;
     }
 
-    CGFloat xOffset = shadow.offset.width();
-    CGFloat yOffset = shadow.offset.height();
-    CGFloat blurRadius = shadow.radius;
+    CGFloat xOffset = shadow->offset.width();
+    CGFloat yOffset = shadow->offset.height();
+    CGFloat blurRadius = shadow->radius;
     CGContextRef context = platformContext();
 
     if (!shadowsIgnoreTransforms) {
@@ -1114,7 +1114,7 @@ void GraphicsContextCG::setCGShadow(const GraphicsDropShadow& shadow, bool shado
 
         blurRadius *= smallEigenvalue;
 
-        CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(shadow.offset, userToBaseCTM);
+        CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(shadow->offset, userToBaseCTM);
 
         xOffset = offsetInBaseSpace.width;
         yOffset = offsetInBaseSpace.height;
@@ -1126,13 +1126,13 @@ void GraphicsContextCG::setCGShadow(const GraphicsDropShadow& shadow, bool shado
     if (renderingMode() != RenderingMode::Accelerated)
         applyShadowOffsetWorkaroundIfNeeded(context, xOffset, yOffset);
 
-    CGContextSetAlpha(context, shadow.opacity);
+    CGContextSetAlpha(context, shadow->opacity);
 
 #if HAVE(CGSTYLE_CREATE_SHADOW2)
-    auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow.color).get()));
+    auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow->color).get()));
     CGContextSetStyle(context, style.get());
 #else
-    CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow.color).get());
+    CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow->color).get());
 #endif
 }
 
@@ -1211,6 +1211,10 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             setCGBlendMode(context, state.compositeMode().operation, state.compositeMode().blendMode);
             break;
 
+        case GraphicsContextState::Change::DropShadow:
+            setCGShadow(state.dropShadow(), state.shadowsIgnoreTransforms());
+            break;
+
         case GraphicsContextState::Change::Style:
             setCGStyle(state.style(), state.shadowsIgnoreTransforms());
             break;
@@ -1258,7 +1262,7 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
     CGContextRef context = platformContext();
 
     if (auto strokeGradient = this->strokeGradient()) {
-        if (hasShadow()) {
+        if (hasDropShadow()) {
             const float doubleLineWidth = lineWidth * 2;
             float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
             float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
@@ -1551,7 +1555,7 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
 
 bool GraphicsContextCG::canUseShadowBlur() const
 {
-    return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms();
+    return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredDropShadow() && !m_state.shadowsIgnoreTransforms();
 }
 
 bool GraphicsContextCG::consumeHasDrawn()

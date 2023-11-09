@@ -130,7 +130,7 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     if (m_originalState.dropShadow)
         m_internalContext->setDropShadow(*m_originalState.dropShadow);
     else
-        m_internalContext->clearShadow();
+        m_internalContext->clearDropShadow();
 
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
 }
@@ -217,7 +217,7 @@ void DrawGlyphsRecorder::updateShadow(const std::optional<GraphicsDropShadow>& d
     if (dropShadow)
         m_owner.setDropShadow(*dropShadow);
     else
-        m_owner.clearShadow();
+        m_owner.clearDropShadow();
 
     m_owner.setShadowsIgnoreTransforms(shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
 }

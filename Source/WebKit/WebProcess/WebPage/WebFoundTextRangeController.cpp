@@ -288,7 +288,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
     for (auto& path : foundFramePaths)
         graphicsContext.strokePath(path);
 
-    graphicsContext.clearShadow();
+    graphicsContext.clearDropShadow();
 
     graphicsContext.setCompositeOperation(WebCore::CompositeOperator::Clear);
     for (auto& path : foundFramePaths)

@@ -140,7 +140,7 @@ public:
     bool consumeHasDrawn();
 
 protected:
-    virtual void setCGShadow(const GraphicsDropShadow&, bool shadowsIgnoreTransforms);
+    void setCGShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
 private:

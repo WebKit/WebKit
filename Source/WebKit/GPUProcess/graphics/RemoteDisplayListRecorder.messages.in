@@ -37,7 +37,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     SetLineDash(WebCore::DisplayList::SetLineDash item) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
-    ClearShadow()
+    ClearDropShadow()
     Clip(WebCore::FloatRect rect)
     ClipRoundedRect(WebCore::FloatRoundedRect rect)
     ClipOut(WebCore::FloatRect rect)

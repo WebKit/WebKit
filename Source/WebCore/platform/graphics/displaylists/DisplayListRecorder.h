@@ -84,7 +84,7 @@ protected:
     virtual void recordSetLineDash(const DashArray&, float dashOffset) = 0;
     virtual void recordSetLineJoin(LineJoin) = 0;
     virtual void recordSetMiterLimit(float) = 0;
-    virtual void recordClearShadow() = 0;
+    virtual void recordClearDropShadow() = 0;
     virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
     virtual void recordClipRoundedRect(const FloatRoundedRect&) = 0;

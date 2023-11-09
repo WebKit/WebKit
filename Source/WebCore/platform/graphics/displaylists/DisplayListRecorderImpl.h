@@ -55,7 +55,7 @@ private:
     void recordSetLineDash(const DashArray&, float dashOffset) final;
     void recordSetLineJoin(LineJoin) final;
     void recordSetMiterLimit(float) final;
-    void recordClearShadow() final;
+    void recordClearDropShadow() final;
     void recordResetClip() final;
     void recordClip(const FloatRect&) final;
     void recordClipRoundedRect(const FloatRoundedRect&) final;

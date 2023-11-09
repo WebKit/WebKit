@@ -153,9 +153,9 @@ void RemoteDisplayListRecorderProxy::recordSetMiterLimit(float limit)
     send(Messages::RemoteDisplayListRecorder::SetMiterLimit(limit));
 }
 
-void RemoteDisplayListRecorderProxy::recordClearShadow()
+void RemoteDisplayListRecorderProxy::recordClearDropShadow()
 {
-    send(Messages::RemoteDisplayListRecorder::ClearShadow());
+    send(Messages::RemoteDisplayListRecorder::ClearDropShadow());
 }
 
 void RemoteDisplayListRecorderProxy::recordClip(const FloatRect& rect)

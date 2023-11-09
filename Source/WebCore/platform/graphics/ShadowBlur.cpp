@@ -469,7 +469,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext, ImageBuffer&
     graphicsContext.clipToImageBuffer(layerImage, FloatRect(layerOrigin, bufferSize));
     graphicsContext.setFillColor(m_color);
 
-    graphicsContext.clearShadow();
+    graphicsContext.clearDropShadow();
     graphicsContext.fillRect(FloatRect(layerOrigin, layerSize));
 }
 
@@ -507,13 +507,13 @@ void ShadowBlur::drawRectShadow(GraphicsContext& graphicsContext, const FloatRou
         },
         [&graphicsContext](ImageBuffer& image, const FloatRect& destRect, const FloatRect& srcRect) {
             GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.clearShadow();
+            graphicsContext.clearDropShadow();
             graphicsContext.drawImageBuffer(image, destRect, srcRect);
         },
         [&graphicsContext](const FloatRect& rect, const Color& color) {
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.setFillColor(color);
-            graphicsContext.clearShadow();
+            graphicsContext.clearDropShadow();
             graphicsContext.fillRect(rect);
         });
 }
@@ -528,7 +528,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext& graphicsContext, const FloatRe
             // Note that drawing the ImageBuffer is faster than creating a Image and drawing that,
             // because ImageBuffer::draw() knows that it doesn't have to copy the image bits.
             GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.clearShadow();
+            graphicsContext.clearDropShadow();
             graphicsContext.drawImageBuffer(image, destRect, srcRect);
         },
         [&graphicsContext](const FloatRect& rect, const FloatRect& holeRect, const Color& color) {
@@ -539,7 +539,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext& graphicsContext, const FloatRe
             GraphicsContextStateSaver fillStateSaver(graphicsContext);
             graphicsContext.setFillRule(WindRule::EvenOdd);
             graphicsContext.setFillColor(color);
-            graphicsContext.clearShadow();
+            graphicsContext.clearDropShadow();
             graphicsContext.fillPath(exteriorPath);
         });
 }

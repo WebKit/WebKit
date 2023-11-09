@@ -108,9 +108,9 @@ void RenderSVGRect::fillShape(GraphicsContext& context) const
     // shadow drawing method, which draws an extra shadow.
     // This is a workaround for switching off the extra shadow.
     // https://bugs.webkit.org/show_bug.cgi?id=68899
-    if (context.hasShadow()) {
+    if (context.hasDropShadow()) {
         GraphicsContextStateSaver stateSaver(context);
-        context.clearShadow();
+        context.clearDropShadow();
         context.fillRect(m_fillBoundingBox);
         return;
     }

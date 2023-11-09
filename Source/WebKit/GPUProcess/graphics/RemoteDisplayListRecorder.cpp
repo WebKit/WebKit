@@ -190,9 +190,9 @@ void RemoteDisplayListRecorder::setMiterLimit(float limit)
     handleItem(DisplayList::SetMiterLimit(limit));
 }
 
-void RemoteDisplayListRecorder::clearShadow()
+void RemoteDisplayListRecorder::clearDropShadow()
 {
-    handleItem(DisplayList::ClearShadow());
+    handleItem(DisplayList::ClearDropShadow());
 }
 
 void RemoteDisplayListRecorder::clip(const FloatRect& rect)

@@ -94,7 +94,7 @@ ShadowApplier::~ShadowApplier()
     if (m_onlyDrawsShadow)
         m_context.restore();
     else if (!m_avoidDrawingShadow)
-        m_context.clearShadow();
+        m_context.clearDropShadow();
 }
 
 TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const RenderStyle& renderStyle)

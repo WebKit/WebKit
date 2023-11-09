@@ -633,42 +633,6 @@ Vector<FloatPoint> GraphicsContext::centerLineAndCutOffCorners(bool isVerticalLi
     return { point1, point2 };
 }
 
-void GraphicsContext::clearShadow()
-{
-    if (!m_state.style())
-        return;
-
-    if (!std::holds_alternative<GraphicsDropShadow>(*m_state.style()))
-        return;
-
-    m_state.setStyle(std::nullopt);
-    didUpdateState(m_state);
-}
-
-bool GraphicsContext::hasVisibleShadow() const
-{
-    if (const auto shadow = dropShadow())
-        return shadow->isVisible();
-
-    return false;
-}
-
-bool GraphicsContext::hasBlurredShadow() const
-{
-    if (const auto shadow = dropShadow())
-        return shadow->isBlurred();
-
-    return false;
-}
-
-bool GraphicsContext::hasShadow() const
-{
-    if (const auto shadow = dropShadow())
-        return shadow->hasOutsets();
-
-    return false;
-}
-
 #if ENABLE(VIDEO)
 void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
