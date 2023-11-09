@@ -492,13 +492,13 @@ static inline void encodeFontInternal(Encoder& encoder, CocoaFont *font)
 
 static std::optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
 {
-    RetainPtr<NSDictionary> fontAttributes;
-    if (!decode(decoder, fontAttributes))
+    std::optional<RetainPtr<NSDictionary>> fontAttributes = decoder.decode<RetainPtr<NSDictionary>>();
+    if (!fontAttributes)
         return std::nullopt;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    return { WebKit::fontWithAttributes(fontAttributes.get(), 0) };
+    return { WebKit::fontWithAttributes(fontAttributes->get(), 0) };
 
     END_BLOCK_OBJC_EXCEPTIONS
 

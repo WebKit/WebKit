@@ -35,12 +35,7 @@ namespace IPC {
 void encodeObject(Encoder&, id);
 std::optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 
-template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
-
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
-template<typename T, typename = IsObjCObject<T>> WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
-template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
-template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
 
 #if ASSERT_ENABLED
 
@@ -56,36 +51,13 @@ static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasse
 #endif // ASSERT_ENABLED
 
 template<typename T, typename>
-void encode(Encoder& encoder, T *object)
-{
-    encodeObject(encoder, object);
-}
-
-template<typename T, typename>
-bool decode(Decoder& decoder, RetainPtr<T>& result, NSArray<Class> *allowedClasses)
-{
-    auto object = decodeObject(decoder, allowedClasses);
-    if (!object)
-        return false;
-    result = *object;
-    ASSERT(!*object || isObjectClassAllowed((*object).get(), allowedClasses));
-    return true;
-}
-
-template<typename T, typename>
-std::optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
+std::optional<RetainPtr<T>> decodeWithAllowedClasses(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     auto result = decodeObject(decoder, allowedClasses);
     if (!result)
         return std::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
     return { *result };
-}
-
-template<typename T, typename>
-std::optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
-{
-    return decode<T>(decoder, allowedClass ? @[ allowedClass ] : @[ ]);
 }
 
 template<typename T> struct ArgumentCoder<T *> {
@@ -106,9 +78,16 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     template<typename U = T, typename = IsObjCObject<U>>
     static std::optional<RetainPtr<U>> decode(Decoder& decoder)
     {
-        return IPC::decode<U>(decoder);
+        return decoder.decodeWithAllowedClasses<U>();
     }
 };
+
+template<typename T, typename>
+void encode(Encoder& encoder, T *object)
+{
+    ArgumentCoder<T *>::encode(encoder, object);
+}
+
 #endif // __OBJC__
 
 } // namespace IPC

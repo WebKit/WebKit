@@ -80,6 +80,26 @@ namespace IPC {
 
 #if ENABLE(APPLE_PAY)
 
+template<> Class getClass<PKPayment>()
+{
+    return PAL::getPKPaymentClass();
+}
+
+template<> Class getClass<PKContact>()
+{
+    return PAL::getPKContactClass();
+}
+
+template<> Class getClass<PKPaymentMerchantSession>()
+{
+    return PAL::getPKPaymentMerchantSessionClass();
+}
+
+template<> Class getClass<PKPaymentMethod>()
+{
+    return PAL::getPKPaymentMethodClass();
+}
+
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
     encoder << payment.pkPayment();
@@ -87,7 +107,7 @@ void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Pa
 
 std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
 {
-    auto payment = IPC::decode<PKPayment>(decoder, PAL::getPKPaymentClass());
+    auto payment = decoder.decodeWithAllowedClasses<PKPayment>();
     if (!payment)
         return std::nullopt;
 
@@ -101,7 +121,7 @@ void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebC
 
 std::optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
 {
-    auto contact = IPC::decode<PKContact>(decoder, PAL::getPKContactClass());
+    auto contact = decoder.decodeWithAllowedClasses<PKContact>();
     if (!contact)
         return std::nullopt;
 
@@ -115,7 +135,7 @@ void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, co
 
 std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
 {
-    auto paymentMerchantSession = IPC::decode<PKPaymentMerchantSession>(decoder, PAL::getPKPaymentMerchantSessionClass());
+    auto paymentMerchantSession = decoder.decodeWithAllowedClasses<PKPaymentMerchantSession>();
     if (!paymentMerchantSession)
         return std::nullopt;
 
@@ -129,7 +149,7 @@ void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCo
 
 std::optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
 {
-    auto paymentMethod = IPC::decode<PKPaymentMethod>(decoder, PAL::getPKPaymentMethodClass());
+    auto paymentMethod = decoder.decodeWithAllowedClasses<PKPaymentMethod>();
     if (!paymentMethod)
         return std::nullopt;
 
@@ -413,7 +433,7 @@ void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const
 
 std::optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionError>::decode(Decoder& decoder)
 {
-    auto platformError = IPC::decode<NSError>(decoder);
+    auto platformError = decoder.decode<RetainPtr<NSError>>();
     if (!platformError)
         return std::nullopt;
 
@@ -601,6 +621,11 @@ bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(De
 
 #if ENABLE(DATA_DETECTION)
 
+template<> Class getClass<DDScannerResult>()
+{
+    return PAL::getDDScannerResultClass();
+}
+
 void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, const WebCore::DataDetectorElementInfo& info)
 {
     encoder << info.result.get();
@@ -609,7 +634,7 @@ void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, c
 
 std::optional<WebCore::DataDetectorElementInfo> ArgumentCoder<WebCore::DataDetectorElementInfo>::decode(Decoder& decoder)
 {
-    auto result = IPC::decode<DDScannerResult>(decoder, PAL::getDDScannerResultClass());
+    auto result = decoder.decodeWithAllowedClasses<DDScannerResult>();
     if (!result)
         return std::nullopt;
 
@@ -624,6 +649,12 @@ std::optional<WebCore::DataDetectorElementInfo> ArgumentCoder<WebCore::DataDetec
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+template<> Class getClass<AVOutputContext>()
+{
+    return PAL::getAVOutputContextClass();
+}
+
 void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)
 {
     if (target.type() == WebCore::MediaPlaybackTargetContext::Type::AVOutputContext) {
@@ -644,7 +675,7 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
         if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
             return false;
 
-        auto outputContext = IPC::decode<AVOutputContext>(decoder, PAL::getAVOutputContextClass());
+        auto outputContext = decoder.decodeWithAllowedClasses<AVOutputContext>();
         if (!outputContext)
             return false;
 
@@ -653,15 +684,15 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
     }
 
     if (contextType == WebCore::MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
-        RetainPtr<NSData> serializedOutputContext;
-        if (!IPC::decode(decoder, serializedOutputContext) || !serializedOutputContext)
+        std::optional<RetainPtr<NSData>> serializedOutputContext = decoder.decode<RetainPtr<NSData>>();
+        if (!serializedOutputContext)
             return false;
 
         bool hasActiveRoute;
         if (!decoder.decode(hasActiveRoute))
             return false;
 
-        target = WebCore::MediaPlaybackTargetContext { WTFMove(serializedOutputContext), hasActiveRoute };
+        target = WebCore::MediaPlaybackTargetContext { WTFMove(*serializedOutputContext), hasActiveRoute };
         return true;
     }
 
@@ -678,7 +709,7 @@ void ArgumentCoder<WebCore::TextRecognitionDataDetector>::encodePlatformData(Enc
 
 bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Decoder& decoder, WebCore::TextRecognitionDataDetector& result)
 {
-    auto scannerResult = IPC::decode<DDScannerResult>(decoder, @[ PAL::getDDScannerResultClass() ]);
+    auto scannerResult = decoder.decodeWithAllowedClasses<DDScannerResult>();
     if (!scannerResult)
         return false;
 
@@ -689,6 +720,11 @@ bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Dec
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+template<> Class getClass<VKCImageAnalysis>()
+{
+    return PAL::getVKCImageAnalysisClass();
+}
 
 void ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode(Encoder& encoder, const RetainPtr<VKCImageAnalysis>& data)
 {
@@ -703,7 +739,7 @@ std::optional<RetainPtr<VKCImageAnalysis>> ArgumentCoder<RetainPtr<VKCImageAnaly
     if (!PAL::isVisionKitCoreFrameworkAvailable())
         return nil;
 
-    return IPC::decode<VKCImageAnalysis>(decoder, @[ PAL::getVKCImageAnalysisClass() ]);
+    return decoder.decodeWithAllowedClasses<VKCImageAnalysis>();
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

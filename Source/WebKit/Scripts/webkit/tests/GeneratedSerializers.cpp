@@ -204,7 +204,7 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 {
     auto a = decoder.decode<int>();
     auto b = decoder.decode<bool>();
-    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
+    auto dataDetectorResults = decoder.decodeWithAllowedClasses<NSArray>(@[ NSArray.class, PAL::getDDScannerResultClass() ]);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
@@ -563,8 +563,8 @@ void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedM
 
 std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto firstMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
-    auto secondMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
+    auto firstMember = decoder.decodeWithAllowedClasses<DDActionContext>(@[ PAL::getDDActionContextClass() ]);
+    auto secondMember = decoder.decodeWithAllowedClasses<DDActionContext>(@[ PAL::getDDActionContextClass() ]);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {

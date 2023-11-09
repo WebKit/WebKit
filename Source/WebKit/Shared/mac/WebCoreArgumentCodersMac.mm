@@ -197,7 +197,7 @@ void ArgumentCoder<WebCore::Credential>::encodePlatformData(Encoder& encoder, co
 
 bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, WebCore::Credential& credential)
 {
-    auto nsCredential = IPC::decode<NSURLCredential>(decoder);
+    std::optional<RetainPtr<NSURLCredential>> nsCredential = decoder.decode<RetainPtr<NSURLCredential>>();
     if (!nsCredential)
         return false;
     credential = WebCore::Credential { nsCredential->get() };
