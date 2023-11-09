@@ -97,7 +97,7 @@ function run(testFuncString)
 {
     consoleWrite("RUN(" + testFuncString + ")");
     try {
-        eval(testFuncString);
+        return eval(testFuncString);
     } catch (ex) {
         consoleWrite(ex);
     }
