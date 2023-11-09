@@ -486,7 +486,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
     BOOL _waitingForKeyboardAppearanceAnimationToStart;
     BOOL _isHidingKeyboard;
-    BOOL _isPreparingEditMenu;
+    BOOL _isInterpretingKeyEvent;
     BOOL _isPresentingEditMenu;
 
     BOOL _focusRequiresStrongPasswordAssistance;

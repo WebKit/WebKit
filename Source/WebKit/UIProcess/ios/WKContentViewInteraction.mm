@@ -4272,13 +4272,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return !editorState.isInPasswordField && !editorState.selectionIsRange && self.hasContent;
     }
 
+    auto isPreparingEditMenu = [&] {
+        return [sender isKindOfClass:UIKeyCommand.class] && !_isInterpretingKeyEvent;
+    };
+
     if (action == @selector(selectAll:)) {
-        BOOL isPreparingEditMenu = _isPreparingEditMenu;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        if (isPreparingEditMenu) {
-            // By platform convention we don't show Select All in the callout menu for a range selection.
+        if (isPreparingEditMenu()) {
+            // By platform convention we don't show Select All in the edit menu for a range selection.
             return !editorState.selectionIsRange && self.hasContent;
         }
         return YES;
@@ -4312,11 +4312,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!mayContainSelectableText(_focusedElementInformation.elementType) || _focusedElementInformation.isReadOnly)
             return NO;
 
-        BOOL isPreparingEditMenu = _isPreparingEditMenu;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        if (isPreparingEditMenu && editorState.selectionIsRange)
+        if (isPreparingEditMenu() && editorState.selectionIsRange)
             return NO;
     }
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -6768,6 +6764,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
+    SetForScope interpretKeyEventScope { _isInterpretingKeyEvent, YES };
+
     if ([_keyboardScrollingAnimator beginWithEvent:event] || [_keyboardScrollingAnimator scrollTriggeringKeyIsPressed])
         return YES;
 
@@ -8265,12 +8263,18 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (!strongSelf)
             return completionHandler(nil);
 
-        SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
         completionHandler(item.item());
     });
 }
 
 - (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler
+{
+    [self _internalSelectTextForContextMenuWithLocationInView:locationInView completionHandler:[completionHandler = makeBlockPtr(completionHandler)](BOOL shouldPresentMenu, const WebKit::RevealItem& item) {
+        completionHandler(shouldPresentMenu, item.item());
+    }];
+}
+
+- (void)_internalSelectTextForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, const WebKit::RevealItem& item))completionHandler
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     _removeBackgroundData = std::nullopt;
@@ -8279,23 +8283,21 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     _page->prepareSelectionForContextMenuWithLocationInView(WebCore::roundedIntPoint(locationInView), [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](bool shouldPresentMenu, auto& item) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
-            return completionHandler(false, nil);
+            return completionHandler(false, { });
 
         if (shouldPresentMenu && ![strongSelf _shouldSuppressSelectionCommands])
             [strongSelf->_textInteractionWrapper activateSelection];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }, weakSelf]() mutable {
+        [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item, weakSelf] {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
-                return completionHandler(false, nil);
+                return completionHandler(false, { });
 
-            SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
-            completionHandler(shouldPresentMenu, item.get());
+            completionHandler(shouldPresentMenu, item);
         }];
 #else
-        SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
-        completionHandler(shouldPresentMenu, item.item());
+        completionHandler(shouldPresentMenu, item);
 #endif
     });
 }
@@ -12054,6 +12056,18 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         completion(context.get());
     }];
 }
+
+#if ENABLE(REVEAL)
+
+- (void)selectTextForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, NSString *contextString, NSRange selectedRangeInContextString))completionHandler
+{
+    [self _internalSelectTextForContextMenuWithLocationInView:locationInView completionHandler:[completionHandler = makeBlockPtr(completionHandler)](BOOL shouldPresentMenu, const WebKit::RevealItem& item) {
+        auto& selectedRange = item.selectedRange();
+        completionHandler(shouldPresentMenu, item.text(), NSMakeRange(selectedRange.location, selectedRange.length));
+    }];
+}
+
+#endif // ENABLE(REVEAL)
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
