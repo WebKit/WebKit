@@ -81,7 +81,7 @@ public:
 
     IndexValueStore* valueStore() { return m_records.get(); }
 
-    WeakPtr<MemoryObjectStore> objectStore() { return m_objectStore; }
+    MemoryObjectStore& objectStore() { return m_objectStore; }
 
     void cursorDidBecomeClean(MemoryIndexCursor&);
     void cursorDidBecomeDirty(MemoryIndexCursor&);
@@ -96,7 +96,7 @@ private:
     void notifyCursorsOfAllRecordsChanged();
 
     IDBIndexInfo m_info;
-    WeakPtr<MemoryObjectStore> m_objectStore;
+    MemoryObjectStore& m_objectStore;
 
     std::unique_ptr<IndexValueStore> m_records;
 
