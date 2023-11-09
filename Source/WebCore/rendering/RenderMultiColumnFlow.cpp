@@ -219,10 +219,7 @@ RenderFragmentContainer* RenderMultiColumnFlow::fragmentAtBlockOffset(const Rend
     // Layout in progress. We are calculating the set heights as we speak, so the fragment range
     // information is not up-to-date.
 
-    if (m_lastSetWorkedOn && m_lastSetWorkedOn->fragmentedFlow() != this)
-        m_lastSetWorkedOn = nullptr;
-
-    RenderMultiColumnSet* columnSet = m_lastSetWorkedOn ? m_lastSetWorkedOn.get() : firstMultiColumnSet();
+    RenderMultiColumnSet* columnSet = m_lastSetWorkedOn ? m_lastSetWorkedOn : firstMultiColumnSet();
     if (!columnSet) {
         // If there's no set, bail. This multicol is empty or only consists of spanners. There
         // are no fragments.
