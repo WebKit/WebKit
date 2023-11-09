@@ -1043,6 +1043,24 @@ WebCore::Color PageClientImpl::accentColor()
 {
     return WebCore::colorFromCocoaColor([NSApp _effectiveAccentColor]);
 }
+
+bool PageClientImpl::appUsesCustomAccentColor()
+{
+    static dispatch_once_t once;
+    static BOOL usesCustomAppAccentColor = NO;
+    dispatch_once(&once, ^{
+        NSBundle *bundleForAccentColor = [NSBundle mainBundle];
+        NSDictionary *info = [bundleForAccentColor infoDictionary];
+        NSString *accentColorName = info[@"NSAccentColorName"];
+        if ([accentColorName length])
+            usesCustomAppAccentColor = !!adoptNS([NSColor colorNamed:accentColorName bundle:bundleForAccentColor]).get();
+
+        if (!usesCustomAppAccentColor && [(accentColorName = info[@"NSAppAccentColorName"]) length])
+            usesCustomAppAccentColor = !!adoptNS([NSColor colorNamed:accentColorName bundle:bundleForAccentColor]).get();
+    });
+
+    return usesCustomAppAccentColor;
+}
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

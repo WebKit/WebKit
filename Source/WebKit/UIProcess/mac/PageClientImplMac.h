@@ -290,6 +290,9 @@ private:
 
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor() override;
+#if PLATFORM(MAC)
+    bool appUsesCustomAccentColor() override;
+#endif
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
