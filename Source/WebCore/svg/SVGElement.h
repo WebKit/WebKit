@@ -47,8 +47,6 @@ class SVGSVGElement;
 class SVGUseElement;
 class Timer;
 
-void mapAttributeToCSSProperty(HashMap<AtomStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
-
 class SVGElement : public StyledElement, public SVGPropertyOwner {
     WTF_MAKE_ISO_ALLOCATED(SVGElement);
 public:
