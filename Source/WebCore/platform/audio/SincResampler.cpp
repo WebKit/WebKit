@@ -208,16 +208,9 @@ void SincResampler::processBuffer(std::span<const float> source, std::span<float
         // Clamp to number of frames available and zero-pad.
         size_t framesToCopy = std::min(source.size(), framesToProcess);
 
-#if defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wrestrict"
-#endif
-
+        IGNORE_WARNINGS_BEGIN("restrict")
         memcpySpan(buffer.subspan(0, framesToCopy), source.subspan(0, framesToCopy));
-
-#if defined(__GNUC__)
-#pragma GCC diagnostic pop
-#endif
+        IGNORE_WARNINGS_END
 
         // Zero-pad if necessary.
         if (framesToCopy < framesToProcess)
