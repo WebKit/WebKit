@@ -85,6 +85,12 @@
         _didFinishNavigation(webView, navigation);
 }
 
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didSameDocumentNavigation:(_WKSameDocumentNavigationType)navigationType
+{
+    if (_didSameDocumentNavigation)
+        _didSameDocumentNavigation(webView, navigation);
+}
+
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
     if (_webContentProcessDidTerminate)
@@ -140,6 +146,20 @@
     TestWebKitAPI::Util::run(&finished);
 
     self.didFinishNavigation = nil;
+}
+
+- (void)waitForDidSameDocumentNavigation
+{
+    EXPECT_FALSE(self.didSameDocumentNavigation);
+
+    __block bool finished = false;
+    self.didSameDocumentNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.didSameDocumentNavigation = nil;
 }
 
 - (void)waitForWebContentProcessDidTerminate
@@ -262,6 +282,17 @@
     }];
     TestWebKitAPI::Util::run(&presentationUpdateHappened);
 #endif
+}
+
+- (void)_test_waitForDidSameDocumentNavigation
+{
+    EXPECT_FALSE(self.navigationDelegate);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidSameDocumentNavigation];
+
+    self.navigationDelegate = nil;
 }
 
 - (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors
