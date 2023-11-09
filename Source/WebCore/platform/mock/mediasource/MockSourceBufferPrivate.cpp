@@ -195,10 +195,7 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
         }
     }
 
-    SourceBufferPrivate::didReceiveInitializationSegment(
-        WTFMove(segment),
-        [] (auto&) { return true; },
-        [] (auto) { });
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(segment));
 }
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)

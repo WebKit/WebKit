@@ -90,7 +90,6 @@ public:
     virtual void sourceBufferPrivateDidDropSample() = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
-    virtual bool isAsync() const { return false; }
 };
 
 String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult);

@@ -70,6 +70,9 @@ public:
     void allSamplesInTrackEnqueued(const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final;
 
+    bool precheckInitialisationSegment(const InitializationSegment&) final;
+    void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
+
     void didReceiveInitializationSegment(InitializationSegment&&);
     void didReceiveSample(Ref<MediaSample>&&);
     void didReceiveAllPendingSamples();

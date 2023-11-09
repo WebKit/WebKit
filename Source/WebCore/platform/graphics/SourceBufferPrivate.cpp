@@ -650,15 +650,14 @@ void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
         trackBuffer->setNeedRandomAccessFlag(true);
 }
 
-void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment, Function<bool(InitializationSegment&)>&& initSegmentCheck, CompletionHandler<void(ReceiveResult)>&& completionHandler)
+void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    auto initOperation = InitOperation { WTFMove(segment), WTFMove(initSegmentCheck), WTFMove(completionHandler) };
-    m_pendingOperations.append({ WTFMove(initOperation) });
+    m_pendingOperations.append({ InitOperation { WTFMove(segment) } });
 }
 
-void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&& completionHandler)
+void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
-    auto updateFormatDescriptionOperation = UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId, WTFMove(completionHandler) };
+    auto updateFormatDescriptionOperation = UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId };
     m_pendingOperations.append({ WTFMove(updateFormatDescriptionOperation) });
 }
 
@@ -728,7 +727,7 @@ void SourceBufferPrivate::processPendingOperations()
         std::visit(WTF::makeVisitor([&](InitOperation&& initOperation) {
             processInitOperation(WTFMove(initOperation));
         }, [&](UpdateFormatDescriptionOperation&& operation) {
-            operation.completionHandler(WTFMove(operation.formatDescription), operation.trackId);
+            processFormatDescriptionForTrackId(WTFMove(operation.formatDescription), operation.trackId);
         }, [&](SamplesVector&& samples) {
             processMediaSamplesOperation(WTFMove(samples));
         }, [&](ResetParserOperation&&) {
@@ -756,7 +755,7 @@ void SourceBufferPrivate::abortPendingOperations()
     for (auto& operation : std::exchange(m_pendingOperations, { })) {
         if (!std::holds_alternative<InitOperation>(operation))
             continue;
-        std::get<InitOperation>(operation).completionHandler(ReceiveResult::AppendError);
+        processInitialisationSegment({ });
     }
     m_operationState = OperationState::Idle;
 }
@@ -774,42 +773,30 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
 {
     auto& segment = initOperation.segment;
     if ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment))
-        || !initOperation.check(segment)) {
+        || !precheckInitialisationSegment(segment)) {
         m_didReceiveInitializationSegmentErrored = true;
-        initOperation.completionHandler(ReceiveResult::AppendError);
+        processInitialisationSegment({ });
         return;
     }
 
     advanceOperationState();
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::main(), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(initOperation.completionHandler)] (auto&& result) mutable {
-        auto completeProcess = [this, weakThis = WeakPtr { *this }, result = WTFMove(result), completionHandler = WTFMove(completionHandler)] () mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis) {
-                completionHandler(ReceiveResult::ClientDisconnected);
-                return;
-            }
-
-            if (!m_errored) {
-                rewindOperationState();
-                m_didReceiveInitializationSegmentErrored |= !result;
-
-                m_receivedFirstInitializationSegment = true;
-                m_pendingInitializationSegmentForChangeType = false;
-            }
-
-            completionHandler(result ? ReceiveResult::Succeeded : result.error());
-     
-            processPendingOperations();
-        };
-        if (!m_client || !m_client->isAsync()) {
-            // We want to avoid re-entrancy in the case the SourceBufferClient's
-            // sourceBufferPrivateDidReceiveInitializationSegment immediately ran the completionHander
-            // So we queue a task to continue later on.
-            callOnMainThread(WTFMove(completeProcess));
+    auto segmentCopy = segment;
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::main(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable {
+        if (!weakThis)
             return;
+
+        if (!m_errored) {
+            rewindOperationState();
+            m_didReceiveInitializationSegmentErrored |= !result;
+
+            m_receivedFirstInitializationSegment = true;
+            m_pendingInitializationSegmentForChangeType = false;
         }
-        completeProcess();
+
+        processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+
+        processPendingOperations();
     });
 }
 

@@ -153,11 +153,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, Ref<SourceBufferParser>&&);
 
-    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
-    void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
 
     // SourceBufferPrivate overrides
     Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
@@ -175,6 +173,10 @@ private:
     void clearMinimumUpcomingPresentationTime(const AtomString&) override;
     bool canSwitchToType(const ContentType&) final;
     bool isSeeking() const final;
+
+    bool precheckInitialisationSegment(const InitializationSegment&) final;
+    void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
+    void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t) final;
 
     void processPendingTrackChangeTasks();
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, uint64_t trackID);
@@ -199,7 +201,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void keyStatusesChanged();
 #endif
 
-    void setTrackChangeCallbacks(const Vector<Ref<TrackPrivateBase>>& tracks, bool initialized);
+    void setTrackChangeCallbacks(const InitializationSegment&, bool initialized);
 
     HashMap<AtomString, RefPtr<VideoTrackPrivate>> m_videoTracks;
     HashMap<AtomString, RefPtr<AudioTrackPrivate>> m_audioTracks;

@@ -41,6 +41,7 @@
 #include "SampleMap.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include <optional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -179,13 +180,10 @@ protected:
     using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
     struct InitOperation {
         InitializationSegment segment;
-        Function<bool(InitializationSegment&)> check;
-        CompletionHandler<void(ReceiveResult)> completionHandler;
     };
     struct UpdateFormatDescriptionOperation {
         Ref<TrackInfo> formatDescription;
         uint64_t trackId;
-        CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)> completionHandler;
     };
     using SamplesVector = Vector<Ref<MediaSample>>;
     struct AppendCompletedOperation {
@@ -214,11 +212,13 @@ protected:
 
     void reenqueSamples(const AtomString& trackID);
 
-    // Callbacks must not take a strong reference to this SourceBufferPrivate object in order to avoid cycles
-    // that would prevent `this` to be deleted in case the SourceBufferClient detaches itself while an initialization
-    // is pending. Take a WeakPtr instead.
-    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&, Function<bool(InitializationSegment&)>&&, CompletionHandler<void(ReceiveResult)>&&);
-    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&&);
+    virtual bool precheckInitialisationSegment(const InitializationSegment&) { return true; }
+    virtual void processInitialisationSegment(std::optional<InitializationSegment>&&) { }
+    virtual void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t) { }
+
+    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
+    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
+
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
     void provideMediaData(const AtomString& trackID);
