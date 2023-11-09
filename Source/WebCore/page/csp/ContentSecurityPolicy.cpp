@@ -107,15 +107,15 @@ static ReportingClient* reportingClientForContext(ScriptExecutionContext& script
 }
 
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecutionContext& scriptExecutionContext)
-    : m_scriptExecutionContext(&scriptExecutionContext)
+    : m_scriptExecutionContext(scriptExecutionContext)
     , m_reportingClient { reportingClientForContext(scriptExecutionContext) }
     , m_protectedURL { WTFMove(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
     updateSourceSelf(*scriptExecutionContext.securityOrigin());
     // FIXME: handle the non-document case.
-    if (is<Document>(m_scriptExecutionContext)) {
-        if (auto* page = downcast<Document>(*m_scriptExecutionContext).page())
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        if (auto* page = document->page())
             m_contentSecurityPolicyModeForExtension = page->contentSecurityPolicyModeForExtension();
     }
 }
@@ -306,7 +306,7 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         m_scriptExecutionContext->disableEval(m_lastPolicyEvalDisabledErrorMessage);
     if (!m_lastPolicyWebAssemblyDisabledErrorMessage.isNull())
         m_scriptExecutionContext->disableWebAssembly(m_lastPolicyWebAssemblyDisabledErrorMessage);
-    if (m_sandboxFlags != SandboxNone && is<Document>(m_scriptExecutionContext))
+    if (m_sandboxFlags != SandboxNone && is<Document>(m_scriptExecutionContext.get()))
         m_scriptExecutionContext->enforceSandboxFlags(m_sandboxFlags, SecurityContext::SandboxFlagsSource::CSP);
     if (enableStrictMixedContentMode)
         m_scriptExecutionContext->setStrictMixedContentMode(true);
@@ -328,8 +328,8 @@ bool ContentSecurityPolicy::urlMatchesSelf(const URL& url, bool forFrameSrc) con
 
 bool ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol() const
 {
-    if (is<Document>(m_scriptExecutionContext))
-        return downcast<Document>(*m_scriptExecutionContext).settings().allowContentSecurityPolicySourceStarToMatchAnyProtocol();
+    if (auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get()))
+        return document->settings().allowContentSecurityPolicySourceStarToMatchAnyProtocol();
     return false;
 }
 
@@ -827,7 +827,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     if (!m_client) {
         // Unable to ref the document as it may have started destruction.
-        auto* document = dynamicDowncast<Document>(m_scriptExecutionContext);
+        auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
         if (!document || !document->frame())
             return;
 
@@ -841,7 +841,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
             info.columnNumber = callFrame->columnNumber();
         }
     }
-    ASSERT(m_client || is<Document>(m_scriptExecutionContext));
+    ASSERT(m_client || is<Document>(m_scriptExecutionContext.get()));
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
@@ -1011,7 +1011,7 @@ void ContentSecurityPolicy::logToConsole(const String& message, const String& co
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const
 {
     if (m_scriptExecutionContext)
-        InspectorInstrumentation::scriptExecutionBlockedByCSP(m_scriptExecutionContext, directiveText);
+        InspectorInstrumentation::scriptExecutionBlockedByCSP(m_scriptExecutionContext.get(), directiveText);
 }
 
 void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType) const

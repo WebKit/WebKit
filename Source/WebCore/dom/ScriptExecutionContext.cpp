@@ -201,6 +201,8 @@ ScriptExecutionContext::~ScriptExecutionContext()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->contextDestroyed();
 
+    setContentSecurityPolicy(nullptr);
+
 #if ASSERT_ENABLED
     m_inScriptExecutionContextDestructor = false;
 #endif
