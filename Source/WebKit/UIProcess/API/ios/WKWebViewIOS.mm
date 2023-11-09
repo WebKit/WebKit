@@ -3449,6 +3449,11 @@ static bool isLockdownModeWarningNeeded()
     return _haveSetUnobscuredSafeAreaInsets;
 }
 
+- (void)_resetContentOffset
+{
+    [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+}
+
 - (void)_resetUnobscuredSafeAreaInsets
 {
     _haveSetUnobscuredSafeAreaInsets = NO;
