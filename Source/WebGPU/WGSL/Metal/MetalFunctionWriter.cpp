@@ -764,7 +764,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
-            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource)
+            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_stringBuilder.append("::PackedType");
         },
         [&](const PrimitiveStruct& structure) {

@@ -1,6 +1,10 @@
 // RUN: %metal-compile main
 // RUN: %metal main 2>&1 | %check
 
+struct Unpacked {
+  x: i32,
+}
+
 struct T {
     v2f: vec2<f32>,
     v3f: vec3<f32>,
@@ -10,6 +14,7 @@ struct T {
     v4u: vec4<u32>,
     f: f32,
     u: u32,
+    unpacked: Unpacked,
 }
 
 struct U {
