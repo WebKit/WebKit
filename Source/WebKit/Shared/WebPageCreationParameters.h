@@ -195,6 +195,9 @@ struct WebPageCreationParameters {
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
+#if PLATFORM(MAC)
+    bool appUsesCustomAccentColor;
+#endif
 #endif
 #if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor;
