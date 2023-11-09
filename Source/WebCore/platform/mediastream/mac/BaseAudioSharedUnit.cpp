@@ -153,6 +153,9 @@ void BaseAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captu
     bool hasChanged = this->persistentID() != persistentID || this->captureDeviceID() != captureDeviceID;
     m_capturingDevice = { WTFMove(persistentID), captureDeviceID };
 
+    auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
+    m_isCapturingWithDefaultMicrophone = devices.size() && devices[0].persistentId() == m_capturingDevice->first;
+
     if (hasChanged)
         captureDeviceChanged();
 }
@@ -171,6 +174,11 @@ void BaseAudioSharedUnit::devicesChanged()
 
     if (!m_producingCount) {
         RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - returning early as not capturing");
+        return;
+    }
+
+    if (devices.size() && m_isCapturingWithDefaultMicrophone && migrateToNewDefaultDevice(devices[0])) {
+        RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - migrating to new default device");
         return;
     }
 

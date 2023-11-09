@@ -50,6 +50,11 @@
 #include "MediaCaptureStatusBarManager.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "CoreAudioCaptureDevice.h"
+#include "CoreAudioCaptureDeviceManager.h"
+#endif
+
 #include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -662,6 +667,22 @@ void CoreAudioSharedUnit::validateOutputDevice(uint32_t currentOutputDeviceID)
     UNUSED_PARAM(currentOutputDeviceID);
 #endif
 }
+
+#if PLATFORM(MAC)
+bool CoreAudioSharedUnit::migrateToNewDefaultDevice(const CaptureDevice& captureDevice)
+{
+    auto newDefaultDevicePersistentId = captureDevice.persistentId();
+    auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(newDefaultDevicePersistentId);
+    if (!device)
+        return false;
+
+    // We were capturing with the default device which disappeared, let's move capture to the new default device.
+    setCaptureDevice(WTFMove(newDefaultDevicePersistentId), device->deviceID());
+    handleNewCurrentMicrophoneDevice(WTFMove(*device));
+    return true;
+}
+#endif
+
 
 void CoreAudioSharedUnit::verifyIsCapturing()
 {
