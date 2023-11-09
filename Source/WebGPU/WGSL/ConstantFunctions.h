@@ -623,6 +623,8 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
             return shift(*i32, right);
         if (auto* u32 = std::get_if<uint32_t>(&left))
             return shift(*u32, right);
+        if (auto* abstractInt = std::get_if<int64_t>(&left))
+            return shift(*abstractInt, right);
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
@@ -643,6 +645,8 @@ CONSTANT_FUNCTION(BitwiseShiftRight)
             return shift(*i32, right);
         if (auto* u32 = std::get_if<uint32_t>(&left))
             return shift(*u32, right);
+        if (auto* abstractInt = std::get_if<int64_t>(&left))
+            return shift(*abstractInt, right);
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }

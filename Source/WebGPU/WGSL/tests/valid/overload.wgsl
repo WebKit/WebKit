@@ -317,7 +317,7 @@ fn testBitwise()
   }
 
   {
-    _ = 1  << 2;
+    const x: u32 = 1 << 2;
     _ = 1i << 2u;
     _ = 1u << 2u;
     _ = vec2(1) << vec2(2);
@@ -326,7 +326,7 @@ fn testBitwise()
   }
 
   {
-    _ = 1  >> 2;
+    const x: u32 = 1 >> 2;
     _ = 1i >> 2u;
     _ = 1u >> 2u;
     _ = vec2(1) >> vec2(2);

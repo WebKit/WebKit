@@ -206,8 +206,8 @@ end
         must_use: true,
         const: const_function,
 
-        [S < ConcreteInteger].(S, u32) => S,
-        [S < ConcreteInteger, N].(vec[N][S], vec[N][u32]) => vec[N][S],
+        [S < Integer].(S, u32) => S,
+        [S < Integer, N].(vec[N][S], vec[N][u32]) => vec[N][S],
     }
 end
 
