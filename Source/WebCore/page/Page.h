@@ -768,6 +768,11 @@ public:
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
     WEBCORE_EXPORT Color sampledPageTopColor() const;
 
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    WEBCORE_EXPORT void setAppUsesCustomAccentColor(bool);
+    WEBCORE_EXPORT bool appUsesCustomAccentColor() const;
+#endif
+
     Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
     WEBCORE_EXPORT void setUnderPageBackgroundColorOverride(Color&&);
 
@@ -1436,6 +1441,10 @@ private:
     Ref<BadgeClient> m_badgeClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    bool m_appUsesCustomAccentColor { false };
+#endif
 };
 
 inline PageGroup& Page::group()

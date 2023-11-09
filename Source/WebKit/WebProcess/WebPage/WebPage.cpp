@@ -964,6 +964,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
+#if PLATFORM(MAC)
+    setAppUsesCustomAccentColor(parameters.appUsesCustomAccentColor);
+#endif
 #endif
 
     m_needsFontAttributes = parameters.needsFontAttributes;
@@ -1211,6 +1214,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
+#if PLATFORM(MAC)
+    setAppUsesCustomAccentColor(parameters.appUsesCustomAccentColor);
+#endif
 #endif
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
