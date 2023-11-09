@@ -935,8 +935,7 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name
             "com.apple.frontboard.systemappservices"
-            "com.apple.mobileassetd.v2"
-            "com.apple.mobilegestalt.xpc")))
+            "com.apple.mobileassetd.v2")))
 
 (allow mach-lookup
     (require-all

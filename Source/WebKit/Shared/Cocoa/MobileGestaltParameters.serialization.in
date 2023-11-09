@@ -20,47 +20,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(GPU_PROCESS)
+header: "MobileGestaltParameters.h"
 
-[RValue] struct WebKit::GPUProcessCreationParameters {
-    WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-
-#if ENABLE(MEDIA_STREAM)
-    bool useMockCaptureDevices;
-#if PLATFORM(MAC)
-    WebKit::SandboxExtension::Handle microphoneSandboxExtensionHandle;
-    WebKit::SandboxExtension::Handle launchServicesExtensionHandle;
-#endif
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled;
-#endif
-
-    ProcessID parentPID;
-
-#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
-    WebKit::SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
-    WebKit::SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
-    Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
-    WebKit::MobileGestaltParameters mobileGestaltParameters;
-#endif
-
-#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    Vector<WebKit::SandboxExtension::Handle> gpuToolsExtensionHandles;
-#endif
-
-    String applicationVisibleName;
-
-#if USE(GBM)
-    String renderDeviceFile;
-#endif
-
-    Vector<String> overrideLanguages;
+struct WebKit::MobileGestaltParameters {
+    float mainScreenScale;
+    int mainScreenPitch;
+    int mainScreenClass;
+    bool appleInternalInstallCapability;
+    bool iPadCapability;
+    String deviceName;
+    int deviceClassNumber;
+    bool hasExtendedColorDisplay;
+    float deviceCornerRadius;
+    bool supportsForceTouch;
+    bool bluetoothCapability;
+    bool deviceProximityCapability;
+    bool deviceSupportsARKit;
+    bool timeSyncCapability;
+    bool wAPICapability;
+    int mainDisplayRotation;
 };
-
-#endif

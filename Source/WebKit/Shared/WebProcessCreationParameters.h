@@ -52,6 +52,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "MobileGestaltParameters.h"
 #include <WebCore/RenderThemeIOS.h>
 #include <pal/system/ios/UserInterfaceIdiom.h>
 #endif
@@ -193,7 +194,6 @@ struct WebProcessCreationParameters {
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
-    std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
@@ -204,6 +204,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    MobileGestaltParameters mobileGestaltParameters;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 

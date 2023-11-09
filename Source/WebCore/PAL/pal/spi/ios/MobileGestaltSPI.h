@@ -95,6 +95,8 @@ SInt32 MGGetSInt32Answer(CFStringRef question, SInt32 defaultValue);
 Float32 MGGetFloat32Answer(CFStringRef question, Float32 defaultValue);
 #endif
 
+int MGSetAnswer(CFStringRef question, CFTypeRef answer);
+
 bool _MGCacheValid();
 
 WTF_EXTERN_C_END

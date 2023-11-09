@@ -2200,6 +2200,7 @@
 		E31586D32AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
 		E31586D42AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
 		E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */; };
+		E3308CFC2AC237D400D8FBBF /* MobileGestaltParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3308CFB2AC237D400D8FBBF /* MobileGestaltParameters.cpp */; };
 		E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
 		E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */; };
@@ -7305,6 +7306,9 @@
 		E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionEventHandler.h; path = Cocoa/ExtensionEventHandler.h; sourceTree = "<group>"; };
 		E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExtensionEventHandler.mm; path = Cocoa/ExtensionEventHandler.mm; sourceTree = "<group>"; };
 		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
+		E3308CFA2AC2309F00D8FBBF /* MobileGestaltParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MobileGestaltParameters.serialization.in; sourceTree = "<group>"; };
+		E3308CFB2AC237D400D8FBBF /* MobileGestaltParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MobileGestaltParameters.cpp; sourceTree = "<group>"; };
+		E33D8A952AC21C5B001D641D /* MobileGestaltParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileGestaltParameters.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10639,6 +10643,9 @@
 				86E0787C2ACE0AE400B8FADC /* InsertTextOptions.serialization.in */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
+				E3308CFB2AC237D400D8FBBF /* MobileGestaltParameters.cpp */,
+				E33D8A952AC21C5B001D641D /* MobileGestaltParameters.h */,
+				E3308CFA2AC2309F00D8FBBF /* MobileGestaltParameters.serialization.in */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				442E7BEA27B4581300C69AC1 /* RevealItem.h */,
@@ -17717,6 +17724,7 @@
 				07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */,
 				1DF29E64257F37A3003C28AF /* MediaSourcePrivateRemoteMessageReceiver.cpp in Sources */,
 				9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */,
+				E3308CFC2AC237D400D8FBBF /* MobileGestaltParameters.cpp in Sources */,
 				EBA8D3B627A5E33F00CB7900 /* MockPushServiceConnection.mm in Sources */,
 				57B826452304F14000B72EB0 /* NearFieldSoftLink.mm in Sources */,
 				C1C1B30F2540F50D00D9100B /* NetworkConnectionToWebProcessMac.mm in Sources */,

@@ -195,6 +195,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/MobileGestaltParameters.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
