@@ -2145,14 +2145,6 @@ ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue
     return Exception { SyntaxError };
 }
 
-ExceptionOr<String> Internals::documentBackgroundColor()
-{
-    Document* document = contextDocument();
-    if (!document || !document->view())
-        return Exception { InvalidAccessError };
-    return serializationForCSS(document->view()->documentBackgroundColor());
-}
-
 ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int pageLength)
 {
     Document* document = contextDocument();

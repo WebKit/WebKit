@@ -3051,14 +3051,6 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 #endif
 }
 
-- (void)_resetScrollViewInsetAdjustmentBehavior
-{
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    [_scrollView _resetContentInsetAdjustmentBehavior];
-    [self _updateScrollViewInsetAdjustmentBehavior];
-#endif
-}
-
 - (void)_setAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea
 {
     if (_perProcessState.avoidsUnsafeArea == avoidsUnsafeArea)
@@ -3444,46 +3436,6 @@ static bool isLockdownModeWarningNeeded()
     _page->findClient().didRemoveLayerForFindOverlay(_page.get());
 }
 
-- (BOOL)_haveSetUnobscuredSafeAreaInsets
-{
-    return _haveSetUnobscuredSafeAreaInsets;
-}
-
-- (void)_resetUnobscuredSafeAreaInsets
-{
-    _haveSetUnobscuredSafeAreaInsets = NO;
-    _unobscuredSafeAreaInsets = { };
-    [self _scheduleVisibleContentRectUpdate];
-}
-
-- (BOOL)_hasOverriddenLayoutParameters
-{
-    return _viewLayoutSizeOverride
-        || _minimumUnobscuredSizeOverride
-        || _maximumUnobscuredSizeOverride;
-}
-
-- (std::optional<CGSize>)_viewLayoutSizeOverride
-{
-    return _viewLayoutSizeOverride;
-}
-
-- (std::optional<CGSize>)_minimumUnobscuredSizeOverride
-{
-    return _minimumUnobscuredSizeOverride;
-}
-
-- (std::optional<CGSize>)_maximumUnobscuredSizeOverride
-{
-    return _maximumUnobscuredSizeOverride;
-}
-
-- (void)_resetObscuredInsets
-{
-    _haveSetObscuredInsets = NO;
-    _obscuredInsets = { };
-    [self _scheduleVisibleContentRectUpdate];
-}
 @end
 
 @implementation WKWebView (WKPrivateIOS)
@@ -4169,10 +4121,6 @@ static bool isLockdownModeWarningNeeded()
     _viewLayoutSizeOverride = std::nullopt;
     _minimumUnobscuredSizeOverride = std::nullopt;
     _maximumUnobscuredSizeOverride = std::nullopt;
-
-    _page->setMinimumUnobscuredSize({ });
-    _page->setDefaultUnobscuredSize({ });
-    _page->setMaximumUnobscuredSize({ });
 }
 
 static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs)

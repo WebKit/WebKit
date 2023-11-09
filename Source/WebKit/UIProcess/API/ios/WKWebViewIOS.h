@@ -163,7 +163,6 @@ class VisibleContentRectUpdateInfo;
 - (void)_dispatchSetDeviceOrientation:(WebCore::IntDegrees)deviceOrientation;
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
-- (void)_resetScrollViewInsetAdjustmentBehavior;
 
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
@@ -204,14 +203,6 @@ class VisibleContentRectUpdateInfo;
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
-
-@property (nonatomic, readonly) BOOL _haveSetUnobscuredSafeAreaInsets;
-@property (nonatomic, readonly) BOOL _hasOverriddenLayoutParameters;
-@property (nonatomic, readonly) std::optional<CGSize> _viewLayoutSizeOverride;
-@property (nonatomic, readonly) std::optional<CGSize> _minimumUnobscuredSizeOverride;
-@property (nonatomic, readonly) std::optional<CGSize> _maximumUnobscuredSizeOverride;
-- (void)_resetUnobscuredSafeAreaInsets;
-- (void)_resetObscuredInsets;
 
 @end
 
