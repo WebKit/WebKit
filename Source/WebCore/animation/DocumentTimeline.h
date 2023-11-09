@@ -88,6 +88,8 @@ public:
 private:
     DocumentTimeline(Document&, Seconds);
 
+    bool isDocumentTimeline() const final { return true; }
+
     DocumentTimelinesController* controller() const;
     void applyPendingAcceleratedAnimations();
     void scheduleInvalidationTaskIfNeeded();

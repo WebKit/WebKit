@@ -2689,3 +2689,6 @@ webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration
 # rdar://117432620 [ arm64 ] 2 tests in imported/w3c/web-platform-tests/css/css-backgrounds/background-size have constant image failure
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+
+# webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]

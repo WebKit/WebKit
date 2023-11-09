@@ -1,16 +1,13 @@
 
-FAIL A ScrollTimeline can be created with a source Can't find variable: ScrollTimeline
-FAIL A ScrollTimeline can be created with a non-scrolling source Can't find variable: ScrollTimeline
-FAIL A ScrollTimeline created with a null source should have no source Can't find variable: ScrollTimeline
-FAIL A ScrollTimeline created without a source should use the document.scrollingElement Can't find variable: ScrollTimeline
-FAIL A ScrollTimeline created with the default axis should default to 'block' Can't find variable: ScrollTimeline
-FAIL 'block' is a valid axis value Can't find variable: ScrollTimeline
-FAIL 'inline' is a valid axis value Can't find variable: ScrollTimeline
-FAIL 'x' is a valid axis value Can't find variable: ScrollTimeline
-FAIL 'y' is a valid axis value Can't find variable: ScrollTimeline
-FAIL Creating a ScrollTimeline with an invalid axis value should throw assert_throws_js: function "function() {
-    new ScrollTimeline({axis: 'nonsense'})
-  }" threw object "ReferenceError: Can't find variable: ScrollTimeline" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS A ScrollTimeline can be created with a source
+PASS A ScrollTimeline can be created with a non-scrolling source
+PASS A ScrollTimeline created with a null source should have no source
+FAIL A ScrollTimeline created without a source should use the document.scrollingElement assert_equals: expected Element node <html><head><meta charset="utf-8">
+<title>ScrollTimeline ... but got null
+PASS A ScrollTimeline created with the default axis should default to 'block'
+PASS 'block' is a valid axis value
+PASS 'inline' is a valid axis value
+PASS 'x' is a valid axis value
+PASS 'y' is a valid axis value
+PASS Creating a ScrollTimeline with an invalid axis value should throw
 
