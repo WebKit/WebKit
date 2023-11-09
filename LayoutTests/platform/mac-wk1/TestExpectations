@@ -74,6 +74,7 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
+media/now-playing-status-for-video-conference-web-page.html [ Skip ]
 
 # Payment request API is not supported on WK1.
 imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]

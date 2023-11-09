@@ -1155,7 +1155,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 
 #if ENABLE(MEDIA_SESSION)
 #if ENABLE(MEDIA_STREAM)
-static bool isDocumentPlayingSeveralMediaStreams(Document& document)
+static bool isDocumentPlayingSeveralMediaStreamsAndCapturing(Document& document)
 {
     // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
     auto* page = document.page();
@@ -1168,7 +1168,7 @@ static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document,
     if (!page)
         return false;
 
-    if (!isDocumentPlayingSeveralMediaStreams(document))
+    if (!isDocumentPlayingSeveralMediaStreamsAndCapturing(document))
         return false;
 
     WebCore::MediaProducerMutedStateFlags mutedState;
@@ -1270,12 +1270,18 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
 std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 {
     auto* page = m_element.document().page();
+
+#if ENABLE(MEDIA_SESSION)
+    auto* session = mediaSession();
+#endif
+
+#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_STREAM)
+    if (isDocumentPlayingSeveralMediaStreamsAndCapturing(m_element.document()) && (!session || !session->hasActiveActionHandlers()))
+        return { };
+#endif
+
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
     bool isPlaying = state() == PlatformMediaSession::Playing;
-#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_STREAM)
-    if (isPlaying && isDocumentPlayingSeveralMediaStreams(m_element.document()) && page)
-        isPlaying = !page->mutedState().contains(MediaProducerMutedState::AudioIsMuted);
-#endif
 
     bool supportsSeeking = m_element.supportsSeeking();
     double rate = 1.0;
@@ -1293,7 +1299,6 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-    auto* session = mediaSession();
     auto positionState = session ? session->positionState() : std::nullopt;
     auto currentPosition = session ? session->currentPosition() : std::nullopt;
     if (positionState) {
