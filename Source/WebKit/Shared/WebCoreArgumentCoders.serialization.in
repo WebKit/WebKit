@@ -6654,6 +6654,26 @@ class WebCore::ContentSecurityPolicyResponseHeaders {
     int httpStatusCode();
 };
 
+class WebCore::DragImage {
+    std::optional<WebCore::TextIndicatorData> indicatorData();
+    std::optional<WebCore::Path> visiblePath();
+};
+
+struct WebCore::DragItem {
+    WebCore::DragImage image;
+    WebCore::FloatPoint imageAnchorPoint;
+    std::optional<WebCore::DragSourceAction> sourceAction;
+    WebCore::IntPoint eventPositionInContentCoordinates;
+    WebCore::IntPoint dragLocationInContentCoordinates;
+    WebCore::IntPoint dragLocationInWindowCoordinates;
+    String title;
+    URL url;
+    WebCore::IntRect dragPreviewFrameInRootViewCoordinates;
+    bool containsSelection;
+    WebCore::PromisedAttachmentInfo promisedAttachmentInfo;
+    [NotSerialized] WebCore::PasteboardWriterData data;
+};
+
 #if PLATFORM(COCOA)
 struct WebCore::KeypressCommand {
     String commandName;
