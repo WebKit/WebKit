@@ -174,7 +174,7 @@ CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& 
         // TODO: figure out how to get scrollable area for renderer to check if it is maintaining scroll anchor
         if (renderer->style().overflowAnchor() == OverflowAnchor::None || renderer->isStickilyPositioned() || renderer->isFixedPositioned() || renderer->isPseudoElement() || renderer->isAnonymousBlock())
             return CandidateExaminationResult::Exclude;
-        if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
+        if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (is<RenderBox>(renderer) && renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
             return CandidateExaminationResult::Skip;
         auto boxRect = renderer->absoluteBoundingBoxRect();
         if (!boxRect.width() || !boxRect.height())
