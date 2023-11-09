@@ -145,16 +145,25 @@ function CommitSearchBar(onSearchAction = null) {
             onSearchAction(searchValue);
     });
 
+    const clearButtonRef = REF.createRef({});
+    clearButtonRef.fromEvent("click").action(e => {
+        if (onSearchAction)
+            onSearchAction(null);
+    });
+
     window.addEventListener("keypress", searchHotKeyFunction);
 
     return `<div class="input">
         <div class="row">
-            <div class="input col-9">
+            <div class="input col-7">
                 <input type="text" ref="${searchInputRef}" autocomplete="off" autocapitalize="none" required/>
                 <label>Search commit</label>
             </div>
             <button class="button col-3 primary" ref="${searchButtonRef}">
                 <img src="library/icons/search.svg" style="height: var(--largeSize); filter: invert(1);">
+            </button>
+            <button class="button col-2" ref="${clearButtonRef}">
+                X
             </button>
         </div>
     </div>`;
