@@ -23,31 +23,37 @@ import sys
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 SDK_PROJECT_PATH = os.path.join(scriptdir, "..", "buildstream")
-PIPENV_PIPFILE = os.path.realpath(os.path.join(SDK_PROJECT_PATH, "Pipfile"))
 
-def run_pipenv(args: list, **kw) -> subprocess.CompletedProcess:
-    local_env = {
-        "PIPENV_VENV_IN_PROJECT": "1",
-        "PIPENV_PIPFILE": PIPENV_PIPFILE
-    }
-    kw["env"] = os.environ
-    kw["env"].update(local_env)
-    return subprocess.run(["pipenv", ] + args, **kw)
+# DOCKER_IMAGE_ID from https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/blob/master/.gitlab-ci.yml
+IMAGE_ID = 'f2004eceea4b91b56e761826248274b2f66d28b3'
+
+TOOLBOX_NAME = f'bst2-{IMAGE_ID}'
+IMAGE = f'registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:{IMAGE_ID}'
+
+def run(*args, in_container=False, capture_output=True):
+    if in_container:
+        cmdline = f'toolbox run -c {TOOLBOX_NAME}'.split() + list(args)
+    else:
+        cmdline = args
+    print("Running %s" % " ".join(cmdline))
+    proc = subprocess.run(cmdline, capture_output=capture_output, text=True)
+    if proc.returncode != 0:
+        raise Exception(proc.returncode)
+    if capture_output:
+        return proc.stdout.strip()
 
 def ensure_environment():
-    result = run_pipenv(["--venv",], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    if result.returncode != 0:
-        run_pipenv(["install"])
-
-def run_bst(args: list) -> subprocess.CompletedProcess:
-    return run_pipenv(["run", "bst", "-C", SDK_PROJECT_PATH] + args)
+    all_containers = run('podman', 'container', 'list', '-a', '--format', '{{.Names}}').splitlines()
+    if TOOLBOX_NAME not in all_containers:
+        run('toolbox', 'create', '-c', TOOLBOX_NAME, '--image', IMAGE, '-y', capture_output=False)
 
 def main(args: list) -> int:
     ensure_environment()
-    if args[0] == "pipenv":
-        run_pipenv(args[1:])
+    if args[0] == "toolbox":
+        filtered_args = args[1:]
     else:
-        run_bst(args)
+        filtered_args = ["bst", "-C", SDK_PROJECT_PATH] + args
+    run(*filtered_args, in_container=True, capture_output=False)
     return 0
 
 if __name__ == "__main__":

@@ -118,6 +118,9 @@ private:
     bool isProducingData() const final { return m_ioUnitStarted; }
     void isProducingMicrophoneSamplesChanged() final;
     void validateOutputDevice(uint32_t deviceID) final;
+#if PLATFORM(MAC)
+    bool migrateToNewDefaultDevice(const CaptureDevice&) final;
+#endif
     int actualSampleRate() const final;
     void resetSampleRate();
 

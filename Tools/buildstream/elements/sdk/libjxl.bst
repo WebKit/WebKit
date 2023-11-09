@@ -47,10 +47,10 @@ config:
 
 sources:
 - kind: tar
-  url: https://github.com/libjxl/libjxl/archive/refs/tags/v0.8.2.tar.gz
+  url: github_com:libjxl/libjxl/archive/refs/tags/v0.8.2.tar.gz
   ref: c70916fb3ed43784eb840f82f05d390053a558e2da106e40863919238fa7b420
-- kind: git
+- kind: git_repo
   url: https://skia.googlesource.com/skcms
   ref: b25b07b4b07990811de121c0356155b2ba0f4318
   directory: third_party/skcms
-  checkout-submodules: False
+

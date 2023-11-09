@@ -13,7 +13,7 @@ variables:
     -DENABLE_TESTS=FALSE
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:apitrace/apitrace
   track: '11.1'
   ref: 11.1-0-g9352fc02bba106fbbeef9e8452ef34643c0d0764

@@ -67,11 +67,6 @@ config:
       add-ld-path: extra
       version: '%{sdk-branch}'
 
-    Extension org.freedesktop.Platform.sparkle-cdm:
-      directory: '%{lib}/sparkle-cdm'
-      add-ld-path: lib
-      version: '%{sdk-branch}'
-
     Extension org.freedesktop.Sdk.Extension:
       subdirectories: 'true'
       directory: lib/sdk

@@ -29,6 +29,7 @@
 #include "ClientOrigin.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "Page.h"
 #include "SpeechRecognitionError.h"
@@ -77,6 +78,11 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
         return Exception { UnknownError, "Recognition is not in a valid frame"_s };
 
     auto optionalFrameIdentifier = document->frameID();
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document.get(), LogFeaturePolicyFailure::No)) {
+        didError({ SpeechRecognitionErrorType::NotAllowed, "Permission is denied"_s });
+        return { };
+    }
+
     auto frameIdentifier = optionalFrameIdentifier ? *optionalFrameIdentifier : FrameIdentifier { };
     m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document->topOrigin().data(), document->securityOrigin().data() }, frameIdentifier);
     m_state = State::Starting;

@@ -447,6 +447,9 @@ RegisterSet RegisterSetBuilder::wasmPinnedRegisters()
         result.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors);
     if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg)
         result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+#if OS(WINDOWS)
+    result.add(GPRInfo::wasmScratchCSR0, IgnoreVectors);
+#endif
     return result;
 }
 #endif

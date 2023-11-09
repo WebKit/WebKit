@@ -764,7 +764,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
-            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource)
+            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_stringBuilder.append("::PackedType");
         },
         [&](const PrimitiveStruct& structure) {
@@ -1079,6 +1079,62 @@ static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::Call
     writer->visit(call.arguments()[0]);
     writer->stringBuilder().append(".sample_compare");
     visitArguments(writer, call, 1);
+}
+
+static void emitTextureSampleGrad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+
+    ASSERT(call.arguments().size() > 1);
+    auto& texture = call.arguments()[0];
+    auto& textureType = std::get<Types::Texture>(*texture.inferredType());
+
+    unsigned gradientIndex;
+    const char* gradientFunction;
+    switch (textureType.kind) {
+    case Types::Texture::Kind::Texture1d:
+    case Types::Texture::Kind::Texture2d:
+    case Types::Texture::Kind::TextureMultisampled2d:
+        gradientIndex = 3;
+        gradientFunction = "gradient2d";
+        break;
+
+    case Types::Texture::Kind::Texture3d:
+        gradientIndex = 3;
+        gradientFunction = "gradient3d";
+        break;
+
+    case Types::Texture::Kind::TextureCube:
+        gradientIndex = 3;
+        gradientFunction = "gradientcube";
+        break;
+
+    case Types::Texture::Kind::Texture2dArray:
+        gradientIndex = 4;
+        gradientFunction = "gradient2d";
+        break;
+
+    case Types::Texture::Kind::TextureCubeArray:
+        gradientIndex = 4;
+        gradientFunction = "gradientcube";
+        break;
+    }
+    writer->visit(texture);
+    writer->stringBuilder().append(".sample(");
+    for (unsigned i = 1; i < gradientIndex; ++i) {
+        if (i != 1)
+            writer->stringBuilder().append(", ");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(", ", gradientFunction, "(");
+    writer->visit(call.arguments()[gradientIndex]);
+    writer->stringBuilder().append(", ");
+    writer->visit(call.arguments()[gradientIndex + 1]);
+    writer->stringBuilder().append(")");
+    for (unsigned i = gradientIndex + 2; i < call.arguments().size(); ++i) {
+        writer->stringBuilder().append(", ");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(")");
 }
 
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1406,6 +1462,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
             { "textureSampleCompare", emitTextureSampleCompare },
             { "textureSampleCompareLevel", emitTextureSampleCompare },
+            { "textureSampleGrad", emitTextureSampleGrad },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },
@@ -1419,16 +1476,23 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
+            { "countLeadingZeros", "clz"_s },
+            { "countOneBits", "popcount"_s },
+            { "countTrailingZeros", "ctz"_s },
             { "dpdx", "dfdx"_s },
             { "dpdxCoarse", "dfdx"_s },
             { "dpdxFine", "dfdx"_s },
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
+            { "extractBits", "extract_bits"_s },
+            { "faceForward", "faceforward"_s },
             { "frexp", "__wgslFrexp"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
+            { "insertBits", "insert_bits"_s },
             { "inverseSqrt", "rsqrt"_s },
+            { "reverseBits", "reverse_bits"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {
@@ -1905,9 +1969,31 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             // Not supported yet
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const PrimitiveStruct&) {
-            // Not supported yet
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const PrimitiveStruct& primitiveStruct) {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
+
+            m_stringBuilder.append(primitiveStruct.name, "<");
+            bool first = true;
+            for (auto& value : primitiveStruct.values) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                visit(value);
+            }
+            m_stringBuilder.append("> {");
+            first = true;
+            for (auto& entry : constantStruct.fields) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                m_stringBuilder.append(".", entry.key, " = ");
+                auto* key = keys.tryGet(entry.key);
+                RELEASE_ASSERT(key);
+                auto* type = primitiveStruct.values[*key];
+                serializeConstant(type, entry.value);
+            }
+            m_stringBuilder.append("}");
         },
         [&](const Pointer&) {
             RELEASE_ASSERT_NOT_REACHED();

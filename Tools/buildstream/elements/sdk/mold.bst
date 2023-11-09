@@ -19,13 +19,10 @@ variables:
     -DMOLD_MOSTLY_STATIC=OFF
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:rui314/mold.git
-  checkout-submodules: false
-  track-tags: true
-  track: main
-  ref: v1.10.1-0-g040180f933d33fa246f9d2961c2d6e8b74241463
-
+  track: v2.*
+  ref: v2.3.1-0-g34c53777fbb4fe6bff59ed745321d92dbf7e4fab
 public:
   bst:
     integration-commands:

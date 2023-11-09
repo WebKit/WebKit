@@ -33,6 +33,8 @@ end
 
 if X86_64
     const NumberOfWasmArgumentJSRs = 6
+elsif X86_64_WIN
+    const NumberOfWasmArgumentJSRs = 4
 elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentJSRs = 8
 elsif ARMv7
@@ -47,11 +49,15 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 
 # All callee saves must match the definition in WasmCallee.cpp
 
-# These must match the definition in WasmMemoryInformation.cpp
+# These must match the definition in GPRInfo.h
 if X86_64 or ARM64 or ARM64E or RISCV64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
+elsif X86_64_WIN
+    const wasmInstance = csr0
+    const memoryBase = csr5
+    const boundsCheckingSize = csr6
 elsif ARMv7
     const wasmInstance = csr0
     const memoryBase = invalidGPR
@@ -63,6 +69,8 @@ end
 # This must match the definition in LowLevelInterpreter.asm
 if X86_64
     const PB = csr2
+elsif X86_64_WIN
+    const PB = csr4
 elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
 elsif ARMv7
@@ -83,6 +91,11 @@ macro forEachArgumentJSR(fn)
         fn(2 * 8, wa2, wa3)
         fn(4 * 8, wa4, wa5)
         fn(6 * 8, wa6, wa7)
+    elsif X86_64_WIN
+        fn(0 * 8, wa0)
+        fn(1 * 8, wa1)
+        fn(2 * 8, wa2)
+        fn(3 * 8, wa3)
     elsif JSVALUE64
         fn(0 * 8, wa0)
         fn(1 * 8, wa1)
@@ -249,6 +262,11 @@ macro preserveCalleeSavesUsedByWasm()
     elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
+    elsif X86_64_WIN
+        # On Windows, ws1 = csr2 so we need to save / restore it
+        storep PB, -0x8[cfr]
+        storep wasmInstance, -0x10[cfr]
+        storep ws1, -0x18[cfr]
     elsif ARMv7
         storep PB, -4[cfr]
         storep wasmInstance, -8[cfr]
@@ -266,6 +284,11 @@ macro restoreCalleeSavesUsedByWasm()
     elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
+    elsif X86_64_WIN
+        # On Windows, ws1 = csr2 so we need to save / restore it
+        loadp -0x8[cfr], PB
+        loadp -0x10[cfr], wasmInstance
+        loadp -0x18[cfr], ws1
     elsif ARMv7
         loadp -4[cfr], PB
         loadp -8[cfr], wasmInstance
@@ -277,7 +300,7 @@ end
 macro preserveGPRsUsedByTailCall(gpr0, gpr1)
     if ARM64 or ARM64E
         storepairq gpr0, gpr1, CodeBlock[sp]
-    elsif ARMv7 or X86_64 or RISCV64
+    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
         storep gpr0, CodeBlock[sp]
         storep gpr1, Callee[sp]
     else
@@ -288,7 +311,7 @@ end
 macro restoreGPRsUsedByTailCall(gpr0, gpr1)
     if ARM64 or ARM64E
         loadpairq CodeBlock[sp], gpr0, gpr1
-    elsif ARMv7 or X86_64 or RISCV64
+    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
         loadp CodeBlock[sp], gpr0
         loadp Callee[sp], gpr1
     else
@@ -297,7 +320,7 @@ macro restoreGPRsUsedByTailCall(gpr0, gpr1)
 end
 
 macro preserveReturnAddress(scratch)
-if X86_64
+if X86_64 or X86_64_WIN
     loadp ReturnPC[cfr], scratch
     storep scratch, ReturnPC[sp]
 elsif ARM64 or ARM64E or ARMv7 or RISCV64
@@ -308,7 +331,7 @@ end
 macro usePreviousFrame()
     if ARM64 or ARM64E
         loadpairq -PtrSize[cfr], PB, cfr
-    elsif ARMv7 or X86_64 or RISCV64
+    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
         loadp -PtrSize[cfr], PB
         loadp [cfr], cfr
     else
@@ -335,7 +358,7 @@ macro callWasmSlowPath(slowPath)
     move cfr, a0
     move PC, a1
     move wasmInstance, a2
-    cCall4(slowPath)
+    cCall3(slowPath)
     restoreStateAfterCCall()
 end
 
@@ -345,7 +368,7 @@ macro callWasmCallSlowPath(slowPath, action)
     move cfr, a0
     move PC, a1
     move wasmInstance, a2
-    cCall4(slowPath)
+    cCall3(slowPath)
     action(r0, r1)
 end
 
@@ -430,8 +453,10 @@ end
     loadi Wasm::LLIntCallee::m_numVars[ws0], ws1
     subi NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters, ws1
     btiz ws1, .zeroInitializeLocalsDone
+
     lshifti 3, ws1
     negi ws1
+
 if JSVALUE64
     sxi2q ws1, ws1
 end
@@ -780,12 +805,11 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
     move cfr, a0
-    addp PB, PC, a1
-    move wasmInstance, a2
+    move wasmInstance, a1
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
-    loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
+    loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a2
     storei 0, CallSiteIndex[cfr]
-    cCall4(_slow_path_wasm_throw_exception)
+    cCall3(_slow_path_wasm_throw_exception)
     jumpToException()
 end)
 
@@ -795,11 +819,12 @@ macro wasm_throw_from_fault_handler(instance)
     loadp VM::topEntryFrame[a0], a0
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
 
-    move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
-    move 0, a1
     move cfr, a0
+    move a2, a1
+    move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a2
+
     storei 0, CallSiteIndex[cfr]
-    cCall4(_slow_path_wasm_throw_exception)
+    cCall3(_slow_path_wasm_throw_exception)
     jumpToException()
 end
 
@@ -1238,7 +1263,7 @@ end
             # ws1 is the new stack pointer.
             # cfr is the caller's caller's frame pointer.
 
-if X86_64
+if X86_64 or X86_64_WIN
             addp PtrSize, ws1, sp
 elsif ARMv7
             addp CallerFrameAndPCSize, ws1
@@ -1480,7 +1505,7 @@ end)
 
 wasmI64ToFOp(f32_convert_u_i64, WasmF32ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64
+    if X86_64 or X86_64_WIN
         cq2f t0, t1, ft0
     else
         cq2f t0, ft0
@@ -1490,7 +1515,7 @@ end)
 
 wasmI64ToFOp(f64_convert_u_i64, WasmF64ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64
+    if X86_64 or X86_64_WIN
         cq2d t0, t1, ft0
     else
         cq2d t0, ft0

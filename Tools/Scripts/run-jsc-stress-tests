@@ -585,9 +585,9 @@ end
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
-# Special case armv7, we want to run the wasm tests temporarily without B3/Air support
-$isWasmPlatform = $isFTLPlatform || $architecture == "arm"
-$isSIMDPlatform = $architecture == "arm64" || $architecture == "x86_64"
+# Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
+$isWasmPlatform = $isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64")
+$isSIMDPlatform = $isFTLPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
 # This is meant for skipping execution of tests than require a lot of address
 # space. Cf. $memoryLimited, which is meant for tests that actually make use of

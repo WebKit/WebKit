@@ -46,6 +46,7 @@ operator :-, {
     [T < Number, N].(vec[N][T], T) => vec[N][T],
     [T < Number, N].(T, vec[N][T]) => vec[N][T],
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
+    [T < Float, C, R].(mat[C,R][T], mat[C,R][T]) => mat[C,R][T],
 }
 
 operator :*, {
@@ -205,8 +206,8 @@ end
         must_use: true,
         const: const_function,
 
-        [S < ConcreteInteger].(S, u32) => S,
-        [S < ConcreteInteger, N].(vec[N][S], vec[N][u32]) => vec[N][S],
+        [S < Integer].(S, u32) => S,
+        [S < Integer, N].(vec[N][S], vec[N][u32]) => vec[N][S],
     }
 end
 

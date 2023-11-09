@@ -100,10 +100,6 @@ private:
 private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayerForQueue WTF_GUARDED_BY_CAPABILITY(workQueue());
-    bool m_isReconfiguring WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
-    RetainPtr<CVPixelBufferRef> m_lastPixelBuffer WTF_GUARDED_BY_CAPABILITY(workQueue());
-    MediaTime m_lastPresentationTime WTF_GUARDED_BY_CAPABILITY(workQueue());
     RetainPtr<PlatformLayer> m_rootLayer;
     RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };
 

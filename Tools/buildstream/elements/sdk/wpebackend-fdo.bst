@@ -1,6 +1,6 @@
 kind: meson
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:Igalia/WPEBackend-fdo.git
   track: 1.12.0
   ref: 1.12.0-0-g1b35ae0d8f32e32431da494d3389c5b1a8812cab

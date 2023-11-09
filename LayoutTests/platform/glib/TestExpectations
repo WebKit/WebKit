@@ -2546,6 +2546,7 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
 # Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
+http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]

@@ -510,7 +510,8 @@ RefPtr<Element> TreeScope::findAnchor(StringView name)
     if (RefPtr element = getElementById(name))
         return element;
     auto inQuirksMode = documentScope().inQuirksMode();
-    for (Ref anchor : descendantsOfType<HTMLAnchorElement>(protectedRootNode())) {
+    Ref rootNode = m_rootNode;
+    for (Ref anchor : descendantsOfType<HTMLAnchorElement>(rootNode)) {
         if (inQuirksMode) {
             // Quirks mode, ASCII case-insensitive comparison of names.
             // FIXME: This behavior is not mentioned in the HTML specification.

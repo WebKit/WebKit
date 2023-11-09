@@ -74,7 +74,7 @@
     }
 
     [self setValue:bridge_cast(data.get()) forKeyPath:WKDynamicContentScalingContentsKey];
-    [self setValue:ports.get() forKeyPath:WKDynamicContentScalingContentsKey];
+    [self setValue:ports.get() forKeyPath:WKDynamicContentScalingPortsKey];
     [self setNeedsDisplay];
 }
 

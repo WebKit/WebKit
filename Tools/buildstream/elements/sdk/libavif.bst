@@ -8,7 +8,7 @@ depends:
 - freedesktop-sdk.bst:components/dav1d.bst
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:AOMediaCodec/libavif
   track: v0.10.1
   ref: v0.10.1-0-gf938f6b7dd412ffcbdab1808a265b6375dc7b037

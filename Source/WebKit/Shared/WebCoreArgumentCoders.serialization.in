@@ -6568,6 +6568,11 @@ header: <WebCore/GraphicsContextState.h>
     WebCore::AffineTransform spaceTransform;
 };
 
+class WebCore::ContentSecurityPolicyResponseHeaders {
+    Vector<std::pair<String, WebCore::ContentSecurityPolicyHeaderType>> headers();
+    int httpStatusCode();
+};
+
 #if PLATFORM(COCOA)
 struct WebCore::KeypressCommand {
     String commandName;

@@ -350,7 +350,7 @@ private:
 
 
 class IPIntCallee final : public Callee {
-    friend class LLIntOffsetsExtractor;
+    friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
     static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
@@ -420,7 +420,7 @@ public:
 };
 
 class LLIntCallee final : public Callee {
-    friend LLIntOffsetsExtractor;
+    friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
     static Ref<LLIntCallee> create(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)

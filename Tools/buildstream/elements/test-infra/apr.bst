@@ -24,6 +24,6 @@ public:
     - '**'
 
 sources:
-- kind: git
+- kind: git_repo
   url: github_com:apache/apr
   ref: ab59882d46f992fe13e696e0275a244123d51349

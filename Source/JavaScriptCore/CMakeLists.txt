@@ -289,7 +289,17 @@ list(APPEND JavaScriptCore_HEADERS
 )
 
 if (WIN32)
-    set(OFFLINE_ASM_BACKEND "X86_WIN, X86_64_WIN, C_LOOP_WIN")
+    if (WTF_CPU_X86)
+        set(OFFLINE_ASM_BACKEND "X86_WIN")
+    elseif (WTF_CPU_X86_64)
+        set(OFFLINE_ASM_BACKEND "X86_64_WIN")
+    endif ()
+
+    if (NOT ENABLE_JIT)
+        if (ENABLE_C_LOOP)
+            set(OFFLINE_ASM_BACKEND "C_LOOP_WIN")
+        endif ()
+    endif ()
 else ()
     if (WTF_CPU_X86)
         set(OFFLINE_ASM_BACKEND "X86")

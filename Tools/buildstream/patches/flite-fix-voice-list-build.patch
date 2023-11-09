@@ -1,0 +1,63 @@
+From 14aa28529357ba13994a2bd90cfd11bfceeffcce Mon Sep 17 00:00:00 2001
+From: Moritz Barsnick <barsnick@gmx.net>
+Date: Thu, 23 Mar 2023 14:53:08 +0100
+Subject: [PATCH] fix implicit dependency on flite_voice_list.c
+
+Also make flite_lang_list a proper rule, so that it only builds once.
+
+Both C files were repeatedly being clobbered, as were their respective
+object files.
+
+Convert flite_voice_list.c is into an explicit dependency with a creation
+rule. flite_voice_list.o continues to be implicit from flite_voice_list.c.
+
+Convert flite_lang_list into a similar, proper object rule.
+
+Fixes https://github.com/festvox/flite/issues/86
+---
+ main/Makefile | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/main/Makefile b/main/Makefile
+index 8166182..b9a8828 100644
+--- a/main/Makefile
++++ b/main/Makefile
+@@ -106,21 +106,16 @@ endif
+ 
+ .NOTPARALLEL: $(ALL)
+ 
+-flite_lang_list: 
+-	rm -f flite_lang_list.c
++flite_lang_list.c:
+ 	$(TOP)/tools/make_lang_list $(LANGS) $(LEXES)
+-	$(MAKE) flite_lang_list.o
+ 
+-$(BINDIR)/flite$(EXEEXT): flite_main.o flite_lang_list $(flite_LIBS_deps)
++flite_voice_list.c:
+ 	$(TOP)/tools/make_voice_list $(VOICES)
+-	rm -f flite_voice_list.o
+-	$(MAKE) flite_voice_list.o
++
++$(BINDIR)/flite$(EXEEXT): flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_deps)
+ 	$(CC) $(CFLAGS) -o $@ flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+ 
+-$(BINDIR)/flitevox_info$(EXEEXT): flitevox_info_main.o flite_lang_list $(flite_LIBS_deps)
+-	$(TOP)/tools/make_voice_list $(VOICES)
+-	rm -f flite_voice_list.o
+-	$(MAKE) flite_voice_list.o
++$(BINDIR)/flitevox_info$(EXEEXT): flitevox_info_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_deps)
+ 	$(CC) $(CFLAGS) -o $@ flitevox_info_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+ 
+ $(BINDIR)/world$(EXEEXT): world_main.c
+@@ -144,10 +139,7 @@ each:
+ 	   $(MAKE) VOICE=$$i $(BINDIR)/flite_$$i ; \
+ 	done
+ 
+-$(BINDIR)/flite_${VOICE}: flite_main.o flite_lang_list $(flite_LIBS_deps)
+-	$(TOP)/tools/make_voice_list $(VOICE)
+-	rm -f flite_voice_list.o
+-	$(MAKE) flite_voice_list.o
++$(BINDIR)/flite_${VOICE}: flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_deps)
+ 	$(CC) $(CFLAGS) -o $@ flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+ 
+ install:

@@ -5,7 +5,6 @@ depends:
 - freedesktop-sdk.bst:components/python3-markdown.bst
 - freedesktop-sdk.bst:components/python3-markupsafe.bst
 - freedesktop-sdk.bst:components/python3-pygments.bst
-- freedesktop-sdk.bst:components/python3-toml.bst
 - sdk/python3-smartypants.bst
 - sdk/python3-typogrify.bst
 
@@ -15,8 +14,8 @@ build-depends:
 
 sources:
 - kind: tar
-  url: gnome_downloads:gi-docgen/2022/gi-docgen-2022.1.tar.xz
-  ref: fefe3153979595ddad2dc81d5efa7e54c8ca3770f91a5a75710c8fd6fad4575f
+  url: gnome_downloads:gi-docgen/2023/gi-docgen-2023.1.tar.xz
+  ref: a9a687c1b7c4a4139a214bd451e01ca86131a3161f68aa3e07325b06002bbfb6
 
 variables:
   meson-local: >-

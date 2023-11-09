@@ -381,11 +381,13 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             }
         } else if (unify(result, initializerType))
             variable.maybeInitializer()->m_inferredType = result;
-        else
+        else {
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
+            result = m_types.bottomType();
+        }
     }
 
-    if (value)
+    if (value && !isBottom(result))
         convertValue(variable.span(), result, *value);
 
     if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType()) {
@@ -752,6 +754,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
                 typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
                 return nullptr;
             }
+            if (auto constant = access.base().constantValue()) {
+                auto& constantStruct = std::get<ConstantStruct>(*constant);
+                access.setConstantValue(constantStruct.fields.get(access.fieldName().id()));
+            }
             return primitiveStruct->values[*key];
         }
 
@@ -784,6 +790,23 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
+    const auto& constantAccess = [&]<typename T>() {
+        auto constantBase = access.base().constantValue();
+        auto constantIndex = access.index().constantValue();
+        bool isConstant = constantBase && constantIndex;
+
+        if (!isConstant)
+            return;
+
+        auto constant = std::get<T>(*constantBase);
+        auto index = constantIndex->integerValue();
+        auto size = constant.upperBound();
+        if (index < 0 || static_cast<size_t>(index) >= size)
+            typeError(InferBottom::No, access.span(), "index ", String::number(index), " is out of bounds [0..", String::number(size - 1), "]");
+        else
+            access.setConstantValue(constant[index]);
+    };
+
     const auto& accessImpl = [&](const Type* base) -> const Type* {
         if (isBottom(base))
             return m_types.bottomType();
@@ -791,14 +814,14 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
         const Type* result = nullptr;
         if (auto* array = std::get_if<Types::Array>(base)) {
-            // FIXME: check bounds if index is constant
             result = array->element;
+            constantAccess.operator()<ConstantArray>();
         } else if (auto* vector = std::get_if<Types::Vector>(base)) {
-            // FIXME: check bounds if index is constant
             result = vector->element;
+            constantAccess.operator()<ConstantVector>();
         } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
-            // FIXME: check bounds if index is constant
             result = m_types.vectorType(matrix->rows, matrix->element);
+            constantAccess.operator()<ConstantMatrix>();
         }
 
         if (!result) {
@@ -1647,9 +1670,17 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             // FIXME: this should be supported
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::PrimitiveStruct&) -> Conversion {
-            // FIXME: this should be supported
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Types::PrimitiveStruct& primitiveStruct) -> Conversion {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
+            for (auto& entry : constantStruct.fields) {
+                auto* key = keys.tryGet(entry.key);
+                RELEASE_ASSERT(key);
+                auto* type = primitiveStruct.values[*key];
+                if (!convertValue(span, type, entry.value, explicitConversion))
+                    return FailedInner;
+            }
+            return Success;
         },
         [&](const Types::Function&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();

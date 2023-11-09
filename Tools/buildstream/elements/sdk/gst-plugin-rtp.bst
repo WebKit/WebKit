@@ -29,7 +29,7 @@ public:
 
 sources:
 - kind: tar
-  url: https://static.crates.io/crates/gst-plugin-rtp/gst-plugin-rtp-0.10.6.crate
+  url: crates:crates/gst-plugin-rtp/gst-plugin-rtp-0.10.6.crate
   ref: 87d676bb844649f335be1a39230473e547cf9cf05929e78b6bbd969a67c8c5c3
 - kind: local
   path: files/gst-plugin-rtp/Cargo.lock

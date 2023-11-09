@@ -29,7 +29,7 @@ public:
 
 sources:
 - kind: tar
-  url: https://static.crates.io/crates/gst-plugin-closedcaption/gst-plugin-closedcaption-0.10.6.crate
+  url: crates:crates/gst-plugin-closedcaption/gst-plugin-closedcaption-0.10.6.crate
   ref: 81c439b8b1f91680cc32a9c152c8df2335aaacc33c7f6d457d7c62660ebf4bb4
 - kind: local
   path: files/gst-plugin-closedcaption/Cargo.lock

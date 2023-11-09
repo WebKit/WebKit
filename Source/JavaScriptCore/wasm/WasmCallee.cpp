@@ -289,8 +289,11 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
     std::call_once(initializeFlag, [] {
         RegisterSet registers;
         registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
-#if CPU(X86_64)
+#if CPU(X86_64) && !OS(WINDOWS)
         registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
+#elif CPU(X86_64) && OS(WINDOWS)
+        registers.add(GPRInfo::regCS2, IgnoreVectors); // wasmScratch
+        registers.add(GPRInfo::regCS4, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
         registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
 #elif CPU(ARM)

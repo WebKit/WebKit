@@ -1,13 +1,12 @@
 kind: meson
 sources:
 - kind: tar
-  url: gnome_downloads:gtk+/3.24/gtk+-3.24.34.tar.xz
-  ref: dbc69f90ddc821b8d1441f00374dc1da4323a2eafa9078e61edbe5eeefa852ec
+  url: gnome_downloads:gtk+/3.24/gtk+-3.24.37.tar.xz
+  ref: 6745f0b4c053794151fd0f0e2474b077cccff5f83e9dd1bf3d39fe9fe5fb7f57
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
-- freedesktop-sdk.bst:components/at-spi2-atk.bst
-- freedesktop-sdk.bst:components/atk.bst
+- freedesktop-sdk.bst:components/at-spi2-core.bst
 - freedesktop-sdk.bst:components/gdk-pixbuf.bst
 - freedesktop-sdk.bst:components/glib.bst
 - freedesktop-sdk.bst:components/gobject-introspection.bst

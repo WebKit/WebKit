@@ -27,6 +27,9 @@
 #pragma once
 
 #include <wtf/FixedVector.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL {
 
@@ -49,6 +52,9 @@ struct ConstantArray {
     {
     }
 
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
+
     FixedVector<ConstantValue> elements;
 };
 
@@ -62,6 +68,9 @@ struct ConstantVector {
         : elements(WTFMove(elements))
     {
     }
+
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
 
     FixedVector<ConstantValue> elements;
 };
@@ -82,12 +91,19 @@ struct ConstantMatrix {
         RELEASE_ASSERT(elements.size() == columns * rows);
     }
 
+    size_t upperBound() { return columns; }
+    ConstantVector operator[](unsigned);
+
     uint32_t columns;
     uint32_t rows;
     FixedVector<ConstantValue> elements;
 };
 
-using BaseValue = std::variant<float, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix>;
+struct ConstantStruct {
+    HashMap<String, ConstantValue> fields;
+};
+
+using BaseValue = std::variant<float, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 

@@ -31,6 +31,24 @@
 
 namespace WGSL {
 
+ConstantValue ConstantArray::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantValue ConstantVector::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantVector ConstantMatrix::operator[](unsigned index)
+{
+    ConstantVector result(rows);
+    for (unsigned i = 0; i < rows; ++i)
+        result.elements[i] = elements[index * rows + i];
+    return result;
+}
+
 void ConstantValue::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,
@@ -86,6 +104,17 @@ void ConstantValue::dump(PrintStream& out) const
                 out.print(element);
             }
             out.print(")");
+        },
+        [&](const ConstantStruct& s) {
+            out.print("struct { ");
+            bool first = true;
+            for (const auto& entry : s.fields) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(entry.key, ": ", entry.value);
+            }
+            out.print(" }");
         });
 }
 

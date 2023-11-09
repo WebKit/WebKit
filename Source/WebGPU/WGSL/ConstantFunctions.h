@@ -429,7 +429,7 @@ CONSTANT_FUNCTION(Add)
         return { { result } };
     }
 
-    return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
+    return constantBinaryOperation<Constraints::Number>(arguments, [&]<typename T>(T left, T right) -> T {
         return left + right;
     });
 }
@@ -442,6 +442,18 @@ CONSTANT_FUNCTION(Minus)
             return -arg;
         });
     }
+
+    if (auto* left = std::get_if<ConstantMatrix>(&arguments[0])) {
+        auto& right = std::get<ConstantMatrix>(arguments[1]);
+        auto* elementType = std::get<Types::Matrix>(*resultType).element;
+        ASSERT(left->columns == right.columns);
+        ASSERT(left->rows == right.rows);
+        ConstantMatrix result(left->columns, left->rows);
+        for (unsigned i = 0; i < result.elements.size(); ++i)
+            CALL_MOVE(result.elements[i], Minus, elementType, { left->elements[i], right.elements[i] });
+        return { { result } };
+    }
+
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
         return left - right;
     });
@@ -601,7 +613,7 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
     // i.e. we accept (u32, u32) as well as (i32, u32)
     UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
-    const auto& shift = [&]<typename T>(T left, uint32_t right) {
+    const auto& shift = [&]<typename T>(T left, uint32_t right) -> T {
         return left << right;
     };
 
@@ -611,6 +623,8 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
             return shift(*i32, right);
         if (auto* u32 = std::get_if<uint32_t>(&left))
             return shift(*u32, right);
+        if (auto* abstractInt = std::get_if<int64_t>(&left))
+            return shift(*abstractInt, right);
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
@@ -631,6 +645,8 @@ CONSTANT_FUNCTION(BitwiseShiftRight)
             return shift(*i32, right);
         if (auto* u32 = std::get_if<uint32_t>(&left))
             return shift(*u32, right);
+        if (auto* abstractInt = std::get_if<int64_t>(&left))
+            return shift(*abstractInt, right);
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
@@ -996,10 +1012,44 @@ CONSTANT_FUNCTION(Fract)
 
 CONSTANT_FUNCTION(Frexp)
 {
-    // FIXME: this needs the special return types __frexp_result_*
     UNUSED_PARAM(resultType);
-    UNUSED_PARAM(arguments);
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT(arguments.size() == 1);
+
+    const auto& frexpValue = [&](auto value) -> std::tuple<ConstantValue, ConstantValue> {
+        using Exp = std::conditional_t<std::is_same_v<decltype(value), double>, int64_t, int>;
+        int exp;
+        auto fract = std::frexp(value, &exp);
+        return { ConstantValue(fract), ConstantValue(static_cast<Exp>(exp)) };
+    };
+
+    const auto& frexpScalar = [&](auto value) {
+        if (auto* f32 = std::get_if<float>(&value))
+            return frexpValue(*f32);
+        if (auto* abstractFloat = std::get_if<double>(&value))
+            return frexpValue(*abstractFloat);
+        // FIXME: implement f16
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto [fract, exp] = [&]() -> std::tuple<ConstantValue, ConstantValue> {
+        auto& arg = arguments[0];
+
+        if (!std::holds_alternative<ConstantVector>(arg))
+            return frexpScalar(arg);
+
+        auto& argVector = std::get<ConstantVector>(arg);
+        auto size = argVector.elements.size();
+        ConstantVector fractVector(size);
+        ConstantVector expVector(size);
+        for (unsigned i = 0; i < size; ++i) {
+            auto [fract, exp] = frexpScalar(argVector.elements[i]);
+            fractVector.elements[i] = fract;
+            expVector.elements[i] = exp;
+        }
+        return { fractVector, expVector };
+    }();
+
+    return { ConstantStruct({ { { "fract"_s, fract }, { "exp"_s, exp } } }) };
 }
 
 CONSTANT_FUNCTION(InsertBits)
