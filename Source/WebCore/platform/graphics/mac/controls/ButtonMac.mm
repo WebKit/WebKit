@@ -28,14 +28,14 @@
 
 #if PLATFORM(MAC)
 
-#import "ButtonPart.h"
+#import "ButtonAppearance.h"
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 
 namespace WebCore {
 
-ButtonMac::ButtonMac(ButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
+ButtonMac::ButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)
 {
     ASSERT(m_owningPart.type() == StyleAppearance::Button

@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class SearchFieldCancelButtonPart;
+class SearchFieldCancelButtonAppearance;
 
 class SearchFieldCancelButtonMac final : public SearchControlMac {
 public:
-    SearchFieldCancelButtonMac(SearchFieldCancelButtonPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
+    SearchFieldCancelButtonMac(ControlPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

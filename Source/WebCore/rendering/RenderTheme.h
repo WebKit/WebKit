@@ -387,8 +387,8 @@ protected:
     virtual void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const;
-    virtual bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }
+    virtual void adjustSearchFieldResultsDecorationAppearanceStyle(RenderStyle&, const Element*) const;
+    virtual bool paintSearchFieldResultsDecorationAppearance(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }

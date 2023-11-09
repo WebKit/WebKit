@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class ColorWellPart;
+class ColorWellAppearance;
 
 class ColorWellMac final : public ButtonControlMac {
 public:
-    ColorWellMac(ColorWellPart& owningPart, ControlFactoryMac&, NSButtonCell *);
+    ColorWellMac(ControlPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 
 private:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;

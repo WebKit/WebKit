@@ -28,17 +28,15 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
-#import "MeterPart.h"
+#import "MeterAppearance.h"
 
 namespace WebCore {
 
 class MeterMac final : public ControlMac {
 public:
-    MeterMac(MeterPart& owningMeterPart, ControlFactoryMac&, NSLevelIndicatorCell*);
+    MeterMac(ControlPart& owningMeterAppearance, ControlFactoryMac&, NSLevelIndicatorCell*);
 
 private:
-    const MeterPart& owningMeterPart() const { return downcast<MeterPart>(m_owningPart); }
-
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&) const override;

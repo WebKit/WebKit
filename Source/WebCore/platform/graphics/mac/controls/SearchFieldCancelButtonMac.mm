@@ -32,14 +32,15 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "SearchFieldCancelButtonPart.h"
+#import "SearchFieldCancelButtonAppearance.h"
 
 namespace WebCore {
 
-SearchFieldCancelButtonMac::SearchFieldCancelButtonMac(SearchFieldCancelButtonPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell)
+SearchFieldCancelButtonMac::SearchFieldCancelButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell)
     : SearchControlMac(owningPart, controlFactory, searchFieldCell)
 {
     ASSERT(searchFieldCell);
+    ASSERT(owningPart.type() == StyleAppearance::SearchFieldCancelButton);
 }
 
 IntSize SearchFieldCancelButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) const

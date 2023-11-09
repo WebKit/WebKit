@@ -32,12 +32,12 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "ToggleButtonPart.h"
+#import "ToggleButtonAppearance.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 
 namespace WebCore {
 
-ToggleButtonMac::ToggleButtonMac(ToggleButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
+ToggleButtonMac::ToggleButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)
 {
     ASSERT(m_owningPart.type() == StyleAppearance::Checkbox || m_owningPart.type() == StyleAppearance::Radio);

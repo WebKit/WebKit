@@ -32,11 +32,11 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "SliderThumbPart.h"
+#import "SliderThumbAppearance.h"
 
 namespace WebCore {
 
-SliderThumbMac::SliderThumbMac(SliderThumbPart& owningPart, ControlFactoryMac& controlFactory, NSSliderCell *sliderCell)
+SliderThumbMac::SliderThumbMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSSliderCell *sliderCell)
     : ControlMac(owningPart, controlFactory)
     , m_sliderCell(sliderCell)
 {

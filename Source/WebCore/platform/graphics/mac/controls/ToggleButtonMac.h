@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class ToggleButtonPart;
+class ToggleButtonAppearance;
 
 class ToggleButtonMac final : public ButtonControlMac {
 public:
-    ToggleButtonMac(ToggleButtonPart& owningPart, ControlFactoryMac&, NSButtonCell *);
+    ToggleButtonMac(ControlPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

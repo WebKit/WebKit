@@ -28,14 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "SwitchMacUtilities.h"
-#import "SwitchThumbPart.h"
+#import "SwitchThumbAppearance.h"
 
 namespace WebCore {
 
-SwitchThumbMac::SwitchThumbMac(SwitchThumbPart& part, ControlFactoryMac& controlFactory)
+SwitchThumbMac::SwitchThumbMac(ControlPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
 {
-    ASSERT(part.type() == StyleAppearance::SwitchThumb);
+    ASSERT(m_owningPart.type() == StyleAppearance::SwitchThumb);
 }
 
 IntSize SwitchThumbMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
