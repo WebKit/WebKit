@@ -326,7 +326,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasSelfPaintingLayerDescendantDirty(false)
     , m_usedTransparency(false)
     , m_paintingInsideReflection(false)
-    , m_repaintStatus(NeedsNormalRepaint)
     , m_visibleContentStatusDirty(true)
     , m_hasVisibleContent(false)
     , m_visibleDescendantStatusDirty(false)
@@ -563,7 +562,7 @@ void RenderLayer::removeOnlyThisLayer(LayerChangeTiming timing)
         RenderLayer* next = current->nextSibling();
         removeChild(*current);
         m_parent->addChild(*current, nextSib);
-        current->setRepaintStatus(NeedsFullRepaint);
+        current->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
         current = next;
     }
 
@@ -1045,7 +1044,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if ((flags & CheckForRepaint) && newRects) {
             if (!renderer().view().printing()) {
-                if (m_repaintStatus & NeedsFullRepaint) {
+                if (m_repaintStatus == RepaintStatus::NeedsFullRepaint) {
                     if (oldRects)
                         renderer().repaintUsingContainer(repaintContainer.get(), oldRects->clippedOverflowRect);
 
@@ -1064,7 +1063,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
     } else
         clearRepaintRects();
 
-    m_repaintStatus = NeedsNormalRepaint;
+    m_repaintStatus = RepaintStatus::NeedsNormalRepaint;
     m_hasFixedContainingBlockAncestor = flags.contains(SeenFixedContainingBlockLayer);
     m_hasTransformedAncestor = flags.contains(SeenTransformedLayer);
     m_has3DTransformedAncestor = flags.contains(Seen3DTransformedLayer);
@@ -2048,12 +2047,12 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
         return false;
 #endif
 
-    if (m_repaintStatus == NeedsNormalRepaint)
+    if (m_repaintStatus == RepaintStatus::NeedsNormalRepaint)
         return true;
 
     // Composited layers that were moved during a positioned movement only
     // layout, don't need to be repainted. They just need to be recomposited.
-    ASSERT(m_repaintStatus == NeedsFullRepaintForPositionedMovementLayout);
+    ASSERT(m_repaintStatus == RepaintStatus::NeedsFullRepaintForPositionedMovementLayout);
     return !isComposited() || backing()->paintsIntoCompositedAncestor();
 }
 

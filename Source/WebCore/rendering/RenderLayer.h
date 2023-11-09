@@ -94,7 +94,7 @@ enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 enum CrossFrameBoundaries : bool { No, Yes };
 enum class LayoutUpToDate : bool { No, Yes };
 
-enum RepaintStatus {
+enum class RepaintStatus : uint8_t {
     NeedsNormalRepaint,
     NeedsFullRepaint,
     NeedsFullRepaintForPositionedMovementLayout
@@ -730,8 +730,8 @@ public:
     LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
     void setRepaintStatus(RepaintStatus status) { m_repaintStatus = status; }
-    RepaintStatus repaintStatus() const { return static_cast<RepaintStatus>(m_repaintStatus); }
-    bool needsFullRepaint() const { return m_repaintStatus == NeedsFullRepaint || m_repaintStatus == NeedsFullRepaintForPositionedMovementLayout; }
+    RepaintStatus repaintStatus() const { return m_repaintStatus; }
+    bool needsFullRepaint() const { return m_repaintStatus == RepaintStatus::NeedsFullRepaint || m_repaintStatus == RepaintStatus::NeedsFullRepaintForPositionedMovementLayout; }
 
     LayoutUnit staticInlinePosition() const { return m_offsetForPosition.width(); }
     LayoutUnit staticBlockPosition() const { return m_offsetForPosition.height(); }
@@ -1247,7 +1247,7 @@ private:
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
     bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
-    unsigned m_repaintStatus : 2; // RepaintStatus
+    RepaintStatus m_repaintStatus : 2 { RepaintStatus::NeedsNormalRepaint };
 
     bool m_visibleContentStatusDirty : 1;
     bool m_hasVisibleContent : 1;
