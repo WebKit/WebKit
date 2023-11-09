@@ -136,6 +136,71 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
     }
 }
 
+bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<RefPtr<SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL& url)
+{
+    switch (parseXFrameOptionsHeader(xFrameOptions)) {
+    case XFrameOptionsDisposition::None:
+    case XFrameOptionsDisposition::AllowAll:
+        return false;
+    case XFrameOptionsDisposition::Deny:
+        return true;
+    case XFrameOptionsDisposition::SameOrigin: {
+        auto origin = SecurityOrigin::create(url);
+        for (auto& ancestorOrigin : frameAncestorOrigins) {
+            if (!origin->isSameSchemeHostPort(*ancestorOrigin))
+                return true;
+        }
+        return false;
+    }
+    case XFrameOptionsDisposition::Conflict: {
+        String errorMessage = "Multiple 'X-Frame-Options' headers with conflicting values ('" + xFrameOptions + "') encountered. Falling back to 'DENY'.";
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().data());
+        return true;
+    }
+    case XFrameOptionsDisposition::Invalid: {
+        String errorMessage = "Invalid 'X-Frame-Options' header encountered: '" + xFrameOptions + "' is not a recognized directive. The header will be ignored.";
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().data());
+        return false;
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse& response)
+{
+    Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
+
+    ASSERT(navigationAction());
+    if (auto* targetFrame = navigationAction()->targetFrame()) {
+        if (auto parentFrameHandle = targetFrame->parentFrameHandle()) {
+            for (auto* parent = WebFrameProxy::webFrame(parentFrameHandle->frameID()); parent; parent = parent->parentFrame()) {
+                auto origin = SecurityOrigin::create(parent->url());
+                RefPtr<SecurityOrigin> frameOrigin = origin.ptr();
+                frameAncestorOrigins.append(frameOrigin);
+            }
+        }
+    }
+
+    auto url = response.url();
+    ContentSecurityPolicy contentSecurityPolicy { URL { url }, nullptr, nullptr };
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, navigationAction()->request().httpReferrer());
+    if (!contentSecurityPolicy.allowFrameAncestors(frameAncestorOrigins, url))
+        return true;
+
+    if (!contentSecurityPolicy.overridesXFrameOptions()) {
+        String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
+        if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTFMove(frameAncestorOrigins), xFrameOptions, response.url())) {
+            String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '", xFrameOptions, "'.");
+            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8().data());
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 } // namespace WebKit
 
 #undef AUTHORIZATIONSESSION_RELEASE_LOG
