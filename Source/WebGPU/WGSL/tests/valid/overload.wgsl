@@ -103,6 +103,7 @@ fn testBinaryMinus() {
   _ = vec2(1, 1) - 1;
   _ = 1 - vec2(1, 1);
   _ = vec2(1, 1) - vec2(1, 1);
+  _ = mat2x2(2, 2, 2, 2) - mat2x2(1, 1, 1, 1);
 }
 
 fn testComparison() {

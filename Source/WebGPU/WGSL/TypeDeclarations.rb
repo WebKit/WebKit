@@ -46,6 +46,7 @@ operator :-, {
     [T < Number, N].(vec[N][T], T) => vec[N][T],
     [T < Number, N].(T, vec[N][T]) => vec[N][T],
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
+    [T < Float, C, R].(mat[C,R][T], mat[C,R][T]) => mat[C,R][T],
 }
 
 operator :*, {

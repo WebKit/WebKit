@@ -442,6 +442,18 @@ CONSTANT_FUNCTION(Minus)
             return -arg;
         });
     }
+
+    if (auto* left = std::get_if<ConstantMatrix>(&arguments[0])) {
+        auto& right = std::get<ConstantMatrix>(arguments[1]);
+        auto* elementType = std::get<Types::Matrix>(*resultType).element;
+        ASSERT(left->columns == right.columns);
+        ASSERT(left->rows == right.rows);
+        ConstantMatrix result(left->columns, left->rows);
+        for (unsigned i = 0; i < result.elements.size(); ++i)
+            CALL_MOVE(result.elements[i], Minus, elementType, { left->elements[i], right.elements[i] });
+        return { { result } };
+    }
+
     return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
         return left - right;
     });
