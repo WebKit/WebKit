@@ -784,6 +784,23 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
+    const auto& constantAccess = [&]<typename T>() {
+        auto constantBase = access.base().constantValue();
+        auto constantIndex = access.index().constantValue();
+        bool isConstant = constantBase && constantIndex;
+
+        if (!isConstant)
+            return;
+
+        auto constant = std::get<T>(*constantBase);
+        auto index = constantIndex->integerValue();
+        auto size = constant.upperBound();
+        if (index < 0 || static_cast<size_t>(index) >= size)
+            typeError(InferBottom::No, access.span(), "index ", String::number(index), " is out of bounds [0..", String::number(size - 1), "]");
+        else
+            access.setConstantValue(constant[index]);
+    };
+
     const auto& accessImpl = [&](const Type* base) -> const Type* {
         if (isBottom(base))
             return m_types.bottomType();
@@ -791,14 +808,14 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
         const Type* result = nullptr;
         if (auto* array = std::get_if<Types::Array>(base)) {
-            // FIXME: check bounds if index is constant
             result = array->element;
+            constantAccess.operator()<ConstantArray>();
         } else if (auto* vector = std::get_if<Types::Vector>(base)) {
-            // FIXME: check bounds if index is constant
             result = vector->element;
+            constantAccess.operator()<ConstantVector>();
         } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
-            // FIXME: check bounds if index is constant
             result = m_types.vectorType(matrix->rows, matrix->element);
+            constantAccess.operator()<ConstantMatrix>();
         }
 
         if (!result) {

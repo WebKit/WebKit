@@ -31,6 +31,24 @@
 
 namespace WGSL {
 
+ConstantValue ConstantArray::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantValue ConstantVector::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantVector ConstantMatrix::operator[](unsigned index)
+{
+    ConstantVector result(rows);
+    for (unsigned i = 0; i < rows; ++i)
+        result.elements[i] = elements[index * rows + i];
+    return result;
+}
+
 void ConstantValue::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,

@@ -52,6 +52,9 @@ struct ConstantArray {
     {
     }
 
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
+
     FixedVector<ConstantValue> elements;
 };
 
@@ -65,6 +68,9 @@ struct ConstantVector {
         : elements(WTFMove(elements))
     {
     }
+
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
 
     FixedVector<ConstantValue> elements;
 };
@@ -84,6 +90,9 @@ struct ConstantMatrix {
     {
         RELEASE_ASSERT(elements.size() == columns * rows);
     }
+
+    size_t upperBound() { return columns; }
+    ConstantVector operator[](unsigned);
 
     uint32_t columns;
     uint32_t rows;
