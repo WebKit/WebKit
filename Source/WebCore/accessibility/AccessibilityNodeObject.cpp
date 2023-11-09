@@ -454,7 +454,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Group;
     if (node()->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;
-    if (node()->hasTagName(captionTag))
+    if (node()->hasTagName(captionTag) || node()->hasTagName(figcaptionTag))
         return AccessibilityRole::Caption;
     if (node()->hasTagName(dialogTag))
         return AccessibilityRole::ApplicationDialog;

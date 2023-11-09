@@ -11,6 +11,7 @@ PASS: Help text for <button> is bar
 PASS: Help text for <button> is baz
 PASS: Help text for <button> is
 PASS: Help text for <table> is table summary
+PASS: Help text for <caption> is
 PASS: Help text for <input> is
 PASS: Help text for <div> is
 PASS: Help text for <main> is bar
