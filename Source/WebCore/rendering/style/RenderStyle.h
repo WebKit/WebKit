@@ -1098,6 +1098,8 @@ public:
 
     inline void setLogicalMinWidth(Length&&);
     inline void setLogicalMaxWidth(Length&&);
+    inline void setLogicalMinHeight(Length&&);
+    inline void setLogicalMaxHeight(Length&&);
 
     inline void resetBorder();
     inline void resetBorderExceptRadius();

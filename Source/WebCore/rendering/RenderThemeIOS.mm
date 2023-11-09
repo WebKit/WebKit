@@ -70,6 +70,7 @@
 #import "PathUtilities.h"
 #import "PlatformLocale.h"
 #import "RenderAttachment.h"
+#import "RenderBoxInlines.h"
 #import "RenderButton.h"
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
@@ -741,14 +742,20 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
     if (!canAdjustBorderRadiusForAppearance(style.effectiveAppearance(), box) || style.backgroundLayers().hasImage())
         return;
 
-    if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && box.height() >= largeButtonSize) {
-        auto largeButtonBorderRadius = std::min(box.width(), box.height()) * largeButtonBorderRadiusRatio;
+    auto boxLogicalHeight = box.logicalHeight();
+    auto minDimension = std::min(box.width(), box.height());
+
+    if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
+        auto largeButtonBorderRadius = minDimension * largeButtonBorderRadiusRatio;
         style.setBorderRadius({ { largeButtonBorderRadius, LengthType::Fixed }, { largeButtonBorderRadius, LengthType::Fixed } });
         return;
     }
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, LengthType::Fixed }, { box.height() / 2, LengthType::Fixed } });
+    auto borderRadius = LengthSize { { minDimension / 2, LengthType::Fixed }, { boxLogicalHeight / 2, LengthType::Fixed } };
+    if (!style.isHorizontalWritingMode())
+        borderRadius = { borderRadius.height, borderRadius.width };
+    style.setBorderRadius(WTFMove(borderRadius));
 }
 
 static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
@@ -757,7 +764,12 @@ static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& e
     auto emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
     // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
     int pixels = emSize->computeLength<int>({ style, document.renderStyle(), nullptr, document.renderView() });
-    style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
+
+    auto paddingBox = LengthBox(0, pixels, 0, pixels);
+    if (!style.isHorizontalWritingMode())
+        paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
+
+    style.setPaddingBox(WTFMove(paddingBox));
 }
 
 static void adjustSelectListButtonStyle(RenderStyle& style, const Element& element)
@@ -823,10 +835,10 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     adjustStyleForAlternateFormControlDesignTransition(style, element);
 
     // Set the min-height to be at least MenuListMinHeight.
-    if (style.height().isAuto())
-        style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
+    if (style.logicalHeight().isAuto())
+        style.setLogicalMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
     else
-        style.setMinHeight(Length(MenuListMinHeight, LengthType::Fixed));
+        style.setLogicalMinHeight(Length(MenuListMinHeight, LengthType::Fixed));
 
     if (!element)
         return;
@@ -1276,8 +1288,8 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
-    if (style.width().isIntrinsicOrAuto() || style.height().isAuto())
-        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
+    if (style.logicalWidth().isIntrinsicOrAuto() || style.logicalHeight().isAuto())
+        style.setLogicalMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (style.effectiveAppearance() == StyleAppearance::ColorWell)
@@ -1290,7 +1302,12 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // the parent element style, and the render view.
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
     int pixels = emSize->computeLength<int>({ style, nullptr, nullptr, nullptr });
-    style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
+
+    auto paddingBox = LengthBox(0, pixels, 0, pixels);
+    if (!style.isHorizontalWritingMode())
+        paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
+
+    style.setPaddingBox(WTFMove(paddingBox));
 
     if (!element)
         return;
@@ -2515,11 +2532,21 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
-    AffineTransform transform;
+    bool isHorizontalWritingMode = style.isHorizontalWritingMode();
+    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
+
+    FloatPoint glyphOrigin;
+    glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
     if (style.isLeftToRightDirection())
-        transform.translate(rect.maxX() - glyphSize.width() - box.style().borderEndWidth() - valueForLength(box.style().paddingEnd(), rect.width()), rect.center().y() - glyphSize.height() / 2.0f);
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - box.style().borderEndWidth() - valueForLength(box.style().paddingEnd(), logicalRect.width()));
     else
-        transform.translate(rect.x() + box.style().borderEndWidth() + valueForLength(box.style().paddingEnd(), rect.width()), rect.center().y() - glyphSize.height() / 2.0f);
+        glyphOrigin.setX(logicalRect.x() + box.style().borderEndWidth() + valueForLength(box.style().paddingEnd(), logicalRect.width()));
+
+    if (!isHorizontalWritingMode)
+        glyphOrigin = glyphOrigin.transposedPoint();
+
+    AffineTransform transform;
+    transform.translate(glyphOrigin);
     transform.scale(glyphScale);
     glyphPath.transform(transform);
 
