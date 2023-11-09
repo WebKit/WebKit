@@ -677,8 +677,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
-            auto borderBoxLeft = LayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
-            boxGeometry.setLeft(borderBoxLeft);
+            auto borderBoxLeft = InlineLayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
+            setLeftForWritingMode(boxGeometry, LayoutUnit { borderBoxLeft }, writingMode);
             setLeftForWritingMode(displayBox, borderBoxLeft, writingMode);
 
             contentRightInInlineDirectionVisualOrder += boxGeometry.marginBoxWidth();
@@ -1178,16 +1178,17 @@ InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingM
     return rootInlineBoxLogicalRect;
 }
 
-void InlineDisplayContentBuilder::setLeftForWritingMode(InlineDisplay::Box& displayBox, InlineLayoutUnit logicalLeft, WritingMode writingMode) const
+template <typename BoxType, typename LayoutUnitType>
+void InlineDisplayContentBuilder::setLeftForWritingMode(BoxType& box, LayoutUnitType logicalLeft, WritingMode writingMode) const
 {
     switch (writingModeToBlockFlowDirection(writingMode)) {
     case BlockFlowDirection::TopToBottom:
     case BlockFlowDirection::BottomToTop:
-        displayBox.setLeft(logicalLeft);
+        box.setLeft(logicalLeft);
         break;
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft:
-        displayBox.setTop(logicalLeft);
+        box.setTop(logicalLeft);
         break;
     default:
         ASSERT_NOT_REACHED();
