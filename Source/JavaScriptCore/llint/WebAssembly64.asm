@@ -154,20 +154,28 @@ end)
 # i32 binary ops
 
 wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
-    mloadi(ctx, m_lhs, t0)
-    mloadi(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+    else
+        const divisor = t1
+    end
 
-    btiz t1, .throwDivisionByZero
+    mloadi(ctx, m_lhs, dividend)
+    mloadi(ctx, m_rhs, divisor)
 
-    bineq t1, -1, .safe
-    bieq t0, constexpr INT32_MIN, .throwIntegerOverflow
+    btiz divisor, .throwDivisionByZero
+
+    bineq divisor, -1, .safe
+    bieq dividend, constexpr INT32_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64
-        # FIXME: Add a way to static_asset that t0 is rax and t2 is rdx
+    if X86_64 or X86_64_WIN
+        # FIXME: Add a way to static_assert that dividend is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
-        idivi t1
+        # divide edx:eax by divisor (esi or r8), result in t0 (eax) remainder in edx
+        idivi divisor
     elsif ARM64 or ARM64E or RISCV64
         divis t1, t0
     else
@@ -183,14 +191,23 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
 end)
 
 wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
-    mloadi(ctx, m_lhs, t0)
-    mloadi(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btiz t1, .throwDivisionByZero
+    mloadi(ctx, m_lhs, dividend)
+    mloadi(ctx, m_rhs, divisor)
 
-    if X86_64
-        xori t2, t2
-        udivi t1
+    btiz divisor, .throwDivisionByZero
+
+    if X86_64 or X86_64_WIN
+        xori r_rdx, r_rdx
+        udivi divisor
     elsif ARM64 or ARM64E or RISCV64
         divi t1, t0
     else
@@ -203,23 +220,32 @@ wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
 end)
 
 wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
-    mloadi(ctx, m_lhs, t0)
-    mloadi(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btiz t1, .throwDivisionByZero
+    mloadi(ctx, m_lhs, dividend)
+    mloadi(ctx, m_rhs, divisor)
 
-    bineq t1, -1, .safe
-    bineq t0, constexpr INT32_MIN, .safe
+    btiz divisor, .throwDivisionByZero
 
-    move 0, t2
+    bineq divisor, -1, .safe
+    bineq dividend, constexpr INT32_MIN, .safe
+
+    move 0, r_rdx
     jmp .return
 
 .safe:
-    if X86_64
-        # FIXME: Add a way to static_asset that t0 is rax and t2 is rdx
+    if X86_64 or X86_64_WIN
+        # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
-        idivi t1
+        idivi divisor
     elsif ARM64 or ARM64E
         divis t1, t0, t2
         muli t1, t2
@@ -231,21 +257,30 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     end
 
 .return:
-    returni(ctx, t2)
+    returni(ctx, r_rdx)
 
 .throwDivisionByZero:
     throwException(DivisionByZero)
 end)
 
 wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
-    mloadi(ctx, m_lhs, t0)
-    mloadi(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btiz t1, .throwDivisionByZero
+    mloadi(ctx, m_lhs, dividend)
+    mloadi(ctx, m_rhs, divisor)
 
-    if X86_64
-        xori t2, t2
-        udivi t1
+    btiz divisor, .throwDivisionByZero
+
+    if X86_64 or X86_64_WIN
+        xori r_rdx, r_rdx
+        udivi divisor
     elsif ARM64 or ARM64E
         divi t1, t0, t2
         muli t1, t2
@@ -255,7 +290,8 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
     else
         error
     end
-    returni(ctx, t2)
+
+    returni(ctx, r_rdx)
 
 .throwDivisionByZero:
     throwException(DivisionByZero)
@@ -285,20 +321,27 @@ wasmOp(i64_mul, WasmI64Mul, macro(ctx)
 end)
 
 wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
-    mloadq(ctx, m_lhs, t0)
-    mloadq(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+    else
+        const divisor = t1
+    end
 
-    btqz t1, .throwDivisionByZero
+    mloadq(ctx, m_lhs, dividend)
+    mloadq(ctx, m_rhs, divisor)
 
-    bqneq t1, -1, .safe
-    bqeq t0, constexpr INT64_MIN, .throwIntegerOverflow
+    btqz divisor, .throwDivisionByZero
+
+    bqneq divisor, -1, .safe
+    bqeq dividend, constexpr INT64_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64
-        # FIXME: Add a way to static_asset that t0 is rax and t2 is rdx
-        # https://bugs.webkit.org/show_bug.cgi?id=203692
+    if X86_64 or X86_64_WIN
+        # FIXME: Add a way to static_assert that t0 is rax and divisor is not rdx
+        # https://bugs.webkit.org/show_bug.cgi?id=203692 
         cqoq
-        idivq t1
+        idivq divisor
     elsif ARM64 or ARM64E or RISCV64
         divqs t1, t0
     else
@@ -314,14 +357,23 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
 end)
 
 wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
-    mloadq(ctx, m_lhs, t0)
-    mloadq(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btqz t1, .throwDivisionByZero
+    mloadq(ctx, m_lhs, dividend)
+    mloadq(ctx, m_rhs, divisor)
 
-    if X86_64
-        xorq t2, t2
-        udivq t1
+    btqz divisor, .throwDivisionByZero
+
+    if X86_64 or X86_64_WIN
+        xorq r_rdx, r_rdx
+        udivq divisor
     elsif ARM64 or ARM64E or RISCV64
         divq t1, t0
     else
@@ -334,23 +386,32 @@ wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
 end)
 
 wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
-    mloadq(ctx, m_lhs, t0)
-    mloadq(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btqz t1, .throwDivisionByZero
+    mloadq(ctx, m_lhs, dividend)
+    mloadq(ctx, m_rhs, divisor)
 
-    bqneq t1, -1, .safe
-    bqneq t0, constexpr INT64_MIN, .safe
+    btqz divisor, .throwDivisionByZero
 
-    move 0, t2
+    bqneq divisor, -1, .safe
+    bqneq dividend, constexpr INT64_MIN, .safe
+
+    move 0, r_rdx
     jmp .return
 
 .safe:
-    if X86_64
-        # FIXME: Add a way to static_asset that t0 is rax and t2 is rdx
+    if X86_64 or X86_64_WIN
+        # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cqoq
-        idivq t1
+        idivq divisor
     elsif ARM64 or ARM64E
         divqs t1, t0, t2
         mulq t1, t2
@@ -362,21 +423,30 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     end
 
 .return:
-    returnq(ctx, t2) # rdx has the remainder
+    returnq(ctx, r_rdx)
 
 .throwDivisionByZero:
     throwException(DivisionByZero)
 end)
 
 wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
-    mloadq(ctx, m_lhs, t0)
-    mloadq(ctx, m_rhs, t1)
+    const dividend = t0
+    if X86_64_WIN
+        const divisor = t2
+        const r_rdx = t1
+    else
+        const divisor = t1
+        const r_rdx = t2
+    end
 
-    btqz t1, .throwDivisionByZero
+    mloadq(ctx, m_lhs, dividend)
+    mloadq(ctx, m_rhs, divisor)
 
-    if X86_64
-        xorq t2, t2
-        udivq t1
+    btqz divisor, .throwDivisionByZero
+
+    if X86_64 or X86_64_WIN
+        xorq r_rdx, r_rdx
+        udivq divisor
     elsif ARM64 or ARM64E
         divq t1, t0, t2
         mulq t1, t2
@@ -386,7 +456,8 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
     else
         error
     end
-    returnq(ctx, t2)
+
+    returnq(ctx, r_rdx)
 
 .throwDivisionByZero:
     throwException(DivisionByZero)
@@ -918,7 +989,7 @@ end
 macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, fnq)
     wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64
+            if X86_64 or X86_64_WIN
                 move t0GPR, t5GPR
                 loadb mem, t0GPR
             .loop:
@@ -935,7 +1006,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64
+            if X86_64 or X86_64_WIN
                 move t0GPR, t5GPR
                 loadh mem, t0GPR
             .loop:
@@ -952,7 +1023,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64
+            if X86_64 or X86_64_WIN
                 move t0GPR, t5GPR
                 loadi mem, t0GPR
             .loop:
@@ -969,7 +1040,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64
+            if X86_64 or X86_64_WIN
                 move t0GPR, t5GPR
                 loadq mem, t0GPR
             .loop:
@@ -987,7 +1058,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
         end)
 end
 
-if X86_64
+if X86_64 or X86_64_WIN
     wasmAtomicBinaryRMWOps(_add, Add,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddb t0GPR, mem end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddh t0GPR, mem end,
@@ -1168,11 +1239,11 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
     end)
 end
 
-if X86_64 or ARM64E or ARM64 or RISCV64
+if X86_64 or X86_64_WIN or ARM64E or ARM64 or RISCV64
 # t0GPR => expected, t2GPR => value, mem => memory reference
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or ARM64E
+        if X86_64 or X86_64_WIN or ARM64E
             bqa t0GPR , 0xff, .fail
             atomicweakcasb t0GPR, t2GPR, mem
             jmp .done
@@ -1195,7 +1266,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or ARM64E
+        if X86_64 or X86_64_WIN or ARM64E
             bqa t0GPR, 0xffff, .fail
             atomicweakcash t0GPR, t2GPR, mem
             jmp .done
@@ -1218,7 +1289,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or ARM64E
+        if X86_64 or X86_64_WIN or ARM64E
             bqa t0GPR, 0xffffffff, .fail
             atomicweakcasi t0GPR, t2GPR, mem
             jmp .done
@@ -1241,7 +1312,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or ARM64E
+        if X86_64 or X86_64_WIN or ARM64E
             atomicweakcasq t0GPR, t2GPR, mem
         else
         .loop:

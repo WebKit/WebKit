@@ -126,6 +126,9 @@ static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigEx
 #else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 extern "C" JS_EXPORT_PRIVATE Config g_jscConfig;
+#if OS(WINDOWS) && ENABLE(WEBASSEMBLY)
+extern "C" JS_EXPORT_PRIVATE WTF::Config g_wtfConfigForLLInt;
+#endif
 
 #endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 

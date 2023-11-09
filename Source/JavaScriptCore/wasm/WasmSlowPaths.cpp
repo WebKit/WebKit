@@ -1156,9 +1156,8 @@ WASM_SLOW_PATH_DECL(i64_trunc_sat_f64_s)
 }
 #endif
 
-extern "C" UGPRPair slow_path_wasm_throw_exception(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
+extern "C" UGPRPair slow_path_wasm_throw_exception(CallFrame* callFrame, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
-    UNUSED_PARAM(pc);
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
     WASM_RETURN_TWO(Wasm::throwWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }

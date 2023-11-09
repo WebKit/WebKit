@@ -484,10 +484,17 @@ public:
     static constexpr GPRReg wasmScratchGPR0 = X86Registers::eax;
 #if !OS(WINDOWS)
     static constexpr GPRReg wasmScratchGPR1 = X86Registers::r10;
+#else
+    static constexpr GPRReg wasmScratchCSR0 = regCS2;
 #endif
     static constexpr GPRReg wasmContextInstancePointer = regCS0;
+#if !OS(WINDOWS)
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
+#else
+    static constexpr GPRReg wasmBaseMemoryPointer = regCS5;
+    static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS6;
+#endif
 
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better

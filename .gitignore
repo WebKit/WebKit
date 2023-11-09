@@ -11,6 +11,7 @@ project.xcworkspace
 xcuserdata
 DerivedData
 .mailmap
+results
 
 # Ignore Buildstream local files
 /Tools/buildstream/.bst
