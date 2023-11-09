@@ -271,6 +271,11 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
         }
     }
 
+    writeBuffer(buffer.buffer(), bufferOffset, data, size);
+}
+
+void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, const void* data, size_t size)
+{
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
@@ -283,7 +288,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
     [m_blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0
-        toBuffer:buffer.buffer()
+        toBuffer:buffer
         destinationOffset:static_cast<NSUInteger>(bufferOffset)
         size:static_cast<NSUInteger>(size)];
 }

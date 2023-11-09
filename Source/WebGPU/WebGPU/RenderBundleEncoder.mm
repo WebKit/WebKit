@@ -39,7 +39,7 @@
     Vector<WebGPU::BindableResources> _resources;
 }
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer
 {
     if (!(self = [super init]))
         return nil;
@@ -53,6 +53,7 @@
     _depthBias = depthBias;
     _depthBiasSlopeScale = depthBiasSlopeScale;
     _depthBiasClamp = depthBiasClamp;
+    _fragmentDynamicOffsetsBuffer = fragmentDynamicOffsetsBuffer;
 
     return self;
 }
@@ -66,7 +67,9 @@
 
 namespace WebGPU {
 
-static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp)
+constexpr auto startIndexForFragmentDynamicOffsets = 2;
+
+static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer)
 {
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     constexpr auto maxStageValue = MTLRenderStageVertex | MTLRenderStageFragment;
@@ -78,7 +81,7 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
         stageResources[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(r);
     }
 
-    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp];
+    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer];
 
     for (size_t stage = 0; stage < maxStageValue; ++stage) {
         for (size_t i = 0; i < maxResourceUsageValue; ++i) {
@@ -104,6 +107,7 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
     MTLIndirectCommandBufferDescriptor *icbDescriptor = [MTLIndirectCommandBufferDescriptor new];
     icbDescriptor.inheritBuffers = NO;
     icbDescriptor.inheritPipelineState = NO;
+    icbDescriptor.maxFragmentBufferBindCount = 1;
 
     return RenderBundleEncoder::create(icbDescriptor, *this);
 }
@@ -213,7 +217,7 @@ void RenderBundleEncoder::executePreDrawCommands()
             if (m_dynamicOffsetsFragmentBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
                 auto bufferOffset = fragmentDynamicOffset;
-                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset;
+                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset + startIndexForFragmentDynamicOffsets * sizeof(float);
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
@@ -229,8 +233,10 @@ void RenderBundleEncoder::executePreDrawCommands()
     if (m_dynamicOffsetsVertexBuffer)
         [icbCommand setVertexBuffer:m_dynamicOffsetsVertexBuffer offset:vertexDynamicOffset atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
 
-    if (m_dynamicOffsetsFragmentBuffer)
-        [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size()];
+    if (m_dynamicOffsetsFragmentBuffer) {
+        RELEASE_ASSERT(m_fragmentBuffers.size());
+        [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size() - 1];
+    }
 
     if (m_bindGroupDynamicOffsets)
         m_bindGroupDynamicOffsets->clear();
@@ -357,16 +363,19 @@ void RenderBundleEncoder::endCurrentICB()
 
     m_icbDescriptor.maxVertexBufferBindCount = m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
     m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
-    if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount + 1)
-        m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount + 1);
+    if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount)
+        m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount);
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
         m_dynamicOffsetsVertexBuffer = [m_device->device() newBufferWithLength:m_vertexDynamicOffset options:MTLResourceStorageModeShared];
         addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex);
     }
     m_vertexDynamicOffset = 0;
 
-    if (m_fragmentDynamicOffset && !m_dynamicOffsetsFragmentBuffer) {
-        m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset options:MTLResourceStorageModeShared];
+    if (!m_dynamicOffsetsFragmentBuffer) {
+        m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset + startIndexForFragmentDynamicOffsets * sizeof(float) options:MTLResourceStorageModeShared];
+        RELEASE_ASSERT(m_dynamicOffsetsFragmentBuffer.contents);
+        static_cast<float*>(m_dynamicOffsetsFragmentBuffer.contents)[0] = 0.f;
+        static_cast<float*>(m_dynamicOffsetsFragmentBuffer.contents)[1] = 1.f;
         addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment);
     }
     m_fragmentDynamicOffset = 0;
@@ -392,7 +401,7 @@ void RenderBundleEncoder::endCurrentICB()
     } else
         m_recordedCommands.remove(0, lastIndexOfRecordedCommand);
 
-    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp)];
+    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer)];
     m_indirectCommandBuffer = nil;
     m_currentCommand = nil;
     m_currentPipelineState = nil;
@@ -487,7 +496,7 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
     id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand();
     if (!icbCommand) {
         if (group.fragmentArgumentBuffer())
-            m_icbDescriptor.maxFragmentBufferBindCount = std::max<NSUInteger>(m_icbDescriptor.maxFragmentBufferBindCount, 1 + groupIndex);
+            m_icbDescriptor.maxFragmentBufferBindCount = std::max<NSUInteger>(m_icbDescriptor.maxFragmentBufferBindCount, 2 + groupIndex);
 
         if (group.vertexArgumentBuffer())
             m_requiresMetalWorkaround = false;

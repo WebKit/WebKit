@@ -68,6 +68,18 @@ void RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) co
         m_renderBundleEncoder->replayCommands(commandEncoder);
 }
 
+void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
+{
+    if (m_minDepth == minDepth && m_maxDepth == maxDepth)
+        return;
+
+    m_minDepth = minDepth;
+    m_maxDepth = maxDepth;
+    float twoFloats[2] = { m_minDepth, m_maxDepth };
+    for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
+        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, twoFloats, sizeof(float) * 2);
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
