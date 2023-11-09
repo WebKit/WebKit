@@ -1969,9 +1969,31 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             // Not supported yet
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const PrimitiveStruct&) {
-            // Not supported yet
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const PrimitiveStruct& primitiveStruct) {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
+
+            m_stringBuilder.append(primitiveStruct.name, "<");
+            bool first = true;
+            for (auto& value : primitiveStruct.values) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                visit(value);
+            }
+            m_stringBuilder.append("> {");
+            first = true;
+            for (auto& entry : constantStruct.fields) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                m_stringBuilder.append(".", entry.key, " = ");
+                auto* key = keys.tryGet(entry.key);
+                RELEASE_ASSERT(key);
+                auto* type = primitiveStruct.values[*key];
+                serializeConstant(type, entry.value);
+            }
+            m_stringBuilder.append("}");
         },
         [&](const Pointer&) {
             RELEASE_ASSERT_NOT_REACHED();

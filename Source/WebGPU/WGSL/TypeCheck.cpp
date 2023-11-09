@@ -1647,9 +1647,17 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, Constan
             // FIXME: this should be supported
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Types::PrimitiveStruct&) -> Conversion {
-            // FIXME: this should be supported
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Types::PrimitiveStruct& primitiveStruct) -> Conversion {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
+            for (auto& entry : constantStruct.fields) {
+                auto* key = keys.tryGet(entry.key);
+                RELEASE_ASSERT(key);
+                auto* type = primitiveStruct.values[*key];
+                if (!convertValue(span, type, entry.value, explicitConversion))
+                    return FailedInner;
+            }
+            return Success;
         },
         [&](const Types::Function&) -> Conversion {
             RELEASE_ASSERT_NOT_REACHED();

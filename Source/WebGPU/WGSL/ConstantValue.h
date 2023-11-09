@@ -27,6 +27,9 @@
 #pragma once
 
 #include <wtf/FixedVector.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL {
 
@@ -87,7 +90,11 @@ struct ConstantMatrix {
     FixedVector<ConstantValue> elements;
 };
 
-using BaseValue = std::variant<float, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix>;
+struct ConstantStruct {
+    HashMap<String, ConstantValue> fields;
+};
+
+using BaseValue = std::variant<float, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 

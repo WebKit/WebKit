@@ -86,6 +86,17 @@ void ConstantValue::dump(PrintStream& out) const
                 out.print(element);
             }
             out.print(")");
+        },
+        [&](const ConstantStruct& s) {
+            out.print("struct { ");
+            bool first = true;
+            for (const auto& entry : s.fields) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(entry.key, ": ", entry.value);
+            }
+            out.print(" }");
         });
 }
 
