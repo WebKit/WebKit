@@ -784,6 +784,9 @@ Document::~Document()
 
     for (unsigned count : m_nodeListAndCollectionCounts)
         ASSERT_UNUSED(count, !count);
+
+    // End the loading signpost here in case loadEventEnd never fired.
+    WTFEndSignpost(this, NavigationAndPaintTiming);
 }
 
 void Document::removedLastRef()
@@ -1452,6 +1455,10 @@ void Document::setReadyState(ReadyState readyState)
             m_eventTiming.domLoading = now;
             if (auto* eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domLoading = now;
+            // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
+            if (!url().isEmpty())
+                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %{public}s | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
+            WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
         break;
     case ReadyState::Complete:
@@ -1460,6 +1467,7 @@ void Document::setReadyState(ReadyState readyState)
             m_eventTiming.domComplete = now;
             if (auto* eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domComplete = now;
+            WTFEmitSignpost(this, NavigationAndPaintTiming, "domComplete");
         }
         FALLTHROUGH;
     case ReadyState::Interactive:
@@ -1468,6 +1476,7 @@ void Document::setReadyState(ReadyState readyState)
             m_eventTiming.domInteractive = now;
             if (auto* eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domInteractive = now;
+            WTFEmitSignpost(this, NavigationAndPaintTiming, "domInteractive");
         }
         break;
     }
@@ -3529,8 +3538,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
         return;
 
-    if (frame() && frame()->isMainFrame())
-        WTFEmitSignpost(this, "Page Load: First Contentful Paint");
+    WTFEmitSignpost(this, NavigationAndPaintTiming, "firstContentfulPaint");
 
     protectedWindow()->performance().reportFirstContentfulPaint();
     m_didEnqueueFirstContentfulPaint = true;
@@ -6631,6 +6639,7 @@ void Document::finishedParsing()
         m_eventTiming.domContentLoadedEventStart = now;
         if (auto* eventTiming = documentEventTimingFromNavigationTiming())
             eventTiming->domContentLoadedEventStart = now;
+        WTFEmitSignpost(this, NavigationAndPaintTiming, "domContentLoadedEventBegin");
     }
 
     // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
@@ -6639,20 +6648,14 @@ void Document::finishedParsing()
     if (!isInMiddleOfInitializingIframe)
         eventLoop().performMicrotaskCheckpoint();
 
-    bool isMainFrame = m_frame && m_frame->isMainFrame();
-    if (isMainFrame)
-        WTFBeginSignpost(this, "Page Load: DOM Content Loaded");
-
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-
-    if (isMainFrame)
-        WTFEndSignpost(this, "Page Load: DOM Content Loaded");
 
     if (!m_eventTiming.domContentLoadedEventEnd) {
         auto now = MonotonicTime::now();
         m_eventTiming.domContentLoadedEventEnd = now;
         if (auto* eventTiming = documentEventTimingFromNavigationTiming())
             eventTiming->domContentLoadedEventEnd = now;
+        WTFEmitSignpost(this, NavigationAndPaintTiming, "domContentLoadedEventEnd");
     }
 
     if (RefPtr frame = this->frame()) {

@@ -437,9 +437,9 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? document.ptr() : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
-    WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
+    WTFBeginSignpost(this, ExecuteScriptElement, "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
     frame->checkedScript()->evaluateIgnoringException(sourceCode);
-    WTFEndSignpost(this, "Execute Script Element");
+    WTFEndSignpost(this, ExecuteScriptElement);
 }
 
 void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
@@ -476,9 +476,9 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     if (!frame)
         return;
 
-    WTFBeginSignpost(this, "Register ImportMap", "registering import-map from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
+    WTFBeginSignpost(this, RegisterImportMap, "registering import-map from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
     frame->checkedScript()->registerImportMap(sourceCode, document->baseURL());
-    WTFEndSignpost(this, "Register ImportMap");
+    WTFEndSignpost(this, RegisterImportMap);
 }
 
 void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScript)
@@ -495,9 +495,9 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(document.ptr());
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
-    WTFBeginSignpost(this, "Execute Script Element", "executing module script");
+    WTFBeginSignpost(this, ExecuteScriptElement, "executing module script");
     frame->script().linkAndEvaluateModuleScript(loadableModuleScript);
-    WTFEndSignpost(this, "Execute Script Element", "executing module script");
+    WTFEndSignpost(this, ExecuteScriptElement, "executing module script");
 }
 
 void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()

@@ -275,7 +275,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_task.get()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", url.port().value_or(0))).get();
 #endif
 
-    WTFBeginSignpost(m_task.get(), "DataTask", "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod().utf8().data(), url.string().utf8().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod().utf8().data(), url.string().utf8().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     switch (parameters.storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
@@ -331,7 +331,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
 {
     if (m_task)
-        WTFEndSignpost(m_task.get(), "DataTask");
+        WTFEndSignpost(m_task.get(), DataTask);
 
     if (m_task && m_sessionWrapper) {
         auto& map = m_sessionWrapper->dataTaskMap;
@@ -344,7 +344,7 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
 
 void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "sent %llu bytes (expected %llu bytes)", totalBytesSent, totalBytesExpectedToSend);
+    WTFEmitSignpost(m_task.get(), DataTask, "sent %llu bytes (expected %llu bytes)", totalBytesSent, totalBytesExpectedToSend);
 
     if (m_client)
         m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
@@ -352,7 +352,7 @@ void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBy
 
 void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "received challenge");
+    WTFEmitSignpost(m_task.get(), DataTask, "received challenge");
 
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
@@ -373,7 +373,7 @@ void NetworkDataTaskCocoa::didNegotiateModernTLS(const URL& url)
 
 void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "completed with error: %d", !error.isNull());
+    WTFEmitSignpost(m_task.get(), DataTask, "completed with error: %d", !error.isNull());
 
     if (m_client)
         m_client->didCompleteWithError(error, networkLoadMetrics);
@@ -381,7 +381,7 @@ void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& er
 
 void NetworkDataTaskCocoa::didReceiveData(const WebCore::SharedBuffer& data)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "received %zd bytes", data.size());
+    WTFEmitSignpost(m_task.get(), DataTask, "received %zd bytes", data.size());
 
     if (m_client)
         m_client->didReceiveData(data);
@@ -389,7 +389,7 @@ void NetworkDataTaskCocoa::didReceiveData(const WebCore::SharedBuffer& data)
 
 void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, WebKit::ResponseCompletionHandler&& completionHandler)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "received response headers");
+    WTFEmitSignpost(m_task.get(), DataTask, "received response headers");
     if (isTopLevelNavigation())
         updateFirstPartyInfoForSession(response.url());
 #if ENABLE(NETWORK_ISSUE_REPORTING)
@@ -403,7 +403,7 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
 
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "redirect");
+    WTFEmitSignpost(m_task.get(), DataTask, "redirect");
 
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
@@ -551,13 +551,13 @@ String NetworkDataTaskCocoa::suggestedFilename() const
 
 void NetworkDataTaskCocoa::cancel()
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "cancel");
+    WTFEmitSignpost(m_task.get(), DataTask, "cancel");
     [m_task cancel];
 }
 
 void NetworkDataTaskCocoa::resume()
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "resume");
+    WTFEmitSignpost(m_task.get(), DataTask, "resume");
 
     if (m_failureScheduled)
         return;

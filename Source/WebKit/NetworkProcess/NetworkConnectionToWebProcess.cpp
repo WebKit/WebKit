@@ -111,6 +111,10 @@
 #include "IPCTesterMessages.h"
 #endif
 
+#if HAVE(OS_SIGNPOST)
+#include <wtf/SystemTracing.h>
+#endif
+
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -1482,9 +1486,17 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&&
         osLog = adoptOSObject(os_log_create(subsystem, category));
     }
 
+    auto osLogPointer = osLog.get() ? osLog.get() : OS_LOG_DEFAULT;
+    auto logData = reinterpret_cast<const char*>(logString.data());
+
+#if HAVE(OS_SIGNPOST)
+    if (WTFSignpostHandleIndirectLog(osLogPointer, pid, logData))
+        return;
+#endif
+
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLog.get() ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logString.data());
+    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logData);
 }
 #endif
 

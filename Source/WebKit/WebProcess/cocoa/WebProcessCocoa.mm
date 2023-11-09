@@ -806,6 +806,8 @@ static void registerLogHook()
             free(messageString);
         }, qos);
     });
+
+    WTFSignpostIndirectLoggingEnabled = true;
 }
 #endif
 
