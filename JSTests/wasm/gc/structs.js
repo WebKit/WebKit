@@ -147,7 +147,7 @@ function testStructJS() {
     m.exports.f(null);
   }
 
-  // JS API behavior not implemented yet, setting global errors for now.
+  // Test cast failure
   assert.throws(
     () => {
       let m = instantiate(`
@@ -159,7 +159,7 @@ function testStructJS() {
       m.exports.g.value = 42;
     },
     TypeError,
-    "Unsupported use of struct or array type"
+    "Argument value did not match reference type"
   )
 }
 

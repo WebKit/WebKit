@@ -1336,6 +1336,8 @@ end
 wasmOp(ref_i31, WasmRefI31, macro(ctx)
     mloadi(ctx, m_value, t0)
     andq 0x7fffffff, t0
+    lshifti 0x1, t0
+    rshifti 0x1, t0
     orq TagNumber, t0
     returnq(ctx, t0)
 end)
@@ -1344,10 +1346,9 @@ wasmOp(i31_get, WasmI31Get, macro(ctx)
     mloadp(ctx, m_ref, t0)
     bqeq t0, ValueNull, .throw
     wgetu(ctx, m_isSigned, t1)
-    btiz t1, .unsigned
-    lshifti 0x1, t0
-    rshifti 0x1, t0
-.unsigned:
+    btinz t1, .signed
+    andq 0x7fffffff, t0
+.signed:
     returni(ctx, t0)
 
 .throw:

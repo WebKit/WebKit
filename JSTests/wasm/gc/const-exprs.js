@@ -119,6 +119,38 @@ async function testGCConstExprs() {
   {
     let m = instantiate(`
       (module
+        (global (export "g") (ref i31) (ref.i31 (i32.const 0x4000_0000))))
+    `);
+    assert.eq(m.exports.g.value, -0x40000000);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (ref i31) (ref.i31 (i32.const 0x4000_0000))))
+    `);
+    assert.eq(m.exports.g.value, -0x40000000);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (ref i31) (ref.i31 (i32.const 0xaaaa_aaaa))))
+    `);
+    assert.eq(m.exports.g.value, 0x2aaaaaaa);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (ref i31) (ref.i31 (i32.const 0x7fff_ffff))))
+    `);
+    assert.eq(m.exports.g.value, -1);
+  }
+
+  {
+    let m = instantiate(`
+      (module
         (global (export "g") externref (extern.convert_any (ref.i31 (i32.const 555)))))
     `);
     assert.eq(m.exports.g.value, 555);

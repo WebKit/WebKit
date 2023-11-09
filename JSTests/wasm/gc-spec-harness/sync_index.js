@@ -326,7 +326,7 @@ function assert_return(action, ...expected) {
     uniqueTest(() => {
         // FIXME: the currently JS API behavior results in string coerion failing for GC objects,
         //        so we cannot construct an error message here currently.
-        assert_true(!result.isError());
+        assert_true(!result.isError(), `expected success result`);
         let actual = result.value;
         if (actual === undefined) {
             actual = [];
@@ -360,13 +360,14 @@ function assert_return(action, ...expected) {
                 case "ref.array":
                     // For now, JS can't distinguish exported Wasm GC values,
                     // so we only test for object.
-                    //assert_true(typeof actua[i] === "object", `expected Wasm object, got ${actual[i]}`);
+                    assert_true(typeof actual[i] === "object", `expected Wasm object`);
                     return;
                 case "ref.func":
                     assert_true(typeof actual[i] === "function", `expected Wasm function, got ${actual[i]}`);
                     return;
                 case "ref.extern":
-                    assert_true(actual[i] !== null, `expected Wasm reference, got ${actual[i]}`);
+                    // FIXME: see comment above about error messages
+                    assert_true(actual[i] !== null, `expected Wasm reference`);
                     return;
                 case "ref.null":
                     assert_true(actual[i] === null, `expected Wasm null reference, got ${actual[i]}`);

@@ -316,7 +316,10 @@ inline bool isSubtype(Type sub, Type parent)
             return TypeInformation::get(sub.index).expand().is<FunctionSignature>();
     }
 
-    if ((isAnyref(parent) || isEqref(parent)) && (isI31ref(sub) || isStructref(sub) || isArrayref(sub)))
+    if ((isI31ref(sub) || isStructref(sub) || isArrayref(sub)) && (isAnyref(parent) || isEqref(parent)))
+        return true;
+
+    if (isEqref(sub) && isAnyref(parent))
         return true;
 
     if (isNullref(sub))
@@ -325,8 +328,8 @@ inline bool isSubtype(Type sub, Type parent)
     if (isNullfuncref(sub))
         return isSubtype(parent, funcrefType());
 
-    if (isNullexternref(sub))
-        return sub == parent || isExternref(parent);
+    if (isNullexternref(sub) && isExternref(parent))
+        return true;
 
     if (sub.isRef() && parent.isRefNull())
         return sub.index == parent.index;

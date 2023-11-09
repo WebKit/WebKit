@@ -61,7 +61,8 @@ JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (Instance*, EncodedJSV
 JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (Instance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (Instance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (Instance*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance*, const TypeDefinition*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (Instance*, const TypeDefinition*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (Instance*, EncodedWasmValue));
 
 JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (Instance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));

@@ -2913,9 +2913,10 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
 
 auto B3IRGenerator::addRefI31(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    Value* i64 = m_currentBlock->appendNew<Value>(m_proc, B3::ZExt32, origin(), get(value));
-    Value* truncated = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), i64, constant(Int64, 0x7fffffff));
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::BitOr, origin(), truncated, constant(Int64, JSValue::NumberTag)));
+    Value* masked = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), get(value), constant(Int64, 0x7fffffff));
+    Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), masked, constant(Int64, 0x1));
+    Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, constant(Int64, 0x1));
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::BitOr, origin(), shiftRight, constant(Int64, JSValue::NumberTag)));
 
     return { };
 }
@@ -2931,10 +2932,7 @@ auto B3IRGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> Pa
         });
     }
 
-    Value* truncated = m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref));
-    Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), truncated, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 1));
-    Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 1));
-    result = push(shiftRight);
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref)));
 
     return { };
 }
@@ -2950,7 +2948,8 @@ auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> Pa
         });
     }
 
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref)));
+    Value* masked = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), get(ref), constant(Int64, 0x7fffffff));
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), masked));
     return { };
 }
 

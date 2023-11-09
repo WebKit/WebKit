@@ -267,7 +267,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         case Wasm::TypeKind::RefNull:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref: {
-            if (!Wasm::isExternref(type)) {
+            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::get(type.index).is<Wasm::FunctionSignature>())) {
                 // Ensure we have a WASM exported function.
                 jit.loadValue(jsParam, scratchJSR);
                 auto isNull = jit.branchIfNull(scratchJSR);
@@ -293,6 +293,10 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
                 if (type.isNullable())
                     isNull.link(&jit);
+            } else if (!Wasm::isExternref(type)) {
+                // FIXME: this should implement some fast paths for, e.g., i31refs and other
+                // types that can be easily handled.
+                slowPath.append(jit.jump());
             }
 
             if (isStack) {
