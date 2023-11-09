@@ -169,15 +169,6 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
     m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
     m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
 
-    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, layer = RetainPtr { m_sampleBufferDisplayLayer }]() mutable {
-        auto protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        assertIsCurrent(workQueue());
-        m_sampleBufferDisplayLayerForQueue = WTFMove(layer);
-    });
-
     m_rootLayer = adoptNS([[CALayer alloc] init]);
     m_rootLayer.get().hidden = hideRootLayer;
 
@@ -281,49 +272,19 @@ void LocalSampleBufferDisplayLayer::updateSampleLayerBoundsAndPosition(std::opti
         if (!protectedThis)
             return;
 
-        [m_statusChangeListener stop];
-
-        [m_sampleBufferDisplayLayer stopRequestingMediaData];
-        [m_sampleBufferDisplayLayer flush];
-        auto oldLayer = std::exchange(m_sampleBufferDisplayLayer, { });
-
-        m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
-        m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
-        m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
-        [m_sampleBufferDisplayLayer setName:@"LocalSampleBufferDisplayLayer AVSampleBufferDisplayLayer"];
-
         auto layerBounds = bounds.value_or(m_rootLayer.get().bounds);
         CGPoint layerPosition { layerBounds.size.width / 2, layerBounds.size.height / 2 };
         if (rotation == VideoFrame::Rotation::Right || rotation == VideoFrame::Rotation::Left)
             std::swap(layerBounds.size.width, layerBounds.size.height);
         runWithoutAnimations([&] {
+            if (bounds) {
+                m_rootLayer.get().position = { bounds->size.width / 2, bounds->size.height / 2 };
+                m_rootLayer.get().bounds = *bounds;
+            }
+            m_sampleBufferDisplayLayer.get().affineTransform = affineTransform;
             m_sampleBufferDisplayLayer.get().position = layerPosition;
             m_sampleBufferDisplayLayer.get().bounds = layerBounds;
-            m_sampleBufferDisplayLayer.get().affineTransform = affineTransform;
         });
-
-        m_processingQueue->dispatch([this, weakThis = WTFMove(weakThis), newLayer = m_sampleBufferDisplayLayer, oldLayer = WTFMove(oldLayer), bounds]() mutable {
-            auto protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-
-            assertIsCurrent(workQueue());
-            m_sampleBufferDisplayLayerForQueue = newLayer;
-            m_isReconfiguring = false;
-            if (m_lastPixelBuffer)
-                enqueueBufferInternal(m_lastPixelBuffer.get(), m_lastPresentationTime);
-
-            callOnMainThread([rootLayer = m_rootLayer, newLayer = WTFMove(newLayer), oldLayer = WTFMove(oldLayer), bounds] {
-                if (bounds) {
-                    runWithoutAnimations([&] {
-                        rootLayer.get().position = { bounds->size.width / 2, bounds->size.height / 2 };
-                        rootLayer.get().bounds = *bounds;
-                    });
-                }
-                [rootLayer replaceSublayer:oldLayer.get() with:newLayer.get()];
-            });
-        });
-        [m_statusChangeListener begin:m_sampleBufferDisplayLayer.get()];
     });
 }
 
@@ -334,8 +295,7 @@ void LocalSampleBufferDisplayLayer::flush()
         if (!protectedThis)
             return;
 
-        assertIsCurrent(workQueue());
-        [m_sampleBufferDisplayLayerForQueue flush];
+        [m_sampleBufferDisplayLayer flush];
     });
 }
 
@@ -346,9 +306,8 @@ void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
         if (!protectedThis)
             return;
 
-        assertIsCurrent(workQueue());
         @try {
-            [m_sampleBufferDisplayLayerForQueue flushAndRemoveImage];
+            [m_sampleBufferDisplayLayer flushAndRemoveImage];
         } @catch(id exception) {
             RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::flushAndRemoveImage failed");
             layerErrorDidChange();
@@ -389,28 +348,21 @@ static inline CGAffineTransform transformationMatrixForVideoFrame(VideoFrame& vi
 
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
-    bool isReconfiguring = false;
     auto affineTransform = transformationMatrixForVideoFrame(videoFrame);
     if (!CGAffineTransformEqualToTransform(affineTransform, m_affineTransform)) {
         m_affineTransform = affineTransform;
         m_videoFrameRotation = videoFrame.rotation();
-        isReconfiguring = true;
+        updateSampleLayerBoundsAndPosition({ });
     }
 
-    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, pixelBuffer = RetainPtr { videoFrame.pixelBuffer() }, presentationTime = videoFrame.presentationTime(), isReconfiguring]() mutable {
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, pixelBuffer = RetainPtr { videoFrame.pixelBuffer() }, presentationTime = videoFrame.presentationTime()]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         assertIsCurrent(workQueue());
-        if (isReconfiguring)
-            m_isReconfiguring = true;
-
         enqueueBufferInternal(pixelBuffer.get(), presentationTime);
     });
-
-    if (isReconfiguring)
-        updateSampleLayerBoundsAndPosition({ });
 }
 
 static const double rendererLatency = 0.02;
@@ -419,18 +371,12 @@ void LocalSampleBufferDisplayLayer::enqueueBufferInternal(CVPixelBufferRef pixel
 {
     assertIsCurrent(workQueue());
 
-    m_lastPixelBuffer = pixelBuffer;
-    m_lastPresentationTime = presentationTime;
-
-    if (m_isReconfiguring)
-        return;
-
     auto sampleBuffer = createVideoSampleBuffer(pixelBuffer, PAL::toCMTime(presentationTime));
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
     if (m_renderPolicy == RenderPolicy::Immediately || now >= presentationTime)
         setSampleBufferAsDisplayImmediately(sampleBuffer.get());
 
-    [m_sampleBufferDisplayLayerForQueue enqueueSampleBuffer:sampleBuffer.get()];
+    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleBuffer.get()];
 
 #if !RELEASE_LOG_DISABLED
     constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
@@ -496,7 +442,6 @@ void LocalSampleBufferDisplayLayer::clearVideoFrames()
         assertIsCurrent(workQueue());
 
         m_pendingVideoFrameQueue.clear();
-        m_lastPixelBuffer = nullptr;
     });
 }
 
@@ -505,7 +450,7 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
     assertIsCurrent(workQueue());
 
     ThreadSafeWeakPtr weakThis { *this };
-    [m_sampleBufferDisplayLayerForQueue requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -515,11 +460,10 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
             if (!protectedThis)
                 return;
 
-            assertIsCurrent(workQueue());
-            [m_sampleBufferDisplayLayerForQueue stopRequestingMediaData];
+            [m_sampleBufferDisplayLayer stopRequestingMediaData];
 
             while (!m_pendingVideoFrameQueue.isEmpty()) {
-                if (![m_sampleBufferDisplayLayerForQueue isReadyForMoreMediaData]) {
+                if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
                     requestNotificationWhenReadyForVideoData();
                     return;
                 }
