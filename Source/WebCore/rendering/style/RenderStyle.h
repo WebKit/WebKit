@@ -2142,6 +2142,8 @@ public:
     static constexpr BlockStepInsert initialBlockStepInsert();
     inline BlockStepInsert blockStepInsert() const;
     inline void setBlockStepInsert(BlockStepInsert);
+    bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
+    bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
 
 private:
     struct NonInheritedFlags {

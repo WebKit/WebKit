@@ -1010,6 +1010,14 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         updateOutlineAutoAncestor(hasOutlineAuto);
         issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().outlineSize() : oldStyle->outlineSize());
     }
+
+    bool shouldCheckIfInAncestorChain = false;
+    if (frame().settings().cssScrollAnchoringEnabled() && (style().outOfFlowPositionStyleDidChange(oldStyle) || (shouldCheckIfInAncestorChain = style().scrollAnchoringSuppressionStyleDidChange(oldStyle)))) {
+        LOG_WITH_STREAM(ScrollAnchoring, stream << "RenderElement::styleDidChange() found node with style change: " << *this << " from: " << oldStyle->position() <<" to: " << style().position());
+        auto* controller = findScrollAnchoringControllerForRenderer(*this);
+        if (controller && (!shouldCheckIfInAncestorChain || (shouldCheckIfInAncestorChain && controller->isInScrollAnchoringAncestorChain(*this))))
+            controller->notifyChildHadSuppressingStyleChange();
+    }
 }
 
 void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)

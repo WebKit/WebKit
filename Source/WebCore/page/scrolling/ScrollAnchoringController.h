@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Document.h"
+#include "Element.h"
 #include "FloatPoint.h"
 #include "ScrollTypes.h"
 #include <wtf/WeakPtr.h>
@@ -44,11 +45,15 @@ class ScrollAnchoringController final : public CanMakeWeakPtr<ScrollAnchoringCon
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScrollAnchoringController(ScrollableArea&);
+    ~ScrollAnchoringController();
     void invalidateAnchorElement();
     void adjustScrollPositionForAnchoring();
     void selectAnchorElement();
     void chooseAnchorElement(Document&);
     void updateAnchorElement();
+    void notifyChildHadSuppressingStyleChange();
+    bool isInScrollAnchoringAncestorChain(const RenderObject&);
+    Element* anchorElement() const { return m_anchorElement.get(); }
 
 private:
     Element* findAnchorElementRecursive(Element*);
@@ -62,6 +67,7 @@ private:
     FloatPoint m_lastOffsetForAnchorElement;
     bool m_midUpdatingScrollPositionForAnchorElement { false };
     bool m_isQueuedForScrollPositionUpdate { false };
+    bool m_shouldSupressScrollPositionUpdate { false };
 };
 
 } // namespace WebCore

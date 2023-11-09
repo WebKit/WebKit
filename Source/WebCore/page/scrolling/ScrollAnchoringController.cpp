@@ -43,11 +43,21 @@ ScrollAnchoringController::ScrollAnchoringController(ScrollableArea& owningScrol
     : m_owningScrollableArea(owningScroller)
 { }
 
+ScrollAnchoringController::~ScrollAnchoringController()
+{
+    invalidateAnchorElement();
+}
+
 LocalFrameView& ScrollAnchoringController::frameView()
 {
     if (is<RenderLayerScrollableArea>(m_owningScrollableArea))
         return downcast<RenderLayerScrollableArea>(m_owningScrollableArea).layer().renderer().view().frameView();
     return downcast<LocalFrameView>(downcast<ScrollView>(m_owningScrollableArea));
+}
+
+static bool elementIsScrollableArea(const Element& element, const ScrollableArea& scrollableArea)
+{
+    return element.renderBox() && element.renderBox()->layer() && element.renderBox()->layer()->scrollableArea() == &scrollableArea;
 }
 
 void ScrollAnchoringController::invalidateAnchorElement()
@@ -83,6 +93,30 @@ FloatPoint ScrollAnchoringController::computeOffsetFromOwningScroller(RenderObje
 {
     // TODO: investigate this for zoom/rtl
     return FloatPoint(candidate.absoluteBoundingBoxRect().location() - boundingRectForScrollableArea(m_owningScrollableArea).location());
+}
+
+void ScrollAnchoringController::notifyChildHadSuppressingStyleChange()
+{
+    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::notifyChildHadSuppressingStyleChange() for scroller: " << m_owningScrollableArea);
+
+    m_shouldSupressScrollPositionUpdate = true;
+}
+
+bool ScrollAnchoringController::isInScrollAnchoringAncestorChain(const RenderObject& object)
+{
+    RefPtr iterElement = m_anchorElement.get();
+
+    while (iterElement) {
+        if (auto* renderer = iterElement->renderer()) {
+            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::isInScrollAnchoringAncestorChain() checking for : " <<object << " current Element: " << *iterElement);
+            if (&object == renderer)
+                return true;
+        }
+        if (iterElement && elementIsScrollableArea(*iterElement, m_owningScrollableArea))
+            break;
+        iterElement = iterElement->parentElement();
+    }
+    return false;
 }
 
 static RefPtr<Element> anchorElementForPriorityCandidate(Element* element)
@@ -249,16 +283,21 @@ void ScrollAnchoringController::updateAnchorElement()
 
 void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 {
-    SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);
     auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
+    auto supressed = std::exchange(m_shouldSupressScrollPositionUpdate, false);
     if (!m_anchorElement || !queued)
         return;
-    auto renderBox = m_anchorElement->renderer();
-    if (!renderBox) {
+    auto* renderer = m_anchorElement->renderer();
+    if (!renderer || supressed) {
         invalidateAnchorElement();
+        updateAnchorElement();
+        if (supressed)
+            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() supressing scroll adjustment for frame: " << frameView() << " for scroller: " << m_owningScrollableArea);
         return;
     }
-    FloatSize adjustment = computeOffsetFromOwningScroller(*renderBox) - m_lastOffsetForAnchorElement;
+    SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);
+
+    FloatSize adjustment = computeOffsetFromOwningScroller(*renderer) - m_lastOffsetForAnchorElement;
     if (!adjustment.isZero()) {
         auto newScrollPosition = m_owningScrollableArea.scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
         LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for frame: " << frameView() << " for scroller: " << m_owningScrollableArea << " adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);

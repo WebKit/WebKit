@@ -256,6 +256,7 @@ public:
     void updateScrollAnchoringElement() final;
     void updateScrollPositionForScrollAnchoringController() final;
     void invalidateScrollAnchoringElement() final;
+    ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
 private:
     bool hasHorizontalOverflow() const;
