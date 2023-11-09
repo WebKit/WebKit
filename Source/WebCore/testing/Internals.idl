@@ -739,6 +739,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined startTrackingLayerFlushes();
     unsigned long layerFlushCount();
 
+    undefined setCanvasNoiseInjectionSalt(HTMLCanvasElement element, unsigned long long salt);
+    boolean doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement element);
+
     // Query if a timer is currently throttled, to debug timer throttling.
     boolean isTimerThrottled(long timerHandle);
 
