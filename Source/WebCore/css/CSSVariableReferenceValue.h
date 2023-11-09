@@ -31,6 +31,7 @@
 
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSVariableData.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,6 @@ namespace WebCore {
 
 class CSSParserToken;
 class CSSParserTokenRange;
-class CSSVariableData;
 struct CSSParserContext;
 
 namespace Style {
