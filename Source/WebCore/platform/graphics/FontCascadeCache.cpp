@@ -82,10 +82,10 @@ void FontCascadeCache::pruneUnreferencedEntries()
     });
 }
 
-void FontCascadeCache::pruneSystemFallbackFonts()
+void FontCascadeCache::pruneGlyphPageCacheAndSystemFallbackFonts()
 {
     for (auto& entry : m_entries.values())
-        entry->fonts->pruneSystemFallbacks();
+        entry->fonts->pruneGlyphPageCacheAndSystemFallbacks();
 }
 
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)

@@ -289,7 +289,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     LOG(Fonts, "FontCache::purgeInactiveFontData(%u)", purgeCount);
 
     m_fontCascadeCache.pruneUnreferencedEntries();
-    m_fontCascadeCache.pruneSystemFallbackFonts();
+    m_fontCascadeCache.pruneGlyphPageCacheAndSystemFallbackFonts();
 
 #if PLATFORM(IOS_FAMILY)
     Locker locker { m_fontLock };

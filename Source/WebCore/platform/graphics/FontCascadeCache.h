@@ -267,7 +267,7 @@ public:
     void invalidate();
     void clearWidthCaches();
     void pruneUnreferencedEntries();
-    void pruneSystemFallbackFonts();
+    void pruneGlyphPageCacheAndSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
 
 private:
