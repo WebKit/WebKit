@@ -285,6 +285,9 @@ class TestRunner(object):
         sys.stderr.write("WARNING: %s doesn't seem to be a supported test program.\n" % test_program)
         return {}
 
+    def _has_gpu_available(self):
+        return os.access("/dev/dri/card0", os.R_OK | os.W_OK) and os.access("/dev/dri/renderD128", os.R_OK | os.W_OK)
+
     def run_tests(self):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
@@ -297,6 +300,11 @@ class TestRunner(object):
         # Remove skipped tests now instead of when we find them, because
         # some tests might be skipped while setting up the test environment.
         self._tests = [test for test in self._tests if self._should_run_test_program(test)]
+        # Skip Qt tests if there is no GPU <https://webkit.org/b/264458>
+        number_of_qt_tests = len([test for test in self._tests if self.is_qt_test(test)])
+        if number_of_qt_tests > 0 and not self._has_gpu_available():
+            sys.stderr.write("WARNING: Skipping %d Qt tests because this system doesn't have a working GPU (/dev/dri devices are not available).\n" % number_of_qt_tests)
+            self._tests = [test for test in self._tests if not self.is_qt_test(test)]
         number_of_executed_tests = len(self._tests)
 
         crashed_tests = {}
