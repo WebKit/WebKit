@@ -2098,7 +2098,8 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                     // (since root backgrounds cover the canvas, not just the element). If the root element
                     // is composited though, we need to issue the repaint to that root element.
                     auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
-                    if (documentElementRenderer->layer()->isComposited())
+                    auto rendererLayer = documentElementRenderer->layer();
+                    if (rendererLayer && rendererLayer->isComposited())
                         layerRenderer = documentElementRenderer;
                 } else {
                     layerRenderer = this;
