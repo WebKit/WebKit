@@ -457,8 +457,9 @@ Element* TreeScope::findAnchor(StringView name)
         return nullptr;
     if (Element* element = getElementById(name))
         return element;
-    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(m_rootNode)) {
-        if (m_rootNode.document().inQuirksMode()) {
+    Ref rootNode = m_rootNode;
+    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(rootNode)) {
+        if (rootNode->document().inQuirksMode()) {
             // Quirks mode, ASCII case-insensitive comparison of names.
             // FIXME: This behavior is not mentioned in the HTML specification.
             // We should either remove this or get this into the specification.
