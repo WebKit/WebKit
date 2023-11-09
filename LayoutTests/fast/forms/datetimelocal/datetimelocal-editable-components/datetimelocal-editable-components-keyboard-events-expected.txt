@@ -37,6 +37,36 @@ PASS input.value is "0003-03-03T03:03"
 PASS changeEventsFired is 11
 PASS inputEventsFired is 11
 
+Left/Right arrow keys (vertical-lr)
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-02-20T23:59"
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T13:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
+Left/Right arrow keys (vertical-rl)
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-02-20T23:59"
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T13:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
 Advance field keys
 PASS input.value is "2020-06-03T16:27"
 PASS input.value is "2020-06-04T16:27"
@@ -59,6 +89,18 @@ PASS input.value is "2020-12-20T23:59"
 PASS input.value is "2020-12-20T11:59"
 PASS input.value is "2020-12-20T23:59"
 PASS input.value is "2020-12-20T11:59"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
+Up/Down arrow keys (vertical-lr)
+PASS input.value is "0002-02-02T02:02"
+PASS input.value is "0003-03-03T03:03"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
+Up/Down arrow keys (vertical-rl)
+PASS input.value is "0002-02-02T02:02"
+PASS input.value is "0003-03-03T03:03"
 PASS changeEventsFired is 11
 PASS inputEventsFired is 11
 
