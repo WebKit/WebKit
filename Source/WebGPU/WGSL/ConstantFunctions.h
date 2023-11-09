@@ -429,7 +429,7 @@ CONSTANT_FUNCTION(Add)
         return { { result } };
     }
 
-    return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
+    return constantBinaryOperation<Constraints::Number>(arguments, [&]<typename T>(T left, T right) -> T {
         return left + right;
     });
 }
@@ -613,7 +613,7 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
     // i.e. we accept (u32, u32) as well as (i32, u32)
     UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
-    const auto& shift = [&]<typename T>(T left, uint32_t right) {
+    const auto& shift = [&]<typename T>(T left, uint32_t right) -> T {
         return left << right;
     };
 
