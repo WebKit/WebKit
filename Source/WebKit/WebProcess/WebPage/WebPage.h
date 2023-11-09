@@ -1909,10 +1909,6 @@ private:
 
 #if HAVE(APP_ACCENT_COLORS)
     void setAccentColor(WebCore::Color);
-#if PLATFORM(MAC)
-    void setAppUsesCustomAccentColor(bool);
-    bool appUsesCustomAccentColor();
-#endif
 #endif
 
     void setMainFrameIsScrollable(bool);
@@ -2574,10 +2570,6 @@ private:
 #endif
 #if HAVE(SCENEKIT)
     bool m_useSceneKitForModel { false };
-#endif
-
-#if HAVE(APP_ACCENT_COLORS)
-    bool m_appUsesCustomAccentColor { false };
 #endif
 
     bool m_textManipulationIncludesSubframes { false };

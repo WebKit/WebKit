@@ -413,9 +413,6 @@ public:
 
 #if HAVE(APP_ACCENT_COLORS)
     virtual WebCore::Color accentColor() = 0;
-#if PLATFORM(MAC)
-    virtual bool appUsesCustomAccentColor() = 0;
-#endif
 #endif
 
     virtual bool effectiveAppearanceIsDark() const { return false; }
