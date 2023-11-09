@@ -1056,7 +1056,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
                     // FIXME: We will convert this to just take the old and new RepaintLayoutRects once
                     // we change other callers to use RepaintLayoutRects.
                     auto resolvedOldRects = valueOrDefault(oldRects);
-                    renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect,
+                    renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), RenderElement::RequiresFullRepaint::No, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect,
                         &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
                 }
             }
