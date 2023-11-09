@@ -31,7 +31,6 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   --blueLight: #3b99fc;
   --blueLighter: #9dccfe;
   --blueLightest: #f5f9fe;
-  --blueHighLight: #aed4fd;
   --greenDarker: #43c359;
   --greenDark: #3dce56;
   --green: #4cd964;
@@ -335,14 +334,6 @@ a:hover {
 [class*="col-"] {
   width: 100%;
   padding: var(--colPaddingSize) 0;
-}
-
-[class*="input col-"] {
-  padding: 0;
-}
-
-[class*="button col-"] {
-  padding: 0;
 }
 
 /* size s */
@@ -1860,27 +1851,28 @@ a.disabled {
 }
 
 .timeline>.header .series {
+  margin: 8px 0;
   margin-left: 5px;
   display: block;
   vertical-align: middle;
   font-size: var(--tinySize);
-  line-height: calc(var(--mediumSize) + var(--colPaddingSize));
+  line-height: var(--mediumSize);
   white-space: nowrap;
 }
 .timeline>.header .series * {
-  line-height: calc(var(--mediumSize) + var(--colPaddingSize));
+  line-height: var(--mediumSize);
   font-size: var(--tinySize);
 }
 .timeline>.header .series a {
-  line-height: calc(var(--mediumSize) + var(--colPaddingSize));
+  line-height: var(--mediumSize);
 }
 
 .timeline>.content .series {
   display: flex;
   white-space: nowrap;
-  height: calc(var(--mediumSize) + var(--colPaddingSize));
+  margin: 8px 0;
+  height: var(--mediumSize);
   vertical-align: middle;
-  align-items: center;
 }
 
 .timeline>.content .dot {
@@ -1945,6 +1937,7 @@ a.disabled {
 
 .timeline>.content .dot.empty {
   height: 1px;
+  margin-top: calc((var(--smallSize) - 1px) / 2);
   background: var(--grey);
 }
 
@@ -1958,6 +1951,7 @@ a.disabled {
 
 .timeline>.content .x-axis {
   display: flex;
+  margin: 8px 0;
   min-height: calc(var(--smallSize) * 4);
 }
 
@@ -2174,7 +2168,7 @@ a.disabled {
 }
 
 .timeline>.header.with-top-x-axis {
-  padding-top: calc(var(--smallSize) * 4);
+  padding-top: calc(var(--smallSize) * 4.5);
 }
 
 .timeline>.content>.x-axis .scale .text a {
