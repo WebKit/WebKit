@@ -568,16 +568,16 @@ public:
     bool hasKeyframeEffects(PseudoId) const;
 
     const AnimationCollection* animations(PseudoId) const;
-    bool hasCompletedTransitionForProperty(PseudoId, const AnimatableProperty&) const;
-    bool hasRunningTransitionForProperty(PseudoId, const AnimatableProperty&) const;
+    bool hasCompletedTransitionForProperty(PseudoId, const AnimatableCSSProperty&) const;
+    bool hasRunningTransitionForProperty(PseudoId, const AnimatableCSSProperty&) const;
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 
-    const AnimatablePropertyToTransitionMap* completedTransitionsByProperty(PseudoId) const;
-    const AnimatablePropertyToTransitionMap* runningTransitionsByProperty(PseudoId) const;
+    const AnimatableCSSPropertyToTransitionMap* completedTransitionsByProperty(PseudoId) const;
+    const AnimatableCSSPropertyToTransitionMap* runningTransitionsByProperty(PseudoId) const;
 
-    AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
-    AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
+    AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
+    AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
     CSSAnimationCollection& animationsCreatedByMarkup(PseudoId);
     void setAnimationsCreatedByMarkup(PseudoId, CSSAnimationCollection&&);
 

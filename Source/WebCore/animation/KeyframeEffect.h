@@ -150,8 +150,8 @@ public:
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
-    const HashSet<AnimatableProperty>& animatedProperties();
-    bool animatesProperty(const AnimatableProperty&) const;
+    const HashSet<AnimatableCSSProperty>& animatedProperties();
+    bool animatesProperty(const AnimatableCSSProperty&) const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
@@ -268,7 +268,7 @@ private:
 
     AtomString m_keyframesName;
     KeyframeList m_blendingKeyframes { emptyAtom() };
-    HashSet<AnimatableProperty> m_animatedProperties;
+    HashSet<AnimatableCSSProperty> m_animatedProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;

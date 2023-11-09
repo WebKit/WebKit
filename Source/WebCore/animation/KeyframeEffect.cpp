@@ -640,7 +640,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     Vector<ComputedKeyframe> computedKeyframes;
 
-    if (!m_parsedKeyframes.isEmpty() || m_animationType == WebAnimationType::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
+    if (!m_parsedKeyframes.isEmpty() || m_animationType == WebAnimationType::WebAnimation || !m_blendingKeyframes.containsAnimatableCSSProperty()) {
         for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
             auto& parsedKeyframe = m_parsedKeyframes[i];
             ComputedKeyframe computedKeyframe { parsedKeyframe };
@@ -922,7 +922,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
-const HashSet<AnimatableProperty>& KeyframeEffect::animatedProperties()
+const HashSet<AnimatableCSSProperty>& KeyframeEffect::animatedProperties()
 {
     if (!m_blendingKeyframes.isEmpty())
         return m_blendingKeyframes.properties();
@@ -939,7 +939,7 @@ const HashSet<AnimatableProperty>& KeyframeEffect::animatedProperties()
     return m_animatedProperties;
 }
 
-bool KeyframeEffect::animatesProperty(const AnimatableProperty& property) const
+bool KeyframeEffect::animatesProperty(const AnimatableCSSProperty& property) const
 {
     if (!m_blendingKeyframes.isEmpty())
         return m_blendingKeyframes.containsProperty(property);
@@ -1503,7 +1503,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     KeyframeValue propertySpecificKeyframeWithZeroOffset(0, RenderStyle::clonePtr(targetStyle));
     KeyframeValue propertySpecificKeyframeWithOneOffset(1, RenderStyle::clonePtr(targetStyle));
 
-    auto blendProperty = [&](AnimatableProperty property) {
+    auto blendProperty = [&](AnimatableCSSProperty property) {
         // 1. If iteration progress is unresolved abort this procedure.
         // 2. Let target property be the longhand property for which the effect value is to be calculated.
         // 3. If animation type of the target property is not animatable abort this procedure since the effect cannot be applied.
@@ -2716,7 +2716,7 @@ KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-static bool acceleratedPropertyDidChange(AnimatableProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
+static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
 {
 #if ASSERT_ENABLED
     ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));

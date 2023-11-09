@@ -93,7 +93,7 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoId);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
     {
         return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, affectedProperties, previousLastStyleChangeEventStyle, resolutionContext);
     }
@@ -103,12 +103,12 @@ struct Styleable {
         return element.animations(pseudoId);
     }
 
-    bool hasCompletedTransitionForProperty(const AnimatableProperty& property) const
+    bool hasCompletedTransitionForProperty(const AnimatableCSSProperty& property) const
     {
         return element.hasCompletedTransitionForProperty(pseudoId, property);
     }
 
-    bool hasRunningTransitionForProperty(const AnimatableProperty& property) const
+    bool hasRunningTransitionForProperty(const AnimatableCSSProperty& property) const
     {
         return element.hasRunningTransitionForProperty(pseudoId, property);
     }
@@ -123,12 +123,12 @@ struct Styleable {
         return element.ensureAnimations(pseudoId);
     }
 
-    AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
+    AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
     {
         return element.ensureCompletedTransitionsByProperty(pseudoId);
     }
 
-    AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty() const
+    AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty() const
     {
         return element.ensureRunningTransitionsByProperty(pseudoId);
     }

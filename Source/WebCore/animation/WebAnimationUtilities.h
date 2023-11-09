@@ -60,7 +60,7 @@ bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&)
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
 String pseudoIdAsString(PseudoId);
 ExceptionOr<PseudoId> pseudoIdFromString(const String&);
-AtomString animatablePropertyAsString(AnimatableProperty);
+AtomString animatablePropertyAsString(AnimatableCSSProperty);
 
 } // namespace WebCore
 

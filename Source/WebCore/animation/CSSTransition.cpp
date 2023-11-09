@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransition);
 
-Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, oldStyle, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(&oldStyle, newStyle, { nullptr });
@@ -49,7 +49,7 @@ Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const A
     return result;
 }
 
-CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
     : DeclarativeAnimation(styleable, backingAnimation)
     , m_property(property)
     , m_generationTime(generationTime)
