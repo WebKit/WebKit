@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>full-screen-document-background-color</title>
+    <style>html { background-color: white; }</style>
+    <script src="full-screen-test.js"></script>
+    <script>
+    async function enterFullscreen() {
+        return new Promise(resolve => {
+            internals.withUserGesture(() => {
+                frame.contentDocument.body.requestFullscreen().then(resolve, resolve);
+            });
+        });
+    }
+
+    async function exitFullscreen() {
+        return new Promise(resolve => {
+            internals.withUserGesture(() => {
+                frame.contentDocument.exitFullscreen().then(resolve, resolve);
+            });
+        });
+    }
+
+    async function runTest() {
+        testExpected('internals.documentBackgroundColor()', 'rgb(255, 255, 255)');
+        await run('enterFullscreen()');
+        testExpected('internals.documentBackgroundColor()', 'rgb(0, 128, 0)');
+        await run('exitFullscreen()');
+        testExpected('internals.documentBackgroundColor()', 'rgb(255, 255, 255)');
+    }
+    window.addEventListener('load', event => {
+        runTest().finally(endTest);
+    })
+    </script>
+</head>
+<body>
+    <iframe id=frame width=100 height=50 src="resources/green.html"></iframe>
+</body>

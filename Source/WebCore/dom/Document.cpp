@@ -4170,13 +4170,25 @@ ViewportArguments Document::viewportArguments() const
 
 void Document::updateViewportArguments()
 {
-    if (page() && frame()->isMainFrame()) {
-#if ASSERT_ENABLED
-        m_didDispatchViewportPropertiesChanged = true;
+    auto page = this->page();
+    if (!page)
+        return;
+
+    bool isViewportDocument = [&] {
+#if ENABLE(FULLSCREEN_API)
+        if (auto* outermostFullscreenDocument = page->outermostFullscreenDocument())
+            return outermostFullscreenDocument == this;
 #endif
-        page()->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
-        page()->chrome().didReceiveDocType(*frame());
-    }
+        return frame()->isMainFrame();
+    }();
+    if (!isViewportDocument)
+        return;
+
+#if ASSERT_ENABLED
+    m_didDispatchViewportPropertiesChanged = true;
+#endif
+    page->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
+    page->chrome().didReceiveDocType(*frame());
 }
 
 void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
