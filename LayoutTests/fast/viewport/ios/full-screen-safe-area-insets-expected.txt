@@ -1,0 +1,47 @@
+
+Set main frame viewport-fit=contain and test iframes
+RUN(metaViewport.content = "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=contain")
+RUN(setSafeAreaInsets(100, 50))
+EXPECTED (visibleRect.left == '-100') OK
+EXPECTED (visibleRect.top == '-50') OK
+
+Test that fullscreen within an iframe with viewport-fit-cover has viewport-fit-cover behavior:
+RUN(frame.src = "resources/viewport-fit-cover.html")
+EVENT(load)
+RUN(enterFullscreen())
+EXPECTED (visibleRect.left == '0') OK
+EXPECTED (visibleRect.top == '0') OK
+RUN(exitFullscreen())
+
+Test that fullscreen within an iframe with viewport-fit-contain has viewport-fit-contain behavior:
+RUN(frame.src = "resources/viewport-fit-contain.html")
+EVENT(load)
+RUN(enterFullscreen())
+EXPECTED (visibleRect.left == '-100') OK
+EXPECTED (visibleRect.top == '-50') OK
+RUN(exitFullscreen())
+
+Set main frame viewport-fit=cover and re-test iframes
+RUN(metaViewport.content = "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover")
+EXPECTED (visibleRect.left == '0') OK
+EXPECTED (visibleRect.top == '0') OK
+
+RUN(frame.src = "resources/viewport-fit-cover.html")
+EVENT(load)
+Test that fullscreen within an iframe with viewport-fit-cover has viewport-fit-cover behavior:
+RUN(enterFullscreen())
+EXPECTED (visibleRect.left == '0') OK
+EXPECTED (visibleRect.top == '0') OK
+RUN(exitFullscreen())
+
+Test that fullscreen within an iframe with viewport-fit-contain has viewport-fit-contain behavior:
+RUN(frame.src = "resources/viewport-fit-contain.html")
+EVENT(load)
+RUN(enterFullscreen())
+EXPECTED (visibleRect.left == '-100') OK
+EXPECTED (visibleRect.top == '-50') OK
+RUN(exitFullscreen())
+
+RUN(setSafeAreaInsets(0, 0))
+END OF TEST
+
