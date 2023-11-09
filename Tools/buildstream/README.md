@@ -54,7 +54,7 @@ Another nice feature of Buildstream is `workspace`, where you can make changes
 to recipes:
 
 ```bash
-$ Tools/Scripts/bst-wrapper workspace open sdk/openxr.bst ~/Projects/openxr
+$ Tools/Scripts/bst-wrapper workspace open --directory=~/Projects/openxr sdk/openxr.bst
 # hack hack hack in ~/Projects/openxr/
 $ Tools/Scripts/bst-wrapper build sdk/openxr.bst
 # Once you are happy, format changes from your workspace with git:
@@ -85,11 +85,6 @@ synchronize our SDK with its parent.
    re-created when the build is done for a new version, but this is not plumbed in the Makefile yet.
 2. In `project.conf` change the `sdk-branch` to the new version.
 3. Remove `~/.cache/buildstream`
-4. Make sure the pipenv uses a version of `bst` compatible with the new SDK version. For instance
-   22.08 still depends on bst-1, while 23.08 is expected to require bst-2.
-5. If you updated the `Pipfile`, update your local environment accordingly. For instance here I use
-   this command: `toolbox run -c fedora-toolbox-37 $PWD/Tools/Scripts/bst-wrapper pipenv update`.
-   YMMV.
 
 ### Updating FDO junction and recipes
 
@@ -97,7 +92,7 @@ synchronize our SDK with its parent.
    - Update `track:` to track new release branch
    - Review the list of junction patches we maintain there. Usually most of these are no longer
      relevant for the new version.
-   - Run `bst-wrapper track freedesktop-sdk.bst` to update the junction reference. Tracking will
+   - Run `bst-wrapper source track freedesktop-sdk.bst` to update the junction reference. Tracking will
      fail if any of our patches fail to apply. This should give you hints that some manual update or
      removal of the patch is needed.
 2. Build the SDK. This is the most time consuming task. Sometimes a recipe will fail to build and

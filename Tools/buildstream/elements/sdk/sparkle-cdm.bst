@@ -13,8 +13,7 @@ variables:
     -Dsample-player=disabled
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:Sparkle-CDM/sparkle-cdm.git
   track: main
-  track-tags: false
-  ref: 72c4035f10fd4e4a91d3fde53465b33427f8fe0a
+  ref: 3e1e0dcb221d044213f8c6e32b0b06102e7fb224

@@ -14,8 +14,7 @@ DerivedData
 results
 
 # Ignore Buildstream local files
-/Tools/buildstream/.bst
-/Tools/buildstream/.venv
+/Tools/buildstream/.bst2
 /Tools/buildstream/cache
 /Tools/buildstream/flatpak-version.yml
 /Tools/buildstream/repo

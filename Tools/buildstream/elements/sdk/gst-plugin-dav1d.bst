@@ -30,7 +30,7 @@ public:
 
 sources:
 - kind: tar
-  url: https://static.crates.io/crates/gst-plugin-dav1d/gst-plugin-dav1d-0.10.0.crate
+  url: crates:crates/gst-plugin-dav1d/gst-plugin-dav1d-0.10.0.crate
   ref: 2233741874f5fea45a342b130b8c0d572581fb8769a0a20cef66d9c98540c197
 - kind: local
   path: files/gst-plugin-dav1d/Cargo.lock

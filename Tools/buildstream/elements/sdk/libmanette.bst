@@ -1,9 +1,9 @@
 kind: meson
 sources:
-- kind: git_tag
+- kind: git_repo
   url: gitlab_gnome_org:GNOME/libmanette.git
   track: master
-  ref: 0.2.4-0-ge92a35af43853eee0ce255754e622dbe10e71f2a
+  ref: 0.2.6-9-g697f5b09716d153969cbf7f5d6f86a2ca6d6aded
 
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst

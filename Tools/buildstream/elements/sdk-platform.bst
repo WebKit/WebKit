@@ -12,7 +12,6 @@ depends:
 - sdk/breakpad.bst
 - sdk/capnp.bst
 - sdk/cargo-c.bst
-- sdk/ccls.bst
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/flite.bst
@@ -55,9 +54,7 @@ depends:
 - freedesktop-sdk.bst:components/alsa-plugins.bst
 - freedesktop-sdk.bst:components/appstream-glib.bst
 - freedesktop-sdk.bst:components/aspell.bst
-- freedesktop-sdk.bst:components/at-spi2-atk.bst
 - freedesktop-sdk.bst:components/at-spi2-core.bst
-- freedesktop-sdk.bst:components/atk.bst
 - freedesktop-sdk.bst:components/brotli.bst
 - freedesktop-sdk.bst:components/bubblewrap.bst
 - freedesktop-sdk.bst:components/ca-certificates.bst
@@ -74,9 +71,11 @@ depends:
 - freedesktop-sdk.bst:components/dummy-gbm.bst
 - freedesktop-sdk.bst:components/e2fsprogs.bst
 - freedesktop-sdk.bst:components/expat.bst
+- freedesktop-sdk.bst:components/ffmpeg.bst
 - freedesktop-sdk.bst:components/fftw.bst
 - freedesktop-sdk.bst:components/flatpak-xdg-utils.bst
 - freedesktop-sdk.bst:components/flex.bst
+- freedesktop-sdk.bst:components/fontconfig-flatpak-config.bst
 - freedesktop-sdk.bst:components/fontconfig.bst
 - freedesktop-sdk.bst:components/freetype.bst
 - freedesktop-sdk.bst:components/frei0r.bst
@@ -189,8 +188,6 @@ depends:
 - freedesktop-sdk.bst:components/python3-setuptools.bst
 - freedesktop-sdk.bst:components/python3-sitecustomize.bst
 - freedesktop-sdk.bst:components/python3-six.bst
-- freedesktop-sdk.bst:components/python3-tomli.bst
-- freedesktop-sdk.bst:components/python3-usercustomize.bst
 - freedesktop-sdk.bst:components/python3-virtualenv.bst
 - freedesktop-sdk.bst:components/python3.bst
 - freedesktop-sdk.bst:components/shared-mime-info.bst

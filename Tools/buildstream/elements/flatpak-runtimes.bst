@@ -8,30 +8,37 @@ build-depends:
 - arch != 'i686':
     build-depends:
       (>):
-      - flatpak/platform.bst
-      - flatpak/platform-locale.bst
-      - flatpak/sdk.bst
-      - flatpak/sdk-debug.bst
-      - flatpak/sdk-docs.bst
-      - flatpak/sdk-locale.bst
+      - filename:
+        - flatpak/platform.bst
+        - flatpak/platform-locale.bst
+        - flatpak/sdk.bst
+        - flatpak/sdk-debug.bst
+        - flatpak/sdk-docs.bst
+        - flatpak/sdk-locale.bst
+        config:
+          flatpak-image: true
 
 # platform compat is only built on 32 bit
 - arch in ('i686', 'arm'):
     build-depends:
       (>):
-      - flatpak/platform-arch-libs.bst
-      - flatpak/platform-arch-libs-debug.bst
+      - filename:
+        - flatpak/platform-arch-libs.bst
+        - flatpak/platform-arch-libs-debug.bst
+        config:
+          flatpak-image: true
 
 # sdk compat is not built on x86_64
 - arch != 'x86_64':
     build-depends:
       (>):
-      - flatpak/sdk-arch-libs.bst
-      - flatpak/sdk-arch-libs-debug.bst
+      - filename:
+        - flatpak/sdk-arch-libs.bst
+        - flatpak/sdk-arch-libs-debug.bst
+        config:
+          flatpak-image: true
 
 config:
-  environment:
-  - components/flatpak.bst
   arch: '%{gcc_arch}'
   branch: '%{sdk-branch}'
   repo-mode: bare-user-only

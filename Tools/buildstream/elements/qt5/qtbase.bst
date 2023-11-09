@@ -46,7 +46,7 @@ config:
   - ./configure %{conf-local}
 
   build-commands:
-  - make
+  - make -j%{max-jobs}
 
   install-commands:
   - |
@@ -60,7 +60,7 @@ public:
         - "%{libdir}/*.so"
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: kde:qtbase
   track: kde/5.15
   ref: v5.15.0-870-g663d240a18f5acac82fd2bd0fd4a33c4f47b260a

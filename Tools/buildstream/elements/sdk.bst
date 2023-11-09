@@ -22,7 +22,6 @@ depends:
 - freedesktop-sdk.bst:components/libpipeline.bst
 - freedesktop-sdk.bst:components/m4.bst
 - freedesktop-sdk.bst:components/man-db.bst
-- freedesktop-sdk.bst:components/man-pages-posix.bst
 - freedesktop-sdk.bst:components/man-pages.bst
 - freedesktop-sdk.bst:components/meson.bst
 - freedesktop-sdk.bst:components/nasm.bst

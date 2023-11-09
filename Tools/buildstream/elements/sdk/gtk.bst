@@ -1,17 +1,15 @@
 kind: meson
 sources:
-- kind: git_tag
+- kind: git_repo
   url: gitlab_gnome_org:GNOME/gtk.git
-  # No gtk-4-11 branch, so track most recent release...
-  track: 4.11.4
-  ref: 4.11.4-0-gf5d68bb586be6a82b9c2fa8c1a32ea540999ea10
+  track: 4.*
+  ref: 4.13.2-0-g004a8815218355daa4e569f91d9f5066648d5445
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 
 depends:
-- freedesktop-sdk.bst:components/at-spi2-atk.bst
-- freedesktop-sdk.bst:components/atk.bst
+- freedesktop-sdk.bst:components/at-spi2-core.bst
 - freedesktop-sdk.bst:components/gdk-pixbuf.bst
 - freedesktop-sdk.bst:components/glib.bst
 - sdk/graphene.bst

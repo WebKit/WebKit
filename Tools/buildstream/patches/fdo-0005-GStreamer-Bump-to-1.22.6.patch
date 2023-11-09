@@ -1,75 +1,37 @@
-From d22c9daefbd330d00af0359004b16073ac0eab37 Mon Sep 17 00:00:00 2001
+From 09e0e6fa0234dd2d0f7020bcb1b02727a5a7f693 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Fri, 28 Apr 2023 13:18:24 +0100
-Subject: [PATCH] GStreamer: Bump to 1.22.6
+Date: Sun, 8 Oct 2023 13:22:26 +0100
+Subject: [PATCH 2/2] GStreamer: Bump to 1.22.6
 
 ---
- elements/components/gstreamer-plugins-good.bst       |  2 ++
- elements/components/gstreamer-plugins-ugly.bst       |  1 -
- elements/include/gstreamer-source.yml                |  4 ++--
- patches/gstreamer/gst-libav-no-cache-generator.patch | 12 ------------
- 4 files changed, 4 insertions(+), 15 deletions(-)
- delete mode 100644 patches/gstreamer/gst-libav-no-cache-generator.patch
+ elements/components/gstreamer-plugins-good.bst | 1 +
+ elements/include/gstreamer-source.yml          | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/elements/components/gstreamer-plugins-good.bst b/elements/components/gstreamer-plugins-good.bst
-index b26ac6a8e..b858e2c48 100644
+index cea2a324..5d5224a7 100644
 --- a/elements/components/gstreamer-plugins-good.bst
 +++ b/elements/components/gstreamer-plugins-good.bst
-@@ -44,6 +44,8 @@ variables:
+@@ -45,6 +45,7 @@ variables:
      -Dtwolame=disabled
      -Dexamples=disabled
      -Drpicamsrc=disabled
-+    -Dxingmux=enabled
 +    -Dqt6=disabled
  
- (@):
- - elements/include/gstreamer-source.yml
-diff --git a/elements/components/gstreamer-plugins-ugly.bst b/elements/components/gstreamer-plugins-ugly.bst
-index f5664d7db..b5144c26e 100644
---- a/elements/components/gstreamer-plugins-ugly.bst
-+++ b/elements/components/gstreamer-plugins-ugly.bst
-@@ -19,7 +19,6 @@ variables:
-     -Ddvdlpcmdec=enabled
-     -Ddvdsub=enabled
-     -Drealmedia=enabled
--    -Dxingmux=enabled
-     -Dorc=enabled
-     -Dpackage-origin="freedesktop-sdk"
-     -Dx264=enabled
+ public:
+   cpe:
 diff --git a/elements/include/gstreamer-source.yml b/elements/include/gstreamer-source.yml
-index e73a056ab..ee16131c9 100644
+index f36b91ea..3b02415c 100644
 --- a/elements/include/gstreamer-source.yml
 +++ b/elements/include/gstreamer-source.yml
-@@ -3,9 +3,9 @@ sources:
+@@ -2,6 +2,6 @@ sources:
+ - kind: git_repo
    url: freedesktop:gstreamer/gstreamer.git
-   track: master
-   track-extra:
--  - '1.20'
-+  - '1.22'
-   match:
-   - 1.*[02468].*
--  ref: 1.20.6-0-gb7d3037cca2fe72c5b7daab5e0617e61ae013dcc
+   track: 1.*[02468].*
+-  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
 +  ref: 1.22.6-0-gddb4fbe43149b157efb52b6472313f48308c1dbc
  - kind: patch_queue
    path: patches/gstreamer
-diff --git a/patches/gstreamer/gst-libav-no-cache-generator.patch b/patches/gstreamer/gst-libav-no-cache-generator.patch
-deleted file mode 100644
-index 7e4381830..000000000
---- a/patches/gstreamer/gst-libav-no-cache-generator.patch
-+++ /dev/null
-@@ -1,12 +0,0 @@
--diff --git a/subprojects/gst-libav/docs/meson.build b/subprojects/gst-libav/docs/meson.build
--index 5f25f20837..590b62919a 100644
----- a/subprojects/gst-libav/docs/meson.build
--+++ b/subprojects/gst-libav/docs/meson.build
--@@ -74,6 +74,6 @@ plugins_doc = [hotdoc.generate_doc('libav',
--     gst_c_sources: ['../ext/*/*.[ch]',],
--     gst_cache_file: plugins_cache,
--     gst_plugin_name: 'libav',
---    dependencies: [gst_dep, gstlibav_plugin, plugins_doc_dep],
--+    dependencies: [gst_dep, gstlibav_plugin],
--     disable_incremental_build: true,
-- )]
 -- 
-2.40.1
+2.41.0
 

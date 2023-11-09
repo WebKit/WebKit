@@ -1,8 +1,8 @@
 kind: autotools
 sources:
 - kind: tar
-  url: github_com:flatpak/xdg-dbus-proxy/releases/download/0.1.2/xdg-dbus-proxy-0.1.2.tar.xz
-  ref: 1749d6f9f46dcc9edc87725641cf56cf91dcad1b01707891ea0850c1000c520f
+  url: github_com:flatpak/xdg-dbus-proxy/releases/download/0.1.5/xdg-dbus-proxy-0.1.5.tar.xz
+  ref: 061dcfaf8a0650e5fd9d5432dfe88bda749ea0d079dc136304bfecfbce0661fb
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
 
