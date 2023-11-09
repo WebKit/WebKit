@@ -2605,7 +2605,8 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sam
 
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
 
-# webkit.org/b/264042 [ Sonoma EWS ] Suppress failures on EWS to avoid false positives on patches
+# webkit.org/b/264419 ([ Sonoma 14.1+ ] Multiple tests are constantly failing following update from 14.0.)
+[ Sonoma+ ] css1/box_properties/acid_test.html [ Pass ImageOnlyFailure Failure ]
 [ Sonoma+ ] css2.1/t09-c5526c-display-00-e.html [ Pass ImageOnlyFailure Failure ]
 [ Sonoma+ ] css3/filters/effect-opacity-hw.html [ Pass ImageOnlyFailure Failure ]
 [ Sonoma+ ] fast/block/basic/011.html [ Pass ImageOnlyFailure Failure ]
