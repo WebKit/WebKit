@@ -664,18 +664,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [self _updateWebViewFullscreenInsets];
     _secheuristic.setSize(self.view.bounds.size);
+    [self._webView setFrame:[_animatingView bounds]];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        [self._webView _beginAnimatedResizeWithUpdates:^{
-            [self._webView _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
-        }];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self._webView _setInterfaceOrientationOverride:[UIApp statusBarOrientation]];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
     } completion:^(id <UIViewControllerTransitionCoordinatorContext>context) {
         [self._webView _endAnimatedResize];
     }];
