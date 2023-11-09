@@ -147,6 +147,8 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
+    bool searchFieldShouldAppearAsTextField(const RenderStyle&) const final;
+
     // Get the control size based off the font. Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(const RenderStyle&) const;
     NSControlSize controlSizeForSystemFont(const RenderStyle&) const;

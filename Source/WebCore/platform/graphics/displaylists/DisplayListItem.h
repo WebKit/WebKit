@@ -44,7 +44,7 @@ class ResourceHeap;
 class ApplyDeviceScaleFactor;
 class BeginTransparencyLayer;
 class ClearRect;
-class ClearShadow;
+class ClearDropShadow;
 class Clip;
 class ClipRoundedRect;
 class ClipOut;
@@ -119,7 +119,7 @@ using Item = std::variant
     < ApplyDeviceScaleFactor
     , BeginTransparencyLayer
     , ClearRect
-    , ClearShadow
+    , ClearDropShadow
     , Clip
     , ClipRoundedRect
     , ClipOut

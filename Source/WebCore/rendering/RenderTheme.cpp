@@ -206,6 +206,11 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         style.setEffectiveAppearance(appearance);
     }
 
+    if (appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style)) {
+        appearance = StyleAppearance::TextField;
+        style.setEffectiveAppearance(appearance);
+    }
+
     if (!isAppearanceAllowedForAllElements(appearance)
         && !userAgentAppearanceStyle
         && autoAppearance == StyleAppearance::None

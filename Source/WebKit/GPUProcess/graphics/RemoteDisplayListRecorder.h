@@ -69,7 +69,7 @@ public:
     void setLineDash(WebCore::DisplayList::SetLineDash&&);
     void setLineJoin(WebCore::LineJoin);
     void setMiterLimit(float);
-    void clearShadow();
+    void clearDropShadow();
     void clip(const WebCore::FloatRect&);
     void clipRoundedRect(const WebCore::FloatRoundedRect&);
     void clipOut(const WebCore::FloatRect&);

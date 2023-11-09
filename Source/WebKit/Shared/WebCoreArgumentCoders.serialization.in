@@ -6516,6 +6516,7 @@ header: <WebCore/GraphicsContextState.h>
     StrokeThickness,
     StrokeStyle,
     CompositeMode,
+    DropShadow,
     Style,
     Alpha,
     TextDrawingMode,
@@ -6545,6 +6546,7 @@ header: <WebCore/GraphicsContextState.h>
     float m_strokeThickness;
     WebCore::StrokeStyle m_strokeStyle;
     WebCore::CompositeMode m_compositeMode;
+    std::optional<WebCore::GraphicsDropShadow> m_dropShadow;
     std::optional<WebCore::GraphicsStyle> m_style;
     float m_alpha;
     WebCore::InterpolationQuality m_imageInterpolationQuality;

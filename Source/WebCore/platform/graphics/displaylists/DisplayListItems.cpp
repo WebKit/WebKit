@@ -181,9 +181,9 @@ void SetMiterLimit::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("mitre-limit", miterLimit());
 }
 
-void ClearShadow::apply(GraphicsContext& context) const
+void ClearDropShadow::apply(GraphicsContext& context) const
 {
-    context.clearShadow();
+    context.clearDropShadow();
 }
 
 void Clip::apply(GraphicsContext& context) const

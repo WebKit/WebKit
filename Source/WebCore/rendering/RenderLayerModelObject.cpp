@@ -160,7 +160,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
                 setChildNeedsLayout();
             createLayer();
             if (parent() && !needsLayout() && containingBlock())
-                layer()->setRepaintStatus(NeedsFullRepaint);
+                layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
         }
     } else if (layer() && layer()->parent()) {
         gainedOrLostLayer = true;
@@ -175,7 +175,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         setHasReflection(false);
 
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
-        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && layer()->repaintRects())
+        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == RepaintStatus::NeedsFullRepaint && layer()->repaintRects())
             repaintUsingContainer(containerForRepaint().renderer.get(), layer()->repaintRects()->clippedOverflowRect);
 
         layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange); // calls destroyLayer() which clears m_layer

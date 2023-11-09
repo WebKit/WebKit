@@ -661,13 +661,13 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 void RenderObject::setLayerNeedsFullRepaint()
 {
     ASSERT(hasLayer());
-    downcast<RenderLayerModelObject>(*this).checkedLayer()->setRepaintStatus(NeedsFullRepaint);
+    downcast<RenderLayerModelObject>(*this).checkedLayer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
 }
 
 void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 {
     ASSERT(hasLayer());
-    downcast<RenderLayerModelObject>(*this).checkedLayer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
+    downcast<RenderLayerModelObject>(*this).checkedLayer()->setRepaintStatus(RepaintStatus::NeedsFullRepaintForPositionedMovementLayout);
 }
 
 static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(RenderElement* renderer)

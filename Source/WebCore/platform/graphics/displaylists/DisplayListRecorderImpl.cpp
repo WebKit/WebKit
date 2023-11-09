@@ -124,9 +124,9 @@ void RecorderImpl::recordSetMiterLimit(float limit)
     append(SetMiterLimit(limit));
 }
 
-void RecorderImpl::recordClearShadow()
+void RecorderImpl::recordClearDropShadow()
 {
-    append(ClearShadow());
+    append(ClearDropShadow());
 }
 
 void RecorderImpl::recordResetClip()

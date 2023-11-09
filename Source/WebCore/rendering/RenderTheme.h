@@ -163,6 +163,8 @@ public:
     virtual bool useFormSemanticContext() const { return false; }
     virtual bool supportsLargeFormControls() const { return false; }
 
+    virtual bool searchFieldShouldAppearAsTextField(const RenderStyle&) const { return false; }
+
     // Text selection colors.
     Color activeSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;

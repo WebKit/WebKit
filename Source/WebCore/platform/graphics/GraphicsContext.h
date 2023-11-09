@@ -124,11 +124,10 @@ public:
     void setStrokeStyle(StrokeStyle style) { m_state.setStrokeStyle(style); didUpdateState(m_state); }
 
     std::optional<GraphicsDropShadow> dropShadow() const { return m_state.dropShadow(); }
-    void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setStyle(dropShadow); didUpdateState(m_state); }
-    WEBCORE_EXPORT void clearShadow();
-    bool hasVisibleShadow() const;
-    bool hasBlurredShadow() const;
-    bool hasShadow() const;
+    void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setDropShadow(dropShadow); didUpdateState(m_state); }
+    void clearDropShadow() { m_state.setDropShadow(std::nullopt); didUpdateState(m_state); }
+    bool hasBlurredDropShadow() const { return dropShadow() && dropShadow()->isBlurred(); }
+    bool hasDropShadow() const { return dropShadow() && dropShadow()->hasOutsets(); }
 
     std::optional<GraphicsStyle> style() const { return m_state.style(); }
     void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateState(m_state); }

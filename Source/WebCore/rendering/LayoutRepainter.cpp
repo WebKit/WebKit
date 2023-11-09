@@ -54,7 +54,7 @@ bool LayoutRepainter::repaintAfterLayout()
     auto newBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
     auto newOutlineBounds = m_repaintOutlineBounds ? nullptr : &m_oldOutlineBounds;
 
-    return m_renderer.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBounds, &newBounds, newOutlineBounds);
+    return m_renderer.repaintAfterLayoutIfNeeded(m_repaintContainer, m_renderer.selfNeedsLayout() ? RenderElement::RequiresFullRepaint::Yes : RenderElement::RequiresFullRepaint::No, m_oldBounds, m_oldOutlineBounds, &newBounds, newOutlineBounds);
 }
 
 } // namespace WebCore
