@@ -54,6 +54,7 @@ public:
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
         virtual bool isFieldOwnerDisabled() const = 0;
         virtual bool isFieldOwnerReadOnly() const = 0;
+        virtual bool isFieldOwnerHorizontal() const = 0;
         virtual AtomString localeIdentifier() const = 0;
         virtual const GregorianDateTime& placeholderDate() const = 0;
     };
@@ -93,6 +94,7 @@ private:
     void defaultKeyboardEventHandler(KeyboardEvent&);
     bool isFieldOwnerDisabled() const;
     bool isFieldOwnerReadOnly() const;
+    bool isFieldOwnerHorizontal() const;
 
     WeakPtr<FieldOwner> m_fieldOwner;
 };

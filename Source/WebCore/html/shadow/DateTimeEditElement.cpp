@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "HTMLNames.h"
 #include "PlatformLocale.h"
+#include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "Text.h"
@@ -360,6 +361,13 @@ bool DateTimeEditElement::isFieldOwnerDisabled() const
 bool DateTimeEditElement::isFieldOwnerReadOnly() const
 {
     return m_editControlOwner && m_editControlOwner->isEditControlOwnerReadOnly();
+}
+
+bool DateTimeEditElement::isFieldOwnerHorizontal() const
+{
+    if (CheckedPtr renderer = fieldsWrapperElement().renderer())
+        return renderer->isHorizontalWritingMode();
+    return true;
 }
 
 AtomString DateTimeEditElement::localeIdentifier() const
