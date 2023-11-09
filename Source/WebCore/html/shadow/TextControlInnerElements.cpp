@@ -233,6 +233,12 @@ std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustom
 
 // MARK: SearchFieldResultsButtonElement
 
+static inline bool searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const RenderStyle& style)
+{
+    auto appearance = style.appearance();
+    return appearance == StyleAppearance::TextField && appearance == style.effectiveAppearance();
+}
+
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
     : HTMLDivElement(divTag, document, CreateSearchFieldResultsButtonElement)
 {
@@ -254,13 +260,16 @@ std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCust
     if (!shadowHostStyle)
         return std::nullopt;
 
-    auto appearance = shadowHostStyle->effectiveAppearance();
-    if (appearance == StyleAppearance::TextField) {
+    if (searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle)) {
         auto elementStyle = resolveStyle(resolutionContext);
         elementStyle.style->setDisplay(DisplayType::None);
         return elementStyle;
     }
-    if (appearance != StyleAppearance::SearchField) {
+
+    // By default, input[type=search] can use either the searchfield or textfield appearance depending
+    // on the platform and writing mode. Only adjust the style when that default is used.
+    auto effectiveAppearance = shadowHostStyle->effectiveAppearance();
+    if (effectiveAppearance != StyleAppearance::SearchField && effectiveAppearance != StyleAppearance::TextField) {
         SetForScope canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(resolutionContext);
     }
@@ -326,7 +335,7 @@ std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCusto
     auto& inputElement = downcast<HTMLInputElement>(*shadowHost());
     elementStyle.style->setVisibility(elementStyle.style->visibility() == Visibility::Hidden || inputElement.value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
 
-    if (shadowHostStyle && shadowHostStyle->effectiveAppearance() == StyleAppearance::TextField)
+    if (shadowHostStyle && searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle))
         elementStyle.style->setDisplay(DisplayType::None);
 
     return elementStyle;

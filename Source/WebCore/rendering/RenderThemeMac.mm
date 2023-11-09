@@ -753,6 +753,11 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
     return WebCore::usesTestModeFocusRingColor();
 }
 
+bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style) const
+{
+    return !style.isHorizontalWritingMode();
+}
+
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     auto appearance = style.effectiveAppearance();
@@ -1281,8 +1286,14 @@ const int emptyResultsOffset = 9;
 void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width() - emptyResultsOffset, LengthType::Fixed));
-    style.setHeight(Length(size.height(), LengthType::Fixed));
+    int widthOffset = 0;
+    int heightOffset = 0;
+    if (style.isHorizontalWritingMode())
+        widthOffset = emptyResultsOffset;
+    else
+        heightOffset = emptyResultsOffset;
+    style.setWidth(Length(size.width() - widthOffset, LengthType::Fixed));
+    style.setHeight(Length(size.height() - heightOffset, LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
