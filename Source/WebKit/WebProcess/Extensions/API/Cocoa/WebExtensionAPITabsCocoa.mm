@@ -196,7 +196,7 @@ NSArray *toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& parameter
             [results addObject:NSNull.null];
     }
 
-    return results;
+    return [results copy];
 }
 
 bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
@@ -511,8 +511,13 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
         return false;
     }
 
-    if (options[frameIdKey] && options[allFramesKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'frameId' and 'allFrames");
+    if (!options[fileKey] && !options[codeKey]) {
+        *outExceptionString = toErrorString(nil, @"details", @"it must specify either 'file' or 'code'");
+        return false;
+    }
+
+    if (options[allFramesKey] && options[frameIdKey]) {
+        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'allFrames' and 'frameId'");
         return false;
     }
 

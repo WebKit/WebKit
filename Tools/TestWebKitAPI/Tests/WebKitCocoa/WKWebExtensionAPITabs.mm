@@ -46,6 +46,22 @@ static auto *tabsManifest = @{
     },
 };
 
+static auto *tabsManifestV2 = @{
+    @"manifest_version": @2,
+
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
+    @"permissions": @[ @"*://localhost/*" ],
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+};
+
 static auto *tabsContentScriptManifest = @{
     @"manifest_version": @3,
 
@@ -127,6 +143,52 @@ TEST(WKWebExtensionAPITabs, Errors)
     ]);
 
     Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.tabs.executeScript(), /a required argument is missing/i)",
+
+        @"await browser.test.assertRejects(browser.tabs.executeScript(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 0, frameId: 0 }), /'file' is expected to be a string, but a number was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS(), /a required argument is missing./i)",
+
+        @"await browser.test.assertRejects(browser.tabs.insertCSS(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS(), /a required argument is missing./i)",
+
+        @"await browser.test.assertRejects(browser.tabs.removeCSS(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 0, frameId: 0 }), /'file' is expected to be a string, but a number was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifestV2, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPITabs, Create)
@@ -1420,6 +1482,173 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, ExecuteScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *javaScript = @"document.body.style.background = 'pink'";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
+        @"browser.test.assertEq(results[0], 'pink')",
+
+        @"results = await browser.tabs.executeScript(tabId, { frameId: 0, file: 'executeScript.js' })",
+        @"browser.test.assertEq(results[0], 'pink')",
+
+        @"results = await browser.tabs.executeScript(tabId, { allFrames: true, file: 'executeScript.js' })",
+        @"browser.test.assertEq(results[0], 'pink')",
+        @"browser.test.assertEq(results[1], 'pink')",
+
+        @"results = await browser.tabs.executeScript(tabId, { allFrames: false, code: \"document.body.style.background = 'pink'\" })",
+        @"browser.test.assertEq(results[0], 'pink')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"executeScript.js": javaScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInMainFrame)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *css = @"body { background-color: pink !important }";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+        @"const transparentValue = 'rgba(0, 0, 0, 0)'",
+
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"await browser.tabs.insertCSS(tabId, { allFrames: false, file: 'styles.css' })",
+        @"let result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { allFrames: false, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { frameId: 0, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], blueValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        // Stylesheet being removed should match the one inserted.
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"await browser.tabs.removeCSS(tabId, { allFrames: true, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], blueValue)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"styles.css": css }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInAllFrames)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body><iframe src='/frame.html'/></body>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *css = @"body { background-color: pink !important }";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+        @"const transparentValue = 'rgba(0, 0, 0, 0)'",
+
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"await browser.tabs.insertCSS(tabId, { allFrames: true, file: 'styles.css' })",
+
+        @"let result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: true })",
+
+        @"browser.test.assertEq(result[0], pinkValue)",
+        @"browser.test.assertEq(result[1], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { allFrames: true, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: true })",
+
+        @"browser.test.assertEq(result[0], transparentValue)",
+        @"browser.test.assertEq(result[1], blueValue)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"styles.css": css }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, UnsupportedMV3APIs)
+{
+    // Manifest v3 deprecates executeScript(), insertCSS() and removeCSS(), so they should be an undefined property.
+
+    static auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.tabs.insertCSS, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.insertCSS, undefined)",
+
+        @"browser.test.assertEq(typeof browser.tabs.removeCSS, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.removeCSS, undefined)",
+
+        @"browser.test.assertEq(typeof browser.tabs.executeScript, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.executeScript, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
 }
 
 } // namespace TestWebKitAPI
