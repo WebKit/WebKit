@@ -638,12 +638,45 @@ std::optional<WebCore::CrossOriginEmbedderPolicy> Coder<WebCore::CrossOriginEmbe
 
 void Coder<WebCore::ContentSecurityPolicyResponseHeaders>::encodeForPersistence(Encoder& encoder, const WebCore::ContentSecurityPolicyResponseHeaders& instance)
 {
-    instance.encode(encoder);
+    encoder << static_cast<uint64_t>(instance.headers().size());
+    for (auto& pair : instance.headers()) {
+        encoder << pair.first;
+        encoder << pair.second;
+    }
+    encoder << instance.httpStatusCode();
 }
 
 std::optional<WebCore::ContentSecurityPolicyResponseHeaders> Coder<WebCore::ContentSecurityPolicyResponseHeaders>::decodeForPersistence(Decoder& decoder)
 {
-    return WebCore::ContentSecurityPolicyResponseHeaders::decode(decoder);
+    WebCore::ContentSecurityPolicyResponseHeaders headers;
+
+    std::optional<uint64_t> headersSize;
+    decoder >> headersSize;
+    if (!headersSize)
+        return std::nullopt;
+
+    Vector<std::pair<String, WebCore::ContentSecurityPolicyHeaderType>> headersVector;
+    for (size_t i = 0; i < *headersSize; ++i) {
+        std::optional<String> header;
+        decoder >> header;
+        if (!header)
+            return std::nullopt;
+        std::optional<WebCore::ContentSecurityPolicyHeaderType> headerType;
+        decoder >> headerType;
+        if (!headerType)
+            return std::nullopt;
+        headersVector.append(std::make_pair(WTFMove(*header), WTFMove(*headerType)));
+    }
+    headersVector.shrinkToFit();
+    headers.setHeaders(WTFMove(headersVector));
+
+    std::optional<int> httpStatusCode;
+    decoder >> httpStatusCode;
+    if (!httpStatusCode)
+        return std::nullopt;
+    headers.setHTTPStatusCode(*httpStatusCode);
+
+    return headers;
 }
 
 void Coder<WebCore::ClientOrigin>::encodeForPersistence(Encoder& encoder, const WebCore::ClientOrigin& instance)
