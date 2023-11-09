@@ -1328,7 +1328,17 @@ private:
         if (doubleImmediate < -twoToThe48 || doubleImmediate > twoToThe48)
             return DontSpeculateInt32;
         
-        return bytecodeCanTruncateInteger(add->arithNodeFlags()) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
+        if (bytecodeCanTruncateInteger(add->arithNodeFlags())) {
+            // If int32 + const double, then we should not speculate this add node with int32 type.
+            // Because ToInt32(int32 + const double) is not always equivalent to int32 + ToInt32(const double).
+            // For example:
+            // let the int32 = -1 and const double = 0.1, then ToInt32(-1 + 0.1) = 0 but -1 + ToInt32(0.1) = -1.
+            if (operandResultType == NodeResultInt32 && !isInteger(doubleImmediate))
+                return DontSpeculateInt32;
+            return SpeculateInt32AndTruncateConstants;
+        }
+
+        return DontSpeculateInt32;
     }
 
     B3::SparseCollection<Node> m_nodes;
