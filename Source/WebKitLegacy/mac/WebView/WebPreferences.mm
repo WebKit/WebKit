@@ -3036,16 +3036,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
 }
 
-- (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
-{
-    return [self _boolValueForKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
-}
-
-- (void)setAspectRatioOfImgFromWidthAndHeightEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
-}
-
 - (BOOL)coreMathMLEnabled
 {
     return [self _boolValueForKey:WebKitCoreMathMLEnabledPreferenceKey];
@@ -3142,6 +3132,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
+{
+    return YES;
+}
+
+- (void)setAspectRatioOfImgFromWidthAndHeightEnabled:(BOOL)flag
+{
+}
 
 - (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
 {
