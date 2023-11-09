@@ -52,12 +52,12 @@ static inline UserStyleLevel toUserStyleLevel(WebKitUserStyleLevel styleLevel)
 {
     switch (styleLevel) {
     case WEBKIT_USER_STYLE_LEVEL_USER:
-        return UserStyleUserLevel;
+        return UserStyleLevel::User;
     case WEBKIT_USER_STYLE_LEVEL_AUTHOR:
-        return UserStyleAuthorLevel;
+        return UserStyleLevel::Author;
     default:
         ASSERT_NOT_REACHED();
-        return UserStyleAuthorLevel;
+        return UserStyleLevel::Author;
     }
 }
 

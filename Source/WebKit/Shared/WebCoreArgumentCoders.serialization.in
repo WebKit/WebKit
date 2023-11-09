@@ -6660,3 +6660,5 @@ struct WebCore::KeypressCommand {
     String text;
 }
 #endif
+
+[Nested] enum class WebCore::UserStyleLevel : bool;
