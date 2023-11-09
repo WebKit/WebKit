@@ -82,7 +82,7 @@ GlyphData FontCascadeFonts::GlyphPageCacheEntry::glyphDataForCharacter(UChar32 c
 
 void FontCascadeFonts::GlyphPageCacheEntry::setGlyphDataForCharacter(UChar32 character, GlyphData glyphData)
 {
-    ASSERT(!glyphDataForCharacter(character).glyph);
+    ASSERT(!glyphDataForCharacter(character).isValid());
     if (!m_mixedFont) {
         m_mixedFont = makeUnique<MixedFontGlyphPage>(m_singleFont.get());
         m_singleFont = nullptr;
@@ -375,7 +375,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 character, const 
     }
 
     // Keep the system fallback fonts we use alive.
-    if (fallbackGlyphData.glyph)
+    if (fallbackGlyphData.isValid())
         m_systemFallbackFontSet.add(WTFMove(systemFallbackFont));
 
     return fallbackGlyphData;
@@ -413,7 +413,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
             break;
 
         GlyphData data = fontRanges.glyphDataForCharacter(character, policy);
-        if (!data.font)
+        if (!data.isValid())
             continue;
 
         if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
@@ -425,7 +425,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
             policy = ExternalResourceDownloadPolicy::Forbid;
             if (fallbackVisibility == FallbackVisibility::Immaterial)
                 fallbackVisibility = data.font->visibility() == Font::Visibility::Visible ? FallbackVisibility::Visible : FallbackVisibility::Invisible;
-            if (!loadingResult.font && data.glyph)
+            if (!loadingResult.isValid() && data.glyph)
                 loadingResult = data;
             continue;
         }
@@ -454,7 +454,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
         return data;
     }
 
-    if (loadingResult.font)
+    if (loadingResult.isValid())
         return loadingResult;
     // https://drafts.csswg.org/css-fonts-4/#char-handling-issues
     // "If a given character is a Private-Use Area Unicode codepoint, user agents must only match font families named in the font-family list that are not generic families. If none of the families named in the font-family list contain a glyph for that codepoint, user agents must display some form of missing glyph symbol for that character rather than attempting installed font fallback for that codepoint."
@@ -519,7 +519,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
         cacheEntry.setSingleFontPage(glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, 0)));
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
-    if (!glyphData.font) {
+    if (!glyphData.isValid()) {
         // No glyph, resolve per-character.
         ASSERT(variant == NormalVariant);
         glyphData = glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
