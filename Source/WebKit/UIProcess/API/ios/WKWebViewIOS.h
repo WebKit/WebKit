@@ -210,6 +210,7 @@ class VisibleContentRectUpdateInfo;
 @property (nonatomic, readonly) std::optional<CGSize> _viewLayoutSizeOverride;
 @property (nonatomic, readonly) std::optional<CGSize> _minimumUnobscuredSizeOverride;
 @property (nonatomic, readonly) std::optional<CGSize> _maximumUnobscuredSizeOverride;
+- (void)_resetContentOffset;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;
 
