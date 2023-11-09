@@ -2800,6 +2800,8 @@ fn testTextureSampleCompareLevel()
 }
 
 // 16.7.12
+// RUN: %metal-compile testTextureSampleGrad
+@compute @workgroup_size(1)
 fn testTextureSampleGrad()
 {
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[F32, 2], Vector[F32, 2]) => Vector[F32, 4],

@@ -1081,6 +1081,62 @@ static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::Call
     visitArguments(writer, call, 1);
 }
 
+static void emitTextureSampleGrad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+
+    ASSERT(call.arguments().size() > 1);
+    auto& texture = call.arguments()[0];
+    auto& textureType = std::get<Types::Texture>(*texture.inferredType());
+
+    unsigned gradientIndex;
+    const char* gradientFunction;
+    switch (textureType.kind) {
+    case Types::Texture::Kind::Texture1d:
+    case Types::Texture::Kind::Texture2d:
+    case Types::Texture::Kind::TextureMultisampled2d:
+        gradientIndex = 3;
+        gradientFunction = "gradient2d";
+        break;
+
+    case Types::Texture::Kind::Texture3d:
+        gradientIndex = 3;
+        gradientFunction = "gradient3d";
+        break;
+
+    case Types::Texture::Kind::TextureCube:
+        gradientIndex = 3;
+        gradientFunction = "gradientcube";
+        break;
+
+    case Types::Texture::Kind::Texture2dArray:
+        gradientIndex = 4;
+        gradientFunction = "gradient2d";
+        break;
+
+    case Types::Texture::Kind::TextureCubeArray:
+        gradientIndex = 4;
+        gradientFunction = "gradientcube";
+        break;
+    }
+    writer->visit(texture);
+    writer->stringBuilder().append(".sample(");
+    for (unsigned i = 1; i < gradientIndex; ++i) {
+        if (i != 1)
+            writer->stringBuilder().append(", ");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(", ", gradientFunction, "(");
+    writer->visit(call.arguments()[gradientIndex]);
+    writer->stringBuilder().append(", ");
+    writer->visit(call.arguments()[gradientIndex + 1]);
+    writer->stringBuilder().append(")");
+    for (unsigned i = gradientIndex + 2; i < call.arguments().size(); ++i) {
+        writer->stringBuilder().append(", ");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(")");
+}
+
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     bool isArray = false;
@@ -1406,6 +1462,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
             { "textureSampleCompare", emitTextureSampleCompare },
             { "textureSampleCompareLevel", emitTextureSampleCompare },
+            { "textureSampleGrad", emitTextureSampleGrad },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },
