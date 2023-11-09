@@ -1297,7 +1297,7 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     style.setBoxShadow(nullptr);
 }
 
-void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element*) const
+void RenderThemeMac::adjustSearchFieldResultsDecorationAppearanceStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Length(size.width(), LengthType::Fixed));

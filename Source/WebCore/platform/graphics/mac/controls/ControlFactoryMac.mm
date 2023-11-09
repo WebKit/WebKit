@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
+#import "ButtonAppearance.h"
 #import "ButtonMac.h"
-#import "ButtonPart.h"
 #import "ColorWellMac.h"
 #import "ControlStyle.h"
 #import "ImageControlsButtonMac.h"
@@ -40,16 +40,16 @@
 #import "ProgressBarMac.h"
 #import "SearchFieldCancelButtonMac.h"
 #import "SearchFieldMac.h"
+#import "SearchFieldResultsAppearance.h"
 #import "SearchFieldResultsMac.h"
-#import "SearchFieldResultsPart.h"
 #import "SliderThumbMac.h"
 #import "SliderTrackMac.h"
 #import "SwitchThumbMac.h"
 #import "SwitchTrackMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
+#import "ToggleButtonAppearance.h"
 #import "ToggleButtonMac.h"
-#import "ToggleButtonPart.h"
 #import <pal/spi/mac/NSSearchFieldCellSPI.h>
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -228,96 +228,96 @@ NSTextFieldCell *ControlFactoryMac::textFieldCell() const
     return m_textFieldCell.get();
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ControlPart& part)
 {
     return makeUnique<ButtonMac>(part, *this, part.type() == StyleAppearance::DefaultButton ? defaultButtonCell() : buttonCell());
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ControlPart& part)
 {
     return makeUnique<ColorWellMac>(part, *this, buttonCell());
 }
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformImageControlsButton(ImageControlsButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformImageControlsButton(ControlPart& part)
 {
     return makeUnique<ImageControlsButtonMac>(part, *this, servicesRolloverButtonCell());
 }
 #endif
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformInnerSpinButton(InnerSpinButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformInnerSpinButton(ControlPart& part)
 {
     return makeUnique<InnerSpinButtonMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuListPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(ControlPart& part)
 {
     return makeUnique<MenuListMac>(part, *this, popUpButtonCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuListButton(MenuListButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuListButton(ControlPart& part)
 {
     return makeUnique<MenuListButtonMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(ControlPart& part)
 {
     return makeUnique<MeterMac>(part, *this, levelIndicatorCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformProgressBar(ProgressBarPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformProgressBar(ControlPart& part)
 {
     return makeUnique<ProgressBarMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchField(SearchFieldPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchField(ControlPart& part)
 {
     return makeUnique<SearchFieldMac>(part, *this, searchFieldCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldCancelButton(ControlPart& part)
 {
     return makeUnique<SearchFieldCancelButtonMac>(part, *this, searchFieldCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldResults(SearchFieldResultsPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldResults(ControlPart& part)
 {
     return makeUnique<SearchFieldResultsMac>(part, *this, searchFieldCell(), part.type() == StyleAppearance::SearchFieldResultsButton ? searchMenuTemplate() : nullptr);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderThumb(SliderThumbPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderThumb(ControlPart& part)
 {
     return makeUnique<SliderThumbMac>(part, *this, sliderCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderTrack(SliderTrackPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderTrack(ControlPart& part)
 {
     return makeUnique<SliderTrackMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchThumb(SwitchThumbPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchThumb(ControlPart& part)
 {
     return makeUnique<SwitchThumbMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchTrack(SwitchTrackPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchTrack(ControlPart& part)
 {
     return makeUnique<SwitchTrackMac>(part, *this);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(ControlPart& part)
 {
     return makeUnique<TextAreaMac>(part);
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextField(TextFieldPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextField(ControlPart& part)
 {
     return makeUnique<TextFieldMac>(part, *this, textFieldCell());
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformToggleButton(ToggleButtonPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformToggleButton(ControlPart& part)
 {
     return makeUnique<ToggleButtonMac>(part, *this, part.type() == StyleAppearance::Checkbox ? checkboxCell() : radioCell());
 }

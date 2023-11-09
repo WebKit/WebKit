@@ -31,13 +31,15 @@
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
-#import "MenuListButtonPart.h"
+#import "LocalCurrentGraphicsContext.h"
+#import "MenuListButtonAppearance.h"
 
 namespace WebCore {
 
-MenuListButtonMac::MenuListButtonMac(MenuListButtonPart& owningPart, ControlFactoryMac& controlFactory)
+MenuListButtonMac::MenuListButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory)
     : ControlMac(owningPart, controlFactory)
 {
+    ASSERT(owningPart.type() == StyleAppearance::MenulistButton);
 }
 
 static void topGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)

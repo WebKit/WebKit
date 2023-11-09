@@ -595,7 +595,7 @@ LayoutUnit RenderMenuList::clientPaddingLeft() const
         // space appear on the side of the popup menu.
         return endOfLinePadding;
     }
-    // If the appearance isn't MenulistPart, then the select is styled (non-native), so
+    // If the appearance isn't MenuListAppearance, then the select is styled (non-native), so
     // we want to return the user specified padding.
     return paddingLeft() + m_innerBlock->paddingLeft();
 }

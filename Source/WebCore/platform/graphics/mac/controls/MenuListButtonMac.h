@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class MenuListButtonPart;
+class MenuListButtonAppearance;
 
 class MenuListButtonMac final : public ControlMac {
 public:
-    MenuListButtonMac(MenuListButtonPart&, ControlFactoryMac&);
+    MenuListButtonMac(ControlPart&, ControlFactoryMac&);
 
 private:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;

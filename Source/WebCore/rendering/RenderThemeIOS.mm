@@ -2591,12 +2591,12 @@ bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderObject& box, con
     return false;
 }
 
-void RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSearchFieldResultsDecorationAppearanceStyle(RenderStyle& style, const Element* element) const
 {
     adjustSearchFieldDecorationPartStyle(style, element);
 }
 
-bool RenderThemeIOS::paintSearchFieldResultsDecorationPart(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintSearchFieldResultsDecorationAppearance(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return paintSearchFieldDecorationPart(box, paintInfo, rect);
 }

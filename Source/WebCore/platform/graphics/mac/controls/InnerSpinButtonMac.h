@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class InnerSpinButtonPart;
+class InnerSpinButtonAppearance;
 
 class InnerSpinButtonMac final : public ControlMac {
 public:
-    InnerSpinButtonMac(InnerSpinButtonPart&, ControlFactoryMac&);
+    InnerSpinButtonMac(ControlPart&, ControlFactoryMac&);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class TextFieldPart;
+class TextFieldAppearance;
 
 class TextFieldMac final : public ControlMac {
 public:
-    TextFieldMac(TextFieldPart& owningPart, ControlFactoryMac&, NSTextFieldCell *);
+    TextFieldMac(ControlPart& owningPart, ControlFactoryMac&, NSTextFieldCell *);
 
 private:
     static bool shouldPaintCustomTextField(const ControlStyle&);

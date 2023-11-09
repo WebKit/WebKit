@@ -27,26 +27,8 @@
 
 namespace WebCore {
 
-class ApplePayButtonPart;
-class ButtonPart;
-class ColorWellPart;
-class ImageControlsButtonPart;
-class InnerSpinButtonPart;
-class MeterPart;
-class MenuListButtonPart;
-class MenuListPart;
+class ControlPart;
 class PlatformControl;
-class ProgressBarPart;
-class SearchFieldCancelButtonPart;
-class SearchFieldPart;
-class SearchFieldResultsPart;
-class SliderThumbPart;
-class SliderTrackPart;
-class SwitchThumbPart;
-class SwitchTrackPart;
-class TextAreaPart;
-class TextFieldPart;
-class ToggleButtonPart;
 
 class ControlFactory {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,30 +39,30 @@ public:
     static ControlFactory& sharedControlFactory();
 
 #if ENABLE(APPLE_PAY)
-    virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ControlPart&) = 0;
 #endif
-    virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformButton(ControlPart&) = 0;
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ControlPart&) = 0;
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-    virtual std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ImageControlsButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ControlPart&) = 0;
 #endif
-    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformMenuListButton(MenuListButtonPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSwitchThumb(SwitchThumbPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformSwitchTrack(SwitchTrackPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuListButton(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMeter(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchField(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSliderThumb(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSliderTrack(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSwitchThumb(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSwitchTrack(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformTextArea(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformTextField(ControlPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformToggleButton(ControlPart&) = 0;
 
 protected:
     ControlFactory() = default;

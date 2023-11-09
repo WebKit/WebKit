@@ -2340,13 +2340,13 @@ platform/graphics/VelocityData.cpp
 platform/graphics/WebMResourceClient.cpp
 platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
-platform/graphics/controls/ApplePayButtonPart.cpp
+platform/graphics/controls/ApplePayButtonAppearance.cpp
 platform/graphics/controls/ControlFactory.cpp
 platform/graphics/controls/ControlPart.cpp
 platform/graphics/controls/ControlStyle.cpp
-platform/graphics/controls/MeterPart.cpp
-platform/graphics/controls/ProgressBarPart.cpp
-platform/graphics/controls/SliderTrackPart.cpp
+platform/graphics/controls/MeterAppearance.cpp
+platform/graphics/controls/ProgressBarAppearance.cpp
+platform/graphics/controls/SliderTrackAppearance.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
