@@ -159,16 +159,19 @@ fn testFieldAccess() -> i32
     return 0;
 }
 
+@group(0) @binding(9) var<storage, read_write> index: u32;
 fn testIndexAccess() -> i32
 {
     // CHECK: local\d+ = __unpack\(global\d+\);
     // CHECK-NEXT: local\d+\[0\] = __unpack\(global\d+\[0\]\);
     // CHECK-NEXT: global\d+\[0\] = global\d+\[0\];
     // CHECK-NEXT: global\d+\[0\] = __pack\(local\d+\[0\]\);
+    // CHECK-NEXT: global\d+\[global\d+\] = __pack\(local\d+\[global\d+\]\);
     var at = at1;
     at[0] = at1[0];
     at1[0] = at2[0];
     at2[0] = at[0];
+    at2[index] = at[index];
     return 0;
 }
 

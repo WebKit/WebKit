@@ -401,6 +401,7 @@ auto RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression) 
 auto RewriteGlobalVariables::getPacking(AST::IndexAccessExpression& expression) -> Packing
 {
     auto basePacking = pack(Packing::Either, expression.base());
+    pack(Packing::Unpacked, expression.index());
     if (basePacking & Packing::Unpacked)
         return Packing::Unpacked;
     auto* baseType = expression.base().inferredType();
