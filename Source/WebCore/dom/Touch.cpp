@@ -63,7 +63,7 @@ static LayoutPoint scaledLocation(LocalFrame* frame, int pageX, int pageY)
     return { pageX * scaleFactor, pageY * scaleFactor };
 }
 
-Touch::Touch(LocalFrame* frame, EventTarget* target, unsigned identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
+Touch::Touch(LocalFrame* frame, EventTarget* target, int identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
     : m_target(target)
     , m_identifier(identifier)
     , m_clientX(pageX - contentsX(frame))
@@ -80,7 +80,7 @@ Touch::Touch(LocalFrame* frame, EventTarget* target, unsigned identifier, int sc
 {
 }
 
-Touch::Touch(EventTarget* target, unsigned identifier, int clientX, int clientY, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation)
+Touch::Touch(EventTarget* target, int identifier, int clientX, int clientY, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation)
     : m_target(target)
     , m_identifier(identifier)
     , m_clientX(clientX)
