@@ -267,7 +267,7 @@ void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::
 
 void LocalSampleBufferDisplayLayer::updateSampleLayerBoundsAndPosition(std::optional<CGRect> bounds)
 {
-    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, bounds, rotation = m_videoFrameRotation, affineTransform = m_affineTransform]() mutable {
+    ensureOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, bounds, rotation = m_videoFrameRotation, affineTransform = m_affineTransform]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;

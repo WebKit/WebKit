@@ -1108,6 +1108,13 @@ void GPUConnectionToWebProcess::enableMockMediaSource()
 }
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+void GPUConnectionToWebProcess::updateSampleBufferDisplayLayerBoundsAndPosition(SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRight>&& fence)
+{
+    m_sampleBufferDisplayLayerManager->updateSampleBufferDisplayLayerBoundsAndPosition(identifier, bounds, WTFMove(fence));
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
