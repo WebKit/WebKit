@@ -5542,18 +5542,17 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
         resultRegister = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
-    Vector<RefPtr<RegisterID>> registers;
-    registers.reserveInitialCapacity(m_targetPatterns.size());
-    for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        registers.unsafeAppendWithoutCapacityCheck(generator.newTemporary());
-        generator.emitNode(registers.last().get(), elements[i]);
+    Vector<RefPtr<RegisterID>> registers(m_targetPatterns.size(), [&](size_t i) {
+        RefPtr newRegister = generator.newTemporary();
+        generator.emitNode(newRegister.get(), elements[i]);
         if (m_targetPatterns[i].defaultValue)
-            assignDefaultValueIfUndefined(generator, registers.last().get(), m_targetPatterns[i].defaultValue);
+            assignDefaultValueIfUndefined(generator, newRegister.get(), m_targetPatterns[i].defaultValue);
         if (resultRegister) {
-            RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(i));
-            generator.emitDirectPutByVal(resultRegister.get(), index.get(), registers.last().get());
+            RefPtr index = generator.emitLoad(nullptr, jsNumber(i));
+            generator.emitDirectPutByVal(resultRegister.get(), index.get(), newRegister.get());
         }
-    }
+        return newRegister;
+    });
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         if (m_targetPatterns[i].pattern)

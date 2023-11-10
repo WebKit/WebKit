@@ -28,6 +28,7 @@
 #include <wtf/Algorithms.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 
@@ -150,16 +151,15 @@ public:
         Vector<Ref<T>> strongReferences;
         {
             Locker locker { m_lock };
-            strongReferences.reserveInitialCapacity(m_map.size());
-            m_map.removeIf([&] (auto& pair) {
-                auto& controlBlock = pair.value;
-                auto* objectOfCorrectType = pair.key;
-                if (auto refPtr = controlBlock->template makeStrongReferenceIfPossible<T>(objectOfCorrectType)) {
-                    strongReferences.unsafeAppendWithoutCapacityCheck(refPtr.releaseNonNull());
-                    return false;
-                }
-                return true;
+            bool hasNullReferences = false;
+            strongReferences = compactMap(m_map, [&hasNullReferences](auto& pair) -> RefPtr<T> {
+                if (RefPtr strongReference = pair.value->template makeStrongReferenceIfPossible<T>(pair.key))
+                    return strongReference;
+                hasNullReferences = true;
+                return nullptr;
             });
+            if (hasNullReferences)
+                m_map.removeIf([](auto& pair) { return pair.value->objectHasStartedDeletion(); });
             cleanupHappened();
         }
         return strongReferences;
