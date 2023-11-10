@@ -105,6 +105,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "_WKWebExtensionActionInternal.h"
+#import "_WKWebExtensionCommandInternal.h"
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
@@ -407,6 +408,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::WebExtensionAction:
         wrapper = [_WKWebExtensionAction alloc];
+        break;
+
+    case Type::WebExtensionCommand:
+        wrapper = [_WKWebExtensionCommand alloc];
         break;
 
     case Type::WebExtensionController:

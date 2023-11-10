@@ -2119,6 +2119,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionCommand {
+    header "_WKWebExtensionCommand.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionCommandPrivate {
+    header "_WKWebExtensionCommandPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtensionContext {
     header "_WKWebExtensionContext.h"
     export *

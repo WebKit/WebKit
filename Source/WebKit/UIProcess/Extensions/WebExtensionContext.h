@@ -34,6 +34,7 @@
 #include "WebExtension.h"
 #include "WebExtensionAction.h"
 #include "WebExtensionAlarm.h"
+#include "WebExtensionCommand.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
 #include "WebExtensionDynamicScripts.h"
@@ -136,6 +137,8 @@ public:
     using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
     using PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
+
+    using CommandsVector = Vector<Ref<WebExtensionCommand>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -299,6 +302,9 @@ public:
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionTab*);
     void performAction(WebExtensionTab*, UserTriggered = UserTriggered::No);
+
+    const CommandsVector& commands();
+    void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
 
     void userGesturePerformed(WebExtensionTab&);
     bool hasActiveUserGesture(WebExtensionTab&) const;
@@ -583,6 +589,9 @@ private:
     std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
 
     TabIdentifierMap m_tabMap;
+
+    CommandsVector m_commands;
+    bool m_populatedCommands { false };
 };
 
 template<typename T>

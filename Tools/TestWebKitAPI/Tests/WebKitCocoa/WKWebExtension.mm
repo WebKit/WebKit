@@ -994,6 +994,54 @@ TEST(WKWebExtension, WebAccessibleResourcesV3)
     EXPECT_EQ(testExtension.errors.count, 1ul);
 }
 
+TEST(WKWebExtension, CommandsParsing)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{
+            @"show-popup": @{
+                @"suggested_key": @{
+                    @"default": @"Ctrl+Shift+P",
+                    @"mac": @"Command+Shift+P"
+                },
+                @"description": @"Show the popup"
+            }
+        }
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_TRUE(testExtension.hasCommands);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0"
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{
+            @"show-popup": @"Invalid"
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

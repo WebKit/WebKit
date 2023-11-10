@@ -34,13 +34,16 @@
 #import "WKWebView.h"
 #import "WebExtension.h"
 #import "WebExtensionAction.h"
+#import "WebExtensionCommand.h"
 #import "WebExtensionContext.h"
+#import "_WKWebExtensionCommandInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URLParser.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 NSErrorDomain const _WKWebExtensionContextErrorDomain = @"_WKWebExtensionContextErrorDomain";
 
@@ -515,6 +518,20 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
         NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
     _webExtensionContext->performAction(toImplNullable(tab, *_webExtensionContext).get(), WebKit::WebExtensionContext::UserTriggered::Yes);
+}
+
+- (NSArray<_WKWebExtensionCommand *> *)commands
+{
+    return createNSArray(_webExtensionContext->commands(), [](auto& command) {
+        return command->wrapper();
+    }).get();
+}
+
+- (void)performCommand:(_WKWebExtensionCommand *)command
+{
+    NSParameterAssert([command isKindOfClass:_WKWebExtensionCommand.class]);
+
+    _webExtensionContext->performCommand(command._webExtensionCommand, WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
@@ -1001,6 +1018,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)performActionForTab:(id<_WKWebExtensionTab>)tab NS_SWIFT_NAME(performAction(for:))
+{
+}
+
+- (NSArray<_WKWebExtensionCommand *> *)commands
+{
+    return nil;
+}
+
+- (void)performCommand:(_WKWebExtensionCommand *)command
 {
 }
 

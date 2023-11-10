@@ -178,6 +178,7 @@ public:
 #if ENABLE(WK_WEB_EXTENSIONS)
         WebExtension,
         WebExtensionAction,
+        WebExtensionCommand,
         WebExtensionContext,
         WebExtensionController,
         WebExtensionControllerConfiguration,
@@ -441,6 +442,7 @@ template<> struct EnumTraits<API::Object::Type> {
 #if ENABLE(WK_WEB_EXTENSIONS)
         API::Object::Type::WebExtension,
         API::Object::Type::WebExtensionAction,
+        API::Object::Type::WebExtensionCommand,
         API::Object::Type::WebExtensionContext,
         API::Object::Type::WebExtensionController,
         API::Object::Type::WebExtensionControllerConfiguration,

@@ -490,6 +490,9 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
 "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
+"Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
 "Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
 
@@ -501,6 +504,12 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for options UI */
 "Empty or invalid `options_ui` manifest entry" = "Empty or invalid `options_ui` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command */
+"Empty or invalid command in the `commands` manifest entry." = "Empty or invalid command in the `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command identifier */
+"Empty or invalid identifier in the `commands` manifest entry." = "Empty or invalid identifier in the `commands` manifest entry.";
 
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
@@ -646,6 +655,9 @@
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for commands */
+"Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
+
 /* WKWebExtensionErrorInvalidBackgroundPersistence description */
 "Invalid `persistent` manifest entry." = "Invalid `persistent` manifest entry.";
 
@@ -657,6 +669,9 @@
 
 /* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
 "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut */
+"Invalid `suggested_key` in the `commands` manifest entry." = "Invalid `suggested_key` in the `commands` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
@@ -1278,6 +1293,9 @@
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for too many command shortcuts */
+"Too many shortcuts specified for `commands`, only 4 shortcuts are allowed." = "Too many shortcuts specified for `commands`, only 4 shortcuts are allowed.";
 
 /* Label for the top up with Apple Pay button. */
 "Top up with Apple Pay" = "Top up with Apple Pay";
