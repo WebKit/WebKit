@@ -1592,8 +1592,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
             break;
     }
     
-    // Give up if there is clearance on the box, since it probably won't collapse into us.
-    if (!grandchildBox || RenderStyle::usedClear(*grandchildBox) != UsedClear::None)
+    if (!grandchildBox)
         return;
 
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
@@ -1605,6 +1604,12 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
             grandchildBlock.setHasMarginAfterQuirk(grandchildBox->style().marginAfter().hasQuirk());
         }
     }
+
+    // If we have a 'clear' value but also have a margin we may not actually require clearance to move past any floats.
+    // If that's the case we want to be sure we estimate the correct position including margins after any floats rather
+    // than use 'clearance' later which could give us the wrong position.
+    if (RenderStyle::usedClear(*grandchildBox) != UsedClear::None && !childBlock.marginBeforeForChild(*grandchildBox))
+        return;
 
     // Collapse the margin of the grandchild box with our own to produce an estimate.
     childBlock.marginBeforeEstimateForChild(*grandchildBox, positiveMarginBefore, negativeMarginBefore);
