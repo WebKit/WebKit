@@ -29,7 +29,6 @@
 #include "ColorTypes.h"
 #include <optional>
 #include <variant>
-#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 
 namespace WTF {
@@ -151,35 +150,5 @@ String serializationForCSS(const ColorInterpolationMethod&);
 WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolationColorSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, HueInterpolationMethod);
 WTF::TextStream& operator<<(WTF::TextStream&, const ColorInterpolationMethod&);
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::HueInterpolationMethod> {
-    using values = EnumValues<
-        WebCore::HueInterpolationMethod,
-        WebCore::HueInterpolationMethod::Shorter,
-        WebCore::HueInterpolationMethod::Longer,
-        WebCore::HueInterpolationMethod::Increasing,
-        WebCore::HueInterpolationMethod::Decreasing
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ColorInterpolationColorSpace> {
-    using values = EnumValues<
-        WebCore::ColorInterpolationColorSpace,
-        WebCore::ColorInterpolationColorSpace::HSL,
-        WebCore::ColorInterpolationColorSpace::HWB,
-        WebCore::ColorInterpolationColorSpace::LCH,
-        WebCore::ColorInterpolationColorSpace::Lab,
-        WebCore::ColorInterpolationColorSpace::OKLCH,
-        WebCore::ColorInterpolationColorSpace::OKLab,
-        WebCore::ColorInterpolationColorSpace::SRGB,
-        WebCore::ColorInterpolationColorSpace::SRGBLinear,
-        WebCore::ColorInterpolationColorSpace::XYZD50,
-        WebCore::ColorInterpolationColorSpace::XYZD65
-    >;
-};
 
 }
