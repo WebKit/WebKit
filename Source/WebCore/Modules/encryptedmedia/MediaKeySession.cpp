@@ -799,14 +799,13 @@ String MediaKeySession::mediaKeysStorageDirectory() const
 
 CDMKeyGroupingStrategy MediaKeySession::keyGroupingStrategy() const
 {
+#if HAVE(AVCONTENTKEYSPECIFIER)
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (!document)
-        return CDMKeyGroupingStrategy::Platform;
+    if (document && document->settings().sampleBufferContentKeySessionSupportEnabled())
+        return CDMKeyGroupingStrategy::BuiltIn;
+#endif
 
-    if (!document->settings().builtInCDMKeyGroupingStrategyEnabled())
-        return CDMKeyGroupingStrategy::Platform;
-
-    return CDMKeyGroupingStrategy::BuiltIn;
+    return CDMKeyGroupingStrategy::Platform;
 }
 
 bool MediaKeySession::virtualHasPendingActivity() const

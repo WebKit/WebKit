@@ -837,21 +837,6 @@ BroadcastChannelOriginPartitioningEnabled:
     WebCore:
       default: true
 
-BuiltInCDMKeyGroupingStrategyEnabled:
-  type: bool
-  status: unstable
-  category: media
-  humanReadableName: "Built-in CDM key grouping strategy"
-  humanReadableDescription: "Enable built-in CDM key grouping strategy"
-  condition: ENABLE(ENCRYPTED_MEDIA)
-  defaultValue:
-    WebCore:
-      default: false
-    WebKit:
-      default: false
-    WebKitLegacy:
-      default: false
-
 BuiltInNotificationsEnabled:
   type: bool
   status: unstable
