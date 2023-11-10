@@ -6614,3 +6614,13 @@ header: <WebCore/WheelEventTestMonitor.h>
     ContentScrollInProgress,
     RequestedScrollPosition,
 };
+
+header: <WebCore/CrossOriginAccessControl.h>
+[OptionSet] enum class WebCore::HTTPHeadersToKeepFromCleaning : uint8_t {
+    ContentType,
+    Referer,
+    Origin,
+    UserAgent,
+    AcceptEncoding,
+    CacheControl,
+};

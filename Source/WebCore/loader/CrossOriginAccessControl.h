@@ -96,19 +96,3 @@ std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, 
 String validateCrossOriginRedirectionURL(const URL&);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::HTTPHeadersToKeepFromCleaning> {
-    using values = EnumValues<
-        WebCore::HTTPHeadersToKeepFromCleaning,
-        WebCore::HTTPHeadersToKeepFromCleaning::ContentType,
-        WebCore::HTTPHeadersToKeepFromCleaning::Referer,
-        WebCore::HTTPHeadersToKeepFromCleaning::Origin,
-        WebCore::HTTPHeadersToKeepFromCleaning::UserAgent,
-        WebCore::HTTPHeadersToKeepFromCleaning::AcceptEncoding,
-        WebCore::HTTPHeadersToKeepFromCleaning::CacheControl
-    >;
-};
-
-} // namespace WTF
