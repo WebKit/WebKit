@@ -39,12 +39,12 @@ static constexpr float minScale = 0.1; // Arbitrarily chosen min scale.
 
 FloatSize PDFDocumentLayout::documentMargin()
 {
-    return { 20, 20 };
+    return { 6, 8 };
 }
 
 FloatSize PDFDocumentLayout::pageMargin()
 {
-    return { 10, 10 };
+    return { 4, 6 };
 }
 
 PDFDocumentLayout::PDFDocumentLayout() = default;
@@ -175,7 +175,7 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
     currentYOffset += documentMargin.height();
 
     m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
-    m_documentBounds = FloatRect { 0, 0, availableWidth, currentYOffset };
+    m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
 
 void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidth)
@@ -233,7 +233,7 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
     currentYOffset += documentMargin.height();
 
     m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
-    m_documentBounds = FloatRect { 0, 0, availableWidth, currentYOffset };
+    m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
 
 size_t PDFDocumentLayout::pageCount() const
