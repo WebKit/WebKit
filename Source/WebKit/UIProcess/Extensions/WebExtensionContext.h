@@ -40,6 +40,7 @@
 #include "WebExtensionDynamicScripts.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionFrameParameters.h"
 #include "WebExtensionMatchPattern.h"
 #include "WebExtensionMessagePort.h"
 #include "WebExtensionPortChannelIdentifier.h"
@@ -508,6 +509,10 @@ private:
     void testMessage(String message, String sourceURL, unsigned lineNumber);
     void testYielded(String message, String sourceURL, unsigned lineNumber);
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
+
+    // WebNavigation APIs
+    void webNavigationGetFrame(WebExtensionTabIdentifier, WebExtensionFrameIdentifier, CompletionHandler<void(std::optional<WebExtensionFrameParameters>)>&&);
+    void webNavigationGetAllFrames(WebExtensionTabIdentifier, CompletionHandler<void(std::optional<Vector<WebExtensionFrameParameters>>)>&&);
 
     // Windows APIs
     void windowsCreate(const WebExtensionWindowParameters&, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);

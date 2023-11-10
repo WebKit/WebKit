@@ -161,6 +161,15 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
     return false;
 }
 
+static bool absolutePositionedElementOutsideScroller(RenderElement& renderer, ScrollableArea& scroller)
+{
+    if (is<RenderLayerScrollableArea>(scroller) && renderer.hasLayer()) {
+        if (auto* layerForRenderer = downcast<RenderLayerModelObject>(renderer).layer())
+            return !layerForRenderer->ancestorLayerIsInContainingBlockChain(downcast<RenderLayerScrollableArea>(scroller).layer());
+    }
+    return false;
+}
+
 CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& element)
 {
     if (elementForScrollableArea(m_owningScrollableArea) && elementForScrollableArea(m_owningScrollableArea)->identifier() == element.identifier())
@@ -181,7 +190,7 @@ CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& 
     if (auto renderer = element.renderer()) {
         // TODO: we need to think about position: absolute
         // TODO: figure out how to get scrollable area for renderer to check if it is maintaining scroll anchor
-        if (renderer->style().overflowAnchor() == OverflowAnchor::None || renderer->isStickilyPositioned() || renderer->isFixedPositioned() || renderer->isPseudoElement() || renderer->isAnonymousBlock())
+        if (renderer->style().overflowAnchor() == OverflowAnchor::None || renderer->isStickilyPositioned() || renderer->isFixedPositioned() || renderer->isPseudoElement() || renderer->isAnonymousBlock() || (renderer->isAbsolutelyPositioned() && absolutePositionedElementOutsideScroller(*renderer, m_owningScrollableArea)))
             return CandidateExaminationResult::Exclude;
         if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
             return CandidateExaminationResult::Skip;

@@ -63,10 +63,10 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
 {
     auto* page = document.page();
     if (!page)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (!isTypeSupported(document, options.mimeType))
-        return Exception { NotSupportedError, "mimeType is not supported"_s };
+        return Exception { ExceptionCode::NotSupportedError, "mimeType is not supported"_s };
 
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
@@ -82,7 +82,7 @@ ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRec
 {
     auto* page = document.page();
     if (!page)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (m_customCreator)
         return m_customCreator(stream, options);
@@ -93,7 +93,7 @@ ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRec
     std::unique_ptr<MediaRecorderPrivate> result;
 #endif
     if (!result)
-        return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
+        return Exception { ExceptionCode::NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
     return result;
 }
 
@@ -136,7 +136,7 @@ void MediaRecorder::suspend(ReasonForSuspension reason)
 
     stopRecordingInternal();
 
-    queueTaskToDispatchEvent(*this, TaskSource::Networking, MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "MediaStream recording was interrupted"_s }));
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { ExceptionCode::UnknownError, "MediaStream recording was interrupted"_s }));
 }
 
 const char* MediaRecorder::activeDOMObjectName() const
@@ -147,10 +147,10 @@ const char* MediaRecorder::activeDOMObjectName() const
 ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlice)
 {
     if (!m_isActive)
-        return Exception { InvalidStateError, "The MediaRecorder is not active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder is not active"_s };
 
     if (state() != RecordingState::Inactive)
-        return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
 
     updateBitRates();
 
@@ -234,7 +234,7 @@ void MediaRecorder::stopRecording()
 ExceptionOr<void> MediaRecorder::requestData()
 {
     if (state() == RecordingState::Inactive)
-        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     if (m_timeSliceTimer.isActive())
         m_timeSliceTimer.stop();
@@ -265,7 +265,7 @@ ExceptionOr<void> MediaRecorder::requestData()
 ExceptionOr<void> MediaRecorder::pauseRecording()
 {
     if (state() == RecordingState::Inactive)
-        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     if (state() == RecordingState::Paused)
         return { };
@@ -292,7 +292,7 @@ ExceptionOr<void> MediaRecorder::pauseRecording()
 ExceptionOr<void> MediaRecorder::resumeRecording()
 {
     if (state() == RecordingState::Inactive)
-        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     if (state() == RecordingState::Recording)
         return { };
@@ -365,7 +365,7 @@ void MediaRecorder::handleTrackChange()
             queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
                 if (!m_isActive)
                     return;
-                dispatchError(Exception { InvalidModificationError, "Track cannot be added to or removed from the MediaStream while recording"_s });
+                dispatchError(Exception { ExceptionCode::InvalidModificationError, "Track cannot be added to or removed from the MediaStream while recording"_s });
 
                 if (!m_isActive)
                     return;

@@ -177,14 +177,4 @@ void HTMLStyleElement::setDisabled(bool setDisabled)
         styleSheet->setDisabled(setDisabled);
 }
 
-String HTMLStyleElement::textContentWithReplacementURLs(const HashMap<String, String>& replacementURLStrings) const
-{
-    RefPtr styleSheet = sheet();
-    if (!styleSheet)
-        return TextNodeTraversal::contentsAsString(*this);
-
-    auto result = styleSheet->cssTextWithReplacementURLs(replacementURLStrings);
-    return result.isNull() ? TextNodeTraversal::contentsAsString(*this) : result;
-}
-
 }

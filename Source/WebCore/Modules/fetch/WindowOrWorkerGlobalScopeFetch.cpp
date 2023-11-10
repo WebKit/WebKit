@@ -53,7 +53,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     if (request->signal().aborted()) {
         auto reason = request->signal().reason().getValue();
         if (reason.isUndefined())
-            promise.reject(Exception { AbortError, "Request signal is aborted"_s });
+            promise.reject(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
         else
             promise.rejectType<IDLAny>(reason);
 
@@ -76,7 +76,7 @@ void WindowOrWorkerGlobalScopeFetch::fetch(LocalDOMWindow& window, FetchRequest:
 {
     RefPtr document = window.document();
     if (!document) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
     doFetch(*document, WTFMove(input), WTFMove(init), WTFMove(promise));

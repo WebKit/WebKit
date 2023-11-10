@@ -346,19 +346,19 @@ ExceptionCode toExceptionCode(webrtc::RTCErrorType type)
 {
     switch (type) {
     case webrtc::RTCErrorType::INVALID_PARAMETER:
-        return InvalidAccessError;
+        return ExceptionCode::InvalidAccessError;
     case webrtc::RTCErrorType::INVALID_RANGE:
-        return RangeError;
+        return ExceptionCode::RangeError;
     case webrtc::RTCErrorType::SYNTAX_ERROR:
-        return SyntaxError;
+        return ExceptionCode::SyntaxError;
     case webrtc::RTCErrorType::INVALID_STATE:
-        return InvalidStateError;
+        return ExceptionCode::InvalidStateError;
     case webrtc::RTCErrorType::INVALID_MODIFICATION:
-        return InvalidModificationError;
+        return ExceptionCode::InvalidModificationError;
     case webrtc::RTCErrorType::NETWORK_ERROR:
-        return NetworkError;
+        return ExceptionCode::NetworkError;
     default:
-        return OperationError;
+        return ExceptionCode::OperationError;
     }
 }
 

@@ -81,23 +81,23 @@ void HTMLVideoElementPictureInPicture::providePictureInPictureTo(HTMLVideoElemen
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
     if (!supportsPictureInPicture()) {
-        promise->reject(NotSupportedError, "The Picture-in-Picture mode is not supported."_s);
+        promise->reject(ExceptionCode::NotSupportedError, "The Picture-in-Picture mode is not supported."_s);
         return;
     }
 
     if (videoElement.readyState() == HTMLMediaElementEnums::HAVE_NOTHING) {
-        promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode."_s);
+        promise->reject(ExceptionCode::InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode."_s);
         return;
     }
 
     if (!videoElement.videoTracks() || !videoElement.videoTracks()->length()) {
-        promise->reject(InvalidStateError, "The video element does not have a video track or it has not detected a video track yet."_s);
+        promise->reject(ExceptionCode::InvalidStateError, "The video element does not have a video track or it has not detected a video track yet."_s);
         return;
     }
 
     bool userActivationRequired = !videoElement.document().pictureInPictureElement();
     if (userActivationRequired && !UserGestureIndicator::processingUserGesture()) {
-        promise->reject(NotAllowedError, "The request is not triggered by a user activation."_s);
+        promise->reject(ExceptionCode::NotAllowedError, "The request is not triggered by a user activation."_s);
         return;
     }
 
@@ -108,7 +108,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
     }
 
     if (videoElementPictureInPicture->m_enterPictureInPicturePromise || videoElementPictureInPicture->m_exitPictureInPicturePromise) {
-        promise->reject(NotAllowedError, "The video element is processing a Picture-in-Picture request."_s);
+        promise->reject(ExceptionCode::NotAllowedError, "The video element is processing a Picture-in-Picture request."_s);
         return;
     }
 
@@ -116,7 +116,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         videoElementPictureInPicture->m_enterPictureInPicturePromise = WTFMove(promise);
         videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
     } else
-        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode."_s);
+        promise->reject(ExceptionCode::NotSupportedError, "The video element does not support the Picture-in-Picture mode."_s);
 }
 
 bool HTMLVideoElementPictureInPicture::autoPictureInPicture(HTMLVideoElement& videoElement)
@@ -143,7 +143,7 @@ void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>
 {
     INFO_LOG(LOGIDENTIFIER);
     if (m_enterPictureInPicturePromise || m_exitPictureInPicturePromise) {
-        promise->reject(NotAllowedError);
+        promise->reject(ExceptionCode::NotAllowedError);
         return;
     }
 

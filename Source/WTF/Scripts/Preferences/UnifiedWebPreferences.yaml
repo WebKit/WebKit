@@ -837,21 +837,6 @@ BroadcastChannelOriginPartitioningEnabled:
     WebCore:
       default: true
 
-BuiltInCDMKeyGroupingStrategyEnabled:
-  type: bool
-  status: unstable
-  category: media
-  humanReadableName: "Built-in CDM key grouping strategy"
-  humanReadableDescription: "Enable built-in CDM key grouping strategy"
-  condition: ENABLE(ENCRYPTED_MEDIA)
-  defaultValue:
-    WebCore:
-      default: false
-    WebKit:
-      default: false
-    WebKitLegacy:
-      default: false
-
 BuiltInNotificationsEnabled:
   type: bool
   status: unstable
@@ -3462,19 +3447,6 @@ InterruptVideoOnPageVisibilityChangeEnabled:
     WebCore:
       default: false
 
-IntersectionObserverEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Intersection Observer"
-  humanReadableDescription: "Enable Intersection Observer support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 InvisibleAutoplayNotPermitted:
   type: bool
   status: embedder
@@ -5449,19 +5421,6 @@ RequiresUserGestureToLoadVideo:
     WebCore:
       "PLATFORM(IOS_FAMILY)": true
       default: false
-
-ResizeObserverEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Resize Observer"
-  humanReadableDescription: "Enable Resize Observer support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 ResourceLoadSchedulingEnabled:
   type: bool

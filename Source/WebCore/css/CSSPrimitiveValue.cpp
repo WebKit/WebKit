@@ -1081,7 +1081,7 @@ ExceptionOr<float> CSSPrimitiveValue::getFloatValue(CSSUnitType unitType) const
 {
     auto result = doubleValueInternal(unitType);
     if (!result)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     return clampTo<float>(result.value());
 }
 

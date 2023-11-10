@@ -124,7 +124,7 @@ void U2fAuthenticator::responseReceived(Vector<uint8_t>&& response, CommandType 
 {
     auto apduResponse = ApduResponse::createFromMessage(response);
     if (!apduResponse) {
-        receiveRespond(ExceptionData { UnknownError, "Couldn't parse the APDU response."_s });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the APDU response."_s });
         return;
     }
 
@@ -156,7 +156,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
         ASSERT(options.rp.id);
         auto response = readU2fRegisterResponse(*options.rp.id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform, { driver().transport() }, options.attestation);
         if (!response) {
-            receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F register response."_s });
+            receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the U2F register response."_s });
             return;
         }
         receiveRespond(response.releaseNonNull());
@@ -167,7 +167,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
     }
 }
 
@@ -187,14 +187,14 @@ void U2fAuthenticator::continueBogusCommandExcludeCredentialsMatchAfterResponseR
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
-        receiveRespond(ExceptionData { InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
+        receiveRespond(ExceptionData { ExceptionCode::InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
         return;
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
         // Polling is required during test of user presence.
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
     }
 }
 
@@ -204,14 +204,14 @@ void U2fAuthenticator::continueBogusCommandNoCredentialsAfterResponseReceived(Ap
     case ApduResponse::Status::SW_NO_ERROR:
         if (auto* observer = this->observer())
             observer->authenticatorStatusUpdated(WebAuthenticationStatus::NoCredentialsFound);
-        receiveRespond(ExceptionData { NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
+        receiveRespond(ExceptionData { ExceptionCode::NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
         return;
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
         // Polling is required during test of user presence.
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
     }
 }
 
@@ -227,7 +227,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         } else
             response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         if (!response) {
-            receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F sign response."_s });
+            receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the U2F sign response."_s });
             return;
         }
         if (m_isAppId)

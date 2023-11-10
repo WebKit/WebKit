@@ -181,7 +181,7 @@ AuthenticatorManager::AuthenticatorManager()
 void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Callback&& callback)
 {
     if (m_pendingCompletionHandler) {
-        invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
+        invokePendingCompletionHandler(ExceptionData { ExceptionCode::NotAllowedError, "This request has been cancelled by a new request."_s });
         m_requestTimeOutTimer.stop();
     }
     clearState();
@@ -290,7 +290,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
     if (!shouldComplete) {
         auto code = std::get<ExceptionData>(respond).code;
-        shouldComplete = code == InvalidStateError || code == NotSupportedError;
+        shouldComplete = code == ExceptionCode::InvalidStateError || code == ExceptionCode::NotSupportedError;
     }
     if (shouldComplete) {
         invokePendingCompletionHandler(WTFMove(respond));
@@ -394,7 +394,7 @@ void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler
 
 void AuthenticatorManager::cancelRequest()
 {
-    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+    invokePendingCompletionHandler(ExceptionData { ExceptionCode::NotAllowedError, "This request has been cancelled by the user."_s });
     RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to AuthenticatorManager::cancelRequest being called.");
     clearState();
     m_requestTimeOutTimer.stop();
@@ -446,7 +446,7 @@ void AuthenticatorManager::initTimeOutTimer()
 
 void AuthenticatorManager::timeOutTimerFired()
 {
-    invokePendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
+    invokePendingCompletionHandler((ExceptionData { ExceptionCode::NotAllowedError, "Operation timed out."_s }));
     clearState();
 }
 

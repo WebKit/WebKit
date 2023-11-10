@@ -98,11 +98,9 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
 
 void RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    remoteGraphicsStreamWorkQueue().dispatch([weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
+    remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
         auto updateInfo = scene->update(WTFMove(update));
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
-            if (!weakThis)
-                return;
+        RunLoop::main().dispatch([updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(updateInfo));
         });
     });

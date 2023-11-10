@@ -234,7 +234,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     if (m_isShadowDisabled && element.shadowRoot()) {
         element.clearReactionQueueFromFailedCustomElement();
-        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, NotSupportedError, "Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots."_s));
+        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, ExceptionCode::NotSupportedError, "Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots."_s));
         return;
     }
 
@@ -260,7 +260,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.clearReactionQueueFromFailedCustomElement();
-        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, TypeError, "Custom element constructor returned a wrong element"_s));
+        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, ExceptionCode::TypeError, "Custom element constructor returned a wrong element"_s));
         return;
     }
 

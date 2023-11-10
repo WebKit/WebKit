@@ -252,7 +252,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return { };
     auto& selection = frame->selection();
     if (selection.isNone())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     if (frame->settings().liveRangeSelectionEnabled()) {
         selection.disassociateLiveRange();
         selection.moveTo(selection.selection().uncanonicalizedEnd(), Affinity::Downstream);
@@ -268,7 +268,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return { };
     auto& selection = frame->selection();
     if (selection.isNone())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     if (frame->settings().liveRangeSelectionEnabled()) {
         selection.disassociateLiveRange();
         selection.moveTo(selection.selection().uncanonicalizedStart(), Affinity::Downstream);
@@ -290,7 +290,7 @@ ExceptionOr<void> DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOf
     if (frame->settings().liveRangeSelectionEnabled()) {
         // FIXME: We should do this by making the arguments non-nullable in the IDL file, once liveRangeSelectionEnabled is always true.
         if (!baseNode || !extentNode)
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         if (auto result = Range::checkNodeOffsetPair(*baseNode, baseOffset); result.hasException())
             return result.releaseException();
         if (auto result = Range::checkNodeOffsetPair(*extentNode, extentOffset); result.hasException())
@@ -373,7 +373,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         return { };
 
     if (rangeCount() < 1 && !(frame->settings().liveRangeSelectionEnabled() && frame->selection().isCaretOrRange()))
-        return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
+        return Exception { ExceptionCode::InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
 
     if (frame->settings().liveRangeSelectionEnabled()) {
         if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node.isConnected() && frame->document() == &node.document())
@@ -388,7 +388,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         selection.setSelection(newSelection);
     } else {
         if (offset > node.length())
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
         if (!isValidForPosition(&node))
             return { };
         frame->selection().setExtent(makeContainerOffsetPosition(&node, offset), Affinity::Downstream);
@@ -407,7 +407,7 @@ static RefPtr<Range> createLiveRangeBeforeShadowHostWithSelection(LocalFrame& fr
 ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
 {
     if (index >= rangeCount())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     auto frame = this->frame().releaseNonNull();
     if (frame->settings().liveRangeSelectionEnabled()) {
         if (auto liveRange = frame->selection().associatedLiveRange())
@@ -454,7 +454,7 @@ ExceptionOr<void> DOMSelection::removeRange(Range& liveRange)
         return { };
     ASSERT(frame->settings().liveRangeSelectionEnabled());
     if (&liveRange != frame->selection().associatedLiveRange())
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     removeAllRanges();
     return { };
 }

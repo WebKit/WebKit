@@ -56,7 +56,7 @@ void AbortController::abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason
 {
     ASSERT(reason);
     if (reason.isUndefined())
-        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+        reason = toJS(&globalObject, &globalObject, DOMException::create(ExceptionCode::AbortError));
 
     protectedSignal()->signalAbort(reason);
 }

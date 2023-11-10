@@ -1189,10 +1189,17 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor(OptionSet<Sty
 
 int RenderTheme::baselinePosition(const RenderBox& box) const
 {
+    auto baseline = [&]() -> int {
+        if (box.isHorizontalWritingMode())
+            return box.height() + box.marginTop();
+
+        return (box.width() / 2.0f) + box.marginBefore();
+    }();
+
 #if USE(NEW_THEME)
-    return box.height() + box.marginTop() + Theme::singleton().baselinePositionAdjustment(box.style().effectiveAppearance()) * box.style().effectiveZoom();
+    return baseline + Theme::singleton().baselinePositionAdjustment(box.style().effectiveAppearance(), box.isHorizontalWritingMode()) * box.style().effectiveZoom();
 #else
-    return box.height() + box.marginTop();
+    return baseline;
 #endif
 }
 

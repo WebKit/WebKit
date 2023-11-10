@@ -118,10 +118,10 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
 ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config)
 {
     if (!isValidDecoderConfig(config))
-        return Exception { TypeError, "Config is not valid"_s };
+        return Exception { ExceptionCode::TypeError, "Config is not valid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
-        return Exception { InvalidStateError, "VideoDecoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is closed"_s };
 
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
@@ -141,14 +141,14 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
 
         if (!isSupportedCodec) {
             postTaskCallback([this] {
-                closeDecoder(Exception { NotSupportedError, "Codec is not supported"_s });
+                closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
             });
             return;
         }
 
         VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [this](auto&& result) {
             if (!result.has_value()) {
-                closeDecoder(Exception { NotSupportedError, WTFMove(result.error()) });
+                closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
                 return;
             }
             setInternalDecoder(WTFMove(result.value()));
@@ -159,7 +159,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 return;
 
             if (!result.has_value()) {
-                closeDecoder(Exception { EncodingError, WTFMove(result).error() });
+                closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result).error() });
                 return;
             }
 
@@ -181,11 +181,11 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
 ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&& chunk)
 {
     if (m_state != WebCodecsCodecState::Configured)
-        return Exception { InvalidStateError, "VideoDecoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is not configured"_s };
 
     if (m_isKeyChunkRequired) {
         if (chunk->type() != WebCodecsEncodedVideoChunkType::Key)
-            return Exception { DataError, "Key frame is required"_s };
+            return Exception { ExceptionCode::DataError, "Key frame is required"_s };
         m_isKeyChunkRequired = false;
     }
 
@@ -198,7 +198,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         m_internalDecoder->decode({ { chunk->data(), chunk->byteLength() }, chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this](auto&& result) {
             --m_beingDecodedQueueSize;
             if (!result.isNull())
-                closeDecoder(Exception { EncodingError, WTFMove(result) });
+                closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
         });
     });
     return { };
@@ -207,7 +207,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
 ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 {
     if (m_state != WebCodecsCodecState::Configured)
-        return Exception { InvalidStateError, "VideoDecoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is not configured"_s };
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise.copyRef());
@@ -226,18 +226,18 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 
 ExceptionOr<void> WebCodecsVideoDecoder::reset()
 {
-    return resetDecoder(Exception { AbortError, "Reset called"_s });
+    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
 }
 
 ExceptionOr<void> WebCodecsVideoDecoder::close()
 {
-    return closeDecoder(Exception { AbortError, "Close called"_s });
+    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_s });
 }
 
 void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidDecoderConfig(config)) {
-        promise->reject(Exception { TypeError, "Config is not valid"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_s });
         return;
     }
 
@@ -272,7 +272,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)
         return result;
     m_state = WebCodecsCodecState::Closed;
     m_internalDecoder = nullptr;
-    if (exception.code() != AbortError)
+    if (exception.code() != ExceptionCode::AbortError)
         m_error->handleEvent(DOMException::create(WTFMove(exception)));
 
     return { };
@@ -281,7 +281,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)
 ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception)
 {
     if (m_state == WebCodecsCodecState::Closed)
-        return Exception { InvalidStateError, "VideoDecoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoDecoder is closed"_s };
 
     m_state = WebCodecsCodecState::Unconfigured;
     if (m_internalDecoder)

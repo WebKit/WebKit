@@ -169,9 +169,9 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
     auto message = callFrame->uncheckedArgument(1).getString(globalObject);
     scope.assertNoException();
 
-    ExceptionCode code { TypeError };
+    ExceptionCode code { ExceptionCode::TypeError };
     if (codeValue == "AbortError"_s)
-        code = AbortError;
+        code = ExceptionCode::AbortError;
     auto value = createDOMException(globalObject, code, message);
 
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
@@ -480,7 +480,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
 
     auto inputResponse = JSFetchResponse::toWrapped(vm, source);
     if (!inputResponse) {
-        deferred->reject(TypeError, "first argument must be an Response or Promise for Response"_s);
+        deferred->reject(ExceptionCode::TypeError, "first argument must be an Response or Promise for Response"_s);
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
@@ -492,25 +492,25 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     // 4. If response is not CORS-same-origin, reject returnValue with a TypeError and abort these substeps.
     // If response is opaque, content-type becomes "".
     if (!inputResponse->isCORSSameOrigin()) {
-        deferred->reject(TypeError, "Response is not CORS-same-origin"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response is not CORS-same-origin"_s);
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
     // 3. If mimeType is not `application/wasm`, reject returnValue with a TypeError and abort these substeps.
     if (!inputResponse->hasWasmMIMEType()) {
-        deferred->reject(TypeError, "Unexpected response MIME type. Expected 'application/wasm'"_s);
+        deferred->reject(ExceptionCode::TypeError, "Unexpected response MIME type. Expected 'application/wasm'"_s);
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
     // 5. If response’s status is not an ok status, reject returnValue with a TypeError and abort these substeps.
     if (!inputResponse->ok()) {
-        deferred->reject(TypeError, "Response has not returned OK status"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response has not returned OK status"_s);
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
     // https://fetch.spec.whatwg.org/#concept-body-consume-body
     if (inputResponse->isDisturbedOrLocked()) {
-        deferred->reject(TypeError, "Response is disturbed or locked"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response is disturbed or locked"_s);
         return jsCast<JSC::JSPromise*>(deferred->promise());
     }
 
@@ -532,7 +532,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
 
             if (result.hasException()) {
                 auto exception = result.exception();
-                if (exception.code() == ExistingExceptionError) {
+                if (exception.code() == ExceptionCode::ExistingExceptionError) {
                     auto scope = DECLARE_CATCH_SCOPE(vm);
 
                     EXCEPTION_ASSERT(scope.exception());

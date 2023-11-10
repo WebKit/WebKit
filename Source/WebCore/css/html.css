@@ -399,11 +399,6 @@ button {
     appearance: auto;
 }
 
-/* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-select {
-    writing-mode: horizontal-tb !important;
-}
-
 input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)

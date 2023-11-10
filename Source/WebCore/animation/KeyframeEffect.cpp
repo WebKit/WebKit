@@ -229,7 +229,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         baseProperties.easing = baseKeyframe.easing;
         baseProperties.composite = baseKeyframe.composite;
     }
-    RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
     KeyframeEffect::KeyframeLikeObject keyframeOuput;
     keyframeOuput.baseProperties = baseProperties;
@@ -270,7 +270,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         auto rawValue = keyframesInput->get(&lexicalGlobalObject, animationProperties[i]);
 
         // 2. Check the completion record of raw value.
-        RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
         // 3. Convert raw value to a DOMString or sequence of DOMStrings property values as follows:
         Vector<String> propertyValues;
@@ -289,7 +289,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             // Let property values be the result of converting raw value to a DOMString using the procedure for converting an ECMAScript value to a DOMString.
             propertyValues = { convert<IDLDOMString>(lexicalGlobalObject, rawValue) };
         }
-        RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
         auto propertyName = animationProperties[i].string();
@@ -827,7 +827,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     auto method = keyframesInput.get()->get(&lexicalGlobalObject, vm.propertyNames->iteratorSymbol);
 
     // 4. Check the completion record of method.
-    RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
     // 5. Perform the steps corresponding to the first matching condition from below,
     Vector<String> unusedEasings;
@@ -850,7 +850,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
             continue;
         auto offset = keyframe.offset.value();
         if (offset < lastNonNullOffset || offset < 0 || offset > 1)
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         lastNonNullOffset = offset;
     }
 

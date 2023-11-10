@@ -880,7 +880,7 @@ private:
 
     void updateEmbeddedObjectsTimerFired();
     bool updateEmbeddedObjects();
-    void updateEmbeddedObject(RenderEmbeddedObject&);
+    void updateEmbeddedObject(const WeakPtr<RenderEmbeddedObject>&);
 
     void updateWidgetPositionsTimerFired();
 

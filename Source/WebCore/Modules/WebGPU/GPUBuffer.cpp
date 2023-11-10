@@ -63,7 +63,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     }
 
     if (m_pendingMapPromise) {
-        promise.reject(Exception { OperationError });
+        promise.reject(Exception { ExceptionCode::OperationError });
         return;
     }
 
@@ -83,7 +83,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
         } else {
             if (protectedThis->m_mapState == GPUBufferMapState::Pending)
                 protectedThis->m_mapState = GPUBufferMapState::Unmapped;
-            promise.reject(Exception { OperationError });
+            promise.reject(Exception { ExceptionCode::OperationError });
         }
     });
 }
@@ -97,7 +97,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
     m_mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
     if (!m_mappedRange.source) {
         m_arrayBuffer = nullptr;
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     }
 
     auto arrayBuffer = ArrayBuffer::create(m_mappedRange.source, m_mappedRange.byteLength);
@@ -109,7 +109,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
 void GPUBuffer::unmap()
 {
     if (m_pendingMapPromise) {
-        m_pendingMapPromise->reject(Exception { AbortError });
+        m_pendingMapPromise->reject(Exception { ExceptionCode::AbortError });
         m_pendingMapPromise = std::nullopt;
     }
 

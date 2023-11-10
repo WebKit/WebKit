@@ -61,7 +61,7 @@ public:
     {
         callOnMainThread([origin = m_origin.releaseNonNull(), callback = WTFMove(m_resultCallback), certificate = WTFMove(certificate)]() mutable {
             if (!certificate) {
-                callback(Exception { TypeError, "Unable to create a certificate"_s });
+                callback(Exception { ExceptionCode::TypeError, "Unable to create a certificate"_s });
                 return;
             }
 

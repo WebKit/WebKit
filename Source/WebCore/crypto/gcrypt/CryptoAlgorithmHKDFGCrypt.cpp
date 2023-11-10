@@ -156,7 +156,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
 {
     auto output = gcryptDeriveBits(key.key(), parameters.saltVector(), parameters.infoVector(), length / 8, parameters.hashIdentifier);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

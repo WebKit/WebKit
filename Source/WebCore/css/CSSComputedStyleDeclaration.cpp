@@ -72,7 +72,7 @@ String CSSComputedStyleDeclaration::cssText() const
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 // In CSS 2.1 the returned object should actually contain the "used values"
@@ -219,12 +219,12 @@ bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 ExceptionOr<String> CSSComputedStyleDeclaration::removeProperty(const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
     
 String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
@@ -234,7 +234,7 @@ String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID prope
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 } // namespace WebCore

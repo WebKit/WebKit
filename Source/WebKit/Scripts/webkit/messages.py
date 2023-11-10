@@ -464,6 +464,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WebExtensionCommandParameters',
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionEventListenerType',
+        'WebKit::WebExtensionFrameParameters',
         'WebKit::WebExtensionScriptInjectionParameters',
         'WebKit::WebExtensionScriptInjectionResultParameters',
         'WebKit::WebExtensionTab::ImageFormat',

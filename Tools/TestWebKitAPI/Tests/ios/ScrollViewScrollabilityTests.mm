@@ -115,8 +115,7 @@ TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndVisibleUI)
     obscuredInsets.right = 0;
 
     [webView _setObscuredInsets:obscuredInsets];
-    auto unobscuredLayoutSize = CGSizeMake(320, 406);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize minimumUnobscuredSizeOverride:unobscuredLayoutSize maximumUnobscuredSizeOverride:CGSizeMake(320, 490)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(320, 406) maximumUnobscuredSizeOverride:CGSizeMake(320, 490)];
 
     [webView synchronouslyLoadHTMLString:nonScrollableDocumentMarkup];
     [webView waitForNextPresentationUpdate];
@@ -135,8 +134,7 @@ TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndShrunkUI)
     obscuredInsets.right = 0;
 
     [webView _setObscuredInsets:obscuredInsets];
-    auto unobscuredLayoutSize = CGSizeMake(viewHeight, 325);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize minimumUnobscuredSizeOverride:unobscuredLayoutSize maximumUnobscuredSizeOverride:CGSizeMake(viewHeight, 375)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(viewHeight, 325) maximumUnobscuredSizeOverride:CGSizeMake(viewHeight, 375)];
 
     [webView synchronouslyLoadHTMLString:nonScrollableDocumentMarkup];
     [webView waitForNextPresentationUpdate];

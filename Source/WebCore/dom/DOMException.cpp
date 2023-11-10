@@ -69,13 +69,13 @@ static const DOMException::Description descriptions[] = {
     { "OperationError"_s, "The operation failed for an operation-specific reason."_s, 0 },
     { "NotAllowedError"_s, "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."_s, 0 }
 };
-static_assert(!IndexSizeError, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
-static_assert(NotAllowedError == std::size(descriptions) - 1, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
+static_assert(!static_cast<bool>(ExceptionCode::IndexSizeError), "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
+static_assert(static_cast<std::size_t>(ExceptionCode::NotAllowedError) == std::size(descriptions) - 1, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
 
 auto DOMException::description(ExceptionCode ec) -> const Description&
 {
-    if (ec < std::size(descriptions))
-        return descriptions[ec];
+    if (static_cast<std::size_t>(ec) < std::size(descriptions))
+        return descriptions[static_cast<std::size_t>(ec)];
 
     static const Description emptyDescription { { }, { }, 0 };
     return emptyDescription;

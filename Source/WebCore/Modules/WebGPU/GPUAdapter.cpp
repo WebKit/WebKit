@@ -65,9 +65,9 @@ void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUD
 {
     m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise)](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device.get())
-            promise.reject(Exception(OperationError));
+            promise.reject(Exception(ExceptionCode::OperationError));
         else if (deviceDescriptor && deviceDescriptor->requiredFeatures.size() > device->features().features().size())
-            promise.reject(Exception(TypeError));
+            promise.reject(Exception(ExceptionCode::TypeError));
         else
             promise.resolve(GPUDevice::create(nullptr, device.releaseNonNull()));
     });

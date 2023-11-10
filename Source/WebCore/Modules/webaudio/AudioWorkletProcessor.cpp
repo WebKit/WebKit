@@ -209,7 +209,7 @@ ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExec
     auto& globalScope = downcast<AudioWorkletGlobalScope>(context);
     auto constructionData = globalScope.takePendingProcessorConstructionData();
     if (!constructionData)
-        return Exception { TypeError, "No pending construction data for this worklet processor"_s };
+        return Exception { ExceptionCode::TypeError, "No pending construction data for this worklet processor"_s };
 
     return adoptRef(*new AudioWorkletProcessor(globalScope, *constructionData));
 }

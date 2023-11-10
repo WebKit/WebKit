@@ -474,11 +474,15 @@ LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutR
 
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
+    auto baseline = RenderTheme::baselinePosition(box);
+    if (!box.isHorizontalWritingMode())
+        return baseline;
+
     if (box.style().effectiveAppearance() == StyleAppearance::Checkbox || box.style().effectiveAppearance() == StyleAppearance::Radio)
-        return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+        return baseline - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     if (box.style().effectiveAppearance() == StyleAppearance::Menulist)
-        return box.marginTop() + box.height() - 5; // This is to match AppKit. There might be a better way to calculate this though.
-    return RenderTheme::baselinePosition(box);
+        return baseline - 5; // This is to match AppKit. There might be a better way to calculate this though.
+    return baseline;
 }
 
 bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const

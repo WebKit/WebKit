@@ -569,7 +569,7 @@ void WebMParser::createByteRangeSamples()
 ExceptionOr<int> WebMParser::parse(SourceBufferParser::Segment&& segment)
 {
     if (!m_parser)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_reader->appendSegment(WTFMove(segment));
 

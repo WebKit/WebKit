@@ -112,7 +112,7 @@ bool GStreamerRtpTransceiverBackend::stopped() const
 static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int& dynamicPayloadType)
 {
     if (!codec.mimeType.startsWith("video/"_s) && !codec.mimeType.startsWith("audio/"_s))
-        return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
+        return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
 
     auto components = codec.mimeType.split('/');
     const auto mediaType = components[0];

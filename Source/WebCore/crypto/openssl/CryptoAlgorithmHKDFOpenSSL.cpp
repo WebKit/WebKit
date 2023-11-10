@@ -39,11 +39,11 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
 {
     auto algorithm = digestAlgorithm(parameters.hashIdentifier);
     if (!algorithm)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     Vector<uint8_t> output(length / 8);
     if (HKDF(output.data(), output.size(), algorithm, key.key().data(), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), parameters.infoVector().data(), parameters.infoVector().size()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return output;
 }

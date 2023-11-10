@@ -348,7 +348,7 @@ TEST(ScrollViewInsetTests, ScrollabilityWithObscuredInsetsAndOverrideSizes)
 
     auto minimumLayoutSize = CGSizeMake(390, 664);
     auto maxUnobscuredLayoutSize = CGSizeMake(390, 745);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:maxUnobscuredLayoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize maximumUnobscuredSizeOverride:maxUnobscuredLayoutSize];
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><style> body { overflow: hidden; height: 2000px; } </style>"];
     [webView waitForNextPresentationUpdate];
@@ -368,7 +368,7 @@ TEST(ScrollViewInsetTests, ScrollabilityWithMaxOverrideSize)
     [webView _setObscuredInsets:insets];
 
     auto unobscuredLayoutSize = CGSizeMake(390, 797);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize minimumUnobscuredSizeOverride:unobscuredLayoutSize maximumUnobscuredSizeOverride:unobscuredLayoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize maximumUnobscuredSizeOverride:unobscuredLayoutSize];
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><style> body { overflow: hidden; height: 2000px; } </style>"];
     [webView waitForNextPresentationUpdate];

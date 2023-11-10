@@ -52,7 +52,7 @@ void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<Deferred
     if (RefPtr clipboard = m_item.clipboard())
         clipboard->getType(m_item, type, WTFMove(promise));
     else
-        promise->reject(NotAllowedError);
+        promise->reject(ExceptionCode::NotAllowedError);
 }
 
 void ClipboardItemPasteboardDataSource::collectDataForWriting(Clipboard&, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)

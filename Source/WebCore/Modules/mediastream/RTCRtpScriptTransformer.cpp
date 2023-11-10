@@ -49,7 +49,7 @@ namespace WebCore {
 ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context, MessageWithMessagePorts&& options)
 {
     if (!context.globalObject())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
     JSC::JSLockHolder lock(globalObject.vm());
@@ -58,7 +58,7 @@ ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(Script
     if (readable.hasException())
         return readable.releaseException();
     if (!options.message)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto ports = MessagePort::entanglePorts(context, WTFMove(options.transferredPorts));
     auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, options.message.releaseNonNull(), WTFMove(ports), readable.releaseReturnValue(), WTFMove(readableSource)));
@@ -93,12 +93,12 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
     if (!m_writable) {
         RefPtr context = downcast<WorkerGlobalScope>(scriptExecutionContext());
         if (!context || !context->globalObject())
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
 
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
         auto writableOrException = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = Ref { *this }](auto& context, auto value) -> ExceptionOr<void> {
             if (!transformer->m_backend)
-                return Exception { InvalidStateError };
+                return Exception { ExceptionCode::InvalidStateError };
 
             auto& globalObject = *context.globalObject();
 
@@ -106,7 +106,7 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
 
             if (scope.exception())
-                return Exception { ExistingExceptionError };
+                return Exception { ExceptionCode::ExistingExceptionError };
 
             auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
                 return value->rtcFrame();
@@ -195,7 +195,7 @@ void RTCRtpScriptTransformer::generateKeyFrame(Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Sender || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
-        promise->reject(Exception { InvalidStateError, "Not attached to a valid video sender"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video sender"_s });
         return;
     }
 
@@ -209,7 +209,7 @@ void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise
 {
     RefPtr context = scriptExecutionContext();
     if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Receiver || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
-        promise->reject(Exception { InvalidStateError, "Not attached to a valid video receiver"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video receiver"_s });
         return;
     }
 

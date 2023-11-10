@@ -39,23 +39,23 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(const Cryp
 #if defined(EVP_PKEY_CTX_set_rsa_oaep_md) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md) && defined(EVP_PKEY_CTX_set0_rsa_oaep_label)
     const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!md)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new(key.platformKey(), nullptr));
     if (!ctx)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_encrypt_init(ctx.get()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_padding(ctx.get(), RSA_PKCS1_OAEP_PADDING) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_oaep_md(ctx.get(), md) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_mgf1_md(ctx.get(), md) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (!parameters.labelVector().isEmpty()) {
         size_t labelSize = parameters.labelVector().size();
@@ -64,22 +64,22 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(const Cryp
         memcpy(label, parameters.labelVector().data(), labelSize);
         if (EVP_PKEY_CTX_set0_rsa_oaep_label(ctx.get(), label, labelSize) <= 0) {
             OPENSSL_free(label);
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
         }
     }
 
     size_t cipherTextLen;
     if (EVP_PKEY_encrypt(ctx.get(), nullptr, &cipherTextLen, plainText.data(), plainText.size()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> cipherText(cipherTextLen);
     if (EVP_PKEY_encrypt(ctx.get(), cipherText.data(), &cipherTextLen, plainText.data(), plainText.size()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     cipherText.shrink(cipherTextLen);
 
     return cipherText;
 #else
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 #endif
 }
 
@@ -88,23 +88,23 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(const Cryp
 #if defined(EVP_PKEY_CTX_set_rsa_oaep_md) && defined(EVP_PKEY_CTX_set_rsa_mgf1_md) && defined(EVP_PKEY_CTX_set0_rsa_oaep_label)
     const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
     if (!md)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new(key.platformKey(), nullptr));
     if (!ctx)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_decrypt_init(ctx.get()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_padding(ctx.get(), RSA_PKCS1_OAEP_PADDING) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_oaep_md(ctx.get(), md) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (EVP_PKEY_CTX_set_rsa_mgf1_md(ctx.get(), md) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     if (!parameters.labelVector().isEmpty()) {
         size_t labelSize = parameters.labelVector().size();
@@ -113,22 +113,22 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(const Cryp
         memcpy(label, parameters.labelVector().data(), labelSize);
         if (EVP_PKEY_CTX_set0_rsa_oaep_label(ctx.get(), label, labelSize) <= 0) {
             OPENSSL_free(label);
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
         }
     }
 
     size_t plainTextLen;
     if (EVP_PKEY_decrypt(ctx.get(), nullptr, &plainTextLen, cipherText.data(), cipherText.size()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> plainText(plainTextLen);
     if (EVP_PKEY_decrypt(ctx.get(), plainText.data(), &plainTextLen, cipherText.data(), cipherText.size()) <= 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     plainText.shrink(plainTextLen);
 
     return plainText;
 #else
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 #endif
 }
 

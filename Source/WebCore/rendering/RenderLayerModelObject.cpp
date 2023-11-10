@@ -175,8 +175,8 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         setHasReflection(false);
 
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
-        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == RepaintStatus::NeedsFullRepaint && layer()->repaintRects())
-            repaintUsingContainer(containerForRepaint().renderer.get(), layer()->repaintRects()->clippedOverflowRect);
+        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == RepaintStatus::NeedsFullRepaint && layer()->cachedClippedOverflowRect())
+            repaintUsingContainer(containerForRepaint().renderer.get(), *(layer()->cachedClippedOverflowRect()));
 
         layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
@@ -238,9 +238,9 @@ bool RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft() const
 #endif
 }
 
-std::optional<LayerRepaintRects> RenderLayerModelObject::layerRepaintRects() const
+std::optional<LayoutRect> RenderLayerModelObject::cachedLayerClippedOverflowRect() const
 {
-    return hasLayer() ? layer()->repaintRects() : std::nullopt;
+    return hasLayer() ? layer()->cachedClippedOverflowRect() : std::nullopt;
 }
 
 bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)

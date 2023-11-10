@@ -345,11 +345,11 @@ ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
 
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // If start is negative or greater than end, then throw a TypeError exception and abort these steps.
     if (start < 0 || start > end)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // Set live seekable range to be a new normalized TimeRanges object containing a single range
     // whose start position is start and end position is end.
@@ -367,7 +367,7 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
 
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     m_liveSeekable.clear();
     return { };
 }
@@ -504,17 +504,17 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
     // On setting, run the following steps:
     // 1. If the value being set is negative or NaN then throw a TypeError exception and abort these steps.
     if (duration < 0.0 || std::isnan(duration))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 2. If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an InvalidStateError
     // exception and abort these steps.
     for (auto& sourceBuffer : *m_sourceBuffers) {
         if (sourceBuffer->updating())
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
     }
 
     // 4. Run the duration change algorithm with new duration set to the value being assigned to this attribute.
@@ -544,7 +544,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
         highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().maximumBufferedTime());
     }
     if (highestPresentationTimestamp.isValid() && newDuration < highestPresentationTimestamp)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If new duration is less than highest end time, then
     // 4.1. Update new duration to equal highest end time.
@@ -583,12 +583,12 @@ ExceptionOr<void> MediaSource::endOfStream(std::optional<EndOfStreamError> error
     // 1. If the readyState attribute is not in the "open" state then throw an
     // InvalidStateError exception and abort these steps.
     if (!isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an
     // InvalidStateError exception and abort these steps.
     if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), [](auto& sourceBuffer) { return sourceBuffer->updating(); }))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. Run the end of stream algorithm with the error parameter set to error.
     streamEndedWithError(error);
@@ -704,7 +704,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 1. If type is an empty string then throw a TypeError exception and abort these steps.
     if (type.isEmpty())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NotSupportedError exception and abort these steps.
@@ -714,15 +714,15 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     auto context = scriptExecutionContext();
     if (!context)
-        return Exception { NotAllowedError };
+        return Exception { ExceptionCode::NotAllowedError };
 
     if (!isTypeSupported(*context, type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // 4. If the readyState attribute is not in the "open" state then throw an
     // InvalidStateError exception and abort these steps.
     if (!isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
@@ -776,7 +776,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     // 2. If sourceBuffer specifies an object that is not in sourceBuffers then
     // throw a NotFoundError exception and abort these steps.
     if (!m_sourceBuffers->length() || !m_sourceBuffers->contains(buffer))
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     buffer.abortIfUpdating();
@@ -1162,16 +1162,16 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
         // Step 2: If type contains a MIME type ... that is not supported with the types
         // specified for the other SourceBuffer objects in sourceBuffers, then throw
         // a NotSupportedError exception and abort these steps.
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     case MediaSourcePrivate::AddStatus::ReachedIdLimit:
         // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
         // Step 3: If the user agent can't handle any more SourceBuffer objects then throw
         // a QuotaExceededError exception and abort these steps.
-        return Exception { QuotaExceededError };
+        return Exception { ExceptionCode::QuotaExceededError };
     }
 
     ASSERT_NOT_REACHED();
-    return Exception { QuotaExceededError };
+    return Exception { ExceptionCode::QuotaExceededError };
 }
 
 void MediaSource::scheduleEvent(const AtomString& eventName)

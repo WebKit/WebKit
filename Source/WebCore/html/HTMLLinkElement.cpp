@@ -704,12 +704,4 @@ RequestPriority HTMLLinkElement::fetchPriorityHint() const
     return RequestPriority::Auto;
 }
 
-String HTMLLinkElement::styleSheetContentWithReplacementURLs(const HashMap<String, String>& replacementURLStrings) const
-{
-    if (!m_sheet)
-        return { };
-
-    return m_sheet->cssTextWithReplacementURLs(replacementURLStrings);
-}
-
 } // namespace WebCore

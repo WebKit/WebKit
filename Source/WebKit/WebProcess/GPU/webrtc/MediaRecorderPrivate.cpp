@@ -95,7 +95,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
     m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
         if (!weakThis) {
-            callback(Exception { InvalidStateError }, 0, 0);
+            callback(Exception { ExceptionCode::InvalidStateError }, 0, 0);
             return;
         }
         if (exception) {

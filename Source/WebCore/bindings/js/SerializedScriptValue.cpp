@@ -5128,7 +5128,7 @@ static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffe
 
         bool result = arrayBuffers[arrayBufferIndex]->transferTo(vm, contents->at(arrayBufferIndex));
         if (!result)
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
     }
 
     return contents;
@@ -5165,22 +5165,22 @@ static Exception exceptionForSerializationFailure(SerializationReturnCode code)
     
     switch (code) {
     case SerializationReturnCode::StackOverflowError:
-        return Exception { StackOverflowError };
+        return Exception { ExceptionCode::StackOverflowError };
     case SerializationReturnCode::ValidationError:
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     case SerializationReturnCode::DataCloneError:
-        return Exception { DataCloneError };
+        return Exception { ExceptionCode::DataCloneError };
     case SerializationReturnCode::ExistingExceptionError:
-        return Exception { ExistingExceptionError };
+        return Exception { ExceptionCode::ExistingExceptionError };
     case SerializationReturnCode::UnspecifiedError:
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     case SerializationReturnCode::SuccessfullyCompleted:
     case SerializationReturnCode::InterruptedExecutionError:
         ASSERT_NOT_REACHED();
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     }
     ASSERT_NOT_REACHED();
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 static bool containsDuplicates(const Vector<RefPtr<ImageBitmap>>& imageBitmaps)
@@ -5255,31 +5255,31 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     HashSet<JSC::JSObject*> uniqueTransferables;
     for (auto& transferable : transferList) {
         if (!uniqueTransferables.add(transferable.get()).isNewEntry)
-            return Exception { DataCloneError, "Duplicate transferable for structured clone"_s };
+            return Exception { ExceptionCode::DataCloneError, "Duplicate transferable for structured clone"_s };
 
         if (auto arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
             if (arrayBuffer->isDetached() || arrayBuffer->isShared())
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
             if (arrayBuffer->isLocked()) {
                 auto scope = DECLARE_THROW_SCOPE(vm);
                 throwVMTypeError(&lexicalGlobalObject, scope, errorMessageForTransfer(arrayBuffer));
-                return Exception { ExistingExceptionError };
+                return Exception { ExceptionCode::ExistingExceptionError };
             }
             arrayBuffers.append(WTFMove(arrayBuffer));
             continue;
         }
         if (auto port = JSMessagePort::toWrapped(vm, transferable.get())) {
             if (port->isDetached())
-                return Exception { DataCloneError, "MessagePort is detached"_s };
+                return Exception { ExceptionCode::DataCloneError, "MessagePort is detached"_s };
             messagePorts.append(WTFMove(port));
             continue;
         }
 
         if (auto imageBitmap = JSImageBitmap::toWrapped(vm, transferable.get())) {
             if (imageBitmap->isDetached())
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
             if (!imageBitmap->originClean())
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
 
             imageBitmaps.append(WTFMove(imageBitmap));
             continue;
@@ -5302,29 +5302,29 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #if ENABLE(WEB_CODECS)
         if (auto videoFrame = JSWebCodecsVideoFrame::toWrapped(vm, transferable.get())) {
             if (videoFrame->isDetached())
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
             transferredVideoFrames.append(*videoFrame);
             continue;
         }
         if (auto audioData = JSWebCodecsAudioData::toWrapped(vm, transferable.get())) {
             if (audioData->isDetached())
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
             transferredAudioData.append(*audioData);
             continue;
         }
 #endif
-        return Exception { DataCloneError };
+        return Exception { ExceptionCode::DataCloneError };
     }
 
     if (containsDuplicates(imageBitmaps))
-        return Exception { DataCloneError };
+        return Exception { ExceptionCode::DataCloneError };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     if (!canOffscreenCanvasesDetach(offscreenCanvases))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 #endif
 #if ENABLE(WEB_RTC)
     if (!canDetachRTCDataChannels(dataChannels))
-        return Exception { DataCloneError };
+        return Exception { ExceptionCode::DataCloneError };
 #endif
 
     Vector<uint8_t> buffer;

@@ -26,7 +26,6 @@
 // https://wicg.github.io/IntersectionObserver/
 
 [
-    EnabledBySetting=IntersectionObserverEnabled,
     Exposed=Window,
     JSCustomMarkFunction,
     CustomIsReachable,
@@ -43,9 +42,6 @@
     [ResultField=records] sequence<IntersectionObserverEntry> takeRecords();
 };
 
-[
-    EnabledBySetting=IntersectionObserverEnabled
-]
 dictionary IntersectionObserverInit {
     (Element or Document)? root = null;
     DOMString rootMargin = "0px";

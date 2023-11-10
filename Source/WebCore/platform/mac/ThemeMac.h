@@ -44,7 +44,7 @@ private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;
 
-    int baselinePositionAdjustment(StyleAppearance) const final;
+    int baselinePositionAdjustment(StyleAppearance, bool isHorizontalWritingMode) const final;
 
     std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
 

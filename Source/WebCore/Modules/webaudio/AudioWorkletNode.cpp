@@ -62,25 +62,25 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletNode);
 ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
 {
     if (!options.numberOfInputs && !options.numberOfOutputs)
-        return Exception { NotSupportedError, "Number of inputs and outputs cannot both be 0"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Number of inputs and outputs cannot both be 0"_s };
 
     if (options.outputChannelCount) {
         if (options.numberOfOutputs != options.outputChannelCount->size())
-            return Exception { IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_s };
+            return Exception { ExceptionCode::IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_s };
 
         for (auto& channelCount : *options.outputChannelCount) {
             if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels)
-                return Exception { NotSupportedError, "Provided number of channels for output is outside supported range"_s };
+                return Exception { ExceptionCode::NotSupportedError, "Provided number of channels for output is outside supported range"_s };
         }
     }
 
     auto it = context.parameterDescriptorMap().find(name);
     if (it == context.parameterDescriptorMap().end())
-        return Exception { InvalidStateError, "No ScriptProcessor was registered with this name"_s };
+        return Exception { ExceptionCode::InvalidStateError, "No ScriptProcessor was registered with this name"_s };
     auto& parameterDescriptors = it->value;
 
     if (!context.scriptExecutionContext())
-        return Exception { InvalidStateError, "Audio context's frame is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Audio context's frame is detached"_s };
 
     auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
     auto& nodeMessagePort = messageChannel->port1();

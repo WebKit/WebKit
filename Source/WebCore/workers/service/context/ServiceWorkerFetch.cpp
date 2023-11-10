@@ -227,7 +227,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
         if (event->defaultPrevented()) {
             ResourceError error { errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };
             client->didFail(error);
-            deferredPromise->reject(Exception { NetworkError });
+            deferredPromise->reject(Exception { ExceptionCode::NetworkError });
             return;
         }
         client->didNotHandle();

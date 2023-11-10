@@ -76,7 +76,8 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto inflatedTrackRect = inflatedRect(trackRect, size, outsets, style);
 
-    auto drawingThumbX = isOn ? inflatedTrackRect.width() - inflatedTrackRect.height() : 0;
+    auto drawingThumbIsLeft = (!isRTL && !isOn) || (isRTL && isOn);
+    auto drawingThumbX = drawingThumbIsLeft ? 0 : inflatedTrackRect.width() - inflatedTrackRect.height();
     auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, inflatedTrackRect.height(), inflatedTrackRect.height());
 
     auto trackBuffer = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);

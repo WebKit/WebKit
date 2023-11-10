@@ -653,7 +653,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
 #endif
-    , m_identifier(PDFPluginIdentifier::generate())
 {
     Ref document = element.document();
 
@@ -701,12 +700,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
         });
     }
 #endif
-}
-
-PDFPlugin::~PDFPlugin()
-{
-    if (auto* page = m_frame ? m_frame->page() : nullptr)
-        page->removePDFHUD(*this);
 }
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -1332,13 +1325,6 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
     }
 }
 
-bool PDFPlugin::hudEnabled() const
-{
-    if (CheckedPtr page = this->page())
-        return page->settings().pdfPluginHUDEnabled();
-    return false;
-}
-
 static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)
 {
     PDFPlugin* pdfView = static_cast<PDFPlugin*>(JSObjectGetPrivate(object));
@@ -1576,11 +1562,6 @@ void PDFPlugin::contentsScaleFactorChanged(float)
     updatePageAndDeviceScaleFactors();
 }
 
-IntRect PDFPlugin::frameForHUD() const
-{
-    return convertFromPDFViewToRootView(IntRect(IntPoint(), size()));
-}
-
 IntSize PDFPlugin::contentsSize() const
 {
     if (isLocked())
@@ -1600,12 +1581,6 @@ bool PDFPlugin::isLocked() const
     return [m_pdfDocument isLocked];
 }
 
-void PDFPlugin::updatePDFHUDLocation()
-{
-    if (isLocked() || !m_frame || !m_frame->page())
-        return;
-    m_frame->protectedPage()->updatePDFHUDLocation(*this, frameForHUD());
-}
 
 void PDFPlugin::setView(PluginView& view)
 {
@@ -1617,6 +1592,8 @@ void PDFPlugin::setView(PluginView& view)
 
 void PDFPlugin::teardown()
 {
+    PDFPluginBase::teardown();
+
 #if HAVE(INCREMENTAL_PDF_APIS)
     // By clearing out the resource data and handling all outstanding range requests,
     // we can force the PDFThread to complete quickly
@@ -1634,9 +1611,6 @@ void PDFPlugin::teardown()
 
     m_activeAnnotation = nullptr;
     m_annotationContainer = nullptr;
-
-    destroyScrollbar(ScrollbarOrientation::Horizontal);
-    destroyScrollbar(ScrollbarOrientation::Vertical);
     
     [m_scrollCornerLayer removeFromSuperlayer];
     [m_contentLayer removeFromSuperlayer];
@@ -1706,65 +1680,6 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
 PlatformLayer* PDFPlugin::platformLayer() const
 {
     return m_containerLayer.get();
-}
-
-IntPoint PDFPlugin::convertFromPluginToPDFView(const IntPoint& point) const
-{
-    return IntPoint(point.x(), size().height() - point.y());
-}
-
-IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
-{
-    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
-}
-
-IntRect PDFPlugin::convertFromPDFViewToRootView(const IntRect& rect) const
-{
-    IntRect rectInPluginCoordinates(rect.x(), rect.y(), rect.width(), rect.height());
-    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(rectInPluginCoordinates);
-}
-
-IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
-{
-    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
-    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
-}
-
-FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
-{
-    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
-        FloatRect updatedRect = rect;
-        updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
-        CheckedPtr page = this->page();
-        if (!page)
-            return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
-    });
-}
-
-IntRect PDFPlugin::boundsOnScreen() const
-{
-    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&] () -> WebCore::IntRect {
-        FloatRect bounds = FloatRect(FloatPoint(), size());
-        FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
-        CheckedPtr page = this->page();
-        if (!page)
-            return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
-    });
-}
-
-void PDFPlugin::visibilityDidChange(bool visible)
-{
-    if (!m_frame)
-        return;
-    if (!hudEnabled())
-        return;
-    if (visible)
-        m_frame->page()->createPDFHUD(*this, frameForHUD());
-    else
-        m_frame->page()->removePDFHUD(*this);
 }
 
 void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)

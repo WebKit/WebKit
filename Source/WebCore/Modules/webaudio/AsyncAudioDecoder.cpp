@@ -47,7 +47,7 @@ Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audio
         // The ArrayBuffer must be deleted on the main thread, send it back there to be derefed.
         callOnMainThread([audioData = WTFMove(audioData)] { });
         if (!audioBuffer)
-            return DecodingTaskPromise::createAndReject(Exception { EncodingError, "Decoding failed"_s });
+            return DecodingTaskPromise::createAndReject(Exception { ExceptionCode::EncodingError, "Decoding failed"_s });
         return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull());
     });
 }

@@ -52,7 +52,7 @@ Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecu
 {
     ASSERT(reason);
     if (reason.isUndefined())
-        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+        reason = toJS(&globalObject, &globalObject, DOMException::create(ExceptionCode::AbortError));
     return adoptRef(*new AbortSignal(&context, Aborted::Yes, reason));
 }
 
@@ -70,7 +70,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
 
         auto& vm = globalObject->vm();
         Locker locker { vm.apiLock() };
-        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(TimeoutError)));
+        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(ExceptionCode::TimeoutError)));
     };
     DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), DOMTimer::Type::SingleShot);
     return signal;

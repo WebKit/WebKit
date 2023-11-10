@@ -227,17 +227,17 @@ static bool validateModifiedParameters(const RTCRtpSendParameters& newParameters
 void GStreamerRtpSenderBackend::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
 {
     if (!hasSource()) {
-        promise.reject(NotSupportedError);
+        promise.reject(ExceptionCode::NotSupportedError);
         return;
     }
 
     if (!m_currentParameters) {
-        promise.reject(Exception { InvalidStateError, "getParameters must be called before setParameters"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "getParameters must be called before setParameters"_s });
         return;
     }
 
     if (!validateModifiedParameters(parameters, toRTCRtpSendParameters(m_currentParameters.get()))) {
-        promise.reject(InvalidModificationError, "parameters are not valid"_s);
+        promise.reject(ExceptionCode::InvalidModificationError, "parameters are not valid"_s);
         return;
     }
 

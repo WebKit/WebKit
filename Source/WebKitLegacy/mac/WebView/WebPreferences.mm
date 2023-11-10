@@ -2916,16 +2916,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitContactPickerAPIEnabledPreferenceKey];
 }
 
-- (BOOL)intersectionObserverEnabled
-{
-    return [self _boolValueForKey:WebKitIntersectionObserverEnabledPreferenceKey];
-}
-
-- (void)setIntersectionObserverEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitIntersectionObserverEnabledPreferenceKey];
-}
-
 - (BOOL)visualViewportAPIEnabled
 {
     return [self _boolValueForKey:WebKitVisualViewportAPIEnabledPreferenceKey];
@@ -3004,16 +2994,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
-}
-
-- (BOOL)resizeObserverEnabled
-{
-    return [self _boolValueForKey:WebKitResizeObserverEnabledPreferenceKey];
-}
-
-- (void)setResizeObserverEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitResizeObserverEnabledPreferenceKey];
 }
 
 - (BOOL)privateClickMeasurementEnabled
@@ -3142,6 +3122,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 {
 }
 
+- (BOOL)resizeObserverEnabled
+{
+    return YES;
+}
+
+- (void)setResizeObserverEnabled:(BOOL)flag
+{
+}
+
 - (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
@@ -3213,6 +3202,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (BOOL)fetchAPIKeepAliveEnabled
 {
     return YES;
+}
+
+- (BOOL)intersectionObserverEnabled
+{
+    return YES;
+}
+
+- (void)setIntersectionObserverEnabled:(BOOL)flag
+{
 }
 
 - (void)setShadowDOMEnabled:(BOOL)flag

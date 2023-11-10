@@ -42,7 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSOMVariableReferenceValue);
 ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::create(String&& variable, RefPtr<CSSUnparsedValue>&& fallback)
 {
     if (!variable.startsWith("--"_s))
-        return Exception { TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
+        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
     return adoptRef(*new CSSOMVariableReferenceValue(WTFMove(variable), WTFMove(fallback)));
 }
@@ -50,7 +50,7 @@ ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::creat
 ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
 {
     if (!variable.startsWith("--"_s))
-        return Exception { TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
+        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
     m_variable = WTFMove(variable);
     return { };

@@ -53,9 +53,12 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     static bool hasAsyncTextInteraction = !!getUIAsyncTextInteractionClass();
     if (hasAsyncTextInteraction && view.shouldUseAsyncInteractions) {
         _asyncTextInteraction = adoptNS([allocUIAsyncTextInteractionInstance() init]);
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
+        [_asyncTextInteraction setDelegate:view];
+#endif
         [view addInteraction:_asyncTextInteraction.get()];
     } else
-#endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
         _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
     _view = view;
     return self;

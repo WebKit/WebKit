@@ -351,7 +351,7 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 
     ASSERT(!jobData.scopeURL.isNull());
     if (jobData.scopeURL.isNull()) {
-        rejectJobInClient(jobData.identifier().jobIdentifier, ExceptionData { InvalidStateError, "Scope URL is empty"_s });
+        rejectJobInClient(jobData.identifier().jobIdentifier, ExceptionData { ExceptionCode::InvalidStateError, "Scope URL is empty"_s });
         return;
     }
 
@@ -391,7 +391,7 @@ void WebSWServerConnection::scheduleUnregisterJobInServer(ServiceWorkerJobIdenti
 
     auto clientURL = clientURLFromIdentifier(contextIdentifier);
     if (!clientURL.isValid())
-        return completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Client is unknown"_s }));
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Client is unknown"_s }));
 
     ASSERT(!m_unregisterJobs.contains(jobIdentifier));
     m_unregisterJobs.add(jobIdentifier, WTFMove(completionHandler));
@@ -538,16 +538,16 @@ void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistr
 #if !ENABLE(BUILT_IN_NOTIFICATIONS)
     UNUSED_PARAM(registrationIdentifier);
     UNUSED_PARAM(applicationServerKey);
-    completionHandler(makeUnexpected(ExceptionData { AbortError, "Push service not implemented"_s }));
+    completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "Push service not implemented"_s }));
 #else
     auto registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Subscribing for push requires an active service worker"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s }));
         return;
     }
 
     if (!session()) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -572,12 +572,12 @@ void WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerReg
 #else
     auto registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Unsubscribing from push requires a service worker"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Unsubscribing from push requires a service worker"_s }));
         return;
     }
 
     if (!session()) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -594,12 +594,12 @@ void WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrati
 #else
     auto registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Getting push subscription requires a service worker"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push subscription requires a service worker"_s }));
         return;
     }
 
     if (!session()) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -616,12 +616,12 @@ void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
 #else
     auto registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Getting push permission state requires a service worker"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Getting push permission state requires a service worker"_s }));
         return;
     }
 
     if (!session()) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -683,7 +683,7 @@ void WebSWServerConnection::enableNavigationPreload(WebCore::ServiceWorkerRegist
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        callback(ExceptionData { ExceptionCode::InvalidStateError, "No registration"_s });
         return;
     }
     callback(registration->enableNavigationPreload());
@@ -693,7 +693,7 @@ void WebSWServerConnection::disableNavigationPreload(WebCore::ServiceWorkerRegis
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        callback(ExceptionData { ExceptionCode::InvalidStateError, "No registration"_s });
         return;
     }
     callback(registration->disableNavigationPreload());
@@ -703,7 +703,7 @@ void WebSWServerConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWork
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        callback(ExceptionData { ExceptionCode::InvalidStateError, "No registration"_s });
         return;
     }
     callback(registration->setNavigationPreloadHeaderValue(WTFMove(headerValue)));
@@ -713,7 +713,7 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(makeUnexpected(ExceptionData { InvalidStateError, { } }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, { } }));
         return;
     }
     callback(registration->navigationPreloadState());

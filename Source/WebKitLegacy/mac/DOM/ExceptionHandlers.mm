@@ -38,7 +38,7 @@ NSString * const DOMXPathException = @"DOMXPathException";
 
 static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
 {
-    ASSERT(ec);
+    ASSERT(static_cast<bool>(ec));
 
     auto description = WebCore::DOMException::description(ec);
 
@@ -57,12 +57,12 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
 
 void raiseTypeErrorException()
 {
-    raiseDOMErrorException(WebCore::TypeError);
+    raiseDOMErrorException(WebCore::ExceptionCode::TypeError);
 }
 
 void raiseNotSupportedErrorException()
 {
-    raiseDOMErrorException(WebCore::NotSupportedError);
+    raiseDOMErrorException(WebCore::ExceptionCode::NotSupportedError);
 }
 
 void raiseDOMErrorException(WebCore::Exception&& exception)

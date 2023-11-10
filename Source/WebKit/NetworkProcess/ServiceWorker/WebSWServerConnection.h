@@ -47,7 +47,7 @@ namespace IPC {
 class FormDataReference;
 
 template<> struct AsyncReplyError<WebCore::ExceptionOr<bool>> {
-    static WebCore::ExceptionOr<bool> create() { return WebCore::Exception { WebCore::TypeError, "Internal error"_s }; }
+    static WebCore::ExceptionOr<bool> create() { return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Internal error"_s }; }
 };
 
 }

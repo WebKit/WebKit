@@ -184,12 +184,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
+        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
         return jsPromise;
     }
 
     if (!moduleKeyValue.isString()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), TypeError, "Module key is not Symbol or String."_s);
+        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Module key is not Symbol or String."_s);
         return jsPromise;
     }
 
@@ -197,7 +197,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject) };
     if (!completedURL.isValid()) {
-        rejectWithFetchError(*m_context, WTFMove(deferred), TypeError, "Module key is a valid URL."_s);
+        rejectWithFetchError(*m_context, WTFMove(deferred), ExceptionCode::TypeError, "Module key is a valid URL."_s);
         return jsPromise;
     }
 
@@ -323,7 +323,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
     if (isWorkletOrServiceWorker(*m_context)) {
         scope.release();
-        return rejectPromise(*m_context, globalObject, TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
+        return rejectPromise(*m_context, globalObject, ExceptionCode::TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
     }
 
     auto reject = [&](auto& scope) {
@@ -371,7 +371,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         baseURL = URL { sourceOrigin.string() };
         if (!baseURL.isValid()) {
             scope.release();
-            return rejectPromise(*m_context, globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
+            return rejectPromise(*m_context, globalObject, ExceptionCode::TypeError, "Importer module key is not a Symbol or a String."_s);
         }
 
         auto type = getTypeFromAssertions();
@@ -506,7 +506,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(*m_context, WTFMove(promise), TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
+            rejectWithFetchError(*m_context, WTFMove(promise), ExceptionCode::TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
             return;
         }
 
@@ -515,7 +515,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             if (!integrity.isEmpty()) {
                 if (!matchIntegrityMetadata(cachedScript, integrity)) {
                     m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, integrity)));
-                    rejectWithFetchError(*m_context, WTFMove(promise), TypeError, "Cannot load script due to integrity mismatch"_s);
+                    rejectWithFetchError(*m_context, WTFMove(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
                     return;
                 }
             }
@@ -573,7 +573,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(*m_context, WTFMove(promise), TypeError, makeString("'", loader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
+            rejectWithFetchError(*m_context, WTFMove(promise), ExceptionCode::TypeError, makeString("'", loader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
             return;
         }
 

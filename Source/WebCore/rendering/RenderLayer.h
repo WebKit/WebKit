@@ -220,13 +220,7 @@ public:
 
     RenderLayer* paintOrderParent() const;
 
-    std::optional<LayerRepaintRects> repaintRects() const
-    {
-        if (m_repaintRectsValid)
-            return m_repaintRects;
-
-        return { };
-    }
+    std::optional<LayoutRect> cachedClippedOverflowRect() const;
 
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
@@ -969,10 +963,24 @@ private:
     void setAncestorChainHasSelfPaintingLayerDescendant();
     void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
+    struct RepaintRects {
+        LayoutRect clippedOverflowRect;
+        LayoutRect outlineBoundsRect;
+    };
+
+
+    std::optional<RepaintRects> repaintRects() const
+    {
+        if (m_repaintRectsValid)
+            return m_repaintRects;
+
+        return { };
+    }
+
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = nullptr);
     void computeRepaintRectsIncludingDescendants();
 
-    void setRepaintRects(const LayerRepaintRects&);
+    void setRepaintRects(const RepaintRects&);
     void clearRepaintRects();
 
     LayoutRect clipRectRelativeToAncestor(RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect) const;
@@ -1310,7 +1318,7 @@ private:
     std::unique_ptr<Vector<RenderLayer*>> m_normalFlowList;
 
     // Only valid if m_repaintRectsValid is set (std::optional<> not used to avoid padding).
-    LayerRepaintRects m_repaintRects;
+    RepaintRects m_repaintRects;
 
     // Our current relative or absolute position offset.
     LayoutSize m_offsetForPosition;

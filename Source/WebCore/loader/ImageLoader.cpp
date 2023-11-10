@@ -354,7 +354,7 @@ static inline void rejectPromises(Vector<RefPtr<DeferredPromise>>& promises, ASC
     ASSERT(!promises.isEmpty());
     auto promisesToBeRejected = std::exchange(promises, { });
     for (auto& promise : promisesToBeRejected)
-        promise->reject(Exception { EncodingError, message });
+        promise->reject(Exception { ExceptionCode::EncodingError, message });
 }
 
 inline void ImageLoader::resolveDecodePromises()

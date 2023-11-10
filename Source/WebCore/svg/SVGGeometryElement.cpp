@@ -76,7 +76,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (is<LegacyRenderSVGShape>(renderer))
@@ -88,7 +88,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 #endif
 
     ASSERT_NOT_REACHED();
-    return Exception { InvalidStateError };
+    return Exception { ExceptionCode::InvalidStateError };
 }
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)

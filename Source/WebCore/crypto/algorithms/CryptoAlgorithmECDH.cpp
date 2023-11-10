@@ -50,7 +50,7 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
     if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
@@ -71,28 +71,28 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
     auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(parameters);
 
     if (baseKey->type() != CryptoKey::Type::Private) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
     ASSERT(ecParameters.publicKey);
     if (ecParameters.publicKey->type() != CryptoKey::Type::Public) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
     if (baseKey->algorithmIdentifier() != ecParameters.publicKey->algorithmIdentifier()) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
     auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
     auto& ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
     if (ecBaseKey.namedCurve() != ecPublicKey.namedCurve()) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
 
     auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, size_t length) mutable {
         if (!derivedKey) {
-            exceptionCallback(OperationError);
+            exceptionCallback(ExceptionCode::OperationError);
             return;
         }
         if (!length) {
@@ -101,7 +101,7 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
         }
         auto lengthInBytes = std::ceil(length / 8.);
         if (lengthInBytes > (*derivedKey).size()) {
-            exceptionCallback(OperationError);
+            exceptionCallback(ExceptionCode::OperationError);
             return;
         }
         (*derivedKey).shrink(lengthInBytes);
@@ -136,12 +136,12 @@ void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, cons
         }
         isUsagesAllowed = isUsagesAllowed || !usages;
         if (!isUsagesAllowed) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
 
         if (usages && !key.use.isNull() && key.use != "enc"_s) {
-            exceptionCallback(DataError);
+            exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
@@ -150,28 +150,28 @@ void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, cons
     }
     case CryptoKeyFormat::Raw:
         if (usages) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Spki:
         if (usages) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageDeriveKey) && (usages ^ CryptoKeyUsageDeriveBits) && (usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     if (!result) {
-        exceptionCallback(DataError);
+        exceptionCallback(ExceptionCode::DataError);
         return;
     }
 
@@ -183,7 +183,7 @@ void CryptoAlgorithmECDH::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key
     const auto& ecKey = downcast<CryptoKeyEC>(key.get());
 
     if (!ecKey.keySizeInBits()) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 

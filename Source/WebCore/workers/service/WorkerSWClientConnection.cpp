@@ -63,39 +63,39 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
 
     auto unregisterRequests = WTFMove(m_unregisterRequests);
     for (auto& callback : unregisterRequests.values())
-        callback(Exception { TypeError, "context stopped"_s });
+        callback(Exception { ExceptionCode::TypeError, "context stopped"_s });
 
     auto subscribeToPushServiceRequests = WTFMove(m_subscribeToPushServiceRequests);
     for (auto& callback : subscribeToPushServiceRequests.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto unsubscribeFromPushServiceRequests = WTFMove(m_unsubscribeFromPushServiceRequests);
     for (auto& callback : unsubscribeFromPushServiceRequests.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto getPushSubscriptionRequests = WTFMove(m_getPushSubscriptionRequests);
     for (auto& callback : getPushSubscriptionRequests.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto getPushPermissionStateCallbacks = WTFMove(m_getPushPermissionStateCallbacks);
     for (auto& callback : getPushPermissionStateCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto voidCallbacks = WTFMove(m_voidCallbacks);
     for (auto& callback : voidCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto navigationPreloadStateCallbacks = WTFMove(m_navigationPreloadStateCallbacks);
     for (auto& callback : navigationPreloadStateCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto getNotificationsCallbacks = WTFMove(m_getNotificationsCallbacks);
     for (auto& callback : getNotificationsCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto backgroundFetchInformationCallbacks = std::exchange(m_backgroundFetchInformationCallbacks, { });
     for (auto& callback : backgroundFetchInformationCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto backgroundFetchIdentifiersCallbacks = std::exchange(m_backgroundFetchIdentifiersCallbacks, { });
     for (auto& callback : backgroundFetchIdentifiersCallbacks.values())
@@ -111,7 +111,7 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
 
     auto retrieveRecordResponseCallbacks = std::exchange(m_retrieveRecordResponseCallbacks, { });
     for (auto& callback : retrieveRecordResponseCallbacks.values())
-        callback(Exception { AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
     auto retrieveRecordResponseBodyCallbacks = std::exchange(m_retrieveRecordResponseBodyCallbacks, { });
     for (auto& callback : retrieveRecordResponseBodyCallbacks.values())

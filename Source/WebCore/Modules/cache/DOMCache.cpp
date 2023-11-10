@@ -235,7 +235,7 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
         if (request->method() != "GET"_s && !ignoreMethod) {
             if (requestValidationFailed)
                 *requestValidationFailed = true;
-            return Exception { TypeError, "Request method is not GET"_s };
+            return Exception { ExceptionCode::TypeError, "Request method is not GET"_s };
         }
     } else {
         auto result = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { });
@@ -247,7 +247,7 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
     if (!request->url().protocolIsInHTTPFamily()) {
         if (requestValidationFailed)
             *requestValidationFailed = true;
-        return Exception { TypeError, "Request url is not HTTP/HTTPS"_s };
+        return Exception { ExceptionCode::TypeError, "Request url is not HTTP/HTTPS"_s };
     }
 
     return request.releaseNonNull();
@@ -287,7 +287,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
     for (auto& request : requests) {
         auto& requestReference = request.get();
         if (requestReference.signal().aborted()) {
-            taskHandler->error(Exception { AbortError, "Request signal is aborted"_s });
+            taskHandler->error(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
             return;
         }
         FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler](auto&& result) mutable {
@@ -304,24 +304,24 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             auto& response = protectedResponse.get();
 
             if (!response.ok()) {
-                taskHandler->error(Exception { TypeError, "Response is not OK"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is not OK"_s });
                 return;
             }
 
             if (hasResponseVaryStarHeaderValue(response)) {
-                taskHandler->error(Exception { TypeError, "Response has a '*' Vary header value"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_s });
                 return;
             }
 
             if (response.status() == 206) {
-                taskHandler->error(Exception { TypeError, "Response is a 206 partial"_s });
+                taskHandler->error(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_s });
                 return;
             }
 
             CacheQueryOptions options;
             for (const auto& record : taskHandler->records()) {
                 if (DOMCacheEngine::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
-                    taskHandler->error(Exception { InvalidStateError, "addAll cannot store several matching requests"_s});
+                    taskHandler->error(Exception { ExceptionCode::InvalidStateError, "addAll cannot store several matching requests"_s });
                     return;
                 }
             }
@@ -383,17 +383,17 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
 
     if (hasResponseVaryStarHeaderValue(response.get())) {
-        promise.reject(Exception { TypeError, "Response has a '*' Vary header value"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response has a '*' Vary header value"_s });
         return;
     }
 
     if (response->status() == 206) {
-        promise.reject(Exception { TypeError, "Response is a 206 partial"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response is a 206 partial"_s });
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        promise.reject(Exception { TypeError, "Response is disturbed or locked"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Response is disturbed or locked"_s });
         return;
     }
 

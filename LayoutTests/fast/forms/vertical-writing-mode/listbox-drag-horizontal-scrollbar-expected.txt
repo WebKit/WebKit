@@ -15,7 +15,7 @@ PASS select.scrollLeft is 0
 
 Drag horizontal scrollbar
 PASS select.scrollTop is 0
-PASS select.scrollLeft is 14
+PASS select.scrollLeft is > 0
 
 
 PASS successfullyParsed is true

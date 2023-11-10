@@ -60,6 +60,10 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #if ENABLE(MEDIA_SOURCE)
     EnableMockMediaSource();
 #endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    UpdateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRight> fence);
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

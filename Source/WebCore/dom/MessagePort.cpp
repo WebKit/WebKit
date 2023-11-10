@@ -176,7 +176,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
     if (!ports.isEmpty()) {
         for (auto& port : ports) {
             if (port->identifier() == m_identifier || port->identifier() == m_remoteIdentifier)
-                return Exception { DataCloneError };
+                return Exception { ExceptionCode::DataCloneError };
         }
 
         auto disentangleResult = MessagePort::disentanglePorts(WTFMove(ports));
@@ -351,7 +351,7 @@ ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector
     HashSet<CheckedRef<MessagePort>> portSet;
     for (auto& port : ports) {
         if (!port || !port->m_entangled || !portSet.add(*port).isNewEntry)
-            return Exception { DataCloneError };
+            return Exception { ExceptionCode::DataCloneError };
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.

@@ -166,7 +166,7 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     //    reject promise with a "SecurityError" DOMException and return it.
     auto document = downcast<Document>(scriptExecutionContext());
     if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::XRSpatialTracking, *document, LogFeaturePolicyFailure::Yes)) {
-        promise.reject(Exception { SecurityError });
+        promise.reject(Exception { ExceptionCode::SecurityError });
         return;
     }
 
@@ -457,23 +457,23 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     Ref protectedDocument { document };
     RefPtr globalObject = protectedDocument->domWindow();
     if (!globalObject) {
-        promise.reject(Exception { InvalidAccessError});
+        promise.reject(Exception { ExceptionCode::InvalidAccessError });
         return;
     }
 
     // 4. Check whether the session request is allowed as follows:
     if (immersive) {
         if (!immersiveSessionRequestIsAllowedForGlobalObject(*globalObject, document)) {
-            promise.reject(Exception { SecurityError });
+            promise.reject(Exception { ExceptionCode::SecurityError });
             return;
         }
         if (m_pendingImmersiveSession || m_activeImmersiveSession) {
-            promise.reject(Exception { InvalidStateError });
+            promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
         }
         m_pendingImmersiveSession = true;
     } else if (!inlineSessionRequestIsAllowedForGlobalObject(*globalObject, document, init)) {
-        promise.reject(Exception { SecurityError });
+        promise.reject(Exception { ExceptionCode::SecurityError });
         return;
     }
 
@@ -484,7 +484,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 5.4 Queue a task to perform the following steps:
     obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedDocument, immersive, init, mode, promise = WTFMove(promise)](ThreadSafeWeakPtr<PlatformXR::Device> weakDevice) mutable {
         auto rejectPromiseWithNotSupportedError = makeScopeExit([&]() {
-            promise.reject(Exception { NotSupportedError });
+            promise.reject(Exception { ExceptionCode::NotSupportedError });
             m_pendingImmersiveSession = false;
         });
 
@@ -513,7 +513,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         // 5.4.7 If status' state is "denied" run the following steps: (same as above in 5.4.1)
         resolveFeaturePermissions(mode, init, device, *globalObject, [this, weakThis = WeakPtr { *this }, protectedDocument, device, immersive, mode, promise](std::optional<FeatureList>&& requestedFeatures) mutable {
             if (!weakThis || !requestedFeatures) {
-                promise.reject(Exception { NotSupportedError });
+                promise.reject(Exception { ExceptionCode::NotSupportedError });
                 m_pendingImmersiveSession = false;
                 return;
             }

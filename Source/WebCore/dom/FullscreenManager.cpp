@@ -79,7 +79,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
     // If pendingDoc is not fully active, then reject promise with a TypeError exception and return promise.
     if (promise && !document().isFullyActive()) {
-        promise->reject(Exception { TypeError, "Document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Document is not fully active"_s });
         ERROR_LOG(identifier, "Document is not fully active; failing.");
         return;
     }
@@ -89,7 +89,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             return;
         m_fullscreenErrorEventTargetQueue.append(WTFMove(element));
         if (promise)
-            promise->reject(Exception { TypeError });
+            promise->reject(Exception { ExceptionCode::TypeError });
         protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
             if (weakThis)
                 weakThis->notifyAboutFullscreenChangeOrError();
@@ -169,7 +169,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, element = WTFMove(element), promise = WTFMove(promise), checkType, hasKeyboardAccess, failedPreflights, identifier] () mutable {
         if (!weakThis) {
             if (promise)
-                promise->reject(Exception { TypeError });
+                promise->reject(Exception { ExceptionCode::TypeError });
             return;
         }
 
@@ -241,7 +241,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         document->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WTFMove(weakThis), promise = WTFMove(promise), element = WTFMove(element), failedPreflights = WTFMove(failedPreflights), identifier] () mutable {
             if (!weakThis) {
                 if (promise)
-                    promise->reject(Exception { TypeError });
+                    promise->reject(Exception { ExceptionCode::TypeError });
                 return;
             }
 
@@ -253,7 +253,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             }
             if (m_pendingPromise) {
                 ERROR_LOG(identifier, "Pending operation cancelled by requestFullscreen() call.");
-                m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by requestFullscreen() call."_s });
+                m_pendingPromise->reject(Exception { ExceptionCode::TypeError, "Pending operation cancelled by requestFullscreen() call."_s });
             }
 
             m_pendingPromise = WTFMove(promise);
@@ -279,7 +279,7 @@ void FullscreenManager::cancelFullscreen()
         // by clearing the pending fullscreen element.
         m_pendingFullscreenElement = nullptr;
         if (m_pendingPromise) {
-            m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by webkitCancelFullScreen() call."_s });
+            m_pendingPromise->reject(Exception { ExceptionCode::TypeError, "Pending operation cancelled by webkitCancelFullScreen() call."_s });
             m_pendingPromise = nullptr;
         }
         INFO_LOG(LOGIDENTIFIER, "Cancelling pending fullscreen request.");
@@ -386,7 +386,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
         }
 
         if (m_pendingPromise)
-            m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by exitFullscreen() call."_s });
+            m_pendingPromise->reject(Exception { ExceptionCode::TypeError, "Pending operation cancelled by exitFullscreen() call."_s });
 
         m_pendingPromise = WTFMove(promise);
 
@@ -637,7 +637,7 @@ void FullscreenManager::notifyAboutFullscreenChangeOrError()
     if (m_pendingPromise) {
         ASSERT(!errorQueue.isEmpty() || !changeQueue.isEmpty());
         if (!errorQueue.isEmpty())
-            m_pendingPromise->reject(Exception { TypeError });
+            m_pendingPromise->reject(Exception { ExceptionCode::TypeError });
         else
             m_pendingPromise->resolve();
         m_pendingPromise = nullptr;

@@ -56,11 +56,11 @@ ExtendableEvent::~ExtendableEvent()
 ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 {
     if (!isTrusted())
-        return Exception { InvalidStateError, "Event is not trusted"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is not trusted"_s };
 
     // If the pending promises count is zero and the dispatch flag is unset, throw an "InvalidStateError" DOMException.
     if (!m_pendingPromiseCount && !isBeingDispatched())
-        return Exception { InvalidStateError, "Event is no longer being dispatched and has no pending promises"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is no longer being dispatched and has no pending promises"_s };
 
     addExtendLifetimePromise(WTFMove(promise));
     return { };

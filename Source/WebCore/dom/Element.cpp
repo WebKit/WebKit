@@ -1954,7 +1954,7 @@ const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const 
 ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
 
@@ -1978,7 +1978,7 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
 ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
@@ -2930,7 +2930,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
 ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 {
     if (!canAttachAuthorShadowRoot(*this))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     if (RefPtr shadowRoot = this->shadowRoot()) {
         if (shadowRoot->isDeclarativeShadowRoot()) {
             ChildListMutationScope mutation(*shadowRoot);
@@ -2938,10 +2938,10 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
             shadowRoot->setIsDeclarativeShadowRoot(false);
             return *shadowRoot;
         }
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     }
     if (init.mode == ShadowRootMode::UserAgent)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     Ref shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
         init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
         init.cloneable ? ShadowRoot::Cloneable::Yes : ShadowRoot::Cloneable::No,
@@ -3235,7 +3235,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
     // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attrNode.ownerElement() && attrNode.ownerElement() != this)
-        return Exception { InUseAttributeError };
+        return Exception { ExceptionCode::InUseAttributeError };
 
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -3282,7 +3282,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attrNode.ownerElement() && attrNode.ownerElement() != this)
-        return Exception { InUseAttributeError };
+        return Exception { ExceptionCode::InUseAttributeError };
 
     // Attr::value() will return its 'm_standaloneValue' member any time its Element is set to nullptr. We need to cache this value
     // before making changes to attrNode's Element connections.
@@ -3312,18 +3312,18 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
 ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
 {
     if (attr.ownerElement() != this)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     ASSERT(&document() == &attr.document());
 
     synchronizeAllAttributes();
 
     if (!m_elementData)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     auto existingAttributeIndex = m_elementData->findAttributeIndexByName(attr.qualifiedName());
     if (existingAttributeIndex == ElementData::attributeNotFound)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     Ref oldAttrNode { attr };
 
@@ -3340,7 +3340,7 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomString& namespa
         return parseResult.releaseException();
     QualifiedName parsedAttributeName { parseResult.releaseReturnValue() };
     if (!Document::hasValidNamespaceForAttributes(parsedAttributeName))
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
     return parsedAttributeName;
 }
 
@@ -3775,7 +3775,7 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     if (UNLIKELY(!parent)) {
         if (!parentNode())
             return { };
-        return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element"_s };
+        return Exception { ExceptionCode::NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element"_s };
     }
 
     RefPtr prev = previousSibling();
@@ -5202,7 +5202,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         return newChild.ptr();
     }
 
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Element& newChild)
@@ -5219,12 +5219,12 @@ static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, 
     if (equalLettersIgnoringASCIICase(where, "beforebegin"_s) || equalLettersIgnoringASCIICase(where, "afterend"_s)) {
         RefPtr parent = element.parentNode();
         if (!parent || is<Document>(*parent))
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
         return *parent;
     }
     if (equalLettersIgnoringASCIICase(where, "afterbegin"_s) || equalLettersIgnoringASCIICase(where, "beforeend"_s))
         return element;
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 // Step 2 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.

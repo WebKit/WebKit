@@ -163,7 +163,7 @@ ExceptionOr<uint64_t> TextCheckingParagraph::offsetTo(const Position& position) 
 {
     auto range = makeSimpleRange(paragraphRange().start, position);
     if (!range)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return characterCount(*range);
 }
 

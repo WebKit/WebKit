@@ -47,7 +47,7 @@ SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue(SVGPreserveAspectRatioT
 ExceptionOr<void> SVGPreserveAspectRatioValue::setAlign(unsigned short align)
 {
     if (align == SVG_PRESERVEASPECTRATIO_UNKNOWN || align > SVG_PRESERVEASPECTRATIO_XMAXYMAX)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     m_align = static_cast<SVGPreserveAspectRatioType>(align);
     return { };
@@ -56,7 +56,7 @@ ExceptionOr<void> SVGPreserveAspectRatioValue::setAlign(unsigned short align)
 ExceptionOr<void> SVGPreserveAspectRatioValue::setMeetOrSlice(unsigned short meetOrSlice)
 {
     if (meetOrSlice == SVG_MEETORSLICE_UNKNOWN || meetOrSlice > SVG_MEETORSLICE_SLICE)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     m_meetOrSlice = static_cast<SVGMeetOrSliceType>(meetOrSlice);
     return { };

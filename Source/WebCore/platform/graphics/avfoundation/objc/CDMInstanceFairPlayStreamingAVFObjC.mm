@@ -1581,18 +1581,16 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
 {
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 
-#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
+#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS) && HAVE(AVCONTENTKEYSPECIFIER)
     AVContentKey *contentKey = request.contentKey;
     if (!contentKey)
         return std::nullopt;
 
     // FIXME (118150407): Remove staging code once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders
-    if ([contentKey respondsToSelector:@selector(externalContentProtectionStatus)])
+    if (MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && [contentKey respondsToSelector:@selector(externalContentProtectionStatus)])
         return keyStatusForContentProtectionStatus([contentKey externalContentProtectionStatus]);
 #endif
 
-    // FIXME (118150407): Once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders,
-    // only check the request's -externalContentProtectionStatus when !HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
     return keyStatusForContentProtectionStatus([request externalContentProtectionStatus]);
 #else
 

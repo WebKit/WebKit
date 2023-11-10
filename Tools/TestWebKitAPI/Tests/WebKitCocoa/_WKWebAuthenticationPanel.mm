@@ -1731,7 +1731,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -1939,7 +1939,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -2113,7 +2113,7 @@ TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }

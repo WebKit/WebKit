@@ -156,7 +156,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSS
         return WebCore::reifyMathExpression(downcast<CSSCalcInvertNode>(root));
     }
     ASSERT_NOT_REACHED();
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 static Ref<CSSNumericValue> negate(Ref<CSSNumericValue>&& value)
@@ -178,7 +178,7 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
     if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
             if (unitValue->value() == 0.0 || unitValue->value() == -0.0)
-                return Exception { RangeError };
+                return Exception { ExceptionCode::RangeError };
             return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unitEnum()) };
         }
     }
@@ -352,20 +352,20 @@ ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
     auto type = CSSNumericType::create(unit);
     if (!type)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     auto sumValue = toSumValue();
     if (!sumValue || sumValue->size() != 1)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto& addend = (*sumValue)[0];
     auto unconverted = createCSSUnitValueFromAddend(addend);
     if (!unconverted)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto converted = unconverted->convertTo(unit);
     if (!converted)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return converted.releaseNonNull();
 }
 
@@ -378,19 +378,19 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
     for (auto& unit : units) {
         auto parsedUnit = CSSUnitValue::parseUnit(unit);
         if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
-            return Exception { SyntaxError, "Invalid unit parameter"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid unit parameter"_s };
         parsedUnits.append(parsedUnit);
     }
     auto sumValue = toSumValue();
     if (!sumValue)
-        return Exception { TypeError, "Could not create a sum value"_s };
+        return Exception { ExceptionCode::TypeError, "Could not create a sum value"_s };
 
     Vector<Ref<CSSNumericValue>> values;
     values.reserveInitialCapacity(sumValue->size());
     for (auto& addend : *sumValue) {
         auto cssUnitValue = createCSSUnitValueFromAddend(addend);
         if (!cssUnitValue)
-            return Exception { TypeError, "Could not create CSSUnitValue"_s };
+            return Exception { ExceptionCode::TypeError, "Could not create CSSUnitValue"_s };
         values.append(cssUnitValue.releaseNonNull());
     }
 
@@ -416,7 +416,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
     }
 
     if (!values.isEmpty())
-        return Exception { TypeError, "Failed to convert all values"_s };
+        return Exception { ExceptionCode::TypeError, "Failed to convert all values"_s };
 
     return CSSMathSum::create(WTFMove(result));
 }
@@ -428,13 +428,13 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     auto range = tokenizer.tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
-        return Exception { SyntaxError, "Failed to parse CSS text"_s };
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
     const CSSParserToken* componentValueStart = &range.peek();
     range.consumeComponentValue();
     const CSSParserToken* componentValueEnd = &range.peek();
     range.consumeWhitespace();
     if (!range.atEnd())
-        return Exception { SyntaxError, "Failed to parse CSS text"_s };
+        return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
 
     auto componentValueRange = range.makeSubRange(componentValueStart, componentValueEnd);
     // https://drafts.css-houdini.org/css-typed-om/#reify-a-numeric-value
@@ -444,7 +444,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     case CSSParserTokenType::PercentageToken: {
         auto& token = componentValueRange.consumeIncludingWhitespace();
         if (token.type() == CSSParserTokenType::DimensionToken && !CSSNumericType::create(token.unitType()))
-            return Exception { SyntaxError, "Failed to parse CSS text"_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
         return convertToExceptionOrNumericValue(CSSUnitValue::create(token.numericValue(), token.unitType()));
     }
     case CSSParserTokenType::FunctionToken: {
@@ -459,7 +459,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     default:
         break;
     }
-    return Exception { SyntaxError, "Failed to parse CSS text"_s };
+    return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
 }
 
 } // namespace WebCore

@@ -152,13 +152,13 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
     // 1. If the iterationStart member of input is present and less than zero, throw a TypeError and abort this procedure.
     if (timing->iterationStart) {
         if (timing->iterationStart.value() < 0)
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
     }
 
     // 2. If the iterations member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
     if (timing->iterations) {
         if (timing->iterations.value() < 0 || std::isnan(timing->iterations.value()))
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
     }
 
     // 3. If the duration member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
@@ -167,10 +167,10 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
         if (std::holds_alternative<double>(timing->duration.value())) {
             auto durationAsDouble = std::get<double>(timing->duration.value());
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
-                return Exception { TypeError };
+                return Exception { ExceptionCode::TypeError };
         } else {
             if (std::get<String>(timing->duration.value()) != autoAtom())
-                return Exception { TypeError };
+                return Exception { ExceptionCode::TypeError };
         }
     }
 
@@ -233,7 +233,7 @@ ExceptionOr<void> AnimationEffect::setIterationStart(double iterationStart)
     // If an attempt is made to set this attribute to a value less than zero, a TypeError must
     // be thrown and the value of the iterationStart attribute left unchanged.
     if (iterationStart < 0)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     if (m_timing.iterationStart == iterationStart)
         return { };
@@ -249,7 +249,7 @@ ExceptionOr<void> AnimationEffect::setIterations(double iterations)
     // If an attempt is made to set this attribute to a value less than zero or a NaN value, a
     // TypeError must be thrown and the value of the iterations attribute left unchanged.
     if (iterations < 0 || std::isnan(iterations))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     if (m_timing.iterations == iterations)
         return { };

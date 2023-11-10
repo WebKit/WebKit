@@ -47,7 +47,7 @@ ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(std::variant<Vector<Ve
         Vector<KeyValuePair<String, String>> pairs;
         for (const auto& pair : vector) {
             if (pair.size() != 2)
-                return Exception { TypeError };
+                return Exception { ExceptionCode::TypeError };
             pairs.append({pair[0], pair[1]});
         }
         return adoptRef(*new URLSearchParams(WTFMove(pairs)));

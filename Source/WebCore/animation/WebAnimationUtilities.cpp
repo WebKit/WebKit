@@ -326,10 +326,10 @@ ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
 
     auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
     if (!isLegacy && !pseudoElement.startsWith("::"_s))
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
     if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return CSSSelector::pseudoId(pseudoType);
 }
 

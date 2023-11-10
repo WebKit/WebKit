@@ -505,7 +505,7 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, Funct
                 return;
 
             if (result.hasException()) {
-                RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %d", result.exception().code());
+                RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %hhu", result.exception().code());
                 callback(result.releaseException());
                 return;
             }
@@ -601,17 +601,17 @@ void PeerConnectionBackend::markAsNeedingNegotiation(uint32_t eventId)
 
 ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, FixedVector<String>&&)
 {
-    return Exception { NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
 }
 
 ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(const String&, const RTCRtpTransceiverInit&)
 {
-    return Exception { NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
 }
 
 ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&)
 {
-    return Exception { NotSupportedError, "Not implemented"_s };
+    return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
 }
 
 void PeerConnectionBackend::generateCertificate(Document& document, const CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
@@ -619,7 +619,7 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
 #if USE(LIBWEBRTC)
     auto* page = document.page();
     if (!page) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -632,11 +632,11 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
     if (certificate.has_value())
         promise.resolve(*certificate);
     else
-        promise.reject(NotSupportedError);
+        promise.reject(ExceptionCode::NotSupportedError);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(info);
-    promise.reject(NotSupportedError);
+    promise.reject(ExceptionCode::NotSupportedError);
 #endif
 }
 

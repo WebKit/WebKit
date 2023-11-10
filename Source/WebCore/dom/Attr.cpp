@@ -83,7 +83,7 @@ ExceptionOr<void> Attr::setPrefix(const AtomString& prefix)
         return result.releaseException();
 
     if ((prefix == xmlnsAtom() && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom())
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
 
     const AtomString& newPrefix = prefix.isEmpty() ? nullAtom() : prefix;
     if (RefPtr element = m_element.get())

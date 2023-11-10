@@ -38,7 +38,7 @@ namespace WebCore {
 void DocumentFullscreen::exitFullscreen(Document& document, RefPtr<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive() || !document.fullscreenManager().fullscreenElement()) {
-        promise->reject(Exception { TypeError, "Not in fullscreen"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Not in fullscreen"_s });
         return;
     }
     document.checkedFullscreenManager()->exitFullscreen(WTFMove(promise));

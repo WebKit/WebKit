@@ -149,18 +149,18 @@ void ServiceWorkerRegistration::setUpdateViaCache(ServiceWorkerUpdateViaCache up
 void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
     if (isContextStopped()) {
-        promise->reject(Exception(InvalidStateError));
+        promise->reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
     auto* newestWorker = getNewestWorker();
     if (!newestWorker) {
-        promise->reject(Exception(InvalidStateError, "newestWorker is null"_s));
+        promise->reject(Exception(ExceptionCode::InvalidStateError, "newestWorker is null"_s));
         return;
     }
 
     if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext()); serviceWorkerGlobalScope && serviceWorkerGlobalScope->serviceWorker().state() == ServiceWorkerState::Installing) {
-        promise->reject(Exception(InvalidStateError, "service worker is installing"_s));
+        promise->reject(Exception(ExceptionCode::InvalidStateError, "service worker is installing"_s));
         return;
     }
 
@@ -170,7 +170,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 {
     if (isContextStopped()) {
-        promise->reject(Exception(InvalidStateError));
+        promise->reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -180,7 +180,7 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
 {
     if (isContextStopped()) {
-        promise.reject(Exception(InvalidStateError));
+        promise.reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -190,7 +190,7 @@ void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& ap
 void ServiceWorkerRegistration::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (isContextStopped()) {
-        promise.reject(Exception(InvalidStateError));
+        promise.reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -200,7 +200,7 @@ void ServiceWorkerRegistration::unsubscribeFromPushService(PushSubscriptionIdent
 void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
     if (isContextStopped()) {
-        promise.reject(Exception(InvalidStateError));
+        promise.reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -210,7 +210,7 @@ void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullab
 void ServiceWorkerRegistration::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
     if (isContextStopped()) {
-        promise.reject(Exception(InvalidStateError));
+        promise.reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -287,20 +287,20 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
 {
     if (!m_activeWorker) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: No active worker");
-        promise->reject(Exception { TypeError, "Registration does not have an active worker"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have an active worker"_s });
         return;
     }
 
     auto* client = context.notificationClient();
     if (!client) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Registration not active");
-        promise->reject(Exception { TypeError, "Registration not active"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration not active"_s });
         return;
     }
 
     if (client->checkPermission(&context) != NotificationPermission::Granted) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Client permission is not granted");
-        promise->reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have permission to show notifications"_s });
         return;
     }
 
@@ -320,7 +320,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         if (RefPtr pushNotificationEvent = serviceWorkerGlobalScope->pushNotificationEvent()) {
             auto notification = notificationResult.releaseReturnValue();
             if (!notification->defaultAction().isValid()) {
-                promise->reject(Exception { TypeError, "Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url"_s });
+                promise->reject(Exception { ExceptionCode::TypeError, "Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url"_s });
                 return;
             }
 

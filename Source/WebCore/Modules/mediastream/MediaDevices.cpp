@@ -127,13 +127,13 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     auto videoConstraints = createMediaConstraints(constraints.video);
 
     if (!audioConstraints.isValid && !videoConstraints.isValid) {
-        promise.reject(TypeError, "No constraints provided"_s);
+        promise.reject(ExceptionCode::TypeError, "No constraints provided"_s);
         return;
     }
 
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
-        promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
         return;
     }
 
@@ -141,7 +141,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     if (audioConstraints.isValid) {
         auto categoryOverride = AudioSession::sharedSession().categoryOverride();
         if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
-            promise.reject(Exception { InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
             return;
         }
     }
@@ -253,19 +253,19 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
 
     bool isUserGesturePriviledged = computeUserGesturePriviledge(GestureAllowedRequest::Display);
     if (!isUserGesturePriviledged) {
-        promise.reject(Exception { InvalidAccessError, "getDisplayMedia must be called from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidAccessError, "getDisplayMedia must be called from a user gesture handler."_s });
         return;
     }
 
     auto videoConstraints = createMediaConstraints(constraints.video);
     if (hasInvalidGetDisplayMediaConstraint(videoConstraints)) {
-        promise.reject(Exception { TypeError, "getDisplayMedia must be called with valid constraints."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "getDisplayMedia must be called with valid constraints."_s });
         return;
     }
 
     // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
     if (!document->isFullyActive() || document->topDocument().hidden()) {
-        promise.reject(Exception { InvalidStateError, "Document is not fully active or does not have focus"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
         return;
     }
 

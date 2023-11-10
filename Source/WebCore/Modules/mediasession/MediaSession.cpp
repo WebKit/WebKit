@@ -271,7 +271,7 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -321,7 +321,7 @@ ExceptionOr<void> MediaSession::setPositionState(std::optional<MediaPositionStat
         && state->position <= state->duration
         && std::isfinite(state->playbackRate)
         && state->playbackRate))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_positionState = WTFMove(state);
     m_lastReportedPosition = m_positionState->position;

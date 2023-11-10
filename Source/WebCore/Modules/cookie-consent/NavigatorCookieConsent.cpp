@@ -49,14 +49,14 @@ void NavigatorCookieConsent::requestCookieConsent(RequestCookieConsentOptions&& 
 
     RefPtr frame = m_navigator.frame();
     if (!frame || !frame->isMainFrame() || !frame->page()) {
-        promise->reject(NotAllowedError);
+        promise->reject(ExceptionCode::NotAllowedError);
         return;
     }
 
     frame->page()->chrome().client().requestCookieConsent([promise = WTFMove(promise)] (CookieConsentDecisionResult result) {
         switch (result) {
         case CookieConsentDecisionResult::NotSupported:
-            promise->reject(NotSupportedError);
+            promise->reject(ExceptionCode::NotSupportedError);
             break;
         case CookieConsentDecisionResult::Consent:
             promise->resolve<IDLBoolean>(true);

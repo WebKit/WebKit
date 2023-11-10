@@ -388,7 +388,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
 
-    LayoutRect rectForRepaint = layer().repaintRects() ? layer().repaintRects()->clippedOverflowRect : renderer.clippedOverflowRectForRepaint(repaintContainer.get());
+    auto rectForRepaint = valueOrCompute(layer().cachedClippedOverflowRect(), [&] { return renderer.clippedOverflowRectForRepaint(repaintContainer.get()); });
 
     FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
     if (repaintContainer)

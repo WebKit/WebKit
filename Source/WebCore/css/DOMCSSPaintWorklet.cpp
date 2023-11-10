@@ -64,7 +64,7 @@ void PaintWorklet::addModule(const String& moduleURL, WorkletOptions&&, DOMPromi
 {
     auto* document = this->document();
     if (!document) {
-        promise.reject(Exception { InvalidStateError, "This frame is detached"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_s });
         return;
     }
 
@@ -73,7 +73,7 @@ void PaintWorklet::addModule(const String& moduleURL, WorkletOptions&&, DOMPromi
     // PaintWorklets don't have access to any sensitive APIs so we don't bother tracking taintedness there.
     auto maybeContext = PaintWorkletGlobalScope::tryCreate(*document, ScriptSourceCode(moduleURL, JSC::SourceTaintedOrigin::Untainted));
     if (UNLIKELY(!maybeContext)) {
-        promise.reject(Exception { OutOfMemoryError });
+        promise.reject(Exception { ExceptionCode::OutOfMemoryError });
         return;
     }
     auto context = maybeContext.releaseNonNull();

@@ -609,11 +609,11 @@ CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
 static ExceptionOr<SelectorQuery&> selectorQueryInFrame(LocalFrame* frame, const String& selectors)
 {
     if (!frame)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     RefPtr document = frame->document();
     if (!document)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     return document->selectorQueryForString(selectors);
 }
@@ -858,7 +858,7 @@ ExceptionOr<Storage*> LocalDOMWindow::sessionStorage()
         return nullptr;
 
     if (document->canAccessResource(ScriptExecutionContext::ResourceType::SessionStorage) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     if (m_sessionStorage)
         return m_sessionStorage.get();
@@ -884,7 +884,7 @@ ExceptionOr<Storage*> LocalDOMWindow::localStorage()
         return nullptr;
 
     if (document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     CheckedPtr page = document->page();
     // FIXME: We should consider supporting access/modification to local storage
@@ -1885,7 +1885,7 @@ ExceptionOr<int> LocalDOMWindow::setTimeout(std::unique_ptr<ScheduledAction> act
 {
     RefPtr context = scriptExecutionContext();
     if (!context)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
@@ -1908,7 +1908,7 @@ ExceptionOr<int> LocalDOMWindow::setInterval(std::unique_ptr<ScheduledAction> ac
 {
     RefPtr context = scriptExecutionContext();
     if (!context)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
@@ -1965,7 +1965,7 @@ void LocalDOMWindow::createImageBitmap(ImageBitmap::Source&& source, ImageBitmap
 {
     RefPtr document = this->document();
     if (!document) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
     ImageBitmap::createPromise(*document, WTFMove(source), WTFMove(options), WTFMove(promise));
@@ -1975,7 +1975,7 @@ void LocalDOMWindow::createImageBitmap(ImageBitmap::Source&& source, int sx, int
 {
     RefPtr document = this->document();
     if (!document) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
     ImageBitmap::createPromise(*document, WTFMove(source), WTFMove(options), sx, sy, sw, sh, WTFMove(promise));
@@ -2581,7 +2581,7 @@ ExceptionOr<RefPtr<LocalFrame>> LocalDOMWindow::createWindow(const String& urlSt
 
     URL completedURL = urlString.isEmpty() ? URL({ }, emptyString()) : firstFrame.document()->completeURL(urlString);
     if (!completedURL.isEmpty() && !completedURL.isValid())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     WindowFeatures windowFeatures = initialWindowFeatures;
 

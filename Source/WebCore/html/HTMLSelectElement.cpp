@@ -1675,16 +1675,16 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
         return { };
 
     if (!isMutable())
-        return Exception { InvalidStateError, "Select showPicker() cannot be used on immutable controls."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Select showPicker() cannot be used on immutable controls."_s };
 
     // In cross-origin iframes it should throw a "SecurityError" DOMException. In same-origin iframes it should work fine.
     auto* localTopFrame = dynamicDowncast<LocalFrame>(frame->tree().top());
     if (!localTopFrame || !frame->document()->securityOrigin().isSameOriginAs(localTopFrame->document()->securityOrigin()))
-        return Exception { SecurityError, "Select showPicker() called from cross-origin iframe."_s };
+        return Exception { ExceptionCode::SecurityError, "Select showPicker() called from cross-origin iframe."_s };
 
     auto* window = frame->window();
     if (!window || !window->hasTransientActivation())
-        return Exception { NotAllowedError, "Select showPicker() requires a user gesture."_s };
+        return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
 
 #if !PLATFORM(IOS_FAMILY)
     auto* renderer = this->renderer();

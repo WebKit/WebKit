@@ -171,7 +171,7 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
 ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url, const Vector<String>& protocols)
 {
     if (url.isNull())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     auto socket = adoptRef(*new WebSocket(context));
     socket->suspendIfNeeded();
@@ -233,7 +233,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     if (!m_url.isValid()) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid url for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     }
 
     if (m_url.protocolIs("http"_s))
@@ -244,12 +244,12 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     }
     if (m_url.hasFragmentIdentifier()) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "URL has fragment component " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     }
 
     ASSERT(context.contentSecurityPolicy());
@@ -273,7 +273,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     }
 
     if (RefPtr provider = context.socketProvider())
@@ -293,7 +293,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         if (!isValidProtocolString(protocol)) {
             context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong protocol for WebSocket '" + encodeProtocolString(protocol) + "'");
             m_state = CLOSED;
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
         }
     }
     HashSet<String> visited;
@@ -301,7 +301,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         if (!visited.add(protocol).isNewEntry) {
             context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocol) + "'");
             m_state = CLOSED;
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
         }
     }
 
@@ -349,7 +349,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
 {
     LOG(Network, "WebSocket %p send() Sending String '%s'", this, message.utf8().data());
     if (m_state == CONNECTING)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
@@ -369,7 +369,7 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
 {
     LOG(Network, "WebSocket %p send() Sending ArrayBuffer %p", this, &binaryData);
     if (m_state == CONNECTING)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned payloadSize = binaryData.byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
@@ -387,7 +387,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
     LOG(Network, "WebSocket %p send() Sending ArrayBufferView %p", this, &arrayBufferView);
 
     if (m_state == CONNECTING)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned payloadSize = arrayBufferView.byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
@@ -404,7 +404,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
 {
     LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData.url().stringCenterEllipsizedToLength().utf8().data());
     if (m_state == CONNECTING)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned payloadSize = static_cast<unsigned>(binaryData.size());
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
@@ -425,11 +425,11 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
     else {
         LOG(Network, "WebSocket %p close() code=%d reason='%s'", this, code, reason.utf8().data());
         if (!(code == ThreadableWebSocketChannel::CloseEventCodeNormalClosure || (ThreadableWebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= ThreadableWebSocketChannel::CloseEventCodeMaximumUserDefined)))
-            return Exception { InvalidAccessError };
+            return Exception { ExceptionCode::InvalidAccessError };
         CString utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
             scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
         }
     }
 

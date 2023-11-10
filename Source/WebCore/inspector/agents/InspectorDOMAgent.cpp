@@ -276,7 +276,7 @@ private:
 
 String InspectorDOMAgent::toErrorString(ExceptionCode ec)
 {
-    return ec ? String(DOMException::name(ec)) : emptyString();
+    return static_cast<bool>(ec) ? String(DOMException::name(ec)) : emptyString();
 }
 
 String InspectorDOMAgent::toErrorString(Exception&& exception)

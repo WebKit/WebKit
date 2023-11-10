@@ -109,7 +109,7 @@ ExceptionOr<void> AudioParam::setValueForBindings(float value)
 ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
 {
     if (m_automationRateMode == AutomationRateMode::Fixed)
-        return Exception { InvalidStateError, "automationRate cannot be changed for this node"_s };
+        return Exception { ExceptionCode::InvalidStateError, "automationRate cannot be changed for this node"_s };
 
     m_automationRate = automationRate;
     return { };
@@ -156,7 +156,7 @@ ExceptionOr<AudioParam&> AudioParam::setValueAtTime(float value, double startTim
         return *this;
 
     if (startTime < 0)
-        return Exception { RangeError, "startTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "startTime must be a positive value"_s };
 
     startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setValueAtTime(value, Seconds { startTime });
@@ -171,7 +171,7 @@ ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double
         return *this;
 
     if (endTime < 0)
-        return Exception { RangeError, "endTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "endTime must be a positive value"_s };
 
     endTime = std::max(endTime, context()->currentTime());
     auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context()->currentTime() });
@@ -186,9 +186,9 @@ ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, d
         return *this;
 
     if (!value)
-        return Exception { RangeError, "value cannot be 0"_s };
+        return Exception { ExceptionCode::RangeError, "value cannot be 0"_s };
     if (endTime < 0)
-        return Exception { RangeError, "endTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "endTime must be a positive value"_s };
 
     endTime = std::max(endTime, context()->currentTime());
     auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context()->currentTime() });
@@ -203,9 +203,9 @@ ExceptionOr<AudioParam&> AudioParam::setTargetAtTime(float target, double startT
         return *this;
 
     if (startTime < 0)
-        return Exception { RangeError, "startTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "startTime must be a positive value"_s };
     if (timeConstant < 0)
-        return Exception { RangeError, "timeConstant must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "timeConstant must be a positive value"_s };
 
     startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setTargetAtTime(target, Seconds { startTime }, timeConstant);
@@ -220,11 +220,11 @@ ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, 
         return *this;
 
     if (curve.size() < 2)
-        return Exception { InvalidStateError, "Array must have a length of at least 2"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Array must have a length of at least 2"_s };
     if (startTime < 0)
-        return Exception { RangeError, "startTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "startTime must be a positive value"_s };
     if (duration <= 0)
-        return Exception { RangeError, "duration must be a strictly positive value"_s };
+        return Exception { ExceptionCode::RangeError, "duration must be a strictly positive value"_s };
 
     startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setValueCurveAtTime(WTFMove(curve), Seconds { startTime }, Seconds { duration });
@@ -236,7 +236,7 @@ ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, 
 ExceptionOr<AudioParam&> AudioParam::cancelScheduledValues(double cancelTime)
 {
     if (cancelTime < 0)
-        return Exception { RangeError, "cancelTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "cancelTime must be a positive value"_s };
 
     m_timeline.cancelScheduledValues(Seconds { cancelTime });
     return *this;
@@ -245,7 +245,7 @@ ExceptionOr<AudioParam&> AudioParam::cancelScheduledValues(double cancelTime)
 ExceptionOr<AudioParam&> AudioParam::cancelAndHoldAtTime(double cancelTime)
 {
     if (cancelTime < 0)
-        return Exception { RangeError, "cancelTime must be a positive value"_s };
+        return Exception { ExceptionCode::RangeError, "cancelTime must be a positive value"_s };
 
     auto result = m_timeline.cancelAndHoldAtTime(Seconds { cancelTime });
     if (result.hasException())

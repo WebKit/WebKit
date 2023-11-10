@@ -56,7 +56,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServer
     if (!m_applicationServerKey) {
         m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey.data(), m_serverVAPIDPublicKey.size());
         if (!m_applicationServerKey)
-            return Exception { OutOfMemoryError };
+            return Exception { ExceptionCode::OutOfMemoryError };
     }
 
     return m_applicationServerKey.copyRef();

@@ -548,7 +548,7 @@ ExceptionOr<void> HTMLElement::setOuterText(String&& text)
 {
     RefPtr parent = parentNode();
     if (!parent)
-        return Exception { NoModificationAllowedError };
+        return Exception { ExceptionCode::NoModificationAllowedError };
 
     RefPtr prev = previousSibling();
     RefPtr next = nextSibling();
@@ -561,7 +561,7 @@ ExceptionOr<void> HTMLElement::setOuterText(String&& text)
         newChild = Text::create(document(), WTFMove(text));
 
     if (!parentNode())
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     auto replaceResult = parent->replaceChild(*newChild, *this);
     if (replaceResult.hasException())
@@ -682,7 +682,7 @@ ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"_s))
         removeAttribute(contenteditableAttr);
     else
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return { };
 }
 
@@ -1215,16 +1215,16 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 {
     CheckedPtr queue = reactionQueue();
     if (!queue)
-        return Exception { NotSupportedError, "attachInternals is only supported on a custom element instance"_s };
+        return Exception { ExceptionCode::NotSupportedError, "attachInternals is only supported on a custom element instance"_s };
 
     if (queue->isElementInternalsDisabled())
-        return Exception { NotSupportedError, "attachInternals is disabled"_s };
+        return Exception { ExceptionCode::NotSupportedError, "attachInternals is disabled"_s };
 
     if (queue->isElementInternalsAttached())
-        return Exception { NotSupportedError, "There is already an existing ElementInternals"_s };
+        return Exception { ExceptionCode::NotSupportedError, "There is already an existing ElementInternals"_s };
 
     if (!isPrecustomizedOrDefinedCustomElement())
-        return Exception { NotSupportedError, "Custom element is in an invalid state"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Custom element is in an invalid state"_s };
 
     queue->setElementInternalsAttached();
     return ElementInternals::create(*this);
@@ -1233,23 +1233,23 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisibilityState expectedState, Document* expectedDocument = nullptr)
 {
     if (element.popoverState() == PopoverState::None)
-        return Exception { NotSupportedError, "Element does not have the popover attribute"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Element does not have the popover attribute"_s };
 
     if (element.popoverData()->visibilityState() != expectedState)
         return false;
 
     if (!element.isConnected())
-        return Exception { InvalidStateError, "Element is not connected"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is not connected"_s };
 
     if (expectedDocument && &element.document() != expectedDocument)
-        return Exception { InvalidStateError, "Invalid when the document changes while showing or hiding a popover element"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Invalid when the document changes while showing or hiding a popover element"_s };
 
     if (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal())
-        return Exception { InvalidStateError, "Element is a modal <dialog> element"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is a modal <dialog> element"_s };
 
 #if ENABLE(FULLSCREEN_API)
     if (element.hasFullscreenFlag())
-        return Exception { InvalidStateError, "Element is fullscreen"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is fullscreen"_s };
 #endif
 
     return true;
@@ -1379,7 +1379,7 @@ ExceptionOr<void> HTMLElement::showPopover(const HTMLFormControlElement* invoker
         document->hideAllPopoversUntil(ancestor.get(), FocusPreviousElement::No, fireEvents);
 
         if (popoverState() != originalState)
-            return Exception { InvalidStateError, "The value of the popover attribute was changed while hiding the popover."_s };
+            return Exception { ExceptionCode::InvalidStateError, "The value of the popover attribute was changed while hiding the popover."_s };
 
         check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden, document.ptr());
         if (check.hasException())

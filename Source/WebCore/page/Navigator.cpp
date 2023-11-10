@@ -163,28 +163,28 @@ bool Navigator::canShare(Document& document, const ShareData& data)
 void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive()) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     if (!validateWebSharePolicy(document)) {
-        promise->reject(NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
+        promise->reject(ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
         return;
     }
 
     if (m_hasPendingShare) {
-        promise->reject(InvalidStateError, "share() is already in progress"_s);
+        promise->reject(ExceptionCode::InvalidStateError, "share() is already in progress"_s);
         return;
     }
 
     auto* window = this->window();
     if (!window || !window->consumeTransientActivation()) {
-        promise->reject(NotAllowedError);
+        promise->reject(ExceptionCode::NotAllowedError);
         return;
     }
 
     if (!canShare(document, data)) {
-        promise->reject(TypeError);
+        promise->reject(ExceptionCode::TypeError);
         return;
     }
 
@@ -241,7 +241,7 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
             promise->resolve();
             return;
         }
-        promise->reject(Exception { AbortError, "Abort due to cancellation of share."_s });
+        promise->reject(Exception { ExceptionCode::AbortError, "Abort due to cancellation of share."_s });
     });
 }
 
@@ -404,19 +404,19 @@ void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<Deferre
 {
     auto* frame = this->frame();
     if (!frame) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     auto* page = frame->page();
     if (!page) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     auto* document = frame->document();
     if (document && !document->isFullyActive()) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 

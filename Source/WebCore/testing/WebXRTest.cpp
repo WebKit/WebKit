@@ -71,7 +71,7 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
 
         if (init.boundsCoordinates) {
             if (init.boundsCoordinates->size() < 3) {
-                promise.reject(Exception { TypeError });
+                promise.reject(Exception { ExceptionCode::TypeError });
                 return;
             }
             simulatedDevice.setNativeBoundsGeometry(init.boundsCoordinates.value());

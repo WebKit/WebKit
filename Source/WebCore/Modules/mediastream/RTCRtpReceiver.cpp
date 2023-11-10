@@ -81,7 +81,7 @@ void RTCRtpReceiver::stop()
 void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
 {
     if (!m_connection) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
     m_connection->getStats(*this, WTFMove(promise));
@@ -107,7 +107,7 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&
     }
 
     if (transform->isAttached())
-        return Exception { InvalidStateError, "transform is already in use"_s };
+        return Exception { ExceptionCode::InvalidStateError, "transform is already in use"_s };
 
     transform->attachToReceiver(*this, m_transform.get());
     m_transform = WTFMove(transform);

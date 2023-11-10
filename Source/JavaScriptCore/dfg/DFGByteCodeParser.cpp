@@ -7836,23 +7836,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
 
-            Vector<std::pair<VirtualRegister, Node*>> localsToSet;
-            localsToSet.reserveInitialCapacity(buffer->size()); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
-
             // We're not allowed to exit here since we would not properly recover values.
             // We first need to bootstrap the catch entrypoint state.
             m_exitOK = false; 
 
             unsigned numberOfLocals = 0;
-            buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
+            auto localsToSet = WTF::compactMap(buffer->span(), [&](auto&& profile) -> std::optional<std::pair<VirtualRegister, Node*>> {
                 VirtualRegister operand(profile.m_operand);
                 if (operand.isArgument())
-                    return;
+                    return std::nullopt;
                 ASSERT(operand.isLocal());
                 Node* value = addToGraph(ExtractCatchLocal, OpInfo(numberOfLocals), OpInfo(localPredictions[numberOfLocals]));
                 ++numberOfLocals;
                 addToGraph(MovHint, OpInfo(operand), value);
-                localsToSet.unsafeAppendWithoutCapacityCheck(std::make_pair(operand, value));
+                return std::make_pair(operand, value);
             });
             if (numberOfLocals)
                 addToGraph(ClearCatchLocals);

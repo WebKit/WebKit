@@ -212,6 +212,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionDynamicScripts.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionFrameParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
@@ -520,6 +521,7 @@ $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.i
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in
+$(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in
 $(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewUpdateDispatcher.messages.in

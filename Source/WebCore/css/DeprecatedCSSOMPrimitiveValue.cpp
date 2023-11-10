@@ -108,7 +108,7 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
 
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!numericType || !primitiveValue)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     return primitiveValue->getFloatValue(*numericType);
 }
 
@@ -121,14 +121,14 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
     case CSS_URI:       return downcast<CSSPrimitiveValue>(m_value.get()).stringValue();
 
     // All other, including newer types, should raise an exception.
-    default:            return Exception { InvalidAccessError };
+    default:            return Exception { ExceptionCode::InvalidAccessError };
     }
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
     if (!m_value->isCounter())
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     auto& value = downcast<CSSCounterValue>(m_value.get());
     return DeprecatedCSSOMCounter::create(value.identifier(), value.separator(), value.counterStyleCSSText());
 }
@@ -136,14 +136,14 @@ ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCount
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
 {
     if (!m_value->isRect())
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     return DeprecatedCSSOMRect::create(downcast<CSSRectValue>(m_value.get()).rect(), m_owner);
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBColorValue() const
 {
     if (primitiveType() != CSS_RGBCOLOR)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     return DeprecatedCSSOMRGBColor::create(m_owner, downcast<CSSPrimitiveValue>(m_value.get()).color());
 }
 

@@ -32,11 +32,6 @@ class KeyframeList;
 class RenderLayer;
 class SVGGraphicsElement;
 
-struct LayerRepaintRects {
-    LayoutRect clippedOverflowRect;
-    LayoutRect outlineBoundsRect;
-};
-
 class RenderLayerModelObject : public RenderElement {
     WTF_MAKE_ISO_ALLOCATED(RenderLayerModelObject);
 public:
@@ -65,7 +60,7 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
-    std::optional<LayerRepaintRects> layerRepaintRects() const;
+    std::optional<LayoutRect> cachedLayerClippedOverflowRect() const;
 
     bool startAnimation(double timeOffset, const Animation&, const KeyframeList&) override;
     void animationPaused(double timeOffset, const String& name) override;

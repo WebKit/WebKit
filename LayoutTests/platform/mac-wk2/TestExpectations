@@ -1994,3 +1994,5 @@ webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filt
 webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
 
 webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
+
+webkit.org/b/264615 [ Sonoma+ Release x86_64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ Failure ]

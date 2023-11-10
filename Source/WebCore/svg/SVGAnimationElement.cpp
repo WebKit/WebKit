@@ -232,7 +232,7 @@ ExceptionOr<float> SVGAnimationElement::getStartTime() const
 {
     auto intervalBegin = this->intervalBegin();
     if (!intervalBegin.isFinite())
-        return Exception { InvalidStateError, "The animation element does not have a current interval."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The animation element does not have a current interval."_s };
     return narrowPrecisionToFloat(intervalBegin.value());
 }
 
@@ -245,7 +245,7 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
 {
     auto simpleDuration = this->simpleDuration();
     if (!simpleDuration.isFinite())
-        return Exception { NotSupportedError, "The simple duration is not determined on the given element."_s };
+        return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
     return narrowPrecisionToFloat(simpleDuration.value());
 }    
     

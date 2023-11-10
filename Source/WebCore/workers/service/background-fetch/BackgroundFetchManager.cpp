@@ -55,7 +55,7 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
         if (result.hasException())
             return result.releaseException();
         if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
-            return Exception { TypeError, "Request has no-cors mode"_s };
+            return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
         return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
     }, [&context] (String&& url) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
         auto result = FetchRequest::create(context, WTFMove(url), { });
@@ -71,11 +71,11 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
             if (result.hasException())
                 return result.releaseException();
             if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
-                return Exception { TypeError, "Request has no-cors mode"_s };
+                return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
             
             // FIXME: Add support for readable stream bodies
             if (result.returnValue()->isReadableStreamBody())
-                return Exception { NotSupportedError, "ReadableStream uploading is not supported"_s };
+                return Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s };
             
             requests.append(result.releaseReturnValue());
         }
@@ -105,7 +105,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
     }
 
     if (!generatedRequests.returnValue().size()) {
-        promise.reject(Exception { TypeError, "No requests"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "No requests"_s });
         return;
     }
 
@@ -129,7 +129,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
                 return;
             }
             if (result.returnValue().identifier.isNull()) {
-                promise.reject(Exception { TypeError, "An internal error occured"_s });
+                promise.reject(Exception { ExceptionCode::TypeError, "An internal error occured"_s });
                 return;
             }
 

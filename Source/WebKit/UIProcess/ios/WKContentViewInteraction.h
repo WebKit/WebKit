@@ -593,6 +593,9 @@ struct ImageAnalysisContextMenuActionData {
 #elif ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate
 #endif
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
+    , UIAsyncTextInteractionDelegate
+#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;

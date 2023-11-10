@@ -96,7 +96,6 @@ public:
     void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriorityHint() const;
-    String styleSheetContentWithReplacementURLs(const HashMap<String, String>&) const;
 
 private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

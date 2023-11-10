@@ -56,7 +56,7 @@ ExceptionOr<void> HTMLDialogElement::show()
     if (isOpen()) {
         if (!isModal())
             return { };
-        return Exception { InvalidStateError, "Cannot call show() on an open modal dialog."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot call show() on an open modal dialog."_s };
     }
 
     setBooleanAttribute(openAttr, true);
@@ -75,15 +75,15 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (isOpen()) {
         if (isModal())
             return { };
-        return Exception { InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_s };
     }
 
     // If subject is not connected, then throw an "InvalidStateError" DOMException.
     if (!isConnected())
-        return Exception { InvalidStateError, "Element is not connected."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is not connected."_s };
 
     if (isPopoverShowing())
-        return Exception { InvalidStateError, "Element is already an open popover."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is already an open popover."_s };
 
     // setBooleanAttribute will dispatch a DOMSubtreeModified event.
     // Postpone callback execution that can potentially make the dialog disconnected.

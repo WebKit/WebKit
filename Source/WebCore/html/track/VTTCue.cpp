@@ -416,7 +416,7 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
     if (!std::holds_alternative<AutoKeyword>(position)) {
         textPosition = std::get<double>(position);
         if (!(textPosition >= 0 && textPosition <= 100))
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
     }
 
     if (m_textPosition == textPosition)
@@ -445,7 +445,7 @@ ExceptionOr<void> VTTCue::setSize(double size)
     // On setting, if the new value is negative or greater than 100, then throw an IndexSizeError
     // exception. Otherwise, set the text track cue size to the new value.
     if (!(size >= 0 && size <= 100))
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     // Otherwise, set the text track cue line position to the new value.
     if (m_cueSize == size)

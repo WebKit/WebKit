@@ -41,6 +41,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
@@ -192,11 +193,12 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, ShouldIncludeShadowDOM shouldIncludeShadowDOM)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, ShouldIncludeShadowDOM shouldIncludeShadowDOM)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
     , m_replacementURLStrings(WTFMove(replacementURLStrings))
+    , m_replacementURLStringsForCSSStyleSheet(WTFMove(replacementURLStringsForCSSStyleSheet))
     , m_shouldIncludeShadowDOM(shouldIncludeShadowDOM == ShouldIncludeShadowDOM::Yes)
 {
 }
@@ -211,11 +213,18 @@ String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root,
 
 bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node& targetNode)
 {
-    if (m_replacementURLStrings.isEmpty() || !targetNode.hasTagName(styleTag))
+    if (!targetNode.hasTagName(styleTag))
+        return false;
+
+    if (m_replacementURLStrings.isEmpty() && m_replacementURLStringsForCSSStyleSheet.isEmpty())
         return false;
 
     auto& styleElement = downcast<HTMLStyleElement>(targetNode);
-    result.append(styleElement.textContentWithReplacementURLs(m_replacementURLStrings));
+    RefPtr cssStyleSheet = styleElement.sheet();
+    if (!cssStyleSheet)
+        return false;
+
+    result.append(cssStyleSheet->cssTextWithReplacementURLs(m_replacementURLStrings, m_replacementURLStringsForCSSStyleSheet));
     return true;
 }
 
@@ -304,11 +313,19 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
+    if (!m_replacementURLStringsForCSSStyleSheet.isEmpty() && is<HTMLLinkElement>(element)) {
+        if (RefPtr cssStyleSheet = downcast<HTMLLinkElement>(element).sheet()) {
+            auto replacementURLString = m_replacementURLStringsForCSSStyleSheet.get(cssStyleSheet);
+            if (!replacementURLString.isEmpty())
+                return replacementURLString;
+        }
+    }
+
     if (!m_replacementURLStrings.isEmpty()) {
         if (auto frame = frameForAttributeReplacement(element)) {
-            auto replacementString = m_replacementURLStrings.get(frame->frameID().toString());
-            if (!replacementString.isEmpty())
-                return replacementString;
+            auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
+            if (!replacementURLString.isEmpty())
+                return replacementURLString;
         }
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);

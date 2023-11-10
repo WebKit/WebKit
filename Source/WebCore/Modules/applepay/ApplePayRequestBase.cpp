@@ -51,7 +51,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
     for (auto& supportedNetwork : supportedNetworks) {
         auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
-            return Exception { TypeError, makeString("\"", supportedNetwork, "\" is not a valid payment network.") };
+            return Exception { ExceptionCode::TypeError, makeString("\"", supportedNetwork, "\" is not a valid payment network.") };
         result.append(*validatedNetwork);
     }
 
@@ -61,7 +61,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, const ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
     if (!version || !paymentCoordinator.supportsVersion(document, version))
-        return Exception { InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
+        return Exception { ExceptionCode::InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
 
     ApplePaySessionPaymentRequest result;
     result.setVersion(version);
@@ -73,7 +73,7 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     result.setMerchantCapabilities(merchantCapabilities.releaseReturnValue());
 
     if (requiresSupportedNetworks(version, request) && request.supportedNetworks.isEmpty())
-        return Exception { TypeError, "At least one supported network must be provided."_s };
+        return Exception { ExceptionCode::TypeError, "At least one supported network must be provided."_s };
 
     auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
     if (supportedNetworks.hasException())

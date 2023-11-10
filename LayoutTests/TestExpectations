@@ -1483,10 +1483,6 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 
 webkit.org/b/169075 editing/selection/extend-by-character-007.html [ Failure ]
 
-# <select> element vertical writing mode support is not yet enabled
-fast/forms/vertical-writing-mode/listbox-drag-horizontal-scrollbar.html [ Failure ]
-fast/forms/vertical-writing-mode/listbox-horizontal-scrollbar.html [ ImageOnlyFailure ]
-
 # CSS Font Loading is not yet enabled on all platforms
 webkit.org/b/135390 fast/css/fontloader-download-error.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-events.html [ Skip ]
@@ -4401,14 +4397,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individual-transform/animation/individual-transform-ordering.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
-
-# Vertical form controls support.
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vrl.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional.html [ ImageOnlyFailure ]
 
 webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 

@@ -984,10 +984,7 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style)
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) const
 {
     // Add a margin to place the button at end of the input field.
-    if (style.isLeftToRightDirection())
-        style.setMarginRight(Length(-4, LengthType::Fixed));
-    else
-        style.setMarginLeft(Length(-4, LengthType::Fixed));
+    style.setMarginEnd(Length(-4, LengthType::Fixed));
 }
 
 #endif

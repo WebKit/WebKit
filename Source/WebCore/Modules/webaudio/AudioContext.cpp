@@ -95,11 +95,11 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
     ASSERT(isMainThread());
 #if OS(WINDOWS)
     if (hardwareContextCount >= maxHardwareContexts)
-        return Exception { QuotaExceededError, "Reached maximum number of hardware contexts on this platform"_s };
+        return Exception { ExceptionCode::QuotaExceededError, "Reached maximum number of hardware contexts on this platform"_s };
 #endif
     
     if (!document.isFullyActive())
-        return Exception { InvalidStateError, "Document is not fully active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
     
     // FIXME: Figure out where latencyHint should go.
 
@@ -107,7 +107,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
         contextOptions.sampleRate = *defaultSampleRateForTesting();
 
     if (contextOptions.sampleRate && !isSupportedSampleRate(*contextOptions.sampleRate))
-        return Exception { NotSupportedError, "sampleRate is not in range"_s };
+        return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_s };
     
     auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();
@@ -194,7 +194,7 @@ AudioTimestamp AudioContext::getOutputTimestamp()
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped()) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -217,7 +217,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped() || state() == State::Closed) {
-        promise.reject(Exception { InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
 
@@ -243,7 +243,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped() || state() == State::Closed) {
-        promise.reject(Exception { InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
     }
 

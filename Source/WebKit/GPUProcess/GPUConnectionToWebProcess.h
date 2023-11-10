@@ -53,6 +53,10 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#include "SampleBufferDisplayLayerIdentifier.h"
+#endif
+
 #if ENABLE(WEBGL)
 #include "GraphicsContextGLIdentifier.h"
 #include <WebCore/GraphicsContextGLAttributes.h>
@@ -276,6 +280,9 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource();
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void updateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<MachSendRight>&&);
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

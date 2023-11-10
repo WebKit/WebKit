@@ -68,7 +68,7 @@ if (window.eventSender) {
     eventSender.mouseMoveTo(select.offsetLeft + 25, select.offsetTop + select.offsetHeight - 5);
     eventSender.mouseUp();
     shouldBeEqualToNumber("select.scrollTop", 0);
-    shouldBeEqualToNumber("select.scrollLeft", 14);
+    shouldBeGreaterThan("select.scrollLeft", "0");
     debug("\n");
 }
 

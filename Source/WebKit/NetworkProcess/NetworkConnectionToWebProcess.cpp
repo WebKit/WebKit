@@ -1516,7 +1516,7 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
 {
     auto* session = networkSession();
     if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -1535,7 +1535,7 @@ void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& sc
 {
     auto* session = networkSession();
     if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -1547,7 +1547,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL,
 {
     auto* session = networkSession();
     if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 
@@ -1558,7 +1558,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
 {
     auto* session = networkSession();
     if (!session) {
-        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
         return;
     }
 

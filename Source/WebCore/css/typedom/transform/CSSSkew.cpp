@@ -47,7 +47,7 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumeri
 {
     if (!ax->type().matches<CSSNumericBaseType::Angle>()
         || !ay->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return adoptRef(*new CSSSkew(WTFMove(ax), WTFMove(ay)));
 }
 
@@ -64,14 +64,14 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSSFunctionValue& cssFunctionValue)
         if (valueOrException.hasException())
             return valueOrException.releaseException();
         if (!is<CSSNumericValue>(valueOrException.returnValue()))
-            return Exception { TypeError, "Expected a CSSNumericValue."_s };
+            return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
         components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
     }
 
     auto numberOfComponents = components.size();
     if (numberOfComponents < 1 || numberOfComponents > 2) {
         ASSERT_NOT_REACHED();
-        return Exception { TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
     if (components.size() == 2)
@@ -89,7 +89,7 @@ CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
 ExceptionOr<void> CSSSkew::setAx(Ref<CSSNumericValue> ax)
 {
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_ax = WTFMove(ax);
     return { };
@@ -98,7 +98,7 @@ ExceptionOr<void> CSSSkew::setAx(Ref<CSSNumericValue> ax)
 ExceptionOr<void> CSSSkew::setAy(Ref<CSSNumericValue> ay)
 {
     if (!ay->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_ay = WTFMove(ay);
     return { };
@@ -119,13 +119,13 @@ void CSSSkew::serialize(StringBuilder& builder) const
 ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
 {
     if (!is<CSSUnitValue>(m_ax) || !is<CSSUnitValue>(m_ay))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto x = downcast<CSSUnitValue>(m_ax.get()).convertTo(CSSUnitType::CSS_DEG);
     auto y = downcast<CSSUnitValue>(m_ay.get()).convertTo(CSSUnitType::CSS_DEG);
 
     if (!x || !y)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     TransformationMatrix matrix { };
     matrix.skew(x->value(), y->value());

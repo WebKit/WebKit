@@ -307,7 +307,7 @@ class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
 class MediaKeySystemPermissionRequestManager;
 class NotificationPermissionRequestManager;
-class PDFPlugin;
+class PDFPluginBase;
 class PageBanner;
 class PluginView;
 class RemoteMediaSessionCoordinator;
@@ -443,9 +443,9 @@ public:
     void centerSelectionInVisibleArea();
 
 #if ENABLE(PDF_HUD)
-    void createPDFHUD(PDFPlugin&, const WebCore::IntRect&);
-    void updatePDFHUDLocation(PDFPlugin&, const WebCore::IntRect&);
-    void removePDFHUD(PDFPlugin&);
+    void createPDFHUD(PDFPluginBase&, const WebCore::IntRect&);
+    void updatePDFHUDLocation(PDFPluginBase&, const WebCore::IntRect&);
+    void removePDFHUD(PDFPluginBase&);
 #endif
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
@@ -2164,8 +2164,7 @@ private:
     WeakHashSet<PluginView> m_pluginViews;
 #endif
 #if ENABLE(PDF_HUD)
-    // FIXME: Needs to be PDFPluginBase.
-    HashMap<PDFPluginIdentifier, WeakPtr<PDFPlugin>> m_pdfPlugInsWithHUD;
+    HashMap<PDFPluginIdentifier, WeakPtr<PDFPluginBase>> m_pdfPlugInsWithHUD;
 #endif
 
     WTF::Function<void()> m_selectionChangedHandler;

@@ -304,7 +304,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL requestIdleCallbackEnabled;
 @property (nonatomic) BOOL highlightAPIEnabled;
 @property (nonatomic) BOOL asyncClipboardAPIEnabled;
-@property (nonatomic) BOOL intersectionObserverEnabled;
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL syntheticEditingCommandsEnabled;
 @property (nonatomic) BOOL CSSOMViewSmoothScrollingEnabled;
@@ -313,7 +312,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL maskWebGLStringsEnabled;
 @property (nonatomic) BOOL serverTimingEnabled;
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
-@property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
@@ -334,6 +332,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // be removed when it is considered safe to do so.
 
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;
+@property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL subpixelCSSOMElementMetricsEnabled;
 @property (nonatomic) BOOL userTimingEnabled;
 @property (nonatomic) BOOL requestAnimationFrameEnabled;
@@ -342,6 +341,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;
 @property (nonatomic) BOOL fetchAPIEnabled;
 @property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
+@property (nonatomic) BOOL intersectionObserverEnabled;
 @property (nonatomic) BOOL shadowDOMEnabled;
 @property (nonatomic) BOOL customElementsEnabled;
 @property (nonatomic) BOOL keygenElementEnabled;

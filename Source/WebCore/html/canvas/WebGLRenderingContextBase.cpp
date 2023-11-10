@@ -3066,14 +3066,14 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
     auto* canvas = htmlCanvas();
     if (!canvas) {
         m_isXRCompatible = false;
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     auto* window = canvas->document().domWindow();
     if (!window) {
         m_isXRCompatible = false;
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -3084,7 +3084,7 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
     xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = Ref { *this }, promise = WTFMove(promise), protectedXrSystem = Ref { xrSystem }]() mutable {
         auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {
             m_isXRCompatible = false;
-            promise.reject(Exception { InvalidStateError });
+            promise.reject(Exception { ExceptionCode::InvalidStateError });
         });
 
         // 4. Set context’s XR compatible boolean as follows:
@@ -5392,7 +5392,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(const char
         return false;
     }
     if (taintsOrigin(&image))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     return true;
 }
 
@@ -5403,7 +5403,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(const cha
         return false;
     }
     if (taintsOrigin(&canvas))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     return true;
 }
 
@@ -5415,7 +5415,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char
         return false;
     }
     if (taintsOrigin(&video))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     return true;
 }
 #endif
@@ -5428,7 +5428,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateOffscreenCanvas(const char*
         return false;
     }
     if (taintsOrigin(&canvas))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     return true;
 }
 #endif
@@ -5440,7 +5440,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateImageBitmap(const char* fun
         return false;
     }
     if (!bitmap.originClean())
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     return true;
 }
 

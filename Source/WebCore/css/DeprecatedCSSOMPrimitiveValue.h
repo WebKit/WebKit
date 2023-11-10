@@ -83,8 +83,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRect>> getRectValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> getRGBColorValue() const;
 
-    static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { NoModificationAllowedError }; }
-    static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
+    static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { ExceptionCode::NoModificationAllowedError }; }
+    static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { ExceptionCode::NoModificationAllowedError }; }
 
     bool isCSSWideKeyword() const { return WebCore::isCSSWideKeyword(valueID(m_value.get())); }
     static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }

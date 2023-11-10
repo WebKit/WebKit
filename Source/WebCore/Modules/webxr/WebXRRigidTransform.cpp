@@ -69,7 +69,7 @@ ExceptionOr<Ref<WebXRRigidTransform>> WebXRRigidTransform::create(const DOMPoint
     //   3. If position’s w value is not 1.0, throw a TypeError.
     //   4. Else initialize transform’s position’s x value to position’s x dictionary member, y value to position’s y dictionary member, z value to position’s z dictionary member and w to 1.0.
     if (position.w != 1.0)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     DOMPointInit positionInit { position.x, position.y, position.z, 1 };
 
     //   5. If orientation is not a DOMPointInit initialize transform’s orientation to { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }.
@@ -77,7 +77,7 @@ ExceptionOr<Ref<WebXRRigidTransform>> WebXRRigidTransform::create(const DOMPoint
     //   7. Normalize x, y, z, and w components of transform’s orientation.
     DOMPointInit orientationInit { orientation.x, orientation.y, orientation.z, orientation.w };
     if (!normalizeQuaternion(orientationInit))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     //   8. Return transform.
     return adoptRef(*new WebXRRigidTransform(positionInit, orientationInit));

@@ -78,7 +78,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& docume
 
     for (auto& item : ensureItems()) {
         if (!item->isFile() && equalIgnoringASCIICase(item->type(), type))
-            return Exception { NotSupportedError };
+            return Exception { ExceptionCode::NotSupportedError };
     }
 
     String lowercasedType = type.convertToASCIILowercase();
@@ -107,7 +107,7 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
 {
     Ref dataTransfer = m_dataTransfer.get();
     if (!dataTransfer->canWriteData())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto& items = ensureItems();
     if (items.size() <= index)
