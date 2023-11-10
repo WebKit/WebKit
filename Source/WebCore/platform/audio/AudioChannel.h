@@ -31,7 +31,6 @@
 
 #include "AudioArray.h"
 #include <memory>
-#include <span>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -81,9 +80,6 @@ public:
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(newLength <= length());
         m_length = newLength;
     }
-
-    std::span<const float> span() const { return { data(), length() }; }
-    std::span<float> mutableSpan() { return { mutableData(), length() }; }
 
     // Direct access to PCM sample data. Non-const accessor clears silent flag.
     float* mutableData()
