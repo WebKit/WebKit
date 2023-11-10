@@ -210,8 +210,7 @@ void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const 
     gpuProcessConnection->connection().sendWithAsyncReply(
         Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](WebCore::PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
             m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-            setBufferedRanges(WTFMove(buffered));
-            completionHandler();
+            setBufferedRanges(WTFMove(buffered))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
         },
         m_remoteSourceBufferIdentifier);
 }
@@ -479,7 +478,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTi
 
 void SourceBufferPrivateRemote::sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
 {
-    setBufferedRanges(WTFMove(timeRanges), WTFMove(completionHandler));
+    setBufferedRanges(WTFMove(timeRanges))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges)

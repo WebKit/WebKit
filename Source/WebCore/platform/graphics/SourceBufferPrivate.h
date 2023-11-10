@@ -169,7 +169,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT void updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&, CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT Ref<GenericPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
 
     struct ResetParserOperation { };
     struct ErrorOperation { };
@@ -220,7 +220,7 @@ protected:
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&, Function<bool(InitializationSegment&)>&&, CompletionHandler<void(ReceiveResult)>&&);
     WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&, CompletionHandler<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
     void provideMediaData(const AtomString& trackID);
 
     virtual bool isMediaSampleAllowed(const MediaSample&) const { return true; }

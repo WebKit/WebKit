@@ -1350,7 +1350,7 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
 {
     ASSERT(ranges != m_buffered->ranges(), "sourceBufferPrivateBufferedChanged should only be called if the ranges did change");
 #if ENABLE(MANAGED_MEDIA_SOURCE)
@@ -1368,7 +1368,7 @@ void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& 
 #endif
     m_buffered = TimeRanges::create(ranges);
     setBufferedDirty(true);
-    completionHandler();
+    return GenericPromise::createAndResolve();
 }
 
 bool SourceBuffer::isBufferedDirty() const

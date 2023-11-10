@@ -130,17 +130,14 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
         m_client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
-void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
 {
-    if (m_buffered == timeRanges) {
-        completionHandler();
-        return;
-    }
+    if (m_buffered == timeRanges)
+        return GenericPromise::createAndResolve();
     m_buffered = WTFMove(timeRanges);
     if (isAttached())
-        m_client->sourceBufferPrivateBufferedChanged(buffered(), WTFMove(completionHandler));
-    else
-        completionHandler();
+        return m_client->sourceBufferPrivateBufferedChanged(buffered());
+    return GenericPromise::createAndResolve();
 }
 
 Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
@@ -150,7 +147,7 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     });
 }
 
-void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers)
 {
     // 3.1 Attributes, buffered
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
@@ -165,10 +162,8 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTi
 
     // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
     // a single range of {0, 0}.
-    if (highestEndTime.isNegativeInfinite()) {
-        setBufferedRanges({ }, WTFMove(completionHandler));
-        return;
-    }
+    if (highestEndTime.isNegativeInfinite())
+        return setBufferedRanges({ });
 
     // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
     PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
@@ -192,7 +187,7 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTi
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
-    setBufferedRanges(WTFMove(intersectionRanges), WTFMove(completionHandler));
+    return setBufferedRanges(WTFMove(intersectionRanges));
 }
 
 void SourceBufferPrivate::advanceOperationState()
@@ -235,7 +230,7 @@ void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperati
     if (isAttached())
         m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
 
-    updateBufferedFromTrackBuffers(trackBuffers, [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
+    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::main(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
         if (!weakSelf || !isAttached())
             return;
 
@@ -527,7 +522,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
 
-    updateBufferedFromTrackBuffers(trackBuffers, WTFMove(completionHandler));
+    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 size_t SourceBufferPrivate::platformEvictionThreshold() const

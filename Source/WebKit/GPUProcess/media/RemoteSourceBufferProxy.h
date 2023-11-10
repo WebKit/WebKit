@@ -73,7 +73,7 @@ private:
     // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
-    void sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) final;

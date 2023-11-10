@@ -166,7 +166,7 @@ private:
     // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
-    void sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     void sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;

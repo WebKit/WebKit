@@ -146,14 +146,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vecto
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateTrackBuffersChanged(trackBuffers), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndResolve();
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), m_identifier)->whenSettled(RunLoop::main(), [] {
+        return GenericPromise::createAndResolve();
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)
