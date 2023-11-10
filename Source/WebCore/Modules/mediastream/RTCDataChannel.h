@@ -125,7 +125,10 @@ private:
     bool m_stopped { false };
     RTCDataChannelState m_readyState { RTCDataChannelState::Connecting };
 
-    BinaryType m_binaryType { BinaryType::Arraybuffer };
+    // https://w3c.github.io/webrtc-pc/#dom-datachannel-binarytype
+    // When an RTCDataChannel object is created, the binaryType attribute 
+    // MUST be initialized to the string "blob".
+    BinaryType m_binaryType { BinaryType::Blob };
 
     String m_label;
     RTCDataChannelInit m_options;

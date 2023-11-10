@@ -1,5 +1,5 @@
 
-FAIL Default binaryType value assert_equals: dc.binaryType should be 'blob' expected "blob" but got "arraybuffer"
+PASS Default binaryType value
 PASS Setting binaryType to 'blob' should succeed
 PASS Setting binaryType to 'arraybuffer' should succeed
 PASS Setting binaryType to 'jellyfish' should be ignored
