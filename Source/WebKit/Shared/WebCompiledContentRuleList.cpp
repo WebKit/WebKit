@@ -30,8 +30,10 @@
 
 namespace WebKit {
 
-Ref<WebCompiledContentRuleList> WebCompiledContentRuleList::create(WebCompiledContentRuleListData&& data)
+RefPtr<WebCompiledContentRuleList> WebCompiledContentRuleList::create(WebCompiledContentRuleListData&& data)
 {
+    if (!data.data)
+        return nullptr;
     return adoptRef(*new WebCompiledContentRuleList(WTFMove(data)));
 }
 

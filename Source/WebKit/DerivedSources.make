@@ -601,6 +601,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserContentControllerParameters.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
+	Shared/WebCompiledContentRuleListData.serialization.in \
 	Shared/ViewWindowCoordinates.serialization.in \
 	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \

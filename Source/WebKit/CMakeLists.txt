@@ -423,6 +423,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
+    Shared/WebCompiledContentRuleListData.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebFoundTextRange.serialization.in
     Shared/WebHitTestResultData.serialization.in

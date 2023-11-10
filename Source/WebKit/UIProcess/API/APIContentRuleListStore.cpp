@@ -441,8 +441,9 @@ static Ref<API::ContentRuleList> createExtension(WTF::String&& identifier, Mappe
         frameURLFiltersOffset,
         data.metaData.frameURLFiltersBytecodeSize
     );
-    auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
-    return API::ContentRuleList::create(WTFMove(compiledContentRuleList), WTFMove(data.data));
+    RefPtr compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
+    ASSERT(compiledContentRuleList);
+    return API::ContentRuleList::create(compiledContentRuleList.releaseNonNull(), WTFMove(data.data));
 }
 
 static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mappedData)

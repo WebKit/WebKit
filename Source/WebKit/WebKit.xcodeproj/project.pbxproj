@@ -4892,6 +4892,7 @@
 		463A074A2AFD8C6600CA8DBE /* BufferAndBackendInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BufferAndBackendInfo.h; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
+		46411E3D2AFDA94400CC00E4 /* WebCompiledContentRuleListData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCompiledContentRuleListData.serialization.in; sourceTree = "<group>"; };
 		4651ECE622178A850067EB95 /* WebProcessCacheCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessCacheCocoa.mm; sourceTree = "<group>"; };
 		465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKit2InitializeCocoa.mm; sourceTree = "<group>"; };
 		4656F7BA27ACAA8000CB3D7C /* WebSharedWorkerServerToContextConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerServerToContextConnection.messages.in; sourceTree = "<group>"; };
@@ -8444,6 +8445,7 @@
 				7C4ABECF1AA8E9F00088AA37 /* WebCompiledContentRuleList.h */,
 				7C4ABED21AA8FCB80088AA37 /* WebCompiledContentRuleListData.cpp */,
 				7C4ABED31AA8FCB80088AA37 /* WebCompiledContentRuleListData.h */,
+				46411E3D2AFDA94400CC00E4 /* WebCompiledContentRuleListData.serialization.in */,
 				BC4A628B147312BE006C681A /* WebConnection.cpp */,
 				BC4A628C147312BE006C681A /* WebConnection.h */,
 				1A1FEC191627B3EF00700F6D /* WebConnection.messages.in */,
