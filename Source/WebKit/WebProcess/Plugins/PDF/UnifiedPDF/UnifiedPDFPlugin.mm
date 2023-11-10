@@ -33,6 +33,7 @@
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/ColorCocoa.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
