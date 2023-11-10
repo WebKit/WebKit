@@ -2417,6 +2417,8 @@ fn testTextureDimensions()
 }
 
 // 16.7.2
+// RUN: %metal-compile testTextureGather
+@compute @workgroup_size(1)
 fn testTextureGather()
 {
     // [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2]) => Vector[S, 4],
@@ -2457,6 +2459,8 @@ fn testTextureGather()
 }
 
 // 16.7.3 textureGatherCompare
+// RUN: %metal-compile testTextureGatherCompare
+@compute @workgroup_size(1)
 fn testTextureGatherCompare()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => vec4[f32],
@@ -2624,6 +2628,8 @@ fn testTextureLoad()
 }
 
 // 16.7.5
+// RUN: %metal-compile testTextureNumLayers
+@compute @workgroup_size(1)
 fn testTextureNumLayers()
 {
     // [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
@@ -2679,6 +2685,8 @@ fn testTextureNumLevels()
 }
 
 // 16.7.7
+// RUN: %metal-compile testTextureNumSamples
+@compute @workgroup_size(1)
 fn testTextureNumSamples()
 {
     // [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => U32,
@@ -2689,6 +2697,8 @@ fn testTextureNumSamples()
 }
 
 // 16.7.8
+// RUN: %metal-compile testTextureSample
+@compute @workgroup_size(1)
 fn testTextureSample()
 {
     // [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
@@ -2739,6 +2749,8 @@ fn testTextureSample()
 
 
 // 16.7.9
+// RUN: %metal-compile testTextureSampleBias
+@compute @workgroup_size(1)
 fn testTextureSampleBias()
 {
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
@@ -2893,7 +2905,10 @@ fn testTextureSampleLevel()
 }
 
 // 16.7.14
-fn testTextureSampleBaseClampToEdge() {
+// RUN: %metal-compile testTextureSampleBaseClampToEdge
+@compute @workgroup_size(1)
+fn testTextureSampleBaseClampToEdge()
+{
     // [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
     _ = textureSampleBaseClampToEdge(te, s, vec2f(0));
 
