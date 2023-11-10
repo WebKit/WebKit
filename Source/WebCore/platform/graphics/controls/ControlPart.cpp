@@ -26,20 +26,14 @@
 #include "config.h"
 #include "ControlPart.h"
 
-#include "ControlAppearance.h"
 #include "ControlFactory.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
 
-Ref<ControlPart> ControlPart::create(const ControlAppearance& appearance)
-{
-    return adoptRef(*new ControlPart(appearance));
-}
-
-ControlPart::ControlPart(const ControlAppearance& appearance)
-    : m_appearance(appearance)
+ControlPart::ControlPart(StyleAppearance type)
+    : m_type(type)
 {
 }
 
@@ -48,30 +42,11 @@ ControlFactory& ControlPart::controlFactory() const
     return m_controlFactory ? *m_controlFactory : ControlFactory::sharedControlFactory();
 }
 
-std::unique_ptr<PlatformControl> ControlPart::createPlatformControl()
-{
-    return WTF::switchOn(m_appearance, [&](auto& appearance) {
-        return appearance.createPlatformControl(*this, controlFactory());
-    });
-}
-
 PlatformControl* ControlPart::platformControl() const
 {
     if (!m_platformControl)
         m_platformControl = const_cast<ControlPart&>(*this).createPlatformControl();
     return m_platformControl.get();
-}
-
-ControlAppearance& ControlPart::appearance() const
-{
-    return const_cast<ControlAppearance&>(m_appearance);
-}
-
-StyleAppearance ControlPart::type() const
-{
-    return WTF::switchOn(m_appearance, [&](const auto& appearance) {
-        return std::decay_t<decltype(appearance)>::appearance;
-    });
 }
 
 FloatSize ControlPart::sizeForBounds(const FloatRect& bounds, const ControlStyle& style)

@@ -30,7 +30,7 @@
 
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
-#import "InnerSpinButtonAppearance.h"
+#import "InnerSpinButtonPart.h"
 #import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -38,10 +38,9 @@
 
 namespace WebCore {
 
-InnerSpinButtonMac::InnerSpinButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory)
+InnerSpinButtonMac::InnerSpinButtonMac(InnerSpinButtonPart& owningPart, ControlFactoryMac& controlFactory)
     : ControlMac(owningPart, controlFactory)
 {
-    ASSERT(owningPart.type() == StyleAppearance::InnerSpinButton);
 }
 
 IntSize InnerSpinButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) const

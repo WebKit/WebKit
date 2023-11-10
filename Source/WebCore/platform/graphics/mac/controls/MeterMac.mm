@@ -31,17 +31,16 @@
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "MeterAppearance.h"
+#import "MeterPart.h"
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-MeterMac::MeterMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSLevelIndicatorCell* levelIndicatorCell)
-    : ControlMac(owningPart, controlFactory)
+MeterMac::MeterMac(MeterPart& owningMeterPart, ControlFactoryMac& controlFactory, NSLevelIndicatorCell* levelIndicatorCell)
+    : ControlMac(owningMeterPart, controlFactory)
     , m_levelIndicatorCell(levelIndicatorCell)
 {
     ASSERT(m_levelIndicatorCell);
-    ASSERT(owningPart.type() == StyleAppearance::Meter);
 }
 
 void MeterMac::updateCellStates(const FloatRect& rect, const ControlStyle& style)
@@ -52,31 +51,31 @@ void MeterMac::updateCellStates(const FloatRect& rect, const ControlStyle& style
 
     [m_levelIndicatorCell setUserInterfaceLayoutDirection:style.states.contains(ControlStyle::State::RightToLeft) ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
 
-    auto& meterAppearance = owningPart().get<MeterAppearance>();
-
+    auto& meterPart = owningMeterPart();
+    
     // Because NSLevelIndicatorCell does not support optimum-in-the-middle type coloring,
     // we explicitly control the color instead giving low and high value to NSLevelIndicatorCell as is.
-    switch (meterAppearance.gaugeRegion()) {
-    case MeterAppearance::GaugeRegion::Optimum:
+    switch (meterPart.gaugeRegion()) {
+    case MeterPart::GaugeRegion::Optimum:
         // Make meter the green
-        [m_levelIndicatorCell setWarningValue:meterAppearance.value() + 1];
-        [m_levelIndicatorCell setCriticalValue:meterAppearance.value() + 2];
+        [m_levelIndicatorCell setWarningValue:meterPart.value() + 1];
+        [m_levelIndicatorCell setCriticalValue:meterPart.value() + 2];
         break;
-    case MeterAppearance::GaugeRegion::Suboptimal:
+    case MeterPart::GaugeRegion::Suboptimal:
         // Make the meter yellow
-        [m_levelIndicatorCell setWarningValue:meterAppearance.value() - 1];
-        [m_levelIndicatorCell setCriticalValue:meterAppearance.value() + 1];
+        [m_levelIndicatorCell setWarningValue:meterPart.value() - 1];
+        [m_levelIndicatorCell setCriticalValue:meterPart.value() + 1];
         break;
-    case MeterAppearance::GaugeRegion::EvenLessGood:
+    case MeterPart::GaugeRegion::EvenLessGood:
         // Make the meter red
-        [m_levelIndicatorCell setWarningValue:meterAppearance.value() - 2];
-        [m_levelIndicatorCell setCriticalValue:meterAppearance.value() - 1];
+        [m_levelIndicatorCell setWarningValue:meterPart.value() - 2];
+        [m_levelIndicatorCell setCriticalValue:meterPart.value() - 1];
         break;
     }
 
-    [m_levelIndicatorCell setObjectValue:@(meterAppearance.value())];
-    [m_levelIndicatorCell setMinValue:meterAppearance.minimum()];
-    [m_levelIndicatorCell setMaxValue:meterAppearance.maximum()];
+    [m_levelIndicatorCell setObjectValue:@(meterPart.value())];
+    [m_levelIndicatorCell setMinValue:meterPart.minimum()];
+    [m_levelIndicatorCell setMaxValue:meterPart.maximum()];
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

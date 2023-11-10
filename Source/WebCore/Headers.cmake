@@ -2028,29 +2028,28 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEUtilities.h
     platform/graphics/angle/GraphicsContextGLANGLE.h
 
-    platform/graphics/controls/ButtonAppearance.h
-    platform/graphics/controls/ColorWellAppearance.h
-    platform/graphics/controls/ControlAppearance.h
+    platform/graphics/controls/ButtonPart.h
+    platform/graphics/controls/ColorWellPart.h
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
     platform/graphics/controls/ControlStyle.h
-    platform/graphics/controls/ImageControlsButtonAppearance.h
-    platform/graphics/controls/InnerSpinButtonAppearance.h
-    platform/graphics/controls/MenuListAppearance.h
-    platform/graphics/controls/MenuListButtonAppearance.h
-    platform/graphics/controls/MeterAppearance.h
+    platform/graphics/controls/ImageControlsButtonPart.h
+    platform/graphics/controls/InnerSpinButtonPart.h
+    platform/graphics/controls/MenuListButtonPart.h
+    platform/graphics/controls/MenuListPart.h
+    platform/graphics/controls/MeterPart.h
     platform/graphics/controls/PlatformControl.h
-    platform/graphics/controls/ProgressBarAppearance.h
-    platform/graphics/controls/SearchFieldAppearance.h
-    platform/graphics/controls/SearchFieldCancelButtonAppearance.h
-    platform/graphics/controls/SearchFieldResultsAppearance.h
-    platform/graphics/controls/SliderThumbAppearance.h
-    platform/graphics/controls/SliderTrackAppearance.h
-    platform/graphics/controls/SwitchThumbAppearance.h
-    platform/graphics/controls/SwitchTrackAppearance.h
-    platform/graphics/controls/TextAreaAppearance.h
-    platform/graphics/controls/TextFieldAppearance.h
-    platform/graphics/controls/ToggleButtonAppearance.h
+    platform/graphics/controls/ProgressBarPart.h
+    platform/graphics/controls/SearchFieldCancelButtonPart.h
+    platform/graphics/controls/SearchFieldPart.h
+    platform/graphics/controls/SearchFieldResultsPart.h
+    platform/graphics/controls/SliderThumbPart.h
+    platform/graphics/controls/SliderTrackPart.h
+    platform/graphics/controls/SwitchThumbPart.h
+    platform/graphics/controls/SwitchTrackPart.h
+    platform/graphics/controls/TextAreaPart.h
+    platform/graphics/controls/TextFieldPart.h
+    platform/graphics/controls/ToggleButtonPart.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h

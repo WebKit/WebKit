@@ -265,6 +265,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->hasOverrideNewTabPage();
 }
 
+- (BOOL)hasCommands
+{
+    return _webExtension->hasCommands();
+}
+
 - (BOOL)_backgroundContentIsServiceWorker
 {
     return _webExtension->backgroundContentIsServiceWorker();
@@ -437,6 +442,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 }
 
 - (BOOL)hasOverrideNewTabPage
+{
+    return NO;
+}
+
+- (BOOL)hasCommands
 {
     return NO;
 }

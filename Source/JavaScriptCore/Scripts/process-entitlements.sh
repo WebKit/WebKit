@@ -17,6 +17,7 @@ function mac_process_jsc_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+            plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
@@ -37,6 +38,7 @@ function mac_process_testapi_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+            plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
@@ -60,6 +62,7 @@ function maccatalyst_process_jsc_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+            plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
         fi
     fi
 
@@ -78,6 +81,7 @@ function maccatalyst_process_testapi_entitlements()
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
         plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+        plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
     fi
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
@@ -95,6 +99,7 @@ function ios_family_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.private.verified-jit bool YES
     plistbuddy Add :dynamic-codesigning bool YES
+    plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
 }
 
 function ios_family_process_testapi_entitlements()

@@ -319,6 +319,14 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 
 View::~View()
 {
+    wpe_view_backend_set_backend_client(m_backend, nullptr, nullptr);
+    wpe_view_backend_set_input_client(m_backend, nullptr, nullptr);
+    // Although the fullscreen client is used for libwpe 1.11.1 and newer, we cannot
+    // unregister it prior to 1.15.2 (see https://github.com/WebPlatformForEmbedded/libwpe/pull/129).
+#if ENABLE(FULLSCREEN_API) && WPE_CHECK_VERSION(1, 15, 2)
+    wpe_view_backend_set_fullscreen_client(m_backend, nullptr, nullptr);
+#endif
+
     viewsVector().removeAll(this);
 #if ENABLE(ACCESSIBILITY)
     if (m_accessible)

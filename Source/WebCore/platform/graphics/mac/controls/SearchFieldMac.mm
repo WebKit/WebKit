@@ -32,11 +32,11 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "SearchFieldAppearance.h"
+#import "SearchFieldPart.h"
 
 namespace WebCore {
 
-SearchFieldMac::SearchFieldMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell)
+SearchFieldMac::SearchFieldMac(SearchFieldPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell)
     : SearchControlMac(owningPart, controlFactory, searchFieldCell)
 {
     ASSERT(searchFieldCell);

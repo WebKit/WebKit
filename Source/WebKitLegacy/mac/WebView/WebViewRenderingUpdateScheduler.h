@@ -40,11 +40,10 @@ public:
     void didCompleteRenderingUpdateDisplay();
     
 private:
+    void registerCACommitHandlers();
+
     void renderingUpdateRunLoopObserverCallback();
     void updateRendering();
-
-    void registerPostCommitObserver();
-    void postCommitCallback();
 
     void schedulePostRenderingUpdate();
     void postRenderingUpdateCallback();
@@ -52,10 +51,9 @@ private:
     WebView* m_webView;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
-    std::unique_ptr<WebCore::RunLoopObserver> m_postCommitRunLoopObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
 
     bool m_insideCallback { false };
     bool m_rescheduledInsideCallback { false };
-    bool m_haveRegisteredCommitObserver { false };
+    bool m_haveRegisteredCommitHandlers { false };
 };

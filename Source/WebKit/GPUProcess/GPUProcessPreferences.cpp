@@ -28,21 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ArgumentCoders.h"
 #include "WebPreferences.h"
 
-#if PLATFORM(COCOA)
-#include "ArgumentCodersCF.h"
-#endif
-
 namespace WebKit {
-
-GPUProcessPreferences::GPUProcessPreferences() = default;
-
-GPUProcessPreferences::GPUProcessPreferences(const WebPreferences& webPreferences)
-{
-    copyEnabledWebPreferences(webPreferences);
-}
 
 void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webPreferences)
 {
@@ -80,86 +68,6 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
     if (webPreferences.alternateWebMPlayerEnabled())
         alternateWebMPlayerEnabled = true;
 #endif
-}
-
-void GPUProcessPreferences::encode(IPC::Encoder& encoder) const
-{
-#if ENABLE(OPUS)
-    encoder << opusDecoderEnabled;
-#endif
-    
-#if ENABLE(VORBIS)
-    encoder << vorbisDecoderEnabled;
-#endif
-    
-#if ENABLE(WEBM_FORMAT_READER)
-    encoder << webMFormatReaderEnabled;
-#endif
-    
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    encoder << webMParserEnabled;
-#endif
-    
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    encoder << mediaSourceInlinePaintingEnabled;
-#endif
-    
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    encoder << sampleBufferContentKeySessionSupportEnabled;
-#endif
-    
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    encoder << alternateWebMPlayerEnabled;
-#endif
-    
-#if ENABLE(SC_CONTENT_SHARING_PICKER)
-    encoder << useSCContentSharingPicker;
-#endif
-}
-
-bool GPUProcessPreferences::decode(IPC::Decoder& decoder, GPUProcessPreferences& result)
-{
-#if ENABLE(OPUS)
-    if (!decoder.decode(result.opusDecoderEnabled))
-        return false;
-#endif
-    
-#if ENABLE(VORBIS)
-    if (!decoder.decode(result.vorbisDecoderEnabled))
-        return false;
-#endif
-    
-#if ENABLE(WEBM_FORMAT_READER)
-    if (!decoder.decode(result.webMFormatReaderEnabled))
-        return false;
-#endif
-    
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    if (!decoder.decode(result.webMParserEnabled))
-        return false;
-#endif
-    
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (!decoder.decode(result.mediaSourceInlinePaintingEnabled))
-        return false;
-#endif
-    
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    if (!decoder.decode(result.sampleBufferContentKeySessionSupportEnabled))
-        return false;
-#endif
-    
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    if (!decoder.decode(result.alternateWebMPlayerEnabled))
-        return false;
-#endif
-    
-#if ENABLE(SC_CONTENT_SHARING_PICKER)
-    if (!decoder.decode(result.useSCContentSharingPicker))
-        return false;
-#endif
-
-    return true;
 }
 
 } // namespace WebKit

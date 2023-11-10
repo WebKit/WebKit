@@ -125,7 +125,7 @@ private:
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldResultsDecorationAppearanceStyle(RenderStyle&, const Element*) const final;
+    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
 
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
 

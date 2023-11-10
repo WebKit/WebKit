@@ -26,34 +26,21 @@
 #pragma once
 
 #include "Color.h"
-#include "ControlAppearance.h"
+#include "PlatformControl.h"
 #include "StyleAppearance.h"
-
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class FloatRect;
-class FloatRoundedRect;
 class GraphicsContext;
 class ControlFactory;
-class PlatformControl;
-struct ControlStyle;
 
 class ControlPart : public RefCounted<ControlPart> {
 public:
-    WEBCORE_EXPORT static Ref<ControlPart> create(const ControlAppearance&);
     virtual ~ControlPart() = default;
 
-    StyleAppearance type() const;
-    WEBCORE_EXPORT ControlAppearance& appearance() const;
-
-    template <typename AppearanceType>
-    const AppearanceType& get() const
-    {
-        ASSERT(AppearanceType::appearance == type());
-        return std::get<AppearanceType>(m_appearance);
-    }
+    StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
     void setControlFactory(ControlFactory* controlFactory) { m_controlFactory = controlFactory; }
@@ -63,14 +50,20 @@ public:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) const;
 
 protected:
-    ControlPart(const ControlAppearance&);
+    WEBCORE_EXPORT ControlPart(StyleAppearance);
 
     PlatformControl* platformControl() const;
-    std::unique_ptr<PlatformControl> createPlatformControl();
+    virtual std::unique_ptr<PlatformControl> createPlatformControl() = 0;
 
-    ControlAppearance m_appearance;
+    const StyleAppearance m_type;
+
     mutable std::unique_ptr<PlatformControl> m_platformControl;
     ControlFactory* m_controlFactory { nullptr };
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CONTROL_PART(PartName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PartName##Part) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::PartName; } \
+SPECIALIZE_TYPE_TRAITS_END()

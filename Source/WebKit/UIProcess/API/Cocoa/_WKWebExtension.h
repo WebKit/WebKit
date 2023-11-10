@@ -232,6 +232,13 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  */
 @property (nonatomic, readonly) BOOL hasOverrideNewTabPage;
 
+/*!
+ @abstract A Boolean value indicating whether the extension includes commands that users can invoke.
+ @discussion If this property is `YES`, the extension contains one or more commands that can be performed by the user. These commands should be accessible via keyboard shortcuts,
+ menu items, or other user interface elements provided by the app. The list of commands can be accessed via `commands` on an extension context, and invoked via `performCommand:`.
+ */
+@property (nonatomic, readonly) BOOL hasCommands;
+
 @end
 
 NS_ASSUME_NONNULL_END

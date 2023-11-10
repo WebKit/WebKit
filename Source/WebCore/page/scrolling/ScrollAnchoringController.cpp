@@ -169,6 +169,15 @@ CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& 
     auto containingRect = boundingRectForScrollableArea(m_owningScrollableArea);
     auto* document = frameView().frame().document();
 
+    if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+        if (auto* box = element->renderBox()) {
+            LayoutRect paddedLayerBounds(containingRect);
+            paddedLayerBounds.contract(box->scrollPaddingForViewportRect(paddedLayerBounds));
+            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::examineCandidate() contracted rect: "<< IntRect(paddedLayerBounds));
+            containingRect = IntRect(paddedLayerBounds);
+        }
+    }
+
     if (auto renderer = element.renderer()) {
         // TODO: we need to think about position: absolute
         // TODO: figure out how to get scrollable area for renderer to check if it is maintaining scroll anchor

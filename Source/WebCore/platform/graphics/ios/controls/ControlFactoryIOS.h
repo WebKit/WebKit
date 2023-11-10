@@ -36,25 +36,25 @@ public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
     
 private:
-    std::unique_ptr<PlatformControl> createPlatformButton(ControlPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<PlatformControl> createPlatformColorWell(ControlPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) final;
 #endif
-    std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformMenuList(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformMenuListButton(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformMeter(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformProgressBar(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSearchField(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSliderThumb(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSliderTrack(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSwitchThumb(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformSwitchTrack(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformTextArea(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformTextField(ControlPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformToggleButton(ControlPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMenuListButton(MenuListButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSwitchThumb(SwitchThumbPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSwitchTrack(SwitchTrackPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
 };
 
 } // namespace WebCore

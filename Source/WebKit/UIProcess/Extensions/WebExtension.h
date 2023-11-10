@@ -96,6 +96,7 @@ public:
         InvalidActionIcon,
         InvalidBackgroundContent,
         InvalidBackgroundPersistence,
+        InvalidCommands,
         InvalidContentScripts,
         InvalidContentSecurityPolicy,
         InvalidDeclarativeNetRequest,
@@ -118,6 +119,21 @@ public:
 
     using PermissionsSet = HashSet<String>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
+    // Needs to match UIKeyModifierFlags and NSEventModifierFlags.
+    enum class ModifierFlags : uint32_t {
+        Shift   = 1 << 17,
+        Control = 1 << 18,
+        Option  = 1 << 19,
+        Command = 1 << 20
+    };
+
+    struct CommandData {
+        String identifier;
+        String description;
+        String activationKey;
+        OptionSet<ModifierFlags> modifierFlags;
+    };
 
     struct InjectedContentData {
         MatchPatternSet includeMatchPatterns;
@@ -144,6 +160,7 @@ public:
         Vector<String> resourcePathPatterns;
     };
 
+    using CommandsVector = Vector<CommandData>;
     using InjectedContentVector = Vector<InjectedContentData>;
     using WebAccessibleResourcesVector = Vector<WebAccessibleResourceData>;
 
@@ -211,6 +228,9 @@ public:
     NSString *optionsPagePath();
     NSString *overrideNewTabPagePath();
 
+    const CommandsVector& commands();
+    bool hasCommands();
+
     const InjectedContentVector& staticInjectedContents();
     bool hasStaticInjectedContentForURL(NSURL *);
 
@@ -253,9 +273,11 @@ private:
     void populatePagePropertiesIfNeeded();
     void populateContentSecurityPolicyStringsIfNeeded();
     void populateWebAccessibleResourcesIfNeeded();
+    void populateCommandsIfNeeded();
 
     InjectedContentVector m_staticInjectedContents;
     WebAccessibleResourcesVector m_webAccessibleResources;
+    CommandsVector m_commands;
 
     MatchPatternSet m_permissionMatchPatterns;
     MatchPatternSet m_optionalPermissionMatchPatterns;
@@ -311,6 +333,7 @@ private:
     bool m_parsedManifestPermissionProperties : 1 { false };
     bool m_parsedManifestPageProperties : 1 { false };
     bool m_parsedManifestWebAccessibleResources : 1 { false };
+    bool m_parsedManifestCommands : 1 { false };
 };
 
 #ifdef __OBJC__
@@ -319,6 +342,20 @@ NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet&);
 NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet&);
 
 #endif
+
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtension::ModifierFlags> {
+    using values = EnumValues<
+        WebKit::WebExtension::ModifierFlags,
+        WebKit::WebExtension::ModifierFlags::Shift,
+        WebKit::WebExtension::ModifierFlags::Control,
+        WebKit::WebExtension::ModifierFlags::Option,
+        WebKit::WebExtension::ModifierFlags::Command
+    >;
+};
 
 } // namespace WebKit
 

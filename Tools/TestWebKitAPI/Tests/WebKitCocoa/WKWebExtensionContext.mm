@@ -29,10 +29,15 @@
 
 #import "TestCocoa.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKWebExtensionPermission.h>
+#import <WebKit/_WKWebExtensionCommand.h>
 #import <WebKit/_WKWebExtensionContextPrivate.h>
 #import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
+#import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionPrivate.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#endif
 
 namespace TestWebKitAPI {
 
@@ -580,6 +585,210 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
+}
+
+TEST(WKWebExtensionContext, CommandsParsing)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{
+            @"toggle-feature": @{
+                @"suggested_key": @{
+                    @"default": @"Alt+Shift+U",
+                    @"linux": @"Shift+Ctrl+U"
+                },
+                @"description": @"Send A Thing"
+            },
+            @"do-another-thing": @{
+                @"suggested_key": @{
+                    @"default": @"Alt+Shift+Y",
+                    @"mac": @"Ctrl+Shift+Y",
+                },
+                @"description": @"Find A Thing"
+            },
+            @"special-command": @{
+                @"suggested_key": @{
+                    @"default": @"Alt+F10"
+                },
+                @"description": @"Do A Thing"
+            },
+            @"escape-command": @{
+                @"suggested_key": @{
+                    @"ios": @"MacCtrl+Down"
+                },
+                @"description": @"Be A Thing"
+            },
+            @"unassigned-command": @{
+                @"description": @"Maybe A Thing"
+            }
+        }
+    };
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NS_EQUAL(testContext.webExtension.errors, @[ ]);
+    EXPECT_NOT_NULL(testContext.commands);
+    EXPECT_EQ(testContext.commands.count, 5lu);
+
+    _WKWebExtensionCommand *testCommand = nil;
+
+    for (_WKWebExtensionCommand *command in testContext.commands) {
+        if ([command.identifier isEqualToString:@"toggle-feature"]) {
+            testCommand = command;
+
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Send A Thing");
+            EXPECT_NS_EQUAL(command.activationKey, @"u");
+#if PLATFORM(MAC)
+            EXPECT_EQ(command.modifierFlags, NSEventModifierFlagOption | NSEventModifierFlagShift);
+#else
+            EXPECT_EQ(command.modifierFlags, UIKeyModifierAlternate | UIKeyModifierShift);
+#endif
+        } else if ([command.identifier isEqualToString:@"do-another-thing"]) {
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Find A Thing");
+            EXPECT_NS_EQUAL(command.activationKey, @"y");
+#if PLATFORM(MAC)
+            EXPECT_EQ(command.modifierFlags, NSEventModifierFlagCommand | NSEventModifierFlagShift);
+#else
+            EXPECT_EQ(command.modifierFlags, UIKeyModifierCommand | UIKeyModifierShift);
+#endif
+        } else if ([command.identifier isEqualToString:@"special-command"]) {
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Do A Thing");
+            EXPECT_NS_EQUAL(command.activationKey, @"\uF70D");
+#if PLATFORM(MAC)
+            EXPECT_EQ(command.modifierFlags, NSEventModifierFlagOption);
+#else
+            EXPECT_EQ(command.modifierFlags, UIKeyModifierAlternate);
+#endif
+        } else if ([command.identifier isEqualToString:@"escape-command"]) {
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Be A Thing");
+            EXPECT_NS_EQUAL(command.activationKey, @"\uF701");
+#if PLATFORM(MAC)
+            EXPECT_EQ(command.modifierFlags, NSEventModifierFlagControl);
+#else
+            EXPECT_EQ(command.modifierFlags, UIKeyModifierControl);
+#endif
+        } else if ([command.identifier isEqualToString:@"unassigned-command"]) {
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Maybe A Thing");
+            EXPECT_NULL(command.activationKey);
+            EXPECT_EQ((uint32_t)command.modifierFlags, 0lu);
+        }
+    }
+
+    EXPECT_NOT_NULL(testCommand);
+
+    testCommand.activationKey = nil;
+
+    EXPECT_NULL(testCommand.activationKey);
+    EXPECT_EQ((uint32_t)testCommand.modifierFlags, 0lu);
+
+    testCommand.activationKey = @"\uF70D";
+
+    EXPECT_NS_EQUAL(testCommand.activationKey, @"\uF70D");
+#if PLATFORM(MAC)
+    EXPECT_EQ(testCommand.modifierFlags, NSEventModifierFlagOption | NSEventModifierFlagShift);
+#else
+    EXPECT_EQ(testCommand.modifierFlags, UIKeyModifierAlternate | UIKeyModifierShift);
+#endif
+
+    testCommand.activationKey = @"M";
+
+    EXPECT_NS_EQUAL(testCommand.activationKey, @"m");
+#if PLATFORM(MAC)
+    EXPECT_EQ(testCommand.modifierFlags, NSEventModifierFlagOption | NSEventModifierFlagShift);
+#else
+    EXPECT_EQ(testCommand.modifierFlags, UIKeyModifierAlternate | UIKeyModifierShift);
+#endif
+
+    testCommand.modifierFlags = 0;
+
+    EXPECT_NULL(testCommand.activationKey);
+    EXPECT_EQ((uint32_t)testCommand.modifierFlags, 0lu);
+
+#if PLATFORM(MAC)
+    testCommand.modifierFlags = NSEventModifierFlagCommand | NSEventModifierFlagShift;
+#else
+    testCommand.modifierFlags = UIKeyModifierCommand | UIKeyModifierShift;
+#endif
+
+    EXPECT_NS_EQUAL(testCommand.activationKey, @"m");
+#if PLATFORM(MAC)
+    EXPECT_EQ(testCommand.modifierFlags, NSEventModifierFlagCommand | NSEventModifierFlagShift);
+#else
+    EXPECT_EQ(testCommand.modifierFlags, UIKeyModifierCommand | UIKeyModifierShift);
+#endif
+
+    @try {
+        testCommand.activationKey = @"F10";
+    } @catch (NSException *exception) {
+        EXPECT_NS_EQUAL(exception.name, NSInternalInconsistencyException);
+    } @finally {
+        EXPECT_NS_EQUAL(testCommand.activationKey, @"m");
+    }
+
+    @try {
+        testCommand.modifierFlags = 1 << 16;
+    } @catch (NSException *exception) {
+        EXPECT_NS_EQUAL(exception.name, NSInternalInconsistencyException);
+    } @finally {
+#if PLATFORM(MAC)
+        EXPECT_EQ(testCommand.modifierFlags, NSEventModifierFlagCommand | NSEventModifierFlagShift);
+#else
+        EXPECT_EQ(testCommand.modifierFlags, UIKeyModifierCommand | UIKeyModifierShift);
+#endif
+    }
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test Extension",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{ }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_NS_EQUAL(testContext.webExtension.errors, @[ ]);
+    EXPECT_NOT_NULL(testContext.commands);
+    EXPECT_EQ(testContext.commands.count, 0lu);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test Extension",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{
+            @"command-without-description": @{
+                @"suggested_key": @{
+                    @"default": @"Ctrl+Shift+X"
+                }
+            }
+        }
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
+    EXPECT_NOT_NULL(testContext.commands);
+    EXPECT_EQ(testContext.commands.count, 0lu);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test Extension",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @[
+            @"Invalid"
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
+    EXPECT_NOT_NULL(testContext.commands);
+    EXPECT_EQ(testContext.commands.count, 0lu);
 }
 
 } // namespace TestWebKitAPI

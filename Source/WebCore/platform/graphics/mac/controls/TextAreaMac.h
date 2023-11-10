@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class TextAreaAppearance;
+class TextAreaPart;
 
 class TextAreaMac final : public PlatformControl {
 public:
-    TextAreaMac(ControlPart&);
+    TextAreaMac(TextAreaPart&);
 
 private:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;

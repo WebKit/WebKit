@@ -544,8 +544,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         const scrollLeft = typeof stateDiff.scrollLeft === 'number' ? stateDiff.scrollLeft : state.scrollLeft;
         const scales = stateDiff.scales ? stateDiff.scales : state.scales;
         const dots = stateDiff.dots ? stateDiff.dots : state.dots;
-        const highLightScale = stateDiff.highLightScale ? stateDiff.highLightScale : state.highLightScale;
-        const highLightDot = stateDiff.highLightDot ? stateDiff.highLightDot : state.highLightDot;
+        const highLightScale = "highLightScale" in stateDiff ? stateDiff.highLightScale : state.highLightScale;
+        const highLightDot = "highLightDot" in stateDiff ? stateDiff.highLightDot : state.highLightDot;
         if ('dots' in stateDiff)
             dots.forEach((dot, index) => dot._index = index);
         // This color maybe change when switch dark/light mode
@@ -673,12 +673,13 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         };
         const onSearchScaleAction = (scale) => {
             let clearHighLight = true;
-            canvasRef.state.scales.forEach((currentScale) => {
-                if (comp(currentScale, scale) === 0) {
-                    canvasRef.setState({highLightScale: scale});
-                    clearHighLight = false;
-                }
-            });
+            if (scale)
+                canvasRef.state.scales.forEach((currentScale) => {
+                    if (comp(currentScale, scale) === 0) {
+                        canvasRef.setState({highLightScale: scale});
+                        clearHighLight = false;
+                    }
+                });
             if (clearHighLight)
                 canvasRef.setState({highLightScale: false});
         };
@@ -819,7 +820,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             onStateUpdate: (element, stateDiff, state) => {
                 if (!state.onScreen && !stateDiff.onScreen)
                     return;
-                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen || stateDiff.hasDotSelected || stateDiff.highLightScale || stateDiff.highLightDot) {
+                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen || stateDiff.hasDotSelected || 'highLightDot' in stateDiff || 'highLightScale' in stateDiff) {
                     if (stateDiff.scales)
                         stateDiff.scales = stateDiff.scales.map(x => x);
                     if (stateDiff.dots)
@@ -1194,6 +1195,8 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                 canvasRef.setState({width: width});
             };
             const onSearchScaleAction = (scale) => {
+                if (!scale)
+                    return;
                 canvasRef.state.scales.forEach((currentScale, index) => {
                     if (comp(currentScale, scale) === 0) {
                         const scaleLeft = index * scaleWidth;

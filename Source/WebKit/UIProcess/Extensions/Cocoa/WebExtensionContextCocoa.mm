@@ -1701,6 +1701,30 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
     fireActionClickedEventIfNeeded(tab);
 }
 
+const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
+{
+    if (m_populatedCommands)
+        return m_commands;
+
+    for (auto& data : extension().commands())
+        m_commands.append(WebExtensionCommand::create(*this, data));
+
+    m_populatedCommands = true;
+
+    return m_commands;
+}
+
+void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTriggered userTriggered)
+{
+    auto currentWindow = frontmostWindow();
+    auto activeTab = currentWindow ? currentWindow->activeTab() : nullptr;
+
+    if (activeTab && userTriggered == UserTriggered::Yes)
+        userGesturePerformed(*activeTab);
+
+    // FIXME: <https://webkit.org/b/260157> Dispatch the commands onCommand event.
+}
+
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 {
     // Nothing else to do if the extension does not have the activeTab permissions.

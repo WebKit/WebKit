@@ -35,7 +35,7 @@ class ButtonPart;
 
 class ButtonMac final : public ButtonControlMac {
 public:
-    ButtonMac(ControlPart& owningPart, ControlFactoryMac&, NSButtonCell *);
+    ButtonMac(ButtonPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

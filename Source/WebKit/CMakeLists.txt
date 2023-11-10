@@ -345,6 +345,7 @@ set(WebKit_MESSAGES_IN_FILES
 
 set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/GPUProcessCreationParameters.serialization.in
+    GPUProcess/GPUProcessPreferences.serialization.in
     GPUProcess/GPUProcessSessionParameters.serialization.in
 
     GPUProcess/graphics/PathSegment.serialization.in

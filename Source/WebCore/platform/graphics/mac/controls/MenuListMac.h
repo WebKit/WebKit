@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class MenuListAppearance;
+class MenuListPart;
 
 class MenuListMac final : public ControlMac {
 public:
-    MenuListMac(ControlPart& owningPart, ControlFactoryMac&, NSPopUpButtonCell *);
+    MenuListMac(MenuListPart& owningPart, ControlFactoryMac&, NSPopUpButtonCell *);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

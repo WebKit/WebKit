@@ -57,8 +57,6 @@ public:
     virtual void draw(GraphicsContext&, const FloatRoundedRect&, float, const ControlStyle&) { }
 
 protected:
-    const ControlPart& owningPart() const { return m_owningPart; }
-
     ControlPart& m_owningPart;
 };
 

@@ -644,8 +644,11 @@ class TimelineFromEndpoint {
     }
 
     onSearch(searchValue) {
+        if (!searchValue || !searchValue.length) {
+            this.searchScale(null);
+        }
+        let found = false;
         for (let currentScale of this.scale) {
-            let found = false;
             for (let repo of this.repositories) {
                 if (!currentScale[repo]) {
                     continue;
@@ -660,6 +663,8 @@ class TimelineFromEndpoint {
             if (found)
                 break;
         }
+        if (!found)
+            this.searchScale(null);
     };
 
     render(limit) {
@@ -1068,22 +1073,98 @@ class TimelineFromEndpoint {
         }));
 
         let currentResultIndex = 0;
+        let regressPoints = [];
+        let currentRegressPointIndex = -1;
         const jumpNextRegressPoint = () => {
-            const lastResultStatus = this.getTestResultStatus(allConfigResults[currentResultIndex], InvestigateDrawer.willFilterExpected);
-            for(let i = currentResultIndex + 1; i < allConfigResults.length; i++) {
-                const currentTestStatus = this.getTestResultStatus(allConfigResults[i], InvestigateDrawer.willFilterExpected);
-                if (currentTestStatus.failureType !== lastResultStatus.failureType || currentTestStatus.failureNumber !== lastResultStatus.failureNumber) {
-                    currentResultIndex = i;
-                    searchDot(allConfigResults[i]);
-                    break;
+            if (currentRegressPointIndex === regressPoints.length - 1) {
+                const lastResultStatus = this.getTestResultStatus(allConfigResults[currentResultIndex], InvestigateDrawer.willFilterExpected);
+                for(let i = currentResultIndex + 1; i < allConfigResults.length; i++) {
+                    const currentTestStatus = this.getTestResultStatus(allConfigResults[i], InvestigateDrawer.willFilterExpected);
+                    if (currentTestStatus.failureType !== lastResultStatus.failureType || currentTestStatus.failureNumber !== lastResultStatus.failureNumber) {
+                        currentResultIndex = i;
+                        regressPoints.push(allConfigResults[i]);
+                        currentRegressPointIndex = regressPoints.length - 1;
+                        searchDot(allConfigResults[i]);
+                        if (currentRegressPointIndex > 0)
+                            previousRegressButtonRef.setState({disabled: false});
+                        break;
+                    }
                 }
+            } else if (currentRegressPointIndex < regressPoints.length - 1) {
+                currentRegressPointIndex += 1;
+                if (currentRegressPointIndex > 0)
+                    previousRegressButtonRef.setState({disabled: false});
+                searchDot(regressPoints[currentRegressPointIndex]);
             }
         };
+
+        const jumpPreviousRegressPoint = () => {
+            if (0 < currentRegressPointIndex && currentRegressPointIndex < regressPoints.length) {
+                currentRegressPointIndex -= 1;
+                searchDot(regressPoints[currentRegressPointIndex]);
+                if (currentRegressPointIndex === 0)
+                    previousRegressButtonRef.setState({disabled: true});
+            }
+        };
+
+        const hideableRefOptionFactory = (initShow) => {
+            return {
+                state: {
+                    show: initShow,
+                },
+                onStateUpdate: (element, stateDiff) => {
+                    if ('show' in stateDiff) {
+                        if (stateDiff.show) {
+                            element.style.display = 'block';
+                        } else {
+                            element.style.display = 'none';
+                        }
+                    }
+                }
+            }
+        }
+
+        const findRegressButtonRef = REF.createRef(hideableRefOptionFactory(true));
+        findRegressButtonRef.fromEvent("click").action(e => {
+            findRegressPannelRef.setState({show: true});
+            findRegressButtonRef.setState({show: false});
+            jumpNextRegressPoint();
+        });
+
+        const findRegressPannelRef = REF.createRef(hideableRefOptionFactory(false));
+
+        const closeRegressButtonRef = REF.createRef({});
+        closeRegressButtonRef.fromEvent("click").action(e => {
+            findRegressPannelRef.setState({show: false});
+            findRegressButtonRef.setState({show: true});
+            currentRegressPointIndex = -1;
+            previousRegressButtonRef.setState({disabled: true});
+            searchDot(null);
+        });
 
         const nextRegressButtonRef = REF.createRef({});
         const nextRegressButtonClickEventStream = nextRegressButtonRef.fromEvent("click");
         nextRegressButtonClickEventStream.action((e) => {
             jumpNextRegressPoint();
+        });
+
+        const previousRegressButtonRef = REF.createRef({
+            state: {
+                disabled: true,
+            },
+            onStateUpdate: (element, stateDiff) => {
+                if ("disabled" in stateDiff) {
+                    if (stateDiff.disabled) {
+                        element.setAttribute('disabled', true);
+                    } else {
+                        element.removeAttribute('disabled');
+                    }
+                }
+            }
+        });
+
+        previousRegressButtonRef.fromEvent("click").action(e => {
+            jumpPreviousRegressPoint();
         });
 
         const searchBarRef = REF.createRef({
@@ -1141,10 +1222,21 @@ class TimelineFromEndpoint {
             }
         });
         return `<div ref="${containnerRef}" style="position: relative">
-            <div ref="${searchBarRef}" style="width:100%; background: var(--blurBackgroundColor); -webkit-backdrop-filter: blur(5px); z-index:10">
-                <button class="button" ref="${nextRegressButtonRef}">
-                    Next Regress Point
+            <div ref="${searchBarRef}" class="next-regress-bar">
+                <button class="button" ref="${findRegressButtonRef}">
+                    Find Regress Point
                 </button>
+                <div ref="${findRegressPannelRef}">
+                    <button class="button" ref="${previousRegressButtonRef}">
+                        Previous Regress Point
+                    </button>
+                    <button class="button" ref="${nextRegressButtonRef}">
+                        Next Regress Point
+                    </button>
+                    <button class="button" ref="${closeRegressButtonRef}">
+                        Close
+                    </button>
+                </div>
             </div>
             <div class="row" ref="${placeHolderRef}">
                 <div class="col-12" style="height: 40px; padding: 0"></div>

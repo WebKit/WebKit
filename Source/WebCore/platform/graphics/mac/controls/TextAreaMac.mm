@@ -30,12 +30,12 @@
 
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "TextAreaAppearance.h"
+#import "TextAreaPart.h"
 #import <pal/spi/mac/NSCellSPI.h>
 
 namespace WebCore {
 
-TextAreaMac::TextAreaMac(ControlPart& owningPart)
+TextAreaMac::TextAreaMac(TextAreaPart& owningPart)
     : PlatformControl(owningPart)
 {
     ASSERT(owningPart.type() == StyleAppearance::Listbox || owningPart.type() == StyleAppearance::TextArea);

@@ -31,17 +31,16 @@
 #import "ControlFactoryMac.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
-#import "ImageControlsButtonAppearance.h"
+#import "ImageControlsButtonPart.h"
 #import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 
 namespace WebCore {
 
-ImageControlsButtonMac::ImageControlsButtonMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSServicesRolloverButtonCell *servicesRolloverButtonCell)
+ImageControlsButtonMac::ImageControlsButtonMac(ImageControlsButtonPart& owningPart, ControlFactoryMac& controlFactory, NSServicesRolloverButtonCell *servicesRolloverButtonCell)
     : ControlMac(owningPart, controlFactory)
     , m_servicesRolloverButtonCell(servicesRolloverButtonCell)
 {
-    ASSERT(owningPart.type() == StyleAppearance::ImageControlsButton);
 }
 
 IntSize ImageControlsButtonMac::servicesRolloverButtonCellSize()

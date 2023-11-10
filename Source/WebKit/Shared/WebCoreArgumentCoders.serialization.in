@@ -3201,8 +3201,56 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     WebCore::FloatBoxExtent borderWidth;
 };
 
+enum class WebCore::StyleAppearance : uint8_t {
+    None,
+    Auto,
+    Checkbox,
+    Radio,
+    PushButton,
+    SquareButton,
+    Button,
+    DefaultButton,
+    Listbox,
+    Menulist,
+    MenulistButton,
+    Meter,
+    ProgressBar,
+    SliderHorizontal,
+    SliderVertical,
+    SearchField,
 #if ENABLE(APPLE_PAY)
-header: <WebCore/ApplePayButtonAppearance.h>
+    ApplePayButton,
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    Attachment,
+    BorderlessAttachment,
+#endif
+    TextArea,
+    TextField,
+    CapsLockIndicator,
+#if ENABLE(INPUT_TYPE_COLOR)
+    ColorWell,
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    ImageControlsButton,
+#endif
+    InnerSpinButton,
+#if ENABLE(DATALIST_ELEMENT)
+    ListButton,
+#endif
+    SearchFieldDecoration,
+    SearchFieldResultsDecoration,
+    SearchFieldResultsButton,
+    SearchFieldCancelButton,
+    SliderThumbHorizontal,
+    SliderThumbVertical,
+    Switch,
+    SwitchThumb,
+    SwitchTrack
+};
+
+#if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePayButtonPart.h>
 enum class WebCore::ApplePayButtonType : uint8_t {
     Plain,
     Buy,
@@ -3229,166 +3277,37 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
     Black,
 }
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonAppearance {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
     WebCore::ApplePayButtonType buttonType();
     WebCore::ApplePayButtonStyle buttonStyle();
-    WTF::String locale();
+    String locale();
 };
 #endif
 
-using WebCore::ControlAppearance = std::variant<
-#if ENABLE(APPLE_PAY)
-    ApplePayButtonAppearance,
-#endif
-    ButtonAppearance,
-#if ENABLE(INPUT_TYPE_COLOR)
-    ColorWellAppearance,
-#endif
-    DefaultButtonAppearance,
-#if ENABLE(SERVICE_CONTROLS)
-    ImageControlsButtonAppearance,
-#endif
-    InnerSpinButtonAppearance,
-    MenuListButtonAppearance,
-    MenuListAppearance,
-    MeterAppearance,
-    ProgressBarAppearance,
-    PushButtonAppearance,
-    SearchFieldCancelButtonAppearance,
-    SearchFieldAppearance,
-    SearchFieldResultsButtonAppearance,
-    SearchFieldResultsDecorationAppearance,
-    SliderThumbHorizontalAppearance,
-    SliderThumbVerticalAppearance,
-    SliderTrackHorizontalAppearance,
-    SliderTrackVerticalAppearance,
-    SquareButtonAppearance,
-    ListBoxAppearance,
-    TextAreaAppearance,
-    TextFieldAppearance,
-    CheckboxAppearance,
-    RadioAppearance,
-    SwitchThumbAppearance,
-    SwitchTrackAppearance
-    >;
-
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ControlPart {
-    WebCore::ControlAppearance appearance();
-}
-
-header: <WebCore/ButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ButtonAppearance {
-};
-
-#if ENABLE(INPUT_TYPE_COLOR)
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::ColorWellAppearance {
-};
-#endif
-
-header: <WebCore/ButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DefaultButtonAppearance {
-};
-
-#if ENABLE(SERVICE_CONTROLS)
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::ImageControlsButtonAppearance {
-};
-#endif
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::InnerSpinButtonAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::MenuListButtonAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::MenuListAppearance {
-};
-
-[Nested] enum class WebCore::MeterAppearance::GaugeRegion : uint8_t {
+[Nested] enum class WebCore::MeterPart::GaugeRegion : uint8_t {
     Optimum,
     Suboptimal,
     EvenLessGood
 };
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::MeterAppearance {
-    WebCore::MeterAppearance::GaugeRegion gaugeRegion();
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::MeterPart {
+    WebCore::MeterPart::GaugeRegion gaugeRegion();
     double value();
     double minimum();
     double maximum();
 };
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarAppearance {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarPart {
     double position();
-    WTF::Seconds animationStartTime();
+    Seconds animationStartTime();
 };
 
-header: <WebCore/ButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::PushButtonAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SearchFieldCancelButtonAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SearchFieldAppearance {
-};
-
-header: <WebCore/SearchFieldResultsAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SearchFieldResultsButtonAppearance {
-};
-
-header: <WebCore/SearchFieldResultsAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SearchFieldResultsDecorationAppearance {
-};
-
-header: <WebCore/SliderThumbAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderThumbHorizontalAppearance {
-};
-
-header: <WebCore/SliderThumbAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderThumbVerticalAppearance {
-};
-
-header: <WebCore/SliderTrackAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackHorizontalAppearance {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackPart {
+    WebCore::StyleAppearance type();
     WebCore::IntSize thumbSize();
     WebCore::IntRect trackBounds();
-    WTF::Vector<double> tickRatios();
-};
-
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackVerticalAppearance {
-    WebCore::IntSize thumbSize();
-    WebCore::IntRect trackBounds();
-    WTF::Vector<double> tickRatios();
-};
-
-header: <WebCore/ButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SquareButtonAppearance {
-};
-
-header: <WebCore/TextAreaAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ListBoxAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::TextAreaAppearance {
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::TextFieldAppearance {
-};
-
-header: <WebCore/ToggleButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::CheckboxAppearance {
-};
-
-header: <WebCore/ToggleButtonAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::RadioAppearance {
-};
-
-header: <WebCore/SwitchThumbAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchThumbAppearance {
-};
-
-header: <WebCore/SwitchTrackAppearance.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchTrackAppearance {
-};
+    Vector<double> tickRatios();
+}
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
     float azimuth();

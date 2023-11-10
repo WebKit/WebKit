@@ -56,6 +56,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
+#import <UIKit/UIKit.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreSVG)
@@ -123,9 +124,15 @@ static NSString * const newTabManifestKey = @"newtab";
 static NSString * const contentSecurityPolicyManifestKey = @"content_security_policy";
 static NSString * const contentSecurityPolicyExtensionPagesManifestKey = @"extension_pages";
 
+static NSString * const commandsManifestKey = @"commands";
+static NSString * const commandsSuggestedKeyManifestKey = @"suggested_key";
+static NSString * const commandsDescriptionKeyManifestKey = @"description";
+
 static NSString * const webAccessibleResourcesManifestKey = @"web_accessible_resources";
 static NSString * const webAccessibleResourcesResourcesManifestKey = @"resources";
 static NSString * const webAccessibleResourcesMatchesManifestKey = @"matches";
+
+static const size_t maximumNumberOfShortcutCommands = 4;
 
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
@@ -557,6 +564,8 @@ static _WKWebExtensionError toAPI(WebExtension::Error error)
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidBackgroundContent:
         return _WKWebExtensionErrorInvalidManifestEntry;
+    case WebExtension::Error::InvalidCommands:
+        return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidContentScripts:
         return _WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidContentSecurityPolicy:
@@ -631,6 +640,10 @@ ALLOW_NONLITERAL_FORMAT_END
 
     case Error::InvalidBackgroundContent:
         localizedDescription = WEB_UI_STRING("Empty or invalid `background` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for background");
+        break;
+
+    case Error::InvalidCommands:
+        localizedDescription = WEB_UI_STRING("Invalid `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for commands");
         break;
 
     case Error::InvalidContentScripts:
@@ -768,6 +781,7 @@ NSArray *WebExtension::errors()
     populatePagePropertiesIfNeeded();
     populateContentSecurityPolicyStringsIfNeeded();
     populateWebAccessibleResourcesIfNeeded();
+    populateCommandsIfNeeded();
 
     return [m_errors copy] ?: @[ ];
 }
@@ -1321,6 +1335,187 @@ void WebExtension::populatePagePropertiesIfNeeded()
     m_overrideNewTabPagePath = objectForKey<NSString>(overridesDictionary, newTabManifestKey);
     if (!m_overrideNewTabPagePath && overridesDictionary[newTabManifestKey])
         recordError(createError(Error::InvalidURLOverrides, WEB_UI_STRING("Empty or invalid `newtab` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry")));
+}
+
+const WebExtension::CommandsVector& WebExtension::commands()
+{
+    populateCommandsIfNeeded();
+    return m_commands;
+}
+
+bool WebExtension::hasCommands()
+{
+    populateCommandsIfNeeded();
+    return !m_commands.isEmpty();
+}
+
+using ModifierFlags = WebExtension::ModifierFlags;
+
+static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags>& modifierFlags, String& key)
+{
+    modifierFlags = { };
+    key = emptyString();
+
+    // An empty shortcut is allowed.
+    if (shortcut.isEmpty())
+        return true;
+
+    static NeverDestroyed<HashMap<String, ModifierFlags>> modifierMap = HashMap<String, ModifierFlags> {
+        { "Ctrl"_s, ModifierFlags::Command },
+        { "Command"_s, ModifierFlags::Command },
+        { "Alt"_s, ModifierFlags::Option },
+        { "MacCtrl"_s, ModifierFlags::Control },
+        { "Shift"_s, ModifierFlags::Shift }
+    };
+
+    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+        { "Comma"_s, ","_s },
+        { "Period"_s, "."_s },
+        { "Space"_s, " "_s },
+        { "F1"_s, @"\uF704" },
+        { "F2"_s, @"\uF705" },
+        { "F3"_s, @"\uF706" },
+        { "F4"_s, @"\uF707" },
+        { "F5"_s, @"\uF708" },
+        { "F6"_s, @"\uF709" },
+        { "F7"_s, @"\uF70A" },
+        { "F8"_s, @"\uF70B" },
+        { "F9"_s, @"\uF70C" },
+        { "F10"_s, @"\uF70D" },
+        { "F11"_s, @"\uF70E" },
+        { "F12"_s, @"\uF70F" },
+        { "Insert"_s, @"\uF727" },
+        { "Delete"_s, @"\uF728" },
+        { "Home"_s, @"\uF729" },
+        { "End"_s, @"\uF72B" },
+        { "PageUp"_s, @"\uF72C" },
+        { "PageDown"_s, @"\uF72D" },
+        { "Up"_s, @"\uF700" },
+        { "Down"_s, @"\uF701" },
+        { "Left"_s, @"\uF702" },
+        { "Right"_s, @"\uF703" }
+    };
+
+    auto parts = shortcut.split('+');
+
+    // Reject shortcuts with fewer than two or more than three components.
+    if (parts.size() < 2 || parts.size() > 3)
+        return false;
+
+    key = parts.takeLast();
+
+    // Keys should not be present in the modifier map.
+    if (modifierMap.get().contains(key))
+        return false;
+
+    if (key.length() == 1) {
+        // Single-character keys must be alphanumeric.
+        if (!isASCIIAlphanumeric(key[0]))
+            return false;
+
+        key = key.convertToASCIILowercase();
+    } else {
+        auto entry = specialKeyMap.get().find(key);
+
+        // Non-alphanumeric keys must be in the special key map.
+        if (entry == specialKeyMap.get().end())
+            return false;
+
+        key = entry->value;
+    }
+
+    for (auto& part : parts) {
+        // Modifiers must exist in the modifier map.
+        if (!modifierMap.get().contains(part))
+            return false;
+
+        modifierFlags.add(modifierMap.get().get(part));
+    }
+
+    // At least one valid modifier is required.
+    if (!modifierFlags)
+        return false;
+
+    return true;
+}
+
+void WebExtension::populateCommandsIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestCommands)
+        return;
+
+    m_parsedManifestCommands = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands
+
+    auto *commandsDictionary = objectForKey<NSDictionary>(m_manifest, commandsManifestKey, false, NSDictionary.class);
+    if (!commandsDictionary.count) {
+        if (id value = [m_manifest objectForKey:commandsManifestKey]; ((value && ![value isKindOfClass:NSDictionary.class]) || dynamic_objc_cast<NSDictionary>(value).count))
+            recordError(createError(Error::InvalidCommands));
+        return;
+    }
+
+    size_t commandsWithShortcuts = 0;
+    std::optional<String> error;
+
+    for (NSString *commandIdentifier in commandsDictionary) {
+        if (!commandIdentifier.length) {
+            error = WEB_UI_STRING("Empty or invalid identifier in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command identifier");
+            continue;
+        }
+
+        auto *commandDictionary = objectForKey<NSDictionary>(commandsDictionary, commandIdentifier);
+        if (!commandDictionary.count) {
+            error = WEB_UI_STRING("Empty or invalid command in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command");
+            continue;
+        }
+
+        CommandData commandData;
+        commandData.identifier = commandIdentifier;
+        commandData.activationKey = emptyString();
+        commandData.modifierFlags = { };
+
+        auto *description = objectForKey<NSString>(commandDictionary, commandsDescriptionKeyManifestKey);
+        if (!description.length) {
+            error = WEB_UI_STRING("Empty or invalid `description` in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command description");
+            continue;
+        }
+
+        commandData.description = description;
+
+        if (auto *suggestedKeyDictionary = objectForKey<NSDictionary>(commandDictionary, commandsSuggestedKeyManifestKey)) {
+            static NSString * const macPlatform = @"mac";
+            static NSString * const iosPlatform = @"ios";
+            static NSString * const defaultPlatform = @"default";
+
+#if PLATFORM(MAC)
+            auto *platformShortcut = objectForKey<NSString>(suggestedKeyDictionary, macPlatform) ?: objectForKey<NSString>(suggestedKeyDictionary, iosPlatform);
+#else
+            auto *platformShortcut = objectForKey<NSString>(suggestedKeyDictionary, iosPlatform) ?: objectForKey<NSString>(suggestedKeyDictionary, macPlatform);
+#endif
+            if (!platformShortcut.length)
+                platformShortcut = objectForKey<NSString>(suggestedKeyDictionary, defaultPlatform) ?: @"";
+
+            if (!parseCommandShortcut(platformShortcut, commandData.modifierFlags, commandData.activationKey)) {
+                error = WEB_UI_STRING("Invalid `suggested_key` in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut");
+                continue;
+            }
+
+            if (!commandData.activationKey.isEmpty() && ++commandsWithShortcuts > maximumNumberOfShortcutCommands) {
+                error = WEB_UI_STRING("Too many shortcuts specified for `commands`, only 4 shortcuts are allowed.", "WKWebExtensionErrorInvalidManifestEntry description for too many command shortcuts");
+                commandData.activationKey = emptyString();
+                commandData.modifierFlags = { };
+            }
+        }
+
+        m_commands.append(WTFMove(commandData));
+    }
+
+    if (error)
+        recordError(createError(Error::InvalidCommands, error.value()));
 }
 
 const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()
