@@ -98,6 +98,8 @@ private:
     void didChangeScrollOffset() override;
     void didChangeIsInWindow();
 
+    void didChangeSettings() override;
+
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
 
@@ -113,7 +115,9 @@ private:
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
-    RefPtr<WebCore::GraphicsLayer> m_contentsLayer; // FIXME: Temporary, this will be replaced with a TiledBacking.
+    RefPtr<WebCore::GraphicsLayer> m_clippingLayer;
+    RefPtr<WebCore::GraphicsLayer> m_scrollingLayer;
+    RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
 };
 
 } // namespace WebKit

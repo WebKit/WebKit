@@ -105,6 +105,8 @@ public:
 
     void invalidateRect(const WebCore::IntRect&) final;
 
+    void didChangeSettings();
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();

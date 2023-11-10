@@ -157,6 +157,8 @@ public:
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
 
+    virtual void didChangeSettings() { }
+
     // HUD Actions.
 #if ENABLE(PDF_HUD)
     virtual void zoomIn() = 0;

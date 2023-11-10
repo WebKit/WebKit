@@ -4624,6 +4624,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #include <WebKitAdditions/WebPageUpdatePreferencesAdditions.cpp>
 #endif
 
+#if ENABLE(PDF_PLUGIN)
+    for (auto& pluginView : m_pluginViews)
+        pluginView.didChangeSettings();
+#endif
+
     m_page->settingsDidChange();
 }
 
