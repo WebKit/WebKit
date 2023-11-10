@@ -230,27 +230,24 @@ void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperati
     if (isAttached())
         m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
 
-    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::main(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
+    Vector<Ref<GenericPromise>> promises;
+    promises.append(updateBufferedFromTrackBuffers(trackBuffers));
+    if (m_client) {
+        if (m_groupEndTimestamp > duration()) {
+            // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+            // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+            // duration set to the maximum of the current duration and the group end timestamp.
+            promises.append(m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp));
+        }
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    }
+
+    GenericPromise::all(RunLoop::main(), promises)->whenSettled(RunLoop::main(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
         if (!weakSelf || !isAttached())
             return;
 
-        auto completionHandler = CompletionHandler<void()>([weakSelf = WTFMove(weakSelf), this, operation = WTFMove(operation)] {
-            if (!weakSelf || !isAttached())
-                return;
-
-            if (operation.abortCount == m_abortCount)
-                m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
-            m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-        });
-
-        // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
-        // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
-        // duration set to the maximum of the current duration and the group end timestamp.
-        if (m_groupEndTimestamp > duration()) {
-            m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
-            return;
-        }
-        completionHandler();
+        if (operation.abortCount == m_abortCount)
+            m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
     });
 }
 
