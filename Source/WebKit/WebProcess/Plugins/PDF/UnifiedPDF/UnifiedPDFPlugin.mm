@@ -71,14 +71,6 @@ GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
     return m_rootLayer.get();
 }
 
-void UnifiedPDFPlugin::createPDFDocument()
-{
-    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(m_data.get()));
-    auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
-
-    m_documentLayout.setPDFDocument(WTFMove(pdfDocument));
-}
-
 void UnifiedPDFPlugin::installPDFDocument()
 {
     ASSERT(isMainRunLoop());
@@ -86,11 +78,13 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (m_hasBeenDestroyed)
         return;
 
-    if (!m_documentLayout.hasPDFDocument())
+    if (!m_pdfDocument)
         return;
 
     if (!m_view)
         return;
+
+    m_documentLayout.setPDFDocument(m_pdfDocument.get());
 
     updateLayout();
 
@@ -200,11 +194,10 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         bufferContext.scale({ 1, -1 });
 
         destinationRect.setLocation({ });
-        constexpr bool preserveAspectRatio = true;
-        auto transform = CGPDFPageGetDrawingTransform(page.get(), kCGPDFCropBox, destinationRect, 0, preserveAspectRatio);
+        auto transform = [page transformForBox:kPDFDisplayBoxCropBox];
         bufferContext.concatCTM(transform);
 
-        CGContextDrawPDFPage(bufferContext.platformContext(), page.get());
+        [page drawWithBox:kPDFDisplayBoxCropBox toContext:imageBuffer->context().platformContext()];
     }
 
     context.fillRect(clipRect, WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
@@ -236,11 +229,6 @@ void UnifiedPDFPlugin::updateLayout()
     m_documentLayout.updateLayout(size());
     updateLayerHierarchy();
     updateScrollbars();
-}
-
-bool UnifiedPDFPlugin::isLocked() const
-{
-    return !CGPDFDocumentIsUnlocked(m_documentLayout.pdfDocument());
 }
 
 IntSize UnifiedPDFPlugin::contentsSize() const

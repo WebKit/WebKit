@@ -42,7 +42,6 @@
 #include <wtf/TypeTraits.h>
 #include <wtf/WeakPtr.h>
 
-// FIXME: These Objective-C classes should only appear in PDFPlugin, not here in the base class.
 OBJC_CLASS NSDictionary;
 OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
@@ -96,9 +95,8 @@ public:
 
     virtual CGFloat scaleFactor() const = 0;
 
-    virtual bool isLocked() const = 0;
+    bool isLocked() const;
 
-    // FIXME: Can we use PDFDocument here?
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const = 0;
     virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const = 0;
 
@@ -174,7 +172,7 @@ protected:
 
     virtual void teardown();
 
-    virtual void createPDFDocument() = 0;
+    void createPDFDocument();
     virtual void installPDFDocument() = 0;
     virtual void tryRunScriptsInPDFDocument() { }
 
@@ -183,6 +181,8 @@ protected:
     virtual void incrementalPDFStreamDidFail() { }
 
     virtual unsigned firstPageHeight() const = 0;
+
+    NSData *rawData() const;
 
     void ensureDataBufferLength(uint64_t);
     void addArchiveResource();
@@ -232,6 +232,7 @@ protected:
     PDFPluginIdentifier m_identifier;
 
     RetainPtr<CFMutableDataRef> m_data;
+    RetainPtr<PDFDocument> m_pdfDocument;
 
     String m_suggestedFilename;
     uint64_t m_streamedBytes { 0 };

@@ -48,15 +48,12 @@ private:
 
     void teardown() override;
 
-    void createPDFDocument() override;
     void installPDFDocument() override;
 
     CGFloat scaleFactor() const override;
 
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
-
-    bool isLocked() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override;
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;

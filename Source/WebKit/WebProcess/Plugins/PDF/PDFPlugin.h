@@ -161,7 +161,6 @@ private:
     void teardown() override;
     bool isComposited() const override { return true; }
 
-    void createPDFDocument() override;
     void installPDFDocument() override;
     void tryRunScriptsInPDFDocument() override;
 
@@ -175,8 +174,6 @@ private:
 
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
-
-    bool isLocked() const override;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
@@ -218,11 +215,7 @@ private:
 
     void createPasswordEntryForm();
 
-#ifdef __OBJC__
     NSData *liveData() const;
-    NSData *rawData() const { return (__bridge NSData *)m_data.get(); }
-#endif
-
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSClassRef jsPDFDocClass();
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -251,8 +244,6 @@ private:
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 
     URL m_sourceURL;
-
-    RetainPtr<PDFDocument> m_pdfDocument;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     void threadEntry(Ref<PDFPlugin>&&);
