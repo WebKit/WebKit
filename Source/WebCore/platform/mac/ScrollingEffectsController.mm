@@ -436,14 +436,14 @@ void ScrollingEffectsController::willStartRubberBandAnimation()
 {
     m_isAnimatingRubberBand = true;
     m_client.willStartRubberBandAnimation();
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
+    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::didStopRubberBandAnimation()
 {
     m_isAnimatingRubberBand = false;
     m_client.didStopRubberBandAnimation();
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
+    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
@@ -619,7 +619,7 @@ void ScrollingEffectsController::scheduleDiscreteScrollSnap(const FloatSize& del
         discreteSnapTransitionTimerFired();
     });
     m_discreteSnapTransitionTimer->startOneShot(discreteScrollSnapDelay);
-    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
+    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason::ScrollSnapInProgress);
 }
 
 void ScrollingEffectsController::discreteSnapTransitionTimerFired()
@@ -650,7 +650,7 @@ void ScrollingEffectsController::discreteSnapTransitionTimerFired()
     if (shouldStartScrollSnapAnimation)
         startScrollSnapAnimation();
     else {
-        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
+        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason::ScrollSnapInProgress);
         m_client.didStopScrollSnapAnimation();
     }
 }
