@@ -59,9 +59,12 @@ void RemoteImageDecoderAVFManager::deleteRemoteImageDecoder(const ImageDecoderId
         gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::DeleteDecoder(identifier), 0);
 }
 
-RemoteImageDecoderAVFManager::RemoteImageDecoderAVFManager(WebProcess&)
+Ref<RemoteImageDecoderAVFManager> RemoteImageDecoderAVFManager::create()
 {
+    return adoptRef(*new RemoteImageDecoderAVFManager);
 }
+
+RemoteImageDecoderAVFManager::RemoteImageDecoderAVFManager() = default;
 
 RemoteImageDecoderAVFManager::~RemoteImageDecoderAVFManager()
 {
@@ -76,11 +79,6 @@ void RemoteImageDecoderAVFManager::gpuProcessConnectionDidClose(GPUProcessConnec
         gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteImageDecoderAVFManager::messageReceiverName());
     m_gpuProcessConnection = nullptr;
     // FIXME: Do we need to do more when m_remoteImageDecoders is not empty to re-create them?
-}
-
-const char*  RemoteImageDecoderAVFManager::supplementName()
-{
-    return "RemoteImageDecoderAVFManager";
 }
 
 GPUProcessConnection& RemoteImageDecoderAVFManager::ensureGPUProcessConnection()

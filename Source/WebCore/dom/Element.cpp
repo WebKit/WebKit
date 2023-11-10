@@ -673,7 +673,7 @@ NamedNodeMap& Element::attributes() const
     if (NamedNodeMap* attributeMap = rareData.attributeMap())
         return *attributeMap;
 
-    rareData.setAttributeMap(makeUnique<NamedNodeMap>(const_cast<Element&>(*this)));
+    rareData.setAttributeMap(makeUniqueWithoutRefCountedCheck<NamedNodeMap>(const_cast<Element&>(*this)));
     return *rareData.attributeMap();
 }
 
@@ -4336,7 +4336,7 @@ DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
-        data.setClassList(makeUnique<DOMTokenList>(*this, HTMLNames::classAttr));
+        data.setClassList(makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::classAttr));
     return *data.classList();
 }
 
@@ -4349,7 +4349,7 @@ DOMTokenList& Element::part()
 {
     auto& data = ensureElementRareData();
     if (!data.partList())
-        data.setPartList(makeUnique<DOMTokenList>(*this, HTMLNames::partAttr));
+        data.setPartList(makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::partAttr));
     return *data.partList();
 }
 
@@ -4357,7 +4357,7 @@ DatasetDOMStringMap& Element::dataset()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.dataset())
-        data.setDataset(makeUnique<DatasetDOMStringMap>(*this));
+        data.setDataset(makeUniqueWithoutRefCountedCheck<DatasetDOMStringMap>(*this));
     return *data.dataset();
 }
 
@@ -5399,7 +5399,7 @@ void Element::ensureFormAssociatedCustomElement()
     RELEASE_ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(*this));
     auto& data = ensureElementRareData();
     if (!data.formAssociatedCustomElement())
-        data.setFormAssociatedCustomElement(makeUnique<FormAssociatedCustomElement>(downcast<HTMLMaybeFormAssociatedCustomElement>(*this)));
+        data.setFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(downcast<HTMLMaybeFormAssociatedCustomElement>(*this)));
 }
 
 FormAssociatedCustomElement& Element::formAssociatedCustomElementUnsafe() const
