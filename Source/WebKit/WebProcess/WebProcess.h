@@ -202,7 +202,7 @@ public:
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* focusedWebPage() const;
-    bool hasWebPages() const { return !m_pageMap.isEmpty(); }
+    bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
     
@@ -832,6 +832,7 @@ private:
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
     bool m_imageAnimationEnabled { true };
+    bool m_hasEverHadAnyWebPages { false };
 
     HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
     String m_mediaKeysStorageDirectory;

@@ -841,6 +841,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     auto result = m_pageMap.add(pageID, nullptr);
+    m_hasEverHadAnyWebPages = true;
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         auto page = WebPage::create(pageID, WTFMove(parameters));
