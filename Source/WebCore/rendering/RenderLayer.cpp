@@ -1164,6 +1164,14 @@ void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
     }
 }
 
+std::optional<LayoutRect> RenderLayer::cachedClippedOverflowRect() const
+{
+    if (!m_repaintRectsValid)
+        return std::nullopt;
+
+    return m_repaintRects.clippedOverflowRect;
+}
+
 void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap)
 {
     ASSERT(!m_visibleContentStatusDirty);
@@ -1189,7 +1197,7 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
         layer->computeRepaintRectsIncludingDescendants();
 }
 
-void RenderLayer::setRepaintRects(const LayerRepaintRects& rects)
+void RenderLayer::setRepaintRects(const RepaintRects& rects)
 {
     m_repaintRects = rects;
     m_repaintRectsValid = true;
@@ -2026,7 +2034,7 @@ RenderLayer* RenderLayer::enclosingTransformedAncestor() const
     return curr;
 }
 
-inline bool RenderLayer::shouldRepaintAfterLayout() const
+bool RenderLayer::shouldRepaintAfterLayout() const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // The SVG containers themselves never trigger repaints, only their contents are allowed to.
