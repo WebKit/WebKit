@@ -290,8 +290,8 @@ http/wpt/webxr/xrViewport_singleView_valid.https.html [ Failure ]
 
 # Pending to create bug.
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
-fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Failure Pass ]
-fast/events/scrollbar-double-click.html [ Failure ]
+[ Release ] fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Failure Pass ]
+[ Release ] fast/events/scrollbar-double-click.html [ Failure ]
 fast/rendering/render-style-null-optgroup-crash.html [ Failure Pass ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 media/no-fullscreen-when-hidden.html [ Failure ]
@@ -871,6 +871,20 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
 
+webkit.org/b/259912 [ Debug ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Crash ]
+webkit.org/b/259912 [ Debug ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Crash ]
+webkit.org/b/259912 [ Debug ] css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/dom/vertical-scrollbar-in-rtl.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/events/scroll-after-click-on-tab-index.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/events/scrollbar-double-click.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/scrolling/scrollbar-mousedown-move-mouseup.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fullscreen/full-screen-min-max-width-height.html [ Crash ]
+webkit.org/b/259912 [ Debug ] fullscreen/full-screen-restrictions.html [ Crash ]
+webkit.org/b/259912 [ Debug ] imported/blink/fast/transforms/transform-update-frame-overflow.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -970,7 +984,7 @@ webkit.org/b/252878 fast/hidpi/image-set-as-background-quotes.html [ ImageOnlyFa
 webkit.org/b/252878 fast/hidpi/image-set-gradient.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-gradient-multi.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-units.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass Timeout ]
+webkit.org/b/252878 [ Release ] fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass Timeout ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Crash Failure Pass ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak.html [ Crash Failure Pass ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-utterance-uses-voice.html [ Crash Pass ]
@@ -983,7 +997,7 @@ webkit.org/b/252878 http/wpt/fetch/fetch-in-pagehide.html [ Failure Pass ]
 webkit.org/b/252878 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
 webkit.org/b/252878 imported/blink/compositing/squashing/squashing-does-not-stop-transform-propagation.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/blink/fast/hidpi/border-background-align.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 [ Release ] imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure Pass ]
@@ -1328,7 +1342,7 @@ webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure 
 webkit.org/b/188505 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/188505 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/188505 fast/dom/title-directionality.html [ Failure ]
-webkit.org/b/188505 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/188505 [ Release ] fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 
 webkit.org/b/188508 fast/dom/Window/window-postmessage-clone.html [ Timeout ]
 webkit.org/b/188508 fast/dom/Window/window-postmessage-clone-frames.html [ Timeout ]
@@ -1454,7 +1468,7 @@ webkit.org/b/212155 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 webkit.org/b/212200 fast/spatial-navigation/snav-input.html [ Failure ]
 webkit.org/b/212200 fast/spatial-navigation/snav-textarea.html [ Failure ]
-webkit.org/b/212200 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
+webkit.org/b/212200 [ Release ] fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 webkit.org/b/212023 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
