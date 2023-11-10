@@ -119,7 +119,7 @@ private:
     RefPtr<RemoteVideoFrameObjectHeap> m_objectHeap;
     WebCore::ProcessIdentity m_resourceOwner;
     UseIOSurfaceBufferPool m_useIOSurfaceBufferPool { UseIOSurfaceBufferPool::No };
-    IPC::Semaphore m_semaphore;
+    std::optional<IPC::Semaphore> m_semaphore;
     RefPtr<SharedMemory> m_storage;
 
     RetainPtr<CVPixelBufferPoolRef> m_bufferPool;

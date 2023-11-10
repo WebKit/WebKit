@@ -211,7 +211,8 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBufferFromSharedMemory()
     }
 
     auto scope = makeScopeExit([&] {
-        m_semaphore.signal();
+        if (m_semaphore)
+            m_semaphore->signal();
     });
 
     auto* data = static_cast<const uint8_t*>(m_storage->data());
