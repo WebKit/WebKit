@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MeterAppearance.h"
+#pragma once
 
 #include "ControlFactory.h"
-#include "PlatformControl.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-MeterAppearance::MeterAppearance()
-    : m_gaugeRegion(GaugeRegion::EvenLessGood)
-    , m_value(0)
-    , m_minimum(0)
-    , m_maximum(0)
-{
-}
+class InnerSpinButtonPart final : public ControlPart {
+public:
+    static Ref<InnerSpinButtonPart> create()
+    {
+        return adoptRef(*new InnerSpinButtonPart());
+    }
 
-MeterAppearance::MeterAppearance(GaugeRegion gaugeRegion, double value, double minimum, double maximum)
-    : m_gaugeRegion(gaugeRegion)
-    , m_value(value)
-    , m_minimum(minimum)
-    , m_maximum(maximum)
-{
-}
+private:
+    InnerSpinButtonPart()
+        : ControlPart(StyleAppearance::InnerSpinButton)
+    {
+    }
 
-std::unique_ptr<PlatformControl> MeterAppearance::createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-{
-    return controlFactory.createPlatformMeter(part);
-}
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformInnerSpinButton(*this);
+    }
+};
 
 } // namespace WebCore

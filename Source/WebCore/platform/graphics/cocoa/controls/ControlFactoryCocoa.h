@@ -36,7 +36,7 @@ protected:
     using ControlFactory::ControlFactory;
 
 #if ENABLE(APPLE_PAY)
-    std::unique_ptr<PlatformControl> createPlatformApplePayButton(ControlPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) override;
 #endif
 };
 

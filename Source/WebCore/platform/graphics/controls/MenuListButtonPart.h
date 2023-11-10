@@ -25,27 +25,28 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_CONTROLS)
-
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class ImageControlsButtonAppearance {
+class MenuListButtonPart final : public ControlPart {
 public:
-    ImageControlsButtonAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::ImageControlsButton;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<MenuListButtonPart> create()
     {
-        return controlFactory.createPlatformImageControlsButton(part);
+        return adoptRef(*new MenuListButtonPart());
+    }
+
+private:
+    MenuListButtonPart()
+        : ControlPart(StyleAppearance::MenulistButton)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformMenuListButton(*this);
     }
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_CONTROLS)

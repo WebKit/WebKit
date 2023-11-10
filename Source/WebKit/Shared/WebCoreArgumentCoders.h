@@ -338,6 +338,12 @@ template<> struct ArgumentCoder<WebCore::SystemImage> {
     static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::ControlPart> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::ControlPart&);
+    static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WebCore::LightSource> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::LightSource&);

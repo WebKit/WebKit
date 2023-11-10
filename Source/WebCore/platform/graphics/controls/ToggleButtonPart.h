@@ -26,21 +26,27 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class MenuListAppearance {
+class ToggleButtonPart final : public ControlPart {
 public:
-    MenuListAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::Menulist;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<ToggleButtonPart> create(StyleAppearance type)
     {
-        return controlFactory.createPlatformMenuList(part);
+        return adoptRef(*new ToggleButtonPart(type));
+    }
+
+private:
+    ToggleButtonPart(StyleAppearance type)
+        : ControlPart(type)
+    {
+        ASSERT(type == StyleAppearance::Checkbox || type == StyleAppearance::Radio);
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformToggleButton(*this);
     }
 };
 

@@ -28,15 +28,17 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
-#import "SliderTrackAppearance.h"
+#import "SliderTrackPart.h"
 
 namespace WebCore {
 
 class SliderTrackMac final : public ControlMac {
 public:
-    SliderTrackMac(ControlPart&, ControlFactoryMac&);
+    SliderTrackMac(SliderTrackPart&, ControlFactoryMac&);
 
 private:
+    const SliderTrackPart& owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart); }
+
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;

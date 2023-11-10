@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ApplePayButtonPart.h"
+
+#if ENABLE(APPLE_PAY)
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
+Ref<ApplePayButtonPart> ApplePayButtonPart::create()
+{
+    return adoptRef(*new ApplePayButtonPart(ApplePayButtonType::Plain, ApplePayButtonStyle::White, { }));
+}
 
-class TextAreaAppearance {
-public:
-    TextAreaAppearance() = default;
+Ref<ApplePayButtonPart> ApplePayButtonPart::create(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
+{
+    return adoptRef(*new ApplePayButtonPart(buttonType, buttonStyle, locale));
+}
 
-    static constexpr StyleAppearance appearance = StyleAppearance::TextArea;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-    {
-        return controlFactory.createPlatformTextArea(part);
-    }
-};
+ApplePayButtonPart::ApplePayButtonPart(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
+    : ControlPart(StyleAppearance::ApplePayButton)
+    , m_buttonType(buttonType)
+    , m_buttonStyle(buttonStyle)
+    , m_locale(locale)
+{
+}
 
-class ListBoxAppearance final : public TextAreaAppearance {
-public:
-    ListBoxAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::Listbox;
-};
+std::unique_ptr<PlatformControl> ApplePayButtonPart::createPlatformControl()
+{
+    return controlFactory().createPlatformApplePayButton(*this);
+}
 
 } // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

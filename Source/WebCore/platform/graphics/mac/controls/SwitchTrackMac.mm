@@ -28,14 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "SwitchMacUtilities.h"
-#import "SwitchTrackAppearance.h"
+#import "SwitchTrackPart.h"
 
 namespace WebCore {
 
-SwitchTrackMac::SwitchTrackMac(ControlPart& part, ControlFactoryMac& controlFactory)
+SwitchTrackMac::SwitchTrackMac(SwitchTrackPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
 {
-    ASSERT(m_owningPart.type() == StyleAppearance::SwitchTrack);
+    ASSERT(part.type() == StyleAppearance::SwitchTrack);
 }
 
 IntSize SwitchTrackMac::cellSize(NSControlSize controlSize, const ControlStyle&) const

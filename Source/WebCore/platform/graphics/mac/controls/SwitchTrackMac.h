@@ -30,9 +30,11 @@
 
 namespace WebCore {
 
+class SwitchTrackMac;
+
 class SwitchTrackMac final : public ControlMac {
 public:
-    SwitchTrackMac(ControlPart&, ControlFactoryMac&);
+    SwitchTrackMac(SwitchTrackPart&, ControlFactoryMac&);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

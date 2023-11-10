@@ -32,11 +32,11 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "SearchFieldResultsAppearance.h"
+#import "SearchFieldResultsPart.h"
 
 namespace WebCore {
 
-SearchFieldResultsMac::SearchFieldResultsMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell, NSMenu *searchMenuTemplate)
+SearchFieldResultsMac::SearchFieldResultsMac(SearchFieldResultsPart& owningPart, ControlFactoryMac& controlFactory, NSSearchFieldCell *searchFieldCell, NSMenu *searchMenuTemplate)
     : SearchControlMac(owningPart, controlFactory, searchFieldCell)
     , m_searchMenuTemplate(searchMenuTemplate)
 {

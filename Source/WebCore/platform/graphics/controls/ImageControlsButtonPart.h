@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,45 +25,32 @@
 
 #pragma once
 
-#include "StyleAppearance.h"
+#if ENABLE(SERVICE_CONTROLS)
+
+#include "ControlFactory.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlFactory;
-class ControlPart;
-class PlatformControl;
-
-class MeterAppearance {
+class ImageControlsButtonPart final : public ControlPart {
 public:
-    enum class GaugeRegion : uint8_t {
-        Optimum,
-        Suboptimal,
-        EvenLessGood
-    };
-
-    MeterAppearance();
-    WEBCORE_EXPORT MeterAppearance(GaugeRegion, double value, double minimum, double maximum);
-
-    static constexpr StyleAppearance appearance = StyleAppearance::Meter;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart&, ControlFactory&);
-
-    GaugeRegion gaugeRegion() const { return m_gaugeRegion; }
-    void setGaugeRegion(GaugeRegion gaugeRegion) { m_gaugeRegion = gaugeRegion; }
-
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
-
-    double minimum() const { return m_minimum; }
-    void setMinimum(double minimum) { m_minimum = minimum; }
-
-    double maximum() const { return m_maximum; }
-    void setMaximum(double maximum) { m_maximum = maximum; }
+    static Ref<ImageControlsButtonPart> create()
+    {
+        return adoptRef(*new ImageControlsButtonPart());
+    }
 
 private:
-    GaugeRegion m_gaugeRegion;
-    double m_value;
-    double m_minimum;
-    double m_maximum;
+    ImageControlsButtonPart()
+        : ControlPart(StyleAppearance::ImageControlsButton)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformImageControlsButton(*this);
+    }
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(SERVICE_CONTROLS)

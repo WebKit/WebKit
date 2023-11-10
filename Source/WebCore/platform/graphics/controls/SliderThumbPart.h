@@ -26,21 +26,27 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class InnerSpinButtonAppearance {
+class SliderThumbPart final : public ControlPart {
 public:
-    InnerSpinButtonAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::InnerSpinButton;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<SliderThumbPart> create(StyleAppearance type)
     {
-        return controlFactory.createPlatformInnerSpinButton(part);
+        return adoptRef(*new SliderThumbPart(type));
+    }
+
+private:
+    SliderThumbPart(StyleAppearance type)
+        : ControlPart(type)
+    {
+        ASSERT(type == StyleAppearance::SliderThumbHorizontal || type == StyleAppearance::SliderThumbVertical);
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformSliderThumb(*this);
     }
 };
 

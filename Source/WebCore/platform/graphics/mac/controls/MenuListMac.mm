@@ -31,16 +31,15 @@
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "MenuListAppearance.h"
+#import "MenuListPart.h"
 
 namespace WebCore {
 
-MenuListMac::MenuListMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSPopUpButtonCell *popUpButtonCell)
+MenuListMac::MenuListMac(MenuListPart& owningPart, ControlFactoryMac& controlFactory, NSPopUpButtonCell *popUpButtonCell)
     : ControlMac(owningPart, controlFactory)
     , m_popUpButtonCell(popUpButtonCell)
 {
     ASSERT(m_popUpButtonCell);
-    ASSERT(owningPart.type() == StyleAppearance::Menulist);
 }
 
 IntSize MenuListMac::cellSize(NSControlSize controlSize, const ControlStyle&) const

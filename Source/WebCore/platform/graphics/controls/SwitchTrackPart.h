@@ -25,18 +25,26 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class SwitchTrackAppearance final {
+class SwitchTrackPart final : public ControlPart {
 public:
-    SwitchTrackAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::SwitchTrack;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<SwitchTrackPart> create()
     {
-        return controlFactory.createPlatformSwitchTrack(part);
+        return adoptRef(*new SwitchTrackPart());
+    }
+
+private:
+    SwitchTrackPart()
+        : ControlPart(StyleAppearance::SwitchTrack)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformSwitchTrack(*this);
     }
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ApplePayButtonAppearance.h"
-
-#if ENABLE(APPLE_PAY)
+#pragma once
 
 #include "ControlFactory.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-ApplePayButtonAppearance::ApplePayButtonAppearance()
-    : ApplePayButtonAppearance(ApplePayButtonType::Plain, ApplePayButtonStyle::White, { })
-{
-}
+class ButtonPart final : public ControlPart {
+public:
+    static Ref<ButtonPart> create(StyleAppearance type)
+    {
+        return adoptRef(*new ButtonPart(type));
+    }
 
-ApplePayButtonAppearance::ApplePayButtonAppearance(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
-    : m_buttonType(buttonType)
-    , m_buttonStyle(buttonStyle)
-    , m_locale(locale)
-{
-}
+private:
+    ButtonPart(StyleAppearance type)
+        : ControlPart(type)
+    {
+        ASSERT(type == StyleAppearance::Button
+            || type == StyleAppearance::DefaultButton
+            || type == StyleAppearance::PushButton
+            || type == StyleAppearance::SquareButton);
+    }
 
-std::unique_ptr<PlatformControl> ApplePayButtonAppearance::createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-{
-    return controlFactory.createPlatformApplePayButton(part);
-}
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformButton(*this);
+    }
+};
 
 } // namespace WebCore
-
-#endif // ENABLE(APPLE_PAY)

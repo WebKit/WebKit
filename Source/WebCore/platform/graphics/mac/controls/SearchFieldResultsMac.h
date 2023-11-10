@@ -35,7 +35,7 @@ class SearchFieldResultsPart;
 
 class SearchFieldResultsMac final : public SearchControlMac {
 public:
-    SearchFieldResultsMac(ControlPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *, NSMenu *searchMenuTemplate);
+    SearchFieldResultsMac(SearchFieldResultsPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *, NSMenu *searchMenuTemplate);
 
 private:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;

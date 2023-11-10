@@ -33,11 +33,11 @@ OBJC_CLASS NSServicesRolloverButtonCell;
 
 namespace WebCore {
 
-class ImageControlsButtonAppearance;
+class ImageControlsButtonPart;
 
 class ImageControlsButtonMac final : public ControlMac {
 public:
-    ImageControlsButtonMac(ControlPart&, ControlFactoryMac&, NSServicesRolloverButtonCell *);
+    ImageControlsButtonMac(ImageControlsButtonPart&, ControlFactoryMac&, NSServicesRolloverButtonCell *);
 
     static IntSize servicesRolloverButtonCellSize();
 

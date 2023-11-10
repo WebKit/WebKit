@@ -26,20 +26,26 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-
-class SearchFieldCancelButtonAppearance {
+class SearchFieldCancelButtonPart final : public ControlPart {
 public:
-    SearchFieldCancelButtonAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::SearchFieldCancelButton;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<SearchFieldCancelButtonPart> create()
     {
-        return controlFactory.createPlatformSearchFieldCancelButton(part);
+        return adoptRef(*new SearchFieldCancelButtonPart());
+    }
+
+private:
+    SearchFieldCancelButtonPart()
+        : ControlPart(StyleAppearance::SearchFieldCancelButton)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformSearchFieldCancelButton(*this);
     }
 };
 

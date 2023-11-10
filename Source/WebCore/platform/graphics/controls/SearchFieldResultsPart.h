@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProgressBarAppearance.h"
+#pragma once
 
 #include "ControlFactory.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-ProgressBarAppearance::ProgressBarAppearance()
-    : m_position(0)
-    , m_animationStartTime(0_s)
-{
-}
+class SearchFieldResultsPart final : public ControlPart {
+public:
+    static Ref<SearchFieldResultsPart> create(StyleAppearance type)
+    {
+        return adoptRef(*new SearchFieldResultsPart(type));
+    }
 
-ProgressBarAppearance::ProgressBarAppearance(double position, const Seconds& animationStartTime)
-    : m_position(position)
-    , m_animationStartTime(animationStartTime)
-{
-}
+private:
+    SearchFieldResultsPart(StyleAppearance type)
+        : ControlPart(type)
+    {
+        ASSERT(type == StyleAppearance::SearchFieldResultsButton || type == StyleAppearance::SearchFieldResultsDecoration);
+    }
 
-std::unique_ptr<PlatformControl> ProgressBarAppearance::createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-{
-    return controlFactory.createPlatformProgressBar(part);
-}
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformSearchFieldResults(*this);
+    }
+};
 
 } // namespace WebCore

@@ -25,45 +25,44 @@
 
 #pragma once
 
-#include "ControlFactory.h"
-#include "PlatformControl.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class ButtonAppearanceBase {
+class MeterPart : public ControlPart {
 public:
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-    {
-        return controlFactory.createPlatformButton(part);
-    }
-};
+    enum class GaugeRegion : uint8_t {
+        Optimum,
+        Suboptimal,
+        EvenLessGood
+    };
 
-class ButtonAppearance final : public ButtonAppearanceBase {
-public:
-    ButtonAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::Button;
-};
+    static Ref<MeterPart> create();
+    WEBCORE_EXPORT static Ref<MeterPart> create(GaugeRegion, double value, double minimum, double maximum);
 
-class DefaultButtonAppearance final : public ButtonAppearanceBase {
-public:
-    DefaultButtonAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::DefaultButton;
-};
+    GaugeRegion gaugeRegion() const { return m_gaugeRegion; }
+    void setGaugeRegion(GaugeRegion gaugeRegion) { m_gaugeRegion = gaugeRegion; }
 
-class PushButtonAppearance final : public ButtonAppearanceBase {
-public:
-    PushButtonAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::PushButton;
-};
+    double value() const { return m_value; }
+    void setValue(double value) { m_value = value; }
 
-class SquareButtonAppearance final : public ButtonAppearanceBase {
-public:
-    SquareButtonAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::SquareButton;
+    double minimum() const { return m_minimum; }
+    void setMinimum(double minimum) { m_minimum = minimum; }
+
+    double maximum() const { return m_maximum; }
+    void setMaximum(double maximum) { m_maximum = maximum; }
+
+private:
+    MeterPart(GaugeRegion, double value, double minimum, double maximum);
+
+    std::unique_ptr<PlatformControl> createPlatformControl() override;
+
+    GaugeRegion m_gaugeRegion;
+    double m_value;
+    double m_minimum;
+    double m_maximum;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CONTROL_PART(Meter)

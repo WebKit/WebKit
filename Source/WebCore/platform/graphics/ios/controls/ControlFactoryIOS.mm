@@ -37,105 +37,105 @@ std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
     return makeUnique<ControlFactoryIOS>();
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformButton(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformButton(ButtonPart&)
 {
     notImplemented();
     return nullptr;
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformColorWell(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformColorWell(ColorWellPart&)
 {
     notImplemented();
     return nullptr;
 }
 #endif
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformInnerSpinButton(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformInnerSpinButton(InnerSpinButtonPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMenuList(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMenuList(MenuListPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMenuListButton(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMenuListButton(MenuListButtonPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMeter(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformMeter(MeterPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformProgressBar(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformProgressBar(ProgressBarPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchField(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchField(SearchFieldPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchFieldCancelButton(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchFieldResults(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSearchFieldResults(SearchFieldResultsPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSliderThumb(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSliderThumb(SliderThumbPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSliderTrack(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSliderTrack(SliderTrackPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchThumb(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchThumb(SwitchThumbPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchTrack(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformSwitchTrack(SwitchTrackPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformTextArea(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformTextArea(TextAreaPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformTextField(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformTextField(TextFieldPart&)
 {
     notImplemented();
     return nullptr;
 }
 
-std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformToggleButton(ControlPart&)
+std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformToggleButton(ToggleButtonPart&)
 {
     notImplemented();
     return nullptr;

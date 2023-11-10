@@ -30,9 +30,11 @@
 
 namespace WebCore {
 
+class SwitchThumbPart;
+
 class SwitchThumbMac final : public ControlMac {
 public:
-    SwitchThumbMac(ControlPart&, ControlFactoryMac&);
+    SwitchThumbMac(SwitchThumbPart&, ControlFactoryMac&);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;

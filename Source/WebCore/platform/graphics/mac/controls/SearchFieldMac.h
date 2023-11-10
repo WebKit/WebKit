@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class SearchFieldAppearance;
+class SearchFieldPart;
 
 class SearchFieldMac final : public SearchControlMac {
 public:
-    SearchFieldMac(ControlPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
+    SearchFieldMac(SearchFieldPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
 
 private:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;

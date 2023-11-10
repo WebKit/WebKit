@@ -25,32 +25,29 @@
 
 #pragma once
 
-#include "StyleAppearance.h"
-#include <wtf/Seconds.h>
+#include "ControlFactory.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlFactory;
-class ControlPart;
-class PlatformControl;
-
-class ProgressBarAppearance {
+class TextAreaPart final : public ControlPart {
 public:
-    ProgressBarAppearance();
-    WEBCORE_EXPORT ProgressBarAppearance(double position, const Seconds& animationStartTime);
-
-    static constexpr StyleAppearance appearance = StyleAppearance::ProgressBar;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart&, ControlFactory&);
-
-    double position() const { return m_position; }
-    void setPosition(double position) { m_position = position; }
-
-    Seconds animationStartTime() const { return m_animationStartTime; }
-    void setAnimationStartTime(Seconds animationStartTime) { m_animationStartTime = animationStartTime; }
+    static Ref<TextAreaPart> create(StyleAppearance type)
+    {
+        return adoptRef(*new TextAreaPart(type));
+    }
 
 private:
-    double m_position;
-    Seconds m_animationStartTime;
+    TextAreaPart(StyleAppearance type)
+        : ControlPart(type)
+    {
+        ASSERT(type == StyleAppearance::Listbox || type == StyleAppearance::TextArea);
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformTextArea(*this);
+    }
 };
 
 } // namespace WebCore

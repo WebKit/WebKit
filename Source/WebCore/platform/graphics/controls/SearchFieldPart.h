@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,31 +26,27 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class SearchFieldResultsPart {
+class SearchFieldPart final : public ControlPart {
 public:
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<SearchFieldPart> create()
     {
-        return controlFactory.createPlatformSearchFieldResults(part);
+        return adoptRef(*new SearchFieldPart());
     }
-};
 
-class SearchFieldResultsButtonAppearance final : public SearchFieldResultsPart {
-public:
-    SearchFieldResultsButtonAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::SearchFieldResultsButton;
-};
+private:
+    SearchFieldPart()
+        : ControlPart(StyleAppearance::SearchField)
+    {
+    }
 
-class SearchFieldResultsDecorationAppearance final : public SearchFieldResultsPart {
-public:
-    SearchFieldResultsDecorationAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::SearchFieldResultsDecoration;
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformSearchField(*this);
+    }
 };
 
 } // namespace WebCore

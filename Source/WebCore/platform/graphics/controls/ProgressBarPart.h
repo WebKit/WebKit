@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,31 @@
 
 #pragma once
 
-#include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class MenuListButtonAppearance {
+class ProgressBarPart : public ControlPart {
 public:
-    MenuListButtonAppearance() = default;
+    static Ref<ProgressBarPart> create();
+    WEBCORE_EXPORT static Ref<ProgressBarPart> create(double position, const Seconds& animationStartTime);
 
-    static constexpr StyleAppearance appearance = StyleAppearance::MenulistButton;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-    {
-        return controlFactory.createPlatformMenuListButton(part);
-    }
+    double position() const { return m_position; }
+    void setPosition(double position) { m_position = position; }
+
+    Seconds animationStartTime() const { return m_animationStartTime; }
+    void setAnimationStartTime(Seconds animationStartTime) { m_animationStartTime = animationStartTime; }
+
+private:
+    ProgressBarPart(double position, const Seconds& animationStartTime);
+
+    std::unique_ptr<PlatformControl> createPlatformControl() override;
+
+    double m_position;
+    Seconds m_animationStartTime;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CONTROL_PART(ProgressBar)

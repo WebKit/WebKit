@@ -44,7 +44,7 @@
 #import <wtf/Language.h>
 
 #if ENABLE(APPLE_PAY)
-#import "ApplePayButtonAppearance.h"
+#import "ApplePayButtonPart.h"
 #import "ApplePayLogoSystemImage.h"
 #endif
 

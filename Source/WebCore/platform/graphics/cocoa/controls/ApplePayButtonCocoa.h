@@ -31,13 +31,15 @@
 
 namespace WebCore {
 
-class ApplePayButtonAppearance;
+class ApplePayButtonPart;
 
 class ApplePayButtonCocoa final : public PlatformControl {
 public:
-    ApplePayButtonCocoa(ControlPart& owningPart);
+    ApplePayButtonCocoa(ApplePayButtonPart& owningMeterPart);
 
 private:
+    const ApplePayButtonPart& owningApplePayButtonPart() const { return downcast<ApplePayButtonPart>(m_owningPart); }
+
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
@@ -57,17 +57,10 @@ enum class ApplePayButtonStyle : uint8_t {
     Black,
 };
 
-class ControlFactory;
-class ControlPart;
-class PlatformControl;
-
-class ApplePayButtonAppearance {
+class ApplePayButtonPart : public ControlPart {
 public:
-    ApplePayButtonAppearance();
-    WEBCORE_EXPORT ApplePayButtonAppearance(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
-
-    static constexpr StyleAppearance appearance = StyleAppearance::ApplePayButton;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart&, ControlFactory&);
+    static Ref<ApplePayButtonPart> create();
+    WEBCORE_EXPORT static Ref<ApplePayButtonPart> create(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
 
     ApplePayButtonType buttonType() const { return m_buttonType; }
     void setButtonType(ApplePayButtonType buttonType) { m_buttonType = buttonType; }
@@ -79,11 +72,17 @@ public:
     void setLocale(String locale) { m_locale = locale; }
 
 private:
+    ApplePayButtonPart(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
+
+    std::unique_ptr<PlatformControl> createPlatformControl() override;
+
     ApplePayButtonType m_buttonType;
     ApplePayButtonStyle m_buttonStyle;
     String m_locale;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CONTROL_PART(ApplePayButton)
 
 #endif // ENABLE(APPLE_PAY)

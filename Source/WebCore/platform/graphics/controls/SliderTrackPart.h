@@ -25,28 +25,15 @@
 
 #pragma once
 
-#include "ControlStyle.h"
+#include "ControlPart.h"
 #include "IntRect.h"
-#include "StyleAppearance.h"
 
 namespace WebCore {
 
-class ControlFactory;
-class ControlPart;
-class GraphicsContext;
-class PlatformControl;
-
-enum class SliderTrackStyleType : uint8_t {
-    Horizontal,
-    Vertical
-};
-
-class SliderTrackAppearance {
+class SliderTrackPart : public ControlPart {
 public:
-    SliderTrackAppearance() = default;
-    WEBCORE_EXPORT SliderTrackAppearance(const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
-
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart&, ControlFactory&);
+    static Ref<SliderTrackPart> create(StyleAppearance);
+    WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
 
     IntSize thumbSize() const { return m_thumbSize; }
     void setThumbSize(IntSize thumbSize) { m_thumbSize = thumbSize; }
@@ -57,32 +44,22 @@ public:
     const Vector<double>& tickRatios() const { return m_tickRatios; }
     void setTickRatios(Vector<double>&& tickRatios) { m_tickRatios = WTFMove(tickRatios); }
 
-protected:
-    void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&, StyleAppearance) const;
+#if ENABLE(DATALIST_ELEMENT)
+    void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;
+#endif
+
+private:
+    SliderTrackPart(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
+
+    std::unique_ptr<PlatformControl> createPlatformControl() override;
 
     IntSize m_thumbSize;
     IntRect m_trackBounds;
     Vector<double> m_tickRatios;
 };
 
-class SliderTrackHorizontalAppearance final : public SliderTrackAppearance {
-public:
-    using SliderTrackAppearance::SliderTrackAppearance;
-    static constexpr StyleAppearance appearance = StyleAppearance::SliderHorizontal;
-
-#if ENABLE(DATALIST_ELEMENT)
-    void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;
-#endif
-};
-
-class SliderTrackVerticalAppearance final : public SliderTrackAppearance {
-public:
-    using SliderTrackAppearance::SliderTrackAppearance;
-    static constexpr StyleAppearance appearance = StyleAppearance::SliderVertical;
-
-#if ENABLE(DATALIST_ELEMENT)
-    void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;
-#endif
-};
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderTrackPart) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::SliderHorizontal || part.type() == WebCore::StyleAppearance::SliderVertical; } \
+SPECIALIZE_TYPE_TRAITS_END()

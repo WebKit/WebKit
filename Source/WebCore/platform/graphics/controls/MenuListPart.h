@@ -26,21 +26,26 @@
 #pragma once
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
-
-class TextFieldAppearance {
+class MenuListPart final : public ControlPart {
 public:
-    TextFieldAppearance() = default;
-
-    static constexpr StyleAppearance appearance = StyleAppearance::Listbox;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<MenuListPart> create()
     {
-        return controlFactory.createPlatformTextField(part);
+        return adoptRef(*new MenuListPart());
+    }
+
+private:
+    MenuListPart()
+        : ControlPart(StyleAppearance::Menulist)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformMenuList(*this);
     }
 };
 

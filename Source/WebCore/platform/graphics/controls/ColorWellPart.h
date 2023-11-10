@@ -25,29 +25,32 @@
 
 #pragma once
 
+#if ENABLE(INPUT_TYPE_COLOR)
+
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
+#include "ControlPart.h"
 
 namespace WebCore {
 
-class ControlPart;class PlatformControl;
-
-class ToggleButtonAppearance {
+class ColorWellPart final : public ControlPart {
 public:
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+    static Ref<ColorWellPart> create()
     {
-        return controlFactory.createPlatformToggleButton(part);
+        return adoptRef(*new ColorWellPart());
+    }
+
+private:
+    ColorWellPart()
+        : ControlPart(StyleAppearance::ColorWell)
+    {
+    }
+
+    std::unique_ptr<PlatformControl> createPlatformControl() final
+    {
+        return controlFactory().createPlatformColorWell(*this);
     }
 };
 
-class CheckboxAppearance final : public ToggleButtonAppearance {
-public:
-    static constexpr StyleAppearance appearance = StyleAppearance::Checkbox;
-};
-
-class RadioAppearance final : public ToggleButtonAppearance {
-public:
-    static constexpr StyleAppearance appearance = StyleAppearance::Radio;
-};
-
 } // namespace WebCore
+
+#endif // ENABLE(INPUT_TYPE_COLOR)

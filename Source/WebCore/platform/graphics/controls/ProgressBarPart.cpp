@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ProgressBarPart.h"
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
+Ref<ProgressBarPart> ProgressBarPart::create()
+{
+    return adoptRef(*new ProgressBarPart(0, 0_s));
+}
 
-class SliderThumbAppearance {
-public:
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-    {
-        return controlFactory.createPlatformSliderThumb(part);
-    }
-};
+Ref<ProgressBarPart> ProgressBarPart::create(double position, const Seconds& animationStartTime)
+{
+    return adoptRef(*new ProgressBarPart(position, animationStartTime));
+}
 
-class SliderThumbHorizontalAppearance final : public SliderThumbAppearance {
-public:
-    SliderThumbHorizontalAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::SliderThumbHorizontal;
-};
+ProgressBarPart::ProgressBarPart(double position, const Seconds& animationStartTime)
+    : ControlPart(StyleAppearance::ProgressBar)
+    , m_position(position)
+    , m_animationStartTime(animationStartTime)
+{
+}
 
-class SliderThumbVerticalAppearance final : public SliderThumbAppearance {
-public:
-    SliderThumbVerticalAppearance() = default;
-    static constexpr StyleAppearance appearance = StyleAppearance::SliderThumbVertical;
-};
+std::unique_ptr<PlatformControl> ProgressBarPart::createPlatformControl()
+{
+    return controlFactory().createPlatformProgressBar(*this);
+}
 
 } // namespace WebCore

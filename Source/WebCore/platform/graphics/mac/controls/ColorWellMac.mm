@@ -28,16 +28,15 @@
 
 #if PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
 
-#import "ColorWellAppearance.h"
+#import "ColorWellPart.h"
 #import "ControlFactoryMac.h"
 #import "LocalDefaultSystemAppearance.h"
 
 namespace WebCore {
 
-ColorWellMac::ColorWellMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
+ColorWellMac::ColorWellMac(ColorWellPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)
 {
-    ASSERT(m_owningPart.type() == StyleAppearance::ColorWell);
 }
 
 void ColorWellMac::updateCellStates(const FloatRect& rect, const ControlStyle& style)

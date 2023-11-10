@@ -24,22 +24,34 @@
  */
 
 #include "config.h"
-#include "SliderTrackAppearance.h"
+#include "SliderTrackPart.h"
 
 #include "ControlFactory.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
 
-SliderTrackAppearance::SliderTrackAppearance(const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
-    : m_thumbSize(thumbSize)
+Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type)
+{
+    return adoptRef(*new SliderTrackPart(type, { }, { }, { }));
+}
+
+Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+{
+    return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios)));
+}
+
+SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+    : ControlPart(type)
+    , m_thumbSize(thumbSize)
     , m_trackBounds(trackBounds)
     , m_tickRatios(WTFMove(tickRatios))
 {
+    ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-void SliderTrackAppearance::drawTicks(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style, StyleAppearance appearance) const
+void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style) const
 {
     if (m_tickRatios.isEmpty())
         return;
@@ -47,7 +59,7 @@ void SliderTrackAppearance::drawTicks(GraphicsContext& context, const FloatRect&
     static constexpr IntSize sliderTickSize = { 1, 3 };
     static constexpr int sliderTickOffsetFromTrackCenter = -9;
 
-    bool isHorizontal = appearance == StyleAppearance::SliderHorizontal;
+    bool isHorizontal = type() == StyleAppearance::SliderHorizontal;
 
     auto trackBounds = m_trackBounds;
     trackBounds.moveBy(IntPoint(rect.location()));
@@ -89,21 +101,11 @@ void SliderTrackAppearance::drawTicks(GraphicsContext& context, const FloatRect&
         context.fillRect(tickRect);
     }
 }
-
-void SliderTrackHorizontalAppearance::drawTicks(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style) const
-{
-    SliderTrackAppearance::drawTicks(context, rect, style, StyleAppearance::SliderHorizontal);
-}
-
-void SliderTrackVerticalAppearance::drawTicks(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style) const
-{
-    SliderTrackAppearance::drawTicks(context, rect, style, StyleAppearance::SliderVertical);
-}
 #endif
 
-std::unique_ptr<PlatformControl> SliderTrackAppearance::createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
+std::unique_ptr<PlatformControl> SliderTrackPart::createPlatformControl()
 {
-    return controlFactory.createPlatformSliderTrack(part);
+    return controlFactory().createPlatformSliderTrack(*this);
 }
 
 } // namespace WebCore

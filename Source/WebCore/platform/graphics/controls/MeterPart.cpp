@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(INPUT_TYPE_COLOR)
+#include "config.h"
+#include "MeterPart.h"
 
 #include "ControlFactory.h"
-#include "StyleAppearance.h"
 
 namespace WebCore {
 
-class ControlPart;
-class PlatformControl;
+Ref<MeterPart> MeterPart::create()
+{
+    return adoptRef(*new MeterPart(GaugeRegion::EvenLessGood, 0, 0, 0));
+}
 
-class ColorWellAppearance {
-public:
-    ColorWellAppearance() = default;
+Ref<MeterPart> MeterPart::create(GaugeRegion gaugeRegion, double value, double minimum, double maximum)
+{
+    return adoptRef(*new MeterPart(gaugeRegion, value, minimum, maximum));
+}
 
-    static constexpr StyleAppearance appearance = StyleAppearance::ColorWell;
-    std::unique_ptr<PlatformControl> createPlatformControl(ControlPart& part, ControlFactory& controlFactory)
-    {
-        return controlFactory.createPlatformColorWell(part);
-    }
-};
+MeterPart::MeterPart(GaugeRegion gaugeRegion, double value, double minimum, double maximum)
+    : ControlPart(StyleAppearance::Meter)
+    , m_gaugeRegion(gaugeRegion)
+    , m_value(value)
+    , m_minimum(minimum)
+    , m_maximum(maximum)
+{
+}
+
+std::unique_ptr<PlatformControl> MeterPart::createPlatformControl()
+{
+    return controlFactory().createPlatformMeter(*this);
+}
 
 } // namespace WebCore
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
