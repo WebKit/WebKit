@@ -2368,7 +2368,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
         if (node) {
             auto* childParentElement = child->node() ? child->node()->parentElement() : nullptr;
             // Do not take the textUnderElement for a different element (determined by child's element parent not being us). Otherwise we may doubly-expose the same text.
-            if (childParentElement && childParentElement != node && childParentElement->shadowHost() != node)
+            if (childParentElement && childParentElement != node && childParentElement->shadowHost() != node && node->isInShadowTree() == childParentElement->isInShadowTree())
                 continue;
         }
 
