@@ -893,6 +893,13 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 @end
 
+#define RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED() do { \
+    if (UNLIKELY(self.shouldUseAsyncInteractions)) { \
+        RELEASE_LOG_ERROR(TextInteraction, "Received unexpected call to %s", __PRETTY_FUNCTION__); \
+        RELEASE_ASSERT_NOT_REACHED(); \
+    } \
+} while (0)
+
 @implementation WKContentView (WKInteraction)
 
 - (BOOL)preventsPanningInXAxis
@@ -1516,6 +1523,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)startAutoscroll:(CGPoint)pointInDocument
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     _page->startAutoscrollAtPosition(pointInDocument);
 }
 
@@ -1526,6 +1535,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)scrollSelectionToVisible:(BOOL)animated
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
     // Used to scroll selection on keyboard up; we already scroll to visible.
 }
 
@@ -4876,6 +4886,8 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 // The completion handler can pass nil if input does not match the actual text preceding the insertion point.
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     if (!completionHandler) {
         [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
         return;
@@ -5288,6 +5300,8 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     [self _internalReplaceText:input withText:correction isCandidate:isCandidate completion:[completionHandler = makeBlockPtr(completionHandler), view = retainPtr(self)](bool wasApplied) {
         completionHandler(wasApplied ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:view->_autocorrectionData.textFirstRect lastCGRect:view->_autocorrectionData.textLastRect] : nil);
     }];
@@ -5334,6 +5348,8 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     if (!completionHandler) {
         [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
         return;
@@ -6724,7 +6740,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, WebKit::NativeWebKeyboardEvent::HandledByInputMethod::No));
 }
 
-- (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
+- (void)handleKeyWebEvent:(::WebEvent *)event withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _internalHandleKeyWebEvent:event withCompletionHandler:completionHandler];
+}
+
+- (void)_internalHandleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
     if (!isUIThread()) {
         RELEASE_LOG_FAULT(KeyHandling, "%s was invoked on a background thread.", __PRETTY_FUNCTION__);
@@ -8258,6 +8281,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #if ENABLE(REVEAL)
 - (void)requestRVItemInSelectedRangeWithCompletionHandler:(void(^)(RVItem *item))completionHandler
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     _page->requestRVItemInCurrentSelectedRange([completionHandler = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)](const WebKit::RevealItem& item) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
@@ -8269,6 +8294,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     [self _internalSelectTextForContextMenuWithLocationInView:locationInView completionHandler:[completionHandler = makeBlockPtr(completionHandler)](BOOL shouldPresentMenu, const WebKit::RevealItem& item) {
         completionHandler(shouldPresentMenu, item.item());
     }];
@@ -11983,7 +12010,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (void)handleAsyncKeyEvent:(UIKeyEvent *)event withCompletionHandler:(void(^)(UIKeyEvent *, BOOL))completionHandler
 {
     auto webEvent = adoptNS([[::WebEvent alloc] initWithUIKeyEvent:event]);
-    [self handleKeyWebEvent:webEvent.get() withCompletionHandler:[originalEvent = retainPtr(event), completionHandler = makeBlockPtr(completionHandler)](::WebEvent *webEvent, BOOL handled) {
+    [self _internalHandleKeyWebEvent:webEvent.get() withCompletionHandler:[originalEvent = retainPtr(event), completionHandler = makeBlockPtr(completionHandler)](::WebEvent *webEvent, BOOL handled) {
         ASSERT(webEvent.originalUIKeyEvent == originalEvent);
         completionHandler(originalEvent.get(), handled);
     }];
