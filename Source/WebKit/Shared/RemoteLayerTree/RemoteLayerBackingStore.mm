@@ -86,23 +86,6 @@ private:
 
 }
 
-void BufferAndBackendInfo::encode(IPC::Encoder& encoder) const
-{
-    encoder << resourceIdentifier;
-    encoder << backendGeneration;
-}
-
-bool BufferAndBackendInfo::decode(IPC::Decoder& decoder, BufferAndBackendInfo& bufferInfo)
-{
-    if (!decoder.decode(bufferInfo.resourceIdentifier))
-        return false;
-
-    if (!decoder.decode(bufferInfo.backendGeneration))
-        return false;
-
-    return true;
-}
-
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
     , m_lastDisplayTime(-MonotonicTime::infinity())
@@ -215,7 +198,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
     auto encodeBuffer = [&](const Buffer& buffer) {
         if (buffer.imageBuffer) {
-            encoder << std::optional<BufferAndBackendInfo>(*buffer.imageBuffer);
+            encoder << std::optional { BufferAndBackendInfo::fromImageBuffer(*buffer.imageBuffer) };
             return;
         }
 
