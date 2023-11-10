@@ -32,6 +32,7 @@
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include "VirtualRegister.h"
+#include <span>
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
@@ -204,6 +205,8 @@ public:
     {
         return bitwise_cast<ValueProfileAndVirtualRegister*>(this + 1);
     }
+
+    std::span<ValueProfileAndVirtualRegister> span() { return { data(), size() }; }
 
 private:
 
