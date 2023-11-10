@@ -520,6 +520,7 @@ $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.i
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in
+$(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in
 $(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewUpdateDispatcher.messages.in

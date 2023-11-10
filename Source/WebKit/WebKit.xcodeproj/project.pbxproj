@@ -1046,6 +1046,7 @@
 		46C71AC92A942E2900E459AF /* GoToBackForwardItemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C71AC72A942E1800E459AF /* GoToBackForwardItemParameters.h */; };
 		46C916AA2799D0A2001A4E7C /* WebSharedWorkerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */; };
 		46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */; };
+		46D246262AFE956500F24C94 /* PlatformCAAnimationRemoteProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */; };
 		46D48FCE2799D7E1007D2014 /* WebSharedWorkerServerToContextConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */; };
 		46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */; };
 		46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28B2AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h */; };
@@ -4958,6 +4959,8 @@
 		46C916A82799D09D001A4E7C /* WebSharedWorkerServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServer.cpp; sourceTree = "<group>"; };
 		46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServer.h; sourceTree = "<group>"; };
 		46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListCounts.h; sourceTree = "<group>"; };
+		46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemoteProperties.h; sourceTree = "<group>"; };
+		46D246252AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformCAAnimationRemoteProperties.serialization.in; sourceTree = "<group>"; };
 		46D48FCC2799D7DD007D2014 /* WebSharedWorkerServerToContextConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServerToContextConnection.cpp; sourceTree = "<group>"; };
 		46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServerToContextConnection.h; sourceTree = "<group>"; };
 		46DA285727B73E760089D339 /* WebGeolocationManagerProxyCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxyCocoa.cpp; sourceTree = "<group>"; };
@@ -9522,6 +9525,8 @@
 				2DA049B5180CCD0A00AAFA9E /* GraphicsLayerCARemote.mm */,
 				0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */,
 				0F5E200118E77051003EC3E5 /* PlatformCAAnimationRemote.mm */,
+				46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */,
+				46D246252AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.serialization.in */,
 				2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */,
 				2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.mm */,
 				2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */,
@@ -15154,6 +15159,7 @@
 				E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */,
 				5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */,
 				0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */,
+				46D246262AFE956500F24C94 /* PlatformCAAnimationRemoteProperties.h in Headers */,
 				2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */,
 				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
