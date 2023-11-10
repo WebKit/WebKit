@@ -1,0 +1,8 @@
+
+
+PASS select[multiple][style="writing-mode: horizontal-tb"] scrolls correctly
+PASS select[multiple][style="writing-mode: vertical-lr"] scrolls correctly
+PASS select[multiple][style="writing-mode: vertical-rl"] scrolls correctly
+FAIL select[multiple][style="writing-mode: sideways-lr"] scrolls correctly assert_equals: scrolling is initially at block start for writing-mode: sideways-lr expected 0 but got 90
+FAIL select[multiple][style="writing-mode: sideways-rl"] scrolls correctly assert_equals: scrolling is initially at block start for writing-mode: sideways-rl expected 0 but got -90
+

@@ -728,6 +728,7 @@ webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
 fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
+webkit.org/b/264558 fast/forms/vertical-writing-mode/listbox-horizontal-scrollbar.html [ ImageOnlyFailure ]
 
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-013.xht [ ImageOnlyFailure ]

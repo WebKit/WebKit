@@ -1,8 +1,8 @@
 
 
 PASS select[multiple][style="writing-mode: horizontal-tb"] supports keyboard navigation
-FAIL select[multiple][style="writing-mode: vertical-lr"] supports keyboard navigation assert_equals: expected "Option 2" but got "Option 1"
-FAIL select[multiple][style="writing-mode: vertical-rl"] supports keyboard navigation assert_equals: expected "Option 2" but got "Option 1"
-FAIL select[multiple][style="writing-mode: sideways-lr"] supports keyboard navigation assert_equals: expected "Option 2" but got "Option 1"
-FAIL select[multiple][style="writing-mode: sideways-rl"] supports keyboard navigation assert_equals: expected "Option 2" but got "Option 1"
+PASS select[multiple][style="writing-mode: vertical-lr"] supports keyboard navigation
+PASS select[multiple][style="writing-mode: vertical-rl"] supports keyboard navigation
+PASS select[multiple][style="writing-mode: sideways-lr"] supports keyboard navigation
+PASS select[multiple][style="writing-mode: sideways-rl"] supports keyboard navigation
 
