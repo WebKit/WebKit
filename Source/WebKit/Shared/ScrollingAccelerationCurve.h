@@ -47,11 +47,16 @@ public:
 
     static ScrollingAccelerationCurve interpolate(const ScrollingAccelerationCurve& from, const ScrollingAccelerationCurve& to, float amount);
 
-    float accelerationFactor(float);
+    float gainLinear() const { return m_parameters.gainLinear; }
+    float gainParabolic() const { return m_parameters.gainParabolic; }
+    float gainCubic() const { return m_parameters.gainCubic; }
+    float gainQuartic() const { return m_parameters.gainQuartic; }
+    float tangentSpeedLinear() const { return m_parameters.tangentSpeedLinear; };
+    float tangentSpeedParabolicRoot() const { return m_parameters.tangentSpeedParabolicRoot; };
+    float resolution() const { return m_parameters.resolution; }
     float frameRate() const { return m_parameters.frameRate; }
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<ScrollingAccelerationCurve> decode(IPC::Decoder&);
+    float accelerationFactor(float);
 
     friend bool operator==(const ScrollingAccelerationCurve& a, const ScrollingAccelerationCurve& b)
     {
