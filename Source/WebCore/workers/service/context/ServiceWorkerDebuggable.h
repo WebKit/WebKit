@@ -53,6 +53,9 @@ public:
     void disconnect(Inspector::FrontendChannel&) final;
     void dispatchMessageFromRemote(String&& message) final;
 
+    bool automaticInspectionAllowed() const final { return true; }
+    void pauseWaitingForAutomaticInspection() final;
+
 private:
     ServiceWorkerThreadProxy& m_serviceWorkerThreadProxy;
     String m_scopeURL;

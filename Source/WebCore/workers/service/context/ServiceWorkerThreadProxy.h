@@ -101,6 +101,10 @@ public:
 
     WEBCORE_EXPORT void setInspectable(bool);
 
+#if ENABLE(REMOTE_INSPECTOR)
+    ServiceWorkerDebuggable& serviceWorkerDebuggable() const { return *m_remoteDebuggable; }
+#endif
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
 

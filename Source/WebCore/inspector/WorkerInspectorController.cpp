@@ -44,6 +44,7 @@
 #include "WorkerThread.h"
 #include "WorkerToPageFrontendChannel.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
+#include <JavaScriptCore/InspectorAgent.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
@@ -98,10 +99,39 @@ void WorkerInspectorController::workerTerminating()
     m_debugger = nullptr;
 }
 
-void WorkerInspectorController::connectFrontend()
+void WorkerInspectorController::frontendInitialized()
 {
+    WTFLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    WTFLogAlways("WorkerInspectorController::frontendInitialized()");
+    if (m_pauseAfterInitialization) {
+        m_pauseAfterInitialization = false;
+        // FIXME: <https://webkit.org/b/264578> Automatically pause after connecting to ServiceWorker
+    }
+
+    #if ENABLE(REMOTE_INSPECTOR)
+        if (m_isAutomaticInspection) {
+            // Unpause ServiceWorkerDebuggable (see RemoteInspectionTarget::pauseWaitingForAutomaticInspection())
+            callOnMainThread([frontendInitializedCallback = WTFMove(m_frontendInitializedCallback)] {
+            if (frontendInitializedCallback)
+                frontendInitializedCallback();
+            });
+        }
+    #endif
+}
+
+void WorkerInspectorController::connectFrontend(bool isAutomaticInspection, bool immediatelyPause, Function<void()>&& frontendInitializedCallback)
+{
+    WTFLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    WTFLogAlways("WorkerInspectorController::connectFrontend()");
+    WTFLogAlways("isAutomaticInspection %s", isAutomaticInspection ? "YES" : "NO");
+    WTFLogAlways("immediatelyPause %s", immediatelyPause ? "YES" : "NO");
+
     ASSERT(!m_frontendRouter->hasFrontends());
     ASSERT(!m_forwardingChannel);
+
+    m_isAutomaticInspection = isAutomaticInspection;
+    m_pauseAfterInitialization = immediatelyPause;
+    m_frontendInitializedCallback = WTFMove(frontendInitializedCallback);
 
     createLazyAgents();
 
@@ -123,6 +153,9 @@ void WorkerInspectorController::connectFrontend()
 
 void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason reason)
 {
+    m_isAutomaticInspection = false;
+    m_pauseAfterInitialization = false;
+
     if (!m_frontendRouter->hasFrontends())
         return;
 
@@ -203,6 +236,7 @@ void WorkerInspectorController::createLazyAgents()
 
     auto workerContext = workerAgentContext();
 
+    m_agents.append(makeUnique<InspectorAgent>(workerContext));
     m_agents.append(makeUnique<WorkerRuntimeAgent>(workerContext));
 
 #if ENABLE(SERVICE_WORKER)
