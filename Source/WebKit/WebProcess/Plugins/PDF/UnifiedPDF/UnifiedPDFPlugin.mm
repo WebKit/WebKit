@@ -60,6 +60,8 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 
 void UnifiedPDFPlugin::teardown()
 {
+    PDFPluginBase::teardown();
+
     if (m_rootLayer)
         m_rootLayer->removeFromParent();
 }
@@ -341,12 +343,12 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
     return { };
 }
 
-unsigned UnifiedPDFPlugin::countFindMatches(const String& target, FindOptions, unsigned maxMatchCount)
+unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
 {
     return 0;
 }
 
-bool UnifiedPDFPlugin::findString(const String& target, FindOptions, unsigned maxMatchCount)
+bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
 {
     return false;
 }
@@ -381,6 +383,25 @@ id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) con
     return nil;
 }
 
+#if ENABLE(PDF_HUD)
+
+void UnifiedPDFPlugin::zoomIn()
+{
+}
+
+void UnifiedPDFPlugin::zoomOut()
+{
+}
+
+void UnifiedPDFPlugin::save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+{
+}
+
+void UnifiedPDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+{
+}
+
+#endif // ENABLE(PDF_HUD)
 
 } // namespace WebKit
 

@@ -1135,20 +1135,20 @@ void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandl
     pdfPlugin->openWithPreview(WTFMove(completionHandler));
 }
 
-void WebPage::createPDFHUD(PDFPlugin& plugin, const IntRect& boundingBox)
+void WebPage::createPDFHUD(PDFPluginBase& plugin, const IntRect& boundingBox)
 {
     auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
     if (addResult.isNewEntry)
         send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), boundingBox));
 }
 
-void WebPage::updatePDFHUDLocation(PDFPlugin& plugin, const IntRect& boundingBox)
+void WebPage::updatePDFHUDLocation(PDFPluginBase& plugin, const IntRect& boundingBox)
 {
     if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
         send(Messages::WebPageProxy::UpdatePDFHUDLocation(plugin.identifier(), boundingBox));
 }
 
-void WebPage::removePDFHUD(PDFPlugin& plugin)
+void WebPage::removePDFHUD(PDFPluginBase& plugin)
 {
     if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
         send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));

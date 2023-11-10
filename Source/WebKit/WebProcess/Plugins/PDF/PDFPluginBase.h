@@ -27,6 +27,9 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#include "DataReference.h"
+#include "FrameInfoData.h"
+#include "PDFPluginIdentifier.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
@@ -70,12 +73,14 @@ class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase>, public WebCore
 public:
     static WebCore::PluginInfo pluginInfo();
 
-    virtual ~PDFPluginBase() = default;
+    virtual ~PDFPluginBase();
 
     void destroy();
 
     virtual bool isUnifiedPDFPlugin() const { return false; }
     virtual bool isLegacyPDFPlugin() const { return false; }
+
+    PDFPluginIdentifier identifier() const { return m_identifier; }
 
     virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
     virtual PlatformLayer* platformLayer() const { return nullptr; }
@@ -98,7 +103,7 @@ public:
     virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const = 0;
 
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform);
-    virtual void visibilityDidChange(bool) { }
+    virtual void visibilityDidChange(bool);
     virtual void contentsScaleFactorChanged(float) { }
 
     void updateControlTints(WebCore::GraphicsContext&);
@@ -141,18 +146,33 @@ public:
     void streamDidFinishLoading();
     void streamDidFail();
 
+    // FIXME: Rationalize these (both names and behavior).
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
+    WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
+    WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
+    WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
+    WebCore::IntRect boundsOnScreen() const;
 
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
+
+    // HUD Actions.
+#if ENABLE(PDF_HUD)
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
+    virtual void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) = 0;
+    virtual void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) = 0;
+#endif
 
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
     WebCore::Page* page() const;
 
-    virtual void teardown() = 0;
+    virtual void teardown();
 
     virtual void createPDFDocument() = 0;
     virtual void installPDFDocument() = 0;
@@ -199,8 +219,17 @@ protected:
     virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
 
+    // HUD.
+#if ENABLE(PDF_HUD)
+    void updatePDFHUDLocation();
+    WebCore::IntRect frameForHUD() const;
+    bool hudEnabled() const;
+#endif
+
     WeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
+
+    PDFPluginIdentifier m_identifier;
 
     RetainPtr<CFMutableDataRef> m_data;
 

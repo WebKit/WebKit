@@ -104,6 +104,14 @@ private:
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
 
+    // HUD Actions.
+#if ENABLE(PDF_HUD)
+    void zoomIn() final;
+    void zoomOut() final;
+    void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) final;
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) final;
+#endif
+
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, GraphicsLayer::Type);
 
     PDFDocumentLayout m_documentLayout;
