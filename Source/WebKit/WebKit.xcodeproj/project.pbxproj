@@ -4950,6 +4950,7 @@
 		46EE284C269E051700DD48AB /* NetworkBroadcastChannelRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkBroadcastChannelRegistry.h; sourceTree = "<group>"; };
 		46EE3E8A2763FD2A0060C70F /* WebSharedWorkerServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerServerConnection.messages.in; sourceTree = "<group>"; };
 		46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunningBoardServicesSPI.h; sourceTree = "<group>"; };
+		46F5DD862AFD7DF100F3B26F /* GPUProcessPreferences.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessPreferences.serialization.in; sourceTree = "<group>"; };
 		46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCacheEntry.h; sourceTree = "<group>"; };
 		46FA2E752A04240300912BFE /* RemoteWorkerType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWorkerType.serialization.in; sourceTree = "<group>"; };
 		493102BC2683F3A5002BB885 /* AppPrivacyReport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppPrivacyReport.h; sourceTree = "<group>"; };
@@ -9888,6 +9889,7 @@
 				FAC59A3D2AF9A6BB00FA7AB6 /* GPUProcessCreationParameters.serialization.in */,
 				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
 				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,
+				46F5DD862AFD7DF100F3B26F /* GPUProcessPreferences.serialization.in */,
 				4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */,
 				5C046A17290B268500FF7820 /* GPUProcessSessionParameters.serialization.in */,
 			);
