@@ -1693,6 +1693,7 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
             auto estimatedGCDuration = (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
                 heap.collectSync(CollectionScope::Full);
+                heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
             }
         }
@@ -1700,8 +1701,11 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
         auto timeSinceLastGC = secondsSinceEpoch - std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime).secondsSinceEpoch();
         if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
             auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
-            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime)
+            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
                 heap.collectSync(CollectionScope::Eden);
+                heap.m_shouldDoOpportunisticFullCollection = false;
+                return;
+            }
         }
     }();
 
