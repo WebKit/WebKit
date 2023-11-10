@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--useWebAssemblyExtendedConstantExpressions=true")
 
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
@@ -1238,6 +1238,149 @@ function testStructTable() {
   }
 }
 
+function testStructPacked() {
+  compile(`
+    (module (type (struct (field i8))))
+  `);
+
+  compile(`
+    (module (type (struct (field i16))))
+  `);
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field i8)))
+        (global (ref 0) (struct.new 0 (i32.const 257)))
+        (func (export "f1") (result i32)
+          (struct.get_s 0 0 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f1(), 1);
+    assert.eq(m.exports.f2(), 1);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field i8)))
+        (global (ref 0) (struct.new 0 (i32.const 255)))
+        (func (export "f1") (result i32)
+          (struct.get_s 0 0 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f1(), -1);
+    assert.eq(m.exports.f2(), 255);
+  }
+
+  assert.throws(
+    () => instantiate(`
+      (module (type (struct (field i8)))
+        (global (ref 0) (struct.new 0 (i32.const 257)))
+        (func (export "f") (result i32)
+          (struct.get 0 0 (global.get 0))))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 7: struct.get applied to packed array of I8 -- use struct.get_s or struct.get_u, in function at index 0"
+  );
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field i16)))
+        (global (ref 0) (struct.new 0 (i32.const 65537)))
+        (func (export "f1") (result i32)
+          (struct.get_s 0 0 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f1(), 1);
+    assert.eq(m.exports.f2(), 1);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field i16)))
+        (global (ref 0) (struct.new 0 (i32.const 65535)))
+        (func (export "f1") (result i32)
+          (struct.get_s 0 0 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f1(), -1);
+    assert.eq(m.exports.f2(), 65535);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field i8 i16 i8 i16)))
+        (global (ref 0) (struct.new 0 (i32.const 1) (i32.const 2) (i32.const 3) (i32.const 4)))
+        (func (export "f0") (result i32)
+          (struct.get_s 0 0 (global.get 0)))
+        (func (export "f1") (result i32)
+          (struct.get_s 0 1 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 2 (global.get 0)))
+        (func (export "f3") (result i32)
+          (struct.get_u 0 3 (global.get 0))))
+    `);
+    assert.eq(m.exports.f0(), 1);
+    assert.eq(m.exports.f1(), 2);
+    assert.eq(m.exports.f2(), 3);
+    assert.eq(m.exports.f3(), 4);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field (mut i8))))
+        (global (ref 0) (struct.new 0 (i32.const 42)))
+        (func (export "f") (result i32)
+          (struct.set 0 0 (global.get 0) (i32.const 84))
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f(), 84);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field (mut i16))))
+        (global (ref 0) (struct.new 0 (i32.const 42)))
+        (func (export "f") (result i32)
+          (struct.set 0 0 (global.get 0) (i32.const 84))
+          (struct.get_u 0 0 (global.get 0))))
+    `);
+    assert.eq(m.exports.f(), 84);
+  }
+
+  {
+    const m = instantiate(`
+      (module (type (struct (field (mut i8) (mut i16) (mut i8) (mut i16))))
+        (global (ref 0) (struct.new_default 0))
+        (func (export "init")
+          (struct.set 0 0 (global.get 0) (i32.const 1))
+          (struct.set 0 1 (global.get 0) (i32.const 2))
+          (struct.set 0 2 (global.get 0) (i32.const 3))
+          (struct.set 0 3 (global.get 0) (i32.const 4)))
+        (func (export "f0") (result i32)
+          (struct.get_u 0 0 (global.get 0)))
+        (func (export "f1") (result i32)
+          (struct.get_u 0 1 (global.get 0)))
+        (func (export "f2") (result i32)
+          (struct.get_u 0 2 (global.get 0)))
+        (func (export "f3") (result i32)
+          (struct.get_u 0 3 (global.get 0))))
+    `);
+    assert.eq(m.exports.f0(), 0);
+    assert.eq(m.exports.f1(), 0);
+    assert.eq(m.exports.f2(), 0);
+    assert.eq(m.exports.f3(), 0);
+    m.exports.init();
+    assert.eq(m.exports.f0(), 1);
+    assert.eq(m.exports.f1(), 2);
+    assert.eq(m.exports.f2(), 3);
+    assert.eq(m.exports.f3(), 4);
+  }
+}
+
 testStructDeclaration();
 testStructJS();
 testStructNew();
@@ -1245,3 +1388,4 @@ testStructNewDefault();
 testStructGet();
 testStructSet();
 testStructTable();
+testStructPacked();

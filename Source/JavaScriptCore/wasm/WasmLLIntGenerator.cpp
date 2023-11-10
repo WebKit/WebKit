@@ -326,7 +326,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
@@ -2144,10 +2144,10 @@ auto LLIntGenerator::addStructNewDefault(uint32_t index, ExpressionType& result)
     return { };
 }
 
-auto LLIntGenerator::addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmStructGet::emit(this, result, structReference, fieldIndex);
+    WasmStructGet::emit(this, result, structReference, fieldIndex, static_cast<unsigned>(structGetKind));
 
     return { };
 }

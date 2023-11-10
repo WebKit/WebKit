@@ -349,7 +349,7 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType, const StructType&, uint32_t, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&) CONST_EXPR_STUB

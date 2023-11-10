@@ -2222,13 +2222,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition.index() }, result);
             return { };
         }
-        case ExtGCOpType::StructGet: {
+        case ExtGCOpType::StructGet:
+        case ExtGCOpType::StructGetS:
+        case ExtGCOpType::StructGetU: {
+            const char* opName = op == ExtGCOpType::StructGet ? "struct.get" : op == ExtGCOpType::StructGetS ? "struct.get_s" : "struct.get_u";
+
             StructFieldManipulation structGetInput;
-            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, "struct.get"));
+            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, opName));
+
+            if (op == ExtGCOpType::StructGetS || op == ExtGCOpType::StructGetU)
+                WASM_PARSER_FAIL_IF(!structGetInput.field.type.template is<PackedType>(), opName, " applied to wrong type of struct -- expected: i8 or i16, found ", structGetInput.field.type.template as<Type>().kind);
+
+            if (op == ExtGCOpType::StructGet)
+                WASM_PARSER_FAIL_IF(structGetInput.field.type.template is<PackedType>(), opName, " applied to packed array of ", structGetInput.field.type.template as<PackedType>(), " -- use struct.get_s or struct.get_u");
 
             ExpressionType result;
             const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->expand().template as<StructType>();
-            WASM_TRY_ADD_TO_CONTEXT(addStructGet(structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
+            WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
 
             m_expressionStack.constructAndAppend(structGetInput.field.type.unpacked(), result);
             return { };
