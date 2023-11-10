@@ -4,6 +4,7 @@
 accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 
 # Timeouts
+accessibility/aria-combobox-no-owns.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 
 # Text failures
