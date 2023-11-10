@@ -45,6 +45,9 @@ messages -> WebExtensionContext {
     AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms);
     AlarmsClearAll() -> ();
 
+    // Commands
+    CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands);
+
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
     RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount);

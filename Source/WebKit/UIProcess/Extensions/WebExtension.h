@@ -207,6 +207,9 @@ public:
     CocoaImage *actionIcon(CGSize idealSize);
     NSString *displayActionLabel();
     NSString *actionPopupPath();
+    bool hasAction();
+    bool hasBrowserAction();
+    bool hasPageAction();
 
     CocoaImage *imageForPath(NSString *);
 

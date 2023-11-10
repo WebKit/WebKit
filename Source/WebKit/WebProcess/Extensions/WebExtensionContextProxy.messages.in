@@ -32,6 +32,10 @@ messages -> WebExtensionContextProxy {
     // Alarms
     DispatchAlarmsEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
 
+    // Commands
+    DispatchCommandsCommandEvent(String identifier, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+    DispatchCommandsChangedEvent(String identifier, String oldShortcut, String newShortcut)
+
     // Extension
     SetBackgroundPageIdentifier(WebCore::PageIdentifier pageID)
     AddPopupPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)

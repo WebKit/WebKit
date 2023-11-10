@@ -32,6 +32,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebExtensionContext.h"
+#import <wtf/BlockPtr.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -39,6 +41,25 @@
 #endif
 
 namespace WebKit {
+
+void WebExtensionCommand::dispatchChangedEventSoonIfNeeded()
+{
+    // Already scheduled to fire if old shortcut is set.
+    if (!m_oldShortcut.isNull())
+        return;
+
+    m_oldShortcut = shortcutString();
+
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        RefPtr context = extensionContext();
+        if (!context)
+            return;
+
+        context->fireCommandChangedEventIfNeeded(*this, m_oldShortcut);
+
+        m_oldShortcut = nullString();
+    }).get());
+}
 
 bool WebExtensionCommand::setActivationKey(String activationKey)
 {
@@ -65,6 +86,8 @@ bool WebExtensionCommand::setActivationKey(String activationKey)
 
     if ([(NSString *)activationKey rangeOfCharacterFromSet:notAllowedCharacterSet].location != NSNotFound)
         return false;
+
+    dispatchChangedEventSoonIfNeeded();
 
     m_activationKey = activationKey.convertToASCIILowercase();
 

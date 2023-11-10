@@ -591,9 +591,15 @@ TEST(WKWebExtensionContext, CommandsParsing)
 {
     auto *testManifestDictionary = @{
         @"manifest_version": @3,
+
         @"name": @"Test",
         @"description": @"Test",
         @"version": @"1.0",
+
+        @"action": @{
+            @"default_title": @"Test Action"
+        },
+
         @"commands": @{
             @"toggle-feature": @{
                 @"suggested_key": @{
@@ -631,7 +637,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
     auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NS_EQUAL(testContext.webExtension.errors, @[ ]);
     EXPECT_NOT_NULL(testContext.commands);
-    EXPECT_EQ(testContext.commands.count, 5lu);
+    EXPECT_EQ(testContext.commands.count, 6lu);
 
     _WKWebExtensionCommand *testCommand = nil;
 
@@ -672,6 +678,10 @@ TEST(WKWebExtensionContext, CommandsParsing)
 #endif
         } else if ([command.identifier isEqualToString:@"unassigned-command"]) {
             EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Maybe A Thing");
+            EXPECT_NULL(command.activationKey);
+            EXPECT_EQ((uint32_t)command.modifierFlags, 0lu);
+        } else if ([command.identifier isEqualToString:@"_execute_action"]) {
+            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Test Action");
             EXPECT_NULL(command.activationKey);
             EXPECT_EQ((uint32_t)command.modifierFlags, 0lu);
         }

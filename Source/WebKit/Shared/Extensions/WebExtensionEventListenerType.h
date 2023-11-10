@@ -31,24 +31,28 @@
 
 namespace WebKit {
 
-// If you are adding a new event, you will also need to increase 'currentBackgroundPageListenerStateVersion'
-// so that your new event gets fired to non-persistent background pages.
+// If you are adding a new event, you will also need to increase 'currentBackgroundContentListenerStateVersion'
+// so that your new event gets fired to non-persistent background content.
 enum class WebExtensionEventListenerType : uint8_t {
     Unknown = 0,
     ActionOnClicked,
     AlarmsOnAlarm,
+    CommandsOnChanged,
     CommandsOnCommand,
     ContextMenusOnClicked,
     CookiesOnChanged,
     DevToolsElementsPanelOnSelectionChanged,
-    DevToolsExtensionPanelOnShown,
     DevToolsExtensionPanelOnHidden,
-    DevToolsExtensionSidebarPaneOnShown,
-    DevToolsExtensionSidebarPaneOnHidden,
     DevToolsExtensionPanelOnSearch,
+    DevToolsExtensionPanelOnShown,
+    DevToolsExtensionSidebarPaneOnHidden,
+    DevToolsExtensionSidebarPaneOnShown,
+    DevToolsInspectedWindowOnResourceAdded,
     DevToolsNetworkOnNavigated,
     DevToolsNetworkOnRequestFinished,
     DevToolsPanelsOnThemeChanged,
+    DownloadsOnChanged,
+    DownloadsOnCreated,
     NotificationsOnButtonClicked,
     NotificationsOnClicked,
     PermissionsOnAdded,
@@ -88,9 +92,6 @@ enum class WebExtensionEventListenerType : uint8_t {
     WindowsOnCreated,
     WindowsOnFocusChanged,
     WindowsOnRemoved,
-    DevToolsInspectedWindowOnResourceAdded,
-    DownloadsOnCreated,
-    DownloadsOnChanged,
 };
 
 using WebExtensionEventListenerTypeWorldPair = std::pair<WebExtensionEventListenerType, WebExtensionContentWorldType>;

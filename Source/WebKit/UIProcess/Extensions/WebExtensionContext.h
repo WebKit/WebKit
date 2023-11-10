@@ -355,6 +355,7 @@ public:
 #endif
 
 private:
+    friend class WebExtensionCommand;
     friend class WebExtensionMessagePort;
 
     explicit WebExtensionContext();
@@ -421,6 +422,11 @@ private:
     void alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&&);
     void alarmsClearAll(CompletionHandler<void()>&&);
     void fireAlarmsEventIfNeeded(const WebExtensionAlarm&);
+
+    // Commands APIs
+    void commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&&);
+    void fireCommandEventIfNeeded(WebExtensionCommand&, WebExtensionTab*);
+    void fireCommandChangedEventIfNeeded(WebExtensionCommand&, const String& oldShortcut);
 
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);

@@ -38,6 +38,7 @@ OBJC_CLASS _WKWebExtensionCommand;
 namespace WebKit {
 
 class WebExtensionContext;
+struct WebExtensionCommandParameters;
 
 class WebExtensionCommand : public API::ObjectImpl<API::Object::Type::WebExtensionCommand>, public CanMakeWeakPtr<WebExtensionCommand> {
     WTF_MAKE_NONCOPYABLE(WebExtensionCommand);
@@ -55,7 +56,11 @@ public:
 
     bool operator==(const WebExtensionCommand&) const;
 
+    WebExtensionCommandParameters parameters() const;
+
     WebExtensionContext* extensionContext() const;
+
+    bool isActionCommand() const;
 
     const String& identifier() const { return m_identifier; }
     const String& description() const { return m_description; }
@@ -64,7 +69,7 @@ public:
     bool setActivationKey(String);
 
     OptionSet<ModifierFlags> modifierFlags() const { return !m_activationKey.isEmpty() ? m_modifierFlags : OptionSet<ModifierFlags> { }; }
-    void setModifierFlags(OptionSet<ModifierFlags> modifierFlags) { m_modifierFlags = modifierFlags; }
+    void setModifierFlags(OptionSet<ModifierFlags> modifierFlags) { dispatchChangedEventSoonIfNeeded(); m_modifierFlags = modifierFlags; }
 
     String shortcutString() const;
 
@@ -73,11 +78,14 @@ public:
 #endif
 
 private:
+    void dispatchChangedEventSoonIfNeeded();
+
     WeakPtr<WebExtensionContext> m_extensionContext;
     String m_identifier;
     String m_description;
     String m_activationKey;
     OptionSet<ModifierFlags> m_modifierFlags;
+    String m_oldShortcut;
 };
 
 } // namespace WebKit
