@@ -160,7 +160,8 @@ public:
     bool canAccessRules() const;
 
     String debugDescription() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings);
+    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&);
+    void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);

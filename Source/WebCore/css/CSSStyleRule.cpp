@@ -158,11 +158,11 @@ String CSSStyleRule::cssText() const
 
 void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
 {
-    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
+    for (unsigned index = 0; index < length(); index++)
         rules.append("\n  ", item(index)->cssText());
 }
 
-String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings) const
+String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder declarations;
     StringBuilder rules;
@@ -173,15 +173,15 @@ String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& r
     mutableStyleProperties->clearReplacementURLForSubresources();
 
     declarations.append(declarationsString);
-    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings);
+    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
 
     return cssTextInternal(declarations, rules);
 }
 
-void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings) const
+void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
-    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
-        rules.append("\n  ", item(index)->cssTextWithReplacementURLs(replacementURLStrings));
+    for (unsigned index = 0; index < length(); index++)
+        rules.append("\n  ", item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
 }
 
 String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
@@ -311,6 +311,12 @@ CSSRuleList& CSSStyleRule::cssRules() const
         m_ruleListCSSOMWrapper = makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this));
 
     return *m_ruleListCSSOMWrapper;
+}
+
+void CSSStyleRule::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+{
+    for (unsigned index = 0; index < length(); ++index)
+        item(index)->getChildStyleSheets(childStyleSheets);
 }
 
 } // namespace WebCore

@@ -147,7 +147,7 @@ void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
 void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
 {
     auto& childRules = m_groupRule->childRules();
-    for (unsigned index = 0 ; index < childRules.size() ; index++) {
+    for (unsigned index = 0; index < childRules.size(); index++) {
         auto wrappedRule = item(index);
         rules.append("\n  ", wrappedRule->cssText());
     }
