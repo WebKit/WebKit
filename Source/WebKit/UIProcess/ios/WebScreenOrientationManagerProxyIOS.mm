@@ -37,7 +37,7 @@ namespace WebKit {
 std::optional<WebCore::Exception> WebScreenOrientationManagerProxy::platformShouldRejectLockRequest() const
 {
     if (UIApplication.sharedApplication.supportsMultipleScenes)
-        return WebCore::Exception { WebCore::NotSupportedError, "Apps supporting multiple scenes (multitask) cannot lock their orientation"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Apps supporting multiple scenes (multitask) cannot lock their orientation"_s };
     return std::nullopt;
 }
 

@@ -71,7 +71,7 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
 
     if (m_pendingFileLoads[loadIndex]->errorCode()) {
         if (auto completionHandler = std::exchange(m_completionHandler, { }))
-            completionHandler(Exception { AbortError, "Abort due to error while reading files."_s });
+            completionHandler(Exception { ExceptionCode::AbortError, "Abort due to error while reading files."_s });
         cancel();
         return;
     }

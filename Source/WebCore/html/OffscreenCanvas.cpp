@@ -248,7 +248,7 @@ GPUCanvasContext* OffscreenCanvas::createContextWebGPU(RenderingContextType type
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (contextType == RenderingContextType::_2d) {
         if (m_context) {
@@ -259,7 +259,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         m_context = OffscreenCanvasRenderingContext2D::create(*this, WTFMove(settings));
         if (!m_context)
@@ -275,7 +275,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         m_context = ImageBitmapRenderingContext::create(*this, WTFMove(settings));
         if (!m_context)
@@ -291,7 +291,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
         }
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         auto scriptExecutionContext = this->scriptExecutionContext();
         if (!scriptExecutionContext)
@@ -321,7 +321,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         createContextWebGL(contextType, WTFMove(attributes));
         if (!m_context)
@@ -334,13 +334,13 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
     }
 #endif
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
 {
     if (m_detached || !m_context)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (is<OffscreenCanvasRenderingContext2D>(*m_context) || is<ImageBitmapRenderingContext>(*m_context)) {
         if (!width() || !height())
@@ -404,7 +404,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     }
 #endif
 
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 static String toEncodingMimeType(const String& mimeType)
@@ -425,15 +425,15 @@ static std::optional<double> qualityFromDouble(double qualityNumber)
 void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (!originClean()) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
     if (size().isEmpty()) {
-        promise->reject(IndexSizeError);
+        promise->reject(ExceptionCode::IndexSizeError);
         return;
     }
     if (m_detached || !buffer()) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -444,7 +444,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
 
     Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
     if (blobData.isEmpty()) {
-        promise->reject(EncodingError);
+        promise->reject(ExceptionCode::EncodingError);
         return;
     }
 

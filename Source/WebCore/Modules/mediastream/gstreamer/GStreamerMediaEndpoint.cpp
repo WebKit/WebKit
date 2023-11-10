@@ -406,12 +406,12 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             return;
         if (error) {
             if (error->code == GST_WEBRTC_ERROR_INVALID_STATE) {
-                m_peerConnectionBackend.setLocalDescriptionFailed(Exception { InvalidStateError, "Failed to set local answer sdp: no pending remote description."_s });
+                m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::InvalidStateError, "Failed to set local answer sdp: no pending remote description."_s });
                 return;
             }
-            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, String::fromUTF8(error->message) });
+            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, String::fromUTF8(error->message) });
         } else
-            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, "Unable to apply session local description"_s });
+            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to apply session local description"_s });
     });
 }
 
@@ -488,9 +488,9 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
         if (protectedThis->isStopped())
             return;
         if (error && error->code == GST_WEBRTC_ERROR_INVALID_STATE)
-            m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { InvalidStateError, "Failed to set remote answer sdp"_s });
+            m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { ExceptionCode::InvalidStateError, "Failed to set remote answer sdp"_s });
         else
-            m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { OperationError, "Unable to apply session remote description"_s });
+            m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to apply session remote description"_s });
     });
 #if !RELEASE_LOG_DISABLED
     startLoggingStats();
@@ -1021,7 +1021,7 @@ int GStreamerMediaEndpoint::pickAvailablePayloadType()
 ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source)
 {
     if (!m_webrtcBin)
-        return Exception { InvalidStateError, "End-point has not been configured yet"_s };
+        return Exception { ExceptionCode::InvalidStateError, "End-point has not been configured yet"_s };
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "%zu streams in init data", init.streams.size());
 
@@ -1116,7 +1116,7 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
     GRefPtr<GstWebRTCRTPTransceiver> rtcTransceiver;
     g_signal_emit_by_name(m_webrtcBin.get(), "add-transceiver", direction, caps.get(), &rtcTransceiver.outPtr());
     if (!rtcTransceiver)
-        return Exception { InvalidAccessError, "Unable to add transceiver"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Unable to add transceiver"_s };
 
     auto transceiver = makeUnique<GStreamerRtpTransceiverBackend>(WTFMove(rtcTransceiver));
     return GStreamerMediaEndpoint::Backends { transceiver->createSenderBackend(m_peerConnectionBackend, WTFMove(source), WTFMove(initData)), transceiver->createReceiverBackend(), WTFMove(transceiver) };
@@ -1197,7 +1197,7 @@ void GStreamerMediaEndpoint::addIceCandidate(GStreamerIceCandidate& candidate, P
 
     if (!candidate.candidate.startsWith("candidate:"_s)) {
         callOnMainThread([task = createSharedTask<PeerConnectionBackend::AddIceCandidateCallbackFunction>(WTFMove(callback))]() mutable {
-            task->run(Exception { OperationError, "Expect line: candidate:<candidate-str>"_s });
+            task->run(Exception { ExceptionCode::OperationError, "Expect line: candidate:<candidate-str>"_s });
         });
         return;
     }
@@ -1219,7 +1219,7 @@ void GStreamerMediaEndpoint::addIceCandidate(GStreamerIceCandidate& candidate, P
                     GST_ERROR("Unable to add ICE candidate, error: %s", error->message);
                 }
                 callOnMainThread([task = createSharedTask<PeerConnectionBackend::AddIceCandidateCallbackFunction>(WTFMove(data->callback))]() mutable {
-                    task->run(Exception { OperationError, "Error processing ICE candidate"_s });
+                    task->run(Exception { ExceptionCode::OperationError, "Error processing ICE candidate"_s });
                 });
                 return;
             }
@@ -1235,7 +1235,7 @@ void GStreamerMediaEndpoint::addIceCandidate(GStreamerIceCandidate& candidate, P
     auto parsedCandidate = parseIceCandidateSDP(candidate.candidate);
     if (!parsedCandidate) {
         callOnMainThread([task = createSharedTask<PeerConnectionBackend::AddIceCandidateCallbackFunction>(WTFMove(callback))]() mutable {
-            task->run(Exception { OperationError, "Error processing ICE candidate"_s });
+            task->run(Exception { ExceptionCode::OperationError, "Error processing ICE candidate"_s });
         });
         return;
     }
@@ -1479,7 +1479,7 @@ void GStreamerMediaEndpoint::createSessionDescriptionFailed(RTCSdpType sdpType, 
         if (isStopped())
             return;
 
-        auto exc = Exception { OperationError, error ? String::fromUTF8(error->message) : "Unknown Error"_s };
+        auto exc = Exception { ExceptionCode::OperationError, error ? String::fromUTF8(error->message) : "Unknown Error"_s };
         if (sdpType == RTCSdpType::Offer) {
             m_peerConnectionBackend.createOfferFailed(WTFMove(exc));
             return;

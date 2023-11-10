@@ -49,10 +49,10 @@ static inline bool tokenContainsHTMLSpace(StringView token)
 ExceptionOr<void> DOMTokenList::validateToken(StringView token)
 {
     if (token.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     if (tokenContainsHTMLSpace(token))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     return { };
 }
@@ -181,10 +181,10 @@ static inline void replaceInOrderedSet(Vector<AtomString>& tokens, size_t tokenI
 ExceptionOr<bool> DOMTokenList::replace(const AtomString& token, const AtomString& newToken)
 {
     if (token.isEmpty() || newToken.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     auto& tokens = this->tokens();
 
@@ -204,7 +204,7 @@ ExceptionOr<bool> DOMTokenList::replace(const AtomString& token, const AtomStrin
 ExceptionOr<bool> DOMTokenList::supports(StringView token)
 {
     if (!m_isSupportedToken)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return m_isSupportedToken(m_element.document(), token);
 }
 

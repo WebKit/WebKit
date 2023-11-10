@@ -373,14 +373,14 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
     // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
     // 1. If worker global scope's type is "module", throw a TypeError exception.
     if (m_workerType == WorkerType::Module)
-        return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
+        return Exception { ExceptionCode::TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
     Vector<URLKeepingBlobAlive> completedURLs;
     completedURLs.reserveInitialCapacity(urls.size());
     for (auto& entry : urls) {
         URL url = completeURL(entry);
         if (!url.isValid())
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
         completedURLs.append({ WTFMove(url), m_topOrigin->data() });
     }
 
@@ -402,7 +402,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
         bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
         if (!shouldBypassMainWorldContentSecurityPolicy && !checkedContentSecurityPolicy()->allowScriptFromSource(url))
-            return Exception { NetworkError };
+            return Exception { ExceptionCode::NetworkError };
 
         auto scriptLoader = WorkerScriptLoader::create();
         auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
@@ -422,7 +422,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
             script()->evaluate(sourceCode, exception);
             if (exception) {
                 if (mutedErrors)
-                    return Exception { NetworkError, "Network response is CORS-cross-origin"_s };
+                    return Exception { ExceptionCode::NetworkError, "Network response is CORS-cross-origin"_s };
                 script()->setException(exception);
                 return { };
             }

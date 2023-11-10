@@ -80,7 +80,7 @@ void FormDataConsumer::consumeFile(const String& filename)
                 return;
 
             if (!content) {
-                weakThis->didFail(Exception { InvalidStateError, "Unable to read form data file"_s });
+                weakThis->didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data file"_s });
                 return;
             }
 
@@ -100,7 +100,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
             return;
 
         if (auto optionalErrorCode = loader->errorCode()) {
-            weakThis->didFail(Exception { InvalidStateError, "Failed to read form data blob"_s });
+            weakThis->didFail(Exception { ExceptionCode::InvalidStateError, "Failed to read form data blob"_s });
             return;
         }
 
@@ -111,7 +111,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
     m_blobLoader->start(blobURL, m_context.get(), FileReaderLoader::ReadAsArrayBuffer);
 
     if (!m_blobLoader || !m_blobLoader->isLoading())
-        didFail(Exception { InvalidStateError, "Unable to read form data blob"_s });
+        didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data blob"_s });
 }
 
 void FormDataConsumer::consume(std::span<const uint8_t> content)

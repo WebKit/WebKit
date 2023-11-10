@@ -58,7 +58,7 @@ ExceptionOr<RefPtr<HTMLFormElement>> ElementInternals::form() const
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->form();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<void> ElementInternals::setFormValue(CustomElementFormValue&& value, std::optional<CustomElementFormValue>&& state)
@@ -68,56 +68,56 @@ ExceptionOr<void> ElementInternals::setFormValue(CustomElementFormValue&& value,
         return { };
     }
 
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<void> ElementInternals::setValidity(ValidityStateFlags validityStateFlags, String&& message, HTMLElement* validationAnchor)
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->setValidity(validityStateFlags, WTFMove(message), validationAnchor);
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<bool> ElementInternals::willValidate() const
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->willValidate();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<RefPtr<ValidityState>> ElementInternals::validity()
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->validity();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<String> ElementInternals::validationMessage() const
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->validationMessage();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<bool> ElementInternals::reportValidity()
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->reportValidity();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<bool> ElementInternals::checkValidity()
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->checkValidity();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 ExceptionOr<RefPtr<NodeList>> ElementInternals::labels()
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->asHTMLElement().labels();
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 FormAssociatedCustomElement* ElementInternals::elementAsFormAssociatedCustom() const

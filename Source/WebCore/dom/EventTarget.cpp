@@ -228,7 +228,7 @@ bool EventTarget::hasActiveEventListeners(const AtomString& eventType) const
 ExceptionOr<bool> EventTarget::dispatchEventForBindings(Event& event)
 {
     if (!event.isInitialized() || event.isBeingDispatched())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (!scriptExecutionContext())
         return false;

@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageCapture);
 ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<MediaStreamTrack> track)
 {
     if (track->kind() != "video"_s)
-        return Exception { NotSupportedError, "Invalid track kind"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Invalid track kind"_s };
 
     auto imageCapture = adoptRef(*new ImageCapture(document, track));
     imageCapture->suspendIfNeeded();
@@ -56,7 +56,7 @@ ImageCapture::~ImageCapture() = default;
 void ImageCapture::getPhotoCapabilities(PhotoCapabilitiesPromise&& promise)
 {
     if (m_track->readyState() == MediaStreamTrack::State::Ended) {
-        promise.reject(Exception { InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
         return;
     }
 
@@ -69,7 +69,7 @@ void ImageCapture::getPhotoSettings(PhotoSettingsPromise&& promise)
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
         // If the readyState of track provided in the constructor is not live, return a promise
         // rejected with a new DOMException whose name is InvalidStateError, and abort these steps.
-        promise.reject(Exception { InvalidStateError, "Track has ended"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
         return;
     }
 

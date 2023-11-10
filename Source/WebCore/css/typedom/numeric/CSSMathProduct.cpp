@@ -45,11 +45,11 @@ ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(FixedVector<CSSNumberish
 ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(Vector<Ref<CSSNumericValue>> values)
 {
     if (values.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     auto type = CSSNumericType::multiplyTypes(values);
     if (!type)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSMathProduct(WTFMove(values), WTFMove(*type)));
 }

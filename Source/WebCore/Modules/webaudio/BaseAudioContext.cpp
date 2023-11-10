@@ -287,7 +287,7 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
 void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
 {
     if (!document() || !document()->isFullyActive()) {
-        promise->reject(Exception { InvalidStateError, "Document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
         return;
     }
 
@@ -350,7 +350,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 16384:
         break;
     default:
-        return Exception { IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
     }
 
     // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
@@ -358,19 +358,19 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     // In this case an IndexSizeError must be thrown.
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return Exception { IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
 
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfInputChannels > maxNumberOfChannels)
-        return Exception { IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfOutputChannels > maxNumberOfChannels)
-        return Exception { IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
 
     return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 }

@@ -1584,7 +1584,7 @@ static std::pair<FloatRect, FloatRect> normalizeSourceAndDestination(const Float
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect&, const FloatRect& dstRect)
 {
     if (frame.isDetached())
-        return Exception { InvalidStateError, "frame is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "frame is detached"_s };
 
     auto* context = drawingContext();
     if (!context)
@@ -1689,7 +1689,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     FloatRect srcCanvasRect = FloatRect(FloatPoint(), sourceCanvas.size());
 
     if (!srcCanvasRect.width() || !srcCanvasRect.height())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (!srcRect.width() || !srcRect.height())
         return { };
@@ -1808,7 +1808,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitmap, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     if (!imageBitmap.width() || !imageBitmap.height())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto normalizedSrcRect = normalizeRect(srcRect);
 
@@ -2009,7 +2009,7 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasRenderingContext2DBase::St
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createLinearGradient(float x0, float y0, float x1, float y1)
 {
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1), *this);
 }
@@ -2017,10 +2017,10 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createLinearGradi
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(r0) || !std::isfinite(x1) || !std::isfinite(y1) || !std::isfinite(r1))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     if (r0 < 0 || r1 < 0)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1, *this);
 }
@@ -2028,7 +2028,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradi
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createConicGradient(float angleInRadians, float x, float y)
 {
     if (!std::isfinite(angleInRadians) || !std::isfinite(x) || !std::isfinite(y))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // Angle starts from x-axis for consistency within canvas methods. See https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-createconicgradient
     angleInRadians = normalizeAngleInRadians(angleInRadians) + piOverTwoFloat;
@@ -2039,7 +2039,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 {
     bool repeatX, repeatY;
     if (!CanvasPattern::parseRepetitionType(repetition, repeatX, repeatY))
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     return WTF::switchOn(image,
         [&] (auto& element) -> ExceptionOr<RefPtr<CanvasPattern>> { return this->createPattern(*element, repeatX, repeatY); }
@@ -2061,11 +2061,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
     auto* image = cachedImage.imageForRenderer(renderer);
     if (!image)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto nativeImage = image->nativeImage();
     if (!nativeImage)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, originClean) };
 }
@@ -2079,7 +2079,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
         return nullptr;
 
     if (cachedImage->status() == CachedResource::LoadError)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // Image may have a zero-width or a zero-height.
     Length intrinsicWidth;
@@ -2101,7 +2101,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(S
         return nullptr;
 
     if (cachedImage->errorOccurred())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // The image loading hasn startedbut it is not complete.
     if (!cachedImage->image())
@@ -2121,15 +2121,15 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(S
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasBase& canvas, bool repeatX, bool repeatY)
 {
     if (!canvas.width() || !canvas.height())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     auto* copiedImage = canvas.copiedImage();
 
     if (!copiedImage)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     
     auto nativeImage = copiedImage->nativeImage();
     if (!nativeImage)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, canvas.originClean()) };
 }
@@ -2168,7 +2168,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(W
     UNUSED_PARAM(repeatX);
     UNUSED_PARAM(repeatY);
     // FIXME: Implement.
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 #endif
 
@@ -2176,7 +2176,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
 {
     RefPtr<ImageBuffer> buffer = imageBitmap.buffer();
     if (!buffer)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     return RefPtr<CanvasPattern> { CanvasPattern::create({ buffer.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
 }
@@ -2184,7 +2184,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)
 {
     // FIXME: Implement.
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas(OptionSet<DidDrawOption> options)
@@ -2307,7 +2307,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageD
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     auto imageData = ImageData::createUninitialized(std::abs(sw), std::abs(sh), m_settings.colorSpace, settings);
     if (!imageData.hasException())
@@ -2405,12 +2405,12 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::takeCachedImageDataIfPossible(co
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     }
 
     if (sw < 0) {
@@ -2445,7 +2445,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!is<ByteArrayPixelBuffer>(pixelBuffer)) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     }
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));

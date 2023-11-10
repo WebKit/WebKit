@@ -325,9 +325,9 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
         // https://html.spec.whatwg.org/multipage/forms.html#dom-form-requestsubmit
         control = dynamicDowncast<HTMLFormControlElement>(*submitter);
         if (!control || !control->isSubmitButton())
-            return Exception { TypeError, "The specified element is not a submit button."_s };
+            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_s };
         if (control->form() != this)
-            return Exception { NotFoundError, "The specified element is not owned by this form element."_s };
+            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_s };
     }
 
     submitIfPossible(nullptr, control.get(), SubmittedByJavaScript);

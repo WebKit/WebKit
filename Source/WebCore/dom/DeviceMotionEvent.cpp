@@ -132,7 +132,7 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
 {
     RefPtr window = document.domWindow();
     if (!window || !document.page())
-        return promise.reject(Exception { InvalidStateError, "No browsing context"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
 
     String errorMessage;
     if (!window->isAllowedToUseDeviceMotion(errorMessage)) {
@@ -142,7 +142,7 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
 
     document.deviceOrientationAndMotionAccessController().shouldAllowAccess(document, [promise = WTFMove(promise)](auto permissionState) mutable {
         if (permissionState == PermissionState::Prompt)
-            return promise.reject(Exception { NotAllowedError, "Requesting device motion access requires a user gesture to prompt"_s });
+            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device motion access requires a user gesture to prompt"_s });
         promise.resolve(permissionState);
     });
 }

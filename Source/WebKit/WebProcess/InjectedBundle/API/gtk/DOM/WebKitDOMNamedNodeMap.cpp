@@ -155,7 +155,7 @@ WebKitDOMNode* webkit_dom_named_node_map_set_named_item(WebKitDOMNamedNodeMap* s
     WebCore::NamedNodeMap* item = WebKit::core(self);
     WebCore::Node* convertedNode = WebKit::core(node);
     if (!is<WebCore::Attr>(*convertedNode)) {
-        auto description = WebCore::DOMException::description(WebCore::TypeError);
+        auto description = WebCore::DOMException::description(WebCore::ExceptionCode::TypeError);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }

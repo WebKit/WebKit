@@ -54,14 +54,14 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& contex
     if (submitter) {
         control = dynamicDowncast<HTMLFormControlElement>(*submitter);
         if (!control || !control->isSubmitButton())
-            return Exception { TypeError, "The specified element is not a submit button."_s };
+            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_s };
         if (control->form() != form)
-            return Exception { NotFoundError, "The specified element is not owned by this form element."_s };
+            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_s };
     }
     auto result = form->constructEntryList(control.get(), WTFMove(formData), nullptr);
     
     if (!result)
-        return Exception { InvalidStateError, "Already constructing Form entry list."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Already constructing Form entry list."_s };
     
     return result.releaseNonNull();
 }

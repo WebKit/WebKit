@@ -257,7 +257,7 @@ BackgroundFetch::Record::~Record()
 {
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
-        callback(makeUnexpected(ExceptionData { TypeError, "Record is gone"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Record is gone"_s }));
 
     auto bodyCallbacks = std::exchange(m_responseBodyCallbacks, { });
     for (auto& callback : bodyCallbacks)
@@ -300,7 +300,7 @@ void BackgroundFetch::Record::abort()
 
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
-        callback(makeUnexpected(ExceptionData { AbortError, "Background fetch was aborted"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "Background fetch was aborted"_s }));
 
     auto bodyCallbacks = std::exchange(m_responseBodyCallbacks, { });
     for (auto& callback : bodyCallbacks)
@@ -392,7 +392,7 @@ void BackgroundFetch::Record::didFinish(const ResourceError& error)
 
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
-        callback(makeUnexpected(ExceptionData { TypeError, "Fetch failed"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Fetch failed"_s }));
 
     auto bodyCallbacks = std::exchange(m_responseBodyCallbacks, { });
     for (auto& callback : bodyCallbacks) {
@@ -409,7 +409,7 @@ void BackgroundFetch::Record::didFinish(const ResourceError& error)
 void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRecordResponseCallback&& callback)
 {
     if (m_isAborted) {
-        callback(makeUnexpected(ExceptionData { AbortError, "Background fetch was aborted"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "Background fetch was aborted"_s }));
         return;
     }
 
@@ -419,7 +419,7 @@ void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRe
     }
 
     if (m_isCompleted) {
-        callback(makeUnexpected(ExceptionData { TypeError, "Fetch failed"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Fetch failed"_s }));
         return;
     }
 

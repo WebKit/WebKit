@@ -199,7 +199,7 @@ void GStreamerPeerConnectionBackend::doCreateOffer(RTCOfferOptions&& options)
 void GStreamerPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 {
     if (!m_isRemoteDescriptionSet) {
-        createAnswerFailed(Exception { InvalidStateError, "No remote description set"_s });
+        createAnswerFailed(Exception { ExceptionCode::InvalidStateError, "No remote description set"_s });
         return;
     }
     m_endpoint->doCreateAnswer();
@@ -258,7 +258,7 @@ ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStr
     GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Adding new track.");
     auto senderBackend = WTF::makeUnique<GStreamerRtpSenderBackend>(*this, nullptr);
     if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
-        return Exception { TypeError, "Unable to add track"_s };
+        return Exception { ExceptionCode::TypeError, "Unable to add track"_s };
 
     if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
         GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Existing sender found, associating track to it.");

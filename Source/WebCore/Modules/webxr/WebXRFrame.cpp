@@ -103,20 +103,20 @@ ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(c
 {
     // 1. If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Let session be frame’s session object.
     // 3. If space’s session does not equal session, throw an InvalidStateError and abort these steps.
     if (space.session() != m_session.ptr())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If baseSpace’s session does not equal session, throw an InvalidStateError and abort these steps.
     if (baseSpace.session() != m_session.ptr())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 5. Check if poses may be reported and, if not, throw a SecurityError and abort these steps.
     if (!m_session->posesCanBeReported(document))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     // 6. Let limit be the result of whether poses must be limited between space and baseSpace.
     // 7. Let transform be pose’s transform.
@@ -131,7 +131,7 @@ ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(c
 
     auto baseTransform = baseSpace.effectiveOrigin();
     if (!baseTransform)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (!baseTransform.value().isInvertible())
         return { std::nullopt };
@@ -146,11 +146,11 @@ ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(c
 
     auto isPositionEmulated = space.isPositionEmulated();
     if (!isPositionEmulated)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto baseSpaceIsPositionEmulated = baseSpace.isPositionEmulated();
     if (!baseSpaceIsPositionEmulated)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     bool emulatedPosition = isPositionEmulated.value() || baseSpaceIsPositionEmulated.value();
 
@@ -170,7 +170,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
     // 2. Let session be frame’s session object.
     // 3. If frame’s animationFrame boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_isAnimationFrame)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. Let pose be a new XRViewerPose object in the relevant realm of session.
     // 5. Populate the pose of session’s viewer reference space in referenceSpace at the time represented by frame into pose.
@@ -284,18 +284,18 @@ ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace
 {
     // If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
-        return Exception { InvalidStateError, "Frame is not active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s };
 
     // For each joint in the jointSpaces:
     // If joint’s session is different from session, throw an InvalidStateError and abort these steps.
     for (const auto& jointSpace : jointSpaces) {
         if (!jointSpace || jointSpace->session() != m_session.ptr())
-            return Exception { InvalidStateError, "Joint space's session does not match frame's session"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Joint space's session does not match frame's session"_s };
     }
 
     // If the length of jointSpaces is larger than the number of elements in radii, throw a TypeError and abort these steps.
     if (jointSpaces.size() > radii.length())
-        return Exception { TypeError, "Unexpected length of radii array"_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected length of radii array"_s };
 
     // Let allValid be true.
     bool allValid = true;
@@ -324,28 +324,28 @@ ExceptionOr<bool> WebXRFrame::fillPoses(const Document& document, const Vector<R
 {
     // If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
-        return Exception { InvalidStateError, "Frame is not active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s };
 
     // For each space in the spaces sequence:
     // If space’s session is different from session, throw an InvalidStateError and abort these steps.
     for (const auto& space : spaces) {
         if (!space || space->session() != m_session.ptr())
-            return Exception { InvalidStateError, "Space's session does not match frame's session"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Space's session does not match frame's session"_s };
     }
 
     // If baseSpace’s session is different from session, throw an InvalidStateError and abort these steps.
     if (baseSpace.session() != m_session.ptr())
-        return Exception { InvalidStateError, "Base space's session does not match frame's session"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Base space's session does not match frame's session"_s };
 
     // If the length of spaces multiplied by 16 is larger than the number of elements in transforms,
     // throw a TypeError and abort these steps.
     const size_t numberOfFloatsPerTransform = 16;
     if (spaces.size() * numberOfFloatsPerTransform > transforms.length())
-        return Exception { TypeError, "Unexpected length of transforms array"_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected length of transforms array"_s };
 
     // Check if poses may be reported and, if not, throw a SecurityError and abort these steps.
     if (!m_session->posesCanBeReported(document))
-        return Exception { SecurityError, "Poses cannot be reported"_s };
+        return Exception { ExceptionCode::SecurityError, "Poses cannot be reported"_s };
 
     // Let allValid be true.
     bool allValid = true;

@@ -54,7 +54,7 @@ RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, 
 ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCIceCandidateInit& dictionary)
 {
     if (dictionary.sdpMid.isNull() && !dictionary.sdpMLineIndex)
-        return Exception { TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex"_s };
+        return Exception { ExceptionCode::TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex"_s };
 
     auto fields = valueOrDefault(parseIceCandidateSDP(dictionary.candidate));
     fields.usernameFragment = dictionary.usernameFragment;

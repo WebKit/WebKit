@@ -534,28 +534,28 @@ Element* Node::nextElementSibling() const
 ExceptionOr<void> Node::insertBefore(Node& newChild, RefPtr<Node>&& refChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     return downcast<ContainerNode>(*this).insertBefore(newChild, WTFMove(refChild));
 }
 
 ExceptionOr<void> Node::replaceChild(Node& newChild, Node& oldChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     return downcast<ContainerNode>(*this).replaceChild(newChild, oldChild);
 }
 
 ExceptionOr<void> Node::removeChild(Node& oldChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     return downcast<ContainerNode>(*this).removeChild(oldChild);
 }
 
 ExceptionOr<void> Node::appendChild(Node& newChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     return downcast<ContainerNode>(*this).appendChild(newChild);
 }
 
@@ -752,7 +752,7 @@ void Node::normalize()
 ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep)
 {
     if (UNLIKELY(isShadowRoot()))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     return cloneNode(deep);
 }
 
@@ -767,7 +767,7 @@ ExceptionOr<void> Node::setPrefix(const AtomString&)
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
     // node, however Mozilla throws a NamespaceError exception.
-    return Exception { NamespaceError };
+    return Exception { ExceptionCode::NamespaceError };
 }
 
 const AtomString& Node::localName() const
@@ -1070,15 +1070,15 @@ ExceptionOr<void> Node::checkSetPrefix(const AtomString& prefix)
     // Element::setPrefix() and Attr::setPrefix()
 
     if (!prefix.isEmpty() && !Document::isValidName(prefix))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     // FIXME: Raise NamespaceError if prefix is malformed per the Namespaces in XML specification.
 
     auto& namespaceURI = this->namespaceURI();
     if (namespaceURI.isEmpty() && !prefix.isEmpty())
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
     if (prefix == xmlAtom() && namespaceURI != XMLNames::xmlNamespaceURI)
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
 
     // Attribute-specific checks are in Attr::setPrefix().
 

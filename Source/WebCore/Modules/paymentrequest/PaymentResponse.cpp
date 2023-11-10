@@ -71,12 +71,12 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
 void PaymentResponse::complete(Document& document, std::optional<PaymentComplete>&& result, std::optional<PaymentCompleteDetails>&& details, DOMPromiseDeferred<void>&& promise)
 {
     if (m_state == State::Stopped || !m_request) {
-        promise.reject(Exception { AbortError });
+        promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
 
     if (m_state == State::Completed || m_retryPromise) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -87,7 +87,7 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
 
             serializedData = JSONStringify(document.globalObject(), data.get(), 0);
             if (throwScope.exception()) {
-                promise.reject(Exception { ExistingExceptionError });
+                promise.reject(Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
         }
@@ -106,12 +106,12 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
 void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
 {
     if (m_state == State::Stopped || !m_request) {
-        promise.reject(Exception { AbortError });
+        promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
 
     if (m_state == State::Completed || m_retryPromise) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -148,7 +148,7 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
 void PaymentResponse::stop()
 {
     queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this, pendingActivity = std::exchange(m_pendingActivity, nullptr)] {
-        settleRetryPromise(Exception { AbortError });
+        settleRetryPromise(Exception { ExceptionCode::AbortError });
     });
     m_state = State::Stopped;
 }

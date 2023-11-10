@@ -48,14 +48,14 @@ using namespace Style;
 ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
     if (!isCustomPropertyName(descriptor.name))
-        return Exception { SyntaxError, "The name of this property is not a custom property name."_s };
+        return Exception { ExceptionCode::SyntaxError, "The name of this property is not a custom property name."_s };
 
     auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
     if (!syntax)
-        return Exception { SyntaxError, "Invalid property syntax definition."_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid property syntax definition."_s };
 
     if (!syntax->isUniversal() && descriptor.initialValue.isNull())
-        return Exception { SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
+        return Exception { ExceptionCode::SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
 
     RefPtr<CSSCustomPropertyValue> initialValue;
     RefPtr<CSSVariableData> initialValueTokensForViewportUnits;
@@ -67,10 +67,10 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
         if (!parsedInitialValue) {
             if (parsedInitialValue.error() == CustomPropertyRegistry::ParseInitialValueError::NotComputationallyIndependent)
-                return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
+                return Exception { ExceptionCode::SyntaxError, "The given initial value must be computationally independent."_s };
 
             ASSERT(parsedInitialValue.error() == CustomPropertyRegistry::ParseInitialValueError::DidNotParse);
-            return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
+            return Exception { ExceptionCode::SyntaxError, "The given initial value does not parse for the given syntax."_s };
         }
 
         initialValue = parsedInitialValue->first;
@@ -90,7 +90,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
     auto& registry = document.styleScope().customPropertyRegistry();
     if (!registry.registerFromAPI(WTFMove(property)))
-        return Exception { InvalidModificationError, "This property has already been registered."_s };
+        return Exception { ExceptionCode::InvalidModificationError, "This property has already been registered."_s };
 
     return { };
 }

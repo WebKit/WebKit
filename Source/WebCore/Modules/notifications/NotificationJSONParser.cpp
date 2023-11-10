@@ -114,50 +114,50 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     URL defaultActionURL;
     if (auto value = object.getValue(defaultActionURLKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, defaultActionURLKey(), "' member is specified but is not a string"_s) };
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, defaultActionURLKey(), "' member is specified but is not a string"_s) };
 
         defaultActionURL = URL { value->asString() };
     }
 
     if (!defaultActionURL.isValid())
-        return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, defaultActionURLKey(), "' member is specified but does not represent a valid URL"_s) };
+        return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, defaultActionURLKey(), "' member is specified but does not represent a valid URL"_s) };
 
     String title;
     if (auto value = object.getValue(titleKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is specified but is not a string") };
         title = value->asString();
     }
 
     if (title.isEmpty())
-        return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is missing or is an empty string") };
+        return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is missing or is an empty string") };
 
     std::optional<unsigned long long> appBadge;
     if (auto value = object.getValue(appBadgeKey())) {
         if (value->type() == JSON::Value::Type::String) {
             appBadge = parseAppBadgeString(value->asString());
             if (!appBadge)
-                return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified as a string that did not parse to a valid unsigned long long"_s) };
+                return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified as a string that did not parse to a valid unsigned long long"_s) };
         } else {
             if (value->type() != JSON::Value::Type::Integer && value->type() != JSON::Value::Type::Double)
-                return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified but is not a string or a number"_s) };
+                return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified but is not a string or a number"_s) };
             auto appBadgeInt = value->asInteger();
             if (!appBadgeInt || *appBadgeInt < 0)
-                return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified as an number but is not a valid unsigned long long"_s) };
+                return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, appBadgeKey(), "' member is specified as an number but is not a valid unsigned long long"_s) };
             appBadge = (unsigned long long)(*appBadgeInt);
         }
     }
 
     auto optionsOrException = parseNotificationOptions(object);
     if (optionsOrException.hasException())
-        return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsOrException.exception().message()) };
+        return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsOrException.exception().message()) };
 
     std::optional<NotificationOptionsPayload> notificationOptions = optionsOrException.releaseReturnValue();
 
     bool isMutable = false;
     if (auto value = object.getValue(mutableKey())) {
         if (value->type() != JSON::Value::Type::Boolean)
-            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey(), "' member is specified but is not a boolean") };
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey(), "' member is specified but is not a boolean") };
         isMutable = *(value->asBoolean());
     }
 
@@ -169,49 +169,49 @@ ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificatio
     NotificationDirection direction = NotificationDirection::Auto;
     if (auto value = object.getValue(dirKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("'", dirKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", dirKey(), "' member is specified but is not a string") };
         auto directionString = object.getString(dirKey());
         auto parsedDirection = parseEnumerationFromString<NotificationDirection>(directionString);
         if (parsedDirection == std::nullopt)
-            return Exception { SyntaxError, makeString("'", dirKey(), "' member is specified but is not a valid NotificationDirection") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", dirKey(), "' member is specified but is not a valid NotificationDirection") };
         direction = *parsedDirection;
     }
 
     String lang;
     if (auto value = object.getValue(langKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("'", langKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", langKey(), "' member is specified but is not a string") };
         lang = value->asString();
     }
 
     String body;
     if (auto value = object.getValue(bodyKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("'", bodyKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", bodyKey(), "' member is specified but is not a string") };
         body = value->asString();
     }
 
     String tag;
     if (auto value = object.getValue(tagKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("'", tagKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", tagKey(), "' member is specified but is not a string") };
         tag = value->asString();
     }
 
     URL iconURL;
     if (auto value = object.getValue(iconKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { SyntaxError, makeString("'", iconKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", iconKey(), "' member is specified but is not a string") };
 
         iconURL = URL { value->asString() };
         if (!iconURL.isValid())
-            return Exception { SyntaxError, makeString("'", iconKey(), "' member is specified but does not represent a valid URL") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", iconKey(), "' member is specified but does not represent a valid URL") };
     }
 
     std::optional<bool> silent;
     if (auto value = object.getValue(silentKey())) {
         if (value->type() != JSON::Value::Type::Boolean)
-            return Exception { SyntaxError, makeString("'", silentKey(), "' member is specified but is not a boolean") };
+            return Exception { ExceptionCode::SyntaxError, makeString("'", silentKey(), "' member is specified but is not a boolean") };
         silent = value->asBoolean();
     }
 

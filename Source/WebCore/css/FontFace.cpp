@@ -51,7 +51,7 @@ static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::Arra
 
 void FontFace::setErrorState()
 {
-    m_loadedPromise->reject(Exception { SyntaxError });
+    m_loadedPromise->reject(Exception { ExceptionCode::SyntaxError });
     m_backing->setErrorState();
 }
 
@@ -74,7 +74,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         [&] (String& string) -> ExceptionOr<void> {
             auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, is<Document>(context) ? CSSParserContext(downcast<Document>(context)) : HTMLStandardMode);
             if (!value)
-                return Exception { SyntaxError };
+                return Exception { ExceptionCode::SyntaxError };
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
@@ -178,7 +178,7 @@ FontFace::~FontFace()
 ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const String& family)
 {
     if (family.isNull())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
     m_backing->setFamilies(CSSValueList::createCommaSeparated(context.cssValuePool().createFontFamilyValue(AtomString { family })));
     return { };
@@ -190,7 +190,7 @@ ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const Stri
         m_backing->setStyle(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const String& weight)
@@ -199,7 +199,7 @@ ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const Str
         m_backing->setWeight(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const String& stretch)
@@ -208,7 +208,7 @@ ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const St
         m_backing->setStretch(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, const String& unicodeRange)
@@ -217,7 +217,7 @@ ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, con
         m_backing->setUnicodeRange(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, const String& featureSettings)
@@ -226,7 +226,7 @@ ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, 
         m_backing->setFeatureSettings(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const String& display)
@@ -235,7 +235,7 @@ ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const St
         m_backing->setDisplay(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const String& sizeAdjust)
@@ -244,7 +244,7 @@ ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const
         m_backing->setSizeAdjust(*value);
         return { };
     }
-    return Exception { SyntaxError };
+    return Exception { ExceptionCode::SyntaxError };
 }
 
 String FontFace::family() const
@@ -347,7 +347,7 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
         // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.
         if (!m_loadedPromise->isFulfilled())
-            m_loadedPromise->reject(Exception { NetworkError });
+            m_loadedPromise->reject(Exception { ExceptionCode::NetworkError });
         return;
     case CSSFontFace::Status::Pending:
         ASSERT_NOT_REACHED();

@@ -103,7 +103,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
 
     auto buffer = ArrayBuffer::tryCreate(source->data(), source->size());
     if (!buffer)
-        return Exception { OutOfMemoryError };
+        return Exception { ExceptionCode::OutOfMemoryError };
     return buffer;
 }
 

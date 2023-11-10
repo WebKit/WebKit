@@ -156,7 +156,7 @@ ExceptionOr<void> Location::setProtocol(LocalDOMWindow& incumbentWindow, LocalDO
         return { };
     URL url = localFrame->document()->url();
     if (!url.setProtocol(protocol))
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
@@ -250,10 +250,10 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
 
     URL completedURL = firstFrame->document()->completeURL(urlString);
     if (!completedURL.isValid())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     if (!activeWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
     frame->window()->setLocation(activeWindow, completedURL, SetLocationLocking::LockHistoryAndBackForwardList);
@@ -300,10 +300,10 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     URL completedURL = firstFrame->document()->completeURL(urlString);
 
     if (!completedURL.isValid())
-        return Exception { SyntaxError, "Invalid URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
 
     if (!incumbentWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     ASSERT(frame->window());
     frame->window()->setLocation(incumbentWindow, completedURL);

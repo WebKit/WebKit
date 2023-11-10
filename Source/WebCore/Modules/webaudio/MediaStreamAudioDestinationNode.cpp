@@ -43,7 +43,7 @@ ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNod
 {
     // This behavior is not part of the specification. This is done for consistency with Blink.
     if (context.isStopped() || !context.scriptExecutionContext())
-        return Exception { NotAllowedError, "Cannot create a MediaStreamAudioDestinationNode in a detached frame"_s };
+        return Exception { ExceptionCode::NotAllowedError, "Cannot create a MediaStreamAudioDestinationNode in a detached frame"_s };
 
     auto node = adoptRef(*new MediaStreamAudioDestinationNode(context));
 

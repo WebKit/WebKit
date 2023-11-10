@@ -71,7 +71,7 @@ CanvasGradient::~CanvasGradient() = default;
 ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& colorString)
 {
     if (!(value >= 0 && value <= 1))
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     // Treat currentColor as black, as required by the standard.
     Color color;
@@ -83,7 +83,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& color
         color = parseColor(colorString);
 
     if (!color.isValid())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     m_gradient->addColorStop({ static_cast<float>(value), WTFMove(color) });
     return { };

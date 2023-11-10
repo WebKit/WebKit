@@ -245,7 +245,7 @@ void LibWebRTCPeerConnectionBackend::doCreateOffer(RTCOfferOptions&& options)
 void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 {
     if (!m_isRemoteDescriptionSet) {
-        createAnswerFailed(Exception { InvalidStateError, "No remote description set"_s });
+        createAnswerFailed(Exception { ExceptionCode::InvalidStateError, "No remote description set"_s });
         return;
     }
     m_endpoint->doCreateAnswer();
@@ -269,7 +269,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
     std::unique_ptr<webrtc::IceCandidateInterface> rtcCandidate(webrtc::CreateIceCandidate(candidate.sdpMid().utf8().data(), sdpMLineIndex, candidate.candidate().utf8().data(), &error));
 
     if (!rtcCandidate) {
-        callback(Exception { OperationError, String::fromUTF8(error.description.data(), error.description.length()) });
+        callback(Exception { ExceptionCode::OperationError, String::fromUTF8(error.description.data(), error.description.length()) });
         return;
     }
 
@@ -311,7 +311,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
 {
     auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
-        return Exception { TypeError, "Unable to add track"_s };
+        return Exception { ExceptionCode::TypeError, "Unable to add track"_s };
 
     if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
         backendFromRTPSender(*sender).takeSource(*senderBackend);

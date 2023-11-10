@@ -322,11 +322,11 @@ void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<Pho
             // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
             // asynchronously), then reject p with a new DOMException whose name is OperationError, and
             // abort these steps.
-            promise.reject(Exception { OperationError, WTFMove(result.errorMessage) });
+            promise.reject(Exception { ExceptionCode::OperationError, WTFMove(result.errorMessage) });
             return;
         }
         if (protectedThis->m_readyState != State::Live) {
-            promise.reject(Exception { OperationError, "Track has ended"_s });
+            promise.reject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
             return;
         }
 
@@ -343,11 +343,11 @@ void MediaStreamTrack::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSe
         // asynchronously), then reject p with a new DOMException whose name is OperationError, and
         // abort these steps.
         if (!result) {
-            promise.reject(Exception { OperationError, WTFMove(result.error()) });
+            promise.reject(Exception { ExceptionCode::OperationError, WTFMove(result.error()) });
             return;
         }
         if (protectedThis->m_readyState != State::Live) {
-            promise.reject(Exception { OperationError, "Track has ended"_s });
+            promise.reject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
             return;
         }
 

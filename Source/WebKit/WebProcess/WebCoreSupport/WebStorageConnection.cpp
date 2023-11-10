@@ -56,7 +56,7 @@ void WebStorageConnection::getEstimate(WebCore::ClientOrigin&& origin, StorageCo
 {
     Ref { connection() }->sendWithAsyncReply(Messages::NetworkStorageManager::Estimate(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
-            return completionHandler(WebCore::Exception { WebCore::TypeError });
+            return completionHandler(WebCore::Exception { WebCore::ExceptionCode::TypeError });
 
         return completionHandler(WTFMove(*result));
     });
@@ -70,7 +70,7 @@ void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin
 
         auto identifier = result.value();
         if (!identifier.isValid())
-            return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
+            return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
         auto connection = RefPtr<WebCore::FileSystemStorageConnection> { &WebProcess::singleton().fileSystemStorageConnection() };
         return completionHandler(std::pair { identifier, WTFMove(connection) });

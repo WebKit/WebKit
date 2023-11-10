@@ -97,48 +97,48 @@ static inline ExceptionCode toExceptionCode(NSInteger nsErrorCode)
     ExceptionCode exceptionCode = (ExceptionCode)nsErrorCode;
 
     switch (exceptionCode) {
-    case IndexSizeError: FALLTHROUGH;
-    case HierarchyRequestError: FALLTHROUGH;
-    case WrongDocumentError: FALLTHROUGH;
-    case InvalidCharacterError: FALLTHROUGH;
-    case NoModificationAllowedError: FALLTHROUGH;
-    case NotFoundError: FALLTHROUGH;
-    case NotSupportedError: FALLTHROUGH;
-    case InUseAttributeError: FALLTHROUGH;
-    case InvalidStateError: FALLTHROUGH;
-    case SyntaxError: FALLTHROUGH;
-    case InvalidModificationError: FALLTHROUGH;
-    case NamespaceError: FALLTHROUGH;
-    case InvalidAccessError: FALLTHROUGH;
-    case TypeMismatchError: FALLTHROUGH;
-    case SecurityError: FALLTHROUGH;
-    case NetworkError: FALLTHROUGH;
-    case AbortError: FALLTHROUGH;
-    case URLMismatchError: FALLTHROUGH;
-    case QuotaExceededError: FALLTHROUGH;
-    case TimeoutError: FALLTHROUGH;
-    case InvalidNodeTypeError: FALLTHROUGH;
-    case DataCloneError: FALLTHROUGH;
-    case EncodingError: FALLTHROUGH;
-    case NotReadableError: FALLTHROUGH;
-    case UnknownError: FALLTHROUGH;
-    case ConstraintError: FALLTHROUGH;
-    case DataError: FALLTHROUGH;
-    case TransactionInactiveError: FALLTHROUGH;
-    case ReadonlyError: FALLTHROUGH;
-    case VersionError: FALLTHROUGH;
-    case OperationError: FALLTHROUGH;
-    case NotAllowedError: FALLTHROUGH;
-    case RangeError: FALLTHROUGH;
-    case TypeError: FALLTHROUGH;
-    case JSSyntaxError: FALLTHROUGH;
-    case StackOverflowError: FALLTHROUGH;
-    case OutOfMemoryError: FALLTHROUGH;
-    case ExistingExceptionError:
+    case ExceptionCode::IndexSizeError: FALLTHROUGH;
+    case ExceptionCode::HierarchyRequestError: FALLTHROUGH;
+    case ExceptionCode::WrongDocumentError: FALLTHROUGH;
+    case ExceptionCode::InvalidCharacterError: FALLTHROUGH;
+    case ExceptionCode::NoModificationAllowedError: FALLTHROUGH;
+    case ExceptionCode::NotFoundError: FALLTHROUGH;
+    case ExceptionCode::NotSupportedError: FALLTHROUGH;
+    case ExceptionCode::InUseAttributeError: FALLTHROUGH;
+    case ExceptionCode::InvalidStateError: FALLTHROUGH;
+    case ExceptionCode::SyntaxError: FALLTHROUGH;
+    case ExceptionCode::InvalidModificationError: FALLTHROUGH;
+    case ExceptionCode::NamespaceError: FALLTHROUGH;
+    case ExceptionCode::InvalidAccessError: FALLTHROUGH;
+    case ExceptionCode::TypeMismatchError: FALLTHROUGH;
+    case ExceptionCode::SecurityError: FALLTHROUGH;
+    case ExceptionCode::NetworkError: FALLTHROUGH;
+    case ExceptionCode::AbortError: FALLTHROUGH;
+    case ExceptionCode::URLMismatchError: FALLTHROUGH;
+    case ExceptionCode::QuotaExceededError: FALLTHROUGH;
+    case ExceptionCode::TimeoutError: FALLTHROUGH;
+    case ExceptionCode::InvalidNodeTypeError: FALLTHROUGH;
+    case ExceptionCode::DataCloneError: FALLTHROUGH;
+    case ExceptionCode::EncodingError: FALLTHROUGH;
+    case ExceptionCode::NotReadableError: FALLTHROUGH;
+    case ExceptionCode::UnknownError: FALLTHROUGH;
+    case ExceptionCode::ConstraintError: FALLTHROUGH;
+    case ExceptionCode::DataError: FALLTHROUGH;
+    case ExceptionCode::TransactionInactiveError: FALLTHROUGH;
+    case ExceptionCode::ReadonlyError: FALLTHROUGH;
+    case ExceptionCode::VersionError: FALLTHROUGH;
+    case ExceptionCode::OperationError: FALLTHROUGH;
+    case ExceptionCode::NotAllowedError: FALLTHROUGH;
+    case ExceptionCode::RangeError: FALLTHROUGH;
+    case ExceptionCode::TypeError: FALLTHROUGH;
+    case ExceptionCode::JSSyntaxError: FALLTHROUGH;
+    case ExceptionCode::StackOverflowError: FALLTHROUGH;
+    case ExceptionCode::OutOfMemoryError: FALLTHROUGH;
+    case ExceptionCode::ExistingExceptionError:
         return exceptionCode;
     }
 
-    return NotAllowedError;
+    return ExceptionCode::NotAllowedError;
 }
 
 static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(PublicKeyCredentialDescriptor descriptor)
@@ -458,7 +458,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
             exceptionCode = toExceptionCode(error.get().code);
             errorMessage = error.get().userInfo[NSLocalizedDescriptionKey];
         } else {
-            exceptionCode = NotAllowedError;
+            exceptionCode = ExceptionCode::NotAllowedError;
 
             if ([error.get().domain isEqualToString:ASCAuthorizationErrorDomain] && error.get().code == ASCAuthorizationErrorUserCanceled) {
                 errorMessage = @"This request has been cancelled by the user.";
@@ -484,7 +484,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
 void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialRequestContext> requestContext, RequestCompletionHandler&& handler)
 {
     if (requestContext.get().requestTypes == ASCCredentialRequestTypeNone) {
-        handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+        handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "This request has been cancelled by the user."_s });
         RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to none requestTypes.");
         return;
     }
@@ -494,7 +494,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
         [m_proxy performAutoFillAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
             ensureOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
                 if (!weakThis) {
-                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "Operation failed."_s });
+                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "Operation failed."_s });
                     RELEASE_LOG_ERROR(WebAuthn, "Request cancelled after WebAuthenticatorCoordinatorProxy invalid after staring request.");
                     return;
                 }
@@ -517,7 +517,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), window = WTFMove(window), daemonEndpoint = retainPtr(daemonEndpoint), error = retainPtr(error)] () mutable {
             if (!weakThis || !daemonEndpoint) {
                 RELEASE_LOG_ERROR(WebAuthn, "Could not connect to authorization daemon: %@.", error.get().localizedDescription);
-                handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "Operation failed."_s });
+                handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "Operation failed."_s });
                 if (weakThis && weakThis->m_proxy)
                     weakThis->m_proxy.clear();
                 return;

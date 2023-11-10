@@ -53,7 +53,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<CSSNumericValue> x, Ref<
     if (!x->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
         || !y->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
         || !z->type().matches<CSSNumericBaseType::Length>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSTranslate(is2D, WTFMove(x), WTFMove(y), z.releaseNonNull()));
 }
@@ -67,7 +67,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(CSSFunctionValue& cssFunctio
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             if (!is<CSSNumericValue>(valueOrException.returnValue()))
-                return Exception { TypeError, "Expected a CSSNumericValue."_s };
+                return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
             components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
         }
         if (!maxNumberOfComponents)
@@ -75,7 +75,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(CSSFunctionValue& cssFunctio
         auto numberOfComponents = components.size();
         if (numberOfComponents < minNumberOfComponents || numberOfComponents > maxNumberOfComponents) {
             ASSERT_NOT_REACHED();
-            return Exception { TypeError, "Unexpected number of values."_s };
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
         }
         return create(WTFMove(components));
     };
@@ -134,7 +134,7 @@ void CSSTranslate::serialize(StringBuilder& builder) const
 ExceptionOr<void> CSSTranslate::setZ(Ref<CSSNumericValue> z)
 {
     if (!z->type().matches<CSSNumericBaseType::Length>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_z = WTFMove(z);
     return { };
@@ -147,14 +147,14 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
     // in this involved in generating the matrix are not compatible units with px (such as
     // relative lengths or percentages), throw a TypeError.
     if (!is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto xPx = downcast<CSSUnitValue>(m_x.get()).convertTo(CSSUnitType::CSS_PX);
     auto yPx = downcast<CSSUnitValue>(m_y.get()).convertTo(CSSUnitType::CSS_PX);
     auto zPx = downcast<CSSUnitValue>(m_z.get()).convertTo(CSSUnitType::CSS_PX);
 
     if (!xPx || !yPx || !zPx)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto x = xPx->value();
     auto y = yPx->value();

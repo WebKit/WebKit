@@ -74,11 +74,11 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-request as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
     if (!m_document || !m_document->page()) {
-        promise.reject(Exception { NotSupportedError });
+        promise.reject(Exception { ExceptionCode::NotSupportedError });
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
+        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
         return;
     }
     // Step 1-2.
@@ -88,13 +88,13 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
     // Step 4-6. Shortcut as we only support PublicKeyCredential which can only
     // be requested from [[discoverFromExternalSource]].
     if (!options.publicKey) {
-        promise.reject(Exception { NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
         return;
     }
 
     // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
     if (options.mediation != CredentialRequestOptions::MediationRequirement::Conditional && !m_document->hasFocus()) {
-        promise.reject(Exception { NotAllowedError, "The document is not focused."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
 
@@ -103,7 +103,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented."_s });
+    promise.reject(Exception { ExceptionCode::NotSupportedError, "Not implemented."_s });
 }
 
 void CredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)
@@ -111,11 +111,11 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-create as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
     if (!m_document || !m_document->page()) {
-        promise.reject(Exception { NotSupportedError });
+        promise.reject(Exception { ExceptionCode::NotSupportedError });
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
+        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
         return;
     }
     // Step 1-2.
@@ -123,13 +123,13 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 
     // Step 3-7. Shortcut as we only support one kind of credentials.
     if (!options.publicKey) {
-        promise.reject(Exception { NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
         return;
     }
 
     // Extra.
     if (!m_document->hasFocus()) {
-        promise.reject(Exception { NotAllowedError, "The document is not focused."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
 

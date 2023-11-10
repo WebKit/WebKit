@@ -59,7 +59,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
 {
     ASSERT(!isMainThread());
     if (FileSystem::fileType(fullPath) != FileSystem::FileType::Directory)
-        return Exception { NotFoundError, "Path no longer exists or is no longer a directory"_s };
+        return Exception { ExceptionCode::NotFoundError, "Path no longer exists or is no longer a directory"_s };
 
     auto childNames = FileSystem::listDirectory(fullPath);
     return WTF::compactMap(WTFMove(childNames), [&](auto&& childName) -> std::optional<ListedChild> {
@@ -172,10 +172,10 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 
     auto fileType = fileTypeIgnoringHiddenFiles(fullPath);
     if (!fileType)
-        return Exception { NotFoundError, "Path does not exist"_s };
+        return Exception { ExceptionCode::NotFoundError, "Path does not exist"_s };
 
     if (*fileType != expectedType)
-        return Exception { TypeMismatchError, "Entry at path does not have expected type"_s };
+        return Exception { ExceptionCode::TypeMismatchError, "Entry at path does not have expected type"_s };
 
     return WTFMove(virtualPath);
 }
@@ -281,14 +281,14 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
 
     if (!isValidVirtualPath(virtualPath)) {
         callOnMainThread([completionCallback = WTFMove(completionCallback)] {
-            completionCallback(Exception { TypeMismatchError, "Path is invalid"_s });
+            completionCallback(Exception { ExceptionCode::TypeMismatchError, "Path is invalid"_s });
         });
         return;
     }
 
     if (flags.create) {
         callOnMainThread([completionCallback = WTFMove(completionCallback)] {
-            completionCallback(Exception { SecurityError, "create flag cannot be true"_s });
+            completionCallback(Exception { ExceptionCode::SecurityError, "create flag cannot be true"_s });
         });
         return;
     }
@@ -307,7 +307,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
         auto entryType = fileTypeIgnoringHiddenFiles(fullPath);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(WTFMove(resolvedVirtualPath)), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {
-                completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
+                completionCallback(Exception { ExceptionCode::NotFoundError, "Cannot find entry at given path"_s });
                 return;
             }
             switch (entryType.value()) {
@@ -318,7 +318,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
                 completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, protectedThis.get(), resolvedVirtualPath) });
                 break;
             default:
-                completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
+                completionCallback(Exception { ExceptionCode::NotFoundError, "Cannot find entry at given path"_s });
                 break;
             }
         });

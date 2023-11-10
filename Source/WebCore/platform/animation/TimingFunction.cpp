@@ -182,7 +182,7 @@ ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const Stri
         if (auto function = createFromCSSValue(*value))
             return function;
     }
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)

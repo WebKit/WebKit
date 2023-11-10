@@ -260,7 +260,7 @@ void LocalAuthenticator::makeCredential()
     if (notFound == creationOptions.pubKeyCredParams.findIf([] (auto& pubKeyCredParam) {
         return pubKeyCredParam.type == PublicKeyCredentialType::PublicKey && pubKeyCredParam.alg == COSE::ES256;
     })) {
-        receiveException({ NotSupportedError, "The platform attached authenticator doesn't support any provided PublicKeyCredentialParameters."_s });
+        receiveException({ ExceptionCode::NotSupportedError, "The platform attached authenticator doesn't support any provided PublicKeyCredentialParameters."_s });
         return;
     }
 
@@ -268,7 +268,7 @@ void LocalAuthenticator::makeCredential()
     ASSERT(creationOptions.rp.id);
     auto existingCredentials = getExistingCredentials(*creationOptions.rp.id);
     if (!existingCredentials) {
-        receiveException({ UnknownError, makeString("Couldn't get existing credentials") });
+        receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get existing credentials") });
         return;
     }
     m_existingCredentials = WTFMove(*existingCredentials);
@@ -280,7 +280,7 @@ void LocalAuthenticator::makeCredential()
             ASSERT(rawId);
             return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
         })) {
-            receiveException({ InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
+            receiveException({ ExceptionCode::InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
         }
     }
@@ -308,7 +308,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
         accessControl = adoptCF(SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
-            receiveException({ UnknownError, makeString("Couldn't create access control: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't create access control: ", String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
     }
@@ -333,7 +333,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
 
     // Step 1.
     if (largeBlobInput->read || largeBlobInput->write)
-        return WebCore::ExceptionData { NotSupportedError, "Cannot use `read` or `write` with largeBlob during create."_s };
+        return WebCore::ExceptionData { ExceptionCode::NotSupportedError, "Cannot use `read` or `write` with largeBlob during create."_s };
 
     // Step 2-3.
     extensionOutputs.largeBlob = AuthenticationExtensionsClientOutputs::LargeBlobOutputs {
@@ -354,11 +354,11 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
 
     // Step 1.
     if (!largeBlobInput->support.isNull())
-        return WebCore::ExceptionData { NotSupportedError, "Cannot use `support` with largeBlob during get."_s };
+        return WebCore::ExceptionData { ExceptionCode::NotSupportedError, "Cannot use `support` with largeBlob during get."_s };
 
     // Step 2.
     if (largeBlobInput->read && largeBlobInput->write)
-        return WebCore::ExceptionData { NotSupportedError, "Cannot use `read` and `write` simultaneously with largeBlob."_s };
+        return WebCore::ExceptionData { ExceptionCode::NotSupportedError, "Cannot use `read` and `write` simultaneously with largeBlob."_s };
 
     // Step 3.
     if (largeBlobInput->read && largeBlobInput->read.value()) {
@@ -388,7 +388,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)fetchQuery, &attributesArrayRef);
         if (status && status != errSecItemNotFound) {
             ASSERT_NOT_REACHED();
-            return WebCore::ExceptionData { UnknownError, "Attempted to update unknown credential."_s };
+            return WebCore::ExceptionData { ExceptionCode::UnknownError, "Attempted to update unknown credential."_s };
         }
 
         auto retainAttributesArray = adoptCF(attributesArrayRef);
@@ -397,7 +397,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(dict[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
-            return WebCore::ExceptionData { UnknownError, "Could not read credential."_s };
+            return WebCore::ExceptionData { ExceptionCode::UnknownError, "Could not read credential."_s };
         }
 
         CBOR::MapValue responseMap;
@@ -491,7 +491,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // The above-to-create private key will be inserted into keychain while using SEP.
     auto privateKey = m_connection->createCredentialPrivateKey(context, accessControlRef, secAttrLabel, secAttrApplicationTag.get());
     if (!privateKey) {
-        receiveException({ UnknownError, "Couldn't create private key."_s });
+        receiveException({ ExceptionCode::UnknownError, "Couldn't create private key."_s });
         return;
     }
 
@@ -502,7 +502,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
-            receiveException({ UnknownError, makeString("Couldn't export the public key: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't export the public key: ", String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
         ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
@@ -619,7 +619,7 @@ void LocalAuthenticator::getAssertion()
     // Step 3-5. Unlike the spec, if an allow list is provided and there is no intersection between existing ones and the allow list, we always return NotAllowedError.
     auto allowCredentialIds = produceHashSet(requestOptions.allowCredentials);
     if (!requestOptions.allowCredentials.isEmpty() && allowCredentialIds.isEmpty()) {
-        receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
+        receiveException({ ExceptionCode::NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
         RELEASE_LOG_ERROR(WebAuthn, "No matched credentials are found in the platform attached authenticator.");
         return;
     }
@@ -627,7 +627,7 @@ void LocalAuthenticator::getAssertion()
     // Search Keychain for the RP ID.
     auto existingCredentials = getExistingCredentials(requestOptions.rpId);
     if (!existingCredentials) {
-        receiveException({ UnknownError, "Couldn't get existing credentials"_s });
+        receiveException({ ExceptionCode::UnknownError, "Couldn't get existing credentials"_s });
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't get existing credentials");
         return;
     }
@@ -642,7 +642,7 @@ void LocalAuthenticator::getAssertion()
         return nullptr;
     });
     if (assertionResponses.isEmpty()) {
-        receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
+        receiveException({ ExceptionCode::NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
         RELEASE_LOG_ERROR(WebAuthn, "No matched credentials are found in the platform attached authenticator.");
         return;
     }
@@ -723,7 +723,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         CFTypeRef privateKeyRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
         if (status) {
-            receiveException({ UnknownError, makeString("Couldn't get the private key reference: ", status) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get the private key reference: ", status) });
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't get the private key reference: %d", status);
             return;
         }
@@ -738,7 +738,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", ((NSError*)errorRef).localizedDescription);
-            receiveException({ UnknownError, makeString("Couldn't generate the signature: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't generate the signature: ", String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
     }
@@ -832,7 +832,7 @@ bool LocalAuthenticator::validateUserVerification(LocalConnection::UserVerificat
     }
 
     if (verification == LocalConnection::UserVerification::No) {
-        receiveException({ NotAllowedError, "Couldn't verify user."_s });
+        receiveException({ ExceptionCode::NotAllowedError, "Couldn't verify user."_s });
         RELEASE_LOG_ERROR(WebAuthn, "Could not verify user.");
         return false;
     }

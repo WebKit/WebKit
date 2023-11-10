@@ -61,16 +61,16 @@ static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
     Vector<Length, 4> margins;
     while (!tokenRange.atEnd()) {
         if (margins.size() == 4)
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': Extra text found at the end of rootMargin."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': Extra text found at the end of rootMargin."_s };
         RefPtr<CSSPrimitiveValue> parsedValue = CSSPropertyParserHelpers::consumeLengthOrPercent(tokenRange, HTMLStandardMode, ValueRange::All);
         if (!parsedValue || parsedValue->isCalculated())
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
         if (parsedValue->isPercentage())
             margins.append(Length(parsedValue->doubleValue(), LengthType::Percent));
         else if (parsedValue->isPx())
             margins.append(Length(parsedValue->intValue(), LengthType::Fixed));
         else
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
     }
     switch (margins.size()) {
     case 0:
@@ -124,7 +124,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 
     for (auto threshold : thresholds) {
         if (!(threshold >= 0 && threshold <= 1))
-            return Exception { RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
+            return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
     }
 
     return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));

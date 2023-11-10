@@ -447,7 +447,7 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
 {
     runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), vapidPublicKey, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
-            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
+            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 
@@ -459,7 +459,7 @@ void WebPushDaemon::unsubscribeFromPushService(PushClientConnection& connection,
 {
     runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), subscriptionIdentifier, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
-            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
+            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 
@@ -471,7 +471,7 @@ void WebPushDaemon::getPushSubscription(PushClientConnection& connection, const 
 {
     runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
-            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
+            replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 

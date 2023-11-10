@@ -62,7 +62,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
 
     if (index > m_groupRule->childRules().size()) {
         // IndexSizeError: Raised if the specified index is not a valid insertion point.
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     }
 
     CSSStyleSheet* styleSheet = parentStyleSheet();
@@ -70,7 +70,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, isNestedContext);
     if (!newRule) {
         // SyntaxError: Raised if the specified rule has a syntax error and is unparsable.
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     }
 
     if (newRule->isImportRule() || newRule->isNamespaceRule()) {
@@ -81,12 +81,12 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
         // HierarchyRequestError: Raised if the rule cannot be inserted at the specified
         // index, e.g., if an @import rule is inserted after a standard rule set or other
         // at-rule.
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     }
 
     // Nesting inside style rule only accepts style rule or group rule
     if (hasStyleRuleAncestor() && !newRule->isStyleRule() && !newRule->isGroupRule())
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
@@ -103,7 +103,7 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
     if (index >= m_groupRule->childRules().size()) {
         // IndexSizeError: Raised if the specified index does not correspond to a
         // rule in the media rule list.
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     }
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

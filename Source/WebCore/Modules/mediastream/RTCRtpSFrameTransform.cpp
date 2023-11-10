@@ -74,12 +74,12 @@ void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint6
 {
     auto algorithm = key.algorithm();
     if (!std::holds_alternative<CryptoKeyAlgorithm>(algorithm)) {
-        promise.reject(Exception { TypeError, "Invalid key"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Invalid key"_s });
         return;
     }
 
     if (std::get<CryptoKeyAlgorithm>(algorithm).name != "HKDF"_s) {
-        promise.reject(Exception { TypeError, "Only HKDF is supported"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Only HKDF is supported"_s });
         return;
     }
 
@@ -219,7 +219,7 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 {
     auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()) : nullptr;
     if (!globalObject)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_readableStreamSource = SimpleReadableStreamSource::create();
     auto readable = ReadableStream::create(*globalObject, *m_readableStreamSource);
@@ -228,13 +228,13 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 
     auto writable = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource, weakThis = WeakPtr { *this }](auto& context, auto value) -> ExceptionOr<void> {
         if (!context.globalObject())
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
         auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
         auto frame = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView, IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
         if (scope.exception())
-            return Exception { ExistingExceptionError };
+            return Exception { ExceptionCode::ExistingExceptionError };
 
         // We do not want to throw any exception in the transform to make sure we do not error the transform.
         WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {

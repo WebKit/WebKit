@@ -87,7 +87,7 @@ IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData
     auto result = m_records.add(indexKey, nullptr);
 
     if (!result.isNewEntry && m_unique)
-        return IDBError(ConstraintError);
+        return IDBError(ExceptionCode::ConstraintError);
 
     if (result.isNewEntry)
         result.iterator->value = makeUnique<IndexValueEntry>(m_unique);

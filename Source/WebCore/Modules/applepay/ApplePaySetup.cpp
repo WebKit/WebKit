@@ -59,12 +59,12 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 
     auto page = document.page();
     if (!page) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     if (m_setupFeaturesPromise) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -91,18 +91,18 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
     }
 
     if (!UserGestureIndicator::processingUserGesture()) {
-        promise.reject(Exception { InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler."_s });
         return;
     }
 
     auto page = document.page();
     if (!page) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     if (m_beginPromise) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -131,10 +131,10 @@ ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfi
 void ApplePaySetup::stop()
 {
     if (m_setupFeaturesPromise)
-        std::exchange(m_setupFeaturesPromise, std::nullopt)->reject(Exception { AbortError });
+        std::exchange(m_setupFeaturesPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
 
     if (m_beginPromise)
-        std::exchange(m_beginPromise, std::nullopt)->reject(Exception { AbortError });
+        std::exchange(m_beginPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
 
     if (auto page = downcast<Document>(*scriptExecutionContext()).page())
         page->paymentCoordinator().endApplePaySetup();

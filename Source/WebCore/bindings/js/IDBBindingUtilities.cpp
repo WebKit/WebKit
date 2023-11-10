@@ -519,7 +519,7 @@ std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& 
     JSLockHolder locker(lexicalGlobalObject.vm());
     if (!injectIDBKeyIntoScriptValue(lexicalGlobalObject, key, jsValue, keyPath.value())) {
         auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-        propagateException(lexicalGlobalObject, throwScope, Exception(UnknownError, "Cannot inject key into script value"_s));
+        propagateException(lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Cannot inject key into script value"_s));
         return std::nullopt;
     }
 

@@ -196,7 +196,7 @@ bool HTMLCanvasElement::canStartSelection() const
 ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 {
     if (isControlledByOffscreen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     setAttributeWithoutSynchronization(heightAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
     return { };
 }
@@ -204,7 +204,7 @@ ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
 {
     if (isControlledByOffscreen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
     return { };
 }
@@ -225,7 +225,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
 {
     if (m_context) {
         if (m_context->isPlaceholder())
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
 
         if (m_context->is2d()) {
             if (!is2dType(contextId))
@@ -266,7 +266,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (is2dType(contextId)) {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         auto context = createContext2d(contextId, WTFMove(settings));
         if (!context)
@@ -277,7 +277,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isBitmapRendererType(contextId)) {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         auto context = createContextBitmapRenderer(contextId, WTFMove(settings));
         if (!context)
@@ -289,7 +289,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGLType(contextId)) {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         auto context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
         if (!context)
@@ -708,7 +708,7 @@ static std::optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
 ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!originClean())
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     if (size().isEmpty() || !buffer())
         return UncachedString { "data:,"_s };
@@ -744,7 +744,7 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
 ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!originClean())
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     if (size().isEmpty() || !buffer()) {
         callback->scheduleCallback(document(), nullptr);
@@ -781,7 +781,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
 ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen()
 {
     if (m_context)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_context = makeUniqueWithoutRefCountedCheck<PlaceholderRenderingContext>(*this);
     if (m_context->isAccelerated())
@@ -860,12 +860,12 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<double>&& frameRequestRate)
 {
     if (!originClean())
-        return Exception(SecurityError, "Canvas is tainted"_s);
+        return Exception(ExceptionCode::SecurityError, "Canvas is tainted"_s);
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(this->document());
 
     if (frameRequestRate && frameRequestRate.value() < 0)
-        return Exception(NotSupportedError, "frameRequestRate is negative"_s);
+        return Exception(ExceptionCode::NotSupportedError, "frameRequestRate is negative"_s);
 
     auto track = CanvasCaptureMediaStreamTrack::create(document(), *this, WTFMove(frameRequestRate));
     auto stream = MediaStream::create(document());

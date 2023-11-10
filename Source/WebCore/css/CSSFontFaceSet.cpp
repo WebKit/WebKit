@@ -382,7 +382,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
 {
     auto font = CSSPropertyParserWorkerSafe::parseFont(fontShorthand, HTMLStandardMode);
     if (!font)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     HashSet<AtomString> uniqueFamilies;
     Vector<AtomString> familyOrder;

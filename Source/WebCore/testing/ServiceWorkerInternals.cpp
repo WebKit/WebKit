@@ -112,7 +112,7 @@ void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPro
             String description;
             if (auto& error = result.error())
                 description = error->localizedDescription();
-            promise.reject(TypeError, description);
+            promise.reject(ExceptionCode::TypeError, description);
             return;
         }
         promise.resolve(WTFMove(result.value()));

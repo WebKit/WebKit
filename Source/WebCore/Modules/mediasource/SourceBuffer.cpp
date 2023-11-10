@@ -118,7 +118,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
     //    InvalidStateError exception and abort these steps.
     if (isRemoved())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute, then update the current value of this attribute to intersection ranges.
     // Handled by sourceBufferPrivateBufferedChanged().
@@ -141,7 +141,7 @@ ExceptionOr<void> SourceBuffer::setTimestampOffset(double offset)
     //    InvalidStateError exception and abort these steps.
     // 3. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 4.1 Set the readyState attribute of the parent media source to "open"
@@ -150,7 +150,7 @@ ExceptionOr<void> SourceBuffer::setTimestampOffset(double offset)
 
     // 5. If the append state equals PARSING_MEDIA_SEGMENT, then throw an InvalidStateError and abort these steps.
     if (m_appendState == ParsingMediaSegment)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     MediaTime newTimestampOffset = MediaTime::createWithDouble(offset);
 
@@ -180,12 +180,12 @@ ExceptionOr<void> SourceBuffer::setAppendWindowStart(double newValue)
     //    then throw an InvalidStateError  exception and abort these steps.
     // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the new value is less than 0 or greater than or equal to appendWindowEnd then
     //    throw an TypeError exception and abort these steps.
     if (newValue < 0 || newValue >= m_appendWindowEnd.toDouble())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 4. Update the attribute to the new value.
     m_appendWindowStart = MediaTime::createWithDouble(newValue);
@@ -208,13 +208,13 @@ ExceptionOr<void> SourceBuffer::setAppendWindowEnd(double newValue)
     //    then throw an InvalidStateError exception and abort these steps.
     // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the new value equals NaN, then throw an TypeError and abort these steps.
     // 4. If the new value is less than or equal to appendWindowStart then throw an TypeError exception
     //    and abort these steps.
     if (std::isnan(newValue) || newValue <= m_appendWindowStart.toDouble())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 5.. Update the attribute to the new value.
     m_appendWindowEnd = MediaTime::createWithDouble(newValue);
@@ -261,11 +261,11 @@ ExceptionOr<void> SourceBuffer::abort()
     // 2. If the readyState attribute of the parent media source is not in the "open" state
     //    then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || !m_source->isOpen())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the range removal algorithm is running, then throw an InvalidStateError exception and abort these steps.
     if (m_removeTimer.isActive())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     abortIfUpdating();
@@ -301,7 +301,7 @@ ExceptionOr<void> SourceBuffer::remove(const MediaTime& start, const MediaTime& 
     //    an InvalidStateError exception and abort these steps.
     // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If duration equals NaN, then throw a TypeError exception and abort these steps.
     // 4. If start is negative or greater than duration, then throw a TypeError exception and abort these steps.
@@ -312,7 +312,7 @@ ExceptionOr<void> SourceBuffer::remove(const MediaTime& start, const MediaTime& 
         || start < MediaTime::zeroTime()
         || start > m_source->duration()
         || end <= start) {
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     }
 
     // 6. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
@@ -351,13 +351,13 @@ ExceptionOr<void> SourceBuffer::changeType(const String& type)
 
     // 1. If type is an empty string then throw a TypeError exception and abort these steps.
     if (type.isEmpty())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 2. If this object has been removed from the sourceBuffers attribute of the parent media source,
     // then throw an InvalidStateError exception and abort these steps.
     // 3. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If type contains a MIME type that is not supported or contains a MIME type that is not supported with
     // the types specified (currently or previously) of SourceBuffer objects in the sourceBuffers attribute of
@@ -366,10 +366,10 @@ ExceptionOr<void> SourceBuffer::changeType(const String& type)
 
     auto& settings = document().settings();
     if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     if (!m_private->canSwitchToType(contentType))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // 5. If the readyState attribute of the parent media source is in the "ended" state then run the following
     // steps:
@@ -495,7 +495,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     // then throw an InvalidStateError exception and abort these steps.
     // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     ALWAYS_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered(), " streaming = ", m_source->streaming());
 
@@ -509,8 +509,8 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
 
     // 5. If the buffer full flag equals true, then throw a QuotaExceededError exception and abort these step.
     if (m_private->isBufferFullFor(size, maximumBufferSize())) {
-        ERROR_LOG(LOGIDENTIFIER, "buffer full, failing with QuotaExceededError error");
-        return Exception { QuotaExceededError };
+        ERROR_LOG(LOGIDENTIFIER, "buffer full, failing with ExceptionCode::QuotaExceededError error");
+        return Exception { ExceptionCode::QuotaExceededError };
     }
 
     // NOTE: Return to 3.2 appendBuffer()
@@ -1318,12 +1318,12 @@ ExceptionOr<void> SourceBuffer::setMode(AppendMode newMode)
     // 1. Let new mode equal the new value being assigned to this attribute.
     // 2. If generate timestamps flag equals true and new mode equals "segments", then throw an InvalidAccessError exception and abort these steps.
     if (m_shouldGenerateTimestamps && newMode == AppendMode::Segments)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 3. If this object has been removed from the sourceBuffers attribute of the parent media source, then throw an InvalidStateError exception and abort these steps.
     // 4. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 5. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     if (m_source->isEnded()) {
@@ -1334,7 +1334,7 @@ ExceptionOr<void> SourceBuffer::setMode(AppendMode newMode)
 
     // 6. If the append state equals PARSING_MEDIA_SEGMENT, then throw an InvalidStateError and abort these steps.
     if (m_appendState == ParsingMediaSegment)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 7. If the new mode equals "sequence", then set the group start timestamp to the group end timestamp.
     if (newMode == AppendMode::Sequence)

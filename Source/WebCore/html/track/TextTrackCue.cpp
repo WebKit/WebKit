@@ -105,7 +105,7 @@ static inline bool isLegalNode(Node& node)
 
 static Exception invalidNodeException(Node& node)
 {
-    return Exception { InvalidNodeTypeError, makeString("Invalid node type: ", node.nodeName()) };
+    return Exception { ExceptionCode::InvalidNodeTypeError, makeString("Invalid node type: ", node.nodeName()) };
 }
 
 static ExceptionOr<void> checkForInvalidNodeTypes(Node& root)
@@ -146,7 +146,7 @@ static ExceptionOr<void> tagPseudoObjects(Node& node, OptionSet<RequiredNodes>& 
 
     if (element.hasAttributeWithoutSynchronization(HTMLNames::cueAttr)) {
         if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element.closest("[cuebackground]"_s).returnValue())
-            return Exception { HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_s };
+            return Exception { ExceptionCode::HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_s };
 
         element.setPseudo(ShadowPseudoIds::cue());
         nodeTypes.add(RequiredNodes::Cue);
@@ -176,10 +176,10 @@ static void removePseudoAttributes(Node& node)
 ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double start, double end, DocumentFragment& cueFragment)
 {
     if (!cueFragment.firstChild())
-        return Exception { InvalidNodeTypeError, "Empty cue fragment"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Empty cue fragment"_s };
 
     if (cueFragment.firstChild()->nodeType() == Node::TEXT_NODE)
-        return Exception { InvalidNodeTypeError, "Invalid first child"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Invalid first child"_s };
 
     for (Node* node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = checkForInvalidNodeTypes(*node);
@@ -203,9 +203,9 @@ ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double s
     }
 
     if (!nodeTypes.contains(RequiredNodes::Cue))
-        return Exception { InvalidNodeTypeError, "Missing required attribute: cue"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cue"_s };
     if (!nodeTypes.contains(RequiredNodes::CueBackground))
-        return Exception { InvalidNodeTypeError, "Missing required attribute: cuebackground"_s };
+        return Exception { ExceptionCode::InvalidNodeTypeError, "Missing required attribute: cuebackground"_s };
 
     auto textTrackCue = adoptRef(*new TextTrackCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(fragment)));
     textTrackCue->suspendIfNeeded();

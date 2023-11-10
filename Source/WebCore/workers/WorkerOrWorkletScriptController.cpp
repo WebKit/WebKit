@@ -430,7 +430,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
 void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     if (isExecutionForbidden()) {
-        completionHandler(Exception { NotAllowedError });
+        completionHandler(Exception { ExceptionCode::NotAllowedError });
         return;
     }
 
@@ -501,11 +501,11 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                     switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                     case ModuleFetchFailureKind::WasFetchError:
                     case ModuleFetchFailureKind::WasResolveError:
-                        task->run(Exception { TypeError, message });
+                        task->run(Exception { ExceptionCode::TypeError, message });
                         break;
                     case ModuleFetchFailureKind::WasPropagatedError:
                     case ModuleFetchFailureKind::WasCanceled:
-                        task->run(Exception { AbortError, message });
+                        task->run(Exception { ExceptionCode::AbortError, message });
                         break;
                     }
                     return JSValue::encode(jsUndefined());
@@ -516,13 +516,13 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                     case ErrorType::TypeError: {
                         auto catchScope = DECLARE_CATCH_SCOPE(vm);
                         String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
-                        task->run(Exception { TypeError, message });
+                        task->run(Exception { ExceptionCode::TypeError, message });
                         return JSValue::encode(jsUndefined());
                     }
                     case ErrorType::SyntaxError: {
                         auto catchScope = DECLARE_CATCH_SCOPE(vm);
                         String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
-                        task->run(Exception { JSSyntaxError, message });
+                        task->run(Exception { ExceptionCode::JSSyntaxError, message });
                         return JSValue::encode(jsUndefined());
                     }
                     default:
@@ -533,7 +533,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
             String message = retrieveErrorMessageWithoutName(*globalObject, vm, errorValue, catchScope);
-            task->run(Exception { AbortError, message });
+            task->run(Exception { ExceptionCode::AbortError, message });
             return JSValue::encode(jsUndefined());
         });
 

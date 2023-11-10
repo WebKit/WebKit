@@ -47,7 +47,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSRotate);
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSNumberish x, CSSNumberish y, CSSNumberish z, Ref<CSSNumericValue> angle)
 {
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
     auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
@@ -56,7 +56,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSNumberish x, CSSNumberish y, CS
     if (!rectifiedX->type().matchesNumber()
         || !rectifiedY->type().matchesNumber()
         || !rectifiedZ->type().matchesNumber())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSRotate(Is2D::No, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ), WTFMove(angle)));
 }
@@ -64,7 +64,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSNumberish x, CSSNumberish y, CS
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
 {
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return adoptRef(*new CSSRotate(Is2D::Yes,
         CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
         CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
@@ -81,12 +81,12 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSFunctionValue& cssFunctionValue
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             if (!is<CSSNumericValue>(valueOrException.returnValue()))
-                return Exception { TypeError, "Expected a CSSNumericValue."_s };
+                return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
             components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().ptr()));
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();
-            return Exception { TypeError, "Unexpected number of values."_s };
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
         }
         return create(WTFMove(components));
     };
@@ -131,7 +131,7 @@ ExceptionOr<void> CSSRotate::setX(CSSNumberish x)
 {
     auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(x));
     if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     m_x = WTFMove(rectified);
     return { };
 }
@@ -140,7 +140,7 @@ ExceptionOr<void> CSSRotate::setY(CSSNumberish y)
 {
     auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(y));
     if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     m_y = WTFMove(rectified);
     return { };
 }
@@ -149,7 +149,7 @@ ExceptionOr<void> CSSRotate::setZ(CSSNumberish z)
 {
     auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(z));
     if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     m_z = WTFMove(rectified);
     return { };
 }
@@ -157,7 +157,7 @@ ExceptionOr<void> CSSRotate::setZ(CSSNumberish z)
 ExceptionOr<void> CSSRotate::setAngle(Ref<CSSNumericValue> angle)
 {
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     m_angle = WTFMove(angle);
     return { };
 }
@@ -181,11 +181,11 @@ void CSSRotate::serialize(StringBuilder& builder) const
 ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 {
     if (!is<CSSUnitValue>(m_angle) || !is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     auto angle = downcast<CSSUnitValue>(m_angle.get()).convertTo(CSSUnitType::CSS_DEG);
     if (!angle)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     TransformationMatrix matrix { };
 

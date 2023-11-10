@@ -70,24 +70,24 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
             return styleValuesOrException.releaseException();
         auto styleValues = styleValuesOrException.releaseReturnValue();
         if (styleValues.size() != 1 || !is<CSSUnparsedValue>(styleValues[0].get()))
-            return Exception { TypeError, "Invalid values"_s };
+            return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
         auto value = styleValues[0]->toCSSValue();
         if (!value)
-            return Exception { TypeError, "Invalid values"_s };
+            return Exception { ExceptionCode::TypeError, "Invalid values"_s };
         setCustomProperty(document, property, downcast<CSSVariableReferenceValue>(value.releaseNonNull()));
         return { };
     }
     auto propertyID = cssPropertyID(property);
     if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
-        return Exception { TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
 
     if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
-        return Exception { TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
+        return Exception { ExceptionCode::TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
 
     if (isShorthand(propertyID)) {
         if (values.size() != 1)
-            return Exception { TypeError, "Wrong number of values for shorthand CSS property"_s };
+            return Exception { ExceptionCode::TypeError, "Wrong number of values for shorthand CSS property"_s };
         String value;
         switchOn(values[0], [&](const RefPtr<CSSStyleValue>& styleValue) {
             value = styleValue->toString();
@@ -95,7 +95,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
             value = string;
         });
         if (value.isEmpty() || !setShorthandProperty(propertyID, value))
-            return Exception { TypeError, "Bad value for shorthand CSS property"_s };
+            return Exception { ExceptionCode::TypeError, "Bad value for shorthand CSS property"_s };
         return { };
     }
 
@@ -106,12 +106,12 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (styleValues.size() > 1) {
         for (auto& styleValue : styleValues) {
             if (is<CSSUnparsedValue>(styleValue.get()))
-                return Exception { TypeError, "There is more than one value and one is either a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
+                return Exception { ExceptionCode::TypeError, "There is more than one value and one is either a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
         }
     }
     auto value = cssValueFromStyleValues(propertyID, WTFMove(styleValues));
     if (!value)
-        return Exception { TypeError, "Invalid values"_s };
+        return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
     // The CSS Parser may silently convert number values to lengths. However, CSS Typed OM doesn't allow this so
     // we do some pre-validation.
@@ -119,11 +119,11 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     // at all.
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && primitiveValue->isNumberOrInteger()) {
         if (!CSSProperty::allowsNumberOrIntegerInput(propertyID))
-            return Exception { TypeError, "Invalid value: This property doesn't allow <number> input"_s };
+            return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
     }
 
     if (!setProperty(propertyID, value.releaseNonNull()))
-        return Exception { TypeError, "Invalid values"_s };
+        return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
     return { };
 }
@@ -135,14 +135,14 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
         return { };
 
     if (isCustomPropertyName(property))
-        return Exception { TypeError, "Cannot append to custom properties"_s };
+        return Exception { ExceptionCode::TypeError, "Cannot append to custom properties"_s };
 
     auto propertyID = cssPropertyID(property);
     if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
-        return Exception { TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
 
     if (!CSSProperty::isListValuedProperty(propertyID))
-        return Exception { TypeError, makeString(property, " does not support multiple values"_s) };
+        return Exception { ExceptionCode::TypeError, makeString(property, " does not support multiple values"_s) };
 
     auto currentValue = propertyValue(propertyID);
     CSSValueListBuilder list;
@@ -158,13 +158,13 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
     auto styleValues = styleValuesOrException.releaseReturnValue();
     for (auto& styleValue : styleValues) {
         if (is<CSSUnparsedValue>(styleValue.get()))
-            return Exception { TypeError, "Values cannot contain a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
+            return Exception { ExceptionCode::TypeError, "Values cannot contain a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
         if (auto cssValue = styleValue->toCSSValue())
             list.append(cssValue.releaseNonNull());
     }
 
     if (!setProperty(propertyID, CSSValueList::create(CSSProperty::listValuedPropertySeparator(propertyID), WTFMove(list))))
-        return Exception { TypeError, "Invalid values"_s };
+        return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
     return { };
 }
@@ -179,7 +179,7 @@ ExceptionOr<void> StylePropertyMap::remove(Document& document, const AtomString&
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, document.settings()))
-        return Exception { TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
 
     removeProperty(propertyID);
     return { };

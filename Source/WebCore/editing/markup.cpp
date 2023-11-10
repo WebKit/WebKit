@@ -1361,7 +1361,7 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
 
     bool wasValid = fragment->parseXML(markup, &contextElement, parserContentPolicy);
     if (!wasValid)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return fragment;
 }
 

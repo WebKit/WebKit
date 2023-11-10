@@ -63,7 +63,7 @@ void CryptoAlgorithmAES_CFB::encrypt(const CryptoAlgorithmParameters& parameters
 
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -79,7 +79,7 @@ void CryptoAlgorithmAES_CFB::decrypt(const CryptoAlgorithmParameters& parameters
 
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -94,13 +94,13 @@ void CryptoAlgorithmAES_CFB::generateKey(const CryptoAlgorithmParameters& parame
     const auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmAES_CFB(usages)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
     auto result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_CFB, aesParameters.length, extractable, usages);
     if (!result) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -112,7 +112,7 @@ void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, c
     using namespace CryptoAlgorithmAES_CFBInternal;
     
     if (usagesAreInvalidForCryptoAlgorithmAES_CFB(usages)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
@@ -137,11 +137,11 @@ void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, c
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
     if (!result) {
-        exceptionCallback(DataError);
+        exceptionCallback(ExceptionCode::DataError);
         return;
     }
 
@@ -154,7 +154,7 @@ void CryptoAlgorithmAES_CFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -182,7 +182,7 @@ void CryptoAlgorithmAES_CFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
 

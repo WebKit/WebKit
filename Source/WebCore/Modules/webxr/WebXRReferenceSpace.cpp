@@ -100,11 +100,11 @@ std::optional<TransformationMatrix> WebXRReferenceSpace::nativeOrigin() const
 ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform& offsetTransform)
 {
     if (!m_session)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // https://immersive-web.github.io/webxr/#dom-xrreferencespace-getoffsetreferencespace
     // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.

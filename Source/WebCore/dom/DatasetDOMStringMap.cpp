@@ -198,7 +198,7 @@ String DatasetDOMStringMap::namedItem(const AtomString& name) const
 ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const AtomString& value)
 {
     if (!isValidPropertyName(name))
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return protectedElement()->setAttribute(convertPropertyNameToAttributeName(name), value);
 }
 

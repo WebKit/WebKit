@@ -40,21 +40,21 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
     CCCryptorRef cryptor;
     CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, options, key.data(), key.size(), iv.data(), &cryptor);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, data.size(), true));
 
     size_t bytesWritten;
     status = CCCryptorUpdate(cryptor, data.data(), data.size(), result.data(), result.size(), &bytesWritten);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     uint8_t* p = result.data() + bytesWritten;
     if (padding == CryptoAlgorithmAES_CBC::Padding::Yes) {
         status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
         p += bytesWritten;
         if (status)
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
     }
 
     ASSERT(p <= result.end());
@@ -85,10 +85,10 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const Crypt
         // Validate and remove padding as per https://www.w3.org/TR/WebCryptoAPI/#aes-cbc-operations (Decrypt section).
         auto paddingByte = data.last();
         if (!paddingByte || paddingByte > 16 || paddingByte > data.size())
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
         for (size_t i = data.size() - paddingByte; i < data.size() - 1; ++i) {
             if (data[i] != paddingByte)
-                return Exception { OperationError };
+                return Exception { ExceptionCode::OperationError };
         }
         data.shrink(data.size() - paddingByte);
     }

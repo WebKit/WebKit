@@ -321,7 +321,7 @@ ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(cons
             return { Seconds::fromMilliseconds(milliseconds->value()) };
     }
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 std::optional<double> WebAnimation::bindingsStartTime() const
@@ -443,7 +443,7 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> se
     if (!seekTime) {
         // 1. If the current time is resolved, then throw a TypeError.
         if (currentTime())
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         // 2. Abort these steps.
         return { };
     }
@@ -723,7 +723,7 @@ void WebAnimation::cancel()
         // 3. Set the [[PromiseIsHandled]] internal slot of the current finished promise to true.
         if (auto* context = scriptExecutionContext(); context && !m_finishedPromise->isFulfilled()) {
             context->eventLoop().queueMicrotask([finishedPromise = WTFMove(m_finishedPromise)]() mutable {
-                finishedPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
+                finishedPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
             });
         }
 
@@ -826,7 +826,7 @@ void WebAnimation::resetPendingTasks()
     // 6. Set the [[PromiseIsHandled]] internal slot of animation’s current ready promise to true.
     if (auto* context = scriptExecutionContext()) {
         context->eventLoop().queueMicrotask([readyPromise = WTFMove(m_readyPromise)]() mutable {
-            readyPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
+            readyPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
         });
     }
 
@@ -846,7 +846,7 @@ ExceptionOr<void> WebAnimation::finish()
     //
     // 1. If animation's effective playback rate is zero, or if animation's effective playback rate > 0 and target effect end is infinity, throw an InvalidStateError and abort these steps.
     if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime() == Seconds::infinity()))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Apply any pending playback rate to animation.
     applyPendingPlaybackRate();
@@ -1079,7 +1079,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
             // Otherwise,
             //     Set seek time to animation's associated effect end.
             if (endTime == Seconds::infinity())
-                return Exception { InvalidStateError };
+                return Exception { ExceptionCode::InvalidStateError };
             seekTime = endTime;
         }
     }
@@ -1237,7 +1237,7 @@ ExceptionOr<void> WebAnimation::pause()
             m_holdTime = 0_s;
         } else if (effectEndTime() == Seconds::infinity()) {
             // Otherwise, if target effect end for animation is positive infinity, throw an InvalidStateError and abort these steps.
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
         } else {
             // Otherwise, let animation's hold time be target effect end.
             m_holdTime = effectEndTime();
@@ -1286,7 +1286,7 @@ ExceptionOr<void> WebAnimation::reverse()
     // 1. If there is no timeline associated with animation, or the associated timeline is inactive
     //    throw an InvalidStateError and abort these steps.
     if (!m_timeline || !m_timeline->currentTime())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Let original pending playback rate be animation's pending playback rate.
     auto originalPendingPlaybackRate = m_pendingPlaybackRate;
@@ -1546,7 +1546,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // 2.1 If target is not an element capable of having a style attribute (for example, it is a pseudo-element or is an element in a
     // document format for which style attributes are not defined) throw a "NoModificationAllowedError" DOMException and abort these steps.
     if (!is<StyledElement>(target) || effect->targetsPseudoElement())
-        return Exception { NoModificationAllowedError };
+        return Exception { ExceptionCode::NoModificationAllowedError };
 
     auto& styledElement = downcast<StyledElement>(*target);
 
@@ -1554,7 +1554,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     styledElement.document().updateStyleIfNeeded();
     auto* renderer = styledElement.renderer();
     if (!renderer)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2.3 Let inline style be the result of getting the CSS declaration block corresponding to target’s style attribute. If target does not have a style
     // attribute, let inline style be a new empty CSS declaration block with the readonly flag unset and owner node set to target.

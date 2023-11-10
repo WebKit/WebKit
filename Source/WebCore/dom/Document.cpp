@@ -940,11 +940,11 @@ void Document::invalidateAccessKeyCacheSlowCase()
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
 {
     if (selectorString.isEmpty())
-        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
+        return Exception { ExceptionCode::SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     auto* query = SelectorQueryCache::singleton().add(selectorString, *this);
     if (!query)
-        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
+        return Exception { ExceptionCode::SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     return *query;
 }
@@ -1111,7 +1111,7 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& d
     }
 
     if (UNLIKELY(!isValidHTMLElementName(name)))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     return Ref<Element> { createUpgradeCandidateElement(document, name) };
 }
@@ -1125,7 +1125,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
         return createHTMLElementWithNameValidation(*this, name);
 
     if (!isValidName(name))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", name, "'") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", name, "'") };
 
     return createElement(QualifiedName(nullAtom(), name, nullAtom()), false);
 }
@@ -1148,10 +1148,10 @@ Ref<Comment> Document::createComment(String&& data)
 ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
 {
     if (isHTMLDocument())
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     if (data.contains("]]>"_s))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     return CDATASection::create(*this, WTFMove(data));
 }
@@ -1159,10 +1159,10 @@ ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
 ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(String&& target, String&& data)
 {
     if (!isValidName(target))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", target, "'") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", target, "'") };
 
     if (data.contains("?>"_s))
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     return ProcessingInstruction::create(*this, WTFMove(target), WTFMove(data));
 }
@@ -1201,7 +1201,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)
         break;
     }
 
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 
@@ -1211,7 +1211,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
 
     switch (source.nodeType()) {
     case DOCUMENT_NODE:
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     case ATTRIBUTE_NODE: {
         auto& attr = downcast<Attr>(source);
         if (RefPtr element = attr.ownerElement()) {
@@ -1224,12 +1224,12 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
     default:
         if (source.isShadowRoot()) {
             // ShadowRoot cannot disconnect itself from the host node.
-            return Exception { HierarchyRequestError };
+            return Exception { ExceptionCode::HierarchyRequestError };
         }
         if (is<HTMLFrameOwnerElement>(source)) {
             auto& frameOwnerElement = downcast<HTMLFrameOwnerElement>(source);
             if (frame() && frame()->tree().isDescendantOf(frameOwnerElement.contentFrame()))
-                return Exception { HierarchyRequestError };
+                return Exception { ExceptionCode::HierarchyRequestError };
         }
         auto result = source.remove();
         if (result.hasException())
@@ -1426,7 +1426,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
         return parseResult.releaseException();
     QualifiedName parsedName { parseResult.releaseReturnValue() };
     if (!hasValidNamespaceForElements(parsedName))
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
 
     if (parsedName.namespaceURI() == xhtmlNamespaceURI)
         return createHTMLElementWithNameValidation(*this, parsedName);
@@ -1636,7 +1636,7 @@ void Document::setDocumentElementLanguage(const AtomString& language)
 ExceptionOr<void> Document::setXMLVersion(const String& version)
 {
     if (!XMLDocumentParser::supportsXMLVersion(version))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     m_xmlVersion = version;
     return { };
@@ -3139,7 +3139,7 @@ ScriptableDocumentParser* Document::scriptableDocumentParser() const
 ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
 {
     if (!m_domWindow)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     return protectedWindow()->open(activeWindow, firstWindow, url, name, features);
 }
@@ -3147,7 +3147,7 @@ ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activ
 ExceptionOr<Document&> Document::openForBindings(Document* entryDocument, const String&, const String&)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto result = open(entryDocument);
     if (UNLIKELY(result.hasException()))
@@ -3159,7 +3159,7 @@ ExceptionOr<Document&> Document::openForBindings(Document* entryDocument, const 
 ExceptionOr<void> Document::open(Document* entryDocument)
 {
     if (entryDocument && !entryDocument->securityOrigin().isSameOriginAs(securityOrigin()))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     if (m_ignoreOpensDuringUnloadCount)
         return { };
@@ -3305,14 +3305,14 @@ HTMLElement* Document::bodyOrFrameset() const
 ExceptionOr<void> Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody)
 {
     if (!is<HTMLBodyElement>(newBody) && !is<HTMLFrameSetElement>(newBody))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     RefPtr currentBody = bodyOrFrameset();
     if (newBody == currentBody)
         return { };
 
     if (!m_documentElement)
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     if (currentBody)
         return protectedDocumentElement()->replaceChild(*newBody, *currentBody);
@@ -3343,7 +3343,7 @@ ExceptionOr<void> Document::closeForBindings()
     //        http://www.whatwg.org/specs/web-apps/current-work/#dom-document-close
 
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     close();
     return { };
@@ -3575,7 +3575,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
 ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     SegmentedString text;
     for (auto& string : strings)
@@ -3587,7 +3587,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&&
 ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     SegmentedString text;
     for (auto& string : strings)
@@ -5665,7 +5665,7 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
     if (equalLettersIgnoringASCIICase(type, "wheelevent"_s))
         return Ref<Event> { WheelEvent::createForBindings() };
 
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
@@ -5755,7 +5755,7 @@ ExceptionOr<String> Document::cookie()
         return String();
 
     if (canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     URL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
@@ -5776,7 +5776,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
         return { };
 
     if (canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     URL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
@@ -5833,22 +5833,22 @@ String Document::domain() const
 ExceptionOr<void> Document::setDomain(const String& newDomain)
 {
     if (!frame())
-        return Exception { SecurityError, "A browsing context is required to set a domain."_s };
+        return Exception { ExceptionCode::SecurityError, "A browsing context is required to set a domain."_s };
 
     if (isSandboxed(SandboxDocumentDomain))
-        return Exception { SecurityError, "Assignment is forbidden for sandboxed iframes."_s };
+        return Exception { ExceptionCode::SecurityError, "Assignment is forbidden for sandboxed iframes."_s };
 
     if (LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     // FIXME: We should add logging indicating why a domain was not allowed.
 
     const String& effectiveDomain = domain();
     if (effectiveDomain.isEmpty())
-        return Exception { SecurityError, "The document has a null effectiveDomain."_s };
+        return Exception { ExceptionCode::SecurityError, "The document has a null effectiveDomain."_s };
 
     if (!securityOrigin().isMatchingRegistrableDomainSuffix(newDomain, settings().treatIPAddressAsDomain()))
-        return Exception { SecurityError, "Attempted to use a non-registrable domain."_s };
+        return Exception { ExceptionCode::SecurityError, "Attempted to use a non-registrable domain."_s };
 
     securityOrigin().setDomainFromDOM(newDomain);
     return { };
@@ -5976,7 +5976,7 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
     unsigned length = qualifiedName.length();
 
     if (!length)
-        return Exception { InvalidCharacterError };
+        return Exception { ExceptionCode::InvalidCharacterError };
 
     bool nameStart = true;
     bool sawColon = false;
@@ -5991,17 +5991,17 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
         U16_NEXT(qualifiedName, i, length, c);
         if (c == ':') {
             if (sawColon)
-                return Exception { InvalidCharacterError, makeString("Unexpected colon in qualified name '", qualifiedName, "'") };
+                return Exception { ExceptionCode::InvalidCharacterError, makeString("Unexpected colon in qualified name '", qualifiedName, "'") };
             nameStart = true;
             sawColon = true;
             colonPosition = i - 1;
         } else if (nameStart) {
             if (!isValidNameStart(c))
-                return Exception { InvalidCharacterError, makeString("Invalid qualified name start in '", qualifiedName, "'") };
+                return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name start in '", qualifiedName, "'") };
             nameStart = false;
         } else {
             if (!isValidNamePart(c))
-                return Exception { InvalidCharacterError, makeString("Invalid qualified name part in '", qualifiedName, "'") };
+                return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name part in '", qualifiedName, "'") };
         }
     }
 
@@ -6009,7 +6009,7 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
         return std::pair<AtomString, AtomString> { { }, { qualifiedName } };
 
     if (!colonPosition || length - colonPosition <= 1)
-        return Exception { InvalidCharacterError, makeString("Namespace in qualified name '", qualifiedName, "' is too short") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Namespace in qualified name '", qualifiedName, "' is too short") };
 
     return std::pair<AtomString, AtomString> { StringView { qualifiedName }.left(colonPosition).toAtomString(), StringView { qualifiedName }.substring(colonPosition + 1).toAtomString() };
 }
@@ -6362,7 +6362,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
 ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const String& value)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "execCommand is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_s };
 
     EventQueueScope eventQueueScope;
     return command(this, commandName, userInterface).execute(value);
@@ -6371,35 +6371,35 @@ ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInte
 ExceptionOr<bool> Document::queryCommandEnabled(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandEnabled is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandEnabled is only supported on HTML documents."_s };
     return command(this, commandName).isEnabled();
 }
 
 ExceptionOr<bool> Document::queryCommandIndeterm(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandIndeterm is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandIndeterm is only supported on HTML documents."_s };
     return command(this, commandName).state() == TriState::Indeterminate;
 }
 
 ExceptionOr<bool> Document::queryCommandState(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandState is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandState is only supported on HTML documents."_s };
     return command(this, commandName).state() == TriState::True;
 }
 
 ExceptionOr<bool> Document::queryCommandSupported(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandSupported is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandSupported is only supported on HTML documents."_s };
     return command(this, commandName).isSupported();
 }
 
 ExceptionOr<String> Document::queryCommandValue(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandValue is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandValue is only supported on HTML documents."_s };
     return command(this, commandName).value();
 }
 
@@ -6530,7 +6530,7 @@ CheckedRef<ScriptRunner> Document::checkedScriptRunner()
 ExceptionOr<Ref<Attr>> Document::createAttribute(const AtomString& localName)
 {
     if (!isValidName(localName))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", localName, "'") };
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", localName, "'") };
     return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyAtom());
 }
 
@@ -6541,7 +6541,7 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
         return parseResult.releaseException();
     QualifiedName parsedName { parseResult.releaseReturnValue() };
     if (!shouldIgnoreNamespaceChecks && !hasValidNamespaceForAttributes(parsedName))
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
     return Attr::create(*this, parsedName, emptyAtom());
 }
 

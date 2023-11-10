@@ -422,30 +422,30 @@ enum class ShouldValidateChildParent : bool { No, Yes };
 static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
 {
     if (containsIncludingHostElements(newChild, newParent))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     // Use common case fast path if possible.
     if ((newChild.isElementNode() || newChild.isTextNode()) && newParent.isElementNode()) {
         ASSERT(!newParent.isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
         if (shouldValidateChildParent == ShouldValidateChildParent::Yes && refChild && refChild->parentNode() != &newParent)
-            return Exception { NotFoundError };
+            return Exception { ExceptionCode::NotFoundError };
         return { };
     }
 
     // This should never happen, but also protect release builds from tree corruption.
     ASSERT(!newChild.isPseudoElement());
     if (newChild.isPseudoElement())
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     if (shouldValidateChildParent == ShouldValidateChildParent::Yes && refChild && refChild->parentNode() != &newParent)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     if (auto newParentDocument = dynamicDowncast<Document>(newParent)) {
         if (!newParentDocument->canAcceptChild(newChild, refChild, operation))
-            return Exception { HierarchyRequestError };
+            return Exception { ExceptionCode::HierarchyRequestError };
     } else if (!isChildTypeAllowed(newParent, newChild))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     return { };
 }
@@ -455,7 +455,7 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
     ASSERT(!newParent.isDocumentTypeNode());
     ASSERT(isChildTypeAllowed(newParent, newChild));
     if (containsIncludingHostElements(newChild, newParent))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     return { };
 }
 
@@ -681,10 +681,10 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
     // NotFoundError: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     if (!removeNodeWithScriptAssertion(oldChild, ChildChange::Source::API))
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();

@@ -79,7 +79,7 @@ void VTTRegion::setId(const String& id)
 ExceptionOr<void> VTTRegion::setWidth(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_width = value;
     return { };
 }
@@ -92,7 +92,7 @@ void VTTRegion::setLines(unsigned value)
 ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_regionAnchor.setX(value);
     return { };
 }
@@ -100,7 +100,7 @@ ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
 ExceptionOr<void> VTTRegion::setRegionAnchorY(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_regionAnchor.setY(value);
     return { };
 }
@@ -108,7 +108,7 @@ ExceptionOr<void> VTTRegion::setRegionAnchorY(double value)
 ExceptionOr<void> VTTRegion::setViewportAnchorX(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_viewportAnchor.setX(value);
     return { };
 }
@@ -116,7 +116,7 @@ ExceptionOr<void> VTTRegion::setViewportAnchorX(double value)
 ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_viewportAnchor.setY(value);
     return { };
 }

@@ -105,7 +105,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
         options.add(OptionType::CharacterData);
 
     if (!validateOptions(options))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     node.registerMutationObserver(*this, options, attributeFilter);
 

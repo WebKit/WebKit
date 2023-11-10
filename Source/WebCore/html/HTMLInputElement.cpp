@@ -1126,7 +1126,7 @@ String HTMLInputElement::valueWithDefault() const
 ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     if (isFileUpload() && !value.isEmpty())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     Ref protectedThis { *this };
     EventQueueScope scope;
@@ -1178,7 +1178,7 @@ double HTMLInputElement::valueAsNumber() const
 ExceptionOr<void> HTMLInputElement::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior)
 {
     if (!std::isfinite(newValue))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     return m_inputType->setValueAsDouble(newValue, eventBehavior);
 }
 
@@ -1352,19 +1352,19 @@ ExceptionOr<void> HTMLInputElement::showPicker()
         return { };
 
     if (!isMutable())
-        return Exception { InvalidStateError, "Input showPicker() cannot be used on immutable controls."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Input showPicker() cannot be used on immutable controls."_s };
 
     // In cross-origin iframes it should throw a "SecurityError" DOMException except on file and color. In same-origin iframes it should work fine.
     // https://github.com/whatwg/html/issues/6909#issuecomment-917138991
     if (!m_inputType->allowsShowPickerAcrossFrames()) {
         auto* localTopFrame = dynamicDowncast<LocalFrame>(frame->tree().top());
         if (!localTopFrame || !frame->document()->securityOrigin().isSameOriginAs(localTopFrame->document()->securityOrigin()))
-            return Exception { SecurityError, "Input showPicker() called from cross-origin iframe."_s };
+            return Exception { ExceptionCode::SecurityError, "Input showPicker() called from cross-origin iframe."_s };
     }
 
     auto* window = frame->window();
     if (!window || !window->hasTransientActivation())
-        return Exception { NotAllowedError, "Input showPicker() requires a user gesture."_s };
+        return Exception { ExceptionCode::NotAllowedError, "Input showPicker() requires a user gesture."_s };
 
     m_inputType->showPicker();
     return { };
@@ -1451,7 +1451,7 @@ bool HTMLInputElement::multiple() const
 ExceptionOr<void> HTMLInputElement::setSize(unsigned size)
 {
     if (!size)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(size, defaultSize));
     return { };
 }
@@ -2145,7 +2145,7 @@ void ListAttributeTargetObserver::idTargetChanged()
 ExceptionOr<void> HTMLInputElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)
 {
     if (!m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     return HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode);
 }
@@ -2177,7 +2177,7 @@ std::optional<unsigned> HTMLInputElement::selectionStartForBindings() const
 ExceptionOr<void> HTMLInputElement::setSelectionStartForBindings(std::optional<unsigned> start)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
+        return Exception { ExceptionCode::InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
 
     setSelectionStart(start.value_or(0));
     return { };
@@ -2194,7 +2194,7 @@ std::optional<unsigned> HTMLInputElement::selectionEndForBindings() const
 ExceptionOr<void> HTMLInputElement::setSelectionEndForBindings(std::optional<unsigned> end)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
+        return Exception { ExceptionCode::InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
 
     setSelectionEnd(end.value_or(0));
     return { };
@@ -2211,7 +2211,7 @@ ExceptionOr<String> HTMLInputElement::selectionDirectionForBindings() const
 ExceptionOr<void> HTMLInputElement::setSelectionDirectionForBindings(const String& direction)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
+        return Exception { ExceptionCode::InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
 
     setSelectionDirection(direction);
     return { };
@@ -2220,7 +2220,7 @@ ExceptionOr<void> HTMLInputElement::setSelectionDirectionForBindings(const Strin
 ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
+        return Exception { ExceptionCode::InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
     
     setSelectionRange(start, end, direction, AXTextStateChangeIntent(), ForBindings::Yes);
     return { };

@@ -122,7 +122,7 @@ ExceptionOr<void> CanvasPath::arcTo(float x1, float y1, float x2, float y2, floa
         return { };
 
     if (r < 0)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     if (!hasInvertibleTransform())
         return { };
@@ -163,7 +163,7 @@ ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAng
         return { };
 
     if (radius < 0)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     if (!hasInvertibleTransform())
         return { };
@@ -186,7 +186,7 @@ ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float rad
         return { };
 
     if (radiusX < 0 || radiusY < 0)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     if (!hasInvertibleTransform())
         return { };
@@ -254,7 +254,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
 
     // 2. If radii is not a list of size one, two, three, or four, then throw a RangeError.
     if (radii.size() > 4 || radii.empty())
-        return Exception { RangeError, makeString("radii must contain at least 1 element, up to 4. It contained ", radii.size(), " elements.") };
+        return Exception { ExceptionCode::RangeError, makeString("radii must contain at least 1 element, up to 4. It contained ", radii.size(), " elements.") };
 
     // 3. Let normalizedRadii be an empty list.
     Vector<FloatPoint, 4> normalizedRadii;
@@ -273,7 +273,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
 
                 // 4.1.2 If radius["x"] or radius["y"] is negative, then throw a RangeError.
                 if (point.x < 0 || point.y < 0)
-                    return Exception { RangeError, makeString("radius point coordinates must be positive") };
+                    return Exception { ExceptionCode::RangeError, makeString("radius point coordinates must be positive") };
 
                 // 4.1.3 Otherwise, append radius to normalizedRadii.
                 normalizedRadii.append({ static_cast<float>(point.x), static_cast<float>(point.y) });
@@ -290,7 +290,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
 
                 // 4.2.2 If radius is negative, then throw a RangeError.
                 if (radiusValue < 0)
-                    return Exception { RangeError, makeString("radius value must be positive") };
+                    return Exception { ExceptionCode::RangeError, makeString("radius value must be positive") };
 
                 // 4.2.3 Otherwise append «[ "x" → radius, "y" → radius ]» to normalizedRadii.
                 normalizedRadii.append({ static_cast<float>(radiusValue), static_cast<float>(radiusValue) });

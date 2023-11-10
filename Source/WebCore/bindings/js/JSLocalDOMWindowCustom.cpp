@@ -643,7 +643,7 @@ static inline JSC::EncodedJSValue jsLocalDOMWindowInstanceFunction_openDatabaseB
 
     if (!DeprecatedGlobalSettings::webSQLEnabled()) {
         if (name != "null"_s || version != "null"_s || displayName != "null"_s || estimatedSize)
-            propagateException(*lexicalGlobalObject, throwScope, Exception(UnknownError, "Web SQL is deprecated"_s));
+            propagateException(*lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Web SQL is deprecated"_s));
         return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype()));
     }
 

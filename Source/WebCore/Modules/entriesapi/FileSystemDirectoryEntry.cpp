@@ -74,7 +74,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         if (!matches(entry)) {
             if (errorCallback && document) {
                 document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
-                    errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, "Entry at given path does not match expected type"_s }));
+                    errorCallback->handleEvent(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
                 });
             }
             return;

@@ -489,13 +489,13 @@ bool InspectorFrontendHost::canLoad()
 void InspectorFrontendHost::load(const String& path, Ref<DeferredPromise>&& promise)
 {
     if (!m_client) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     m_client->load(path, [promise = WTFMove(promise)](const String& content) {
         if (!content)
-            promise->reject(NotFoundError);
+            promise->reject(ExceptionCode::NotFoundError);
         else
             promise->resolve<IDLDOMString>(content);
     });
@@ -511,7 +511,7 @@ bool InspectorFrontendHost::canPickColorFromScreen()
 void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
 {
     if (!m_client) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -816,20 +816,20 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
 {
     auto* frame = dynamicDowncast<LocalFrame>(extensionFrameElement.contentFrame());
     if (!frame)
-        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_s };
 
     Ref protectedFrame(*frame);
 
     JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
     if (!frameGlobalObject)
-        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_s };
 
 
     JSC::SuspendExceptionScope scope(frameGlobalObject->vm());
     ValueOrException result = frame->script().evaluateInWorld(ScriptSourceCode(scriptSource, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorld());
     
     if (!result)
-        return Exception { InvalidStateError, result.error().message };
+        return Exception { ExceptionCode::InvalidStateError, result.error().message };
 
     return WTFMove(result.value());
 }

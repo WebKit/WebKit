@@ -323,7 +323,7 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
     // track kind set to metadata, throw a InvalidNodeTypeError exception and don't add the cue to the TextTrackList
     // of the TextTrack.
     if (is<DataCue>(cue) && m_kind != Kind::Metadata)
-        return Exception { InvalidNodeTypeError };
+        return Exception { ExceptionCode::InvalidNodeTypeError };
 
     INFO_LOG(LOGIDENTIFIER, cue.get());
 
@@ -363,9 +363,9 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
     // 1. If the given cue is not currently listed in the method's TextTrack 
     // object's text track's text track list of cues, then throw a NotFoundError exception.
     if (cue.track() != this)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     if (!m_cues)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     INFO_LOG(LOGIDENTIFIER, cue);
 

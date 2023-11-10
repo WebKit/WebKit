@@ -102,14 +102,14 @@ void AnalyserNode::process(size_t framesToProcess)
 ExceptionOr<void> AnalyserNode::setFftSize(unsigned size)
 {
     if (!m_analyser.setFftSize(size))
-        return Exception { IndexSizeError, "fftSize must be power of 2 in the range 32 to 32768."_s };
+        return Exception { ExceptionCode::IndexSizeError, "fftSize must be power of 2 in the range 32 to 32768."_s };
     return { };
 }
 
 ExceptionOr<void> AnalyserNode::setMinMaxDecibels(double minDecibels, double maxDecibels)
 {
     if (maxDecibels <= minDecibels)
-        return Exception { IndexSizeError, "minDecibels must be less than maxDecibels."_s };
+        return Exception { ExceptionCode::IndexSizeError, "minDecibels must be less than maxDecibels."_s };
     
     m_analyser.setMinDecibels(minDecibels);
     m_analyser.setMaxDecibels(maxDecibels);
@@ -119,7 +119,7 @@ ExceptionOr<void> AnalyserNode::setMinMaxDecibels(double minDecibels, double max
 ExceptionOr<void> AnalyserNode::setMinDecibels(double k)
 {
     if (k >= maxDecibels())
-        return Exception { IndexSizeError, "minDecibels must be less than maxDecibels."_s };
+        return Exception { ExceptionCode::IndexSizeError, "minDecibels must be less than maxDecibels."_s };
 
     m_analyser.setMinDecibels(k);
     return { };
@@ -128,7 +128,7 @@ ExceptionOr<void> AnalyserNode::setMinDecibels(double k)
 ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 {
     if (k <= minDecibels())
-        return Exception { IndexSizeError, "maxDecibels must be greater than minDecibels."_s };
+        return Exception { ExceptionCode::IndexSizeError, "maxDecibels must be greater than minDecibels."_s };
 
     m_analyser.setMaxDecibels(k);
     return { };
@@ -137,7 +137,7 @@ ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 ExceptionOr<void> AnalyserNode::setSmoothingTimeConstant(double k)
 {
     if (k < 0 || k > 1)
-        return Exception { IndexSizeError, "Smoothing time constant needs to be between 0 and 1."_s };
+        return Exception { ExceptionCode::IndexSizeError, "Smoothing time constant needs to be between 0 and 1."_s };
 
     m_analyser.setSmoothingTimeConstant(k);
     return { };

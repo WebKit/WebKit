@@ -36,11 +36,11 @@ ExceptionOr<NotificationPayload> NotificationPayload::parseJSON(const String& js
 {
     auto value = JSON::Value::parseJSON(json);
     if (!value)
-        return Exception { SyntaxError, "Push message with Notification disposition: does not contain valid JSON"_s };
+        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: does not contain valid JSON"_s };
 
     auto object = value->asObject();
     if (!object)
-        return Exception { SyntaxError, "Push message with Notification disposition: top level JSON value is not an object"_s };
+        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: top level JSON value is not an object"_s };
 
     return NotificationJSONParser::parseNotificationPayload(*object);
 }

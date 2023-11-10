@@ -62,7 +62,7 @@ public:
     ExceptionOr<void> setValueForBindings(float value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setValue(value);
         commitChange();
@@ -77,7 +77,7 @@ public:
     ExceptionOr<void> setValueInSpecifiedUnits(float valueInSpecifiedUnits)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setValueInSpecifiedUnits(valueInSpecifiedUnits);
         commitChange();
@@ -92,7 +92,7 @@ public:
     ExceptionOr<void> setValueAsString(const String& value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         auto result = m_value.setValueAsString(value);
         if (result.hasException())
@@ -110,7 +110,7 @@ public:
     ExceptionOr<void> newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         auto result = m_value.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
         if (result.hasException())
@@ -123,7 +123,7 @@ public:
     ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         auto result = m_value.convertToSpecifiedUnits(unitType);
         if (result.hasException())

@@ -55,16 +55,16 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
 {
     URL parsedURL(WTFMove(url));
     if (!parsedURL.isValid() || !parsedURL.protocolIs("https"_s) || parsedURL.hasFragmentIdentifier())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     bool dedicated = !options.allowPooling;
     if (!dedicated && !options.serverCertificateHashes.isEmpty())
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     auto* globalObject = context.globalObject();
     if (!globalObject) {
         ASSERT_NOT_REACHED();
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     }
     auto& domGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
 
@@ -91,7 +91,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
     auto socketProvider = context.socketProvider();
     if (!socketProvider) {
         ASSERT_NOT_REACHED();
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     }
 
     auto datagrams = WebTransportDatagramDuplexStream::create(incomingDatagrams.releaseReturnValue(), outgoingDatagrams.releaseReturnValue());
@@ -179,7 +179,7 @@ void WebTransport::receiveBidirectionalStream()
 
 void WebTransport::getStats(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    promise->reject(ExceptionCode::NotSupportedError);
 }
 
 DOMPromise& WebTransport::ready()
@@ -239,7 +239,7 @@ void WebTransport::close(WebTransportCloseInfo&& closeInfo)
     }
     if (auto session = std::exchange(m_session, nullptr))
         session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(closeInfo.reason.utf8()));
-    cleanup(DOMException::create(AbortError), WTFMove(closeInfo));
+    cleanup(DOMException::create(ExceptionCode::AbortError), WTFMove(closeInfo));
 }
 
 void WebTransport::cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&& closeInfo)
@@ -249,19 +249,19 @@ void WebTransport::cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseI
     m_sendStreams = { }; // FIXME: Error each send stream.
     // FIXME: The use of cancel and the use of NetworkError aren't quite correct in this function.
     for (auto& stream : std::exchange(m_receiveStreams, { }))
-        stream->cancel(Exception { NetworkError });
+        stream->cancel(Exception { ExceptionCode::NetworkError });
 
     if (closeInfo) {
         // FIXME: Resolve with closeInfo.
         m_closed.second->resolve();
-        m_incomingBidirectionalStreams->cancel(Exception { NetworkError });
-        m_incomingUnidirectionalStreams->cancel(Exception { NetworkError });
+        m_incomingBidirectionalStreams->cancel(Exception { ExceptionCode::NetworkError });
+        m_incomingUnidirectionalStreams->cancel(Exception { ExceptionCode::NetworkError });
         m_state = State::Closed;
     } else {
-        m_closed.second->reject(Exception { NetworkError });
-        m_ready.second->reject(Exception { NetworkError });
-        m_incomingBidirectionalStreams->cancel(Exception { NetworkError });
-        m_incomingUnidirectionalStreams->cancel(Exception { NetworkError });
+        m_closed.second->reject(Exception { ExceptionCode::NetworkError });
+        m_ready.second->reject(Exception { ExceptionCode::NetworkError });
+        m_incomingBidirectionalStreams->cancel(Exception { ExceptionCode::NetworkError });
+        m_incomingUnidirectionalStreams->cancel(Exception { ExceptionCode::NetworkError });
         m_state = State::Failed;
     }
 }
@@ -275,7 +275,7 @@ void WebTransport::createBidirectionalStream(ScriptExecutionContext& context, We
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransport-createbidirectionalstream
     if (m_state == State::Closed || m_state == State::Failed || !m_session)
-        return promise->reject(InvalidStateError);
+        return promise->reject(ExceptionCode::InvalidStateError);
     m_session->createBidirectionalStream([promise = WTFMove(promise), context = WeakPtr { context }] (std::optional<WebTransportBidirectionalStreamConstructionParameters>&& parameters) {
         if (!parameters)
             return promise->reject(nullptr);
@@ -311,7 +311,7 @@ void WebTransport::createUnidirectionalStream(ScriptExecutionContext& context, W
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransport-createunidirectionalstream
     if (m_state == State::Closed || m_state == State::Failed || !m_session)
-        return promise->reject(InvalidStateError);
+        return promise->reject(ExceptionCode::InvalidStateError);
     m_session->createOutgoingUnidirectionalStream([promise = WTFMove(promise), context = WeakPtr { context }] (RefPtr<WritableStreamSink>&& sink) {
         if (!sink)
             return promise->reject(nullptr);

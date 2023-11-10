@@ -130,7 +130,7 @@ ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLen
 
     switch (lengthType) {
     case SVGLengthType::Unknown:
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     case SVGLengthType::Number:
         return value;
     case SVGLengthType::Pixels:
@@ -161,7 +161,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnits(float value, SVGL
 {
     switch (lengthType) {
     case SVGLengthType::Unknown:
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
     case SVGLengthType::Number:
         return value;
     case SVGLengthType::Percentage:
@@ -192,7 +192,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
 {
     auto viewportSize = this->viewportSize();
     if (!viewportSize)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     switch (lengthMode) {
     case SVGLengthMode::Width:
@@ -211,7 +211,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float
 {
     auto viewportSize = this->viewportSize();
     if (!viewportSize)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     switch (lengthMode) {
     case SVGLengthMode::Width:
@@ -245,11 +245,11 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEMS(float value)
 {
     auto* style = renderStyleForLengthResolving(m_context);
     if (!style)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     float fontSize = style->computedFontSize();
     if (!fontSize)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     return value / fontSize;
 }
@@ -258,7 +258,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEMSToUserUnits(float value)
 {
     auto* style = renderStyleForLengthResolving(m_context);
     if (!style)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     return value * style->computedFontSize();
 }
@@ -267,13 +267,13 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 {
     auto* style = renderStyleForLengthResolving(m_context);
     if (!style)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
     float xHeight = std::ceil(style->metricsOfPrimaryFont().xHeight());
     if (!xHeight)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     return value / xHeight;
 }
@@ -282,7 +282,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
 {
     auto* style = renderStyleForLengthResolving(m_context);
     if (!style)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this

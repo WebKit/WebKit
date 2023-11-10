@@ -235,7 +235,7 @@ void MediaCapabilities::decodingInfo(ScriptExecutionContext& context, MediaDecod
     // 3. If configuration.audio is present and is not a valid audio configuration, return a Promise rejected with a TypeError.
     if (!isValidMediaConfiguration(configuration)) {
         RELEASE_LOG_INFO(Media, "Invalid decoding media configuration");
-        promise->reject(TypeError);
+        promise->reject(ExceptionCode::TypeError);
         return;
     }
 
@@ -292,7 +292,7 @@ void MediaCapabilities::encodingInfo(ScriptExecutionContext& context, MediaEncod
     // encoding modules.
     if (!isValidMediaConfiguration(configuration)) {
         RELEASE_LOG_INFO(Media, "Invalid encoding media configuration");
-        promise->reject(TypeError);
+        promise->reject(ExceptionCode::TypeError);
         return;
     }
 

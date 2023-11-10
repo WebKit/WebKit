@@ -239,13 +239,13 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
 {
     auto* server = this->server();
     if (!server) {
-        callback(makeUnexpected(ExceptionData { TypeError, "No SWServer"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
         return;
     }
 
     RefPtr worker = server->workerByID(identifier);
     if (!worker) {
-        callback(makeUnexpected(ExceptionData { TypeError, "No remaining service worker"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No remaining service worker"_s }));
         return;
     }
 
@@ -257,7 +257,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
         }
 
         if (!server) {
-            callback(makeUnexpected(ExceptionData { TypeError, "No SWServer"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
             return;
         }
 
@@ -349,30 +349,30 @@ void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier c
 {
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
-        callback(makeUnexpected(ExceptionData { TypeError, "no service worker"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "no service worker"_s }));
         return;
     }
 
     if (!worker->isClientActiveServiceWorker(clientIdentifier)) {
-        callback(makeUnexpected(ExceptionData { TypeError, "service worker is not the client active service worker"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is not the client active service worker"_s }));
         return;
     }
 
     auto data = worker->findClientByIdentifier(clientIdentifier);
     if (!data || !data->pageIdentifier || !data->frameIdentifier) {
-        callback(makeUnexpected(ExceptionData { TypeError, "cannot navigate service worker client"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "cannot navigate service worker client"_s }));
         return;
     }
 
     auto frameIdentifier = *data->frameIdentifier;
     m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier, auto frameIdentifier) mutable {
         if (!weakThis || !weakThis->server()) {
-            callback(makeUnexpected(ExceptionData { TypeError, "service worker is gone"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is gone"_s }));
             return;
         }
 
         if (!pageIdentifier || !frameIdentifier) {
-            callback(makeUnexpected(ExceptionData { TypeError, "navigate failed"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "navigate failed"_s }));
             return;
         }
 

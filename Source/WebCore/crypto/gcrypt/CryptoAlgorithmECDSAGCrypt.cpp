@@ -174,7 +174,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
 {
     auto output = gcryptSign(key.platformKey(), data, parameters.hashIdentifier, (key.keySizeInBits() + 7) / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -182,7 +182,7 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
 {
     auto output = gcryptVerify(key.platformKey(), signature, data, parameters.hashIdentifier, (key.keySizeInBits() + 7)/ 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

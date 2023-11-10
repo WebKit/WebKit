@@ -92,7 +92,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
         }
         auto state = serviceWorkerGlobalScope->serviceWorker().state();
         if (state != ServiceWorkerState::Parsed && state != ServiceWorkerState::Installing)
-            return Exception { NetworkError, "Importing a script from a service worker that is past installing state"_s };
+            return Exception { ExceptionCode::NetworkError, "Importing a script from a service worker that is past installing state"_s };
     }
 #endif
 
@@ -118,12 +118,12 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 
     // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
     if (failed())
-        return Exception { NetworkError, m_error.sanitizedDescription() };
+        return Exception { ExceptionCode::NetworkError, m_error.sanitizedDescription() };
 
 #if ENABLE(SERVICE_WORKER)
     if (serviceWorkerGlobalScope) {
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
-            return Exception { NetworkError, "mime type is not a supported JavaScript mime type"_s };
+            return Exception { ExceptionCode::NetworkError, "mime type is not a supported JavaScript mime type"_s };
 
         serviceWorkerGlobalScope->setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }

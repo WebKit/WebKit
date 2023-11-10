@@ -40,7 +40,7 @@ public:
 
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(SVGZoomAndPanType zoomAndPan) { m_zoomAndPan = zoomAndPan; }
-    ExceptionOr<void> setZoomAndPan(unsigned) { return Exception { NoModificationAllowedError }; }
+    ExceptionOr<void> setZoomAndPan(unsigned) { return Exception { ExceptionCode::NoModificationAllowedError }; }
     void reset() { m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::initialValue(); }
 
     void parseAttribute(const QualifiedName&, const AtomString&);

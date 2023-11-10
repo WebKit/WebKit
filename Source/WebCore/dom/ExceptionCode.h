@@ -22,7 +22,7 @@
 
 namespace WebCore {
 
-enum ExceptionCode {
+enum class ExceptionCode : uint8_t {
     // DOMException error names (https://webidl.spec.whatwg.org/#idl-DOMException-error-names).
     // Those need to be kept in sync with the array in DOMException.cpp.
     IndexSizeError, // Deprecated. Use RangeError instead.

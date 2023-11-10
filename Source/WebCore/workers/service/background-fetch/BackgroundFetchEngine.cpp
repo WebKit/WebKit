@@ -51,7 +51,7 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
     if (iterator == m_fetches.end()) {
         m_store->initializeFetches(registration.key(), [weakThis = WeakPtr { *this }, registration = WeakPtr { registration }, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)]() mutable {
             if (!weakThis || !registration) {
-                callback(makeUnexpected(ExceptionData { InvalidStateError, "BackgroundFetchEngine is gone"_s }));
+                callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "BackgroundFetchEngine is gone"_s }));
                 return;
             }
             weakThis->m_fetches.ensure(registration->key(), [] {
@@ -69,22 +69,22 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
         });
     });
     if (!result.isNewEntry) {
-        callback(makeUnexpected(ExceptionData { TypeError, "A background fetch registration already exists"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "A background fetch registration already exists"_s }));
         return;
     }
 
     auto& fetch = *result.iterator->value;
     fetch.doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
         if (!fetch || !server) {
-            callback(makeUnexpected(ExceptionData { TypeError, "Background fetch is gone"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Background fetch is gone"_s }));
             return;
         }
         switch (result) {
         case BackgroundFetchStore::StoreResult::QuotaError:
-            callback(makeUnexpected(ExceptionData { QuotaExceededError, "Background fetch requested space is above quota"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::QuotaExceededError, "Background fetch requested space is above quota"_s }));
             break;
         case BackgroundFetchStore::StoreResult::InternalError:
-            callback(makeUnexpected(ExceptionData { TypeError, "Background fetch store operation failed"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Background fetch store operation failed"_s }));
             break;
         case BackgroundFetchStore::StoreResult::OK:
             if (!fetch->pausedFlagIsSet()) {
@@ -127,7 +127,7 @@ void BackgroundFetchEngine::backgroundFetchInformation(SWServerRegistration& reg
     if (iterator == m_fetches.end()) {
         m_store->initializeFetches(registration.key(), [weakThis = WeakPtr { *this }, registration = WeakPtr { registration }, backgroundFetchIdentifier, callback = WTFMove(callback)]() mutable {
             if (!weakThis || !registration) {
-                callback(makeUnexpected(ExceptionData { InvalidStateError, "BackgroundFetchEngine is gone"_s }));
+                callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "BackgroundFetchEngine is gone"_s }));
                 return;
             }
             weakThis->m_fetches.ensure(registration->key(), [] {
@@ -252,7 +252,7 @@ void BackgroundFetchEngine::retrieveRecordResponse(BackgroundFetchRecordIdentifi
 {
     auto record = m_records.get(recordIdentifier);
     if (!record) {
-        callback(makeUnexpected(ExceptionData { InvalidStateError, "Record not found"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Record not found"_s }));
         return;
     }
     record->retrieveResponse(m_store.get(), WTFMove(callback));

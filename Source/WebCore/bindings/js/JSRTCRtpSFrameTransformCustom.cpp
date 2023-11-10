@@ -56,7 +56,7 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
     if (!argument1.value().isUndefined()) {
         if (argument1.value().isBigInt()) {
             if (argument1.value().asHeapBigInt()->length() > 1) {
-                throwException(&lexicalGlobalObject, throwScope, createDOMException(&lexicalGlobalObject, RangeError, "Not a 64 bits integer"_s));
+                throwException(&lexicalGlobalObject, throwScope, createDOMException(&lexicalGlobalObject, ExceptionCode::RangeError, "Not a 64 bits integer"_s));
                 return jsUndefined();
             }
             keyID = JSBigInt::toBigUInt64(argument1.value());

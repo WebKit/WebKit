@@ -233,15 +233,15 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
 
     if (index > nestedRules().size())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     auto* styleSheet = parentStyleSheet();
     RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::IsNestedContext::Yes);
     if (!newRule)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     // We only accepts style rule or group rule (@media,...) inside style rules.
     if (!newRule->isStyleRule() && !newRule->isGroupRule())
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     if (!m_styleRule->isStyleRuleWithNesting()) {
         // Call the parent rule (or parent stylesheet if top-level or nothing if it's an orphaned rule) to transform the current StyleRule to StyleRuleWithNesting.
@@ -270,7 +270,7 @@ ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
     if (index >= nestedRules().size()) {
         // IndexSizeError: Raised if the specified index does not correspond to a
         // rule in the media rule list.
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     }
 
     ASSERT(m_styleRule->isStyleRuleWithNesting());

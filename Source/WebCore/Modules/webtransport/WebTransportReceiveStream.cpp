@@ -47,7 +47,7 @@ WebTransportReceiveStream::WebTransportReceiveStream(Ref<InternalReadableStream>
 void WebTransportReceiveStream::getStats(Ref<DeferredPromise>&& promise)
 {
     // FIXME: Resolve promise with stats.
-    return promise->reject(NotSupportedError);
+    return promise->reject(ExceptionCode::NotSupportedError);
 }
 
 }

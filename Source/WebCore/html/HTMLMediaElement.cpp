@@ -2461,7 +2461,7 @@ void HTMLMediaElement::noneSupported()
     // 7 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
-    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(NotSupportedError));
+    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(ExceptionCode::NotSupportedError));
 
 #if ENABLE(MEDIA_SOURCE)
     detachMediaSource();
@@ -2531,7 +2531,7 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     for (auto& source : childrenOfType<HTMLSourceElement>(*this))
         source.cancelPendingErrorEvent();
 
-    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(AbortError));
+    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(ExceptionCode::AbortError));
 }
 
 void HTMLMediaElement::mediaPlayerNetworkStateChanged()
@@ -3030,7 +3030,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
 
     // 1. If this object's attaching media keys value is true, return a promise rejected with an InvalidStateError.
     if (m_attachingMediaKeys) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -3356,12 +3356,12 @@ void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferre
     auto* window = document().domWindow();
     auto* mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr;
     if (!mediaDevices) {
-        promise.reject(Exception { NotAllowedError });
+        promise.reject(Exception { ExceptionCode::NotAllowedError });
         return;
     }
 
     if (!document().processingUserGestureForMedia() && document().settings().speakerSelectionRequiresUserGesture()) {
-        promise.reject(Exception { NotAllowedError, "A user gesture is required"_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "A user gesture is required"_s });
         return;
     }
 
@@ -3377,7 +3377,7 @@ void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferre
     if (!deviceId.isNull()) {
         persistentId = mediaDevices->deviceIdToPersistentId(deviceId);
         if (persistentId.isNull()) {
-            promise.reject(Exception { NotFoundError });
+            promise.reject(Exception { ExceptionCode::NotFoundError });
             return;
         }
     }
@@ -3762,7 +3762,7 @@ void HTMLMediaElement::setCurrentTime(const MediaTime& time)
 ExceptionOr<void> HTMLMediaElement::setCurrentTimeForBindings(double time)
 {
     if (m_mediaController)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (m_readyState == HAVE_NOTHING || !m_player) {
         m_defaultPlaybackStartPosition = MediaTime::createWithDouble(time);
@@ -3987,13 +3987,13 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
         if (permitted.error() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
         ERROR_LOG(LOGIDENTIFIER, "rejecting promise: ", permitted.error());
-        promise.reject(NotAllowedError);
+        promise.reject(ExceptionCode::NotAllowedError);
         return;
     }
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED) {
         ERROR_LOG(LOGIDENTIFIER, "rejecting promise because of error");
-        promise.reject(NotSupportedError, "The operation is not supported."_s);
+        promise.reject(ExceptionCode::NotSupportedError, "The operation is not supported."_s);
         return;
     }
 
@@ -4148,7 +4148,7 @@ void HTMLMediaElement::pauseInternal()
         setPaused(true);
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
-        scheduleRejectPendingPlayPromises(DOMException::create(AbortError));
+        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             purgeBufferedDataIfPossible();
     }
@@ -4228,7 +4228,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     ALWAYS_LOG(LOGIDENTIFIER, volume);
 
     if (!(volume >= 0 && volume <= 1))
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     if (m_volume == volume)
         return { };
@@ -4243,7 +4243,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     scheduleEvent(eventNames().volumechangeEvent);
 
     if (isPlaying() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
+        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -4559,7 +4559,7 @@ double HTMLMediaElement::percentLoaded() const
 void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
 {
     if (isPlaying() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
+        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -4714,7 +4714,7 @@ ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const AtomString& kind, c
 
     // 1. If kind is not one of the following strings, then throw a SyntaxError exception and abort these steps
     if (!TextTrack::isValidKindKeyword(kind))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     // 2. If the label argument was omitted, let label be the empty string.
     // 3. If the language argument was omitted, let language be the empty string.
@@ -5772,7 +5772,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
     updateRenderer();
 
     if (!paused() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
+        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -8904,7 +8904,7 @@ void HTMLMediaElement::updateShouldAutoplay()
 void HTMLMediaElement::updateShouldPlay()
 {
     if (!paused() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
+        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     } else if (canTransitionFromAutoplayToPlay())

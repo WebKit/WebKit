@@ -79,22 +79,22 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
 {
     RefPtr frame = this->frame();
     if (!frame || !frame->isMainFrame() || !frame->document() || !frame->page()) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     if (!UserGestureIndicator::processingUserGesture()) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     if (m_contactPickerIsShowing) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
     if (properties.isEmpty()) {
-        promise->reject(TypeError);
+        promise->reject(ExceptionCode::TypeError);
         return;
     }
 
@@ -114,7 +114,7 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
             return;
         }
 
-        promise->reject(UnknownError);
+        promise->reject(ExceptionCode::UnknownError);
     });
 }
 

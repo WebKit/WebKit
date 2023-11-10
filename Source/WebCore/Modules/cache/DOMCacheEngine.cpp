@@ -41,22 +41,22 @@ Exception convertToException(Error error)
 {
     switch (error) {
     case Error::NotImplemented:
-        return Exception { NotSupportedError, "Not implemented"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Not implemented"_s };
     case Error::ReadDisk:
-        return Exception { TypeError, "Failed reading data from the file system"_s };
+        return Exception { ExceptionCode::TypeError, "Failed reading data from the file system"_s };
     case Error::WriteDisk:
-        return Exception { TypeError, "Failed writing data to the file system"_s };
+        return Exception { ExceptionCode::TypeError, "Failed writing data to the file system"_s };
     case Error::QuotaExceeded:
-        return Exception { QuotaExceededError, "Quota exceeded"_s };
+        return Exception { ExceptionCode::QuotaExceededError, "Quota exceeded"_s };
     case Error::Internal:
-        return Exception { TypeError, "Internal error"_s };
+        return Exception { ExceptionCode::TypeError, "Internal error"_s };
     case Error::Stopped:
-        return Exception { TypeError, "Context is stopped"_s };
+        return Exception { ExceptionCode::TypeError, "Context is stopped"_s };
     case Error::CORP:
-        return Exception { TypeError, "Cross-Origin-Resource-Policy failure"_s };
+        return Exception { ExceptionCode::TypeError, "Cross-Origin-Resource-Policy failure"_s };
     }
     ASSERT_NOT_REACHED();
-    return Exception { TypeError, "Connection stopped"_s };
+    return Exception { ExceptionCode::TypeError, "Connection stopped"_s };
 }
 
 Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)

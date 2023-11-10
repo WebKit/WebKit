@@ -80,10 +80,10 @@ ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& 
 {
     auto parsedUnit = parseUnit(unit);
     if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     auto type = CSSNumericType::create(parsedUnit);
     if (!type)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     auto unitValue = adoptRef(*new CSSUnitValue(value, parsedUnit));
     unitValue->m_type = WTFMove(*type);
     return unitValue;

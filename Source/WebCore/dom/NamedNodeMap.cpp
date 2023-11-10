@@ -65,10 +65,10 @@ ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomString& name)
 {
     Ref element = m_element.get();
     if (!element->hasAttributes())
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     auto index = element->findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element));
     if (index == ElementData::attributeNotFound)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     return element->detachAttribute(index);
 }
 
@@ -101,10 +101,10 @@ ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomString& namespa
 {
     Ref element = m_element.get();
     if (!element->hasAttributes())
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     auto index = element->findAttributeIndexByName(QualifiedName { nullAtom(), localName, namespaceURI });
     if (index == ElementData::attributeNotFound)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
     return element->detachAttribute(index);
 }
 

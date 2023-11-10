@@ -73,7 +73,7 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     auto* historyItem = frame->loader().history().currentItem();
     if (!historyItem)
@@ -86,7 +86,7 @@ ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestorat
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     auto* historyItem = frame->loader().history().currentItem();
     if (historyItem)
@@ -199,13 +199,13 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     URL fullURL = urlForState(urlString);
     if (!fullURL.isValid())
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     const URL& documentURL = frame->document()->url();
 
     auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (const char* suffix) {
         const char* functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()" : "history.pushState()";
-        return Exception { SecurityError, makeString("Blocked attempt to use ", functionName, " to change session history URL from ", documentURL.stringCenterEllipsizedToLength(), " to ", fullURL.stringCenterEllipsizedToLength(), ". ", suffix) };
+        return Exception { ExceptionCode::SecurityError, makeString("Blocked attempt to use ", functionName, " to change session history URL from ", documentURL.stringCenterEllipsizedToLength(), " to ", fullURL.stringCenterEllipsizedToLength(), ". ", suffix) };
     };
     if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.password() != documentURL.password())
         return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match.");
@@ -243,8 +243,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     
     if (mainHistory.m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
         if (stateObjectType == StateObjectType::Replace)
-            return Exception { SecurityError, makeString("Attempt to use history.replaceState() more than ", perStateObjectTimeSpanLimit, " times per ", stateObjectTimeSpan.seconds(), " seconds") };
-        return Exception { SecurityError, makeString("Attempt to use history.pushState() more than ", perStateObjectTimeSpanLimit, " times per ", stateObjectTimeSpan.seconds(), " seconds") };
+            return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.replaceState() more than ", perStateObjectTimeSpanLimit, " times per ", stateObjectTimeSpan.seconds(), " seconds") };
+        return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.pushState() more than ", perStateObjectTimeSpanLimit, " times per ", stateObjectTimeSpan.seconds(), " seconds") };
     }
 
     Checked<unsigned> titleSize = title.length();
@@ -265,8 +265,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     if (newTotalUsage > totalStateObjectPayloadLimit) {
         if (stateObjectType == StateObjectType::Replace)
-            return Exception { QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
-        return Exception { QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
+            return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
+        return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
     }
 
     m_mostRecentStateObjectUsage = payloadSize;

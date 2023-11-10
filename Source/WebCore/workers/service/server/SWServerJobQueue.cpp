@@ -84,7 +84,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
 
     if (!result.error.isNull()) {
         // Invoke Reject Job Promise with job and TypeError.
-        m_server.rejectJob(job, ExceptionData { TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.error.localizedDescription()) });
+        m_server.rejectJob(job, ExceptionData { ExceptionCode::TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.error.localizedDescription()) });
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!newestWorker)
@@ -168,7 +168,7 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
     registration->setPreInstallationWorker(nullptr);
 
     // Invoke Reject Job Promise with job and TypeError.
-    m_server.rejectJob(firstJob(), { TypeError, message });
+    m_server.rejectJob(firstJob(), { ExceptionCode::TypeError, message });
 
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
     if (!registration->getNewestWorker())
@@ -314,15 +314,15 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
     ASSERT(job.registrationOptions);
 
     if (!job.isFromServiceWorkerPage && !shouldTreatAsPotentiallyTrustworthy(job.scriptURL) && !m_server.canHandleScheme(job.scriptURL.protocol()))
-        return rejectCurrentJob(ExceptionData { SecurityError, "Script URL is not potentially trustworthy"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Script URL is not potentially trustworthy"_s });
 
     // If the origin of job's script url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scriptURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, "Script origin does not match the registering client's origin"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Script origin does not match the registering client's origin"_s });
 
     // If the origin of job's scope url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, "Scope origin does not match the registering client's origin"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Scope origin does not match the registering client's origin"_s });
 
     // If registration is not null (in our parlance "empty"), then:
     if (auto* registration = m_server.getRegistration(m_registrationKey)) {
@@ -352,7 +352,7 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 {
     // If the origin of job's scope url is not job's client's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, "Origin of scope URL does not match the client's origin"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Origin of scope URL does not match the client's origin"_s });
 
     // Let registration be the result of running "Get Registration" algorithm passing job's scope url as the argument.
     auto* registration = m_server.getRegistration(m_registrationKey);
@@ -384,14 +384,14 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 
     // If registration is null (in our parlance "empty") or registration's uninstalling flag is set, then:
     if (!registration)
-        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a null/nonexistent service worker registration"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::TypeError, "Cannot update a null/nonexistent service worker registration"_s });
 
     // Let newestWorker be the result of running Get Newest Worker algorithm passing registration as the argument.
     auto* newestWorker = registration->getNewestWorker();
 
     // If job’s type is update, and newestWorker is not null and its script url does not equal job’s script url, then:
     if (job.type == ServiceWorkerJobType::Update && newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
-        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a service worker with a requested script URL whose newest worker has a different script URL"_s });
+        return rejectCurrentJob(ExceptionData { ExceptionCode::TypeError, "Cannot update a service worker with a requested script URL whose newest worker has a different script URL"_s });
 
     m_server.startScriptFetch(job, *registration);
 }

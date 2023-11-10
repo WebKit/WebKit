@@ -78,12 +78,12 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     bool quotaException = false;
     m_storageArea->setItem(*frame, key, value, quotaException);
     if (quotaException)
-        return Exception { QuotaExceededError };
+        return Exception { ExceptionCode::QuotaExceededError };
     return { };
 }
 
@@ -91,7 +91,7 @@ ExceptionOr<void> Storage::removeItem(const String& key)
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     m_storageArea->removeItem(*frame, key);
     return { };
@@ -101,7 +101,7 @@ ExceptionOr<void> Storage::clear()
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     m_storageArea->clear(*frame);
     return { };

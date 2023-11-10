@@ -354,7 +354,7 @@ ExceptionOr<void> PannerNode::setRefDistanceForBindings(double refDistance)
     ASSERT(isMainThread());
 
     if (refDistance < 0)
-        return Exception { RangeError, "refDistance cannot be set to a negative value"_s };
+        return Exception { ExceptionCode::RangeError, "refDistance cannot be set to a negative value"_s };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -372,7 +372,7 @@ ExceptionOr<void> PannerNode::setMaxDistanceForBindings(double maxDistance)
     ASSERT(isMainThread());
 
     if (maxDistance <= 0)
-        return Exception { RangeError, "maxDistance cannot be set to a non-positive value"_s };
+        return Exception { ExceptionCode::RangeError, "maxDistance cannot be set to a non-positive value"_s };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -390,7 +390,7 @@ ExceptionOr<void> PannerNode::setRolloffFactorForBindings(double rolloffFactor)
     ASSERT(isMainThread());
 
     if (rolloffFactor < 0)
-        return Exception { RangeError, "rolloffFactor cannot be set to a negative value"_s };
+        return Exception { ExceptionCode::RangeError, "rolloffFactor cannot be set to a negative value"_s };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -408,7 +408,7 @@ ExceptionOr<void> PannerNode::setConeOuterGainForBindings(double gain)
     ASSERT(isMainThread());
 
     if (gain < 0 || gain > 1)
-        return Exception { InvalidStateError, "coneOuterGain must be in [0, 1]"_s };
+        return Exception { ExceptionCode::InvalidStateError, "coneOuterGain must be in [0, 1]"_s };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -454,7 +454,7 @@ ExceptionOr<void> PannerNode::setChannelCount(unsigned channelCount)
     ASSERT(isMainThread());
 
     if (channelCount > 2)
-        return Exception { NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_s };
+        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_s };
     
     return AudioNode::setChannelCount(channelCount);
 }
@@ -464,7 +464,7 @@ ExceptionOr<void> PannerNode::setChannelCountMode(ChannelCountMode mode)
     ASSERT(isMainThread());
 
     if (mode == ChannelCountMode::Max)
-        return Exception { NotSupportedError, "PannerNode's channelCountMode cannot be max"_s };
+        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCountMode cannot be max"_s };
     
     return AudioNode::setChannelCountMode(mode);
 }

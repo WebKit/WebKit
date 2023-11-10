@@ -98,7 +98,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(co
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
     auto output = gcryptEncrypt(key.platformKey(), plainText, key.keySizeInBits() / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -106,7 +106,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(co
 {
     auto output = gcryptDecrypt(key.platformKey(), cipherText);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

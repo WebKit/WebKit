@@ -141,12 +141,12 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 {
     auto* context = scriptExecutionContext();
     if (m_isStopped) {
-        promise->reject(Exception(InvalidStateError));
+        promise->reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
     if (relativeScriptURL.isEmpty()) {
-        promise->reject(Exception { TypeError, "serviceWorker.register() cannot be called with an empty script URL"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() cannot be called with an empty script URL"_s });
         return;
     }
 
@@ -156,13 +156,13 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     CheckedPtr contentSecurityPolicy = is<Document>(context) ? downcast<Document>(context)->contentSecurityPolicy() : nullptr;
     if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(jobData.scriptURL)) {
-        promise->reject(Exception { SecurityError });
+        promise->reject(Exception { ExceptionCode::SecurityError });
         return;
     }
 
     if (!jobData.scriptURL.isValid()) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL");
-        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a valid relative script URL"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a valid relative script URL"_s });
         return;
     }
 
@@ -170,14 +170,14 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     jobData.isFromServiceWorkerPage = page && page->isServiceWorkerPage();
     if (!jobData.scriptURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
         return;
     }
 
     auto path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scriptURL contains invalid character");
-        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
         return;
     }
 
@@ -188,14 +188,14 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
         return;
     }
 
     path = jobData.scopeURL.path();
     if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL contains invalid character");
-        promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
         return;
     }
 
@@ -230,7 +230,7 @@ void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIde
     ASSERT(!m_isStopped);
     if (!m_swConnection) {
         ASSERT_NOT_REACHED();
-        promise.reject(Exception(InvalidStateError));
+        promise.reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -249,7 +249,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     if (!m_swConnection) {
         ASSERT_NOT_REACHED();
         if (promise)
-            promise->reject(Exception(InvalidStateError));
+            promise->reject(Exception(ExceptionCode::InvalidStateError));
         return;
     }
 
@@ -284,14 +284,14 @@ void ServiceWorkerContainer::scheduleJob(std::unique_ptr<ServiceWorkerJob>&& job
 void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<DeferredPromise>&& promise)
 {
     if (m_isStopped) {
-        promise->reject(Exception { InvalidStateError });
+        promise->reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     auto& context = *scriptExecutionContext();
     URL parsedURL = context.completeURL(clientURL);
     if (!protocolHostAndPortAreEqual(parsedURL, context.url())) {
-        promise->reject(Exception { SecurityError, "Origin of clientURL is not client's origin"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "Origin of clientURL is not client's origin"_s });
         return;
     }
 
@@ -335,7 +335,7 @@ void ServiceWorkerContainer::updateWorkerState(ServiceWorkerIdentifier identifie
 void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 {
     if (m_isStopped) {
-        promise->reject(Exception { InvalidStateError });
+        promise->reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 

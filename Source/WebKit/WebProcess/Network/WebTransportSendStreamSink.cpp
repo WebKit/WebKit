@@ -50,15 +50,15 @@ void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context,
 {
     ASSERT(RunLoop::isMain());
     if (!m_session)
-        return promise.reject(WebCore::Exception { WebCore::InvalidStateError });
+        return promise.reject(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
 
     if (!context.globalObject())
-        return promise.reject(WebCore::Exception { WebCore::InvalidStateError });
+        return promise.reject(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
     auto& globalObject = *JSC::jsCast<WebCore::JSDOMGlobalObject*>(context.globalObject());
     auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
     auto arrayBufferOrView = convert<WebCore::IDLUnion<WebCore::IDLArrayBuffer, WebCore::IDLArrayBufferView>>(globalObject, value);
     if (scope.exception())
-        return promise.settle(WebCore::Exception { WebCore::ExistingExceptionError });
+        return promise.settle(WebCore::Exception { WebCore::ExceptionCode::ExistingExceptionError });
 
     WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
         sendBytes({ static_cast<const uint8_t*>(arrayBufferOrView->data()), arrayBufferOrView->byteLength() }, [promise = WTFMove(promise)] () mutable {

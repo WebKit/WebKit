@@ -284,7 +284,7 @@ Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(con
 ExceptionOr<PlatformXR::Device::FrameData::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
 {
     if (init.position.size() != 3 || init.orientation.size() != 4)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     PlatformXR::Device::FrameData::Pose pose;
     pose.position = { init.position[0], init.position[1], init.position[2] };
@@ -299,7 +299,7 @@ ExceptionOr<Ref<FakeXRView>> WebFakeXRDevice::parseView(const FakeXRViewInit& in
     auto fakeView = FakeXRView::create(init.eye);
 
     if (init.projectionMatrix.size() != 16)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     fakeView->setProjection(init.projectionMatrix);
 
     auto viewOffset = parseRigidTransform(init.viewOffset);

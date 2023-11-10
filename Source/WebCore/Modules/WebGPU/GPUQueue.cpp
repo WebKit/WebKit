@@ -100,7 +100,7 @@ ExceptionOr<void> GPUQueue::writeBuffer(
     auto contentSize = optionalSize.has_value() ? (elementSize * optionalSize.value()) : (dataSize - dataOffset);
 
     if (dataOffset > dataSize || dataOffset + contentSize > dataSize || (contentSize % 4))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), dataSize, dataOffset, contentSize);
     return { };

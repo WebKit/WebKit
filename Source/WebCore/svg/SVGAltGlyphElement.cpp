@@ -51,7 +51,7 @@ Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName,
 
 ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomString&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 const AtomString& SVGAltGlyphElement::glyphRef() const
@@ -61,7 +61,7 @@ const AtomString& SVGAltGlyphElement::glyphRef() const
 
 ExceptionOr<void> SVGAltGlyphElement::setFormat(const AtomString&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 const AtomString& SVGAltGlyphElement::format() const

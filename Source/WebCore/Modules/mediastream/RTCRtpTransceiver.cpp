@@ -107,7 +107,7 @@ void RTCRtpTransceiver::setConnection(RTCPeerConnection& connection)
 ExceptionOr<void> RTCRtpTransceiver::stop()
 {
     if (!m_connection || m_connection->isClosed())
-        return Exception { InvalidStateError, "RTCPeerConnection is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "RTCPeerConnection is closed"_s };
 
     if (m_stopped)
         return { };

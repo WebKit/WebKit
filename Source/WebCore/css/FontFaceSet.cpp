@@ -126,7 +126,7 @@ ExceptionOr<FontFaceSet&> FontFaceSet::add(FontFace& face)
     if (m_backing->hasFace(face.backing()))
         return *this;
     if (face.backing().cssConnection())
-        return Exception(InvalidModificationError);
+        return Exception(ExceptionCode::InvalidModificationError);
     m_backing->add(face.backing());
     return *this;
 }
@@ -194,7 +194,7 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
     for (auto& face : matchingFaces) {
         if (face.get().status() == CSSFontFace::Status::Failure) {
-            promise.reject(NetworkError);
+            promise.reject(ExceptionCode::NetworkError);
             return;
         }
     }
@@ -254,7 +254,7 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
             }
         } else {
             ASSERT(newStatus == CSSFontFace::Status::Failure);
-            pendingPromise->promise->reject(NetworkError);
+            pendingPromise->promise->reject(ExceptionCode::NetworkError);
             pendingPromise->hasReachedTerminalState = true;
         }
     }

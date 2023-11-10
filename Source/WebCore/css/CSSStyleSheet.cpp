@@ -112,7 +112,7 @@ ExceptionOr<Ref<CSSStyleSheet>> CSSStyleSheet::create(Document& document, Init&&
     else {
         baseURL = document.completeURL(init.baseURL);
         if (!baseURL.isValid())
-            return Exception { NotAllowedError, "Base URL is invalid"_s };
+            return Exception { ExceptionCode::NotAllowedError, "Base URL is invalid"_s };
     }
 
     CSSParserContext parserContext(document, baseURL);
@@ -347,20 +347,20 @@ ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsign
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (index > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     RefPtr<StyleRuleBase> rule = CSSParser::parseRule(m_contents.get().parserContext(), m_contents.ptr(), ruleString);
 
     if (!rule)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     if (m_wasConstructedByJS && rule->isImportRule())
-        return Exception { SyntaxError, "Cannot inserted an @import rule in a constructed CSSStyleSheet object"_s };
+        return Exception { ExceptionCode::SyntaxError, "Cannot inserted an @import rule in a constructed CSSStyleSheet object"_s };
 
     RuleMutationScope mutationScope(this, RuleInsertion, dynamicDowncast<StyleRuleKeyframes>(*rule));
 
     bool success = m_contents.get().wrapperInsertRule(rule.releaseNonNull(), index);
     if (!success)
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     if (!m_childRuleCSSOMWrappers.isEmpty())
         m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
 
@@ -374,7 +374,7 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
     if (index >= length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     RuleMutationScope mutationScope(this);
 
     m_contents->wrapperDeleteRule(index);
@@ -404,7 +404,7 @@ ExceptionOr<Ref<CSSRuleList>> CSSStyleSheet::cssRulesForBindings()
 {
     auto cssRules = this->cssRules();
     if (!cssRules)
-        return Exception { SecurityError, "Not allowed to access cross-origin stylesheet"_s };
+        return Exception { ExceptionCode::SecurityError, "Not allowed to access cross-origin stylesheet"_s };
     return cssRules.releaseNonNull();
 }
 
@@ -513,7 +513,7 @@ void CSSStyleSheet::replace(String&& text, Ref<DeferredPromise>&& promise)
 ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
 {
     if (!m_wasConstructedByJS)
-        return Exception { NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_s };
+        return Exception { ExceptionCode::NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_s };
 
     RuleMutationScope mutationScope(this, RuleReplace);
     m_contents->clearRules();

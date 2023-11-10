@@ -80,13 +80,13 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 #if HAVE(UNIFIED_ASC_AUTH_UI)
             if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
                 if (!isASCAvailable()) {
-                    handler({ }, AuthenticatorAttachment::Platform, ExceptionData { NotSupportedError, "Not implemented."_s });
+                    handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::NotSupportedError, "Not implemented."_s });
                     RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not currently supported in this environment.");
                     return;
                 }
                 auto context = contextForRequest(WTFMove(data));
                 if (context.get() == nullptr) {
-                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
                     RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                     return;
                 }
@@ -97,7 +97,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             }
 #else
             if (data.parentOrigin && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
-                handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+                handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
                 RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                 return;
             }
@@ -112,7 +112,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                 });
             });
         } else {
-            handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+            handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "This request has been cancelled by the user."_s });
             RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to rejected prompt after lack of user gesture.");
         }
     };

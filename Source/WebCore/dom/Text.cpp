@@ -59,7 +59,7 @@ Text::~Text() = default;
 ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     EventQueueScope scope;
     auto oldData = data();

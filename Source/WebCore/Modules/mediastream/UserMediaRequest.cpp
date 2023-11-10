@@ -221,19 +221,19 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
     switch (reason) {
     case MediaAccessDenialReason::NoReason:
         ASSERT_NOT_REACHED();
-        code = AbortError;
+        code = ExceptionCode::AbortError;
         break;
     case MediaAccessDenialReason::NoConstraints:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no constraints");
-        code = TypeError;
+        code = ExceptionCode::TypeError;
         break;
     case MediaAccessDenialReason::UserMediaDisabled:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - user media disabled");
-        code = SecurityError;
+        code = ExceptionCode::SecurityError;
         break;
     case MediaAccessDenialReason::NoCaptureDevices:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no capture devices");
-        code = NotFoundError;
+        code = ExceptionCode::NotFoundError;
         break;
     case MediaAccessDenialReason::InvalidConstraint:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", message.utf8().data());
@@ -241,19 +241,19 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");
-        code = NotReadableError;
+        code = ExceptionCode::NotReadableError;
         break;
     case MediaAccessDenialReason::OtherFailure:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - other failure");
-        code = AbortError;
+        code = ExceptionCode::AbortError;
         break;
     case MediaAccessDenialReason::PermissionDenied:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - permission denied");
-        code = NotAllowedError;
+        code = ExceptionCode::NotAllowedError;
         break;
     case MediaAccessDenialReason::InvalidAccess:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid access");
-        code = InvalidAccessError;
+        code = ExceptionCode::InvalidAccessError;
         break;
     }
 

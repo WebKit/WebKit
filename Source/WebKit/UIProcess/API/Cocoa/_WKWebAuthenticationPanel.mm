@@ -985,7 +985,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAttestationResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:exception.code userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
+            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
     _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr, std::nullopt, std::nullopt }, WTFMove(callback));
@@ -999,7 +999,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAttestationResponse(response->data(), nullptr, response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:exception.code userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
+            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
     _panel->handleRequest({ vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));
@@ -1053,7 +1053,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAssertionResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:exception.code userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
+            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
     _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr, std::nullopt, std::nullopt }, WTFMove(callback));
@@ -1067,7 +1067,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAssertionResponse(response->data(), nullptr, response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
-            handler(nil, [NSError errorWithDomain:WKErrorDomain code:exception.code userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
+            handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
     _panel->handleRequest({ vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));

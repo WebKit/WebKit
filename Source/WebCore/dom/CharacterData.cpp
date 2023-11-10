@@ -75,7 +75,7 @@ void CharacterData::setData(const String& data)
 ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return m_data.substring(offset, count);
 }
@@ -121,7 +121,7 @@ void CharacterData::appendData(const String& data)
 ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     auto newData = makeStringByInserting(m_data, data, offset);
     setDataAndUpdate(WTFMove(newData), offset, 0, data.length());
@@ -132,7 +132,7 @@ ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     count = std::min(count, length() - offset);
 
@@ -145,7 +145,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, const String& data)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     count = std::min(count, length() - offset);
 

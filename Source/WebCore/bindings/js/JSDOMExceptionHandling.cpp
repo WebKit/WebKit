@@ -148,29 +148,29 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
         return jsUndefined();
 
     switch (ec) {
-    case ExistingExceptionError:
+    case ExceptionCode::ExistingExceptionError:
         return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.
-    case TypeError:
+    case ExceptionCode::TypeError:
         if (message.isEmpty())
             return createTypeError(lexicalGlobalObject);
         return createTypeError(lexicalGlobalObject, message);
 
-    case RangeError:
+    case ExceptionCode::RangeError:
         if (message.isEmpty())
             return createRangeError(lexicalGlobalObject, "Bad value"_s);
         return createRangeError(lexicalGlobalObject, message);
 
-    case JSSyntaxError:
+    case ExceptionCode::JSSyntaxError:
         if (message.isEmpty())
             return createSyntaxError(lexicalGlobalObject);
         return createSyntaxError(lexicalGlobalObject, message);
 
-    case StackOverflowError:
+    case ExceptionCode::StackOverflowError:
         return createStackOverflowError(lexicalGlobalObject);
 
-    case OutOfMemoryError:
+    case ExceptionCode::OutOfMemoryError:
         return createOutOfMemoryError(lexicalGlobalObject);
 
     default: {
@@ -217,19 +217,19 @@ template<typename... StringTypes> static String makeArgumentTypeErrorMessage(uns
 void throwNotSupportedError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, NotSupportedError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::NotSupportedError, message));
 }
 
 void throwInvalidStateError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, InvalidStateError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::InvalidStateError, message));
 }
 
 void throwSecurityError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const String& message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, SecurityError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::SecurityError, message));
 }
 
 JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues)
@@ -299,7 +299,7 @@ EncodedJSValue throwThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
 
 JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise& promise, const char* interfaceName, const char* methodName)
 {
-    promise.reject(TypeError, makeThisTypeErrorMessage(interfaceName, methodName));
+    promise.reject(ExceptionCode::TypeError, makeThisTypeErrorMessage(interfaceName, methodName));
     return JSValue::encode(jsUndefined());
 }
 
@@ -311,13 +311,13 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject& lexicalG
 void throwDOMSyntaxError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, SyntaxError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::SyntaxError, message));
 }
 
 void throwDataCloneError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, DataCloneError));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::DataCloneError));
 }
 
 } // namespace WebCore
