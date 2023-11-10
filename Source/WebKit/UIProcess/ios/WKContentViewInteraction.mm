@@ -2611,7 +2611,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     return [_inputPeripheral assistantView];
 }
 
-- (CGRect)_selectionClipRect
+- (CGRect)_selectionClipRectInternal
 {
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
         return _focusedElementInformation.interactionRect;
@@ -2620,6 +2620,12 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
         return _page->editorState().visualData->selectionClipRect;
 
     return CGRectNull;
+}
+
+- (CGRect)_selectionClipRect
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+    return [self _selectionClipRectInternal];
 }
 
 static BOOL isBuiltInScrollViewPanGestureRecognizer(UIGestureRecognizer *recognizer)
@@ -12087,6 +12093,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 }
 
 #endif // ENABLE(REVEAL)
+
+- (CGRect)selectionClipRect
+{
+    return [self _selectionClipRectInternal];
+}
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
