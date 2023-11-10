@@ -12,15 +12,17 @@ x
 x
 x
 x
+x
 
 PASS el-a
 PASS el-aside-in-section-with-name
+PASS el-aside-in-section-with-role
 PASS el-aside-ancestorbodymain
 PASS el-footer-ancestorbody
 PASS el-header-ancestorbody
 PASS el-section
 PASS el-a-no-href
-FAIL el-aside-in-section-without-name assert_false: Computed Role: "complementary" does not match any of the acceptable role strings in ["generic", "", "none"]: <aside data-testname="el-aside-in-section-without-name" class="ex-generic">x</aside> expected false got true
+PASS el-aside-in-section-without-name
 PASS el-footer
 PASS el-header
 PASS el-section-no-name
