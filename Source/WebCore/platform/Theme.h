@@ -51,7 +51,7 @@ public:
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this. The adjustment is an offset that adds to the baseline, e.g., marginTop() + height() + |offset|.
     // The offset is not zoomed.
-    virtual int baselinePositionAdjustment(StyleAppearance) const;
+    virtual int baselinePositionAdjustment(StyleAppearance, bool isHorizontalWritingMode) const;
 
     // The font description result should have a zoomed font size.
     virtual std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const;

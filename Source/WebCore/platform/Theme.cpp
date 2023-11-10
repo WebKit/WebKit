@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-int Theme::baselinePositionAdjustment(StyleAppearance) const
+int Theme::baselinePositionAdjustment(StyleAppearance, bool) const
 {
     return 0;
 }
