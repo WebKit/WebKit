@@ -168,7 +168,7 @@ private:
     void sourceBufferPrivateAppendComplete(AppendResult) final;
     Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
-    void sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;

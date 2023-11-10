@@ -1179,17 +1179,15 @@ void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
     m_bufferedSinceLastMonitor += frameDuration;
 }
 
-void SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    if (isRemoved()) {
-        completionHandler();
-        return;
-    }
+    if (isRemoved())
+        return GenericPromise::createAndReject(-1);
 
     m_source->setDurationInternal(duration);
     if (m_textTracks)
         m_textTracks->setDuration(duration);
-    completionHandler();
+    return GenericPromise::createAndResolve();
 }
 
 void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)

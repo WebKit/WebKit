@@ -247,7 +247,7 @@ void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperati
         // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
         // duration set to the maximum of the current duration and the group end timestamp.
         if (m_groupEndTimestamp > duration()) {
-            m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp, WTFMove(completionHandler));
+            m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
             return;
         }
         completionHandler();

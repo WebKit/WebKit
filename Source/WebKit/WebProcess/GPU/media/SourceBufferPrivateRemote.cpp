@@ -471,7 +471,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampC
 void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
     if (m_client)
-        m_client->sourceBufferPrivateDurationChanged(duration, WTFMove(completionHandler));
+        m_client->sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
     else
         completionHandler();
 }

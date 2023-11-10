@@ -83,7 +83,7 @@ public:
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
     virtual Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) = 0;
     virtual void sourceBufferPrivateTrackBuffersChanged(const Vector<PlatformTimeRanges>&) { };
-    virtual void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) = 0;
+    virtual Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;

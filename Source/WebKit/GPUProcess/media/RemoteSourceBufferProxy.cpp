@@ -129,14 +129,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampCha
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier)->whenSettled(RunLoop::main(), [] {
+        return GenericPromise::createAndResolve();
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>& trackBuffers)
