@@ -50,8 +50,8 @@ class RemoteScrollingUIState {
 public:
     using Changes = RemoteScrollingUIStateChanges;
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<RemoteScrollingUIState> decode(IPC::Decoder&);
+    RemoteScrollingUIState() = default;
+    RemoteScrollingUIState(OptionSet<RemoteScrollingUIStateChanges>, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveScrollSnap, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveUserScrolls, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveRubberband);
 
     OptionSet<RemoteScrollingUIStateChanges> changes() const { return m_changes; }
     void clearChanges() { m_changes = { }; }

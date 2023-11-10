@@ -4876,6 +4876,7 @@
 		460B87352AFD9F8200200D8C /* ScrollingAccelerationCurve.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ScrollingAccelerationCurve.serialization.in; sourceTree = "<group>"; };
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnectionMessages.h; sourceTree = "<group>"; };
+		4616C9A62AFD954100A37024 /* RemoteScrollingUIState.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteScrollingUIState.serialization.in; sourceTree = "<group>"; };
 		461E1BEC279A010E006AF53B /* WebSharedWorkerContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerContextManagerConnection.cpp; sourceTree = "<group>"; };
 		461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerContextManagerConnection.h; sourceTree = "<group>"; };
 		461E1BF0279A010F006AF53B /* WebSharedWorkerContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSharedWorkerContextManagerConnection.messages.in; sourceTree = "<group>"; };
@@ -9629,6 +9630,7 @@
 				FAC3C3BA2A93E561001E2EB8 /* RemoteScrollingCoordinatorTransaction.serialization.in */,
 				0FCD094E24C79F5B000C6D39 /* RemoteScrollingUIState.cpp */,
 				0FCD094F24C79F5B000C6D39 /* RemoteScrollingUIState.h */,
+				4616C9A62AFD954100A37024 /* RemoteScrollingUIState.serialization.in */,
 				0F65956727DB1D5800EE874B /* SwapBuffersDisplayRequirement.h */,
 				2D12DAB420662C73006F00FB /* WKAnimationDelegate.h */,
 			);

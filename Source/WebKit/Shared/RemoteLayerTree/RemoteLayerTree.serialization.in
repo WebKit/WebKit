@@ -84,13 +84,6 @@ enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
     NeedsNoDisplay
 };
 
-header: "RemoteScrollingUIState.h"
-[OptionSet] enum class WebKit::RemoteScrollingUIStateChanges : uint8_t {
-    ScrollSnapNodes
-    UserScrollNodes
-    RubberbandingNodes
-};
-
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
     WebCore::PlatformLayerIdentifier m_rootLayerID;

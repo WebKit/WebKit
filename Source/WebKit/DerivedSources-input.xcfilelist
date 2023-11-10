@@ -249,6 +249,7 @@ $(PROJECT_DIR)/Shared/RTCNetwork.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/BufferAndBackendInfo.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in
+$(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingUIState.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerInitializationData.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerType.serialization.in
 $(PROJECT_DIR)/Shared/ResourceLoadInfo.serialization.in
