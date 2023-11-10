@@ -40,9 +40,9 @@ enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, Inheri
 class SVGAnimationElement : public SVGSMILElement, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
 public:
-    float getStartTime() const;
+    ExceptionOr<float> getStartTime() const;
     float getCurrentTime() const;
-    float getSimpleDuration() const;
+    ExceptionOr<float> getSimpleDuration() const;
 
     void beginElement();
     void beginElementAt(float offset);
