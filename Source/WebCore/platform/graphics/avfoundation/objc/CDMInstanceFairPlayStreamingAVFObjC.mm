@@ -1581,7 +1581,7 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
 {
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 
-#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
+#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS) && HAVE(AVCONTENTKEYSPECIFIER)
     AVContentKey *contentKey = request.contentKey;
     if (!contentKey)
         return std::nullopt;
