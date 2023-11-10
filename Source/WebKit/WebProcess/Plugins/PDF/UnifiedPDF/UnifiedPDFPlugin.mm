@@ -41,6 +41,10 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIColor.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
