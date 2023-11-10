@@ -125,6 +125,10 @@
 #import <UIKit/UIKeyEventContext.h>
 #endif
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
+#import <UIKit/UIAsyncTextInteractionDelegate.h>
+#endif
+
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
 #import <UIKit/UIDragInteraction_AsyncSupport.h>
 #import <UIKit/_UIAsyncDragInteraction.h>

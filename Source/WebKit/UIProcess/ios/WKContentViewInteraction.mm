@@ -4877,10 +4877,10 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     if (!offset)
         return;
     
-    [self beginSelectionChange];
+    [self _internalBeginSelectionChange];
     RetainPtr<WKContentView> view = self;
     _page->moveSelectionByOffset(offset, [view] {
-        [view endSelectionChange];
+        [view _internalEndSelectionChange];
     });
 }
 
@@ -5605,9 +5605,9 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     _inputPeripheral = nil; // Nullify so that we don't tell the input peripheral to end editing again in -_elementDidBlur.
 
     _isChangingFocusUsingAccessoryTab = YES;
-    [self beginSelectionChange];
+    [self _internalBeginSelectionChange];
     _page->focusNextFocusedElement(direction == WebKit::TabDirection::Next, [protectedSelf = retainPtr(self)] {
-        [protectedSelf endSelectionChange];
+        [protectedSelf _internalEndSelectionChange];
         [protectedSelf reloadInputViews];
         protectedSelf->_isChangingFocusUsingAccessoryTab = NO;
     });
@@ -5661,16 +5661,50 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)beginSelectionChange
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _internalBeginSelectionChange];
+}
+
+- (void)_internalBeginSelectionChange
+{
+    [self _updateInternalStateBeforeSelectionChange];
+
+#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+    if (_asyncSystemInputDelegate)
+        [_asyncSystemInputDelegate selectionWillChange:self];
+    else
+#endif
+        [self.inputDelegate selectionWillChange:self];
+}
+
+- (void)_updateInternalStateBeforeSelectionChange
+{
     _autocorrectionContextNeedsUpdate = YES;
     _selectionChangeNestingLevel++;
-
-    [self.inputDelegate selectionWillChange:self];
 }
 
 - (void)endSelectionChange
 {
-    [self.inputDelegate selectionDidChange:self];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
+    [self _internalEndSelectionChange];
+}
+
+- (void)_internalEndSelectionChange
+{
+#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+    if (_asyncSystemInputDelegate)
+        [_asyncSystemInputDelegate selectionDidChange:self];
+    else
+#endif
+        [self.inputDelegate selectionDidChange:self];
+
+    [self _updateInternalStateAfterSelectionChange];
+}
+
+- (void)_updateInternalStateAfterSelectionChange
+{
     if (_selectionChangeNestingLevel) {
         // FIXME (228083): Some layout tests end up triggering unbalanced calls to -endSelectionChange.
         // We should investigate why this happens, (ideally) prevent it from happening, and then assert
@@ -6934,10 +6968,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     // FIXME: Editing commands are not considered by WebKit as user initiated even if they are the result
     // of keydown or keyup. We need to query the keyboard to determine if this was called from the keyboard
     // or not to know whether to tell WebKit to treat this command as user initiated or not.
-    [self beginSelectionChange];
+    [self _internalBeginSelectionChange];
     RetainPtr<WKContentView> view = self;
     _page->executeEditCommand(commandName, { }, [view] {
-        [view endSelectionChange];
+        [view _internalEndSelectionChange];
     });
 }
 
@@ -8203,18 +8237,18 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
         if (!_usingGestureForSelection && !_selectionChangeNestingLevel && _page->editorState().triggeredByAccessibilitySelectionChange) {
             // Force UIKit to reload all EditorState-based UI; in particular, this includes text candidates.
-            [self beginSelectionChange];
-            [self endSelectionChange];
+            [self _internalBeginSelectionChange];
+            [self _internalEndSelectionChange];
         }
     }
 }
 
 - (void)selectWordForReplacement
 {
-    [self beginSelectionChange];
+    [self _internalBeginSelectionChange];
     _page->extendSelectionForReplacement([weakSelf = WeakObjCPtr<WKContentView>(self)] {
         if (auto strongSelf = weakSelf.get())
-            [strongSelf endSelectionChange];
+            [strongSelf _internalEndSelectionChange];
     });
 }
 
@@ -12100,6 +12134,22 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+#pragma mark - UIAsyncTextInteractionDelegate
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
+
+- (void)selectionWillChange:(UIAsyncTextInteraction *)interaction
+{
+    [self _updateInternalStateBeforeSelectionChange];
+}
+
+- (void)selectionDidChange:(UIAsyncTextInteraction *)interaction
+{
+    [self _updateInternalStateAfterSelectionChange];
+}
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
 
 @end
 
