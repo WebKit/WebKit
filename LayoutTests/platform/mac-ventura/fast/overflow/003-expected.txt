@@ -15,11 +15,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
         RenderText {#text} at (10,11) size 234x15
           text run at (10,11) width 234: "DHTML Animation Array Generator"
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {description} at (0,0) size 236x60
-        RenderText {#text} at (10,26) size 236x60
-          text run at (10,26) width 236: "Robert points us to the first third-party"
+      RenderInline {description} at (0,0) size 237x60
+        RenderText {#text} at (10,26) size 237x60
+          text run at (10,26) width 237: "Robert points us to the first third-party"
           text run at (10,41) width 217: "tool for the DomAPI: The Animation"
-          text run at (10,56) width 198: "Array Generator, a visual tool for"
+          text run at (10,56) width 201: "Array Generator, a visual tool for"
           text run at (10,71) width 62: "creating..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -32,8 +32,8 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
       RenderInline {description} at (0,0) size 244x60
         RenderText {#text} at (193,11) size 244x60
           text run at (193,11) width 61: "Aarondot:"
-          text run at (10,26) width 206: "A Better Way To Display Extended"
-          text run at (10,41) width 225: "Entries. Very cool, and uses the DOM"
+          text run at (10,26) width 208: "A Better Way To Display Extended"
+          text run at (10,41) width 226: "Entries. Very cool, and uses the DOM"
           text run at (10,56) width 243: "and JavaScript to reveal the extended..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -43,11 +43,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,11) width 166: "cellspacing and the DOM"
       RenderText {#text} at (175,11) size 5x15
         text run at (175,11) width 5: " "
-      RenderInline {description} at (0,0) size 241x60
-        RenderText {#text} at (179,11) size 241x60
-          text run at (179,11) width 72: "By the way,"
+      RenderInline {description} at (0,0) size 242x60
+        RenderText {#text} at (179,11) size 242x60
+          text run at (179,11) width 73: "By the way,"
           text run at (10,26) width 217: "if you're using the DOM to generate"
-          text run at (10,41) width 202: "TABLE elements, you have to use"
+          text run at (10,41) width 203: "TABLE elements, you have to use"
           text run at (10,56) width 158: "setAttribute() to set the..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -57,12 +57,12 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,11) width 181: "contenteditable for Mozilla"
       RenderText {#text} at (190,11) size 5x15
         text run at (190,11) width 5: " "
-      RenderInline {description} at (0,0) size 241x75
-        RenderText {#text} at (194,11) size 241x75
+      RenderInline {description} at (0,0) size 242x75
+        RenderText {#text} at (194,11) size 242x75
           text run at (194,11) width 55: "The folks"
           text run at (10,26) width 215: "art Q42, creator of Quek (cute little"
-          text run at (10,41) width 241: "avatar/chat) and Xopus (browser-based"
-          text run at (10,56) width 224: "WYSIWYG XML-editor) have released"
+          text run at (10,41) width 242: "avatar/chat) and Xopus (browser-based"
+          text run at (10,56) width 225: "WYSIWYG XML-editor) have released"
           text run at (10,71) width 132: "code that simulates..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -76,7 +76,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
       RenderInline {description} at (0,0) size 241x45
         RenderText {#text} at (83,26) size 241x45
           text run at (83,26) width 168: "Tim Morgan is working on a"
-          text run at (10,41) width 234: "Flash-like timeline/keyframe extension"
+          text run at (10,41) width 235: "Flash-like timeline/keyframe extension"
           text run at (10,56) width 148: "for his DHTML toolset...."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -87,11 +87,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,26) width 128: "compatibility ports"
       RenderText {#text} at (137,26) size 5x15
         text run at (137,26) width 5: " "
-      RenderInline {description} at (0,0) size 239x60
-        RenderText {#text} at (141,26) size 239x60
+      RenderInline {description} at (0,0) size 240x60
+        RenderText {#text} at (141,26) size 240x60
           text run at (141,26) width 107: "DynAPI 2.9 is the"
           text run at (10,41) width 211: "latest release of the popular cross-"
-          text run at (10,56) width 239: "browser DHTML library, and is available"
+          text run at (10,56) width 240: "browser DHTML library, and is available"
           text run at (10,71) width 204: "at Dan Steinman's original site...."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -101,11 +101,11 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,11) width 155: "!lineDraw bookmarklet"
       RenderText {#text} at (164,11) size 5x15
         text run at (164,11) width 5: " "
-      RenderInline {description} at (0,0) size 216x45
-        RenderText {#text} at (168,11) size 216x45
+      RenderInline {description} at (0,0) size 217x45
+        RenderText {#text} at (168,11) size 217x45
           text run at (168,11) width 42: "Milov's"
-          text run at (10,26) width 216: "!lineDraw bookmarklet is in fact the"
-          text run at (10,41) width 172: "Coolest Bookmarklet Ever...."
+          text run at (10,26) width 217: "!lineDraw bookmarklet is in fact the"
+          text run at (10,41) width 174: "Coolest Bookmarklet Ever...."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
     RenderBlock {item} at (1,736) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
@@ -117,7 +117,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
       RenderInline {description} at (0,0) size 239x75
         RenderText {#text} at (217,11) size 239x75
           text run at (217,11) width 28: "Why"
-          text run at (10,26) width 213: "Mozilla Rules (Link via Dean) Steve"
+          text run at (10,26) width 214: "Mozilla Rules (Link via Dean) Steve"
           text run at (10,41) width 239: "Champeon: Why DHTML Will Win. Glish"
           text run at (10,56) width 199: "finds a not-quite-DOM-compliant"
           text run at (10,71) width 196: "replacement for innerHTML. It..."
@@ -145,7 +145,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
         text run at (23,26) width 6: " "
       RenderInline {description} at (0,0) size 232x60
         RenderText {#text} at (28,26) size 232x60
-          text run at (28,26) width 185: "Repeat after me: javascript: is"
+          text run at (28,26) width 186: "Repeat after me: javascript: is"
           text run at (10,41) width 232: "deprecated. Don't use it. javascript: is"
           text run at (10,56) width 232: "deprecated. Don't use it. javascript: is"
           text run at (10,71) width 147: "deprecated. Don't use..."
@@ -156,9 +156,9 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
         RenderText {#text} at (10,11) size 178x15
           text run at (10,11) width 178: "Conditional Script Loading"
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {description} at (0,0) size 235x30
-        RenderText {#text} at (10,26) size 235x30
-          text run at (10,26) width 235: "Webreference: DOM-Based Conditional"
+      RenderInline {description} at (0,0) size 236x30
+        RenderText {#text} at (10,26) size 236x30
+          text run at (10,26) width 236: "Webreference: DOM-Based Conditional"
           text run at (10,41) width 181: "Script Loading in JavaScript..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -168,12 +168,12 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,11) width 117: "Stories and Tools"
       RenderText {#text} at (126,11) size 5x15
         text run at (126,11) width 5: " "
-      RenderInline {description} at (0,0) size 242x60
-        RenderText {#text} at (130,11) size 242x60
+      RenderInline {description} at (0,0) size 243x60
+        RenderText {#text} at (130,11) size 243x60
           text run at (130,11) width 91: "Anil Dash talks"
-          text run at (10,26) width 198: "about Stories and Tools, drawing"
-          text run at (10,41) width 242: "comparisons between the Web as a text"
-          text run at (10,56) width 160: "medium and the Web as..."
+          text run at (10,26) width 200: "about Stories and Tools, drawing"
+          text run at (10,41) width 243: "comparisons between the Web as a text"
+          text run at (10,56) width 161: "medium and the Web as..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
     RenderBlock {item} at (1,1196) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
@@ -182,12 +182,12 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1302
           text run at (10,11) width 167: "Whole Lotto Gecko Links"
       RenderText {#text} at (176,11) size 5x15
         text run at (176,11) width 5: " "
-      RenderInline {description} at (0,0) size 243x75
-        RenderText {#text} at (180,11) size 243x75
+      RenderInline {description} at (0,0) size 245x75
+        RenderText {#text} at (180,11) size 245x75
           text run at (180,11) width 67: "AOL Gecko"
           text run at (10,26) width 216: "Browser Detection Tips Establishing"
           text run at (10,41) width 195: "Dreamweaver compatibility with"
-          text run at (10,56) width 243: "Netscape 6 Stylesheets and MIME Types"
+          text run at (10,56) width 245: "Netscape 6 Stylesheets and MIME Types"
           text run at (10,71) width 66: "in Gecko..."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

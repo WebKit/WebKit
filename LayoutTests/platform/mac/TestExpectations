@@ -2606,20 +2606,8 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sam
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
 
 # webkit.org/b/264419 ([ Sonoma 14.1+ ] Multiple tests are constantly failing following update from 14.0.)
-[ Sonoma+ ] css1/box_properties/acid_test.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] css2.1/t09-c5526c-display-00-e.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] css3/filters/effect-opacity-hw.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] fast/block/basic/011.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] fast/block/basic/minheight.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] fast/block/margin-collapse/103.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] fast/css/002.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] fast/invalid/008.html [ Pass ImageOnlyFailure Failure ] 
-[ Sonoma+ ] fast/overflow/003.xml [ Pass ImageOnlyFailure Failure ]
+[ Sonoma+ ] css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/scrolling/scroll-snap-crash.html [ Skip ]
-[ Sonoma+ ] fast/text/basic/generic-family-reset.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] scrollbars/overflow-scrollbar-combinations.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure Failure ]
-[ Sonoma+ ] tables/mozilla/bugs/bug2479-2.html [ Pass ImageOnlyFailure Failure ]
 
 webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]
 

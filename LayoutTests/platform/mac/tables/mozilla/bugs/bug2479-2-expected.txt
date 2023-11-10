@@ -4,9 +4,9 @@ layer at (0,0) size 800x553
   RenderBlock {HTML} at (0,0) size 800x553 [bgcolor=#00FF99]
     RenderBody {BODY} at (57,64) size 686x425 [bgcolor=#99FFCC] [border: (3px solid #000000)]
       RenderBlock {P} at (3,3) size 680x64
-        RenderText {#text} at (0,6) size 632x51
+        RenderText {#text} at (0,6) size 631x51
           text run at (0,6) width 593: "These links are in an element with display table-row, and the li elements "
-          text run at (592,6) width 40: "have"
+          text run at (592,6) width 39: "have"
           text run at (0,38) width 155: "display: table-cell. "
           text run at (154,38) width 131: "They disappear:"
       RenderTable at (3,67) size 302x19
