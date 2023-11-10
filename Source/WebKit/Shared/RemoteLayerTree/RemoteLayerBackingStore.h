@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BufferAndBackendInfo.h"
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
@@ -58,24 +59,6 @@ enum class BackingStoreNeedsDisplayReason : uint8_t {
     FrontBufferIsVolatile,
     FrontBufferHasNoSharingHandle,
     HasDirtyRegion,
-};
-
-struct BufferAndBackendInfo {
-    WebCore::RenderingResourceIdentifier resourceIdentifier;
-    unsigned backendGeneration { 0 };
-
-    BufferAndBackendInfo() = default;
-    BufferAndBackendInfo(const BufferAndBackendInfo&) = default;
-
-    explicit BufferAndBackendInfo(WebCore::ImageBuffer& imageBuffer)
-        : resourceIdentifier(imageBuffer.renderingResourceIdentifier())
-        , backendGeneration(imageBuffer.backendGeneration())
-    { }
-
-    bool operator==(const BufferAndBackendInfo&) const = default;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, BufferAndBackendInfo&);
 };
 
 class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {

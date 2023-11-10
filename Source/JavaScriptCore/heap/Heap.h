@@ -328,7 +328,7 @@ public:
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
-    JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollectionIfNeeded();
+    JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollection();
 
     JS_EXPORT_PRIVATE IncrementalSweeper& sweeper();
 

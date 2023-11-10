@@ -438,6 +438,7 @@ namespace WebCore {
     macro(VideoDecoder) \
     macro(VideoEncoder) \
     macro(VideoFrame) \
+    macro(ViewTimeline) \
     macro(VisualViewport) \
     macro(WakeLock) \
     macro(WakeLockSentinel) \

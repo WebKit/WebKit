@@ -62,6 +62,12 @@ void Worklist::dump(PrintStream& out) const
 class Worklist::Thread final : public AutomaticThread {
 public:
     using Base = AutomaticThread;
+    static Ref<Thread> create(const AbstractLocker& locker, Worklist& work)
+    {
+        return adoptRef(*new Thread(locker, work));
+    }
+
+private:
     Thread(const AbstractLocker& locker, Worklist& work)
         : Base(locker, work.m_lock, work.m_planEnqueued.copyRef())
         , worklist(work)
@@ -69,7 +75,6 @@ public:
 
     }
 
-private:
     PollResult poll(const AbstractLocker&) final
     {
         auto& queue = worklist.m_queue;
@@ -219,8 +224,8 @@ Worklist::Worklist()
     unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
     m_threads.reserveInitialCapacity(numberOfCompilationThreads);
     Locker locker { *m_lock };
-    m_threads = Vector<std::unique_ptr<Thread>>(numberOfCompilationThreads, [&](size_t) {
-        return makeUnique<Worklist::Thread>(locker, *this);
+    m_threads = Vector<Ref<Thread>>(numberOfCompilationThreads, [&](size_t) {
+        return Worklist::Thread::create(locker, *this);
     });
 }
 

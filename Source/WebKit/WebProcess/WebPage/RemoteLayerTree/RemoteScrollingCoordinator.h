@@ -91,8 +91,8 @@ private:
     void currentSnapPointIndicesChangedForNode(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
-    void startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
-    void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
+    void startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason>);
+    void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason>);
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, WebCore::ScrollbarOrientation orientation, int minimumThumbLength);
 

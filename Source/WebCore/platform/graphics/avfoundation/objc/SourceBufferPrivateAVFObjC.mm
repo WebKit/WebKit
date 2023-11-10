@@ -231,7 +231,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
                 ASSERT(_layers.contains(layer.get()));
-                if (RefPtr parent = _parent.get())
+                if (auto parent = _parent.get())
                     parent->layerDidReceiveError(layer.get(), error.get());
             });
             return;
@@ -244,7 +244,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
                 ASSERT(_renderers.contains(renderer.get()));
-                if (RefPtr parent = _parent.get())
+                if (auto parent = _parent.get())
                     parent->rendererDidReceiveError(renderer.get(), error.get());
             });
             return;
@@ -260,7 +260,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isObscured] {
             ASSERT(_layers.contains(layer.get()));
-            if (RefPtr parent = _parent.get())
+            if (auto parent = _parent.get())
                 parent->outputObscuredDueToInsufficientExternalProtectionChanged(isObscured);
         });
         return;
@@ -277,7 +277,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
         if (!_layers.contains(layer.get()))
             return;
-        if (RefPtr parent = _parent.get())
+        if (auto parent = _parent.get())
             parent->layerDidReceiveError(layer.get(), error.get());
     });
 }
@@ -290,7 +290,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), requiresFlush] {
         if (!_layers.contains(layer.get()))
             return;
-        if (RefPtr parent = _parent.get())
+        if (auto parent = _parent.get())
             parent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
     });
 }
@@ -304,7 +304,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isReadyForDisplay] {
         if (!_layers.contains(layer.get()))
             return;
-        if (RefPtr parent = _parent.get())
+        if (auto parent = _parent.get())
             parent->layerReadyForDisplayChanged(layer.get(), isReadyForDisplay);
     });
 }
@@ -318,7 +318,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {
         if (!_renderers.contains(renderer.get()))
             return;
-        if (RefPtr parent = _parent.get())
+        if (auto parent = _parent.get())
             parent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
     });
 }

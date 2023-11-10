@@ -755,7 +755,7 @@ void ScrollbarsControllerMac::didBeginScrollGesture()
     [m_scrollerImpPair beginScrollGesture];
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didBeginScrollGesture();
 }
@@ -770,7 +770,7 @@ void ScrollbarsControllerMac::didEndScrollGesture()
     [m_scrollerImpPair endScrollGesture];
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didEndScrollGesture();
 }
@@ -1023,7 +1023,7 @@ void ScrollbarsControllerMac::sendContentAreaScrolledTimerFired()
     m_contentAreaScrolledTimerScrollDelta = { };
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta)
@@ -1034,7 +1034,7 @@ void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta
         m_sendContentAreaScrolledTimer.startOneShot(0_s);
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)

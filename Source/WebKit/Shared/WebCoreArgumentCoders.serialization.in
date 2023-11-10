@@ -6601,3 +6601,16 @@ struct WebCore::KeypressCommand {
 #endif
 
 [Nested] enum class WebCore::UserStyleLevel : bool;
+
+header: <WebCore/WheelEventTestMonitor.h>
+[OptionSet] enum class WebCore::WheelEventTestMonitorDeferReason : uint16_t {
+    HandlingWheelEvent,
+    HandlingWheelEventOnMainThread,
+    PostMainThreadWheelEventHandling,
+    RubberbandInProgress,
+    ScrollSnapInProgress,
+    ScrollAnimationInProgress,
+    ScrollingThreadSyncNeeded,
+    ContentScrollInProgress,
+    RequestedScrollPosition,
+};

@@ -33,12 +33,17 @@
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/ColorCocoa.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIColor.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -121,15 +126,29 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     }
 
     if (!m_contentsLayer) {
-        auto contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::Normal);
+        auto contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::TiledBacking);
         m_contentsLayer = contentsLayer.copyRef();
         contentsLayer->setAnchorPoint({ });
         contentsLayer->setDrawsContent(true);
+        didChangeIsInWindow();
         m_rootLayer->addChild(*contentsLayer);
     }
 
-    m_contentsLayer->setSize(size());
+    m_contentsLayer->setSize(contentsSize());
     m_contentsLayer->setNeedsDisplay();
+}
+
+void UnifiedPDFPlugin::notifyFlushRequired(const GraphicsLayer*)
+{
+    scheduleRenderingUpdate();
+}
+
+void UnifiedPDFPlugin::didChangeIsInWindow()
+{
+    CheckedPtr page = this->page();
+    if (!page || !m_contentsLayer)
+        return;
+    m_contentsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
 }
 
 void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
@@ -137,10 +156,10 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
-    if (m_size.isEmpty())
+    if (m_size.isEmpty() || contentsSize().isEmpty())
         return;
 
-    auto drawingRect = IntRect { { }, m_size };
+    auto drawingRect = IntRect { { }, contentsSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
 
     auto imageBuffer = ImageBuffer::create(drawingRect.size(), RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
@@ -183,9 +202,10 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         auto transform = CGPDFPageGetDrawingTransform(page.get(), kCGPDFCropBox, destinationRect, 0, preserveAspectRatio);
         bufferContext.concatCTM(transform);
 
-        CGContextDrawPDFPage(imageBuffer->context().platformContext(), page.get());
+        CGContextDrawPDFPage(bufferContext.platformContext(), page.get());
     }
 
+    context.fillRect(clipRect, WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
     context.drawImageBuffer(*imageBuffer, drawingRect.location());
 }
 

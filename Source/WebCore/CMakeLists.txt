@@ -868,6 +868,8 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/ScrollAxis.idl
     animation/ScrollTimeline.idl
     animation/ScrollTimelineOptions.idl
+    animation/ViewTimeline.idl
+    animation/ViewTimelineOptions.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl

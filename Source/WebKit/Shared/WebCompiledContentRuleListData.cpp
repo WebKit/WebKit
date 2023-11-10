@@ -32,97 +32,38 @@
 #include "DataReference.h"
 
 namespace WebKit {
+
 static size_t ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
 {
     return topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
 }
 
-void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
+std::optional<SharedMemoryHandle> WebCompiledContentRuleListData::createDataHandle(SharedMemory::Protection protection) const
 {
-    ASSERT(data->size() >= ruleListDataSize(topURLFiltersBytecodeOffset, topURLFiltersBytecodeSize));
-    encoder << identifier;
-    encoder << data->createHandle(SharedMemory::Protection::ReadOnly);
-    encoder << actionsOffset;
-    encoder << actionsSize;
-    encoder << urlFiltersBytecodeOffset;
-    encoder << urlFiltersBytecodeSize;
-    encoder << topURLFiltersBytecodeOffset;
-    encoder << topURLFiltersBytecodeSize;
-    encoder << frameURLFiltersBytecodeOffset;
-    encoder << frameURLFiltersBytecodeSize;
+    return data->createHandle(protection);
 }
 
-std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
+WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebKit::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+    : identifier(WTFMove(identifier))
+    , data(dataHandle ? SharedMemory::map(WTFMove(*dataHandle), SharedMemory::Protection::ReadOnly) : nullptr)
+    , actionsOffset(actionsOffset)
+    , actionsSize(actionsSize)
+    , urlFiltersBytecodeOffset(urlFiltersBytecodeOffset)
+    , urlFiltersBytecodeSize(urlFiltersBytecodeSize)
+    , topURLFiltersBytecodeOffset(topURLFiltersBytecodeOffset)
+    , topURLFiltersBytecodeSize(topURLFiltersBytecodeSize)
+    , frameURLFiltersBytecodeOffset(frameURLFiltersBytecodeOffset)
+    , frameURLFiltersBytecodeSize(frameURLFiltersBytecodeSize)
 {
-    std::optional<String> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-
-    std::optional<std::optional<SharedMemory::Handle>> handle;
-    decoder >> handle;
-    if (!handle)
-        return std::nullopt;
-
-    std::optional<size_t> actionsOffset;
-    decoder >> actionsOffset;
-    if (!actionsOffset)
-        return std::nullopt;
-
-    std::optional<size_t> actionsSize;
-    decoder >> actionsSize;
-    if (!actionsSize)
-        return std::nullopt;
-
-    std::optional<size_t> urlFiltersBytecodeOffset;
-    decoder >> urlFiltersBytecodeOffset;
-    if (!urlFiltersBytecodeOffset)
-        return std::nullopt;
-
-    std::optional<size_t> urlFiltersBytecodeSize;
-    decoder >> urlFiltersBytecodeSize;
-    if (!urlFiltersBytecodeSize)
-        return std::nullopt;
-
-    std::optional<size_t> topURLFiltersBytecodeOffset;
-    decoder >> topURLFiltersBytecodeOffset;
-    if (!topURLFiltersBytecodeOffset)
-        return std::nullopt;
-
-    std::optional<size_t> topURLFiltersBytecodeSize;
-    decoder >> topURLFiltersBytecodeSize;
-    if (!topURLFiltersBytecodeSize)
-        return std::nullopt;
-
-    std::optional<size_t> frameURLFiltersBytecodeOffset;
-    decoder >> frameURLFiltersBytecodeOffset;
-    if (!frameURLFiltersBytecodeOffset)
-        return std::nullopt;
-
-    std::optional<size_t> frameURLFiltersBytecodeSize;
-    decoder >> frameURLFiltersBytecodeSize;
-    if (!frameURLFiltersBytecodeSize)
-        return std::nullopt;
-    
-    if (!*handle)
-        return std::nullopt;
-    auto data = SharedMemory::map(WTFMove(**handle), SharedMemory::Protection::ReadOnly);
-    if (!data)
-        return std::nullopt;
-    if (data->size() < ruleListDataSize(*topURLFiltersBytecodeOffset, *topURLFiltersBytecodeSize))
-        return std::nullopt;
-    return {{
-        WTFMove(*identifier),
-        data.releaseNonNull(),
-        WTFMove(*actionsOffset),
-        WTFMove(*actionsSize),
-        WTFMove(*urlFiltersBytecodeOffset),
-        WTFMove(*urlFiltersBytecodeSize),
-        WTFMove(*topURLFiltersBytecodeOffset),
-        WTFMove(*topURLFiltersBytecodeSize),
-        WTFMove(*frameURLFiltersBytecodeOffset),
-        WTFMove(*frameURLFiltersBytecodeSize)
-    }};
+    if (data) {
+        if (data->size() < ruleListDataSize(actionsOffset, actionsSize)
+        || data->size() < ruleListDataSize(urlFiltersBytecodeOffset, urlFiltersBytecodeSize)
+        || data->size() < ruleListDataSize(topURLFiltersBytecodeOffset, topURLFiltersBytecodeSize)
+        || data->size() < ruleListDataSize(frameURLFiltersBytecodeOffset, frameURLFiltersBytecodeSize)) {
+            ASSERT_NOT_REACHED();
+            data = nullptr;
+        }
+    }
 }
 
 } // namespace WebKit

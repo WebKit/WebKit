@@ -92,12 +92,14 @@ private:
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
     // GraphicsLayerClient
+    void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float deviceScaleFactor() const override;
 
     void updateLayerHierarchy();
 
     void didChangeScrollOffset() override;
+    void didChangeIsInWindow();
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;

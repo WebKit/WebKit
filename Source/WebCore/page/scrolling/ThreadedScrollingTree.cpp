@@ -265,7 +265,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
 
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
-    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *this, node.scrollingNodeID(), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
+    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *this, node.scrollingNodeID(), WheelEventTestMonitor::DeferReason::ScrollingThreadSyncNeeded };
     RunLoop::main().dispatch([strongThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();

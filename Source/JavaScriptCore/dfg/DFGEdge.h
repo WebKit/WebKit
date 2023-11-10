@@ -184,7 +184,7 @@ private:
         ASSERT(sizeof(node) == 8);
         uintptr_t shiftedValue = bitwise_cast<uintptr_t>(node) << shift();
         ASSERT((shiftedValue >> shift()) == bitwise_cast<uintptr_t>(node));
-        ASSERT(useKind >= 0 && useKind < LastUseKind);
+        ASSERT(useKind < LastUseKind);
         static_assert((static_cast<uintptr_t>(LastUseKind) << 2) < (static_cast<uintptr_t>(1) << shift()), "We rely on this being true to not clobber the node pointer.");
         uintptr_t result = shiftedValue | (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | static_cast<uintptr_t>(DFG::isProved(proofStatus));
         if (ASSERT_ENABLED) {

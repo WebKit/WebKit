@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: ViewTimeline
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: ViewTimeline
-
+FAIL View timeline generates and resolves finish promises and events promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForCompositorReady"
 

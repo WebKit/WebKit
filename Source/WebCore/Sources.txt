@@ -576,6 +576,7 @@ animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
 animation/ScrollTimeline.cpp
+animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
@@ -4406,6 +4407,8 @@ JSVideoTrack.cpp
 JSVideoTrackConfiguration.cpp
 JSVideoTrackList.cpp
 JSVideoTransferCharacteristics.cpp
+JSViewTimeline.cpp
+JSViewTimelineOptions.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp

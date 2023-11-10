@@ -440,8 +440,20 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::LandmarkMain;
     if (node()->hasTagName(navTag))
         return AccessibilityRole::LandmarkNavigation;
-    if (node()->hasTagName(asideTag))
+    if (node()->hasTagName(asideTag)) {
+        if (ariaRoleAttribute() == AccessibilityRole::LandmarkComplementary)
+            return AccessibilityRole::LandmarkComplementary;
+        // The aside element should not assume the complementary role when nested
+        // within the sectioning content elements.
+        // https://w3c.github.io/html-aam/#el-aside
+        if (isDescendantOfElementType({ asideTag, articleTag, sectionTag, navTag })) {
+            // Return LandmarkComplementary if the aside element has an accessible name.
+            if (hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) || hasAttribute(aria_descriptionAttr) || hasAttribute(aria_describedbyAttr))
+                return AccessibilityRole::LandmarkComplementary;
+            return AccessibilityRole::Generic;
+        }
         return AccessibilityRole::LandmarkComplementary;
+    }
     if (node()->hasTagName(searchTag))
         return AccessibilityRole::LandmarkSearch;
 

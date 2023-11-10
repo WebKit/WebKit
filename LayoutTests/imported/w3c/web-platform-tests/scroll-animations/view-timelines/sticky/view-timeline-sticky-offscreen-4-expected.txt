@@ -1,4 +1,6 @@
 Subject
 
-FAIL View timeline top-sticky before entry. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT View timeline top-sticky before entry. Test timed out
 

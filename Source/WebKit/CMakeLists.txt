@@ -411,6 +411,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ResourceLoadInfo.serialization.in
     Shared/ResourceLoadStatisticsParameters.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
+    Shared/ScrollingAccelerationCurve.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
     Shared/ShareableResource.serialization.in
@@ -422,6 +423,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
+    Shared/WebCompiledContentRuleListData.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebFoundTextRange.serialization.in
     Shared/WebHitTestResultData.serialization.in

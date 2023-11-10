@@ -593,6 +593,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ResourceLoadInfo.serialization.in \
 	Shared/ResourceLoadStatisticsParameters.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
+	Shared/ScrollingAccelerationCurve.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
 	Shared/ShareableResource.serialization.in \
@@ -600,6 +601,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserContentControllerParameters.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
+	Shared/WebCompiledContentRuleListData.serialization.in \
 	Shared/ViewWindowCoordinates.serialization.in \
 	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
@@ -622,7 +624,9 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \
 	Shared/RemoteLayerTree/RemoteLayerTree.serialization.in \
+	Shared/RemoteLayerTree/BufferAndBackendInfo.serialization.in \
 	Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in \
+	Shared/RemoteLayerTree/RemoteScrollingUIState.serialization.in \
 	Shared/cf/CFTypes.serialization.in \
 	Shared/cf/CoreIPCBoolean.serialization.in \
 	Shared/cf/CoreIPCNumber.serialization.in \

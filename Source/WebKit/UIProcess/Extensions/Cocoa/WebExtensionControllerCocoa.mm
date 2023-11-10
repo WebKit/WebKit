@@ -267,6 +267,9 @@ void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentif
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
+        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
+            continue;
+
         if (!context->hasPermission(targetURL))
             continue;
 
@@ -287,6 +290,9 @@ void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { committedEventType, contentLoadedtype };
 
     for (auto& context : m_extensionContexts) {
+        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
+            continue;
+
         if (!context->hasPermission(frameURL))
             continue;
 
@@ -315,6 +321,9 @@ void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
+        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
+            continue;
+
         if (!context->hasPermission(frameURL))
             continue;
 
@@ -334,6 +343,9 @@ void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, 
     auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
 
     for (auto& context : m_extensionContexts) {
+        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
+            continue;
+
         if (!context->hasPermission(frameURL))
             continue;
 
