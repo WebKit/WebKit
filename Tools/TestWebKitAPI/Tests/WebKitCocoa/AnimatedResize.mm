@@ -199,8 +199,7 @@ TEST(AnimatedResize, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
 
-    auto layoutSize = CGSizeMake(200, 50);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
 
     [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
@@ -215,8 +214,7 @@ TEST(AnimatedResize, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
         [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
     }];
 
-    layoutSize = CGSizeMake(100, 200);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(100, 200) maximumUnobscuredSizeOverride:CGSizeMake(100, 200)];
     [webView _endAnimatedResize];
 
     __block bool didReadLayoutSize = false;
@@ -241,8 +239,7 @@ TEST(AnimatedResize, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
 
-    auto layoutSize = CGSizeMake(200, 50);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
 
     [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -273,8 +270,7 @@ TEST(AnimatedResize, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelau
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
 
-    auto layoutSize = CGSizeMake(100, 100);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(100, 100) maximumUnobscuredSizeOverride:CGSizeMake(100, 100)];
 
     [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -284,8 +280,7 @@ TEST(AnimatedResize, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelau
     [window setHidden:NO];
 
     [webView _killWebContentProcessAndResetState];
-    layoutSize = CGSizeMake(200, 50);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
 
     [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];

@@ -51,8 +51,7 @@ TEST(RestoreScrollPositionTests, RestoreScrollPositionWithLargeContentInset)
     [webView scrollView].contentOffset = CGPointMake(0, -topInset);
     
     [webView waitForNextPresentationUpdate];
-    auto layoutSize = CGSizeMake(375, 727);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(375, 727) maximumUnobscuredSizeOverride:CGSizeMake(375, 727)];
 
     [webView scrollView].contentInset = UIEdgeInsetsMake(1024, 0, 0, 0);
     [webView waitForNextPresentationUpdate];
