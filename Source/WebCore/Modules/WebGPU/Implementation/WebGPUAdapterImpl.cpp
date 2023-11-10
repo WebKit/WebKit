@@ -309,16 +309,17 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
     WGPURequiredLimits requiredLimits { nullptr, WTFMove(limits) };
 
     WGPUDeviceDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        static_cast<uint32_t>(features.size()),
-        features.data(),
-        &requiredLimits, {
+        .nextInChain = nullptr,
+        .label = label.data(),
+        .requiredFeatureCount = static_cast<uint32_t>(features.size()),
+        .requiredFeatures = features.data(),
+        .requiredLimits = &requiredLimits,
+        .defaultQueue = {
             { },
             "queue"
         },
-        nullptr, // FIXME: Implement device lost callback.
-        nullptr,
+        .deviceLostCallback = nullptr,
+        .deviceLostUserdata = nullptr,
     };
 
     auto requestedLimits = SupportedLimits::create(limits.maxTextureDimension1D,
@@ -355,8 +356,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxComputeWorkgroupsPerDimension);
 
     auto requestedFeatures = supportedFeatures(features);
-    auto blockPtr = makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
-        callback(DeviceImpl::create(adoptWebGPU(device), WTFMove(requestedFeatures), WTFMove(requestedLimits), convertToBackingContext));
+    auto blockPtr = makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus status, WGPUDevice device, const char*) mutable {
+        callback(DeviceImpl::create(adoptWebGPU(device), status == WGPURequestDeviceStatus_Success ? WTFMove(requestedFeatures) : SupportedFeatures::create({ }), WTFMove(requestedLimits), convertToBackingContext));
     });
     wgpuAdapterRequestDevice(m_backing.get(), &backingDescriptor, &requestDeviceCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestDeviceCallback().
 }

@@ -89,6 +89,12 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
+    if (m_deviceRequested) {
+        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Adapter can only request one device"_s);
+        makeInvalid();
+        return;
+    }
+
     WGPULimits limits { };
 
     if (descriptor.requiredLimits) {
@@ -124,6 +130,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     };
 
     auto label = fromAPI(descriptor.label);
+    m_deviceRequested = true;
     // FIXME: this should be asynchronous - https://bugs.webkit.org/show_bug.cgi?id=233621
     callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
 }

@@ -127,7 +127,7 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
 
 Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return Sampler::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler

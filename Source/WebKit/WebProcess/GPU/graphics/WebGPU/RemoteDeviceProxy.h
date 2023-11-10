@@ -109,6 +109,7 @@ private:
     void popErrorScope(CompletionHandler<void(std::optional<WebCore::WebGPU::Error>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     Deque<CompletionHandler<void(Ref<WebCore::WebGPU::ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
     Deque<CompletionHandler<void(Ref<WebCore::WebGPU::RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;

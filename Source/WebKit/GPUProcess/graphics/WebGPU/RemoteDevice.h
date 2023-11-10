@@ -139,6 +139,7 @@ private:
 
     void pushErrorScope(WebCore::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
+    void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&);
 
     void setLabel(String&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);

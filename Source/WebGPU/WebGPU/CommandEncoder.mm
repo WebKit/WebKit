@@ -69,7 +69,7 @@ static MTLStoreAction storeAction(WGPUStoreOp storeOp)
 
 Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return CommandEncoder::createInvalid(*this);
 
     captureFrameIfNeeded();
