@@ -2603,6 +2603,9 @@ webkit.org/b/260888 [ Ventura+ ] media/track/track-user-stylesheet-override.html
 webkit.org/b/261312 inspector/timeline/timeline-event-CancelAnimationFrame.html [ Pass Failure ]
 webkit.org/b/261312 inspector/timeline/timeline-event-performance-mark.html [ Pass Failure ]
 webkit.org/b/261312 inspector/timeline/timeline-event-RequestAnimationFrame.html [ Pass Failure ]
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
 
 webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Skip ]
 
