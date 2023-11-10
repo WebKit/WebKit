@@ -1539,12 +1539,11 @@ bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setIntersectionObserverEnabled(flag);
 }
 
 bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->intersectionObserverEnabled();
+    return true;
 }
 
 void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef preferencesRef, bool flag)
