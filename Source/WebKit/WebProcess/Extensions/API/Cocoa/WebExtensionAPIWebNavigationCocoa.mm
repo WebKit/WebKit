@@ -28,25 +28,100 @@
 #endif
 
 #import "config.h"
+#import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIWebNavigation.h"
+#import "WebExtensionContext.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionFrameIdentifier.h"
+#import "WebExtensionFrameParameters.h"
+#import "WebExtensionUtilities.h"
+#import "WebProcess.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 
+static NSString *tabIdKey = @"tabId";
+static NSString *frameIdKey = @"frameId";
+static NSString *parentFrameIdKey = @"parentFrameId";
+static NSString *errorOccurredKey = @"errorOccurred";
+static NSString *urlKey = @"url";
+
+static NSString * const emptyURLValue = @"";
+
+static NSDictionary *toWebAPI(WebExtensionFrameParameters frameInfo)
+{
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+
+    result[errorOccurredKey] = @(frameInfo.errorOccurred);
+    result[parentFrameIdKey] = @(toWebAPI(frameInfo.parentFrameIdentifier));
+    result[urlKey] = frameInfo.url && !frameInfo.url.value().isNull() ? (NSString *)frameInfo.url.value().string() : emptyURLValue;
+
+    if (frameInfo.frameIdentifier)
+        result[frameIdKey] = @(toWebAPI(frameInfo.frameIdentifier.value()));
+
+    return [result copy];
+}
+
+static NSArray<NSDictionary *> *toWebAPI(Vector<WebExtensionFrameParameters> allFrames)
+{
+    return createNSArray(allFrames, [](auto& frame) {
+        return toWebAPI(frame);
+    }).get();
+}
+
 void WebExtensionAPIWebNavigation::getAllFrames(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getAllFrames
 
-    // FIXME: <https://webkit.org/b/260160> Implement this.
+    static NSArray<NSString *> *requiredKeys = @[ tabIdKey ];
+    static NSDictionary<NSString *, id> *types = @{
+        tabIdKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(details, @"details", requiredKeys, types, outExceptionString))
+        return;
+
+    NSNumber *tabId = details[tabIdKey];
+    auto tabIdentifier = toWebExtensionTabIdentifier(tabId.doubleValue);
+    if (!isValid(tabIdentifier, outExceptionString))
+        return;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionFrameParameters>> results) {
+        callback->call(results ? toWebAPI(results.value()) : nil);
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIWebNavigation::getFrame(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getFrame
 
-    // FIXME: <https://webkit.org/b/260160> Implement this.
+    static NSArray<NSString *> *requiredKeys = @[ tabIdKey, frameIdKey ];
+    static NSDictionary<NSString *, id> *types = @{
+        tabIdKey: NSNumber.class,
+        frameIdKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(details, @"details", requiredKeys, types, outExceptionString))
+        return;
+
+    NSNumber *tabId = details[tabIdKey];
+    auto tabIdentifier = toWebExtensionTabIdentifier(tabId.doubleValue);
+    if (!isValid(tabIdentifier, outExceptionString))
+        return;
+
+    NSNumber *frameId = details[frameIdKey];
+    auto frameIdentifier = toWebExtensionFrameIdentifier(frameId.doubleValue);
+    if (!isValid(frameIdentifier)) {
+        *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionFrameParameters> frameInfo) {
+        callback->call(frameInfo ? toWebAPI(frameInfo.value()) : nil);
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigate()
