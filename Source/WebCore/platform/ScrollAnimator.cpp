@@ -91,6 +91,7 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
 
         auto options = ScrollPositionChangeOptions::createProgrammatic();
         options.originalScrollDelta = delta;
+        m_scrollableArea.setCurrentScrollType(ScrollType::Programmatic);
         m_scrollableArea.scrollToPositionWithAnimation(m_currentPosition + delta, options);
         return true;
     }
