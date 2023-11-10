@@ -5,7 +5,9 @@
 
 typedef double DOMHighResTimeStamp;
 
-[Exposed=*]
+typedef unsigned long long EpochTimeStamp;
+
+[Exposed=(Window,Worker)]
 interface Performance : EventTarget {
     DOMHighResTimeStamp now();
     readonly attribute DOMHighResTimeStamp timeOrigin;

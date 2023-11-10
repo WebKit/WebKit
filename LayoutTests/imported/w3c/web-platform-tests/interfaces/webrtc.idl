@@ -1,26 +1,21 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: WebRTC 1.0: Real-Time Communication Between Browsers (https://w3c.github.io/webrtc-pc/)
+// Source: WebRTC: Real-Time Communication in Browsers (https://w3c.github.io/webrtc-pc/)
 
 dictionary RTCConfiguration {
-  sequence<RTCIceServer> iceServers;
-  RTCIceTransportPolicy iceTransportPolicy;
-  RTCBundlePolicy bundlePolicy;
-  RTCRtcpMuxPolicy rtcpMuxPolicy;
-  sequence<RTCCertificate> certificates;
+  sequence<RTCIceServer> iceServers = [];
+  RTCIceTransportPolicy iceTransportPolicy = "all";
+  RTCBundlePolicy bundlePolicy = "balanced";
+  RTCRtcpMuxPolicy rtcpMuxPolicy = "require";
+  sequence<RTCCertificate> certificates = [];
   [EnforceRange] octet iceCandidatePoolSize = 0;
-};
-
-enum RTCIceCredentialType {
-  "password"
 };
 
 dictionary RTCIceServer {
   required (DOMString or sequence<DOMString>) urls;
   DOMString username;
   DOMString credential;
-  RTCIceCredentialType credentialType = "password";
 };
 
 enum RTCIceTransportPolicy {
@@ -183,6 +178,8 @@ interface RTCIceCandidate {
   readonly attribute DOMString? relatedAddress;
   readonly attribute unsigned short? relatedPort;
   readonly attribute DOMString? usernameFragment;
+  readonly attribute RTCIceServerTransportProtocol? relayProtocol;
+  readonly attribute DOMString? url;
   RTCIceCandidateInit toJSON();
 };
 
@@ -209,6 +206,12 @@ enum RTCIceCandidateType {
   "srflx",
   "prflx",
   "relay"
+};
+
+enum RTCIceServerTransportProtocol {
+  "udp",
+  "tcp",
+  "tls",
 };
 
 [Exposed=Window]
@@ -247,12 +250,12 @@ partial interface RTCPeerConnection {
 };
 
 dictionary RTCCertificateExpiration {
-  [EnforceRange] DOMTimeStamp expires;
+  [EnforceRange] unsigned long long expires;
 };
 
 [Exposed=Window, Serializable]
 interface RTCCertificate {
-  readonly attribute DOMTimeStamp expires;
+  readonly attribute EpochTimeStamp expires;
   sequence<RTCDtlsFingerprint> getFingerprints();
 };
 
@@ -286,7 +289,8 @@ interface RTCRtpSender {
   readonly attribute MediaStreamTrack? track;
   readonly attribute RTCDtlsTransport? transport;
   static RTCRtpCapabilities? getCapabilities(DOMString kind);
-  Promise<undefined> setParameters(RTCRtpSendParameters parameters);
+  Promise<undefined> setParameters(RTCRtpSendParameters parameters,
+      optional RTCSetParameterOptions setParameterOptions = {});
   RTCRtpSendParameters getParameters();
   Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
   undefined setStreams(MediaStream... streams);
@@ -311,11 +315,10 @@ dictionary RTCRtpCodingParameters {
   DOMString rid;
 };
 
-dictionary RTCRtpDecodingParameters : RTCRtpCodingParameters {};
-
 dictionary RTCRtpEncodingParameters : RTCRtpCodingParameters {
   boolean active = true;
   unsigned long maxBitrate;
+  double maxFramerate;
   double scaleResolutionDownBy;
 };
 
@@ -330,12 +333,15 @@ dictionary RTCRtpHeaderExtensionParameters {
   boolean encrypted = false;
 };
 
-dictionary RTCRtpCodecParameters {
-  required octet payloadType;
+dictionary RTCRtpCodec {
   required DOMString mimeType;
   required unsigned long clockRate;
   unsigned short channels;
   DOMString sdpFmtpLine;
+};
+
+dictionary RTCRtpCodecParameters : RTCRtpCodec {
+  required octet payloadType;
 };
 
 dictionary RTCRtpCapabilities {
@@ -343,15 +349,14 @@ dictionary RTCRtpCapabilities {
   required sequence<RTCRtpHeaderExtensionCapability> headerExtensions;
 };
 
-dictionary RTCRtpCodecCapability {
-  required DOMString mimeType;
-  required unsigned long clockRate;
-  unsigned short channels;
-  DOMString sdpFmtpLine;
+dictionary RTCRtpCodecCapability : RTCRtpCodec {
 };
 
 dictionary RTCRtpHeaderExtensionCapability {
-  DOMString uri;
+  required DOMString uri;
+};
+
+dictionary RTCSetParameterOptions {
 };
 
 [Exposed=Window]
@@ -372,8 +377,7 @@ dictionary RTCRtpContributingSource {
   required unsigned long rtpTimestamp;
 };
 
-dictionary RTCRtpSynchronizationSource : RTCRtpContributingSource {
-};
+dictionary RTCRtpSynchronizationSource : RTCRtpContributingSource {};
 
 [Exposed=Window]
 interface RTCRtpTransceiver {
@@ -441,13 +445,13 @@ enum RTCIceGathererState {
 };
 
 enum RTCIceTransportState {
+  "closed",
+  "failed",
+  "disconnected",
   "new",
   "checking",
-  "connected",
   "completed",
-  "disconnected",
-  "failed",
-  "closed"
+  "connected"
 };
 
 enum RTCIceRole {

@@ -104,19 +104,19 @@ dictionary MediaTrackConstraintSet {
 };
 
 dictionary MediaTrackSettings {
-  long width;
-  long height;
+  unsigned long width;
+  unsigned long height;
   double aspectRatio;
   double frameRate;
   DOMString facingMode;
   DOMString resizeMode;
-  long sampleRate;
-  long sampleSize;
+  unsigned long sampleRate;
+  unsigned long sampleSize;
   boolean echoCancellation;
   boolean autoGainControl;
   boolean noiseSuppression;
   double latency;
-  long channelCount;
+  unsigned long channelCount;
   DOMString deviceId;
   DOMString groupId;
 };
@@ -174,15 +174,9 @@ enum MediaDeviceKind {
   "videoinput"
 };
 
-[Exposed=Window]
+[Exposed=Window, SecureContext]
 interface InputDeviceInfo : MediaDeviceInfo {
   MediaTrackCapabilities getCapabilities();
-};
-
-partial interface Navigator {
-  [SecureContext] undefined getUserMedia(MediaStreamConstraints constraints,
-                                    NavigatorUserMediaSuccessCallback successCallback,
-                                    NavigatorUserMediaErrorCallback errorCallback);
 };
 
 partial interface MediaDevices {
@@ -193,6 +187,12 @@ partial interface MediaDevices {
 dictionary MediaStreamConstraints {
   (boolean or MediaTrackConstraints) video = false;
   (boolean or MediaTrackConstraints) audio = false;
+};
+
+partial interface Navigator {
+  [SecureContext] undefined getUserMedia(MediaStreamConstraints constraints,
+                                    NavigatorUserMediaSuccessCallback successCallback,
+                                    NavigatorUserMediaErrorCallback errorCallback);
 };
 
 callback NavigatorUserMediaSuccessCallback = undefined (MediaStream stream);
@@ -238,3 +238,7 @@ typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or
 sequence<DOMString> or
 ConstrainDOMStringParameters) ConstrainDOMString;
+
+dictionary CameraDevicePermissionDescriptor : PermissionDescriptor {
+  boolean panTiltZoom = false;
+};

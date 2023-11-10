@@ -9,14 +9,17 @@ dictionary NavigatorUABrandVersion {
 };
 
 dictionary UADataValues {
-  sequence<NavigatorUABrandVersion> brands;
-  boolean mobile;
-  DOMString platform;
   DOMString architecture;
   DOMString bitness;
+  sequence<NavigatorUABrandVersion> brands;
+  sequence<DOMString> formFactor;
+  sequence<NavigatorUABrandVersion> fullVersionList;
   DOMString model;
+  boolean mobile;
+  DOMString platform;
   DOMString platformVersion;
-  DOMString uaFullVersion;
+  DOMString uaFullVersion; // deprecated in favor of fullVersionList
+  boolean wow64;
 };
 
 dictionary UALowEntropyJSON {

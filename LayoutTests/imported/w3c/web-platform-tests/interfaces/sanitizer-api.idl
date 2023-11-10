@@ -9,14 +9,20 @@
 ] interface Sanitizer {
   constructor(optional SanitizerConfig config = {});
 
-  DocumentFragment sanitize(SanitizerInput input);
-  DOMString sanitizeToString(SanitizerInput input);
+  DocumentFragment sanitize((Document or DocumentFragment) input);
+  Element? sanitizeFor(DOMString element, DOMString input);
 
-  SanitizerConfig config();
-  static SanitizerConfig defaultConfig();
+  SanitizerConfig getConfiguration();
+  static SanitizerConfig getDefaultConfiguration();
 };
 
-typedef (DOMString or DocumentFragment or Document) SanitizerInput;
+dictionary SetHTMLOptions {
+  Sanitizer sanitizer;
+};
+[SecureContext]
+partial interface Element {
+  undefined setHTML(DOMString input, optional SetHTMLOptions options = {});
+};
 
 dictionary SanitizerConfig {
   sequence<DOMString> allowElements;
@@ -25,6 +31,8 @@ dictionary SanitizerConfig {
   AttributeMatchList allowAttributes;
   AttributeMatchList dropAttributes;
   boolean allowCustomElements;
+  boolean allowUnknownMarkup;
+  boolean allowComments;
 };
 
 typedef record<DOMString, sequence<DOMString>> AttributeMatchList;
