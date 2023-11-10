@@ -32,7 +32,7 @@ candidate.sdpMLineIndex = 7
 PASS candidate.sdpMLineIndex is 6
 
 Dictionary argument is mandatory.
-PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
+PASS new RTCIceCandidate(); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
 One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
 PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
 PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
