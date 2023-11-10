@@ -1896,15 +1896,15 @@ const Vector<String>& intlAvailableTimeZones()
             });
         auto end = std::unique(temporary.begin(), temporary.end());
         availableTimeZones.construct();
-        availableTimeZones->reserveInitialCapacity(end - temporary.begin());
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
                 return StringImpl::createStaticStringImpl(string.characters8(), string.length());
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
-        for (auto iterator = temporary.begin(); iterator != end; ++iterator)
-            availableTimeZones->unsafeAppendWithoutCapacityCheck(createImmortalThreadSafeString(WTFMove(*iterator)));
+        availableTimeZones.get() = WTF::map(std::span(temporary.begin(), end), [&](auto&& string) -> String {
+            return createImmortalThreadSafeString(WTFMove(string));
+        });
     });
     return availableTimeZones;
 }
