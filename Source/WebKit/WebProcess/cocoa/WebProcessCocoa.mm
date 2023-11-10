@@ -332,8 +332,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
-
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
     WebCore::setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
@@ -502,6 +500,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    parameters.mobileGestaltParameters.populate();
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
 

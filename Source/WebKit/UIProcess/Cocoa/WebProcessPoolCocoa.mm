@@ -438,9 +438,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
     parameters.contentSizeCategory = contentSizeCategory();
+    parameters.mobileGestaltParameters.initialize();
 #endif
-
-    parameters.mobileGestaltExtensionHandle = process.createMobileGestaltSandboxExtensionIfNeeded();
 
 #if PLATFORM(MAC)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))

@@ -142,7 +142,6 @@
     Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
-    std::optional<WebKit::SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<WebKit::SandboxExtension::Handle> launchServicesExtensionHandle;
 #if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
     WebKit::SandboxExtension::Handle trustdExtensionHandle;
@@ -153,6 +152,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    WebKit::MobileGestaltParameters mobileGestaltParameters;
     Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 

@@ -31,6 +31,10 @@
 #include "SandboxExtension.h"
 #include <wtf/ProcessID.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "MobileGestaltParameters.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -59,8 +63,8 @@ struct GPUProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+    MobileGestaltParameters mobileGestaltParameters;
 #endif
-    std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Vector<SandboxExtension::Handle> gpuToolsExtensionHandles;
 #endif

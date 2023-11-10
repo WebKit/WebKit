@@ -257,9 +257,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.compilerServiceExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
+    parameters.mobileGestaltParameters.populate();
 #endif
-
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     SandboxExtension::consumePermanently(parameters.gpuToolsExtensionHandles);
