@@ -1842,9 +1842,6 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
 
-# rdar://104152683 (REGRESSION (Sonoma): [ Sonoma ] compositing/video/video-border-radius-clipping.html is a consistent image failure)
-[ Sonoma+ ] compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
-
 # rdar://108508177 (REGRESSION (262629@main): [ Sonoma wk2 ] Two compositing/hidpi-image-backing-store tests are a consistent failure)
 compositing/hidpi-image-backing-store-scaled.html [ Failure ]
 compositing/hidpi-image-backing-store.html [ Failure ]

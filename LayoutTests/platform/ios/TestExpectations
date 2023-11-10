@@ -4456,9 +4456,6 @@ fast/forms/ios/file-upload-panel.html [ Pass ]
 fast/forms/ios/show-file-upload-context-menu-above-keyboard.html [ Pass ]
 fast/forms/ios/file-upload-panel-accept.html [ Pass ]
 
-# rdar://104152683 (REGRESSION (iOS17 Sonoma): [ iOS17 Sonoma ] compositing/video/video-border-radius-clipping.html is a consistent image failure)
-compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
-
 # rdar://110034620 (REGRESSION ( iOS17 ): [ iOS17 ] compositing/clipping/nested-overflow-with-border-radius.html is a consistent image failure)
 compositing/clipping/nested-overflow-with-border-radius.html [ ImageOnlyFailure ]
 
