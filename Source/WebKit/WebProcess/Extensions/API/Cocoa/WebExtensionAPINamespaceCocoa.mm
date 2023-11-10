@@ -41,6 +41,9 @@ bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
     if (name == "action"_s)
         return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action");
 
+    if (name == "commands"_s)
+        return objectForKey<NSDictionary>(extensionContext().manifest(), @"commands");
+
     if (name == "browserAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
 
@@ -81,6 +84,16 @@ WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
         m_alarms = WebExtensionAPIAlarms::create(forMainWorld(), runtime(), extensionContext());
 
     return *m_alarms;
+}
+
+WebExtensionAPICommands& WebExtensionAPINamespace::commands()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands
+
+    if (!m_commands)
+        m_commands = WebExtensionAPICommands::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_commands;
 }
 
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()

@@ -532,7 +532,7 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
 
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
 {
-    if (!validateRenderPipeline(descriptor))
+    if (!validateRenderPipeline(descriptor) || !isValid())
         return RenderPipeline::createInvalid(*this);
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
@@ -686,8 +686,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
     auto pipeline = createRenderPipeline(descriptor);
-    instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
-        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_InternalError, WTFMove(pipeline), { });
+    instance().scheduleWork([strongThis = Ref { *this }, pipeline, callback = WTFMove(callback)]() mutable {
+        callback(WGPUCreatePipelineAsyncStatus_Success, WTFMove(pipeline), { });
     });
 }
 

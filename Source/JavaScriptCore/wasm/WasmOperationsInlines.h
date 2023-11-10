@@ -334,8 +334,6 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     } else {
         ASSERT(arguments);
         for (unsigned dstIndex = 0; dstIndex < structType.fieldCount(); ++dstIndex) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-            ASSERT(structType.field(dstIndex).type.is<Type>());
             // Arguments are in reverse order!
             unsigned srcIndex = structType.fieldCount() - dstIndex - 1;
             structValue->set(dstIndex, arguments[srcIndex]);
@@ -361,9 +359,6 @@ inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
     JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-    ASSERT(structPointer->structType()->field(fieldIndex).type.is<Type>());
 
     return structPointer->set(fieldIndex, argument);
 }

@@ -107,7 +107,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
 
 Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
-    if (!descriptor.nextInChain)
+    if (!descriptor.nextInChain || !isValid())
         return ShaderModule::createInvalid(*this);
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);

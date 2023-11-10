@@ -948,6 +948,21 @@ NSString *WebExtension::actionPopupPath()
     return m_actionPopupPath.get();
 }
 
+bool WebExtension::hasAction()
+{
+    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+}
+
+bool WebExtension::hasBrowserAction()
+{
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+}
+
+bool WebExtension::hasPageAction()
+{
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+}
+
 void WebExtension::populateActionPropertiesIfNeeded()
 {
     if (!manifestParsedSuccessfully())
@@ -1452,14 +1467,21 @@ void WebExtension::populateCommandsIfNeeded()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands
 
     auto *commandsDictionary = objectForKey<NSDictionary>(m_manifest, commandsManifestKey, false, NSDictionary.class);
-    if (!commandsDictionary.count) {
-        if (id value = [m_manifest objectForKey:commandsManifestKey]; ((value && ![value isKindOfClass:NSDictionary.class]) || dynamic_objc_cast<NSDictionary>(value).count))
+    if (!commandsDictionary) {
+        if (id value = [m_manifest objectForKey:commandsManifestKey]; value && ![value isKindOfClass:NSDictionary.class])
             recordError(createError(Error::InvalidCommands));
+        return;
+    }
+
+    if (id value = [m_manifest objectForKey:commandsManifestKey]; commandsDictionary.count != dynamic_objc_cast<NSDictionary>(value).count) {
+        recordError(createError(Error::InvalidCommands));
         return;
     }
 
     size_t commandsWithShortcuts = 0;
     std::optional<String> error;
+
+    bool hasActionCommand = false;
 
     for (NSString *commandIdentifier in commandsDictionary) {
         if (!commandIdentifier.length) {
@@ -1477,6 +1499,13 @@ void WebExtension::populateCommandsIfNeeded()
         commandData.identifier = commandIdentifier;
         commandData.activationKey = emptyString();
         commandData.modifierFlags = { };
+
+        if (!hasActionCommand) {
+            if (supportsManifestVersion(3) && commandData.identifier == "_execute_action"_s)
+                hasActionCommand = true;
+            else if (!supportsManifestVersion(3) && (commandData.identifier == "_execute_browser_action"_s || commandData.identifier == "_execute_page_action"_s))
+                hasActionCommand = true;
+        }
 
         auto *description = objectForKey<NSString>(commandDictionary, commandsDescriptionKeyManifestKey);
         if (!description.length) {
@@ -1512,6 +1541,19 @@ void WebExtension::populateCommandsIfNeeded()
         }
 
         m_commands.append(WTFMove(commandData));
+    }
+
+    if (!hasActionCommand) {
+        String commandIdentifier;
+        if (hasAction())
+            commandIdentifier = "_execute_action"_s;
+        else if (hasBrowserAction())
+            commandIdentifier = "_execute_browser_action"_s;
+        else if (hasPageAction())
+            commandIdentifier = "_execute_page_action"_s;
+
+        if (!commandIdentifier.isEmpty())
+            m_commands.append({ commandIdentifier, displayActionLabel(), emptyString(), { } });
     }
 
     if (error)

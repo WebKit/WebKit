@@ -42,6 +42,7 @@ messages -> RemoteDevice NotRefCounted Stream {
     void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void PushErrorScope(WebCore::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (std::optional<WebKit::WebGPU::Error> error)
+    void ResolveDeviceLostPromise() -> (WebCore::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable

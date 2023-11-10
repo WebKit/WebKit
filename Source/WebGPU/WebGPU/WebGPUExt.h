@@ -40,6 +40,7 @@ typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
 
 typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
+typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
 
 typedef enum WGPUBufferBindingTypeExtended {
     WGPUBufferBindingType_Float3x2 = WGPUBufferBindingType_Force32 - 1,
@@ -118,6 +119,8 @@ WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain);
 
 WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
 
+WGPU_EXPORT void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata);
+WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
 WGPU_EXPORT void wgpuExternalTextureReference(WGPUExternalTexture externalTexture);
 WGPU_EXPORT void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture);
 #ifdef __cplusplus

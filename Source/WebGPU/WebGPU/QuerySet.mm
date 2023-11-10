@@ -34,9 +34,8 @@ namespace WebGPU {
 
 Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return QuerySet::createInvalid(*this);
-
 
     auto count = descriptor.count;
     const char* label = descriptor.label;

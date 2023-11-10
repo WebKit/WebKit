@@ -922,9 +922,6 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
         StorageType fieldType;
         WASM_PARSER_FAIL_IF(!parseStorageType(fieldType), "can't get ", fieldIndex, "th field Type");
 
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-        WASM_PARSER_FAIL_IF(fieldType.is<PackedType>(), "packed types in structs are not supported yet");
-
         uint8_t mutability;
         WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get ", fieldIndex, "th field mutability");
         WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));

@@ -77,8 +77,14 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
 
     const uint8_t* targetPointer = fieldPointer(fieldIndex);
 
-    // FIXME: packed types in structs not supported yet:
-    // https://bugs.webkit.org/show_bug.cgi?id=246981
+    if (fieldType(fieldIndex).type.is<Wasm::PackedType>()) {
+        switch (fieldType(fieldIndex).type.as<Wasm::PackedType>()) {
+        case Wasm::PackedType::I8:
+            return *bitwise_cast<uint8_t*>(targetPointer);
+        case Wasm::PackedType::I16:
+            return *bitwise_cast<uint16_t*>(targetPointer);
+        }
+    }
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
 
     switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
@@ -105,8 +111,16 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, EncodedJSValue argument)
 
     uint8_t* targetPointer = fieldPointer(fieldIndex);
 
-    // FIXME: packed types in structs not supported yet:
-    // https://bugs.webkit.org/show_bug.cgi?id=246981
+    if (fieldType(fieldIndex).type.is<Wasm::PackedType>()) {
+        switch (fieldType(fieldIndex).type.as<Wasm::PackedType>()) {
+        case Wasm::PackedType::I8:
+            *bitwise_cast<uint8_t*>(targetPointer) = static_cast<uint8_t>(argument);
+            return;
+        case Wasm::PackedType::I16:
+            *bitwise_cast<uint16_t*>(targetPointer) = static_cast<uint16_t>(argument);
+            return;
+        }
+    }
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
 
     switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {

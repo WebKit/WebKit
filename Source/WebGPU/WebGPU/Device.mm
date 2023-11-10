@@ -188,9 +188,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
     makeInvalid();
 
     if (m_deviceLostCallback) {
-        instance().scheduleWork([deviceLostCallback = WTFMove(m_deviceLostCallback), reason]() {
-            deviceLostCallback(reason, "Device lost."_s);
-        });
+        m_deviceLostCallback(reason, "Device lost."_s);
         m_deviceLostCallback = nullptr;
     }
 
@@ -376,6 +374,15 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
     m_errorScopeStack.append(WTFMove(scope));
 }
 
+void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
+{
+    m_deviceLostCallback = WTFMove(callback);
+    if (m_isLost)
+        loseTheDevice(WGPUDeviceLostReason_Destroyed);
+    else if (!m_adapter->isValid())
+        loseTheDevice(WGPUDeviceLostReason_Undefined);
+}
+
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
 {
     m_uncapturedErrorCallback = WTFMove(callback);
@@ -540,6 +547,22 @@ void wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback 
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
     WebGPU::fromAPI(device).pushErrorScope(filter);
+}
+
+void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
+{
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback, userdata](WGPUDeviceLostReason reason, String&& message) {
+        if (callback)
+            callback(reason, message.utf8().data(), userdata);
+    });
+}
+
+void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
+{
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUDeviceLostReason reason, String&& message) {
+        if (callback)
+            callback(reason, message.utf8().data());
+    });
 }
 
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)

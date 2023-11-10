@@ -23,56 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebExtensionCommand.h"
+#pragma once
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionCommandParameters.h"
-#import "WebExtensionContext.h"
-#import "WebExtensionContextProxyMessages.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-WebExtensionCommand::WebExtensionCommand(WebExtensionContext& extensionContext, const WebExtension::CommandData& data)
-    : m_extensionContext(extensionContext)
-    , m_identifier(data.identifier)
-    , m_description(data.description)
-    , m_activationKey(data.activationKey)
-    , m_modifierFlags(data.modifierFlags)
-{
-}
-
-bool WebExtensionCommand::operator==(const WebExtensionCommand& other) const
-{
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_identifier == other.m_identifier);
-}
-
-bool WebExtensionCommand::isActionCommand() const
-{
-    RefPtr context = extensionContext();
-    if (!context)
-        return false;
-
-    if (context->extension().supportsManifestVersion(3))
-        return identifier() == "_execute_action"_s;
-
-    return identifier() == "_execute_browser_action"_s || identifier() == "_execute_page_action"_s;
-}
-
-WebExtensionCommandParameters WebExtensionCommand::parameters() const
-{
-    return {
-        identifier(),
-        description(),
-        shortcutString()
-    };
-}
-
-WebExtensionContext* WebExtensionCommand::extensionContext() const
-{
-    return m_extensionContext.get();
-}
+struct WebExtensionCommandParameters {
+    String identifier;
+    String description;
+    String shortcut;
+};
 
 } // namespace WebKit
 

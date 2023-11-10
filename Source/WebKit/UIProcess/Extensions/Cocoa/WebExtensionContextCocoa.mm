@@ -75,7 +75,7 @@ static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
-static constexpr NSInteger currentBackgroundContentListenerStateVersion = 1;
+static constexpr NSInteger currentBackgroundContentListenerStateVersion = 2;
 
 @interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
     WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
@@ -1706,8 +1706,9 @@ const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
     if (m_populatedCommands)
         return m_commands;
 
-    for (auto& data : extension().commands())
-        m_commands.append(WebExtensionCommand::create(*this, data));
+    m_commands = WTF::map(extension().commands(), [&](auto& data) {
+        return WebExtensionCommand::create(*this, data);
+    });
 
     m_populatedCommands = true;
 
@@ -1719,10 +1720,15 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
     auto currentWindow = frontmostWindow();
     auto activeTab = currentWindow ? currentWindow->activeTab() : nullptr;
 
+    if (command.isActionCommand()) {
+        performAction(activeTab.get(), userTriggered);
+        return;
+    }
+
     if (activeTab && userTriggered == UserTriggered::Yes)
         userGesturePerformed(*activeTab);
 
-    // FIXME: <https://webkit.org/b/260157> Dispatch the commands onCommand event.
+    fireCommandEventIfNeeded(command, activeTab.get());
 }
 
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)

@@ -101,7 +101,7 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
 
 Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return RenderBundleEncoder::createInvalid(*this);
 
     MTLIndirectCommandBufferDescriptor *icbDescriptor = [MTLIndirectCommandBufferDescriptor new];

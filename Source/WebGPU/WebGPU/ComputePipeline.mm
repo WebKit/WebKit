@@ -108,7 +108,7 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
 {
     auto pipeline = createComputePipeline(descriptor);
     instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
-        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_InternalError, WTFMove(pipeline), { });
+        callback(WGPUCreatePipelineAsyncStatus_Success, WTFMove(pipeline), { });
     });
 }
 

@@ -1932,6 +1932,7 @@ op :struct_get,
         dst: VirtualRegister,
         structReference: VirtualRegister,
         fieldIndex: unsigned,
+        structGetKind: unsigned,
     }
 
 op :struct_set,

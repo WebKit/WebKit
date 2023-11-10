@@ -632,7 +632,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
@@ -2645,7 +2645,16 @@ void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.offsetOfField(fieldIndex));
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    if (structType.field(fieldIndex).type.is<PackedType>()) {
+        switch (structType.field(fieldIndex).type.as<PackedType>()) {
+        case PackedType::I8:
+            m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store8), origin(), argument, payloadBase, fieldOffset);
+            return;
+        case PackedType::I16:
+            m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store16), origin(), argument, payloadBase, fieldOffset);
+            return;
+        }
+    }
     ASSERT(structType.field(fieldIndex).type.is<Type>());
 
     Type fieldType = structType.field(fieldIndex).type.as<Type>();
@@ -3264,7 +3273,7 @@ auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& resu
     return { };
 }
 
-auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -3277,7 +3286,34 @@ auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructTyp
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.offsetOfField(fieldIndex));
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    if (structType.field(fieldIndex).type.is<PackedType>()) {
+        Value* load;
+        switch (structType.field(fieldIndex).type.as<PackedType>()) {
+        case PackedType::I8:
+            load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), payloadBase, fieldOffset);
+            break;
+        case PackedType::I16:
+            load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), Int32, origin(), payloadBase, fieldOffset);
+            break;
+        }
+        Value* postProcess = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), load);
+        switch (structGetKind) {
+        case ExtGCOpType::StructGetU:
+            break;
+        case ExtGCOpType::StructGetS: {
+            size_t elementSize = structType.field(fieldIndex).type.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+            Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), postProcess, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            postProcess = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return { };
+        }
+        result = push(postProcess);
+        return { };
+    }
     ASSERT(structType.field(fieldIndex).type.is<Type>());
 
     switch (structType.field(fieldIndex).type.as<Type>().kind) {

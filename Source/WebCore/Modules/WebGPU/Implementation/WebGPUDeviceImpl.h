@@ -86,6 +86,7 @@ private:
 
     void pushErrorScope(ErrorFilter) final;
     void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     void setLabelInternal(const String&) final;
 

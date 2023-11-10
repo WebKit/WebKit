@@ -1,5 +1,3 @@
-# FIXME: add all the missing type declarations here
-
 suffixes = {
     f: f32,
     i: i32,
@@ -18,20 +16,52 @@ suffixes = {
     end
 end
 
-operator :+, {
+# 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+
+operator :!, {
     must_use: true,
-    const: "constantAdd",
+    const: 'constantNot',
 
-    [T < Number].(T, T) => T,
-
-    # vector addition
-    [T < Number, N].(vec[N][T], T) => vec[N][T],
-    [T < Number, N].(T, vec[N][T]) => vec[N][T],
-    [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
-
-    # matrix-matrix addition
-    [T < Float, C, R].(mat[C,R][T], mat[C,R][T]) => mat[C,R][T],
+    [].(bool) => bool,
+    [N].(vec[N][bool]) => vec[N][bool],
 }
+
+operator :'||', {
+    must_use: true,
+    const: 'constantOr',
+
+    [].(bool, bool) => bool,
+}
+
+operator :'&&', {
+    must_use: true,
+    const: 'constantAnd',
+
+    [].(bool, bool) => bool,
+}
+
+operator :'|', {
+    must_use: true,
+    const: 'constantBitwiseOr',
+
+    [].(bool, bool) => bool,
+    [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
+}
+
+operator :'&', {
+    must_use: true,
+    const: 'constantBitwiseAnd',
+
+    # unary
+    # FIXME: move this out of here
+    [AS, T, AM].(ref[AS, T, AM]) => ptr[AS, T, AM],
+
+    # binary
+    [].(bool, bool) => bool,
+    [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
+}
+
+# 8.7. Arithmetic Expressions (https://www.w3.org/TR/WGSL/#arithmetic-expr)
 
 operator :-, {
     must_use: true,
@@ -46,6 +76,21 @@ operator :-, {
     [T < Number, N].(vec[N][T], T) => vec[N][T],
     [T < Number, N].(T, vec[N][T]) => vec[N][T],
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
+    [T < Float, C, R].(mat[C,R][T], mat[C,R][T]) => mat[C,R][T],
+}
+
+operator :+, {
+    must_use: true,
+    const: "constantAdd",
+
+    [T < Number].(T, T) => T,
+
+    # vector addition
+    [T < Number, N].(vec[N][T], T) => vec[N][T],
+    [T < Number, N].(T, vec[N][T]) => vec[N][T],
+    [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
+
+    # matrix-matrix addition
     [T < Float, C, R].(mat[C,R][T], mat[C,R][T]) => mat[C,R][T],
 }
 
@@ -100,7 +145,8 @@ operator :%, {
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# Comparison operations
+# 8.8. Comparison Expressions (https://www.w3.org/TR/WGSL/#comparison-expr)
+
 {
     "==" => 'constantEqual',
     "!=" => 'constantNotEqual',
@@ -128,51 +174,6 @@ end
         [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][bool],
     }
 end
-
-# 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
-
-operator :!, {
-    must_use: true,
-    const: 'constantNot',
-
-    [].(bool) => bool,
-    [N].(vec[N][bool]) => vec[N][bool],
-}
-
-operator :'||', {
-    must_use: true,
-    const: 'constantOr',
-
-    [].(bool, bool) => bool,
-}
-
-operator :'&&', {
-    must_use: true,
-    const: 'constantAnd',
-
-    [].(bool, bool) => bool,
-}
-
-operator :'|', {
-    must_use: true,
-    const: 'constantBitwiseOr',
-
-    [].(bool, bool) => bool,
-    [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
-}
-
-operator :'&', {
-    must_use: true,
-    const: 'constantBitwiseAnd',
-
-    # unary
-    # FIXME: move this out of here
-    [AS, T, AM].(ref[AS, T, AM]) => ptr[AS, T, AM],
-
-    # binary
-    [].(bool, bool) => bool,
-    [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
-}
 
 # 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
 
@@ -210,6 +211,11 @@ end
         [S < Integer, N].(vec[N][S], vec[N][u32]) => vec[N][S],
     }
 end
+
+# 8.13. Address-Of Expression (https://www.w3.org/TR/WGSL/#address-of-expr)
+# 8.14. Indirection Expression (https://www.w3.org/TR/WGSL/#indirection-expr)
+# FIXME: these are implemented together with the logical and arithmetic operators
+# and need to be moved inline into the type checker
 
 # 16.1. Constructor Built-in Functions
 
@@ -383,9 +389,9 @@ constructor :vec4, {
 # to constrain it to a vector type, which we cannot express here, so it's implemented
 # inline in the type checker
 
-# 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
+# 16.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
-# 17.3.1 & 17.3.2
+# 16.3.1 & 16.3.2
 ["all", "any"].each do |op|
     function :"#{op}", {
         must_use: true,
@@ -396,7 +402,7 @@ constructor :vec4, {
     }
 end
 
-# 17.3.3
+# 16.3.3
 function :select, {
     must_use: true,
     const: true,
@@ -416,7 +422,7 @@ function :arrayLength, {
     [T].(ptr[storage, array[T], read_write]) => u32,
 }
 
-# 17.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
+# 16.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
 
 # Trigonometric
 ["acos", "asin", "atan", "cos", "sin", "tan",
@@ -430,7 +436,7 @@ function :arrayLength, {
     }
 end
 
-# 17.5.1
+# 16.5.1
 function :abs, {
     must_use: true,
     const: true,
@@ -439,15 +445,15 @@ function :abs, {
     [T < Number, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.2. acos
-# 17.5.3. acosh
-# 17.5.4. asin
-# 17.5.5. asinh
-# 17.5.6. atan
-# 17.5.7. atanh
+# 16.5.2. acos
+# 16.5.3. acosh
+# 16.5.4. asin
+# 16.5.5. asinh
+# 16.5.6. atan
+# 16.5.7. atanh
 # Defined in [Trigonometric]
 
-# 17.5.8
+# 16.5.8
 function :atan2, {
     must_use: true,
     const: true,
@@ -456,7 +462,7 @@ function :atan2, {
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.9
+# 16.5.9
 function :ceil, {
     must_use: true,
     const: true,
@@ -465,7 +471,7 @@ function :ceil, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.10
+# 16.5.10
 function :clamp, {
     must_use: true,
     const: true,
@@ -474,11 +480,11 @@ function :clamp, {
     [T < Number, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.11. cos
-# 17.5.12. cosh
+# 16.5.11. cos
+# 16.5.12. cosh
 # Defined in [Trigonometric]
 
-# 17.5.13-15 (Bit counting)
+# 16.5.13-15 (Bit counting)
 ["countLeadingZeros", "countOneBits", "countTrailingZeros"].each do |op|
     function :"#{op}", {
         must_use: true,
@@ -489,7 +495,7 @@ function :clamp, {
     }
 end
 
-# 17.5.16
+# 16.5.16
 function :cross, {
     must_use: true,
     const: true,
@@ -497,7 +503,7 @@ function :cross, {
     [T < Float].(vec3[T], vec3[T]) => vec3[T],
 }
 
-# 17.5.17
+# 16.5.17
 function :degrees, {
     must_use: true,
     const: true,
@@ -506,7 +512,7 @@ function :degrees, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.18
+# 16.5.18
 function :determinant, {
     must_use: true,
     const: true,
@@ -514,7 +520,7 @@ function :determinant, {
     [T < Float, C].(mat[C,C][T]) => T,
 }
 
-# 17.5.19
+# 16.5.19
 function :distance, {
     must_use: true,
     const: true,
@@ -523,7 +529,7 @@ function :distance, {
     [T < Float, N].(vec[N][T], vec[N][T]) => T,
 }
 
-# 17.5.20
+# 16.5.20
 function :dot, {
     must_use: true,
     const: true,
@@ -531,7 +537,7 @@ function :dot, {
     [T < Number, N].(vec[N][T], vec[N][T]) => T
 }
 
-# 17.5.21 & 17.5.22
+# 16.5.21 & 16.5.22
 ["exp", "exp2"].each do |op|
     function :"#{op}", {
         must_use: true,
@@ -542,7 +548,7 @@ function :dot, {
     }
 end
 
-# 17.5.23 & 17.5.24
+# 16.5.23 & 16.5.24
 function :extractBits, {
     must_use: true,
     const: true,
@@ -556,7 +562,7 @@ function :extractBits, {
     [N].(vec[N][u32], u32, u32) => vec[N][u32],
 }
 
-# 17.5.25
+# 16.5.25
 function :faceForward, {
     must_use: true,
     const: true,
@@ -564,7 +570,7 @@ function :faceForward, {
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.26 & 17.5.27
+# 16.5.26 & 16.5.27
 function :firstLeadingBit, {
     must_use: true,
     const: true,
@@ -578,7 +584,7 @@ function :firstLeadingBit, {
     [N].(vec[N][u32]) => vec[N][u32],
 }
 
-# 17.5.28
+# 16.5.28
 function :firstTrailingBit, {
     must_use: true,
     const: true,
@@ -587,7 +593,7 @@ function :firstTrailingBit, {
     [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.29
+# 16.5.29
 function :floor, {
     must_use: true,
     const: true,
@@ -596,7 +602,7 @@ function :floor, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.30
+# 16.5.30
 function :fma, {
     must_use: true,
     const: true,
@@ -605,7 +611,7 @@ function :fma, {
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.31
+# 16.5.31
 function :fract, {
     must_use: true,
     const: true,
@@ -614,7 +620,7 @@ function :fract, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.32
+# 16.5.32
 function :frexp, {
     must_use: true,
     const: true,
@@ -636,7 +642,7 @@ function :frexp, {
     [].(vec4[abstract_float]) => __frexp_result_vec4_abstract,
 }
 
-# 17.5.33
+# 16.5.33
 function :insertBits, {
     must_use: true,
     const: true,
@@ -645,7 +651,7 @@ function :insertBits, {
     [T < ConcreteInteger, N].(vec[N][T], vec[N][T], u32, u32) => vec[N][T],
 }
 
-# 17.5.34
+# 16.5.34
 function :inverseSqrt, {
     must_use: true,
     const: true,
@@ -654,7 +660,7 @@ function :inverseSqrt, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.35
+# 16.5.35
 function :ldexp, {
     must_use: true,
     const: true,
@@ -665,7 +671,7 @@ function :ldexp, {
     [N].(vec[N][abstract_float], vec[N][abstract_int]) => vec[N][abstract_float],
 }
 
-# 17.5.36
+# 16.5.36
 function :length, {
     must_use: true,
     const: true,
@@ -674,7 +680,7 @@ function :length, {
     [T < Float, N].(vec[N][T]) => T,
 }
 
-# 17.5.37 & 17.5.38
+# 16.5.37 & 16.5.38
 ["log", "log2"].each do |op|
     function :"#{op}", {
         must_use: true,
@@ -685,7 +691,7 @@ function :length, {
     }
 end
 
-# 17.5.39
+# 16.5.39
 function :max, {
     must_use: true,
     const: true,
@@ -694,7 +700,7 @@ function :max, {
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.40
+# 16.5.40
 function :min, {
     must_use: true,
     const: true,
@@ -703,7 +709,7 @@ function :min, {
     [T < Number, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.41
+# 16.5.41
 function :mix, {
     must_use: true,
     const: true,
@@ -713,7 +719,7 @@ function :mix, {
     [T < Float, N].(vec[N][T], vec[N][T], T) => vec[N][T],
 }
 
-# 17.5.42
+# 16.5.42
 function :modf, {
     must_use: true,
     const: true,
@@ -721,7 +727,7 @@ function :modf, {
     # FIXME: this needs the special return types __modf_result_*
 }
 
-# 17.5.43
+# 16.5.43
 function :normalize, {
     must_use: true,
     const: true,
@@ -729,7 +735,7 @@ function :normalize, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.44
+# 16.5.44
 function :pow, {
     must_use: true,
     const: true,
@@ -738,7 +744,7 @@ function :pow, {
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.45
+# 16.5.45
 function :quantizeToF16, {
     must_use: true,
     const: true,
@@ -747,7 +753,7 @@ function :quantizeToF16, {
     [N].(vec[N][f32]) => vec[N][f32],
 }
 
-# 17.5.46
+# 16.5.46
 function :radians, {
     must_use: true,
     const: true,
@@ -756,7 +762,7 @@ function :radians, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.47
+# 16.5.47
 function :reflect, {
     must_use: true,
     const: true,
@@ -764,7 +770,7 @@ function :reflect, {
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.48
+# 16.5.48
 function :refract, {
     must_use: true,
     const: true,
@@ -772,7 +778,7 @@ function :refract, {
     [T < Float, N].(vec[N][T], vec[N][T], T) => vec[N][T],
 }
 
-# 17.5.49
+# 16.5.49
 function :reverseBits, {
     must_use: true,
     const: true,
@@ -781,7 +787,7 @@ function :reverseBits, {
     [T < ConcreteInteger, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.50
+# 16.5.50
 function :round, {
     must_use: true,
     const: true,
@@ -790,7 +796,7 @@ function :round, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.51
+# 16.5.51
 function :saturate, {
     must_use: true,
     const: true,
@@ -799,7 +805,7 @@ function :saturate, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.52
+# 16.5.52
 function :sign, {
     must_use: true,
     const: true,
@@ -808,11 +814,11 @@ function :sign, {
     [T < SignedNumber, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.53. sin
-# 17.5.54. sinh
+# 16.5.53. sin
+# 16.5.54. sinh
 # Defined in [Trigonometric]
 
-# 17.5.55
+# 16.5.55
 function :smoothstep, {
     must_use: true,
     const: true,
@@ -821,7 +827,7 @@ function :smoothstep, {
     [T < Float, N].(vec[N][T], vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.56
+# 16.5.56
 function :sqrt, {
     must_use: true,
     const: true,
@@ -830,7 +836,7 @@ function :sqrt, {
     [T < Float, N].(vec[N][T]) => vec[N][T],
 }
 
-# 17.5.57
+# 16.5.57
 function :step, {
     must_use: true,
     const: true,
@@ -839,11 +845,11 @@ function :step, {
     [T < Float, N].(vec[N][T], vec[N][T]) => vec[N][T],
 }
 
-# 17.5.58. tan
-# 17.5.59. tanh
+# 16.5.58. tan
+# 16.5.59. tanh
 # Defined in [Trigonometric]
 
-# 17.5.60
+# 16.5.60
 function :transpose, {
     must_use: true,
     const: true,
@@ -851,7 +857,7 @@ function :transpose, {
     [T < Float, C, R].(mat[C,R][T]) => mat[R,C][T],
 }
 
-# 17.5.61
+# 16.5.61
 function :trunc, {
     must_use: true,
     const: true,
@@ -1357,6 +1363,12 @@ end
 
 # FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
 # fn atomicCompareExchangeWeak(atomic_ptr: ptr<AS, atomic<T>, read_write>, cmp: T, v: T) -> __atomic_compare_exchange_result<T>
+
+# 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
+# FIXME: implement
+
+# 16.10. Data Unpacking Built-in Functions (https://www.w3.org/TR/WGSL/#unpack-builtin-functions)
+# FIXME: implement
 
 # 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 

@@ -206,6 +206,7 @@ $(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionCommandParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionControllerParameters.serialization.in
@@ -425,6 +426,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/CodeGeneratorExtensions.pm
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIAction.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPICommands.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPILocalization.idl

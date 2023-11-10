@@ -23,55 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
 #import "config.h"
-#import "WebExtensionCommand.h"
+#import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
+#import "WebExtensionCommand.h"
 #import "WebExtensionCommandParameters.h"
-#import "WebExtensionContext.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionTab.h"
+#import "WebExtensionUtilities.h"
 
 namespace WebKit {
 
-WebExtensionCommand::WebExtensionCommand(WebExtensionContext& extensionContext, const WebExtension::CommandData& data)
-    : m_extensionContext(extensionContext)
-    , m_identifier(data.identifier)
-    , m_description(data.description)
-    , m_activationKey(data.activationKey)
-    , m_modifierFlags(data.modifierFlags)
+void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)
 {
+    auto results = WTF::map(commands(), [](auto& command) {
+        return command->parameters();
+    });
+
+    completionHandler(WTFMove(results));
 }
 
-bool WebExtensionCommand::operator==(const WebExtensionCommand& other) const
+void WebExtensionContext::fireCommandEventIfNeeded(WebExtensionCommand& command, WebExtensionTab* tab)
 {
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_identifier == other.m_identifier);
+    constexpr auto type = WebExtensionEventListenerType::CommandsOnCommand;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsCommandEvent(command.identifier(), tab ? std::optional(tab->parameters()) : std::nullopt));
+    });
 }
 
-bool WebExtensionCommand::isActionCommand() const
+void WebExtensionContext::fireCommandChangedEventIfNeeded(WebExtensionCommand& command, const String& oldShortcut)
 {
-    RefPtr context = extensionContext();
-    if (!context)
-        return false;
-
-    if (context->extension().supportsManifestVersion(3))
-        return identifier() == "_execute_action"_s;
-
-    return identifier() == "_execute_browser_action"_s || identifier() == "_execute_page_action"_s;
-}
-
-WebExtensionCommandParameters WebExtensionCommand::parameters() const
-{
-    return {
-        identifier(),
-        description(),
-        shortcutString()
-    };
-}
-
-WebExtensionContext* WebExtensionCommand::extensionContext() const
-{
-    return m_extensionContext.get();
+    constexpr auto type = WebExtensionEventListenerType::CommandsOnChanged;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsChangedEvent(command.identifier(), oldShortcut, command.shortcutString()));
+    });
 }
 
 } // namespace WebKit

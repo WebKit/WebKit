@@ -123,6 +123,10 @@ private:
     // Alarms
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
+    // Commands
+    void dispatchCommandsCommandEvent(const String& identifier, const std::optional<WebExtensionTabParameters>&);
+    void dispatchCommandsChangedEvent(const String& identifier, const String& oldShortcut, const String& newShortcut);
+
     // Extension
     void setBackgroundPageIdentifier(WebCore::PageIdentifier);
     void addPopupPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
