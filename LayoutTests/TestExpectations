@@ -6836,7 +6836,31 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animation
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/update-playback-rate.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-current-time-vertical-rl.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-current-time.tentative.html [ Skip ] 
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-nested-subject.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-view-timeline-current-time.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-1.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-2.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-3.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-4.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-5.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-6.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/sticky/view-timeline-sticky-offscreen-7.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/timeline-offset-in-keyframe.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-get-set-range.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-inset.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-range.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-range-large-subject.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-root-source.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-snapport.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-block.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-subject-size-changes.html [ Skip ]
+
+
+
 
 # webkit.org/b/229520 CSS @scope unimplemented
 imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ Skip ]

@@ -884,6 +884,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/ScrollAxis.idl \
     $(WebCore)/animation/ScrollTimeline.idl \
     $(WebCore)/animation/ScrollTimelineOptions.idl \
+    $(WebCore)/animation/ViewTimeline.idl \
+    $(WebCore)/animation/ViewTimelineOptions.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \

@@ -42,6 +42,7 @@ public:
 
     virtual bool isDocumentTimeline() const { return false; }
     virtual bool isScrollTimeline() const { return false; }
+    virtual bool isViewTimeline() const { return false; }
 
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 

@@ -1,7 +1,9 @@
 
-FAIL View timeline with range as <name> <percent> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
-FAIL View timeline with range and inferred name or offset. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
-FAIL View timeline with range as <name> <px> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
-FAIL View timeline with range as <name> <percent+px> pair. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
-FAIL View timeline with range as strings. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT View timeline with range as <name> <percent> pair. Test timed out
+NOTRUN View timeline with range and inferred name or offset.
+NOTRUN View timeline with range as <name> <px> pair.
+NOTRUN View timeline with range as <name> <percent+px> pair.
+NOTRUN View timeline with range as strings.
 

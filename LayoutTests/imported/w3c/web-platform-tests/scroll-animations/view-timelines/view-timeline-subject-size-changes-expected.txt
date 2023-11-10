@@ -1,3 +1,5 @@
 
-FAIL View timeline with subject size change after the creation of the animation promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ViewTimeline"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT View timeline with subject size change after the creation of the animation Test timed out
 
