@@ -96,7 +96,7 @@ BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, 
     : m_broadcastChannel(channel)
     , m_identifier(BroadcastChannelIdentifier::generate())
     , m_name(name.isolatedCopy())
-    , m_origin(partitionedSecurityOriginFromContext(*channel.scriptExecutionContext()).isolatedCopy())
+    , m_origin(partitionedSecurityOriginFromContext(*channel.protectedScriptExecutionContext()).isolatedCopy())
 {
 }
 

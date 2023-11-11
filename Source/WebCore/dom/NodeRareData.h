@@ -68,7 +68,8 @@ public:
     void removeChildNodeList(ChildNodeList* list)
     {
         ASSERT(m_childNodeList == list);
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+        Ref ownerNode = list->ownerNode();
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(ownerNode))
             return;
         m_childNodeList = nullptr;
     }
@@ -86,7 +87,8 @@ public:
     void removeEmptyChildNodeList(EmptyNodeList* list)
     {
         ASSERT(m_emptyChildNodeList == list);
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+        Ref ownerNode = list->ownerNode();
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(ownerNode))
             return;
         m_emptyChildNodeList = nullptr;
     }

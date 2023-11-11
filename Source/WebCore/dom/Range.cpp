@@ -339,8 +339,8 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
     ASSERT(commonRoot);
     
     if (action == Extract) {
-        auto& commonRootDocument = commonRoot->document();
-        RefPtr doctype = commonRootDocument.doctype();
+        Ref commonRootDocument = commonRoot->document();
+        RefPtr doctype = commonRootDocument->doctype();
         if (doctype && contains(makeSimpleRange(*this), { *doctype, 0 }))
             return Exception { ExceptionCode::HierarchyRequestError };
     }
@@ -847,10 +847,10 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
     Ref protectedNewParent = newParent;
 
     // Step 1: If a non-Text node is partially contained in the context object, then throw an InvalidStateError.
-    Node* startNonTextContainer = &startContainer();
+    RefPtr startNonTextContainer = &startContainer();
     if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
         startNonTextContainer = startNonTextContainer->parentNode();
-    Node* endNonTextContainer = &endContainer();
+    RefPtr endNonTextContainer = &endContainer();
     if (endNonTextContainer->nodeType() == Node::TEXT_NODE)
         endNonTextContainer = endNonTextContainer->parentNode();
     if (startNonTextContainer != endNonTextContainer)
@@ -1029,7 +1029,7 @@ void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
 
 static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text& oldNode)
 {
-    auto* parent = oldNode.parentNode();
+    RefPtr parent = oldNode.parentNode();
     if (&boundary.container() == &oldNode) {
         unsigned splitOffset = oldNode.length();
         unsigned boundaryOffset = boundary.offset();
