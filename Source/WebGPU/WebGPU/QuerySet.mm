@@ -34,10 +34,13 @@ namespace WebGPU {
 
 Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 {
-    if (descriptor.nextInChain || !isValid())
-        return QuerySet::createInvalid(*this);
-
     auto count = descriptor.count;
+    constexpr auto maxCountAllowed = 4096;
+    if (descriptor.nextInChain || count > maxCountAllowed || !isValid()) {
+        generateAValidationError("GPUQuerySetDescriptor.count must be <= 4096"_s);
+        return QuerySet::createInvalid(*this);
+    }
+
     const char* label = descriptor.label;
     auto type = descriptor.type;
 

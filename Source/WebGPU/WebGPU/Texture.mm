@@ -1304,7 +1304,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
         if (descriptor.size.depthOrArrayLayers != 1)
             return false;
 
-        if (descriptor.usage & WGPUTextureUsage_StorageBinding)
+        if ((descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment))
             return false;
 
         if (!isRenderableFormat(descriptor.format))
