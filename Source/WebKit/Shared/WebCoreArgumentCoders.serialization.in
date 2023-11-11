@@ -6682,3 +6682,11 @@ enum class WebCore::BackgroundFetchResult : uint8_t {
     Success,
     Failure
 };
+
+enum class WebCore::ResourceErrorBaseType : uint8_t {
+     Null,
+     General,
+     AccessControl,
+     Cancellation,
+     Timeout,
+}
