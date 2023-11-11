@@ -437,6 +437,8 @@ webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing 
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 webkit.org/b/169918 compositing/filters/drop-shadow.html [ ImageOnlyFailure ]
 
+webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
+
 # WebGL ANGLE backend failures
 webkit.org/b/245840 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 webkit.org/b/245840 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
@@ -1313,6 +1315,9 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 # These tests started to time out (or time out more often) since the FTL merge
 webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
+
+webkit.org/b/264664 fast/media/mq-inverted-colors-live-update-for-listener.html [ Pass Failure ]
+webkit.org/b/264664 fast/media/mq-prefers-reduced-motion-live-update-for-listener.html [ Pass Failure ]
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 

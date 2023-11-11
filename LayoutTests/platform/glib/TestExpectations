@@ -314,7 +314,7 @@ fast/css/accent-color/text.html [ Pass ]
 webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Pass ]
 
 # GStreamer seeks to the wrong frame
-webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ Failure ]
+webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ Failure Timeout ImageOnlyFailure ]
 
 # Support to pause with 0 rate playback seems to work only in GStreamer ports
 media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
@@ -598,7 +598,7 @@ accessibility/ignored-textfield-still-accessible.html [ Skip ]
 
 webkit.org/b/229261 accessibility/element-line-rects-and-text.html [ Missing ]
 
-webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
+webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure Timeout ]
 
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
@@ -1043,7 +1043,7 @@ webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Pass Failure ]
-webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Timeout ]
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Timeout Failure ]
 
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
@@ -1200,6 +1200,20 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass Du
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
 # expected to pass again once we update to GStreamer 1.24.
 fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
+
+webkit.org/b/264663 media/media-source/media-source-webm-configuration-framerate.html [ Crash Pass ]
+
+webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
+
+webkit.org/b/264666 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Failure ]
+
+webkit.org/b/264667 media/track/track-css-visible-stroke.html [ Pass ImageOnlyFailure ]
+webkit.org/b/264667 media/track/track-cue-left-align.html [ Pass ImageOnlyFailure ]
+webkit.org/b/264667 media/track/track-cue-line-position.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -1938,6 +1952,7 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transce
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
 webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
 webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
@@ -1989,7 +2004,7 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSync
 
 # GStreamerRtpSenderBackend::setParameters() unimplemented.
 webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Failure Timeout ]
-webkit.org/b/215007 webrtc/h264-high.html [ Failure ]
+webkit.org/b/215007 webrtc/h264-high.html [ Failure Timeout ]
 
 # We don't support spatial encoding yet.
 webkit.org/b/235885 webrtc/vp9-svc.html [ Skip ]
@@ -2006,7 +2021,7 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonec
 webkit.org/b/235885 webrtc/dtmf-gc.html [ Skip ]
 
 webkit.org/b/235885 webrtc/video-h264.html [ Slow ]
-webkit.org/b/235885 webrtc/vp9.html [ Slow ]
+webkit.org/b/235885 webrtc/vp9.html [ Slow Failure ]
 
 # Also skipped on mac, timing out because relying on MediaStream::onactive event which is not exposed.
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
@@ -2330,7 +2345,6 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-check-encryption-scheme
 imported/w3c/web-platform-tests/encrypted-media/clearkey-check-initdata-type.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass ]
@@ -3208,7 +3222,8 @@ webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
 media/video-remote-control-playpause.html [ Skip ]
 
-webkit.org/b/207062 webkit.org/b/244776 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass Crash ]
+# Failure Pass Crash Timeout
+webkit.org/b/207062 webkit.org/b/244776 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Skip ]
 
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 
@@ -3595,7 +3610,7 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restri
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?3-4 [ Slow ]
 
 # Flakily crashing on GTK and WPE bots
-webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash ]
+webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout ]
 
 # webkit.org/b/263473 [ GLib ] Implement wheel WPT actions in WebKit's test vendor JS without UIScriptController.sendEventStream
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive [ Skip ]
