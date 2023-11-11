@@ -6665,3 +6665,20 @@ enum class WebCore::ExceptionCode : uint8_t {
     OutOfMemoryError,
     ExistingExceptionError,
 }
+
+header: <WebCore/BackgroundFetchFailureReason.h>
+enum class WebCore::BackgroundFetchFailureReason : uint8_t {
+    EmptyString,
+    Aborted,
+    BadStatus,
+    FetchError,
+    QuotaExceeded,
+    DownloadTotalExceeded
+};
+
+header: <WebCore/BackgroundFetchResult.h>
+enum class WebCore::BackgroundFetchResult : uint8_t {
+    EmptyString,
+    Success,
+    Failure
+};
