@@ -448,3 +448,13 @@ What version of 'WebKit Text' should the bug be associated with?:
                 '<original text - begin>\n\n'
                 'An example issue for testing',
             )
+
+    def test_set_keywords(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker()
+            issue = tracker.issue(1)
+
+            self.assertEqual(issue.keywords, ['Keyword A'])
+            issue.set_keywords(['Keyword B'])
+            self.assertEqual(issue.keywords, ['Keyword B'])
+            self.assertEqual(tracker.issue(1).keywords, ['Keyword B'])
