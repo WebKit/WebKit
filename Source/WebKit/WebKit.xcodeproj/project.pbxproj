@@ -4949,6 +4949,7 @@
 		4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebLockRegistry.h; sourceTree = "<group>"; };
 		4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebLockRegistry.cpp; sourceTree = "<group>"; };
 		4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerType.h; sourceTree = "<group>"; };
+		4692071A2AFEE3B800CBC22D /* WebPreferencesStore.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPreferencesStore.serialization.in; sourceTree = "<group>"; };
 		46943DCB2763F834004B610E /* WebSharedWorkerObjectConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerObjectConnection.messages.in; sourceTree = "<group>"; };
 		469DE802273ECC5D00930276 /* ProcessLauncherCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
@@ -8529,6 +8530,7 @@
 				7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
+				4692071A2AFEE3B800CBC22D /* WebPreferencesStore.serialization.in */,
 				BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */,
 				BC306823125A6B9400E71278 /* WebProcessCreationParameters.serialization.in */,
 				467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */,

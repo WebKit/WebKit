@@ -432,6 +432,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebPageGroupData.serialization.in
     Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in
+    Shared/WebPreferencesStore.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in

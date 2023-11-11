@@ -617,6 +617,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebPageNetworkParameters.serialization.in \
 	Shared/WebPageGroupData.serialization.in \
 	Shared/WebPopupItem.serialization.in \
+	Shared/WebPreferencesStore.serialization.in \
 	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
