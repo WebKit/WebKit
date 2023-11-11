@@ -52,12 +52,7 @@ static std::atomic<size_t> s_activePixelMemory { 0 };
 
 namespace WebCore {
 
-#if USE(CG)
 constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
-#else
-constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Medium;
-#endif
-
 static std::optional<size_t> maxCanvasAreaForTesting;
 
 CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
