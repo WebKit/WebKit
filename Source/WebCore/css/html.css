@@ -501,7 +501,8 @@ input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid -webkit-control-background;
     font-family: system-ui;
-    padding: 0.2em 0.5em;
+    padding-block: 0.2em;
+    padding-inline: 0.5em;
 #if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
     background-color: rgba(0, 0, 0, 0.04);
     color: CanvasText;

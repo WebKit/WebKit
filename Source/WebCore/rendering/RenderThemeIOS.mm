@@ -808,7 +808,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
     applyCommonButtonPaddingToStyle(style, inputElement);
 
     // Don't adjust the style if the width is specified.
-    if (style.width().isFixed() && style.width().value() > 0)
+    if (style.logicalWidth().isFixed() && style.logicalWidth().value() > 0)
         return;
 
     // Don't adjust for unsupported date input types.
@@ -829,7 +829,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
         if (inputElement.document().settings().iOSFormControlRefreshEnabled())
             width = static_cast<int>(std::ceil(maximumWidth));
 #endif
-        style.setWidth(Length(width, LengthType::Fixed));
+        style.setLogicalWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
 }
