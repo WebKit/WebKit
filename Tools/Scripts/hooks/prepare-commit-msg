@@ -303,7 +303,7 @@ def main(file_name=None, source=None, sha=None):
     elif source == 'merge' and content.startswith('Revert'):
         return 0
     else:
-        set_env_variables()
+        set_env_variables_from_branch_config()
 
     for line in content.splitlines():
         if CHERRY_PICKING_RE.match(line):
