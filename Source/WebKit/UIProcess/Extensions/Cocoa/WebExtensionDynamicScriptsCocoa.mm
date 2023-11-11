@@ -31,19 +31,23 @@
 #import "WebExtensionDynamicScripts.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+#import "WKContentWorld.h"
 #import "WKFrameInfoPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtension.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionFrameIdentifier.h"
+#import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebPageProxy.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKFrameHandle.h"
 #import "_WKFrameTreeNode.h"
+#import <wtf/CallbackAggregator.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -86,21 +90,61 @@ std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension
     return SourcePair { [[NSString alloc] initWithData:scriptData encoding:NSUTF8StringEncoding], resourceURL };
 }
 
-SourcePairs getSourcePairsForResource(std::optional<Vector<String>> files, std::optional<String> code, RefPtr<WebExtension> extension)
+SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters& parameters, RefPtr<WebExtension> extension)
 {
-    if (files) {
+    if (parameters.files) {
         SourcePairs sourcePairs;
-        for (auto& file : files.value())
+        for (auto& file : parameters.files.value())
             sourcePairs.append(sourcePairForResource(file, extension));
         return sourcePairs;
     }
 
-    return { SourcePair { code.value(), std::nullopt } };
+    return { SourcePair { parameters.code.value_or(parameters.function.value_or(parameters.css.value_or(""_s))), std::nullopt } };
+}
+
+void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab *tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResultHolder&)>&& completionHandler)
+{
+    auto injectionResults = InjectionResultHolder::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(injectionResults);
+    });
+
+    [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
+        WKContentWorld *world = executionWorld->wrapper();
+        Vector<RetainPtr<_WKFrameTreeNode>> frames = getFrames(mainFrame, parameters.frameIDs);
+
+        for (auto& frame : frames) {
+            WKFrameInfo *frameInfo = frame.get().info;
+            NSURL *frameURL = frameInfo.request.URL;
+
+            if (!context->hasPermission(frameURL, tab)) {
+                injectionResults->results.append(toInjectionResultParameters(nil, frameInfo, @"Failed to execute script. Extension does not have access to this frame."));
+                continue;
+            }
+
+            if (parameters.function) {
+                NSString *javaScript = [NSString stringWithFormat:@"return (%@)(...arguments)", (NSString *)parameters.function.value()];
+                NSArray *arguments = parameters.arguments ? createNSArray(parameters.arguments.value()).get() : @[ ];
+
+                [webView _callAsyncJavaScript:javaScript arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:world completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+                    injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
+                }).get()];
+                continue;
+            }
+
+            for (auto& script : scriptPairs.value()) {
+                [webView _evaluateJavaScript:script.value().first withSourceURL:script.value().second.value_or(URL { }) inFrame:frameInfo inContentWorld:executionWorld->wrapper() completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+                    injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
+                }).get()];
+            }
+        }
+    }).get()];
 }
 
 void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
-    auto pageID = webView._page->webPageID();
+    auto page = webView._page;
+    auto pageID = page->webPageID();
 
     for (auto& styleSheet : styleSheetPairs) {
         if (!styleSheet)
@@ -108,14 +152,14 @@ void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::Con
 
         auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, WebCore::UserStyleLevel::User, pageID }, executionWorld);
 
-        for (auto& controller : context.extensionController()->allUserContentControllers())
-            controller.addUserStyleSheet(userStyleSheet);
+        auto& controller = page.get()->userContentController();
+        controller.addUserStyleSheet(userStyleSheet);
 
         context.dynamicallyInjectedUserStyleSheets().append(userStyleSheet);
     }
 }
 
-void removeStyleSheets(SourcePairs styleSheetPairs, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
+void removeStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView,  WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     UserStyleSheetVector styleSheetsToRemove;
     auto& dynamicallyInjectedUserStyleSheets = context.dynamicallyInjectedUserStyleSheets();
@@ -124,8 +168,8 @@ void removeStyleSheets(SourcePairs styleSheetPairs, WebCore::UserContentInjected
         for (auto& userStyleSheet : dynamicallyInjectedUserStyleSheets) {
             if (userStyleSheetMatchesContent(userStyleSheet, styleSheetContent.value(), injectedFrames)) {
                 styleSheetsToRemove.append(userStyleSheet);
-                for (auto& controller : context.extensionController()->allUserContentControllers())
-                    controller.removeUserStyleSheet(userStyleSheet);
+                auto& controller = webView._page.get()->userContentController();
+                controller.removeUserStyleSheet(userStyleSheet);
             }
         }
 
