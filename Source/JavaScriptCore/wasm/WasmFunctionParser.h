@@ -55,11 +55,12 @@ template<typename EnclosingStack, typename NewStack>
 void splitStack(BlockSignature originalSignature, EnclosingStack& enclosingStack, NewStack& newStack)
 {
     BlockSignature signature = &originalSignature->expand();
-    newStack.reserveInitialCapacity(signature->as<FunctionSignature>()->argumentCount());
     ASSERT(enclosingStack.size() >= signature->as<FunctionSignature>()->argumentCount());
+
     unsigned offset = enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount();
-    for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
-        newStack.unsafeAppendWithoutCapacityCheck(enclosingStack.at(i + offset));
+    newStack = NewStack(signature->as<FunctionSignature>()->argumentCount(), [&](size_t i) {
+        return enclosingStack.at(i + offset);
+    });
     enclosingStack.shrink(offset);
 }
 
