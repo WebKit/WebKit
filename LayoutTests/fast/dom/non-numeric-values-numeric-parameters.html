@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -275,7 +275,7 @@ shouldBe("nonNumericPolicy('createHTMLTableSectionElement().deleteRow(x)')", "'a
 // HTMLInputElement
 
 shouldBe("nonNumericPolicy('document.createElement(\"textarea\").setSelectionRange(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.createElement(\"textarea\").setSelectionRange(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.createElement(\"textarea\").setSelectionRange(0, x)')", "'any type allowed (but not omitted)'");
 
 // KeyboardEvent
 
@@ -653,6 +653,5 @@ Here are other examples of numeric types in function parameters and settable att
 
 */
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

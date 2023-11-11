@@ -154,7 +154,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately
             // (so that an authentication dialog doesn't pop up).
             if (auto* networkStorageSession = d->m_context->storageSession())
-                networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_password, CredentialPersistenceNone), firstRequest().url());
+                networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_password, CredentialPersistence::None), firstRequest().url());
         }
     }
         
@@ -554,7 +554,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
             if (auto* networkStorageSession = d->m_context->storageSession())
                 credential = networkStorageSession->credentialStorage().get(d->m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
-                ASSERT(credential.persistence() == CredentialPersistenceNone);
+                ASSERT(credential.persistence() == CredentialPersistence::None);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
                     if (auto* networkStorageSession = d->m_context->storageSession())
@@ -593,10 +593,10 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-    if (credential.persistence() == CredentialPersistenceForSession && challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
+    if (credential.persistence() == CredentialPersistence::ForSession && challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
         // Manage per-session credentials internally, because once NSURLCredentialPersistenceForSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
-        Credential webCredential(credential, CredentialPersistenceNone);
+        Credential webCredential(credential, CredentialPersistence::None);
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();

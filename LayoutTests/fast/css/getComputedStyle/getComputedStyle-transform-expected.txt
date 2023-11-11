@@ -1,9 +1,0 @@
-div: translate(80px, 90px) expected matrix(1, 0, 0, 1, 80, 90) : PASS
-span: translate(80px, 90px) expected matrix(1, 0, 0, 1, 80, 90) : PASS
-div: scale(1.2, 0.8) expected matrix(1.2, 0, 0, 0.8, 0, 0) : PASS
-span: scale(1.2, 0.8) expected matrix(1.2, 0, 0, 0.8, 0, 0) : PASS
-div: skew(-0.7rad, 20deg) expected matrix(1, 0.36397, -0.842288, 1, 0, 0) : PASS
-span: skew(-0.7rad, 20deg) expected matrix(1, 0.36397, -0.842288, 1, 0, 0) : PASS
-div: rotate(45deg) expected matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0) : PASS
-span: rotate(45deg) expected matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0) : PASS
-

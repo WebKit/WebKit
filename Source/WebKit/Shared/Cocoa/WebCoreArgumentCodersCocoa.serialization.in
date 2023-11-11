@@ -89,3 +89,31 @@ struct WebCore::MediaRecorderPrivateOptions {
 [Nested] class WebCore::ProtectionSpace::PlatformData {
     RetainPtr<NSURLProtectionSpace> nsSpace;
 };
+
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+header: <WebCore/ApplePayLaterAvailability.h>
+enum class WebCore::ApplePayLaterAvailability : uint8_t {
+    Available,
+    UnavailableItemIneligible,
+    UnavailableRecurringTransaction,
+};
+#endif
+
+#if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePaySessionPaymentRequest.h>
+enum class WebCore::ApplePaySessionPaymentRequestShippingType : uint8_t {
+    Shipping,
+    Delivery,
+    StorePickup,
+    ServicePickup,
+};
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+header: <WebCore/ApplePayShippingContactEditingMode.h>
+enum class WebCore::ApplePayShippingContactEditingMode : uint8_t {
+    Available,
+    Enabled,
+    StorePickup,
+};
+#endif

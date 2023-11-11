@@ -37,7 +37,7 @@ PASS nonNumericPolicy('createHTMLTableRowElement().deleteCell(x)') is 'any type 
 PASS nonNumericPolicy('createHTMLTableSectionElement().insertRow(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLTableSectionElement().deleteRow(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createElement("textarea").setSelectionRange(x, 0)') is 'any type allowed'
-PASS nonNumericPolicy('document.createElement("textarea").setSelectionRange(0, x)') is 'any type allowed'
+PASS nonNumericPolicy('document.createElement("textarea").setSelectionRange(0, x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createEvent("KeyboardEvent").initKeyboardEvent("a", false, false, null, "b", x, false, false, false, false, false)') is 'any type allowed'
 PASS nonNumericPolicy('createMediaList().item(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createEvent("MouseEvent").initMouseEvent("a", false, false, null, x, 0, 0, 0, 0, false, false, false, false, 0, null)') is 'any type allowed'

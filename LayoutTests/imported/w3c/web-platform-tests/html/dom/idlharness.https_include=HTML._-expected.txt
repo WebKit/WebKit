@@ -3423,7 +3423,7 @@ PASS HTMLTextAreaElement interface: attribute selectionEnd
 PASS HTMLTextAreaElement interface: attribute selectionDirection
 PASS HTMLTextAreaElement interface: operation setRangeText(DOMString)
 PASS HTMLTextAreaElement interface: operation setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode)
-FAIL HTMLTextAreaElement interface: operation setSelectionRange(unsigned long, unsigned long, optional DOMString) assert_equals: property has wrong .length expected 2 but got 0
+PASS HTMLTextAreaElement interface: operation setSelectionRange(unsigned long, unsigned long, optional DOMString)
 PASS HTMLTextAreaElement must be primary interface of document.createElement("textarea")
 PASS Stringification of document.createElement("textarea")
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "autocomplete" with the proper type
@@ -3460,9 +3460,7 @@ PASS HTMLTextAreaElement interface: calling setRangeText(DOMString) on document.
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode)" with the proper type
 PASS HTMLTextAreaElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on document.createElement("textarea") with too few arguments must throw TypeError
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
-FAIL HTMLTextAreaElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on document.createElement("textarea") with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLTextAreaElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on document.createElement("textarea") with too few arguments must throw TypeError
 PASS HTMLOutputElement interface: existence and properties of interface object
 PASS HTMLOutputElement interface object length
 PASS HTMLOutputElement interface object name

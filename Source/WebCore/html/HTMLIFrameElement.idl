@@ -18,34 +18,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/multipage/iframe-embed-object.html#htmliframeelement
+
 [
     Exposed=Window,
     JSGenerateToNativeObject
 ] interface HTMLIFrameElement : HTMLElement {
-    [Reflect, CEReactions=NotNeeded] attribute DOMString align;
-    [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
-    [Reflect, CEReactions=NotNeeded] attribute DOMString height;
-    [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
-    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginHeight;
-    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
-    [Reflect, CEReactions=NotNeeded] attribute DOMString name;
-
-    [PutForwards=value] readonly attribute DOMTokenList sandbox;
-    [Reflect, CEReactions=NotNeeded] attribute boolean allowFullscreen;
-    [Reflect, CEReactions=NotNeeded] attribute DOMString allow;
-
-    [Reflect, CEReactions=NotNeeded] attribute DOMString scrolling;
     [Reflect, URL, CEReactions=NotNeeded] attribute USVString src;
     [Reflect, CEReactions=NotNeeded] attribute DOMString srcdoc;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString name;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString allow;
+    [Reflect, CEReactions=NotNeeded] attribute boolean allowFullscreen;
     [Reflect, CEReactions=NotNeeded] attribute DOMString width;
-
-    [CheckSecurityForNode] readonly attribute Document contentDocument;
-
-    readonly attribute WindowProxy contentWindow;
-
-    [CheckSecurityForNode] Document getSVGDocument();
-
+    [Reflect, CEReactions=NotNeeded] attribute DOMString height;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
-
     [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CheckSecurityForNode] readonly attribute Document? contentDocument;
+    readonly attribute WindowProxy? contentWindow;
+    [CheckSecurityForNode] Document? getSVGDocument();
+
+    // also has obsolete members
+    // https://html.spec.whatwg.org/multipage/obsolete.html#HTMLIFrameElement-partial
+    [Reflect, CEReactions=NotNeeded] attribute DOMString align;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString scrolling;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
+    [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
+
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginHeight;
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
+
 };

@@ -27,8 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class BackgroundFetchResult : uint8_t {
@@ -38,18 +36,5 @@ enum class BackgroundFetchResult : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::BackgroundFetchResult> {
-    using values = EnumValues<
-    WebCore::BackgroundFetchResult,
-    WebCore::BackgroundFetchResult::EmptyString,
-    WebCore::BackgroundFetchResult::Success,
-    WebCore::BackgroundFetchResult::Failure
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

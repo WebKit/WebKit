@@ -347,13 +347,13 @@ inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersis
 {
     switch (type) {
     case kWKCredentialPersistenceNone:
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     case kWKCredentialPersistenceForSession:
-        return WebCore::CredentialPersistenceForSession;
+        return WebCore::CredentialPersistence::ForSession;
     case kWKCredentialPersistencePermanent:
-        return WebCore::CredentialPersistencePermanent;
+        return WebCore::CredentialPersistence::Permanent;
     default:
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     }
 }
 

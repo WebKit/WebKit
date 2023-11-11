@@ -38,12 +38,18 @@
 #include "ApplePayShippingMethod.h"
 #include "PaymentContact.h"
 #include "PaymentInstallmentConfigurationWebCore.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum class ApplePaySessionPaymentRequestShippingType : uint8_t {
+    Shipping,
+    Delivery,
+    StorePickup,
+    ServicePickup,
+};
 
 class ApplePaySessionPaymentRequest {
 public:
@@ -92,12 +98,7 @@ public:
     const MerchantCapabilities& merchantCapabilities() const { return m_merchantCapabilities; }
     void setMerchantCapabilities(const MerchantCapabilities& merchantCapabilities) { m_merchantCapabilities = merchantCapabilities; }
 
-    enum class ShippingType {
-        Shipping,
-        Delivery,
-        StorePickup,
-        ServicePickup,
-    };
+    using ShippingType = ApplePaySessionPaymentRequestShippingType;
     ShippingType shippingType() const { return m_shippingType; }
     void setShippingType(ShippingType shippingType) { m_shippingType = shippingType; }
 
@@ -228,19 +229,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePaySessionPaymentRequest::ShippingType> {
-    using values = EnumValues<
-        WebCore::ApplePaySessionPaymentRequest::ShippingType,
-        WebCore::ApplePaySessionPaymentRequest::ShippingType::Shipping,
-        WebCore::ApplePaySessionPaymentRequest::ShippingType::Delivery,
-        WebCore::ApplePaySessionPaymentRequest::ShippingType::StorePickup,
-        WebCore::ApplePaySessionPaymentRequest::ShippingType::ServicePickup
-    >;
-};
-
-} // namespace WTF
 
 #endif

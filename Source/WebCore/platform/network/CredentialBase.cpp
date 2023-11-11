@@ -36,7 +36,7 @@ namespace WebCore {
 CredentialBase::CredentialBase()
     : m_user(emptyString())
     , m_password(emptyString())
-    , m_persistence(CredentialPersistenceNone)
+    , m_persistence(CredentialPersistence::None)
 {
 }
    
