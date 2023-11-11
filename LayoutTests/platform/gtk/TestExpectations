@@ -200,7 +200,7 @@ webkit.org/b/263720 http/tests/security/redirect-BLOCKED-to-localURL.html [ Cras
 
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure Timeout ]
-webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
+webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass Timeout ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-frameCount.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-full.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Failure ]
@@ -2671,3 +2671,28 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.h
 fast/canvas/font-family-system-ui-canvas.html [ Skip ]
 
 fast/line-grid [ Skip ]
+
+# Flaky tests Nov2023
+webkit.org/b/264680 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 fast/canvas/offscreen-backing-store-attached.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 fast/canvas/offscreen-scaling.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 fast/media/mq-prefers-contrast-live-update-for-listener.html [ Failure Pass ]
+webkit.org/b/264680 fast/scrolling/gtk/user-scroll-snapping-interaction.html [ Pass Timeout ]
+webkit.org/b/264680 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic2.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-animated-001.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/size-change-under-backface-visibility-hidden.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/filter-effects/dynamic-filter-changes-001.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/css/motion/change-offset-path.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Crash Failure Pass Timeout ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Crash Failure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Crash Failure Pass Timeout ]
+webkit.org/b/264680 inspector/heap/getPreview.html [ Failure Pass ]
+webkit.org/b/264680 media/video-seek-past-end-playing.html [ Pass Timeout ]
+webkit.org/b/264680 scrollbars/scrollbar-selectors.html [ Missing Pass Timeout ]
+webkit.org/b/264680 webanimations/accelerated-animation-opacity-animation-begin-time-after-scale-animation-ends.html [ ImageOnlyFailure Pass ]
+webkit.org/b/264680 webrtc/peer-connection-audio-mute2.html [ Failure Pass Timeout ]
