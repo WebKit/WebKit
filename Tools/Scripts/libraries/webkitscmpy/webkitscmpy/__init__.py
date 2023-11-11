@@ -56,7 +56,8 @@ AutoInstall.register(Package('markupsafe', Version(1, 1, 1), pypi_name='MarkupSa
 AutoInstall.register(Package('webkitbugspy', Version(0, 8, 0)), local=True)
 
 if sys.version_info > (3, 6):
-    AutoInstall.register(Package('rapidfuzz', Version(2, 11, 1), implicit_deps=['pyparsing']))
+    # FIXME: Remove wheel=False after upgrading past 2.15.1
+    AutoInstall.register(Package('rapidfuzz', Version(2, 11, 1), implicit_deps=['pyparsing'], wheel=False))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit
