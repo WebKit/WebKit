@@ -888,6 +888,8 @@ webkit.org/b/259912 [ Debug ] fast/spatial-navigation/snav-unit-overflow-and-scr
 webkit.org/b/259912 [ Debug ] fullscreen/full-screen-min-max-width-height.html [ Crash ]
 webkit.org/b/259912 [ Debug ] fullscreen/full-screen-restrictions.html [ Crash ]
 webkit.org/b/259912 [ Debug ] imported/blink/fast/transforms/transform-update-frame-overflow.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
