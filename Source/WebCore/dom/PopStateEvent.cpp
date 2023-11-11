@@ -39,6 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PopStateEvent);
 PopStateEvent::PopStateEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_state(initializer.state)
+    , m_hasUAVisualTransition(initializer.hasUAVisualTransition)
 {
 }
 
