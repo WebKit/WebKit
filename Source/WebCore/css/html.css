@@ -377,10 +377,24 @@ label {
     cursor: default;
 }
 
+/* https://html.spec.whatwg.org/#the-fieldset-and-legend-elements */
+
 legend {
     padding-inline-start: 2px;
     padding-inline-end: 2px;
     border: none;
+}
+
+legend[align=left i] {
+    justify-self: left;
+}
+  
+legend[align=center i] {
+    justify-self: center;
+}
+
+legend[align=right i] {
+    justify-self: right;
 }
 
 fieldset {
