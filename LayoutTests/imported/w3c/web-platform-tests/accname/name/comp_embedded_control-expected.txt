@@ -2,6 +2,61 @@ Tests the #comp_embedded_control portions of the AccName Name Computation algori
 
   Flash the screen   times
 
+  Flash the screen   times
+
+  Flash the screen   times
+
+  Flash the screen   times
+
+  Flash the screen 3 times
+
+  Flash the screen 3 times
+
+  Flash the screen
+1
+2
+3
+4
+5
+ times
+
+  Flash the screen   times
+
+  Flash the screen   times
+
+  Flash the screen 3.0 times
+
+  Flash the screen 3.0 times
+
+  Flash the screen 3.0 times
+
+  Flash the screen 3.0 times
+
+
 FAIL checkbox label with embedded textfield assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded textfield" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
 PASS label of embedded textfield inside checkbox label
+FAIL checkbox label with embedded select:not([size]) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded select:not([size])" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded select:not([size]) inside checkbox label
+FAIL checkbox label with embedded select[size] assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded select[size]" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded select[size] inside checkbox label
+FAIL checkbox label with embedded combobox (input[type=text]) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded combobox (input[type=text])" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded combobox (input[type=text]) inside checkbox label
+FAIL checkbox label with embedded combobox (span) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded combobox (span)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded combobox (span) inside checkbox label
+FAIL checkbox label with embedded combobox (div) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded combobox (div)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded combobox (div) inside checkbox label
+FAIL checkbox label with embedded listbox>option[aria-selected=true] assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded listbox>option[aria-selected=true]" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded listbox>option[aria-selected=true] inside checkbox label
+FAIL checkbox label with embedded input[type=range] assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded input[type=range]" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded input[type=range] inside checkbox label
+FAIL checkbox label with embedded input[type=number] assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded input[type=number]" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded input[type=number] inside checkbox label
+FAIL checkbox label with embedded ARIA slider (aria-valuenow) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded ARIA slider (aria-valuenow)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded ARIA slider (aria-valuenow) inside checkbox label
+FAIL checkbox label with embedded ARIA slider (aria-valuetext) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded ARIA slider (aria-valuetext)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded ARIA slider (aria-valuetext) inside checkbox label
+FAIL checkbox label with embedded ARIA spinbutton (aria-valuenow) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded ARIA spinbutton (aria-valuenow)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded ARIA spinbutton (aria-valuenow) inside checkbox label
+FAIL checkbox label with embedded ARIA spinbutton (aria-valuetext) assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded ARIA spinbutton (aria-valuetext)" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded ARIA spinbutton (aria-valuetext) inside checkbox label
 
