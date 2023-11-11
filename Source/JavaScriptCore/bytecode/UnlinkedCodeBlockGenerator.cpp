@@ -34,25 +34,6 @@
 
 namespace JSC {
 
-inline void UnlinkedCodeBlockGenerator::getLineAndColumn(const ExpressionRangeInfo& info, unsigned& line, unsigned& column) const
-{
-    switch (info.mode) {
-    case ExpressionRangeInfo::FatLineMode:
-        info.decodeFatLineMode(line, column);
-        break;
-    case ExpressionRangeInfo::FatColumnMode:
-        info.decodeFatColumnMode(line, column);
-        break;
-    case ExpressionRangeInfo::FatLineAndColumnMode: {
-        unsigned fatIndex = info.position;
-        const ExpressionRangeInfo::FatPosition& fatPos = m_expressionInfoFatPositions[fatIndex];
-        line = fatPos.line;
-        column = fatPos.column;
-        break;
-    }
-    } // switch
-}
-
 void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned column)
 {
     if (divot > ExpressionRangeInfo::MaxDivot) {
