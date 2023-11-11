@@ -29,13 +29,9 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxyProperties.h"
 #include <WebCore/VideoFrame.h>
 #include <wtf/ArgumentCoder.h>
-
-namespace IPC {
-class Connection;
-class Decoder;
-}
 
 namespace WebCore {
 #if PLATFORM(COCOA)
@@ -54,21 +50,7 @@ class RemoteVideoFrameProxy final : public WebCore::VideoFrame {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RemoteVideoFrameProxy);
 public:
-    struct Properties {
-        // The receiver owns the reference, so it must be released via either adoption to
-        // `RemoteVideoFrameProxy::create()` or via `RemoteVideoFrameProxy::releaseUnused()`.
-        WebKit::RemoteVideoFrameReference reference;
-        MediaTime presentationTime;
-        bool isMirrored { false };
-        Rotation rotation { Rotation::None };
-        WebCore::IntSize size;
-        uint32_t pixelFormat { 0 };
-        WebCore::PlatformVideoColorSpace colorSpace;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<Properties> decode(Decoder&);
-    };
-
+    using Properties = RemoteVideoFrameProxyProperties;
     static Properties properties(WebKit::RemoteVideoFrameReference, const WebCore::VideoFrame&);
 
     static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
@@ -107,25 +89,6 @@ private:
     mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;
 #endif
 };
-
-template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const
-{
-    encoder << reference << presentationTime << isMirrored << rotation << size << pixelFormat << colorSpace;
-}
-
-template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> RemoteVideoFrameProxy::Properties::decode(Decoder& decoder)
-{
-    auto reference = decoder.template decode<RemoteVideoFrameReference>();
-    auto presentationTime = decoder.template decode<MediaTime>();
-    auto isMirrored = decoder.template decode<bool>();
-    auto rotation = decoder.template decode<Rotation>();
-    auto size = decoder.template decode<WebCore::IntSize>();
-    auto pixelFormat = decoder.template decode<uint32_t>();
-    auto colorSpace = decoder.template decode<WebCore::PlatformVideoColorSpace>();
-    if (!decoder.isValid())
-        return std::nullopt;
-    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *rotation, *size, *pixelFormat, *colorSpace };
-}
 
 TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);
 

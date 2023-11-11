@@ -538,6 +538,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
+    WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in
 
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 
