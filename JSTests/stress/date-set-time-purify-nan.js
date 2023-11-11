@@ -15,7 +15,8 @@ function main() {
     uint64_array[0] = 0xfffe000000001234n;
     opt(date, float64_array);
 
-    print(date.getTime());
+    if (String(date.getTime()) != "NaN")
+        throw "FAILED";
 }
 
 main();

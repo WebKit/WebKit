@@ -17,7 +17,9 @@ function main() {
     for (let i = 0; i < 14; i++) {
         opt(arr, marr)
     }
-    print(opt(arr2, marr))
+
+    if (typeof(opt(arr2, marr)) !== "undefined")
+        throw "FAILED";
 }
 noDFG(main);
 noFTL(main);
