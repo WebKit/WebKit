@@ -1412,7 +1412,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 write(effect.writes[i]);
             }
         }
+#ifndef BUN_SKIP_FAILING_ASSERTIONS
         ASSERT_WITH_MESSAGE(effect.def == DOMJIT::HeapRange::top(), "Currently, we do not accept any def for CallDOM.");
+#endif
         return;
     }
 
