@@ -80,7 +80,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
             if (m_user.isEmpty() && m_password.isEmpty())
                 m_initialCredential = m_session->networkStorageSession()->credentialStorage().get(m_partition, request.url());
             else
-                m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistenceNone), request.url());
+                m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistence::None), request.url());
         }
         applyAuthenticationToRequest(request);
     }
@@ -742,7 +742,7 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
         if (!challenge.previousFailureCount()) {
             auto credential = m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != m_initialCredential) {
-                ASSERT(credential.persistence() == CredentialPersistenceNone);
+                ASSERT(credential.persistence() == CredentialPersistence::None);
 
                 if (isAuthenticationFailureStatusCode(challenge.failureResponse().httpStatusCode())) {
                     // Store the credential back, possibly adding it as a default for this directory.
@@ -801,10 +801,10 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
                 // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
                 // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
                 // this protection space.
-                if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
+                if (credential.persistence() == CredentialPersistence::ForSession || credential.persistence() == CredentialPersistence::Permanent)
                     m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
-                if (credential.persistence() == CredentialPersistencePermanent && persistentCredentialStorageEnabled()) {
+                if (credential.persistence() == CredentialPersistence::Permanent && persistentCredentialStorageEnabled()) {
                     m_protectionSpaceForPersistentStorage = challenge.protectionSpace();
                     m_credentialForPersistentStorage = credential;
                 }

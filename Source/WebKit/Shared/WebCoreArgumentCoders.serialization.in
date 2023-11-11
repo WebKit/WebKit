@@ -6690,3 +6690,9 @@ enum class WebCore::ResourceErrorBaseType : uint8_t {
      Cancellation,
      Timeout,
 }
+
+enum class WebCore::CredentialPersistence : uint8_t {
+     None,
+     ForSession,
+     Permanent,
+}

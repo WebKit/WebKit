@@ -50,11 +50,11 @@ G_DEFINE_BOXED_TYPE(WebKitCredential, webkit_credential, webkit_credential_copy,
 static inline WebKitCredentialPersistence toWebKitCredentialPersistence(WebCore::CredentialPersistence corePersistence)
 {
     switch (corePersistence) {
-    case WebCore::CredentialPersistenceNone:
+    case WebCore::CredentialPersistence::None:
         return WEBKIT_CREDENTIAL_PERSISTENCE_NONE;
-    case WebCore::CredentialPersistenceForSession:
+    case WebCore::CredentialPersistence::ForSession:
         return WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION;
-    case WebCore::CredentialPersistencePermanent:
+    case WebCore::CredentialPersistence::Permanent:
         return WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT;
     default:
         ASSERT_NOT_REACHED();
@@ -66,14 +66,14 @@ static inline WebCore::CredentialPersistence toWebCoreCredentialPersistence(WebK
 {
     switch (kitPersistence) {
     case WEBKIT_CREDENTIAL_PERSISTENCE_NONE:
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     case WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION:
-        return WebCore::CredentialPersistenceForSession;
+        return WebCore::CredentialPersistence::ForSession;
     case WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT:
-        return WebCore::CredentialPersistencePermanent;
+        return WebCore::CredentialPersistence::Permanent;
     default:
         ASSERT_NOT_REACHED();
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     }
 }
 
