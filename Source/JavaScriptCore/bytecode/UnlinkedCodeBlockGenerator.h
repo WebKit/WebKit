@@ -190,8 +190,6 @@ public:
 
     size_t metadataSizeInBytes() { return m_codeBlock->metadataSizeInBytes(); }
 
-    void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
-
     void applyModification(BytecodeRewriter&, JSInstructionStreamWriter&);
 
     void finalize(std::unique_ptr<JSInstructionStream>);

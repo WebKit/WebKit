@@ -152,6 +152,7 @@ namespace WebCore {
     macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
+    macro(CSSScopeRule) \
     macro(CSSSkew) \
     macro(CSSSkewX) \
     macro(CSSSkewY) \

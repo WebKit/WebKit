@@ -27,10 +27,12 @@
 
 #if ENABLE(UNIFIED_PDF)
 
-#include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntDegrees.h>
 #include <wtf/RetainPtr.h>
+
+OBJC_CLASS PDFDocument;
+OBJC_CLASS PDFPage;
 
 namespace WebCore {
 class GraphicsContext;
@@ -53,13 +55,11 @@ public:
     PDFDocumentLayout();
     ~PDFDocumentLayout();
 
-    void setPDFDocument(RetainPtr<CGPDFDocumentRef>&&);
-    CGPDFDocumentRef pdfDocument() const { return m_pdfDocument.get(); }
+    void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
 
-    bool hasPDFDocument() const;
     size_t pageCount() const;
 
-    RetainPtr<CGPDFPageRef> pageAtIndex(PageIndex) const;
+    RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
     IntDegrees rotationForPageAtIndex(PageIndex) const;
@@ -84,7 +84,7 @@ private:
         IntDegrees rotation { 0 };
     };
 
-    RetainPtr<CGPDFDocumentRef> m_pdfDocument;
+    RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };

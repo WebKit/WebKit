@@ -40,32 +40,6 @@ static BoolOverridesMap& boolTestRunnerOverridesMap()
     return map;
 }
 
-WebPreferencesStore::WebPreferencesStore()
-{
-}
-
-void WebPreferencesStore::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_values;
-    encoder << m_overriddenDefaults;
-}
-
-bool WebPreferencesStore::decode(IPC::Decoder& decoder, WebPreferencesStore& result)
-{
-    std::optional<ValueMap> values;
-    decoder >> values;
-    if (!values)
-        return false;
-    result.m_values = WTFMove(*values);
-
-    std::optional<ValueMap> overriddenDefaults;
-    decoder >> overriddenDefaults;
-    if (!overriddenDefaults)
-        return false;
-    result.m_overriddenDefaults = WTFMove(*overriddenDefaults);
-    return true;
-}
-
 void WebPreferencesStore::overrideBoolValueForKey(const String& key, bool value)
 {
     boolTestRunnerOverridesMap().set(key, value);

@@ -104,6 +104,11 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    CoreIPCNumber(NSNumber *number)
+        : CoreIPCNumber(bridge_cast(number))
+    {
+    }
+
     CoreIPCNumber(CFNumberRef number)
         : m_numberHolder(numberHolderForNumber(number))
     {
@@ -160,6 +165,8 @@ public:
     {
         return m_numberHolder;
     }
+
+    RetainPtr<id> toID() { return bridge_cast(createCFNumber().get()); }
 
 private:
     NumberHolder m_numberHolder;

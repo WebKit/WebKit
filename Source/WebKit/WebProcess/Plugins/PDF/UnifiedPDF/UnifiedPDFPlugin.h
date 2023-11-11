@@ -48,15 +48,12 @@ private:
 
     void teardown() override;
 
-    void createPDFDocument() override;
     void installPDFDocument() override;
 
     CGFloat scaleFactor() const override;
 
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
-
-    bool isLocked() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override;
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
@@ -101,6 +98,8 @@ private:
     void didChangeScrollOffset() override;
     void didChangeIsInWindow();
 
+    void didChangeSettings() override;
+
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
 
@@ -116,7 +115,9 @@ private:
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
-    RefPtr<WebCore::GraphicsLayer> m_contentsLayer; // FIXME: Temporary, this will be replaced with a TiledBacking.
+    RefPtr<WebCore::GraphicsLayer> m_clippingLayer;
+    RefPtr<WebCore::GraphicsLayer> m_scrollingLayer;
+    RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
 };
 
 } // namespace WebKit

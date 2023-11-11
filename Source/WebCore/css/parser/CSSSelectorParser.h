@@ -67,6 +67,8 @@ public:
 
     CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
+    CSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
+    CSSSelectorList consumeNestedComplexForgivingSelectorList(CSSParserTokenRange&);
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
@@ -75,7 +77,6 @@ private:
     template<typename ConsumeSelector> CSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
     template<typename ConsumeSelector> CSSSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
 
-    CSSSelectorList consumeForgivingComplexSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
 
@@ -124,7 +125,7 @@ private:
     std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving = CSSParserEnum::IsForgiving::No);
 
 void add(Hasher&, const CSSSelectorParserContext&);
 

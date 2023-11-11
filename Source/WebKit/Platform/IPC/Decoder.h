@@ -40,6 +40,12 @@
 #include "ImportanceAssertion.h"
 #endif
 
+#ifdef __OBJC__
+typedef Class ClassStructPtr;
+#else
+typedef struct objc_class* ClassStructPtr;
+#endif
+
 namespace IPC {
 
 enum class MessageFlags : uint8_t;
@@ -51,7 +57,8 @@ template<typename, typename, typename> struct HasModernDecoder;
 
 #ifdef __OBJC__
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
-template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decodeWithAllowedClasses(Decoder&, NSArray<Class> *);
+template<typename T> using IsNotObjCObject = std::enable_if_t<!std::is_convertible<T *, id>::value, T *>;
+template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> Class getClass()
 {
@@ -160,10 +167,22 @@ public:
 
 #ifdef __OBJC__
     template<typename T, typename = IsObjCObject<T>>
-    std::optional<RetainPtr<T>> decodeWithAllowedClasses(NSArray<Class> *allowedClasses = @[ getClass<T>() ])
+    std::optional<RetainPtr<T>> decodeWithAllowedClasses(const Vector<ClassStructPtr>& allowedClasses = { getClass<T>() })
     {
-        return IPC::decodeWithAllowedClasses<T>(*this, allowedClasses);
+        m_allowedClasses = allowedClasses;
+        return IPC::decodeRequiringAllowedClasses<T>(*this);
     }
+
+    template<typename T, typename = IsNotObjCObject<T>>
+    std::optional<T> decodeWithAllowedClasses(const Vector<ClassStructPtr>& allowedClasses)
+    {
+        m_allowedClasses = allowedClasses;
+        return decode<T>();
+    }
+#endif
+
+#if PLATFORM(COCOA)
+    const Vector<ClassStructPtr>& allowedClasses() const { return m_allowedClasses; }
 #endif
 
     std::optional<Attachment> takeLastAttachment();
@@ -183,6 +202,9 @@ private:
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;
+#endif
+#if PLATFORM(COCOA)
+    Vector<ClassStructPtr> m_allowedClasses;
 #endif
 
     uint64_t m_destinationID;

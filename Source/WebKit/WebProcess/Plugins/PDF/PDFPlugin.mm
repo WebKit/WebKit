@@ -1576,12 +1576,6 @@ unsigned PDFPlugin::firstPageHeight() const
     return static_cast<unsigned>(CGCeiling([[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size.height));
 }
 
-bool PDFPlugin::isLocked() const
-{
-    return [m_pdfDocument isLocked];
-}
-
-
 void PDFPlugin::setView(PluginView& view)
 {
     PDFPluginBase::setView(view);
@@ -1614,11 +1608,6 @@ void PDFPlugin::teardown()
     
     [m_scrollCornerLayer removeFromSuperlayer];
     [m_contentLayer removeFromSuperlayer];
-}
-
-void PDFPlugin::createPDFDocument()
-{
-    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
 }
 
 void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef context)

@@ -40,6 +40,7 @@ namespace WebKit {
 
 class WebExtension;
 class WebExtensionContext;
+class WebExtensionTab;
 
 namespace WebExtensionDynamicScripts {
 
@@ -66,11 +67,12 @@ public:
 };
 
 std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension>);
-SourcePairs getSourcePairsForResource(std::optional<Vector<String>> files, std::optional<String> code, RefPtr<WebExtension>);
+SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, RefPtr<WebExtension>);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
+void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResultHolder&)>&&);
 void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserContentInjectedFrames, WebExtensionContext&);
-void removeStyleSheets(SourcePairs, WebCore::UserContentInjectedFrames, WebExtensionContext&);
+void removeStyleSheets(SourcePairs, WKWebView *, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 
 WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resultOfExecution, WKFrameInfo *, NSString *errorMessage);
 

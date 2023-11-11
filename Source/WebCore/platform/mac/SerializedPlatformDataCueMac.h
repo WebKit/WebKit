@@ -46,7 +46,7 @@ public:
 
     id nativeValue() const { return m_nativeValue.get(); }
 
-    WEBCORE_EXPORT static NSArray *allowedClassesForNativeValues();
+    WEBCORE_EXPORT static const Vector<Class>& allowedClassesForNativeValues();
 
 private:
 

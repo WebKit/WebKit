@@ -251,7 +251,7 @@ Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURender
 
 Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor& querySetDescriptor)
 {
-    return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()));
+    return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()), querySetDescriptor);
 }
 
 void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)

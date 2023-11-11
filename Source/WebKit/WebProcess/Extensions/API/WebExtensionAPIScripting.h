@@ -54,6 +54,8 @@ private:
     bool validateScript(NSDictionary *, NSString **outExceptionString);
     bool validateTarget(NSDictionary *, NSString **outExceptionString);
     bool validateCSS(NSDictionary *, NSString **outExceptionString);
+
+    NSArray* toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& parametersVector);
 #endif
 };
 

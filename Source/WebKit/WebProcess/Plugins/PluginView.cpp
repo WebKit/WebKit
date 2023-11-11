@@ -905,6 +905,11 @@ bool PluginView::isUsingUISideCompositing() const
     return m_webPage->isUsingUISideCompositing();
 }
 
+void PluginView::didChangeSettings()
+{
+    m_plugin->didChangeSettings();
+}
+
 } // namespace WebKit
 
 #endif

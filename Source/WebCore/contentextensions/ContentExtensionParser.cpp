@@ -213,7 +213,7 @@ bool isValidCSSSelector(const String& selector)
     WebCore::CSSParserContext context(HTMLQuirksMode);
     context.hasPseudoClassEnabled = true;
     CSSParser parser(context);
-    return !!parser.parseSelector(selector);
+    return !!parser.parseSelectorList(selector);
 }
 
 WebCore::CSSParserContext contentExtensionCSSParserContext()

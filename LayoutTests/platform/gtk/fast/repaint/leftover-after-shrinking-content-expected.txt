@@ -1,0 +1,10 @@
+12text content
+(repaint rects
+  (rect 8 8 400 584)
+  (rect 8 8 400 100)
+  (rect 8 8 400 584)
+  (rect 8 8 400 10)
+  (rect 58 8 1 50)
+  (rect 28 8 1 10)
+)
+

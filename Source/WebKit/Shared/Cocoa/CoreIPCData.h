@@ -27,15 +27,24 @@
 
 #if PLATFORM(COCOA)
 
-#import "DataReference.h"
+#include "DataReference.h"
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <wtf/RetainPtr.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
 class CoreIPCData {
 public:
+
+#ifdef __OBJC__
+    CoreIPCData(NSData *nsData)
+        : CoreIPCData(bridge_cast(nsData))
+    {
+    }
+#endif
+
     CoreIPCData(CFDataRef cfData)
         : m_cfData(cfData)
         , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
@@ -55,6 +64,11 @@ public:
     IPC::DataReference get() const
     {
         return m_reference;
+    }
+
+    RetainPtr<id> toID() const
+    {
+        return bridge_cast(createData().get());
     }
 
 private:

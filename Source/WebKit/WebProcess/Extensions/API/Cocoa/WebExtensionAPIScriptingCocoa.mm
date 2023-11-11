@@ -40,6 +40,7 @@
 #import "WebExtensionContentWorldType.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionDynamicScripts.h"
+#import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionTabIdentifier.h"
@@ -92,6 +93,7 @@ static inline void parseTargetInjectionOptions(NSDictionary *targetInfo, WebExte
         }
 
         parameters.frameIDs = frames;
+        return;
     }
 
     if (!boolForKey(targetInfo, allFramesKey, false))
@@ -147,7 +149,12 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
     parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
     parseScriptInjectionOptions(script, parameters);
 
-    // FIXME: <https://webkit.org/b/259954> Handle script injections in the UIProcess.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback), this](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call(toWebAPI(results.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -340,6 +347,31 @@ bool WebExtensionAPIScripting::validateCSS(NSDictionary *cssInfo, NSString **out
     }
 
     return true;
+}
+
+NSArray* WebExtensionAPIScripting::toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& parametersVector)
+{
+    auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
+
+    for (auto& parameters : parametersVector) {
+        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
+
+        if (parameters.result)
+            result[@"result"] = (NSString *)parameters.result.value();
+        else
+            result[@"result"] = NSNull.null;
+
+        ASSERT(parameters.frameID);
+        if (parameters.frameID)
+            result[@"frameId"] = @(WebKit::toWebAPI(parameters.frameID.value()));
+
+        if (parameters.error)
+            result[@"error"] = (NSString *)parameters.error.value();
+
+        [results addObject:result];
+    }
+
+    return [results copy];
 }
 
 } // namespace WebKit

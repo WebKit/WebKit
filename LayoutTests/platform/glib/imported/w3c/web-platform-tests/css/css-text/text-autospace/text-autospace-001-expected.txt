@@ -1,0 +1,12 @@
+国国XX国
+国。XX国
+国国XX国
+国。XX国
+国国11国
+
+FAIL text-autospace-001 assert_array_equals: expected property 1 to be 45 but got 40 (expected array [40, 45, 29, 34, 40] got [40, 40, 29, 29, 40])
+FAIL text-autospace-001 1 assert_array_equals: expected property 3 to be 34 but got 29 (expected array [40, 40, 29, 34, 40] got [40, 40, 29, 29, 40])
+FAIL text-autospace-001 2 assert_array_equals: expected property 1 to be 45 but got 40 (expected array [40, 45, 29, 34, 40] got [40, 40, 29, 29, 40])
+FAIL text-autospace-001 3 assert_array_equals: expected property 3 to be 34 but got 29 (expected array [40, 40, 29, 34, 40] got [40, 40, 29, 29, 40])
+FAIL text-autospace-001 4 assert_array_equals: expected property 1 to be 45 but got 40 (expected array [40, 45, 19, 25, 39.515625] got [40, 40, 19, 20, 39.515625])
+

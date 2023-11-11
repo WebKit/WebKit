@@ -33,23 +33,18 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
-#import "WKContentWorld.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionScriptInjectionParameters.h"
-#import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
-#import "_WKFrameHandle.h"
-#import "_WKFrameTreeNode.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <WebCore/ImageBufferUtilitiesCG.h>
-#import <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
@@ -582,30 +577,10 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
         }
     }
 
-    auto injectionResults = InjectionResultHolder::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(injectionResults->results, std::nullopt);
+    auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
+    executeScript(scriptPairs, webView, *m_contentScriptWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResultHolder& injectionResults) mutable {
+        completionHandler(injectionResults.results, std::nullopt);
     });
-
-    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, webView = RetainPtr { webView }, tab, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
-        SourcePairs scriptPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
-        Vector<RetainPtr<_WKFrameTreeNode>> frames = getFrames(mainFrame, parameters.frameIDs);
-
-        for (auto& frame : frames) {
-            WKFrameInfo *info = frame.get().info;
-            NSURL *frameURL = info.request.URL;
-            if (!hasPermission(frameURL, tab.get())) {
-                injectionResults->results.append(toInjectionResultParameters(nil, nil, nil));
-                continue;
-            }
-
-            for (auto& script : scriptPairs) {
-                [webView _evaluateJavaScript:script.value().first withSourceURL:script.value().second.value_or(URL { }) inFrame:info inContentWorld:m_contentScriptWorld.get()->wrapper() completionHandler:makeBlockPtr([injectionResults, aggregator](id resultOfExecution, NSError *error) mutable {
-                    injectionResults->results.append(toInjectionResultParameters(resultOfExecution, nil, error.localizedDescription));
-                }).get()];
-            }
-        }
-    }).get()];
 }
 
 void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
@@ -630,7 +605,7 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
     auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    SourcePairs styleSheetPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
+    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
     injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
 
     completionHandler(std::nullopt);
@@ -658,8 +633,8 @@ void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdent
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
     auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    SourcePairs styleSheetPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
-    removeStyleSheets(styleSheetPairs, injectedFrames, *this);
+    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+    removeStyleSheets(styleSheetPairs, webView, injectedFrames, *this);
 
     completionHandler(std::nullopt);
 }

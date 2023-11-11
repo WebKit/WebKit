@@ -48,6 +48,8 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
 
+#import "PDFKitSoftLink.h"
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -126,6 +128,11 @@ void PDFPluginBase::destroy()
     m_view = nullptr;
 }
 
+void PDFPluginBase::createPDFDocument()
+{
+    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
+}
+
 bool PDFPluginBase::isFullFramePlugin() const
 {
     // <object> or <embed> plugins will appear to be in their parent frame, so we have to
@@ -137,6 +144,16 @@ bool PDFPluginBase::isFullFramePlugin() const
     if (!is<PluginDocument>(document))
         return false;
     return downcast<PluginDocument>(*document).pluginWidget() == m_view;
+}
+
+bool PDFPluginBase::isLocked() const
+{
+    return [m_pdfDocument isLocked];
+}
+
+NSData *PDFPluginBase::rawData() const
+{
+    return (__bridge NSData *)m_data.get();
 }
 
 void PDFPluginBase::ensureDataBufferLength(uint64_t targetLength)

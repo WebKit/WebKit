@@ -224,7 +224,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -280,7 +280,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -390,7 +390,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -445,7 +445,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -569,7 +569,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -637,7 +637,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -709,7 +709,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -786,7 +786,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",

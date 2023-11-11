@@ -613,7 +613,7 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& 
 
     return m_entries.ensure(key, [&]() -> std::unique_ptr<SelectorQuery> {
         auto tokenizer = CSSTokenizer { selectors };
-        auto selectorList = parseCSSSelector(tokenizer.tokenRange(), context, nullptr, CSSParserEnum::IsNestedContext::No);
+        auto selectorList = parseCSSSelectorList(tokenizer.tokenRange(), context, nullptr, CSSParserEnum::IsNestedContext::No);
 
         if (!selectorList || selectorList->hasInvalidSelector())
             return nullptr;

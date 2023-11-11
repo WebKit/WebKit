@@ -7157,7 +7157,7 @@ void Internals::acceptTypedArrays(Int32Array&)
 Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const String& selector)
 {
     auto parser = CSSParser { { *contextDocument() } };
-    auto selectorList = parser.parseSelector(selector);
+    auto selectorList = parser.parseSelectorList(selector);
     if (!selectorList)
         return { };
     

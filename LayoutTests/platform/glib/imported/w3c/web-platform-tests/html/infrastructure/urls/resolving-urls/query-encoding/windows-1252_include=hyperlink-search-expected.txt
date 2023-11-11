@@ -1,0 +1,4 @@
+
+FAIL <a>.search assert_true: href content attribute expected substring %E5 got http://web-platform.test:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type=html expected true got false
+FAIL <area>.search assert_true: href content attribute expected substring %E5 got http://web-platform.test:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type=html expected true got false
+

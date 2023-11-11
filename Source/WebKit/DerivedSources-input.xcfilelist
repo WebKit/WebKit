@@ -192,8 +192,17 @@ $(PROJECT_DIR)/Shared/AuxiliaryProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCDictionary.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCSecureCoding.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
@@ -352,6 +361,7 @@ $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageGroupData.serialization.in
 $(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
+$(PROJECT_DIR)/Shared/WebPreferencesStore.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPushDaemonConnectionConfiguration.serialization.in
@@ -471,6 +481,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteRemoteCommandListener.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in

@@ -447,11 +447,8 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                 Vector<UnprocessedStackFrame> stackTrace;
                 stackTrace.reserveInitialCapacity(walkSize + !!shouldAppendTopFrameAsCCode);
                 if (shouldAppendTopFrameAsCCode)
-                    stackTrace.unsafeAppendWithoutCapacityCheck(UnprocessedStackFrame { machinePC });
-                for (size_t i = 0; i < walkSize; i++) {
-                    UnprocessedStackFrame frame = m_currentFrames[i];
-                    stackTrace.unsafeAppendWithoutCapacityCheck(frame);
-                }
+                    stackTrace.append(UnprocessedStackFrame { machinePC });
+                stackTrace.appendRange(m_currentFrames.begin(), m_currentFrames.begin() + walkSize);
 
                 m_unprocessedStackTraces.append(UnprocessedStackTrace { timestamp, nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
 

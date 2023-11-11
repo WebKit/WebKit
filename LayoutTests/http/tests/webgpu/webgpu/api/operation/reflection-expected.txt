@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :buffer_reflection_attributes:
+PASS :texture_reflection_attributes:
+PASS :query_set_reflection_attributes:
+

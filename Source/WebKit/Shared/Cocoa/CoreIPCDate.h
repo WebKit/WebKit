@@ -34,6 +34,14 @@ namespace WebKit {
 
 class CoreIPCDate {
 public:
+
+#ifdef __OBJC__
+    CoreIPCDate(NSDate *date)
+        : CoreIPCDate(bridge_cast(date))
+    {
+    }
+#endif
+
     CoreIPCDate(const CFDateRef date)
         : m_absoluteTime(CFDateGetAbsoluteTime(date))
     {
@@ -52,6 +60,11 @@ public:
     double get() const
     {
         return m_absoluteTime;
+    }
+
+    RetainPtr<id> toID() const
+    {
+        return bridge_cast(createDate().get());
     }
 
 private:

@@ -432,6 +432,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebPageGroupData.serialization.in
     Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in
+    Shared/WebPreferencesStore.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
@@ -538,6 +539,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
+    WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in
 
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 

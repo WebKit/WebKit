@@ -353,8 +353,8 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness-clamping-hw.html [ Failure Missing ]
 webkit.org/b/99026 css3/filters/effect-brightness-clamping.html [ Failure Missing ]
-webkit.org/b/99026 css3/filters/effect-drop-shadow-hw.html [ Failure ]
-webkit.org/b/99026 css3/filters/effect-drop-shadow.html [ Failure ]
+webkit.org/b/99026 css3/filters/effect-drop-shadow-hw.html [ ImageOnlyFailure ]
+webkit.org/b/99026 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
@@ -435,6 +435,7 @@ webkit.org/b/169918 compositing/transitions/singular-scale-transition.html [ Mis
 webkit.org/b/169918 compositing/visibility/visibility-composited-transforms.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
+webkit.org/b/169918 compositing/filters/drop-shadow.html [ ImageOnlyFailure ]
 
 # WebGL ANGLE backend failures
 webkit.org/b/245840 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
@@ -1199,6 +1200,8 @@ webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ S
 webkit.org/b/209403 fast/forms/placeholder-content-center-line-height-greater-than-content-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
+webkit.org/b/209727 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
+webkit.org/b/209727 fast/forms/single-text-line-content-clipping.html [ ImageOnlyFailure ]
 
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 
@@ -1442,7 +1445,7 @@ webkit.org/b/252878 fast/svg/parsing-fill-opacity.html [ Crash Pass Timeout ]
 webkit.org/b/252878 html5lib/webkit-resumer.html [ Pass Timeout ]
 webkit.org/b/252878 http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html [ Crash Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/webrtc/webrtc-blocked-unknown.html [ Crash Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/webrtc/webrtc-blocked-unknown.html [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-writing-modes/forms/text-input-vertical-overflow-no-scroll.html [ Failure Pass Timeout ]
@@ -2119,6 +2122,8 @@ webkit.org/b/138078 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 # Scrolling cleanup causing some test to fail
 webkit.org/b/159143 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 
+webkit.org/b/264567 fast/forms/scroll-into-view-and-show-validation-message.html [ Failure ]
+
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
@@ -2200,6 +2205,7 @@ webkit.org/b/178441 editing/deleting/delete-ligature-002.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-003.html [ Failure ]
 
 webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
+webkit.org/b/144690 fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 

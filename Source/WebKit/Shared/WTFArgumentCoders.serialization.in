@@ -49,6 +49,11 @@ header: <wtf/text/AtomString.h>
     String string()
 }
 
+header: <wtf/CheckedRef.h>
+[CustomHeader, Nested] class WTF::CanMakeCheckedPtr {
+    [NotSerialized] uint32_t ptrCount();
+}
+
 [WebKitPlatform] class WTF::UUID {
     uint64_t high();
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
