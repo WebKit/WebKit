@@ -117,6 +117,11 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
             addStyleRule(downcast<StyleRule>(rule));
         return;
 
+    case StyleRuleType::Scope:
+        // FIXME: to implement
+        // https://bugs.webkit.org/show_bug.cgi?id=264500
+        return;
+
     case StyleRuleType::Page:
         if (m_ruleSet)
             m_ruleSet->addPageRule(downcast<StyleRulePage>(rule));

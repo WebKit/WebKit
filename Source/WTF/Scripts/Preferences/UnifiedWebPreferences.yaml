@@ -1244,6 +1244,20 @@ CSSRhythmicSizingEnabled:
     WebCore:
       default: false
 
+CSSScopeAtRuleEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Scoping (@scope)"
+  humanReadableDescription: "Enable the CSS Scoping feature with @scope rule"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScrollAnchoringEnabled:
   type: bool
   status: testable

@@ -1,15 +1,15 @@
 
-FAIL CSSScopeRule.cssText, implicit scope undefined is not an object (evaluating 'style.sheet.rules[0].cssText')
-FAIL CSSScopeRule.cssText, root only undefined is not an object (evaluating 'style.sheet.rules[1].cssText')
-FAIL CSSScopeRule.cssText, root and limit undefined is not an object (evaluating 'style.sheet.rules[2].cssText')
-FAIL CSSScopeRule.cssText, limit only undefined is not an object (evaluating 'style.sheet.rules[3].cssText')
-FAIL CSSScopeRule.start, implicit scope undefined is not an object (evaluating 'style.sheet.rules[0].start')
-FAIL CSSScopeRule.start, root only undefined is not an object (evaluating 'style.sheet.rules[1].start')
-FAIL CSSScopeRule.start, root and limit undefined is not an object (evaluating 'style.sheet.rules[2].start')
-FAIL CSSScopeRule.start, limit only undefined is not an object (evaluating 'style.sheet.rules[3].start')
-FAIL CSSScopeRule.end, implicit scope undefined is not an object (evaluating 'style.sheet.rules[0].end')
-FAIL CSSScopeRule.end, root only undefined is not an object (evaluating 'style.sheet.rules[1].end')
-FAIL CSSScopeRule.end, root and limit undefined is not an object (evaluating 'style.sheet.rules[2].end')
-FAIL CSSScopeRule.end, limit only undefined is not an object (evaluating 'style.sheet.rules[3].end')
-FAIL CSSScopeRule is a CSSGroupingRule assert_true: expected true got false
+PASS CSSScopeRule.cssText, implicit scope
+PASS CSSScopeRule.cssText, root only
+PASS CSSScopeRule.cssText, root and limit
+PASS CSSScopeRule.cssText, limit only
+PASS CSSScopeRule.start, implicit scope
+PASS CSSScopeRule.start, root only
+PASS CSSScopeRule.start, root and limit
+PASS CSSScopeRule.start, limit only
+PASS CSSScopeRule.end, implicit scope
+PASS CSSScopeRule.end, root only
+PASS CSSScopeRule.end, root and limit
+PASS CSSScopeRule.end, limit only
+PASS CSSScopeRule is a CSSGroupingRule
 

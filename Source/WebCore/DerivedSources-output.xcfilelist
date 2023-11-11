@@ -461,6 +461,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSRuleList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSRuleList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSScale.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSScale.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSScopeRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSScopeRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkew.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkew.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewX.cpp

@@ -97,6 +97,10 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
         // lists of source data and CSSOM wrappers.
         return RuleFlatteningStrategy::CommitSelfThenChildren;
 
+    // FIXME: implement support for this and move this case up.
+    // https://bugs.webkit.org/show_bug.cgi?id=264496
+    case StyleRuleType::Scope:
+
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Import:
@@ -177,7 +181,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
     switch (styleRuleType) {
     case StyleRuleType::Style: {
         CSSParser parser(parserContextForDocument(document));
-        return !!parser.parseSelector(headerText, nullptr, isNestedContext);
+        return !!parser.parseSelectorList(headerText, nullptr, isNestedContext);
     }
     case StyleRuleType::Media:
     case StyleRuleType::Supports:

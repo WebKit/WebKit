@@ -36,6 +36,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "SelectorPseudoTypeMap.h"
+#include "css/parser/CSSParserEnum.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
@@ -75,14 +76,17 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
     );
 }
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext, CSSParserEnum::IsForgiving isForgiving)
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
     range.consumeWhitespace();
     auto consume = [&] {
-        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
+        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes && isForgiving == CSSParserEnum::IsForgiving::No)
             return parser.consumeNestedSelectorList(range);
-
+        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes && isForgiving == CSSParserEnum::IsForgiving::Yes)
+            return parser.consumeNestedComplexForgivingSelectorList(range);
+        if (isForgiving == CSSParserEnum::IsForgiving::Yes)
+            return parser.consumeComplexForgivingSelectorList(range);
         return parser.consumeComplexSelectorList(range);
     };
     CSSSelectorList result = consume();
@@ -204,10 +208,17 @@ CSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParserTokenRa
     return CSSSelectorList { WTFMove(selectorList) };
 }
 
-CSSSelectorList CSSSelectorParser::consumeForgivingComplexSelectorList(CSSParserTokenRange& range)
+CSSSelectorList CSSSelectorParser::consumeComplexForgivingSelectorList(CSSParserTokenRange& range)
 {
     return consumeForgivingSelectorList(range, [&](CSSParserTokenRange& range) {
         return consumeComplexSelector(range);
+    });
+}
+
+CSSSelectorList CSSSelectorParser::consumeNestedComplexForgivingSelectorList(CSSParserTokenRange& range)
+{
+    return consumeForgivingSelectorList(range, [&] (CSSParserTokenRange& range) {
+        return consumeNestedComplexSelector(range);
     });
 }
 
@@ -894,7 +905,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassType::Any: {
             SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             auto selectorList = makeUnique<CSSSelectorList>();
-            *selectorList = consumeForgivingComplexSelectorList(block);
+            *selectorList = consumeComplexForgivingSelectorList(block);
             if (!block.atEnd())
                 return nullptr;
             selector->setSelectorList(WTFMove(selectorList));

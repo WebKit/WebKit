@@ -21,15 +21,16 @@ PASS CSSLayerStatementRule interface: attribute nameList
 PASS CSSLayerStatementRule must be primary interface of statement
 PASS Stringification of statement
 PASS CSSLayerStatementRule interface: statement must inherit property "nameList" with the proper type
-FAIL CSSScopeRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface object length assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface object name assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface: attribute start assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL CSSScopeRule interface: attribute end assert_own_property: self does not have own property "CSSScopeRule" expected property "CSSScopeRule" missing
-FAIL Stringification of scope assert_class_string: class string of scope expected "[object CSSScopeRule]" but got "[object Null]"
-FAIL CSSScopeRule interface: scope must inherit property "start" with the proper type assert_inherits: provided value is not an object
-FAIL CSSScopeRule interface: scope must inherit property "end" with the proper type assert_inherits: provided value is not an object
+PASS CSSScopeRule interface: existence and properties of interface object
+PASS CSSScopeRule interface object length
+PASS CSSScopeRule interface object name
+PASS CSSScopeRule interface: existence and properties of interface prototype object
+PASS CSSScopeRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSScopeRule interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSScopeRule interface: attribute start
+PASS CSSScopeRule interface: attribute end
+PASS CSSScopeRule must be primary interface of scope
+PASS Stringification of scope
+PASS CSSScopeRule interface: scope must inherit property "start" with the proper type
+PASS CSSScopeRule interface: scope must inherit property "end" with the proper type
 
