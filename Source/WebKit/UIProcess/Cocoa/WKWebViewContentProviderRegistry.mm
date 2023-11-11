@@ -52,7 +52,7 @@
         return nil;
 
 #if ENABLE(WKPDFVIEW)
-    if (!configuration.preferences->_preferences->unifiedPDFEnabled()) {
+    if (!configuration.preferences || !configuration.preferences->_preferences->unifiedPDFEnabled()) {
         for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
             [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
     }
