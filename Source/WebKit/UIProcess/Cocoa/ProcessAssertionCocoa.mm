@@ -377,7 +377,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
     , m_reason(reason)
 {
 #if USE(EXTENSIONKIT)
-    if (AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
+    if (process.extensionProcess()) {
         NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
         NSString *runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
         m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName];
