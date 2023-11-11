@@ -130,7 +130,9 @@ struct ObjCHolderForTesting {
         RetainPtr<NSString>,
         RetainPtr<NSURL>,
         RetainPtr<NSData>,
-        RetainPtr<NSNumber>
+        RetainPtr<NSNumber>,
+        RetainPtr<NSArray>,
+        RetainPtr<NSDictionary>
     > ValueType;
 
     ValueType value;
@@ -288,4 +290,7 @@ TEST(IPCSerialization, Basic)
     runTestNS({ [NSNumber numberWithInteger: NSIntegerMax] });
     runTestNS({ [NSNumber numberWithInteger: NSIntegerMin] });
     runTestNS({ [NSNumber numberWithUnsignedInteger: NSUIntegerMax] });
+
+    runTestNS({ @[ @"Array test" ] });
+    runTestNS({ @{ @"Dictionary": @"Test"   } });
 }

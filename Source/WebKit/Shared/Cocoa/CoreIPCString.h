@@ -27,55 +27,31 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class CoreIPCData {
+class CoreIPCString  {
 public:
-
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
-
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
+    CoreIPCString(NSString *string)
+        : m_string(string)
     {
     }
 
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
+    CoreIPCString(String&& string)
+        : m_string(WTFMove(string))
     {
     }
 
-    RetainPtr<CFDataRef> createData() const
-    {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
-    }
+    RetainPtr<id> toID() { return (NSString *)m_string; }
 
 private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
+    friend struct IPC::ArgumentCoder<CoreIPCString, void>;
+
+    String m_string;
 };
 
-}
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

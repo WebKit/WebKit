@@ -40,6 +40,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
+#import <WebCore/PlatformImage.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 

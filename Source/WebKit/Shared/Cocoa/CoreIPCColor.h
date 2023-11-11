@@ -27,55 +27,34 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
+#include <WebCore/ColorCocoa.h>
+#include <wtf/ArgumentCoder.h>
 
 namespace WebKit {
 
-class CoreIPCData {
+class CoreIPCColor {
 public:
-
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
-
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
+    CoreIPCColor(WebCore::CocoaColor *color)
+        : m_color(WebCore::colorFromCocoaColor(color))
     {
     }
 
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
+    CoreIPCColor(WebCore::Color&& color)
+        : m_color(WTFMove(color))
     {
     }
 
-    RetainPtr<CFDataRef> createData() const
+    RetainPtr<id> toID()
     {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
+        return cocoaColor(m_color);
     }
 
 private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
+    friend struct IPC::ArgumentCoder<CoreIPCColor, void>;
+
+    WebCore::Color m_color;
 };
 
-}
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

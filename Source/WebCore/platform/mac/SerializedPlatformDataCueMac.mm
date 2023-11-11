@@ -109,10 +109,10 @@ const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const Seriali
     return static_cast<const SerializedPlatformDataCueMac*>(rep);
 }
 
-NSArray *SerializedPlatformDataCueMac::allowedClassesForNativeValues()
+const Vector<Class>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
 {
-    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses(@[ [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] ]);
-    return allowedClasses.get().get();
+    static NeverDestroyed<Vector<Class>> allowedClasses(Vector<Class> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
+    return allowedClasses;
 }
 
 SerializedPlatformDataCueValue SerializedPlatformDataCueMac::encodableValue() const

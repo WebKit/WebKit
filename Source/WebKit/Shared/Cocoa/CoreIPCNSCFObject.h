@@ -27,55 +27,53 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
-#include <CoreFoundation/CoreFoundation.h>
+#include "CoreIPCArray.h"
+#include "CoreIPCCFType.h"
+#include "CoreIPCColor.h"
+#include "CoreIPCData.h"
+#include "CoreIPCDate.h"
+#include "CoreIPCDictionary.h"
+#include "CoreIPCFont.h"
+#include "CoreIPCNumber.h"
+#include "CoreIPCSecureCoding.h"
+#include "CoreIPCString.h"
+#include "CoreIPCURL.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
-class CoreIPCData {
+class CoreIPCNSCFObject {
 public:
+    using ObjectValue = std::variant<
+        std::nullptr_t,
+        CoreIPCArray,
+        CoreIPCCFType,
+        CoreIPCColor,
+        CoreIPCData,
+        CoreIPCDate,
+        CoreIPCDictionary,
+        CoreIPCFont,
+        CoreIPCNumber,
+        CoreIPCSecureCoding,
+        CoreIPCString,
+        CoreIPCURL
+    >;
 
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
+    CoreIPCNSCFObject(id);
 
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
-    {
-    }
-
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
-    {
-    }
-
-    RetainPtr<CFDataRef> createData() const
-    {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
-    }
+    RetainPtr<id> toID();
 
 private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
+    friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;
+
+    CoreIPCNSCFObject(ObjectValue&& value)
+        : m_value(WTFMove(value))
+    {
+    }
+
+    ObjectValue m_value;
 };
 
-}
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

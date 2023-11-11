@@ -23,59 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
+#import "config.h"
+#import "CoreIPCSecureCoding.h"
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
+#import "ArgumentCodersCocoa.h"
 
 namespace WebKit {
 
-class CoreIPCData {
-public:
-
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
-
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
-    {
-    }
-
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
-    {
-    }
-
-    RetainPtr<CFDataRef> createData() const
-    {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
-    }
-
-private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
-};
-
+CoreIPCSecureCoding::CoreIPCSecureCoding(NSObject<NSSecureCoding> *object)
+    : m_secureCoding(object)
+{
+    RELEASE_ASSERT(!m_secureCoding || IPC::typeFromObject(object) == IPC::NSType::SecureCoding);
 }
+
+CoreIPCSecureCoding::CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&& object)
+    : m_secureCoding(WTFMove(object))
+{
+    RELEASE_ASSERT(!m_secureCoding || IPC::typeFromObject(m_secureCoding.get()) == IPC::NSType::SecureCoding);
+}
+
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

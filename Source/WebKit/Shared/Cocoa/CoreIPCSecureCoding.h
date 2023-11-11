@@ -27,55 +27,24 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
-#include <CoreFoundation/CoreFoundation.h>
+#include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
-class CoreIPCData {
+class CoreIPCSecureCoding {
 public:
+    CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
+    CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
 
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
-
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
-    {
-    }
-
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
-    {
-    }
-
-    RetainPtr<CFDataRef> createData() const
-    {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
-    }
+    RetainPtr<id> toID() { return m_secureCoding; }
 
 private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
+    friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;
+
+    IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
 };
 
-}
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)

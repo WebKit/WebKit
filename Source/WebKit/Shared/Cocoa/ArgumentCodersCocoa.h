@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #import "ArgumentCoders.h"
 
 #if PLATFORM(COCOA)
@@ -32,16 +34,56 @@
 namespace IPC {
 
 #ifdef __OBJC__
-void encodeObject(Encoder&, id);
-std::optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
+
+template<typename T>
+class CoreIPCRetainPtr : public RetainPtr<T> {
+public:
+    CoreIPCRetainPtr()
+        : RetainPtr<T>()
+    {
+    }
+
+    CoreIPCRetainPtr(T *object)
+        : RetainPtr<T>(object)
+    {
+    }
+
+    CoreIPCRetainPtr(RetainPtr<T>&& object)
+        : RetainPtr<T>(WTFMove(object))
+    {
+    }
+};
+
+enum class NSType : uint8_t {
+    Array,
+    Color,
+    Data,
+    Date,
+    Dictionary,
+    Font,
+    Number,
+    SecureCoding,
+    String,
+    URL,
+    CF,
+    Unknown,
+};
+NSType typeFromObject(id);
+
+void encodeObjectWithWrapper(Encoder&, id);
+std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const Vector<Class>& allowedClasses);
+
+template<typename T> void encodeObjectDirectly(Encoder&, T *);
+template<typename T> void encodeObjectDirectly(Encoder&, T);
+template<typename T> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
 
 #if ASSERT_ENABLED
 
-static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasses)
+static inline bool isObjectClassAllowed(id object, const Vector<Class>& allowedClasses)
 {
-    for (Class allowedClass in allowedClasses) {
+    for (Class allowedClass : allowedClasses) {
         if ([object isKindOfClass:allowedClass])
             return true;
     }
@@ -51,12 +93,22 @@ static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasse
 #endif // ASSERT_ENABLED
 
 template<typename T, typename>
-std::optional<RetainPtr<T>> decodeWithAllowedClasses(Decoder& decoder, NSArray<Class> *allowedClasses)
+std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder& decoder)
 {
-    auto result = decodeObject(decoder, allowedClasses);
+    auto result = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
     if (!result)
         return std::nullopt;
-    ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
+    ASSERT(!*result || isObjectClassAllowed((*result).get(), decoder.allowedClasses()));
+    return { *result };
+}
+
+template<typename T, typename>
+std::optional<T> decodeRequiringAllowedClasses(Decoder& decoder)
+{
+    auto result = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
+    if (!result)
+        return std::nullopt;
+    ASSERT(!*result || isObjectClassAllowed((*result).get(), decoder.allowedClasses()));
     return { *result };
 }
 
@@ -64,7 +116,21 @@ template<typename T> struct ArgumentCoder<T *> {
     template<typename U = T, typename = IsObjCObject<U>>
     static void encode(Encoder& encoder, U *object)
     {
-        encodeObject(encoder, object);
+        encodeObjectWithWrapper(encoder, object);
+    }
+};
+
+template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
+    template<typename U = T>
+    static void encode(Encoder& encoder, const CoreIPCRetainPtr<U>& object)
+    {
+        encodeObjectDirectly<U>(encoder, object.get());
+    }
+
+    template<typename U = T>
+    static std::optional<RetainPtr<U>> decode(Decoder& decoder)
+    {
+        return decodeObjectDirectlyRequiringAllowedClasses<U>(decoder);
     }
 };
 

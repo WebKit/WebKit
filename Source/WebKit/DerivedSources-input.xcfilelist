@@ -192,8 +192,17 @@ $(PROJECT_DIR)/Shared/AuxiliaryProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCDictionary.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCSecureCoding.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in

@@ -27,55 +27,31 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/cocoa/TypeCastsCocoa.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
-class CoreIPCData {
+class CoreIPCURL {
 public:
-
-#ifdef __OBJC__
-    CoreIPCData(NSData *nsData)
-        : CoreIPCData(bridge_cast(nsData))
-    {
-    }
-#endif
-
-    CoreIPCData(CFDataRef cfData)
-        : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
+    CoreIPCURL(NSURL *url)
+        : m_url(url)
     {
     }
 
-    CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
+    CoreIPCURL(URL&& url)
+        : m_url(WTFMove(url))
     {
     }
 
-    RetainPtr<CFDataRef> createData() const
-    {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
-    }
-
-    IPC::DataReference get() const
-    {
-        return m_reference;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createData().get());
-    }
+    RetainPtr<id> toID() { return (NSURL *)m_url; }
 
 private:
-    RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
+    friend struct IPC::ArgumentCoder<CoreIPCURL, void>;
+
+    URL m_url;
 };
 
-}
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)
