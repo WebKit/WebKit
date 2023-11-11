@@ -364,25 +364,6 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:figure, roledescription:figure, tag:div, xml-roles:figure
 ------------
-AXRole: AXLandmarkForm
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition:  { 0.00000, 0.00000 }
-AXSize: { 0.00000, 0.00000 }
-AXTitle:
-AXDescription:
-AXValue:
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:form, tag:div, xml-roles:form
-------------
 AXRole: AXGroup
 AXParent: AXWebArea
 AXChildren: 0

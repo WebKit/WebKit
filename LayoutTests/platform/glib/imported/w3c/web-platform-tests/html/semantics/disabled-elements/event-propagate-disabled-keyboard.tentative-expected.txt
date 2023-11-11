@@ -1,4 +1,4 @@
-                                          Span
+                                           Span
 Span Text
 
 PASS Untrusted key events on <input>, observed from <form>
