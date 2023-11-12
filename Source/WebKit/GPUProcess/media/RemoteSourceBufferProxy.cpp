@@ -345,18 +345,18 @@ void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemote
         m_sourceBufferPrivate->updateTrackIds(WTFMove(trackIdPairs));
 }
 
-void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
     ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
     ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
-void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
     ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
     ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)

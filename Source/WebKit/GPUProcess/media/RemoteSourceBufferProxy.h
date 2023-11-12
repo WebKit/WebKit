@@ -112,8 +112,8 @@ private:
     void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::SourceBufferPrivate::ComputeSeekPromise::Result&&)>&&);
     void seekToTime(const MediaTime&);
     void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
-    void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
-    void enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
+    void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
+    void enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
     void minimumUpcomingPresentationTimeForTrackID(const AtomString&, CompletionHandler<void(MediaTime)>&&);
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);

@@ -1229,14 +1229,14 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-void SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID)
 {
-    m_private->bufferedSamplesForTrackId(trackID, WTFMove(completionHandler));
+    return m_private->bufferedSamplesForTrackId(trackID);
 }
 
-void SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
 {
-    return m_private->enqueuedSamplesForTrackID(trackID, WTFMove(completionHandler));
+    return m_private->enqueuedSamplesForTrackID(trackID);
 }
 
 MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)

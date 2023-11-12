@@ -111,8 +111,8 @@ private:
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime) final;
 
     // Internals Utility methods
-    void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
-    void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&&);

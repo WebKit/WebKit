@@ -394,30 +394,30 @@ void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, Atom
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::UpdateTrackIds(identifierPairs), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trackId)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning()) {
-        completionHandler({ });
-        return;
-    }
+    if (!isGPURunning())
+        return SamplesPromise::createAndResolve(Vector<String> { });
 
-    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(m_trackIdentifierMap.get(trackId)), [completionHandler = WTFMove(completionHandler)](Vector<String>&& samples) mutable {
-        completionHandler(WTFMove(samples));
-    }, m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        if (!result)
+            return SamplesPromise::createAndResolve(Vector<String> { });
+        return SamplesPromise::createAndSettle(WTFMove(*result));
+    });
 }
 
-void SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trackId)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning()) {
-        completionHandler({ });
-        return;
-    }
+    if (!isGPURunning())
+        return SamplesPromise::createAndResolve(Vector<String> { });
 
-    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(m_trackIdentifierMap.get(trackId)), [completionHandler = WTFMove(completionHandler)](auto&& samples) mutable {
-        completionHandler(WTFMove(samples));
-    }, m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        if (!result)
+            return SamplesPromise::createAndResolve(Vector<String> { });
+        return SamplesPromise::createAndSettle(WTFMove(*result));
+    });
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&& completionHandler)

@@ -251,23 +251,20 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
     updateBufferedFromTrackBuffers({ });
 }
 
-void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId)
 {
     auto* trackBuffer = m_trackBufferMap.get(trackId);
-    if (!trackBuffer) {
-        completionHandler({ });
-        return;
-    }
+    if (!trackBuffer)
+        return SamplesPromise::createAndResolve(Vector<String> { });
 
-    auto sampleDescriptions = WTF::map(trackBuffer->samples().decodeOrder(), [](auto& entry) {
+    return SamplesPromise::createAndResolve(WTF::map(trackBuffer->samples().decodeOrder(), [](auto& entry) {
         return toString(*entry.second);
-    });
-    completionHandler(WTFMove(sampleDescriptions));
+    }));
 }
 
-void SourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
 {
-    completionHandler({ });
+    return SamplesPromise::createAndResolve(Vector<String> { });
 }
 
 void SourceBufferPrivate::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffer, const AtomString& trackID)

@@ -151,8 +151,9 @@ public:
     WEBCORE_EXPORT virtual void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime);
 
     // Internals Utility methods
-    WEBCORE_EXPORT virtual void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
-    WEBCORE_EXPORT virtual void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
+    using SamplesPromise = NativePromise<Vector<String>, int>;
+    WEBCORE_EXPORT virtual Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&);
+    WEBCORE_EXPORT virtual Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
     virtual void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) { }
 
