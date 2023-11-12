@@ -27,7 +27,6 @@
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderObject.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"

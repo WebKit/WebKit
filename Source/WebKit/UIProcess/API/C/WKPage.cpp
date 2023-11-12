@@ -815,19 +815,19 @@ void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
     WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case kWKPaginationModeUnpaginated:
-        mode = WebCore::Unpaginated;
+        mode = WebCore::Pagination::Mode::Unpaginated;
         break;
     case kWKPaginationModeLeftToRight:
-        mode = WebCore::LeftToRightPaginated;
+        mode = WebCore::Pagination::Mode::LeftToRightPaginated;
         break;
     case kWKPaginationModeRightToLeft:
-        mode = WebCore::RightToLeftPaginated;
+        mode = WebCore::Pagination::Mode::RightToLeftPaginated;
         break;
     case kWKPaginationModeTopToBottom:
-        mode = WebCore::TopToBottomPaginated;
+        mode = WebCore::Pagination::Mode::TopToBottomPaginated;
         break;
     case kWKPaginationModeBottomToTop:
-        mode = WebCore::BottomToTopPaginated;
+        mode = WebCore::Pagination::Mode::BottomToTopPaginated;
         break;
     default:
         return;
@@ -838,15 +838,15 @@ void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 WKPaginationMode WKPageGetPaginationMode(WKPageRef pageRef)
 {
     switch (toImpl(pageRef)->paginationMode()) {
-    case WebCore::Unpaginated:
+    case WebCore::Pagination::Mode::Unpaginated:
         return kWKPaginationModeUnpaginated;
-    case WebCore::LeftToRightPaginated:
+    case WebCore::Pagination::Mode::LeftToRightPaginated:
         return kWKPaginationModeLeftToRight;
-    case WebCore::RightToLeftPaginated:
+    case WebCore::Pagination::Mode::RightToLeftPaginated:
         return kWKPaginationModeRightToLeft;
-    case WebCore::TopToBottomPaginated:
+    case WebCore::Pagination::Mode::TopToBottomPaginated:
         return kWKPaginationModeTopToBottom;
-    case WebCore::BottomToTopPaginated:
+    case WebCore::Pagination::Mode::BottomToTopPaginated:
         return kWKPaginationModeBottomToTop;
     }
 

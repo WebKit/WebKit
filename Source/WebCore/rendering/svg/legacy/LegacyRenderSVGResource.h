@@ -44,7 +44,7 @@ enum class RenderSVGResourceMode {
     ApplyToText    = 1 << 2 // used in combination with ApplyTo{Fill|Stroke}Mode
 };
 
-enum class RepaintRectCalculation;
+enum class RepaintRectCalculation : bool;
 
 class Color;
 class FloatRect;

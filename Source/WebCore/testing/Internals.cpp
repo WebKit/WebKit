@@ -2162,15 +2162,15 @@ ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int page
 
     Pagination pagination;
     if (mode == "Unpaginated"_s)
-        pagination.mode = Unpaginated;
+        pagination.mode = Pagination::Mode::Unpaginated;
     else if (mode == "LeftToRightPaginated"_s)
-        pagination.mode = LeftToRightPaginated;
+        pagination.mode = Pagination::Mode::LeftToRightPaginated;
     else if (mode == "RightToLeftPaginated"_s)
-        pagination.mode = RightToLeftPaginated;
+        pagination.mode = Pagination::Mode::RightToLeftPaginated;
     else if (mode == "TopToBottomPaginated"_s)
-        pagination.mode = TopToBottomPaginated;
+        pagination.mode = Pagination::Mode::TopToBottomPaginated;
     else if (mode == "BottomToTopPaginated"_s)
-        pagination.mode = BottomToTopPaginated;
+        pagination.mode = Pagination::Mode::BottomToTopPaginated;
     else
         return Exception { ExceptionCode::SyntaxError };
 

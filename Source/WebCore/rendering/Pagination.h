@@ -25,36 +25,19 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
-enum PaginationMode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
+enum class PaginationMode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
 
 struct Pagination {
     using Mode = PaginationMode;
 
     friend bool operator==(const Pagination&, const Pagination&) = default;
 
-    Mode mode { Unpaginated };
+    Mode mode { Pagination::Mode::Unpaginated };
     bool behavesLikeColumns { false };
     unsigned pageLength { 0 };
     unsigned gap { 0 };
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::Pagination::Mode> {
-    using values = EnumValues<
-        WebCore::Pagination::Mode,
-        WebCore::Pagination::Mode::Unpaginated,
-        WebCore::Pagination::Mode::LeftToRightPaginated,
-        WebCore::Pagination::Mode::RightToLeftPaginated,
-        WebCore::Pagination::Mode::TopToBottomPaginated,
-        WebCore::Pagination::Mode::BottomToTopPaginated
-    >;
-};
-
-} // namespace WTF
