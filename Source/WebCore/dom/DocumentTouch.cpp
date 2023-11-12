@@ -40,9 +40,9 @@ namespace WebCore {
 Ref<Touch> DocumentTouch::createTouch(Document& document, RefPtr<WindowProxy>&& window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force)
 {
     RefPtr<LocalFrame> frame;
-    if (window && is<LocalFrame>(window->frame()))
-        frame = downcast<LocalFrame>(window->frame());
-    else
+    if (window)
+        frame = dynamicDowncast<LocalFrame>(window->frame());
+    if (!frame)
         frame = document.frame();
 
     // FIXME: It's not clear from the documentation at

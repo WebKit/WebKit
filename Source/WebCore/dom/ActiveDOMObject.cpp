@@ -37,7 +37,9 @@ namespace WebCore {
 static inline ScriptExecutionContext* suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
 {
     // For detached documents, make sure we observe their context document instead.
-    return is<Document>(scriptExecutionContext) ? &downcast<Document>(*scriptExecutionContext).contextDocument() : scriptExecutionContext;
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
+        return &document->contextDocument();
+    return scriptExecutionContext;
 }
 
 inline ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* context, CheckedScriptExecutionContextType)

@@ -158,13 +158,15 @@ static void upgradeElementsInShadowIncludingDescendants(ContainerNode& root)
 
 void CustomElementRegistry::upgrade(Node& root)
 {
-    if (!is<ContainerNode>(root))
+    auto* containerNode = dynamicDowncast<ContainerNode>(root);
+    if (!containerNode)
         return;
 
-    if (is<Element>(root) && downcast<Element>(root).isCustomElementUpgradeCandidate())
-        CustomElementReactionQueue::tryToUpgradeElement(downcast<Element>(root));
+    auto* element = dynamicDowncast<Element>(*containerNode);
+    if (element && element->isCustomElementUpgradeCandidate())
+        CustomElementReactionQueue::tryToUpgradeElement(*element);
 
-    upgradeElementsInShadowIncludingDescendants(downcast<ContainerNode>(root));
+    upgradeElementsInShadowIncludingDescendants(*containerNode);
 }
 
 template<typename Visitor>

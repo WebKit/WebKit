@@ -1043,8 +1043,8 @@ bool Document::hasManifest() const
 DocumentType* Document::doctype() const
 {
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (is<DocumentType>(node))
-            return downcast<DocumentType>(node);
+        if (auto* documentType = dynamicDowncast<DocumentType>(node))
+            return documentType;
     }
     return nullptr;
 }
@@ -1064,8 +1064,9 @@ void Document::childrenChanged(const ChildChange& change)
         return;
     m_documentElement = WTFMove(newDocumentElement);
     setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
-    setDocumentElementTextDirection(m_documentElement && is<HTMLElement>(m_documentElement) && m_documentElement->usesEffectiveTextDirection()
-        ? downcast<HTMLElement>(*m_documentElement).effectiveTextDirection() : TextDirection::LTR);
+    auto* htmlDocumentElement = dynamicDowncast<HTMLElement>(m_documentElement.get());
+    setDocumentElementTextDirection(htmlDocumentElement && htmlDocumentElement->usesEffectiveTextDirection()
+        ? htmlDocumentElement->effectiveTextDirection() : TextDirection::LTR);
     // The root style used for media query matching depends on the document element.
     styleScope().clearResolver();
 }
@@ -1226,9 +1227,8 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
             // ShadowRoot cannot disconnect itself from the host node.
             return Exception { ExceptionCode::HierarchyRequestError };
         }
-        if (is<HTMLFrameOwnerElement>(source)) {
-            auto& frameOwnerElement = downcast<HTMLFrameOwnerElement>(source);
-            if (frame() && frame()->tree().isDescendantOf(frameOwnerElement.contentFrame()))
+        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(source)) {
+            if (frame() && frame()->tree().isDescendantOf(frameOwnerElement->contentFrame()))
                 return Exception { ExceptionCode::HierarchyRequestError };
         }
         auto result = source.remove();
@@ -1903,11 +1903,12 @@ template<> struct TitleTraits<SVGTitleElement> {
     static SVGTitleElement* findTitleElement(Document& document) { return childrenOfType<SVGTitleElement>(*document.documentElement()).first(); }
 };
 
-template<typename TitleElement> Element* selectNewTitleElement(Document& document, Element* oldTitleElement, Element& changingTitleElement)
+template<typename TitleElement> Element* selectNewTitleElement(Document& document, Element* oldTitleElement, Element& changingElement)
 {
     using Traits = TitleTraits<TitleElement>;
 
-    if (!is<TitleElement>(changingTitleElement)) {
+    auto* changingTitleElement = dynamicDowncast<TitleElement>(changingElement);
+    if (!changingTitleElement) {
         ASSERT(oldTitleElement == Traits::findTitleElement(document));
         return oldTitleElement;
     }
@@ -1917,8 +1918,8 @@ template<typename TitleElement> Element* selectNewTitleElement(Document& documen
 
     // Optimized common case: We have no title element yet.
     // We can figure out which title element should be used without searching.
-    bool isEligible = Traits::isInEligibleLocation(downcast<TitleElement>(changingTitleElement));
-    auto* newTitleElement = isEligible ? &changingTitleElement : nullptr;
+    bool isEligible = Traits::isInEligibleLocation(*changingTitleElement);
+    auto* newTitleElement = isEligible ? changingTitleElement : nullptr;
     ASSERT(newTitleElement == Traits::findTitleElement(document));
     return newTitleElement;
 }
@@ -2492,12 +2493,13 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
         for (CheckedPtr currentRenderer = element.renderer(); currentRenderer && !currentRenderer->isRenderView(); currentRenderer = currentRenderer->container()) {
 
             // Require the entire container chain to be boxes.
-            if (!is<RenderBox>(*currentRenderer)) {
+            CheckedPtr currentRendererBox = dynamicDowncast<RenderBox>(*currentRenderer);
+            if (!currentRendererBox) {
                 requireFullLayout = true;
                 break;
             }
 
-            previousBox = std::exchange(currentBox, downcast<RenderBox>(currentRenderer.get()));
+            previousBox = std::exchange(currentBox, WTFMove(currentRendererBox));
 
             if (currentBox->style().containerType() != ContainerType::Normal) {
                 requireFullLayout = true;
@@ -2821,8 +2823,8 @@ void Document::willBeRemovedFromFrame()
     if (hasLivingRenderTree())
         destroyRenderTree();
 
-    if (is<PluginDocument>(*this))
-        downcast<PluginDocument>(*this).detachFromPluginElement();
+    if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this))
+        pluginDocument->detachFromPluginElement();
 
     if (CheckedPtr page = this->page()) {
 #if ENABLE(POINTER_LOCK)
@@ -5073,10 +5075,9 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
 
         if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
-            if (is<HTMLFormControlElement>(*oldFocusedElement)) {
-                HTMLFormControlElement& formControlElement = downcast<HTMLFormControlElement>(*oldFocusedElement);
-                if (formControlElement.wasChangedSinceLastFormControlChangeEvent())
-                    formControlElement.dispatchFormControlChangeEvent();
+            if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*oldFocusedElement)) {
+                if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
+                    formControlElement->dispatchFormControlChangeEvent();
             }
 
             // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
@@ -5097,8 +5098,8 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             }
         } else {
             // Match the order in HTMLTextFormControlElement::dispatchBlurEvent.
-            if (is<HTMLInputElement>(*oldFocusedElement))
-                downcast<HTMLInputElement>(*oldFocusedElement).endEditing();
+            if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(*oldFocusedElement))
+                inputElement->endEditing();
             if (CheckedPtr page = this->page())
                 page->chrome().client().elementDidBlur(*oldFocusedElement);
             ASSERT(!m_focusedElement);
@@ -5114,10 +5115,10 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
                 view->setFocus(false);
         }
 
-        if (is<HTMLInputElement>(oldFocusedElement)) {
+        if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(*oldFocusedElement)) {
             // HTMLInputElement::didBlur just scrolls text fields back to the beginning.
             // FIXME: This could be done asynchronusly.
-            downcast<HTMLInputElement>(*oldFocusedElement).didBlur();
+            inputElement->didBlur();
         }
 
         if (focusChangeBlocked)
@@ -5258,13 +5259,13 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
             nextNode = WTFMove(node);
         if (direction == FocusDirection::Forward)
             return ElementTraversal::previous(*nextNode);
-        if (is<Element>(*nextNode))
-            return downcast<Element>(nextNode.get());
+        if (auto* nextElement = dynamicDowncast<Element>(*nextNode))
+            return nextElement;
         return ElementTraversal::next(*nextNode);
     }
 
-    if (is<Element>(*node))
-        return downcast<Element>(node.get());
+    if (auto* element = dynamicDowncast<Element>(*node))
+        return element;
     if (Element* elementBeforeNextFocusableElement = direction == FocusDirection::Forward ? ElementTraversal::previous(*node) : ElementTraversal::next(*node))
         return elementBeforeNextFocusableElement;
     return node->parentOrShadowHostElement();
@@ -7008,18 +7009,18 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
         return std::nullopt;
 
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(*context))
-        return RenderingContext { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
+    if (RefPtr renderingContext = dynamicDowncast<WebGLRenderingContext>(*context))
+        return RenderingContext { WTFMove(renderingContext) };
 
-    if (is<WebGL2RenderingContext>(*context))
-        return RenderingContext { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
+    if (RefPtr renderingContext = dynamicDowncast<WebGL2RenderingContext>(*context))
+        return RenderingContext { WTFMove(renderingContext) };
 #endif
 
-    if (is<ImageBitmapRenderingContext>(*context))
-        return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
+    if (RefPtr renderingContext = dynamicDowncast<ImageBitmapRenderingContext>(*context))
+        return RenderingContext { WTFMove(renderingContext) };
 
-    if (is<GPUCanvasContext>(*context))
-        return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context))
+        return RenderingContext { WTFMove(gpuCanvasContext) };
 
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }
@@ -7265,11 +7266,8 @@ void Document::serviceRequestVideoFrameCallbacks()
 
     bool isServicingRequestVideoFrameCallbacks = false;
     forEachMediaElement([now = domWindow()->frozenNowTimestamp(), &isServicingRequestVideoFrameCallbacks](auto& element) {
-        if (!is<HTMLVideoElement>(element))
-            return;
-
-        Ref videoElement = downcast<HTMLVideoElement>(element);
-        if (videoElement->shouldServiceRequestVideoFrameCallbacks()) {
+        RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(element);
+        if (videoElement && videoElement->shouldServiceRequestVideoFrameCallbacks()) {
             isServicingRequestVideoFrameCallbacks = true;
             videoElement->serviceRequestVideoFrameCallbacks(now);
         }
@@ -7680,20 +7678,18 @@ Document::RegionFixedPair Document::absoluteEventRegionForNode(Node& node)
     LayoutRect rootRelativeBounds;
     bool insideFixedPosition = false;
 
-    if (is<Document>(node)) {
-        auto& document = downcast<Document>(node);
-        if (&document == this)
+    if (auto* document = dynamicDowncast<Document>(node)) {
+        if (document == this)
             rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
-        else if (RefPtr element = document.ownerElement())
+        else if (RefPtr element = document->ownerElement())
             rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
-    } else if (is<Element>(node)) {
-        auto& element = downcast<Element>(node);
-        if (is<HTMLBodyElement>(element)) {
+    } else if (auto* element = dynamicDowncast<Element>(node)) {
+        if (is<HTMLBodyElement>(*element)) {
             // For the body, just use the document bounds.
             // The body may not cover this whole area, but it's OK for this region to be an overestimate.
             rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
         } else
-            rootRelativeBounds = element.absoluteEventHandlerBounds(insideFixedPosition);
+            rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
     }
 
     if (!rootRelativeBounds.isEmpty())
@@ -7814,8 +7810,10 @@ Element* eventTargetElementForDocument(Document* document)
     if (!document)
         return nullptr;
     Element* element = document->focusedElement();
-    if (!element && is<PluginDocument>(*document))
-        element = downcast<PluginDocument>(*document).pluginElement();
+    if (!element) {
+        if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*document))
+            element = pluginDocument->pluginElement();
+    }
     if (!element && document->isHTMLDocument())
         element = document->bodyOrFrameset();
     if (!element)
@@ -8002,8 +8000,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             elementsToClearHover.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
-        if (is<HTMLFrameOwnerElement>(oldHoveredElement)) {
-            if (RefPtr contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
+        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(oldHoveredElement.get())) {
+            if (RefPtr contentDocument = frameOwnerElement->contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr);
         }
     }
@@ -8655,17 +8653,14 @@ void Document::updateResizeObservations(Page& page)
 
 const AtomString& Document::dir() const
 {
-    auto* documentElement = this->documentElement();
-    if (!is<HTMLHtmlElement>(documentElement))
-        return nullAtom();
-    return downcast<HTMLHtmlElement>(*documentElement).dir();
+    auto* documentElement = dynamicDowncast<HTMLHtmlElement>(this->documentElement());
+    return documentElement ? documentElement->dir() : nullAtom();
 }
 
 void Document::setDir(const AtomString& value)
 {
-    RefPtr documentElement = this->documentElement();
-    if (is<HTMLHtmlElement>(documentElement))
-        downcast<HTMLHtmlElement>(*documentElement).setDir(value);
+    if (RefPtr documentElement = dynamicDowncast<HTMLHtmlElement>(this->documentElement()))
+        documentElement->setDir(value);
 }
 
 DOMSelection* Document::getSelection()
@@ -8986,18 +8981,18 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
 void Document::keyframesRuleDidChange(const String& name)
 {
     for (auto* animation : WebAnimation::instances()) {
-        if (!is<CSSAnimation>(*animation) || !animation->isRelevant())
+        auto cssAnimation = dynamicDowncast<CSSAnimation>(*animation);
+        if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
 
-        auto& cssAnimation = downcast<CSSAnimation>(*animation);
-        if (cssAnimation.animationName() != name)
+        if (cssAnimation->animationName() != name)
             continue;
 
-        auto owningElement = cssAnimation.owningElement();
+        auto owningElement = cssAnimation->owningElement();
         if (!owningElement || !owningElement->element.isConnected() || &owningElement->element.document() != this)
             continue;
 
-        cssAnimation.keyframesRuleDidChange();
+        cssAnimation->keyframesRuleDidChange();
     }
 }
 
@@ -9011,7 +9006,8 @@ void Document::addTopLayerElement(Element& element)
         if (candidatePopover->hasFullscreenFlag())
             return;
 #endif
-        if (is<HTMLDialogElement>(*candidatePopover) && downcast<HTMLDialogElement>(*candidatePopover).isModal())
+        auto* dialogElement = dynamicDowncast<HTMLDialogElement>(*candidatePopover);
+        if (dialogElement && dialogElement->isModal())
             return;
         auto result = m_autoPopoverList.add(*candidatePopover);
         RELEASE_ASSERT(result.isNewEntry);
@@ -9032,8 +9028,8 @@ void Document::removeTopLayerElement(Element& element)
 HTMLDialogElement* Document::activeModalDialog() const
 {
     for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (is<HTMLDialogElement>(element))
-            return downcast<HTMLDialogElement>(element.ptr());
+        if (auto* dialogElement = dynamicDowncast<HTMLDialogElement>(element.get()))
+            return dialogElement;
     }
 
     return nullptr;
@@ -9092,7 +9088,8 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
         return;
 
     RefPtr popoverToAvoidHiding = [&]() -> HTMLElement* {
-        RefPtr startElement = is<Element>(target) ? &downcast<Element>(target) : target.parentElement();
+        auto* targetElement = dynamicDowncast<Element>(target);
+        RefPtr startElement = targetElement ? targetElement : target.parentElement();
         auto [clickedPopover, invokerPopover] = [&]() {
             RefPtr<HTMLElement> clickedPopover;
             RefPtr<HTMLElement> invokerPopover;
@@ -9557,11 +9554,9 @@ void Document::clearCanvasPreparation(HTMLCanvasElement& canvas)
 
 void Document::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect)
 {
-    if (!is<HTMLCanvasElement>(canvasBase))
-        return;
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
-    if (canvas.needsPreparationForDisplay()) {
-        m_canvasesNeedingDisplayPreparation.add(canvas);
+    auto* canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase);
+    if (canvas && canvas->needsPreparationForDisplay()) {
+        m_canvasesNeedingDisplayPreparation.add(*canvas);
         // Schedule a rendering update to force handling of prepareForDisplay
         // for any queued canvases. This is especially important for any canvas
         // that is not in the DOM, as those don't have a rect to invalidate to
@@ -9583,10 +9578,8 @@ void Document::updateSleepDisablerIfNeeded()
 
 void Document::canvasDestroyed(CanvasBase& canvasBase)
 {
-    if (!is<HTMLCanvasElement>(canvasBase))
-        return;
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
-    m_canvasesNeedingDisplayPreparation.remove(canvas);
+    if (auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase))
+        m_canvasesNeedingDisplayPreparation.remove(*canvasElement);
 }
 
 JSC::VM& Document::vm()
