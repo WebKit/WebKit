@@ -65,7 +65,7 @@ public:
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
     MediaTime duration() const final;
     const WebCore::PlatformTimeRanges& buffered() const final;
-    void waitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    Ref<WebCore::MediaSourcePrivate::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
     void monitorSourceBuffers() final;
 

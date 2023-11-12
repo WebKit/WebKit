@@ -71,7 +71,7 @@ public:
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
 
-    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    Ref<MediaSourcePrivate::MediaTimePromise> waitForTarget(const SeekTarget&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
 
     MediaTime duration() const final;

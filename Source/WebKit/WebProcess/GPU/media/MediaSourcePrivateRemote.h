@@ -71,7 +71,7 @@ public:
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
 
-    void waitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    Ref<MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
@@ -87,6 +87,9 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
+
+    // IPC Methods
+    void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(MediaTimePromise::Result&&)>&&);
 
 private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);

@@ -35,6 +35,8 @@
 #include "RemoteSourceBufferIdentifier.h"
 #include "SourceBufferPrivateRemote.h"
 #include <WebCore/NotImplemented.h>
+#include <wtf/NativePromise.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
@@ -164,12 +166,17 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
-void MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target)
 {
-    if (m_client)
-        m_client->waitForTarget(target, WTFMove(completionHandler));
-    else
-        completionHandler(MediaTime::invalidTime());
+    ASSERT_NOT_REACHED();
+    return MediaTimePromise::createAndReject(-1);
+}
+
+void MediaSourcePrivateRemote::proxyWaitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(MediaTimePromise::Result&&)>&& completionHandler)
+{
+    if (!m_client)
+        return completionHandler(makeUnexpected(-1));
+    m_client->waitForTarget(target)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 void MediaSourcePrivateRemote::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)

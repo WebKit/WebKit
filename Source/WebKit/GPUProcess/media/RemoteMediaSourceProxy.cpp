@@ -83,14 +83,16 @@ const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
     return m_buffered;
 }
 
-void RemoteMediaSourceProxy::waitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSourcePrivate::MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return MediaTimePromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::WaitForTarget(target), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxyWaitForTarget(target), m_identifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        if (!result)
+            return MediaTimePromise::createAndReject(-1);
+        return MediaTimePromise::createAndSettle(WTFMove(*result));
+    });
 }
 
 void RemoteMediaSourceProxy::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)

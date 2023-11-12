@@ -57,6 +57,7 @@
 #import <wtf/Deque.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakPtr.h>
 
@@ -553,13 +554,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     m_lastSeekTime = pendingSeek.time;
 
     m_seekState = Seeking;
-    m_mediaSourcePrivate->waitForTarget(pendingSeek, [this, weakThis = WeakPtr { this }] (const MediaTime& seekedTime) {
+    m_mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::main(), [this, weakThis = WeakPtr { this }] (auto&& result) {
         if (!weakThis)
             return;
-        if (m_seekState != Seeking || seekedTime.isInvalid()) {
+        if (m_seekState != Seeking || !result) {
             ALWAYS_LOG(LOGIDENTIFIER, "seek Interrupted, aborting");
             return;
         }
+        auto seekedTime = *result;
         m_lastSeekTime = seekedTime;
 
         ALWAYS_LOG(LOGIDENTIFIER);

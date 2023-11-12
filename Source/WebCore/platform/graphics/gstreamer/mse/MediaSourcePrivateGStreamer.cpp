@@ -46,6 +46,7 @@
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <wtf/NativePromise.h>
 #include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -138,12 +139,11 @@ void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
     m_playerPrivate.setReadyState(state);
 }
 
-void MediaSourcePrivateGStreamer::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateGStreamer::waitForTarget(const SeekTarget& target)
 {
     if (m_mediaSource)
-        m_mediaSource->waitForTarget(target, WTFMove(completionHandler));
-    else
-        completionHandler(MediaTime::invalidTime());
+        return m_mediaSource->waitForTarget(target);
+    return MediaTimePromise::createAndReject(-1);
 }
 
 void MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
