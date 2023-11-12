@@ -101,6 +101,7 @@ ShadowRoot::~ShadowRoot()
     // for this ShadowRoot instance because TreeScope destructor
     // clears Node::m_treeScope thus ContainerNode is no longer able
     // to access it Document reference after that.
+    // We can't ref document() here since it may have started destruction.
     willBeDeletedFrom(document());
 
     ASSERT(!m_hasBegunDeletingDetachedChildren);
