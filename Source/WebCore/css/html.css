@@ -625,7 +625,7 @@ input::-webkit-strong-password-auto-fill-button {
     pointer-events: none !important;
     text-align: right !important;
     color: rgba(0, 0, 0, 0.8) !important;
-    padding-left: 6px !important;
+    padding-inline-start: 6px !important;
     white-space: nowrap !important;
 }
 
@@ -634,16 +634,16 @@ input::-webkit-credentials-auto-fill-button {
     background-image: url('data:image/svg+xml,%3Csvg xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" viewBox%3D"0 0 26 26"%3E%3Cpath d%3D"m8.692 1h8.617c2.675 0 3.644.278 4.622.801s1.745 1.29 2.268 2.268.801 1.948.801 4.622v8.617c0 2.675-.278 3.644-.801 4.622s-1.29 1.745-2.268 2.268-1.948.801-4.622.801h-8.617c-2.675 0-3.644-.278-4.622-.801s-1.745-1.29-2.268-2.268-.801-1.948-.801-4.622v-8.616c0-2.675.278-3.644.801-4.622s1.29-1.745 2.268-2.268 1.948-.801 4.622-.801z" fill%3D"%23e5e5e5" opacity%3D".64"%2F%3E%3Cpath d%3D"m9.838 8.318c-.308 0-.57-.108-.787-.325s-.325-.478-.325-.785.108-.57.323-.787.478-.325.789-.325c.303 0 .564.109.782.327s.327.48.327.785c0 .306-.109.568-.327.785s-.479.325-.782.325zm0-3.84c-.59 0-1.139.108-1.648.324s-.956.517-1.341.903-.686.833-.904 1.341-.326 1.055-.326 1.641c0 .571.106 1.112.317 1.622s.51.961.896 1.352.841.698 1.366.918v6.082c0 .101.018.196.054.287s.092.173.167.247l1.122 1.077c.083.078.19.12.32.126s.244-.039.343-.136l1.998-1.998c.104-.105.155-.227.153-.365s-.054-.26-.157-.365l-1.094-1.083 1.555-1.553c.101-.102.151-.223.149-.361-.001-.138-.054-.26-.158-.365l-1.488-1.496c.929-.411 1.644-.964 2.142-1.66.499-.696.748-1.472.748-2.329 0-.581-.109-1.126-.327-1.635s-.52-.956-.905-1.341-.833-.687-1.343-.905-1.057-.327-1.639-.327z" opacity%3D".78"%2F%3E%3Cpath d%3D"m19.091 15.574c.108-.002.207-.023.296-.064.09-.041.179-.105.268-.193l2.462-2.522c.126-.124.189-.278.189-.46 0-.124-.03-.237-.091-.34s-.141-.185-.242-.245c-.101-.061-.212-.091-.334-.091-.187 0-.352.073-.495.22l-2.165 2.249h.232l-2.175-2.249c-.145-.147-.311-.22-.497-.22-.122 0-.234.03-.334.091-.101.061-.182.142-.242.245-.061.103-.091.216-.091.34 0 .09.015.173.046.248s.078.146.14.212l2.467 2.521c.171.171.36.256.565.256z" opacity%3D".75"%2F%3E%3C%2Fsvg%3E');
     width: 24px;
     height: 24px;
-    margin-left: 2px;
-    margin-right: 1px;
+    margin-inline-start: 2px;
+    margin-inline-end: 1px;
     mix-blend-mode: luminosity;
 #else
     mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M 16 3.5 C 16 2.672 16.672 2 17.5 2 C 18.3 2 19 2.7 19 3.5 C 19 4.3 18.3 5 17.5 5 C 16.7 5 16 4.3 16 3.5 Z M 11 6.5 C 11 10.1 13.9 13 17.5 13 C 21.1 13 24 10.1 24 6.5 C 24 2.9 21.1 0 17.5 0 C 13.9 0 11 2.9 11 6.5 Z"/><path d="M 20 17.3 L 20 18.6 L 20.9 19.9 C 21 20 21 20 21 20 L 17.7 23.8 C 17.7 23.8 17.7 23.8 17.7 23.8 C 17.5 23.9 17.4 23.9 17.3 23.8 L 15 21 L 15 11 L 20 11 L 20 14.8 L 21 15.9 C 21 16 21 16 20.9 16.1 L 20 17.3 Z M 17 13 L 17 21.3 L 17.5 21.8 L 18 21.3 L 18 13 L 17 13 Z"/></svg>');
     mask-size: 22px 12px;
     width: 22px;
     height: 12px;
-    margin-left: 3px;
-    margin-right: 2px;
+    margin-inline-start: 3px;
+    margin-inline-end: 2px;
     background-color: black;
 #endif
     flex: none;
@@ -675,8 +675,8 @@ input::-webkit-contacts-auto-fill-button {
     mask-size: 22px 12px;
     width: 22px;
     height: 12px;
-    margin-left: 3px;
-    margin-right: 2px;
+    margin-inline-start: 3px;
+    margin-inline-end: 2px;
     background-color: black;
     flex: none;
     -webkit-user-select: none;
@@ -695,8 +695,8 @@ input::-webkit-credit-card-auto-fill-button {
     mask-size: 22px 12px;
     width: 22px;
     height: 12px;
-    margin-left: 3px;
-    margin-right: 2px;
+    margin-inline-start: 3px;
+    margin-inline-end: 2px;
     background-color: black;
     flex: none;
     -webkit-user-select: none;
@@ -714,8 +714,8 @@ input::-webkit-loading-auto-fill-button {
     background-image: url('data:image/svg+xml,<svg width="22" height="12" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xml:space="preserve"><path fill="rgb(55,55,55)" d="M19.36,12.64L19.36,12.64c-0.88-0.88-0.88-2.3,0-3.18l4.6-4.6c0.88-0.88,2.3-0.88,3.18,0l0,0c0.88,0.88,0.88,2.3,0,3.18l-4.6,4.6C21.66,13.52,20.24,13.52,19.36,12.64z"><animate attributeName="fill" begin="0s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(76,76,76)" d="M20.75,16L20.75,16c0-1.24,1.01-2.25,2.25-2.25l6.5,0c1.24,0,2.25,1.01,2.25,2.25v0c0,1.24-1.01,2.25-2.25,2.25l-6.5,0C21.76,18.25,20.75,17.24,20.75,16z"><animate attributeName="fill" begin="0.125s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(97,97,97)" d="M27.14,27.14L27.14,27.14c-0.88,0.88-2.3,0.88-3.18,0l-4.6-4.6c-0.88-0.88-0.88-2.3,0-3.18l0,0c0.88-0.88,2.3-0.88,3.18,0l4.6,4.6C28.02,24.83,28.02,26.26,27.14,27.14z"><animate attributeName="fill" begin="0.25s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(118,118,118)" d="M16,31.75L16,31.75c-1.24,0-2.25-1.01-2.25-2.25l0-6.5c0-1.24,1.01-2.25,2.25-2.25h0c1.24,0,2.25,1.01,2.25,2.25l0,6.5C18.25,30.74,17.24,31.75,16,31.75z"><animate attributeName="fill" begin="0.375s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(138,138,138)" d="M4.86,27.14L4.86,27.14c-0.88-0.88-0.88-2.3,0-3.18l4.6-4.6c0.88-0.88,2.3-0.88,3.18,0l0,0c0.88,0.88,0.88,2.3,0,3.18l-4.6,4.6C7.17,28.02,5.74,28.02,4.86,27.14z"><animate attributeName="fill" begin="0.5s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(159,159,159)" d="M0.25,16L0.25,16c0-1.24,1.01-2.25,2.25-2.25l6.5,0c1.24,0,2.25,1.01,2.25,2.25v0c0,1.24-1.01,2.25-2.25,2.25l-6.5,0C1.26,18.25,0.25,17.24,0.25,16z"><animate attributeName="fill" begin="0.625s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(180,180,180)" d="M12.64,12.64L12.64,12.64c-0.88,0.88-2.3,0.88-3.18,0l-4.6-4.6c-0.88-0.88-0.88-2.3,0-3.18l0,0c0.88-0.88,2.3-0.88,3.18,0l4.6,4.6C13.52,10.34,13.52,11.76,12.64,12.64z"><animate attributeName="fill" begin="0.75s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path><path fill="rgb(201,201,201)" d="M16,11.25L16,11.25c-1.24,0-2.25-1.01-2.25-2.25l0-6.5c0-1.24,1.01-2.25,2.25-2.25h0c1.24,0,2.25,1.01,2.25,2.25l0,6.5C18.25,10.24,17.24,11.25,16,11.25z"><animate attributeName="fill" begin="0.875s" dur="1s" values="rgb(86,86,86);rgb(207,207,207)" calcMode="linear" repeatCount="indefinite" /></path></svg>');
     width: 22px;
     height: 12px;
-    margin-left: 3px;
-    margin-right: 2px;
+    margin-inline-start: 3px;
+    margin-inline-end: 2px;
     flex: none;
     -webkit-user-select: none;
 }
