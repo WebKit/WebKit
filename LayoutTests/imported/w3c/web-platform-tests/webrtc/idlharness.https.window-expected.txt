@@ -40,7 +40,7 @@ PASS RTCPeerConnection interface: attribute connectionState
 PASS RTCPeerConnection interface: attribute canTrickleIceCandidates
 PASS RTCPeerConnection interface: operation restartIce()
 PASS RTCPeerConnection interface: operation getConfiguration()
-FAIL RTCPeerConnection interface: operation setConfiguration(optional RTCConfiguration) assert_equals: property has wrong .length expected 0 but got 1
+PASS RTCPeerConnection interface: operation setConfiguration(optional RTCConfiguration)
 PASS RTCPeerConnection interface: operation close()
 PASS RTCPeerConnection interface: attribute onnegotiationneeded
 PASS RTCPeerConnection interface: attribute onicecandidate
