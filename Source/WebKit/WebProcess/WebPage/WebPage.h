@@ -258,6 +258,7 @@ enum class UserInterfaceLayoutDirection : bool;
 enum class ViolationReportType : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WritingDirection : uint8_t;
+enum class PaginationMode : uint8_t;
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -682,7 +683,7 @@ public:
 
     void setBackgroundExtendsBeyondPage(bool);
 
-    void setPaginationMode(uint32_t /* WebCore::Pagination::Mode */);
+    void setPaginationMode(WebCore::PaginationMode);
     void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);
     void setGapBetweenPages(double);

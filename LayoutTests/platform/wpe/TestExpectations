@@ -890,6 +890,13 @@ webkit.org/b/259912 [ Debug ] fullscreen/full-screen-restrictions.html [ Crash ]
 webkit.org/b/259912 [ Debug ] imported/blink/fast/transforms/transform-update-frame-overflow.html [ Crash ]
 webkit.org/b/259912 [ Debug ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Crash ]
 webkit.org/b/259912 [ Debug ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Crash ]
+webkit.org/b/259912 [ Debug ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS

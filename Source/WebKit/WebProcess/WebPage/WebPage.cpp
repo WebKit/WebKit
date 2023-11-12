@@ -2778,7 +2778,7 @@ void WebPage::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
         m_page->settings().setBackgroundShouldExtendBeyondPage(backgroundExtendsBeyondPage);
 }
 
-void WebPage::setPaginationMode(uint32_t mode)
+void WebPage::setPaginationMode(Pagination::Mode mode)
 {
     Pagination pagination = m_page->pagination();
     pagination.mode = static_cast<Pagination::Mode>(mode);

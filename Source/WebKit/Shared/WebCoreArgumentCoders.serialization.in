@@ -6696,3 +6696,14 @@ enum class WebCore::CredentialPersistence : uint8_t {
      ForSession,
      Permanent,
 }
+header: <WebCore/Pagination.h>
+enum class WebCore::PaginationMode : uint8_t {
+    Unpaginated,
+    LeftToRightPaginated,
+    RightToLeftPaginated,
+    TopToBottomPaginated,
+    BottomToTopPaginated
+};
+
+header: <WebCore/RenderObject.h>
+enum class WebCore::RepaintRectCalculation : bool;

@@ -95,7 +95,7 @@ namespace Style {
 class PseudoElementRequest;
 }
 
-enum class RepaintRectCalculation { Fast, Accurate };
+enum class RepaintRectCalculation : bool { Fast, Accurate };
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient, public CanMakeCheckedPtr {
@@ -1446,15 +1446,3 @@ void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);
 void showRenderTree(const WebCore::RenderObject*);
 #endif
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::RepaintRectCalculation> {
-    using values = EnumValues<
-        WebCore::RepaintRectCalculation,
-        WebCore::RepaintRectCalculation::Fast,
-        WebCore::RepaintRectCalculation::Accurate
-    >;
-};
-
-} // namespace WTF

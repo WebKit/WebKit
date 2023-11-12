@@ -65,7 +65,7 @@ private:
     bool drawContentIntoMaskImage(MaskerData*, const DestinationColorSpace&, RenderObject*);
     void calculateMaskContentRepaintRect(RepaintRectCalculation);
 
-    EnumeratedArray<RepaintRectCalculation, FloatRect> m_maskContentBoundaries;
+    EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_maskContentBoundaries;
     HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_masker;
 };
 

@@ -2582,7 +2582,6 @@ webkit.org/b/261024 imported/w3c/web-platform-tests/navigation-timing/nav2_test_
 webkit.org/b/261024 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate.html [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Failure Pass ]
-webkit.org/b/261024 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect.html [ Pass Timeout ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel.html [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/websockets/Close-1000.any.worker.html [ Failure Pass ]
