@@ -32,12 +32,58 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WKFrameInfo.h"
+#import "WKWebViewPrivate.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionFrameParameters.h"
 #import "WebExtensionTab.h"
 #import "WebFrame.h"
+#import "_WKFrameTreeNode.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
+
+static WebExtensionFrameParameters frameParametersForFrame(_WKFrameTreeNode *frame, _WKFrameTreeNode *parentFrame, WebExtensionTab* tab, WebExtensionContext* extensionContext, bool includeFrameIdentifier)
+{
+    WKFrameInfo *frameInfo = frame.info;
+    NSURL *frameURL = frameInfo.request.URL;
+
+    return {
+        // errorOccured
+        // FIXME: Correctly populate this based on whether or not an error occurred loading this frame
+        false,
+
+        // url
+        extensionContext->hasPermission(frameURL, tab) ? std::optional { frameURL } : std::nullopt,
+
+        // parentFrameIdentifier
+        parentFrame ? toWebExtensionFrameIdentifier(parentFrame.info) : WebExtensionFrameConstants::NoneIdentifier,
+
+        // frameIdentifier
+        includeFrameIdentifier ? std::optional { toWebExtensionFrameIdentifier(frameInfo) } : std::nullopt
+    };
+}
+
+void WebExtensionContext::webNavigationTraverseFrameTreeForFrame(_WKFrameTreeNode *frame, _WKFrameTreeNode *parentFrame, WebExtensionTab* tab, Vector<WebExtensionFrameParameters> &frames)
+{
+    frames.append(frameParametersForFrame(frame, parentFrame, tab, this, true));
+
+    for (_WKFrameTreeNode *childFrame in frame.childFrames)
+        webNavigationTraverseFrameTreeForFrame(childFrame, frame, tab, frames);
+}
+
+std::optional<WebExtensionFrameParameters> WebExtensionContext::webNavigationFindFrameIdentifierInFrameTree(_WKFrameTreeNode *frame, _WKFrameTreeNode *parentFrame, WebExtensionTab* tab, WebExtensionFrameIdentifier targetFrameIdentifier)
+{
+    if (toWebExtensionFrameIdentifier(frame.info) == targetFrameIdentifier)
+        return frameParametersForFrame(frame, parentFrame, tab, this, false);
+
+    for (_WKFrameTreeNode *childFrame in frame.childFrames) {
+        if (auto matchingChildFrame = webNavigationFindFrameIdentifierInFrameTree(childFrame, frame, tab, targetFrameIdentifier))
+            return matchingChildFrame;
+    }
+
+    return std::nullopt;
+}
 
 void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIdentifier, WebExtensionFrameIdentifier frameIdentifier, CompletionHandler<void(std::optional<WebExtensionFrameParameters>)>&& completionHandler)
 {
@@ -53,8 +99,9 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
         return;
     }
 
-    // FIXME: rdar://102820594 - Implement this.
-    completionHandler({ });
+    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab, frameIdentifier] (_WKFrameTreeNode *mainFrame) mutable {
+        completionHandler(webNavigationFindFrameIdentifierInFrameTree(mainFrame, nil, tab.get(), frameIdentifier));
+    }).get()];
 }
 
 void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier tabIdentifier, CompletionHandler<void(std::optional<Vector<WebExtensionFrameParameters>>)>&& completionHandler)
@@ -71,8 +118,11 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
         return;
     }
 
-    // FIXME: rdar://102820594 - Implement this.
-    completionHandler({ });
+    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab] (_WKFrameTreeNode *mainFrame) mutable {
+        Vector<WebExtensionFrameParameters> frameParameters;
+        webNavigationTraverseFrameTreeForFrame(mainFrame, nil, tab.get(), frameParameters);
+        completionHandler(frameParameters);
+    }).get()];
 }
 
 } // namespace WebKit
