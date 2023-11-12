@@ -37,6 +37,7 @@ indexFile=".index"
 testList=".all_tests.txt"
 tempFile=".temp.txt"
 lockDir=".lock_dir"
+pauseFile=".pause"
 
 trap "kill -9 0" INT HUP TERM
 
@@ -49,7 +50,17 @@ else
 fi
 
 lock_test_list() {
-    until mkdir ${lockDir} 2> /dev/null; do sleep 0; done
+    
+    until mkdir ${lockDir} 2> /dev/null
+    do
+        if [ -e ${pauseFile} ]
+        then
+            echo 'Running paused...'
+            sleep 600
+        else
+            sleep 0
+        fi
+    done
 }
 
 unlock_test_list() {
@@ -67,6 +78,12 @@ do
         lock_test_list
         while [ -s ${testList} ]
         do
+            if [ -e ${pauseFile} ]
+            then
+                echo 'Running paused...'
+                sleep 600
+                continue
+            fi
             index=`cat ${indexFile}`
             index=$((index + 1))
             echo "${index}" > ${indexFile}
