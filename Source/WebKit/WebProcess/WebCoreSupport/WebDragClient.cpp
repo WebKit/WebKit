@@ -51,7 +51,7 @@ OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const In
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
-void WebDragClient::startDrag(DragItem, DataTransfer&, LocalFrame&)
+void WebDragClient::startDrag(DragItem, DataTransfer&, Frame&)
 {
 }
 

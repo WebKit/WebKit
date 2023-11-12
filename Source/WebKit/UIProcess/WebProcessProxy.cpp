@@ -199,6 +199,11 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::pages() const
     });
 }
 
+Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
+{
+    return WTF::copyToVector(m_remotePages);
+}
+
 void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, const Function<void(WebPageProxy&)>& callback)
 {
     for (Ref page : globalPages()) {

@@ -205,7 +205,7 @@
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
-#include <WebCore/RemoteMouseEventData.h>
+#include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RunJavaScriptParameters.h>
@@ -3158,16 +3158,22 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
 #endif
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const std::optional<WebCore::FrameIdentifier>& frameID)
 {
     if (!hasRunningProcess())
         return;
 
-    auto completionHandler = [this, protectedThis = Ref { *this }] (auto... args) {
-        didPerformDragControllerAction(args...);
+    auto completionHandler = [this, protectedThis = Ref { *this }, action, dragData] (std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+        if (!remoteUserInputEventData) {
+            didPerformDragControllerAction(dragOperation, dragHandlingMethod, mouseIsOverFileInput, numberOfItemsToBeAccepted, insertionRect, editableElementRect);
+            return;
+        }
+        dragData.setClientPosition(remoteUserInputEventData->transformedPoint);
+        performDragControllerAction(action, dragData, remoteUserInputEventData->targetFrameID);
     };
 
 #if PLATFORM(GTK)
+    UNUSED_PARAM(frameID);
     String url = dragData.asURL();
     if (!url.isEmpty())
         protectedProcess()->assumeReadAccessToBaseURL(*this, url);
@@ -3175,7 +3181,18 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     ASSERT(dragData.platformData());
     sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
 #else
-    sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(action, dragData), WTFMove(completionHandler));
+    if (frameID) {
+        if (RefPtr frame = WebFrameProxy::webFrame(*frameID)) {
+            if (RefPtr remotePageProxy = frame->remotePageProxy()) {
+                remotePageProxy->sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(frameID, action, dragData), WTFMove(completionHandler));
+                return;
+            }
+        } else {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+    sendWithAsyncReply(Messages::WebPage::PerformDragControllerAction(frameID, action, dragData), WTFMove(completionHandler));
 #endif
 }
 
@@ -3200,13 +3217,31 @@ void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::D
 }
 #endif
 
-void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
+void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask, const std::optional<WebCore::FrameIdentifier>& frameID)
 {
     if (!hasRunningProcess())
         return;
-    sendWithAsyncReply(Messages::WebPage::DragEnded(clientPosition, globalPosition, dragOperationMask), [this, protectedThis = Ref { *this }] {
-        resetCurrentDragInformation();
-    });
+    auto completionHandler = [this, protectedThis = Ref { *this }, globalPosition, dragOperationMask] (std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
+        if (!remoteUserInputEventData) {
+            resetCurrentDragInformation();
+            return;
+        }
+        dragEnded(remoteUserInputEventData->transformedPoint, globalPosition, dragOperationMask, remoteUserInputEventData->targetFrameID);
+    };
+
+    if (frameID) {
+        if (RefPtr frame = WebFrameProxy::webFrame(*frameID)) {
+            if (RefPtr remotePageProxy = frame->remotePageProxy()) {
+                remotePageProxy->sendWithAsyncReply(Messages::WebPage::DragEnded(frameID, clientPosition, globalPosition, dragOperationMask), WTFMove(completionHandler));
+                setDragCaretRect({ });
+                return;
+            }
+        } else {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+    sendWithAsyncReply(Messages::WebPage::DragEnded(frameID, clientPosition, globalPosition, dragOperationMask), WTFMove(completionHandler));
     setDragCaretRect({ });
 }
 
@@ -3270,23 +3305,23 @@ static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEventT
     return false;
 }
 
-void WebPageProxy::handleMouseEventReply(WebEventType eventType, bool handled, const std::optional<WebCore::RemoteMouseEventData>& remoteMouseEventData, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
+void WebPageProxy::handleMouseEventReply(WebEventType eventType, bool handled, const std::optional<WebCore::RemoteUserInputEventData>& remoteUserInputEventData, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
 {
-    if (remoteMouseEventData) {
-        RefPtr frame = WebFrameProxy::webFrame(remoteMouseEventData->targetFrameID);
+    if (remoteUserInputEventData) {
+        RefPtr frame = WebFrameProxy::webFrame(remoteUserInputEventData->targetFrameID);
         if (!frame)
             return;
 
         auto& event = internals().mouseEventQueue.first();
-        event.setPosition(remoteMouseEventData->transformedPoint);
+        event.setPosition(remoteUserInputEventData->transformedPoint);
 
         RefPtr remotePageProxy = frame->remotePageProxy();
         if (!remotePageProxy) {
-            sendMouseEvent(remoteMouseEventData->targetFrameID, event, WTFMove(sandboxExtensions));
+            sendMouseEvent(remoteUserInputEventData->targetFrameID, event, WTFMove(sandboxExtensions));
             return;
         }
 
-        remotePageProxy->sendMouseEvent(remoteMouseEventData->targetFrameID, event, WTFMove(sandboxExtensions));
+        remotePageProxy->sendMouseEvent(remoteUserInputEventData->targetFrameID, event, WTFMove(sandboxExtensions));
         return;
     }
     didReceiveEvent(eventType, handled);
@@ -3294,7 +3329,7 @@ void WebPageProxy::handleMouseEventReply(WebEventType eventType, bool handled, c
 
 void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const NativeWebMouseEvent& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
 {
-    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         if (!m_pageClient)
             return;
         if (!eventType) {
@@ -3302,7 +3337,7 @@ void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const
             return;
         }
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
-        handleMouseEventReply(*eventType, handled, remoteMouseEventData, { });
+        handleMouseEventReply(*eventType, handled, remoteUserInputEventData, { });
     });
 }
 

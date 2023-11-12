@@ -221,6 +221,8 @@ public:
     unsigned provisionalPageCount() const { return m_provisionalPages.computeSize(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
+    Vector<WeakPtr<RemotePageProxy>> remotePages() const;
+
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
 
     bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }

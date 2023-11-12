@@ -134,17 +134,21 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, LocalFrame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
 {
     auto& dragImage = dragItem.image;
     auto dragLocationInContentCoordinates = dragItem.dragLocationInContentCoordinates;
 
-    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(&frame) frameView] documentView];
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (!localFrame)
+        return;
+
+    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(localFrame) frameView] documentView];
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
-    NSEvent *event = (dragItem.sourceAction && *dragItem.sourceAction == DragSourceAction::Link) ? frame.eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
-    WebHTMLView* topHTMLView = getTopHTMLView(&frame);
+    NSEvent *event = (dragItem.sourceAction && *dragItem.sourceAction == DragSourceAction::Link) ? localFrame->eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    WebHTMLView* topHTMLView = getTopHTMLView(localFrame);
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
     [topHTMLView _stopAutoscrollTimer];
@@ -154,7 +158,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Loc
     WebHTMLView *sourceHTMLView = htmlView.get();
 
     IntSize size([dragNSImage size]);
-    size.scale(1 / frame.page()->deviceScaleFactor());
+    size.scale(1 / localFrame->page()->deviceScaleFactor());
     [dragNSImage setSize:size];
 
     id delegate = [m_webView UIDelegate];
@@ -260,7 +264,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame&)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame&)
 {
     [m_webView _startDrag:dragItem];
 }

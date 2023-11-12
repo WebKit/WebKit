@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-struct RemoteMouseEventData {
+struct RemoteUserInputEventData {
     FrameIdentifier targetFrameID;
     IntPoint transformedPoint;
 };
