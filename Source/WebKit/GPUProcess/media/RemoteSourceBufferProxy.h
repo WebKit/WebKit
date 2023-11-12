@@ -72,7 +72,6 @@ private:
 
     // SourceBufferPrivateClient
     Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
@@ -89,7 +88,7 @@ private:
     void setActive(bool);
     void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
-    void append(IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebKit::SharedMemory::Handle>&&)>&&);
+    void append(IPC::SharedBufferReference&&, CompletionHandler<void(GenericPromise::Result, uint64_t, const MediaTime&)>&&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();

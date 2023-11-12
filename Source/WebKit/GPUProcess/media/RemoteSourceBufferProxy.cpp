@@ -170,14 +170,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
-}
-
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
     if (!m_connectionToWebProcess)
@@ -194,15 +186,19 @@ void RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost(uint64_t 
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(GenericPromise::Result, uint64_t, const MediaTime&)>&& completionHandler)
 {
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return completionHandler(std::nullopt);
+        return completionHandler(makeUnexpected(-1), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
 
-    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()));
+    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (handle && m_connectionToWebProcess)
+        m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
-    completionHandler(sharedMemory->createHandle(SharedMemory::Protection::ReadOnly));
+    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+        completionHandler(WTFMove(result), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
+    });
 }
 
 void RemoteSourceBufferProxy::abort()

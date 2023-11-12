@@ -81,17 +81,26 @@ SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
     gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::SourceBufferPrivateRemote::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
-void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
+Ref<GenericPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
-        return;
+        return GenericPromise::createAndReject(-1);
 
-    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), [] (auto&& bufferHandle) {
-        // Take ownership of shared memory and mark it as media-related memory.
-        if (bufferHandle)
-            bufferHandle->takeOwnershipOfMemory(MemoryLedger::Media);
-    }, m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *static_cast<SourceBufferPrivate*>(this) }, this](auto&& result) {
+        if (!result || !weakThis)
+            return GenericPromise::createAndReject(-1);
+
+        m_totalTrackBufferSizeInBytes = std::get<uint64_t>(*result);
+        setTimestampOffset(std::get<MediaTime>(*result));
+        return GenericPromise::createAndSettle(std::get<GenericPromise::Result>(*result));
+    });
+}
+
+void SourceBufferPrivateRemote::takeOwnershipOfMemory(WebKit::SharedMemory::Handle&& bufferHandle)
+{
+    // Take ownership of shared memory and mark it as media-related memory.
+    bufferHandle.takeOwnershipOfMemory(MemoryLedger::Media);
 }
 
 void SourceBufferPrivateRemote::abort()
@@ -450,15 +459,6 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     });
 
     m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::main(), WTFMove(completionHandler));
-}
-
-void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
-{
-    m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-    if (m_client) {
-        setTimestampOffset(timestampOffset);
-        m_client->sourceBufferPrivateAppendComplete(appendResult);
-    }
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)

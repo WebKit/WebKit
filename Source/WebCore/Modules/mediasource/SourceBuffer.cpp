@@ -85,7 +85,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_private(WTFMove(sourceBufferPrivate))
     , m_source(&source)
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
-    , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
@@ -107,6 +106,9 @@ SourceBuffer::~SourceBuffer()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_private->detach();
+
+    if (m_appendBufferPromise)
+        m_appendBufferPromise.disconnect();
 }
 
 ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
@@ -428,7 +430,8 @@ void SourceBuffer::abortIfUpdating()
         return;
 
     // 4.1. Abort the buffer append algorithm if it is running.
-    m_appendBufferTimer.stop();
+    if (m_appendBufferPromise)
+        m_appendBufferPromise.disconnect();
     m_pendingAppendData = nullptr;
     m_private->abort();
 
@@ -478,11 +481,6 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 bool SourceBuffer::virtualHasPendingActivity() const
 {
     return m_source;
-}
-
-void SourceBuffer::stop()
-{
-    m_appendBufferTimer.stop();
 }
 
 const char* SourceBuffer::activeDOMObjectName() const
@@ -543,39 +541,20 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     scheduleEvent(eventNames().updatestartEvent);
 
     // 6. Asynchronously run the buffer append algorithm.
-    m_appendBufferTimer.startOneShot(0_s);
+    invokeAsync(RunLoop::main(), [protectedThis = Ref { *this }, this]() mutable {
+        // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
+        if (!m_pendingAppendData || m_pendingAppendData->isEmpty())
+            return GenericPromise::createAndResolve();
+        return m_private->append(m_pendingAppendData.releaseNonNull());
+    })->whenSettled(RunLoop::main(), *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
 
     return { };
 }
 
-void SourceBuffer::appendBufferTimerFired()
+void SourceBuffer::sourceBufferPrivateAppendComplete(GenericPromise::Result&& result)
 {
-    if (isRemoved())
-        return;
+    m_appendBufferPromise.complete();
 
-    ASSERT(m_updating);
-
-    // Section 3.5.5 Buffer Append Algorithm
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
-
-    // 1. Run the segment parser loop algorithm.
-
-    // Section 3.5.1 Segment Parser Loop
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
-    // When the segment parser loop algorithm is invoked, run the following steps:
-
-    RefPtr<SharedBuffer> appendData = WTFMove(m_pendingAppendData);
-    // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
-    if (!appendData || !appendData->size()) {
-        sourceBufferPrivateAppendComplete(AppendResult::Succeeded);
-        return;
-    }
-
-    m_private->append(appendData.releaseNonNull());
-}
-
-void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
-{
     if (isRemoved())
         return;
 
@@ -584,7 +563,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
     // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
-    if (result == AppendResult::ParsingFailed) {
+    if (!result) {
         ERROR_LOG(LOGIDENTIFIER, "ParsingFailed");
         appendError(true);
         return;
@@ -597,8 +576,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != AppendResult::Succeeded)
-        return;
+    // When aborted, the appendBuffer promise got disconnected
 
     // 3. Set the updating attribute to false.
     m_updating = false;

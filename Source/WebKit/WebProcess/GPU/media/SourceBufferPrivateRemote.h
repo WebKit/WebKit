@@ -74,7 +74,7 @@ private:
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
-    void append(Ref<WebCore::SharedBuffer>&&) final;
+    Ref<GenericPromise> append(Ref<WebCore::SharedBuffer>&&) final;
     Ref<GenericPromise> appendInternal(Ref<WebCore::SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void abort() final;
@@ -116,7 +116,7 @@ private:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&&);
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
+    void takeOwnershipOfMemory(WebKit::SharedMemory::Handle&&);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&&);

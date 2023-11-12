@@ -660,17 +660,20 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
     m_pendingSamples.append(WTFMove(sample));
 }
 
-void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
+Ref<GenericPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
+    GenericPromise::Producer producer;
+    Ref<GenericPromise> promise = producer;
+
     m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this}, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable -> Ref<GenericPromise> {
         if (!weakThis || !result)
             return GenericPromise::createAndReject(-1);
 
-        if (buffer->isEmpty())
-            return GenericPromise::createAndResolve();
-
         // We have fully completed the previous append operation, we can start a new promise chain.
         m_currentAppendProcessing = GenericPromise::createAndResolve();
+
+        if (buffer->isEmpty())
+            return GenericPromise::createAndResolve();
 
         if (abortCount != m_abortCount)
             return GenericPromise::createAndResolve();
@@ -715,14 +718,11 @@ void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         }
 
         return GenericPromise::all(RunLoop::main(), promises);
-    })->whenSettled(RunLoop::main(), [weakSelf = WeakPtr { *this }, this, abortCount = m_abortCount](auto&& result) mutable {
-        if (!weakSelf || !isAttached())
-            return GenericPromise::createAndReject(-1);
-
-        if (abortCount == m_abortCount)
-            m_client->sourceBufferPrivateAppendComplete(result ? SourceBufferPrivateClient::AppendResult::Succeeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
-        return GenericPromise::createAndResolve();
+    })->whenSettled(RunLoop::main(), [producer = WTFMove(producer)](auto&& result) mutable {
+        producer.settle(result);
+        return GenericPromise::createAndSettle(WTFMove(result));
     });
+    return promise;
 }
 
 void SourceBufferPrivate::processPendingMediaSamples()

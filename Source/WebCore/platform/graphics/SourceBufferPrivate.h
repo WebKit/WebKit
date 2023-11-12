@@ -94,7 +94,7 @@ public:
 
     WEBCORE_EXPORT virtual void setActive(bool);
 
-    WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT virtual Ref<GenericPromise> append(Ref<SharedBuffer>&&);
 
     virtual void abort();
     // Overrides must call the base class.
