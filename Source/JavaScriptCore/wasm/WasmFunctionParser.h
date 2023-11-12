@@ -336,8 +336,9 @@ auto FunctionParser<Context>::parse() -> Result
     WASM_PARSER_FAIL_IF(!parseVarUInt32(localGroupsCount), "can't get local groups count");
 
     WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(signature.argumentCount()), "can't allocate enough memory for function's ", signature.argumentCount(), " arguments");
-    for (uint32_t i = 0; i < signature.argumentCount(); ++i)
-        m_locals.unsafeAppendWithoutCapacityCheck(signature.argumentType(i));
+    m_locals.appendUsingFunctor(signature.argumentCount(), [&](size_t i) {
+        return signature.argumentType(i);
+    });
 
     uint64_t totalNumberOfLocals = signature.argumentCount();
     uint64_t totalNonDefaultableLocals = 0;
@@ -362,8 +363,7 @@ auto FunctionParser<Context>::parse() -> Result
         }
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's ", totalNumberOfLocals, " locals");
-        for (uint32_t i = 0; i < numberOfLocals; ++i)
-            m_locals.unsafeAppendWithoutCapacityCheck(typeOfLocal);
+        m_locals.appendUsingFunctor(numberOfLocals, [&](size_t) { return typeOfLocal; });
 
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
