@@ -177,7 +177,8 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
         document->sendReportToEndpoints(testReportURL, { }, { group }, WTFMove(reportFormData), ViolationReportType::Test);
     }
 
-    notifyReportObservers(Report::create(testReportBody->type(), WTFMove(reportURL), WTFMove(testReportBody)));
+    auto bodyType = testReportBody->type();
+    notifyReportObservers(Report::create(bodyType, reportURL, WTFMove(testReportBody)));
 }
 
 } // namespace WebCore
