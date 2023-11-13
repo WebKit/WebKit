@@ -1,10 +1,3 @@
-CONSOLE MESSAGE: webviewerloaded: SecurityError: Blocked a frame with origin "webkit-pdfjs-viewer://pdfjs" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin 'webkit-pdfjs-viewer://pdfjs' and allow attribute ''.
-CONSOLE MESSAGE: Invalid or corrupted PDF file.
-
-PDF.js v4.0.189 (build: 50f52b43a)
-Message: Invalid PDF structure.
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidPDFException: Invalid PDF structure.
 Tests that loading a data URL with a PDF MIME type inside an does not dispatch an error event.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

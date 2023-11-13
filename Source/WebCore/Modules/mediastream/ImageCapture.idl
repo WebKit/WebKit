@@ -34,8 +34,7 @@
 
     Promise<PhotoCapabilities> getPhotoCapabilities();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=262467
-    // Promise<Blob> takePhoto(optional PhotoSettings photoSettings = {});
+    Promise<Blob> takePhoto(optional PhotoSettings photoSettings = {});
 
     Promise<PhotoSettings> getPhotoSettings();
 

@@ -6256,7 +6256,7 @@ using WebCore::FontSelectionValue::BackingType = int16_t;
     std::optional<WebCore::FontSelectionRange> slope;
 };
 
-struct WebCore::RemoteMouseEventData {
+struct WebCore::RemoteUserInputEventData {
     WebCore::FrameIdentifier targetFrameID;
     WebCore::IntPoint transformedPoint;
 };

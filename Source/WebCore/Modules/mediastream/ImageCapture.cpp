@@ -28,7 +28,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "JSBlob.h"
 #include "JSPhotoCapabilities.h"
+#include "TaskSource.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -52,6 +54,18 @@ ImageCapture::ImageCapture(Document& document, Ref<MediaStreamTrack> track)
 }
 
 ImageCapture::~ImageCapture() = default;
+
+void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInterface<Blob>>&& promise)
+{
+    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }, promise = WTFMove(promise)] (auto&& result) mutable {
+        queueTaskKeepingObjectAlive(protectedThis.get(), TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), protectedThis] () mutable {
+            if (result)
+                promise.resolve(Blob::create(protectedThis->scriptExecutionContext(), WTFMove(get<0>(result.value())), WTFMove(get<1>(result.value()))));
+            else
+                promise.reject(WTFMove(result.error()));
+        });
+    });
+}
 
 void ImageCapture::getPhotoCapabilities(PhotoCapabilitiesPromise&& promise)
 {

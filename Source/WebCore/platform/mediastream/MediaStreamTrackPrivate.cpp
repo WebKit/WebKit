@@ -199,6 +199,11 @@ Ref<RealtimeMediaSource::PhotoSettingsNativePromise> MediaStreamTrackPrivate::ge
     return m_source->getPhotoSettings();
 }
 
+Ref<RealtimeMediaSource::TakePhotoNativePromise> MediaStreamTrackPrivate::takePhoto(PhotoSettings&& settings)
+{
+    return m_source->takePhoto(WTFMove(settings));
+}
+
 void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
 {
     m_source->applyConstraints(constraints, WTFMove(completionHandler));

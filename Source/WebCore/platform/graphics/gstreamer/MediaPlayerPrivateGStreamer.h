@@ -633,7 +633,8 @@ private:
     MediaTime m_pausedTime;
 
     void setupCodecProbe(GstElement*);
-    HashMap<String, String> m_codecs;
+    Lock m_codecsLock;
+    HashMap<String, String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 

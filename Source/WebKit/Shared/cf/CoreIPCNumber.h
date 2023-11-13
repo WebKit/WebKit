@@ -166,7 +166,7 @@ public:
         return m_numberHolder;
     }
 
-    RetainPtr<id> toID() { return bridge_cast(createCFNumber().get()); }
+    RetainPtr<id> toID() const { return bridge_cast(createCFNumber().get()); }
 
 private:
     NumberHolder m_numberHolder;

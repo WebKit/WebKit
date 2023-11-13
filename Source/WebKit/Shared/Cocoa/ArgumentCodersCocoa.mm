@@ -304,149 +304,11 @@ static inline bool isSerializableFont(CTFontRef font)
     return adoptCF(CTFontCopyAttribute(font, kCTFontURLAttribute));
 }
 
-static inline bool isSerializableValue(id value)
+bool isSerializableValue(id value)
 {
     if ([value isKindOfClass:[CocoaFont class]])
         return isSerializableFont((__bridge CTFontRef)value);
     return typeFromObject(value) != NSType::Unknown;
-}
-
-#pragma mark - NSArray
-
-template<> void encodeObjectDirectly<NSArray>(Encoder& encoder, NSArray *array)
-{
-    // Even though NSArray is toll free bridged with CFArrayRef, values may not be,
-    // so we should stay within this file's code.
-
-    if (!array.count) {
-        encoder << static_cast<uint64_t>(0);
-        return;
-    }
-
-    HashSet<NSUInteger> invalidIndices;
-    for (NSUInteger i = 0; i < array.count; ++i) {
-        id value = array[i];
-
-        // Ignore values we don't support.
-        ASSERT(isSerializableValue(value));
-        if (!isSerializableValue(value))
-            invalidIndices.add(i);
-    }
-
-    encoder << static_cast<uint64_t>(array.count - invalidIndices.size());
-
-    for (NSUInteger i = 0; i < array.count; ++i) {
-        if (invalidIndices.contains(i))
-            continue;
-        encodeObjectWithWrapper(encoder, array[i]);
-    }
-}
-
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<NSArray>(Decoder& decoder)
-{
-    RELEASE_ASSERT(decoder.allowedClasses().size());
-
-    uint64_t size;
-    if (!decoder.decode(size))
-        return std::nullopt;
-
-    auto array = adoptNS([[NSMutableArray alloc] init]);
-    for (uint64_t i = 0; i < size; ++i) {
-        auto value = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
-        if (!value || !value.value())
-            return std::nullopt;
-        [array addObject:value.value().get()];
-    }
-
-    return { array };
-}
-
-#pragma mark - NSDictionary
-
-template<> void encodeObjectDirectly<NSDictionary>(Encoder& encoder, NSDictionary *dictionary)
-{
-    // Even though NSDictionary is toll free bridged with CFDictionaryRef, keys/values may not be,
-    // so we should stay within this file's code.
-
-    if (!dictionary.count) {
-        encoder << static_cast<uint64_t>(0);
-        return;
-    }
-
-    HashSet<id> invalidKeys;
-    for (id key in dictionary) {
-        id value = dictionary[key];
-        ASSERT(value);
-
-        // Ignore values we don't support.
-        ASSERT(isSerializableValue(key));
-        ASSERT(isSerializableValue(value));
-        if (!isSerializableValue(key) || !isSerializableValue(value))
-            invalidKeys.add(key);
-    }
-
-    encoder << static_cast<uint64_t>(dictionary.count - invalidKeys.size());
-
-    for (id key in dictionary) {
-        if (invalidKeys.contains(key))
-            continue;
-        encodeObjectWithWrapper(encoder, key);
-        encodeObjectWithWrapper(encoder, dictionary[key]);
-    }
-}
-
-template<> void encodeObjectDirectly<NSDictionary<NSString *, id>>(Encoder& encoder, NSDictionary<NSString *, id> *dictionary)
-{
-    encodeObjectDirectly<NSDictionary>(encoder, dictionary);
-}
-
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<NSDictionary>(Decoder& decoder)
-{
-    auto allowedClasses = decoder.allowedClasses();
-    RELEASE_ASSERT(allowedClasses.size());
-
-    uint64_t size;
-    if (!decoder.decode(size))
-        return std::nullopt;
-
-    RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
-    for (uint64_t i = 0; i < size; ++i) {
-        auto key = decodeObjectFromWrapper(decoder, allowedClasses);
-        if (!key)
-            return std::nullopt;
-
-        auto value = decodeObjectFromWrapper(decoder, allowedClasses);
-        if (!value)
-            return std::nullopt;
-
-        [dictionary setObject:value.value().get() forKey:key.value().get()];
-    }
-
-    return { dictionary };
-}
-
-#pragma mark - NSFont / UIFont
-
-template<> void encodeObjectDirectly<WebCore::CocoaFont>(Encoder& encoder, WebCore::CocoaFont *font)
-{
-    encodeObjectDirectly(encoder, font.fontDescriptor.fontAttributes);
-}
-
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<WebCore::CocoaFont>(Decoder& decoder)
-{
-    RELEASE_ASSERT(decoder.allowedClasses().size());
-
-    std::optional<RetainPtr<NSDictionary>> fontAttributes = decodeObjectDirectlyRequiringAllowedClasses<NSDictionary>(decoder);
-    if (!fontAttributes)
-        return std::nullopt;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    return { WebKit::fontWithAttributes(fontAttributes->get(), 0) };
-
-    END_BLOCK_OBJC_EXCEPTIONS
-
-    return { };
 }
 
 #pragma mark - id <NSSecureCoding>
@@ -503,7 +365,7 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
-static bool shouldEnableStrictMode(Decoder& decoder, const Vector<Class>& allowedClasses)
+static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allowedClasses)
 {
 #if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
     auto isDecodingKnownVKCImageAnalysisMessageFromUIProcess = [] (auto& decoder) {
@@ -635,7 +497,7 @@ static constexpr bool haveSecureActionContext = false;
 
 template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<NSObject<NSSecureCoding>>(Decoder& decoder)
 {
-    const auto& allowedClasses = decoder.allowedClasses();
+    auto& allowedClasses = decoder.allowedClasses();
     RELEASE_ASSERT(allowedClasses.size());
 
     RetainPtr<CFDataRef> data;
@@ -648,24 +510,24 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
     unarchiver.get().delegate = delegate.get();
 
+    if (allowedClasses.contains(NSMutableURLRequest.class)
+        || allowedClasses.contains(NSURLRequest.class)) {
+        allowedClasses.add(WKSecureCodingURLWrapper.class);
+        allowedClasses.add(NSMutableString.class);
+        allowedClasses.add(NSMutableArray.class);
+        allowedClasses.add(NSMutableDictionary.class);
+        allowedClasses.add(NSMutableData.class);
+    }
+
+    if (allowedClasses.contains(NSParagraphStyle.class))
+        allowedClasses.add(NSMutableParagraphStyle.class);
+
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithCapacity:allowedClasses.size()]);
     for (auto allowedClass : allowedClasses)
         [allowedClassSet addObject:allowedClass];
 
-    if (allowedClasses.contains(NSMutableURLRequest.class)
-        || allowedClasses.contains(NSURLRequest.class)) {
-        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
-        [allowedClassSet addObject:NSMutableString.class];
-        [allowedClassSet addObject:NSMutableArray.class];
-        [allowedClassSet addObject:NSMutableDictionary.class];
-        [allowedClassSet addObject:NSMutableData.class];
-    }
-
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
-
-    if (allowedClasses.contains(NSParagraphStyle.class))
-        [allowedClassSet addObject:NSMutableParagraphStyle.class];
 
     @try {
         id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
@@ -704,7 +566,7 @@ void encodeObjectWithWrapper(Encoder& encoder, id object)
     encoder << WebKit::CoreIPCNSCFObject(object);
 }
 
-std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder& decoder, const Vector<Class>& allowedClasses)
+std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder& decoder, const HashSet<Class>& allowedClasses)
 {
     std::optional<WebKit::CoreIPCNSCFObject> result = decoder.decodeWithAllowedClasses<WebKit::CoreIPCNSCFObject>(allowedClasses);
     if (!result)

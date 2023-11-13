@@ -148,7 +148,7 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#unhandled-promise-rejections
 
-    VM& vm = m_context->vm();
+    Ref vm = m_context->vm();
     JSC::JSLockHolder lock(vm);
 
     for (auto& unhandledPromise : unhandledPromises) {
@@ -182,7 +182,7 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#the-hostpromiserejectiontracker-implementation
 
-    VM& vm = m_context->vm();
+    Ref vm = m_context->vm();
     JSC::JSLockHolder lock(vm);
 
     if (rejectedPromise->isSuspended())

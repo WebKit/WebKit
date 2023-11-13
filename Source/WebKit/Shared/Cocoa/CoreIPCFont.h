@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
+#include "CoreIPCDictionary.h"
 #include <WebCore/FontCocoa.h>
 #include <wtf/ArgumentCoder.h>
 
@@ -35,22 +36,24 @@ namespace WebKit {
 
 class CoreIPCFont {
 public:
-    CoreIPCFont(WebCore::CocoaFont *font)
-        : m_font(font)
-    {
-    }
+    CoreIPCFont(WebCore::CocoaFont *);
 
     CoreIPCFont(RetainPtr<WebCore::CocoaFont>&& font)
-        : m_font(WTFMove(font))
+        : CoreIPCFont(font.get())
     {
     }
 
-    RetainPtr<id> toID() { return m_font; }
+    RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCFont, void>;
 
-    IPC::CoreIPCRetainPtr<WebCore::CocoaFont> m_font;
+    CoreIPCFont(CoreIPCDictionary&& attributes)
+        : m_fontDescriptorAttributes(WTFMove(attributes))
+    {
+    }
+
+    CoreIPCDictionary m_fontDescriptorAttributes;
 };
 
 } // namespace WebKit

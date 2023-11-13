@@ -484,7 +484,7 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
     if (page && !page->settings().unhandledPromiseRejectionToConsoleEnabled())
         return;
 
-    JSC::VM& vm = state.vm();
+    Ref vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSValue result = promise.result(vm);
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
@@ -521,7 +521,7 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLeve
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
 {
-    auto* target = errorEventTarget();
+    RefPtr target = errorEventTarget();
     if (!target)
         return false;
 
@@ -544,6 +544,11 @@ int ScriptExecutionContext::circularSequentialID()
     if (m_circularSequentialID <= 0)
         m_circularSequentialID = 1;
     return m_circularSequentialID;
+}
+
+Ref<JSC::VM> ScriptExecutionContext::protectedVM()
+{
+    return vm();
 }
 
 PublicURLManager& ScriptExecutionContext::publicURLManager()
@@ -595,7 +600,7 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
         if (!scriptController || scriptController->isTerminatingExecution())
             return nullptr;
     }
-    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, vm());
+    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, protectedVM());
     return m_rejectedPromiseTracker.get();
 }
 
@@ -776,7 +781,7 @@ void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Documen
     if (!is<WorkerOrWorkletGlobalScope>(this))
         return;
 
-    auto* thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
+    RefPtr thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
     if (thread) {
         thread->workerLoaderProxy().postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
             callback(downcast<Document>(context));

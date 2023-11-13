@@ -43,7 +43,7 @@ public:
     {
     }
 
-    RetainPtr<id> toID() { return (__bridge id)(m_cfType.get()); }
+    RetainPtr<id> toID() const { return (__bridge id)(m_cfType.get()); }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCCFType, void>;

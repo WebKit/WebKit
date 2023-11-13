@@ -248,6 +248,7 @@ public:
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
     virtual JSC::VM& vm() = 0;
+    virtual Ref<JSC::VM> protectedVM();
 
     void adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval);
     virtual Seconds minimumDOMTimerInterval() const;

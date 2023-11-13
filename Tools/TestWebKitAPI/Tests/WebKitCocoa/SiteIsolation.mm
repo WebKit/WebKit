@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "DragAndDropSimulator.h"
 #import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
@@ -1301,6 +1302,54 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mousemove", eventTypes[0]);
     EXPECT_WK_STREQ("mousedown,40,40", eventTypes[1]);
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
+}
+
+TEST(SiteIsolation, DragEvents)
+{
+    auto mainframeHTML = "<script>"
+    "    window.events = [];"
+    "    addEventListener('message', function(event) {"
+    "        window.events.push(event.data);"
+    "    });"
+    "</script>"
+    "<iframe width='300' height='300' src='https://domain2.com/subframe'></iframe>"_s;
+
+    auto subframeHTML = "<body>"
+    "<div id='draggable' draggable='true' style='width: 100px; height: 100px; background-color: blue;'></div>"
+    "<script>"
+    "    draggable.addEventListener('dragstart', window.parent.postMessage('dragstart', '*'));"
+    "    draggable.addEventListener('drag', window.parent.postMessage('drag', '*'));"
+    "    draggable.addEventListener('dragend', window.parent.postMessage('dragend', '*'));"
+    "    draggable.addEventListener('dragenter', window.parent.postMessage('dragenter', '*'));"
+    "    draggable.addEventListener('dragleave', window.parent.postMessage('dragleave', '*'));"
+    "</script>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    RetainPtr webView = [simulator webView];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 150)];
+
+    NSArray<NSString *> *events = [webView objectByEvaluatingJavaScript:@"window.events"];
+    EXPECT_EQ(5U, events.count);
+    EXPECT_WK_STREQ("dragstart", events[0]);
+    EXPECT_WK_STREQ("drag", events[1]);
+    EXPECT_WK_STREQ("dragend", events[2]);
+    EXPECT_WK_STREQ("dragenter", events[3]);
+    EXPECT_WK_STREQ("dragleave", events[4]);
 }
 #endif
 

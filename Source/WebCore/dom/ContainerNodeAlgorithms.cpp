@@ -50,18 +50,20 @@ static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, 
     if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ true, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
         postInsertionNotificationTargets.append(node);
 
-    if (!is<ContainerNode>(node))
+    auto* containerNode = dynamicDowncast<ContainerNode>(node);
+    if (!containerNode)
         return;
 
-    for (RefPtr child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = containerNode->firstChild(); child; child = child->nextSibling()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(node.isConnected() && child->parentNode() == &node);
         notifyNodeInsertedIntoDocument(parentOfInsertedTree, *child, treeScopeChange, postInsertionNotificationTargets);
     }
 
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(*containerNode);
+    if (!element)
         return;
 
-    if (RefPtr root = downcast<Element>(node).shadowRoot()) {
+    if (RefPtr root = element->shadowRoot()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(node.isConnected() && root->host() == &node);
         notifyNodeInsertedIntoDocument(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
     }
@@ -75,16 +77,18 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
     if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
         postInsertionNotificationTargets.append(node);
 
-    if (!is<ContainerNode>(node))
+    auto* containerNode = dynamicDowncast<ContainerNode>(node);
+    if (!containerNode)
         return;
 
-    for (RefPtr child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling())
+    for (RefPtr child = containerNode->firstChild(); child; child = child->nextSibling())
         notifyNodeInsertedIntoTree(parentOfInsertedTree, *child, treeScopeChange, postInsertionNotificationTargets);
 
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(*containerNode);
+    if (!element)
         return;
 
-    if (RefPtr root = downcast<Element>(node).shadowRoot())
+    if (RefPtr root = element->shadowRoot())
         notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
 }
 
@@ -126,18 +130,20 @@ static RemovedSubtreeObservability notifyNodeRemovedFromDocument(ContainerNode& 
     node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ true, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
 
     auto observability = observabilityOfRemovedNode(node);
-    if (!is<ContainerNode>(node))
+    auto* containerNode = dynamicDowncast<ContainerNode>(node);
+    if (!containerNode)
         return observability;
 
-    for (RefPtr child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = containerNode->firstChild(); child; child = child->nextSibling()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!node.isConnected() && child->parentNode() == &node);
         updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, treeScopeChange, *child.get()));
     }
 
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(*containerNode);
+    if (!element)
         return observability;
 
-    if (RefPtr root = downcast<Element>(node).shadowRoot()) {
+    if (RefPtr root = element->shadowRoot()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!node.isConnected() && root->host() == &node);
         updateObservability(observability, notifyNodeRemovedFromDocument(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root.get()));
     }
@@ -151,16 +157,18 @@ static RemovedSubtreeObservability notifyNodeRemovedFromTree(ContainerNode& oldP
     node.removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ false, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
 
     auto observability = observabilityOfRemovedNode(node);
-    if (!is<ContainerNode>(node))
+    auto* containerNode = dynamicDowncast<ContainerNode>(node);
+    if (!containerNode)
         return observability;
 
-    for (RefPtr child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling())
+    for (RefPtr child = containerNode->firstChild(); child; child = child->nextSibling())
         updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, *child));
 
-    if (!is<Element>(node))
+    auto* element  = dynamicDowncast<Element>(*containerNode);
+    if (!element)
         return observability;
 
-    if (RefPtr root = downcast<Element>(node).shadowRoot())
+    if (RefPtr root = element->shadowRoot())
         updateObservability(observability, notifyNodeRemovedFromTree(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root));
 
     return observability;
@@ -207,11 +215,12 @@ static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
 {
     unsigned count = 0;
 
-    if (is<Element>(node)) {
-        if (is<HTMLFrameOwnerElement>(node) && downcast<HTMLFrameOwnerElement>(node).contentFrame())
+    if (auto* element = dynamicDowncast<Element>(node)) {
+        auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(*element);
+        if (frameOwnerElement && frameOwnerElement->contentFrame())
             ++count;
 
-        if (ShadowRoot* root = downcast<Element>(node).shadowRoot())
+        if (RefPtr root = element->shadowRoot())
             count += assertConnectedSubrameCountIsConsistent(*root);
     }
 
@@ -243,8 +252,8 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
             continue;
         }
 
-        if (is<HTMLFrameOwnerElement>(element))
-            frameOwners.append(downcast<HTMLFrameOwnerElement>(element));
+        if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
+            frameOwners.append(frameOwnerElement.releaseNonNull());
 
         if (ShadowRoot* shadowRoot = element.shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
@@ -262,8 +271,8 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
     Vector<Ref<HTMLFrameOwnerElement>> frameOwners;
 
     if (policy == SubframeDisconnectPolicy::RootAndDescendants) {
-        if (is<HTMLFrameOwnerElement>(root))
-            frameOwners.append(downcast<HTMLFrameOwnerElement>(root));
+        if (RefPtr rootElement = dynamicDowncast<HTMLFrameOwnerElement>(root))
+            frameOwners.append(rootElement.releaseNonNull());
     }
 
     collectFrameOwners(frameOwners, root);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -396,7 +396,7 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeFrameRateAndZoom(std::optional
     setSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
-void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoomConsideringObservers(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
     auto& settings = this->settings();
 
@@ -412,18 +412,106 @@ void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> widt
     }
 
     if (!width && !height && !frameRate && !zoom)
-        return;
+        return { };
 
-    auto match = bestSupportedSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    return bestSupportedSizeFrameRateAndZoom(width, height, frameRate, zoom);
+}
+
+void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+{
+    auto match = bestSupportedSizeFrameRateAndZoomConsideringObservers(width, height, frameRate, zoom);
     ERROR_LOG_IF(loggerPtr() && !match, LOGIDENTIFIER, "unable to find a preset that would match the size, frame rate and zoom");
     if (!match)
         return;
 
     m_currentPreset = match->encodingPreset;
+    auto newSize = match->encodingPreset->size();
     setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
-    setSize(match->encodingPreset->size());
+    setSize(newSize);
     setFrameRate(match->requestedFrameRate);
     setZoom(match->requestedZoom);
+}
+
+auto RealtimeVideoCaptureSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>
+{
+    return TakePhotoNativePromise::createAndReject("Not supported"_s);
+}
+
+auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref<TakePhotoNativePromise>
+{
+    ASSERT(isMainThread());
+
+    if (isEnded())
+        return TakePhotoNativePromise::createAndResolve();
+
+    if ((photoSettings.imageHeight && !photoSettings.imageWidth) || (!photoSettings.imageHeight && photoSettings.imageWidth)) {
+        IntSize sanitizedSize;
+        if (photoSettings.imageHeight)
+            sanitizedSize.setHeight(*photoSettings.imageHeight);
+        if (photoSettings.imageWidth)
+            sanitizedSize.setWidth(*photoSettings.imageWidth);
+
+        auto intrinsicSize = this->intrinsicSize();
+        if (!sanitizedSize.height())
+            sanitizedSize.setHeight(sanitizedSize.width() * (intrinsicSize.height() / static_cast<double>(intrinsicSize.width())));
+        else if (!sanitizedSize.width())
+            sanitizedSize.setWidth(sanitizedSize.height() * (intrinsicSize.width() / static_cast<double>(intrinsicSize.height())));
+
+        photoSettings.imageHeight = sanitizedSize.height();
+        photoSettings.imageWidth = sanitizedSize.width();
+    }
+
+    std::optional<CaptureSizeFrameRateAndZoom> newPresetForPhoto;
+    if (photoSettings.imageHeight || photoSettings.imageWidth) {
+        newPresetForPhoto = bestSupportedSizeFrameRateAndZoomConsideringObservers(photoSettings.imageWidth, photoSettings.imageHeight, { }, { });
+        ERROR_LOG_IF(loggerPtr() && !newPresetForPhoto, LOGIDENTIFIER, "unable to find a preset to match the size of requested photo, using current preset");
+
+        if (newPresetForPhoto && m_currentPreset && m_currentPreset->size() == newPresetForPhoto->encodingPreset->size())
+            newPresetForPhoto = { };
+    }
+
+    std::optional<CaptureSizeFrameRateAndZoom> configurationToRestore;
+    if (newPresetForPhoto) {
+        configurationToRestore = {
+            { m_currentPreset },
+            size(),
+            frameRate(),
+            zoom()
+        };
+
+        // 3.2.2 - Devices MAY temporarily stop streaming data, reconfigure themselves with the appropriate photo
+        // settings, take the photo, and then resume streaming. In this case, the stopping and restarting of
+        // streaming SHOULD cause onmute and onunmute events to fire on the track in question.
+        if (!muted()) {
+            setMuted(true);
+            m_mutedForPhotoCapture = true;
+        }
+
+        m_currentPreset = newPresetForPhoto->encodingPreset;
+        auto newSize = newPresetForPhoto->encodingPreset->size();
+        setFrameRateAndZoomWithPreset(newPresetForPhoto->requestedFrameRate, newPresetForPhoto->requestedZoom, WTFMove(newPresetForPhoto->encodingPreset));
+        setSize(newSize);
+    }
+
+    return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
+
+        ASSERT(isMainThread());
+
+        if (configurationToRestore) {
+            m_currentPreset = configurationToRestore->encodingPreset;
+            auto newSize = configurationToRestore->encodingPreset->size();
+            setFrameRateAndZoomWithPreset(configurationToRestore->requestedFrameRate, configurationToRestore->requestedZoom, WTFMove(configurationToRestore->encodingPreset));
+            setSize(newSize);
+            if (m_mutedForPhotoCapture) {
+                m_mutedForPhotoCapture = false;
+                setMuted(false);
+            }
+        }
+
+        // FIXME: Resize image if preset size doesn't match requested size.
+
+        return TakePhotoNativePromise::createAndSettle(WTFMove(result));
+    });
 }
 
 void RealtimeVideoCaptureSource::ensureIntrinsicSizeMaintainsAspectRatio()

@@ -41,7 +41,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
-#include <WebCore/RemoteMouseEventData.h>
+#include <WebCore/RemoteUserInputEventData.h>
 
 namespace WebKit {
 
@@ -198,13 +198,13 @@ bool RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
 
 void RemotePageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const NativeWebMouseEvent& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
 {
-    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
         if (!m_page)
             return;
         if (!eventType)
             return;
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
-        m_page->handleMouseEventReply(*eventType, handled, remoteMouseEventData, { });
+        m_page->handleMouseEventReply(*eventType, handled, remoteUserInputEventData, { });
     });
 }
 

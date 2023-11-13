@@ -1017,17 +1017,6 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
             return;
         }
 
-        // If the decode timestamp is less than the presentation start time, then run the end of stream
-        // algorithm with the error parameter set to "decode", and abort these steps.
-        // NOTE: Until <https://www.w3.org/Bugs/Public/show_bug.cgi?id=27487> is resolved, we will only check
-        // the presentation timestamp.
-        MediaTime presentationStartTime = MediaTime::zeroTime();
-        if (presentationTimestamp < presentationStartTime) {
-            ERROR_LOG(LOGIDENTIFIER, "failing because presentationTimestamp (", presentationTimestamp, ") < presentationStartTime (", presentationStartTime, ")");
-            m_client->sourceBufferPrivateStreamEndedWithDecodeError();
-            return;
-        }
-
         // 1.10 If the need random access point flag on track buffer equals true, then run the following steps:
         if (trackBuffer.needRandomAccessFlag()) {
             // 1.11.1 If the coded frame is not a random access point, then drop the coded frame and jump

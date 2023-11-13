@@ -70,6 +70,9 @@ fast/forms/time [ Skip ]
 fast/forms/week [ Skip ]
 fast/forms/datalist/ [ Skip ]
 
+# Not supported yet
+fast/forms/vertical-writing-mode [ Skip ]
+
 # FILTERS_LEVEL_2 is disabled
 compositing/layer-creation/will-change-on-normal-flow-content.html [ Skip ]
 
@@ -515,9 +518,6 @@ fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 
 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 
-fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
-fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
-
 # entire directory fails
 dom/svg/level3/xpath [ Skip ]
 
@@ -534,6 +534,8 @@ webkit.org/b/221445 fast/text/system-font-width-8.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-9.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width.html [ Skip ]
 webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Skip ]
+
+webkit.org/b/264710 [ Debug ] fast/svg/svg_should_not_crash.html [ Skip ] # Makes a subsequent test crash
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # crypto
@@ -1881,8 +1883,6 @@ fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
-fast/canvas/canvas-imageSmoothingEnabled.html [ Failure ]
-fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 fast/canvas/canvas-measureText-2.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]

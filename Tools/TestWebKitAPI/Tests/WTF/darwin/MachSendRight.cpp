@@ -46,7 +46,7 @@ static mach_port_t setup()
 
     kr = mach_port_insert_right(mach_task_self(), port, port, MACH_MSG_TYPE_MAKE_SEND);
     EXPECT_EQ(kr, KERN_SUCCESS);
-    
+
     EXPECT_EQ(getSendRefs(port), 1u);
 
     return port;
@@ -150,13 +150,36 @@ TEST(MachSendRight, DeadName)
     {
         MachSendRight right = MachSendRight::adopt(port);
         EXPECT_EQ(getSendRefs(port), 0u);
-        
+
         unsigned count = 0;
         auto kr = mach_port_get_refs(mach_task_self(), port, MACH_PORT_RIGHT_DEAD_NAME, &count);
         EXPECT_EQ(kr, KERN_SUCCESS);
         EXPECT_EQ(count, 1u);
     }
-    
+
+    EXPECT_EQ(mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_DEAD_NAME, -1), KERN_INVALID_NAME);
+}
+
+TEST(MachSendRight, CreateFromDeadNameReceiveRight)
+{
+    // Release the receive right so that the send right becomes a dead name right instead, and
+    // confirm that MachSendRight::createFromReceiveRight does not return a functioning MachSendRight.
+    auto port = setup();
+    EXPECT_EQ(mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1), KERN_SUCCESS);
+
+    {
+        MachSendRight portHolder = MachSendRight::adopt(port);
+        EXPECT_TRUE(!!portHolder);
+        MachSendRight rightFromDeadName = MachSendRight::createFromReceiveRight(port);
+        EXPECT_FALSE(!!rightFromDeadName);
+        EXPECT_EQ(getSendRefs(port), 0u);
+
+        unsigned count = 0;
+        auto kr = mach_port_get_refs(mach_task_self(), port, MACH_PORT_RIGHT_DEAD_NAME, &count);
+        EXPECT_EQ(kr, KERN_SUCCESS);
+        EXPECT_EQ(count, 1u);
+    }
+
     EXPECT_EQ(mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_DEAD_NAME, -1), KERN_INVALID_NAME);
 }
 

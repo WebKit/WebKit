@@ -29,27 +29,31 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
+class CoreIPCNSCFObject;
+
 class CoreIPCArray {
 public:
-    CoreIPCArray(NSArray *array)
-        : m_array(array)
+    CoreIPCArray(NSArray *);
+    CoreIPCArray(const RetainPtr<NSArray>& array)
+        : CoreIPCArray(array.get())
     {
     }
 
-    CoreIPCArray(RetainPtr<NSArray> array)
-        : m_array(WTFMove(array))
-    {
-    }
-
-    RetainPtr<id> toID() { return m_array; }
+    RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCArray, void>;
 
-    IPC::CoreIPCRetainPtr<NSArray> m_array;
+    CoreIPCArray(Vector<UniqueRef<CoreIPCNSCFObject>>&& array)
+        : m_array(WTFMove(array))
+    {
+    }
+
+    Vector<UniqueRef<CoreIPCNSCFObject>> m_array;
 };
 
 } // namespace WebKit

@@ -1726,8 +1726,6 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/custom-elements/form-associa
 webkit.org/b/264680 imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-iterable.https.html [ Crash Pass Timeout ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Crash Pass ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Crash Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_filename.htm [ Failure Pass ]

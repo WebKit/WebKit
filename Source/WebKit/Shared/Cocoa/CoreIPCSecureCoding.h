@@ -37,7 +37,9 @@ public:
     CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
     CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
 
-    RetainPtr<id> toID() { return m_secureCoding; }
+    RetainPtr<id> toID() const { return m_secureCoding; }
+
+    Class objectClass() { return m_secureCoding.get().class; }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;

@@ -44,7 +44,7 @@ public:
     {
     }
 
-    RetainPtr<id> toID() { return (NSURL *)m_url; }
+    RetainPtr<id> toID() const { return (NSURL *)m_url; }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCURL, void>;

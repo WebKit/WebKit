@@ -30,8 +30,10 @@
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
 #import <Foundation/NSValue.h>
+#import <WebCore/FontCocoa.h>
 #import <limits.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // This test makes it trivial to test round trip encoding and decoding of a particular object type.
 // The primary focus here is Objective-C and similar types - Objects that exist on the platform or in
@@ -78,7 +80,8 @@ struct CFHolderForTesting {
         RetainPtr<CFURLRef>,
         RetainPtr<CFDataRef>,
         RetainPtr<CFBooleanRef>,
-        RetainPtr<CGColorRef>
+        RetainPtr<CGColorRef>,
+        RetainPtr<CFDictionaryRef>
     > ValueType;
 
     ValueType value;
@@ -109,7 +112,12 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
     EXPECT_TRUE(aObject);
     EXPECT_TRUE(bObject);
 
-    return CFEqual(aObject, bObject);
+    if (CFEqual(aObject, bObject))
+        return true;
+
+    // Sometimes the CF input and CF output fail the CFEqual call above (Such as CFDictionaries containing certain things)
+    // In these cases, give the Obj-C equivalent equality check a chance.
+    return [(NSObject *)aObject isEqual: (NSObject *)bObject];
 }
 
 struct ObjCHolderForTesting {
@@ -132,7 +140,8 @@ struct ObjCHolderForTesting {
         RetainPtr<NSData>,
         RetainPtr<NSNumber>,
         RetainPtr<NSArray>,
-        RetainPtr<NSDictionary>
+        RetainPtr<NSDictionary>,
+        RetainPtr<WebCore::CocoaFont>
     > ValueType;
 
     ValueType value;
@@ -244,17 +253,21 @@ TEST(IPCSerialization, Basic)
         EXPECT_TRUE(done);
     };
 
+    // NSString/CFString
     runTestNS({ @"Hello world" });
     runTestCF({ CFSTR("Hello world") });
 
+    // NSURL/CFURL
     runTestNS({ [NSURL URLWithString:@"https://webkit.org/"] });
     auto cfURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR("https://webkit.org/"), NULL));
     runTestCF({ cfURL.get() });
 
+    // NSData/CFData
     runTestNS({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
     auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)"Data test", strlen("Data test")));
     runTestCF({ cfData.get() });
 
+    // NSDate
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setYear:2007];
     [dateComponents setMonth:1];
@@ -262,17 +275,19 @@ TEST(IPCSerialization, Basic)
     [dateComponents setHour:10];
     [dateComponents setMinute:00];
     [dateComponents setSecond:0];
-
     runTestNS({ [[NSCalendar currentCalendar] dateFromComponents:dateComponents] });
 
+    // CFBoolean
     runTestCF({ kCFBooleanTrue });
     runTestCF({ kCFBooleanFalse });
 
+    // CGColor
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     constexpr CGFloat testComponents[4] = { 1, .75, .5, .25 };
     auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
     runTestCF({ cgColor.get() });
 
+    // NSNumber
     runTestNS({ [NSNumber numberWithChar: CHAR_MIN] });
     runTestNS({ [NSNumber numberWithUnsignedChar: CHAR_MAX] });
     runTestNS({ [NSNumber numberWithShort: SHRT_MIN] });
@@ -291,6 +306,18 @@ TEST(IPCSerialization, Basic)
     runTestNS({ [NSNumber numberWithInteger: NSIntegerMin] });
     runTestNS({ [NSNumber numberWithUnsignedInteger: NSUIntegerMax] });
 
-    runTestNS({ @[ @"Array test" ] });
-    runTestNS({ @{ @"Dictionary": @"Test"   } });
+    // NSArray
+    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
+
+    // NSDictionary
+    runTestNS({ @{ @"Dictionary": @[ @"array value", @12 ] } });
+
+    // CFDictionary with a non-toll-free bridged CFType, also run as NSDictionary
+    auto cfDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, NULL, NULL));
+    CFDictionaryAddValue(cfDictionary.get(), CFSTR("MyKey"), cgColor.get());
+    runTestCF({ cfDictionary.get() });
+    runTestNS({ bridge_cast(cfDictionary.get()) });
+
+    // NSFont/UIFont
+    runTestNS({ [WebCore::CocoaFont systemFontOfSize:[WebCore::CocoaFont systemFontSize]] });
 }

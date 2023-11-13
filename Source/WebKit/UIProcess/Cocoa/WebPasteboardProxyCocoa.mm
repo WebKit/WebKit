@@ -28,6 +28,7 @@
 
 #import "Connection.h"
 #import "PasteboardAccessIntent.h"
+#import "RemotePageProxy.h"
 #import "SandboxExtension.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPageProxy.h"
@@ -638,6 +639,17 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
     std::optional<DataOwnerType> result;
     for (Ref page : process->pages()) {
         if (page->webPageID() == *pageID) {
+            result = page->dataOwnerForPasteboard(intent);
+            break;
+        }
+    }
+
+    for (WeakPtr<RemotePageProxy> remotePage : process->remotePages()) {
+        if (!remotePage)
+            continue;
+
+        RefPtr page = remotePage->page();
+        if (page && page->webPageID() == *pageID) {
             result = page->dataOwnerForPasteboard(intent);
             break;
         }

@@ -44,7 +44,7 @@ public:
     {
     }
 
-    RetainPtr<id> toID()
+    RetainPtr<id> toID() const
     {
         return cocoaColor(m_color);
     }

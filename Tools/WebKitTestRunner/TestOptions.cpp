@@ -118,7 +118,7 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
-            { "PdfJSViewerEnabled", false },
+            { "PDFJSViewerEnabled", false },
             { "PluginsEnabled", true },
             { "PushAPIEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },

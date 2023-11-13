@@ -164,7 +164,6 @@ private:
 
     // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
-    void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
     void sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;

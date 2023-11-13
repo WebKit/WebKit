@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RemoteMouseEventData.h"
+#include "RemoteUserInputEventData.h"
 
 namespace WebCore {
 
@@ -36,8 +36,8 @@ public:
     {
     }
 
-    HandleMouseEventResult(RemoteMouseEventData remoteMouseEventData)
-        : m_result(makeUnexpected(remoteMouseEventData))
+    HandleMouseEventResult(RemoteUserInputEventData remoteUserInputEventData)
+        : m_result(makeUnexpected(remoteUserInputEventData))
     {
     }
 
@@ -48,12 +48,12 @@ public:
             m_result = handled;
     }
 
-    std::optional<RemoteMouseEventData> remoteMouseEventData()
+    std::optional<RemoteUserInputEventData> remoteUserInputEventData()
     {
-        return m_result ? std::nullopt : std::optional<RemoteMouseEventData>(m_result.error());
+        return m_result ? std::nullopt : std::optional<RemoteUserInputEventData>(m_result.error());
     }
 private:
-    Expected<bool, RemoteMouseEventData> m_result;
+    Expected<bool, RemoteUserInputEventData> m_result;
 };
 
 }

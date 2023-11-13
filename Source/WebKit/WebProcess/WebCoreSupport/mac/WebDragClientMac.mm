@@ -40,11 +40,11 @@
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
 #import <WebCore/FrameDestructionObserver.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/LocalFrame.h>
-#import <WebCore/LocalFrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PagePasteboardContext.h>
@@ -67,13 +67,9 @@ using DragImage = NSImage *;
 using DragImage = CGImageRef;
 #endif
 
-static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, LocalFrame& frame)
+static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
-    if (!localMainFrame)
-        return nullptr;
-
-    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(localMainFrame->view()) });
+    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(frame.mainFrame().virtualView()) });
     if (!bitmap)
         return nullptr;
 
@@ -91,7 +87,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
 {
     auto& image = dragItem.image;
 

@@ -94,6 +94,7 @@
 #include "Range.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
+#include "RemoteUserInputEventData.h"
 #include "RenderFrameSet.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -1739,7 +1740,7 @@ static LayoutPoint documentPointForWindowPoint(LocalFrame& frame, const IntPoint
     return view ? view->windowToContents(windowPoint) : windowPoint;
 }
 
-std::optional<RemoteMouseEventData> EventHandler::mouseEventDataForRemoteFrame(const RemoteFrame* remoteFrame, const IntPoint& pointInFrame)
+std::optional<RemoteUserInputEventData> EventHandler::mouseEventDataForRemoteFrame(const RemoteFrame* remoteFrame, const IntPoint& pointInFrame)
 {
     if (!remoteFrame)
         return std::nullopt;
@@ -1752,7 +1753,7 @@ std::optional<RemoteMouseEventData> EventHandler::mouseEventDataForRemoteFrame(c
     if (!remoteFrameView)
         return std::nullopt;
 
-    return RemoteMouseEventData {
+    return RemoteUserInputEventData {
         remoteFrame->frameID(),
         remoteFrameView->rootViewToContents(frameView->contentsToRootView(pointInFrame))
     };
@@ -4161,10 +4162,14 @@ void EventHandler::didStartDrag()
 #endif
 }
 
-void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, OptionSet<DragOperation> dragOperationMask, MayExtendDragSession mayExtendDragSession)
+std::optional<RemoteUserInputEventData> EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, OptionSet<DragOperation> dragOperationMask, MayExtendDragSession mayExtendDragSession)
 {
     // Send a hit test request so that RenderLayer gets a chance to update the :hover and :active pseudoclasses.
-    prepareMouseEvent(OptionSet<HitTestRequest::Type> { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent }, event);
+    auto mouseEvent = prepareMouseEvent(OptionSet<HitTestRequest::Type> { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent }, event);
+    if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframeForHitTestResult(mouseEvent))) {
+        // FIXME(264611): These mouse coordinates need to be correctly transformed.
+        return RemoteUserInputEventData { remoteSubframe->frameID(),  mouseEvent.hitTestResult().roundedPointInInnerNodeFrame() };
+    }
 
     if (shouldDispatchEventsToDragSourceElement()) {
         dragState().dataTransfer->setDestinationOperationMask(dragOperationMask);
@@ -4181,6 +4186,7 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, OptionSet<
     // In case the drag was ended due to an escape key press we need to ensure
     // that consecutive mousemove events don't reinitiate the drag and drop.
     m_mouseDownMayStartDrag = false;
+    return std::nullopt;
 }
 
 void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement)

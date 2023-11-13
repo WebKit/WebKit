@@ -69,9 +69,11 @@ enum class NSType : uint8_t {
     Unknown,
 };
 NSType typeFromObject(id);
+bool isSerializableValue(id);
+
 
 void encodeObjectWithWrapper(Encoder&, id);
-std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const Vector<Class>& allowedClasses);
+std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Class>& allowedClasses);
 
 template<typename T> void encodeObjectDirectly(Encoder&, T *);
 template<typename T> void encodeObjectDirectly(Encoder&, T);
@@ -81,7 +83,7 @@ template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
 
 #if ASSERT_ENABLED
 
-static inline bool isObjectClassAllowed(id object, const Vector<Class>& allowedClasses)
+static inline bool isObjectClassAllowed(id object, const HashSet<Class>& allowedClasses)
 {
     for (Class allowedClass : allowedClasses) {
         if ([object isKindOfClass:allowedClass])
