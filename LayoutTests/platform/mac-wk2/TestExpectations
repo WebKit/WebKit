@@ -1997,3 +1997,5 @@ webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-
 webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
 
 webkit.org/b/264615 [ Sonoma+ Release x86_64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ Failure ]
+
+webkit.org/b/264751 fast/frames/iframe-window-focus.html [ Pass Failure ]
