@@ -313,7 +313,7 @@ bool StreamStatisticianImpl::IsRetransmitOfOldPacket(
     const RtpPacketReceived& packet,
     int64_t now_ms) const {
   uint32_t frequency_khz = packet.payload_type_frequency() / 1000;
-  RTC_DCHECK_GT(frequency_khz, 0);
+  RTC_CHECK_GT(frequency_khz, 0);
 
   int64_t time_diff_ms = now_ms - last_receive_time_ms_;
 
