@@ -42,8 +42,8 @@ static WorkQueue& gstEncoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalAudioEncoder : public ThreadSafeRefCounted<GStreamerInternalAudioEncoder>
-    , public CanMakeWeakPtr<GStreamerInternalAudioEncoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalAudioEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalAudioEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_NONCOPYABLE(GStreamerInternalAudioEncoder);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -152,10 +152,9 @@ void GStreamerAudioEncoder::encode(RawFrame&& frame, EncodeCallback&& callback)
         else
             resultString = "Encoding failed"_s;
 
-        encoder->postTask([weakEncoder = WeakPtr { encoder.get() }, encoder, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
-            if (!weakEncoder)
-                return;
-            if (encoder->isClosed())
+        encoder->postTask([weakEncoder = ThreadSafeWeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
+            auto encoder = weakEncoder.get();
+            if (!encoder || encoder->isClosed())
                 return;
 
             callback(WTFMove(result));
@@ -205,7 +204,8 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(const String& codec
 
     auto pad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "src"));
     g_signal_connect_data(pad.get(), "notify::caps", G_CALLBACK(+[](GObject* pad, GParamSpec*, gpointer userData) {
-        WeakPtr<GStreamerInternalAudioEncoder> encoder(*static_cast<WeakPtr<GStreamerInternalAudioEncoder>*>(userData));
+        auto weakEncoder = static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(userData);
+        auto encoder = weakEncoder->get();
         if (!encoder)
             return;
 
@@ -214,8 +214,9 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(const String& codec
         if (!caps)
             return;
 
-        encoder.get()->postTask([weakEncoder = WeakPtr { *encoder.get() }, caps = WTFMove(caps)] {
-            if (!weakEncoder)
+        encoder->postTask([weakEncoder = WTFMove(weakEncoder), caps = WTFMove(caps)] {
+            auto encoder = weakEncoder->get();
+            if (!encoder)
                 return;
 
             auto structure = gst_caps_get_structure(caps.get(), 0);
@@ -243,14 +244,14 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(const String& codec
             if (gst_structure_get_int(structure, "rate", &sampleRate))
                 configuration.sampleRate = sampleRate;
 
-            weakEncoder.get()->m_descriptionCallback(WTFMove(configuration));
+            encoder->m_descriptionCallback(WTFMove(configuration));
         });
-    }), new WeakPtr { *this }, [](void* data, GClosure*) {
-        delete static_cast<WeakPtr<GStreamerInternalAudioEncoder>*>(data);
+    }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {
+        delete static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
+        if (!weakThis.get())
             return;
         if (m_isClosed)
             return;
@@ -269,10 +270,8 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(const String& codec
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer mappedBuffer(outputBuffer.get(), GST_MAP_READ);
         AudioEncoder::EncodedFrame encodedFrame { mappedBuffer.createVector(), isKeyFrame, m_timestamp, m_duration };
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, encodedFrame = WTFMove(encodedFrame)]() mutable {
-            if (!weakThis)
-                return;
-            if (m_isClosed)
+        m_postTaskCallback([protectedThis = Ref { *this }, this, encodedFrame = WTFMove(encodedFrame)]() mutable {
+            if (protectedThis->m_isClosed)
                 return;
             m_outputCallback({ WTFMove(encodedFrame) });
         });

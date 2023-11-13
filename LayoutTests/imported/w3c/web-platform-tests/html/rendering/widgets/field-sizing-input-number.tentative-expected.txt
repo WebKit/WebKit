@@ -1,0 +1,11 @@
+
+
+FAIL number: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL number: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS number: Explicit width and heigth
+PASS number: Explicit width and auto height
+FAIL number: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL number: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL number: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL number: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+

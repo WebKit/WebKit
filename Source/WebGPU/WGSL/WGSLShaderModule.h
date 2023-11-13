@@ -82,6 +82,9 @@ public:
     bool usesDivision() const { return m_usesDivision; }
     void setUsesDivision() { m_usesDivision = true; }
 
+    bool usesModulo() const { return m_usesModulo; }
+    void setUsesModulo() { m_usesModulo = true; }
+
     bool usesFrexp() const { return m_usesFrexp; }
     void setUsesFrexp() { m_usesFrexp = true; }
 
@@ -224,6 +227,7 @@ private:
     bool m_usesUnpackArray { false };
     bool m_usesWorkgroupUniformLoad { false };
     bool m_usesDivision { false };
+    bool m_usesModulo { false };
     bool m_usesFrexp { false };
     Configuration m_configuration;
     AST::Directive::List m_directives;

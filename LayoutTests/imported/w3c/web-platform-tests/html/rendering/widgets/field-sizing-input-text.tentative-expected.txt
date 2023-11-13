@@ -1,0 +1,57 @@
+
+
+FAIL text: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL text: Empty value with a size atttribute assert_less_than: expected a number less than 78 but got 78
+FAIL text: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS text: Explicit width and heigth
+PASS text: Explicit width and auto height
+FAIL text: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL text: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL text: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL text: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL search: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL search: Empty value with a size atttribute assert_less_than: expected a number less than 105 but got 105
+FAIL search: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS search: Explicit width and heigth
+PASS search: Explicit width and auto height
+FAIL search: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL search: Text caret is taller than the placeholder assert_less_than: expected a number less than 170 but got 170
+FAIL search: Text caret is shorter than the placeholder assert_less_than: expected a number less than 170 but got 170
+FAIL search: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL tel: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL tel: Empty value with a size atttribute assert_less_than: expected a number less than 78 but got 78
+FAIL tel: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS tel: Explicit width and heigth
+PASS tel: Explicit width and auto height
+FAIL tel: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL tel: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL tel: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL tel: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL url: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL url: Empty value with a size atttribute assert_less_than: expected a number less than 78 but got 78
+FAIL url: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS url: Explicit width and heigth
+PASS url: Explicit width and auto height
+FAIL url: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL url: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL url: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL url: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL email: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL email: Empty value with a size atttribute assert_less_than: expected a number less than 78 but got 78
+FAIL email: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS email: Explicit width and heigth
+PASS email: Explicit width and auto height
+FAIL email: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL email: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL email: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL email: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL password: Empty value assert_less_than: expected a number less than 148 but got 148
+FAIL password: Empty value with a size atttribute assert_less_than: expected a number less than 78 but got 78
+FAIL password: Auto width and auto height with a long text assert_greater_than: expected a number greater than 148 but got 148
+PASS password: Explicit width and heigth
+PASS password: Explicit width and auto height
+FAIL password: Explicit height and auto width assert_less_than: expected a number less than 148 but got 148
+FAIL password: Text caret is taller than the placeholder assert_less_than: expected a number less than 404 but got 404
+FAIL password: Text caret is shorter than the placeholder assert_less_than: expected a number less than 249 but got 249
+FAIL password: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+

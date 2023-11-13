@@ -576,15 +576,23 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
     infer(statement.leftExpression());
     infer(statement.rightExpression());
 
-    if (statement.operation() == AST::BinaryOperation::Divide) {
+    const char* operationName = nullptr;
+    if (statement.operation() == AST::BinaryOperation::Divide)
+        operationName = "division";
+    else if (statement.operation() == AST::BinaryOperation::Modulo)
+        operationName = "modulo";
+    if (operationName) {
         auto* rightType = statement.rightExpression().inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
         if (satisfies(rightType, Constraints::Integer)) {
-            m_shaderModule.setUsesDivision();
+            if (statement.operation() == AST::BinaryOperation::Divide)
+                m_shaderModule.setUsesDivision();
+            else
+                m_shaderModule.setUsesModulo();
             auto rightValue = statement.rightExpression().constantValue();
             if (rightValue && containsZero(*rightValue, statement.rightExpression().inferredType()))
-                typeError(InferBottom::No, statement.span(), "invalid division by zero");
+                typeError(InferBottom::No, statement.span(), "invalid ", operationName, " by zero");
         }
     }
 }
@@ -858,16 +866,24 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
 {
     chooseOverload("operator", binary, toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 
-    if (binary.operation() == AST::BinaryOperation::Divide) {
+    const char* operationName = nullptr;
+    if (binary.operation() == AST::BinaryOperation::Divide)
+        operationName = "division";
+    else if (binary.operation() == AST::BinaryOperation::Modulo)
+        operationName = "modulo";
+    if (operationName) {
         auto* rightType = binary.rightExpression().inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
         if (satisfies(rightType, Constraints::Integer)) {
-            m_shaderModule.setUsesDivision();
+            if (binary.operation() == AST::BinaryOperation::Divide)
+                m_shaderModule.setUsesDivision();
+            else
+                m_shaderModule.setUsesModulo();
             auto leftValue = binary.leftExpression().constantValue();
             auto rightValue = binary.rightExpression().constantValue();
             if (!leftValue && rightValue && containsZero(*rightValue, binary.rightExpression().inferredType()))
-                typeError(InferBottom::No, binary.span(), "invalid division by zero");
+                typeError(InferBottom::No, binary.span(), "invalid ", operationName, " by zero");
         }
     }
 }

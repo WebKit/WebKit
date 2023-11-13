@@ -697,7 +697,7 @@ static void commitSurface(TextureMapperPaintOptions& options, BitmapTexture& sur
 
 void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
+    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface);
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
@@ -712,7 +712,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 
 void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
+    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface);
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
@@ -796,7 +796,7 @@ void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& 
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
                 tileRect.intersect(rect);
-                auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), BitmapTexture::SupportsAlpha | BitmapTexture::DepthBuffer);
+                auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha, BitmapTexture::Flags::DepthBuffer });
                 {
                     SetForScope scopedSurface(options.surface, surface);
                     SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));

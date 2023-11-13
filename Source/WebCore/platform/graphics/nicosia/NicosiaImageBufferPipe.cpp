@@ -83,7 +83,10 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
                         return;
 
                     auto size = nativeImage->size();
-                    texture = BitmapTexture::create(size, nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                    OptionSet<BitmapTexture::Flags> flags;
+                    if (nativeImage->hasAlpha())
+                        flags.add(BitmapTexture::Flags::SupportsAlpha);
+                    texture = BitmapTexture::create(size, flags);
 #if USE(CAIRO)
                     auto* surface = nativeImage->platformImage().get();
                     auto* imageData = cairo_image_surface_get_data(surface);

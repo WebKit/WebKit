@@ -222,6 +222,9 @@ imported/w3c/web-platform-tests/html/rendering/the-details-element/details-befor
 imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-as-listbox-default-styles.tentative.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html [ Pass ]

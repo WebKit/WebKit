@@ -54,7 +54,7 @@ static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 
 namespace WebCore {
 
-BitmapTexture::BitmapTexture(const IntSize& size, const Flags flags, GLint internalFormat)
+BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, GLint internalFormat)
     : m_flags(flags)
     , m_size(size)
     , m_internalFormat(internalFormat == GL_DONT_CARE ? GL_RGBA : internalFormat)
@@ -69,7 +69,7 @@ BitmapTexture::BitmapTexture(const IntSize& size, const Flags flags, GLint inter
     glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_size.width(), m_size.height(), 0, m_format, s_pixelDataType, nullptr);
 }
 
-void BitmapTexture::reset(const IntSize& size, const Flags flags)
+void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
 {
     m_flags = flags;
     m_shouldClear = true;
@@ -256,7 +256,7 @@ void BitmapTexture::createFboIfNeeded()
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0);
-    if (flags() & DepthBuffer)
+    if (m_flags.contains(Flags::DepthBuffer))
         initializeDepthBuffer();
     m_shouldClear = true;
 }
@@ -267,7 +267,7 @@ void BitmapTexture::bindAsSurface()
     createFboIfNeeded();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_size.width(), m_size.height());
-    if (flags() & DepthBuffer)
+    if (m_flags.contains(Flags::DepthBuffer))
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);

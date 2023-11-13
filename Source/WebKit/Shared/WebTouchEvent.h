@@ -141,9 +141,6 @@ public:
     void setCanPreventNativeGestures(bool canPreventNativeGestures) { m_canPreventNativeGestures = canPreventNativeGestures; }
 
     bool allTouchPointsAreReleased() const;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebTouchEvent&);
     
 private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
@@ -185,9 +182,6 @@ public:
     float force() const { return m_force; }
 
     void setState(State state) { m_state = state; }
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPlatformTouchPoint> decode(IPC::Decoder&);
 
 private:
     uint32_t m_id;

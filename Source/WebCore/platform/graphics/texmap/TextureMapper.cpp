@@ -183,7 +183,7 @@ TextureMapper::TextureMapper()
 {
 }
 
-RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
+RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
     return m_texturePool->acquireTexture(size, flags);
 }
@@ -287,7 +287,7 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
     IntRect sourceRect(IntPoint::zero(), size);
     IntRect targetRect(roundedIntPoint(targetPoint), size);
 
-    RefPtr<BitmapTexture> texture = acquireTextureFromPool(size);
+    RefPtr<BitmapTexture> texture = m_texturePool->acquireTexture(size, { BitmapTexture::Flags::SupportsAlpha });
     const unsigned char* bits = cairo_image_surface_get_data(surface);
     int stride = cairo_image_surface_get_stride(surface);
     texture->updateContents(bits, sourceRect, IntPoint::zero(), stride);
@@ -913,7 +913,7 @@ RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourc
     if (radiusX < MinBlurRadius && radiusY < MinBlurRadius)
         return sourceTexture;
 
-    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(textureSize, BitmapTexture::SupportsAlpha);
+    RefPtr<BitmapTexture> resultTexture = m_texturePool->acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
     IntSize currentSize = textureSize;
     IntSize targetSize = currentSize;
     Vector<Direction> blurDirections;
@@ -989,8 +989,8 @@ RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourc
 RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture> sourceTexture, const DropShadowFilterOperation& dropShadowFilter)
 {
     const auto& textureSize = sourceTexture->size();
-    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(textureSize, BitmapTexture::SupportsAlpha);
-    RefPtr<BitmapTexture> contentTexture = acquireTextureFromPool(textureSize, BitmapTexture::SupportsAlpha);
+    RefPtr<BitmapTexture> resultTexture = m_texturePool->acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
+    RefPtr<BitmapTexture> contentTexture = m_texturePool->acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
     IntSize currentSize = textureSize;
     IntSize targetSize = currentSize;
     float radius = float(dropShadowFilter.stdDeviation());
@@ -1116,7 +1116,7 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
         return sourceTexture;
     }
 
-    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(sourceTexture->size(), BitmapTexture::SupportsAlpha);
+    RefPtr<BitmapTexture> resultTexture = m_texturePool->acquireTexture(sourceTexture->size(), { BitmapTexture::Flags::SupportsAlpha });
 
     bindSurface(resultTexture.get());
 

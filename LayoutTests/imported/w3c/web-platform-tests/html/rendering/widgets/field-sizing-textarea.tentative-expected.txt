@@ -1,0 +1,12 @@
+
+
+FAIL Empty value assert_less_than: expected a number less than 161 but got 161
+FAIL Empty value with cols/rows assert_less_than: expected a number less than 91 but got 91
+FAIL Auto width and auto height with a long text assert_greater_than: expected a number greater than 161 but got 161
+PASS Explicit width and heigth
+FAIL Explicit width and auto height assert_less_than: expected a number less than 32 but got 32
+FAIL Explicit height and auto width assert_less_than: expected a number less than 161 but got 161
+FAIL Text caret is taller than the placeholder assert_less_than: expected a number less than 418 but got 418
+FAIL Text caret is shorter than the placeholder assert_less_than: width expected a number less than 262 but got 262
+FAIL Update field-sizing property dynamically assert_less_than: expected a number less than 161 but got 161
+
