@@ -14,8 +14,10 @@ async function waitForScrollendEvent(test, target, timeoutMs = 500) {
   return waitForEvent("scrollend", test, target, timeoutMs);
 }
 
-async function waitForOverscrollEvent(test, target, timeoutMs = 500) {
-  return waitForEvent("overscroll", test, target, timeoutMs);
+async function waitForScrollendEventNoTimeout(target) {
+  return new Promise((resolve) => {
+    target.addEventListener("scrollend", resolve);
+  });
 }
 
 async function waitForPointercancelEvent(test, target, timeoutMs = 500) {
@@ -113,10 +115,10 @@ function waitForCompositorCommit() {
   });
 }
 
-// Please don't remove this. This is necessary for chromium-based browsers.
-// This shouldn't be necessary if the test harness deferred running the tests
-// until after paint holding. This can be a no-op on user-agents that do not
-// have a separate compositor thread.
+// Please don't remove this. This is necessary for chromium-based browsers. It
+// can be a no-op on user-agents that do not have a separate compositor thread.
+// TODO(crbug.com/1509054): This shouldn't be necessary if the test harness
+// deferred running the tests until after paint holding.
 async function waitForCompositorReady() {
   const animation =
       document.body.animate({ opacity: [ 1, 1 ] }, {duration: 1 });
