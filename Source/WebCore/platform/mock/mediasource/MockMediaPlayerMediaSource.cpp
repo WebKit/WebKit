@@ -223,7 +223,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
         if (!weakThis || !result)
             return;
 
-        m_mediaSourcePrivate->seekToTime(*result, [this, weakThis, seekTime = *result] {
+        m_mediaSourcePrivate->seekToTime(*result)->whenSettled(RunLoop::main(), [this, weakThis, seekTime = *result] {
             if (!weakThis)
                 return;
             m_seekCompleted = true;

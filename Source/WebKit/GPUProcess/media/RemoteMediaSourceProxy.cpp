@@ -95,14 +95,16 @@ Ref<MediaSourcePrivate::MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(
     });
 }
 
-void RemoteMediaSourceProxy::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::SeekToTime(time), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxySeekToTime(time), m_identifier)->whenSettled(RunLoop::main(), [](auto&& result) {
+        if (!result)
+            return GenericPromise::createAndReject(-1);
+        return GenericPromise::createAndSettle(WTFMove(*result));
+    });
 }
 
 void RemoteMediaSourceProxy::monitorSourceBuffers()

@@ -120,12 +120,11 @@ Ref<MediaSourcePrivate::MediaTimePromise> MockMediaSourcePrivate::waitForTarget(
     return m_client->waitForTarget(target);
 }
 
-void MockMediaSourcePrivate::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MockMediaSourcePrivate::seekToTime(const MediaTime& time)
 {
-    if (m_client)
-        m_client->seekToTime(time, WTFMove(completionHandler));
-    else
-        completionHandler();
+    if (!m_client)
+        return GenericPromise::createAndReject(-1);
+    return m_client->seekToTime(time);
 }
 
 MediaTime MockMediaSourcePrivate::currentMediaTime() const

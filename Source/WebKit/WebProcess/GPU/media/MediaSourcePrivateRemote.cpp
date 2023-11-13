@@ -179,12 +179,17 @@ void MediaSourcePrivateRemote::proxyWaitForTarget(const WebCore::SeekTarget& tar
     m_client->waitForTarget(target)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
-void MediaSourcePrivateRemote::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
 {
-    if (m_client)
-        m_client->seekToTime(time, WTFMove(completionHandler));
-    else
-        completionHandler();
+    ASSERT_NOT_REACHED();
+    return GenericPromise::createAndReject(-1);
+}
+
+void MediaSourcePrivateRemote::proxySeekToTime(const MediaTime& time, CompletionHandler<void(GenericPromise::Result&&)>&& completionHandler)
+{
+    if (!m_client)
+        return completionHandler(makeUnexpected(-1));
+    m_client->seekToTime(time)->whenSettled(RunLoop::main(), WTFMove(completionHandler));
 }
 
 void MediaSourcePrivateRemote::mediaSourcePrivateShuttingDown(CompletionHandler<void()>&& completionHandler)

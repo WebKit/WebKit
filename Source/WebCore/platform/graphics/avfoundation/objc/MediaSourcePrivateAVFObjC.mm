@@ -185,13 +185,11 @@ Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateAVFObjC::waitForTarg
     return m_client->waitForTarget(target);
 }
 
-void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
 {
-    if (!m_client) {
-        completionHandler();
-        return;
-    }
-    m_client->seekToTime(time, WTFMove(completionHandler));
+    if (!m_client)
+        return GenericPromise::createAndReject(-1);
+    return m_client->seekToTime(time);
 }
 
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const

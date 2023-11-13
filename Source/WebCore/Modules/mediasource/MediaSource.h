@@ -159,7 +159,7 @@ private:
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> seekToTime(const MediaTime&) final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

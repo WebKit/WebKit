@@ -201,7 +201,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
         if (!weakThis || !result)
             return;
 
-        m_mediaSource->seekToTime(*result, [] { });
+        m_mediaSource->seekToTime(*result);
 
         auto player = m_player.get();
         if (player && !player->isVideoPlayer() && m_audioSink) {

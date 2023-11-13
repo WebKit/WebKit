@@ -580,7 +580,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         m_mediaSourcePrivate->willSeek();
         [m_synchronizer setRate:0 time:PAL::toCMTime(seekedTime)];
 
-        m_mediaSourcePrivate->seekToTime(seekedTime, [this, weakThis] {
+        m_mediaSourcePrivate->seekToTime(seekedTime)->whenSettled(RunLoop::main(), [this, weakThis] {
             if (!weakThis)
                 return;
             maybeCompleteSeek();

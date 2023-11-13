@@ -267,15 +267,13 @@ void MediaSource::completeSeek()
     m_seekTargetPromise.reset();
 }
 
-void MediaSource::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSource::seekToTime(const MediaTime& time)
 {
-    if (isClosed()) {
-        completionHandler();
-        return;
-    }
+    if (isClosed())
+        return GenericPromise::createAndReject(-1);
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->seekToTime(time);
-    completionHandler();
+    return GenericPromise::createAndResolve();
 }
 
 Ref<TimeRanges> MediaSource::seekable()

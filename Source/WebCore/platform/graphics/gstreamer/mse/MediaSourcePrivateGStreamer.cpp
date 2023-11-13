@@ -146,12 +146,11 @@ Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateGStreamer::waitForTa
     return MediaTimePromise::createAndReject(-1);
 }
 
-void MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time)
 {
     if (m_mediaSource)
-        m_mediaSource->seekToTime(time, WTFMove(completionHandler));
-    else
-        completionHandler();
+        return m_mediaSource->seekToTime(time);
+    return GenericPromise::createAndReject(-1);
 }
 
 MediaTime MediaSourcePrivateGStreamer::duration() const

@@ -78,7 +78,7 @@ public:
 
     using MediaTimePromise = NativePromise<MediaTime, int>;
     virtual Ref<MediaTimePromise> waitForTarget(const SeekTarget&) = 0;
-    virtual void seekToTime(const MediaTime&, CompletionHandler<void()>&&) = 0;
+    virtual Ref<GenericPromise> seekToTime(const MediaTime&) = 0;
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }

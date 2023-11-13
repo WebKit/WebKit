@@ -65,7 +65,7 @@ public:
     void setReadyState(MediaPlayer::ReadyState) override;
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> seekToTime(const MediaTime&) final;
 
     MediaTime duration() const final;
     MediaTime currentMediaTime() const final;
