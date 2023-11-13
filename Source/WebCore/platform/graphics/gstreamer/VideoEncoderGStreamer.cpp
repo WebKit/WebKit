@@ -187,6 +187,9 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
 
         GRefPtr<GstCaps> caps;
         g_object_get(pad, "caps", &caps.outPtr(), nullptr);
+        if (!caps)
+            return;
+
         encoder.get()->postTask([weakEncoder = WeakPtr { *encoder.get() }, caps = WTFMove(caps)] {
             if (!weakEncoder)
                 return;
