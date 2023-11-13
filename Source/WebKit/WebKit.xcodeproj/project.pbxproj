@@ -1172,6 +1172,9 @@
 		517D7B812AAA624500BAA3EB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		5183722223CE97410003CF83 /* APIContentWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 5183722023CE973A0003CF83 /* APIContentWorld.h */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
+		5187BDEA2AFF5419008A6EE5 /* CoreIPCArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5187BDE82AFF4A3A008A6EE5 /* CoreIPCArray.mm */; };
+		5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */; };
+		5187BDF02B007445008A6EE5 /* CoreIPCFont.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5187BDEF2B007445008A6EE5 /* CoreIPCFont.mm */; };
 		518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACF1012B015F800B04B83 /* WKCredentialTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
@@ -5201,6 +5204,9 @@
 		518405282A9E861F00630A12 /* com.apple.webkit.webpushd.relocatable.mac.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.relocatable.mac.plist; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
 		51871B5A127CB89D00F76232 /* WebContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenu.h; sourceTree = "<group>"; };
+		5187BDE82AFF4A3A008A6EE5 /* CoreIPCArray.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCArray.mm; sourceTree = "<group>"; };
+		5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCDictionary.mm; sourceTree = "<group>"; };
+		5187BDEF2B007445008A6EE5 /* CoreIPCFont.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCFont.mm; sourceTree = "<group>"; };
 		518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProtectionSpaceTypes.h; sourceTree = "<group>"; };
 		518ACF1012B015F800B04B83 /* WKCredentialTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredentialTypes.h; sourceTree = "<group>"; };
 		518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListItem.cpp; sourceTree = "<group>"; };
@@ -10726,6 +10732,7 @@
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
 				5197FACD2AFD33AF009180C5 /* CoreIPCArray.h */,
+				5187BDE82AFF4A3A008A6EE5 /* CoreIPCArray.mm */,
 				5197FAD82AFD33B1009180C5 /* CoreIPCArray.serialization.in */,
 				5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */,
 				5197FAD62AFD33B1009180C5 /* CoreIPCCFType.serialization.in */,
@@ -10736,8 +10743,10 @@
 				F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */,
 				F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */,
 				5197FAD22AFD33B0009180C5 /* CoreIPCDictionary.h */,
+				5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */,
 				5197FADE2AFD33B3009180C5 /* CoreIPCDictionary.serialization.in */,
 				5197FAD72AFD33B1009180C5 /* CoreIPCFont.h */,
+				5187BDEF2B007445008A6EE5 /* CoreIPCFont.mm */,
 				5197FACA2AFD33AE009180C5 /* CoreIPCFont.serialization.in */,
 				5197FACE2AFD33AF009180C5 /* CoreIPCNSCFObject.h */,
 				5197FADC2AFD33B2009180C5 /* CoreIPCNSCFObject.mm */,
@@ -17754,6 +17763,9 @@
 				5131D5452AE9D5140016EF39 /* ArgumentCodersCF.cpp in Sources */,
 				51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */,
 				5131D5442AE9D4370016EF39 /* ArgumentCodersCocoa.mm in Sources */,
+				5187BDEA2AFF5419008A6EE5 /* CoreIPCArray.mm in Sources */,
+				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
+				5187BDF02B007445008A6EE5 /* CoreIPCFont.mm in Sources */,
 				5197FAF22AFD33FF009180C5 /* CoreIPCNSCFObject.mm in Sources */,
 				5197FAED2AFD33FF009180C5 /* CoreIPCSecureCoding.mm in Sources */,
 				5131D5462AE9D5230016EF39 /* CoreTextHelpers.mm in Sources */,

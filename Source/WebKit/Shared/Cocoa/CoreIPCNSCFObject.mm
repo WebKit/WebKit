@@ -71,7 +71,7 @@ CoreIPCNSCFObject::CoreIPCNSCFObject(id object)
 {
 }
 
-RetainPtr<id> CoreIPCNSCFObject::toID()
+RetainPtr<id> CoreIPCNSCFObject::toID() const
 {
     RetainPtr<id> result;
 
@@ -82,6 +82,20 @@ RetainPtr<id> CoreIPCNSCFObject::toID()
     });
 
     return result;
+}
+
+bool CoreIPCNSCFObject::valueIsAllowed(IPC::Decoder& decoder, ObjectValue& value)
+{
+    // The Decoder always has a set of allowedClasses,
+    // but we only check that set when considering SecureCoding classes
+    Class objectClass;
+    WTF::switchOn(value, [&](CoreIPCSecureCoding& object) {
+        objectClass = object.objectClass();
+    }, [&](auto& object) {
+        objectClass = nullptr;
+    });
+
+    return !objectClass || decoder.allowedClasses().contains(objectClass);
 }
 
 } // namespace WebKit

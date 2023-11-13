@@ -23,29 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoreIPCArray.h"
 
 #if PLATFORM(COCOA)
 
-#include "ArgumentCodersCocoa.h"
-#include <wtf/RetainPtr.h>
+#include "CoreIPCNSCFObject.h"
 
 namespace WebKit {
 
-class CoreIPCSecureCoding {
-public:
-    CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
-    CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
+CoreIPCArray::CoreIPCArray(NSArray *array)
+{
+    for (id value in array) {
+        if (!IPC::isSerializableValue(value))
+            continue;
+        m_array.append(WTF::makeUniqueRef<CoreIPCNSCFObject>(value));
+    }
+}
 
-    RetainPtr<id> toID() const { return m_secureCoding; }
-
-    Class objectClass() { return m_secureCoding.get().class; }
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;
-
-    IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
-};
+RetainPtr<id> CoreIPCArray::toID() const
+{
+    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);
+    for (auto& object : m_array)
+        [result addObject:object->toID().get()];
+    return result;
+}
 
 } // namespace WebKit
 

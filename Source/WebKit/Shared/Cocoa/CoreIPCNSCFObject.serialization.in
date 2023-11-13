@@ -25,7 +25,7 @@
 webkit_platform_headers: "ArgumentCodersCocoa.h" "ArgumentCodersCF.h" "CoreIPCNSCFObject.h"
 
 [WebKitPlatform] class WebKit::CoreIPCNSCFObject {
-    WebKit::CoreIPCNSCFObject::ObjectValue m_value;
+    [Validator='WebKit::CoreIPCNSCFObject::valueIsAllowed(decoder, *m_value)'] WebKit::CoreIPCNSCFObject::ObjectValue m_value;
 }
 
 #endif // USE(CF)

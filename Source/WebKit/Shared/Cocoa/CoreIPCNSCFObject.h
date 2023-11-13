@@ -43,6 +43,7 @@
 namespace WebKit {
 
 class CoreIPCNSCFObject {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using ObjectValue = std::variant<
         std::nullptr_t,
@@ -61,7 +62,9 @@ public:
 
     CoreIPCNSCFObject(id);
 
-    RetainPtr<id> toID();
+    RetainPtr<id> toID() const;
+
+    static bool valueIsAllowed(IPC::Decoder&, ObjectValue&);
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;

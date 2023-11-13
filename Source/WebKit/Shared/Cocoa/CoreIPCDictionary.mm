@@ -23,29 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoreIPCDictionary.h"
 
 #if PLATFORM(COCOA)
 
-#include "ArgumentCodersCocoa.h"
-#include <wtf/RetainPtr.h>
+#include "CoreIPCNSCFObject.h"
 
 namespace WebKit {
 
-class CoreIPCSecureCoding {
-public:
-    CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
-    CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
+CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
+{
+    m_keyValuePairs.reserveInitialCapacity(dictionary.count);
 
-    RetainPtr<id> toID() const { return m_secureCoding; }
+    for (id key in dictionary) {
+        id value = dictionary[key];
+        ASSERT(value);
 
-    Class objectClass() { return m_secureCoding.get().class; }
+        // Ignore values we don't support.
+        ASSERT(IPC::isSerializableValue(key));
+        ASSERT(IPC::isSerializableValue(value));
+        if (!IPC::isSerializableValue(key) || !IPC::isSerializableValue(value))
+            continue;
 
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;
+        m_keyValuePairs.append({ WTF::makeUniqueRef<CoreIPCNSCFObject>(key), WTF::makeUniqueRef<CoreIPCNSCFObject>(value) });
+    }
+}
 
-    IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
-};
+RetainPtr<id> CoreIPCDictionary::toID() const
+{
+    auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
+    for (auto& keyValuePair : m_keyValuePairs)
+        [result setObject:keyValuePair.value->toID().get() forKey:keyValuePair.key->toID().get()];
+
+    return result;
+}
 
 } // namespace WebKit
 

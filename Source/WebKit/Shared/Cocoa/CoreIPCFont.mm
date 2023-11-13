@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoreIPCFont.h"
 
 #if PLATFORM(COCOA)
 
-#include "ArgumentCodersCocoa.h"
-#include <wtf/RetainPtr.h>
+#import "CoreIPCNSCFObject.h"
+#import "CoreTextHelpers.h"
+#import <wtf/BlockObjCExceptions.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIFont.h>
+#import <UIKit/UIFontDescriptor.h>
+#endif
 
 namespace WebKit {
 
-class CoreIPCSecureCoding {
-public:
-    CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
-    CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
+CoreIPCFont::CoreIPCFont(WebCore::CocoaFont *font)
+    : m_fontDescriptorAttributes(font.fontDescriptor.fontAttributes)
+{
+}
 
-    RetainPtr<id> toID() const { return m_secureCoding; }
+RetainPtr<id> CoreIPCFont::toID() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    Class objectClass() { return m_secureCoding.get().class; }
+    return { WebKit::fontWithAttributes(m_fontDescriptorAttributes.toID().get(), 0) };
 
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;
+    END_BLOCK_OBJC_EXCEPTIONS
 
-    IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
-};
+    return nullptr;
+}
 
 } // namespace WebKit
 

@@ -28,27 +28,37 @@
 #if PLATFORM(COCOA)
 
 #include <wtf/ArgumentCoder.h>
+#include <wtf/KeyValuePair.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
+class CoreIPCNSCFObject;
+
 class CoreIPCDictionary {
 public:
-    CoreIPCDictionary(NSDictionary *dictionary)
-        : m_dictionary(dictionary)
+    CoreIPCDictionary(NSDictionary *);
+
+    CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
+        : CoreIPCDictionary(dictionary.get())
     {
     }
 
-    CoreIPCDictionary(RetainPtr<NSDictionary>&& dictionary)
-        : m_dictionary(WTFMove(dictionary))
-    {
-    }
-
-    RetainPtr<id> toID() { return m_dictionary; }
+    RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
 
-    IPC::CoreIPCRetainPtr<NSDictionary> m_dictionary;
+    using ValueType = Vector<KeyValuePair<UniqueRef<CoreIPCNSCFObject>, UniqueRef<CoreIPCNSCFObject>>>;
+
+    CoreIPCDictionary(ValueType&& keyValuePairs)
+        : m_keyValuePairs(WTFMove(keyValuePairs))
+    {
+    }
+
+    ValueType m_keyValuePairs;
 };
 
 } // namespace WebKit

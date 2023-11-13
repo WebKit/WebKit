@@ -44,7 +44,7 @@ public:
     {
     }
 
-    RetainPtr<id> toID() { return (NSString *)m_string; }
+    RetainPtr<id> toID() const { return (NSString *)m_string; }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCString, void>;

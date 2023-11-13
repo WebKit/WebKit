@@ -109,9 +109,9 @@ const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const Seriali
     return static_cast<const SerializedPlatformDataCueMac*>(rep);
 }
 
-const Vector<Class>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
+const HashSet<Class>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
 {
-    static NeverDestroyed<Vector<Class>> allowedClasses(Vector<Class> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
+    static NeverDestroyed<HashSet<Class>> allowedClasses(HashSet<Class> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
     return allowedClasses;
 }
 
