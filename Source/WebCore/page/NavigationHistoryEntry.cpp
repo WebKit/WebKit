@@ -27,6 +27,7 @@
 #include "NavigationHistoryEntry.h"
 
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

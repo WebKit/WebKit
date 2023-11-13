@@ -65,6 +65,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSQuadValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProcessThrottler.h"
 
+#include "AuxiliaryProcessProxy.h"
 #include "Logging.h"
 #include "ProcessThrottlerClient.h"
 #include <optional>

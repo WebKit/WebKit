@@ -27,6 +27,7 @@
 #include "MainThreadStylePropertyMapReadOnly.h"
 
 #include "CSSPendingSubstitutionValue.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleValue.h"

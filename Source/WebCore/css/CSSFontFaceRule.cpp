@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
+#include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
