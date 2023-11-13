@@ -2656,10 +2656,9 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
     RefPtr firstFrameDocument = firstFrame->document();
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(firstFrame->mainFrame());
-    if (!localFrame)
-        return RefPtr<WindowProxy> { nullptr };
 
-    RefPtr mainFrameDocument = localFrame->document();
+    // FIXME: <rdar://118280717> Make WKContentRuleLists apply in this case.
+    RefPtr mainFrameDocument = localFrame ? localFrame->document() : nullptr;
     RefPtr mainFrameDocumentLoader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
     if (firstFrameDocument && page && mainFrameDocumentLoader) {
         auto results = page->userContentProvider().processContentRuleListsForLoad(*page, firstFrameDocument->completeURL(urlString), ContentExtensions::ResourceType::Popup, *mainFrameDocumentLoader);

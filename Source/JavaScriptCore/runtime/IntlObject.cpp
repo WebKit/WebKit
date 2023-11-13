@@ -1631,7 +1631,6 @@ const Vector<String>& intlAvailableCalendars()
 
         int32_t count = uenum_count(enumeration.get(), &status);
         ASSERT(U_SUCCESS(status));
-        availableCalendars->reserveInitialCapacity(count);
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
@@ -1639,16 +1638,15 @@ const Vector<String>& intlAvailableCalendars()
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
 
-        for (int32_t index = 0; index < count; ++index) {
+        availableCalendars->appendUsingFunctor(count, [&](size_t) {
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
             String calendar(pointer, length);
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-                availableCalendars->append(createImmortalThreadSafeString(WTFMove(mapped.value())));
-            else
-                availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
-        }
+                return createImmortalThreadSafeString(WTFMove(mapped.value()));
+            return createImmortalThreadSafeString(WTFMove(calendar));
+        });
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
         // values had been sorted using %Array.prototype.sort% using undefined as comparator

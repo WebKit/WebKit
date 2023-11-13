@@ -141,30 +141,42 @@ fn testAddEq() {
   }
 }
 
-fn testMultiply() {
-  {
+// RUN: %metal-compile testMultiply
+@compute @workgroup_size(1)
+fn testMultiply()
+{
     _ = 0 * 0;
     _ = 0i * 0i;
     _ = 0u * 0u;
     _ = 0.0 * 0.0;
     _ = 0.0f * 0.0f;
-  }
 
-  let v2 = vec2<f32>(0, 0);
-  let v4 = vec4<f32>(0, 0, 0, 0);
-  let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
-  _ = m * v2;
-  _ = v4 * m;
-  _ = vec2(1, 1) * 1;
-  _ = 1 * vec2(1, 1);
-  _ = vec2(1, 1) * vec2(1, 1);
+    var v2 = vec2<f32>(0, 0);
+    var v4 = vec4<f32>(0, 0, 0, 0);
+    var m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
+    _ = m * v2;
+    _ = v4 * m;
+    _ = vec2(1, 1) * 1;
+    _ = 1 * vec2(1, 1);
+    _ = vec2(1, 1) * vec2(1, 1);
 
-  _ = m * 2;
-  _ = 2 * m;
+    _ = m * 2;
+    _ = 2 * m;
 
-  _ = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
-  _ = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
-  _ = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
+    v2 *= v2;
+    v2 *= 2;
+
+    v4 *= v4;
+    v4 *= 2;
+
+    var m2 = mat2x2<f32>(0, 0, 0, 0);
+    m2 *= m2;
+    // FIXME: this requires type checking compound assignment
+    // m2 *= 2;
+
+    _ = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
+    _ = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
+    _ = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 fn testDivision() {

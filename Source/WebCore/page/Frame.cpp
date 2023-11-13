@@ -74,7 +74,7 @@ bool Frame::isRootFrame() const
     case FrameType::Local:
         if (auto* parent = tree().parent())
             return is<RemoteFrame>(parent);
-        ASSERT(&m_mainFrame == this);
+        ASSERT(m_mainFrame.ptr() == this);
         return true;
     case FrameType::Remote:
         break;

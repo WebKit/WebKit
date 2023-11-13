@@ -158,6 +158,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 
         void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max(), JSCell* caller = nullptr);
 
+        static JSValue checkVMEntryPermission();
+
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
         

@@ -240,14 +240,16 @@ macro doVMEntry(makeCall)
 
     checkStackPointerAlignment(t4, 0xbad0dc01)
 
-    loadi VM::disallowVMEntryCount[vm], t4
-    btinz t4, .checkVMEntryPermission
-
     storep vm, VMEntryRecord::m_vm[sp]
-    loadp VM::topCallFrame[vm], t4
-    storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
-    loadp VM::topEntryFrame[vm], t4
-    storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
+    if ARM64 or ARM64E
+        loadpairq VM::topCallFrame[vm], t4, t3
+        storepairq t4, t3, VMEntryRecord::m_prevTopCallFrame[sp]
+    else
+        loadp VM::topCallFrame[vm], t4
+        storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
+        loadp VM::topEntryFrame[vm], t4
+        storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
+    end
     loadp ProtoCallFrame::calleeValue[protoCallFrame], t4
     storep t4, VMEntryRecord::m_callee[sp]
 
@@ -255,7 +257,7 @@ macro doVMEntry(makeCall)
     addp CallFrameHeaderSlots, t4, t4
     lshiftp 3, t4
     subp sp, t4, t3
-    bqbeq sp, t3, .throwStackOverflow
+    bqbeq sp, t3, _llint_throw_stack_overflow_error_from_vm_entry
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
@@ -273,21 +275,31 @@ macro doVMEntry(makeCall)
 .stackCheckFailed:
         move t4, entry
         move t5, vm
-        jmp .throwStackOverflow
-    else
-        bpb t3, VM::m_softStackLimit[vm], .throwStackOverflow
-    end
-
+        jmp  _llint_throw_stack_overflow_error_from_vm_entry
 .stackHeightOK:
-    move t3, sp
-    move (constexpr ProtoCallFrame::numberOfRegisters), t3
+        move t3, sp
+    else
+        bpb t3, VM::m_softStackLimit[vm],  _llint_throw_stack_overflow_error_from_vm_entry
+        move t3, sp
+    end
 
 .copyHeaderLoop:
     # Copy the CodeBlock/Callee/ArgumentCountIncludingThis/|this| from protoCallFrame into the callee frame.
-    subi 1, t3
-    loadq [protoCallFrame, t3, 8], extraTempReg
-    storeq extraTempReg, CodeBlock[sp, t3, 8]
-    btinz t3, .copyHeaderLoop
+    if ARM64 or ARM64E
+        loadpairq (8 * 0)[protoCallFrame], extraTempReg, t3
+        storepairq extraTempReg, t3, CodeBlock + (8 * 0)[sp]
+        loadpairq (8 * 2)[protoCallFrame], extraTempReg, t3
+        storepairq extraTempReg, t3, CodeBlock + (8 * 2)[sp]
+    else
+        loadq (8 * 0)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 0)[sp]
+        loadq (8 * 1)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 1)[sp]
+        loadq (8 * 2)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 2)[sp]
+        loadq (8 * 3)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 3)[sp]
+    end
 
     loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
     subi 1, t4
@@ -314,11 +326,11 @@ macro doVMEntry(makeCall)
 .copyArgsDone:
     if ARM64 or ARM64E
         move sp, t4
-        storep t4, VM::topCallFrame[vm]
+        storepairq t4, cfr, VM::topCallFrame[vm]
     else
         storep sp, VM::topCallFrame[vm]
+        storep cfr, VM::topEntryFrame[vm]
     end
-    storep cfr, VM::topEntryFrame[vm]
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
@@ -332,18 +344,28 @@ macro doVMEntry(makeCall)
     vmEntryRecord(cfr, t4)
 
     loadp VMEntryRecord::m_vm[t4], vm
-    loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
-    storep t2, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t4], t2
-    storep t2, VM::topEntryFrame[vm]
+    if ARM64 or ARM64E
+        loadpairq VMEntryRecord::m_prevTopCallFrame[t4], t4, t2
+        storepairq t4, t2, VM::topCallFrame[vm]
+    else
+        loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
+        storep t2, VM::topCallFrame[vm]
+        loadp VMEntryRecord::m_prevTopEntryFrame[t4], t2
+        storep t2, VM::topEntryFrame[vm]
+    end
 
     subp cfr, CalleeRegisterSaveSize, sp
 
     popCalleeSaves()
     functionEpilogue()
     ret
+end
 
-.throwStackOverflow:
+_llint_throw_stack_overflow_error_from_vm_entry:
+    const entry = a0
+    const vm = a1
+    const protoCallFrame = a2
+
     move vm, a0
     move protoCallFrame, a1
     cCall2(_llint_throw_stack_overflow_error)
@@ -362,18 +384,6 @@ macro doVMEntry(makeCall)
     popCalleeSaves()
     functionEpilogue()
     ret
-
-.checkVMEntryPermission:
-    move vm, a0
-    move protoCallFrame, a1
-    cCall2(_llint_check_vm_entry_permission)
-    move ValueUndefined, r0
-
-    subp cfr, CalleeRegisterSaveSize, sp
-    popCalleeSaves()
-    functionEpilogue()
-    ret
-end
 
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)

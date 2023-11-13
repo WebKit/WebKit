@@ -177,14 +177,15 @@ inline Element* ShadowRoot::activeElement() const
 
 inline bool Node::isUserAgentShadowRoot() const
 {
-    return isShadowRoot() && downcast<ShadowRoot>(*this).mode() == ShadowRootMode::UserAgent;
+    auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this);
+    return shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent;
 }
 
 inline ContainerNode* Node::parentOrShadowHostNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    if (is<ShadowRoot>(*this))
-        return downcast<ShadowRoot>(*this).host();
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this))
+        return shadowRoot->host();
     return parentNode();
 }
 

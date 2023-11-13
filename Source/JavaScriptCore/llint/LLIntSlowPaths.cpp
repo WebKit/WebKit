@@ -2622,10 +2622,7 @@ extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
 
 extern "C" UGPRPair llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
 {
-    if (Options::crashOnDisallowedVMEntry() || g_jscConfig.vmEntryDisallowed)
-        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMEntryDisallowed, "VM entry disallowed"_s);
-
-    // Else return, and let doVMEntry return undefined.
+    Interpreter::checkVMEntryPermission();
     return encodeResult(nullptr, nullptr);
 }
 

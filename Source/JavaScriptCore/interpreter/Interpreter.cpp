@@ -862,6 +862,13 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
     exception->setDidNotifyInspectorOfThrow();
 }
 
+NEVER_INLINE JSValue Interpreter::checkVMEntryPermission()
+{
+    if (Options::crashOnDisallowedVMEntry() || g_jscConfig.vmEntryDisallowed)
+        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMEntryDisallowed, "VM entry disallowed"_s);
+    return jsUndefined();
+}
+
 JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, JSObject* thisObj)
 {
     VM& vm = this->vm();
@@ -885,6 +892,9 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
 
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return throwStackOverflowError(globalObject, throwScope);
+
+    if (UNLIKELY(vm.disallowVMEntryCount))
+        return checkVMEntryPermission();
 
     // First check if the "program" is actually just a JSON object. If so,
     // we'll handle the JSON object here. Else, we'll handle real JS code
@@ -1132,6 +1142,9 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
     if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments))
         return throwStackOverflowError(globalObject, scope);
 
+    if (UNLIKELY(vm.disallowVMEntryCount))
+        return checkVMEntryPermission();
+
     if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
         if (vm.hasExceptionsAfterHandlingTraps())
             return scope.exception();
@@ -1220,6 +1233,11 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
         return nullptr;
     }
 
+    if (UNLIKELY(vm.disallowVMEntryCount)) {
+        checkVMEntryPermission();
+        return globalObject->globalThis();
+    }
+
     if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
         if (vm.hasExceptionsAfterHandlingTraps())
             return nullptr;
@@ -1298,6 +1316,9 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     VMEntryScope entryScope(vm, globalObject);
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return throwStackOverflowError(globalObject, throwScope);
+
+    if (UNLIKELY(vm.disallowVMEntryCount))
+        return checkVMEntryPermission();
 
     unsigned numVariables = eval->numVariables();
     unsigned numTopLevelFunctionDecls = eval->numTopLevelFunctionDecls();
@@ -1486,6 +1507,9 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
     VMEntryScope entryScope(vm, scope->globalObject());
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return throwStackOverflowError(globalObject, throwScope);
+
+    if (UNLIKELY(vm.disallowVMEntryCount))
+        return checkVMEntryPermission();
 
     if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
         if (vm.hasExceptionsAfterHandlingTraps())

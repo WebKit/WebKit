@@ -73,14 +73,16 @@ static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, const AtomString
 
 static HTMLSlotElement* nextSlotElementSkippingSubtree(ContainerNode& startingNode, ContainerNode* skippedSubtree)
 {
-    Node* node = &startingNode;
-    do {
-        if (UNLIKELY(node == skippedSubtree))
-            node = NodeTraversal::nextSkippingChildren(*node);
-        else
-            node = NodeTraversal::next(*node);
-    } while (node && !is<HTMLSlotElement>(node));
-    return downcast<HTMLSlotElement>(node);
+    auto nextNode = [&](Node& node) {
+        if (UNLIKELY(&node == skippedSubtree))
+            return NodeTraversal::nextSkippingChildren(node);
+        return NodeTraversal::next(node);
+    };
+    for (auto* node = nextNode(startingNode); node; node = nextNode(*node)) {
+        if (auto* slotElement = dynamicDowncast<HTMLSlotElement>(*node))
+            return slotElement;
+    }
+    return nullptr;
 }
 
 NamedSlotAssignment::NamedSlotAssignment() = default;

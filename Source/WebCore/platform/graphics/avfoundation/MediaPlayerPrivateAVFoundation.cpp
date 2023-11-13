@@ -66,7 +66,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedDuration(MediaTime::invalidTime())
     , m_reportedDuration(MediaTime::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::invalidTime())
-    , m_delayCallbacks(0)
     , m_delayCharacteristicsChangedNotification(0)
     , m_mainThreadCallPending(false)
     , m_assetIsPlayable(false)
@@ -78,7 +77,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedHasCaptions(false)
     , m_ignoreLoadStateChanges(false)
     , m_haveReportedFirstVideoFrame(false)
-    , m_inbandTrackConfigurationPending(false)
     , m_characteristicsChanged(false)
     , m_shouldMaintainAspectRatio(true)
     , m_seeking(false)
@@ -743,8 +741,6 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
     if (m_assetURL.isEmpty())
         return;
 
-    setDelayCallbacks(true);
-
     if (m_preload >= MediaPlayer::Preload::MetaData && assetStatus() == MediaPlayerAVAssetStatusDoesNotExist)
         createAVAssetForURL(m_assetURL);
 
@@ -753,173 +749,6 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
     if (m_preload == MediaPlayer::Preload::Auto && m_assetIsPlayable) {
         createAVPlayerItem();
         createAVPlayer();
-    }
-
-    setDelayCallbacks(false);
-}
-
-void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
-{
-    Locker locker { m_queuedNotificationsLock };
-    if (delay)
-        ++m_delayCallbacks;
-    else {
-        ASSERT(m_delayCallbacks);
-        --m_delayCallbacks;
-    }
-}
-
-void MediaPlayerPrivateAVFoundation::mainThreadCallback()
-{
-    clearMainThreadPendingFlag();
-    dispatchNotification();
-}
-
-void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
-{
-    Locker locker { m_queuedNotificationsLock };
-    m_mainThreadCallPending = false;
-}
-
-void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification::Type type, const MediaTime& time)
-{
-    scheduleMainThreadNotification(Notification(type, time));
-}
-
-void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification::Type type, bool finished)
-{
-    scheduleMainThreadNotification(Notification(type, finished));
-}
-
-void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification&& notification)
-{
-    {
-        Locker locker { m_queuedNotificationsLock };
-
-        // It is important to always process the properties in the order that we are notified,
-        // so always go through the queue because notifications happen on different threads.
-        m_queuedNotifications.append(WTFMove(notification));
-
-        bool delayDispatch = m_delayCallbacks || !isMainThread();
-        if (delayDispatch && !m_mainThreadCallPending) {
-            m_mainThreadCallPending = true;
-
-            callOnMainThread([weakThis = WeakPtr { *this }] {
-                if (!weakThis)
-                    return;
-
-                weakThis->mainThreadCallback();
-            });
-        }
-
-        if (delayDispatch)
-            return;
-    }
-
-    dispatchNotification();
-}
-
-void MediaPlayerPrivateAVFoundation::dispatchNotification()
-{
-    ASSERT(isMainThread());
-
-    Notification notification;
-    {
-        Locker locker { m_queuedNotificationsLock };
-        
-        if (m_queuedNotifications.isEmpty())
-            return;
-        
-        if (!m_delayCallbacks) {
-            // Only dispatch one notification callback per invocation because they can cause recursion.
-            notification = m_queuedNotifications.takeFirst();
-        }
-        
-        if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {
-            callOnMainThread([weakThis = WeakPtr { *this }] {
-                if (!weakThis)
-                    return;
-
-                weakThis->mainThreadCallback();
-            });
-        }
-
-        if (!notification.isValid())
-            return;
-    }
-
-    switch (notification.type()) {
-    case Notification::ItemDidPlayToEndTime:
-        didEnd();
-        break;
-    case Notification::ItemTracksChanged:
-        tracksChanged();
-        updateStates();
-        break;
-    case Notification::ItemStatusChanged:
-        updateStates();
-        break;
-    case Notification::ItemSeekableTimeRangesChanged:
-        seekableTimeRangesChanged();
-        updateStates();
-        break;
-    case Notification::ItemLoadedTimeRangesChanged:
-        loadedTimeRangesChanged();
-        updateStates();
-        break;
-    case Notification::ItemPresentationSizeChanged:
-        sizeChanged();
-        updateStates();
-        break;
-    case Notification::ItemIsPlaybackLikelyToKeepUpChanged:
-        updateStates();
-        break;
-    case Notification::ItemIsPlaybackBufferEmptyChanged:
-        updateStates();
-        break;
-    case Notification::ItemIsPlaybackBufferFullChanged:
-        updateStates();
-        break;
-    case Notification::PlayerRateChanged:
-        updateStates();
-        rateChanged();
-        break;
-    case Notification::PlayerTimeChanged:
-        timeChanged(notification.time());
-        break;
-    case Notification::SeekCompleted:
-        seekCompleted(notification.finished());
-        break;
-    case Notification::AssetMetadataLoaded:
-        metadataLoaded();
-        updateStates();
-        break;
-    case Notification::AssetPlayabilityKnown:
-        updateStates();
-        playabilityKnown();
-        break;
-    case Notification::DurationChanged:
-        invalidateCachedDuration();
-        break;
-    case Notification::ContentsNeedsDisplay:
-        contentsNeedsDisplay();
-        break;
-    case Notification::InbandTracksNeedConfiguration:
-        m_inbandTrackConfigurationPending = false;
-        configureInbandTracks();
-        break;
-    case Notification::FunctionType:
-        notification.function()();
-        break;
-    case Notification::TargetIsWirelessChanged:
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        playbackTargetIsWirelessChanged();
-#endif
-        break;
-
-    case Notification::None:
-        ASSERT_NOT_REACHED();
-        break;
     }
 }
 
@@ -948,10 +777,7 @@ void MediaPlayerPrivateAVFoundation::configureInbandTracks()
 
 void MediaPlayerPrivateAVFoundation::trackModeChanged()
 {
-    if (m_inbandTrackConfigurationPending)
-        return;
-    m_inbandTrackConfigurationPending = true;
-    scheduleMainThreadNotification(Notification::InbandTracksNeedConfiguration);
+    configureInbandTracks();
 }
 
 void MediaPlayerPrivateAVFoundation::clearTextTracks()

@@ -42,13 +42,14 @@ enum class RenderAsTextFlag : uint16_t;
 
 class RemoteFrame final : public Frame {
 public:
-    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame* opener = nullptr);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
 
+    // FIXME: <rdar://118263278> Move this to a pure virtual function on Frame or just a function on Frame, move LocalDOMWindow::opener to DOMWindow.
     void setOpener(Frame* opener) { m_opener = opener; }
     Frame* opener() const { return m_opener.get(); }
 
@@ -63,7 +64,7 @@ public:
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame*, Markable<LayerHostingContextIdentifier>);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener = nullptr);
 
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;

@@ -443,7 +443,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
         for (auto key : keyframeRule->keys()) {
             KeyframeValue keyframeValue(0, nullptr);
             keyframeValue.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), keyframeValue));
-            keyframeValue.setKey(key);
+            keyframeValue.setOffset(key);
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {

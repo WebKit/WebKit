@@ -77,7 +77,6 @@ void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPro
 std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 {
     Ref document = m_document.get();
-    ASSERT(document->settings().storageAccessAPIEnabled());
 
     RefPtr frame = document->frame();
     if (frame && hasFrameSpecificStorageAccess())
@@ -102,7 +101,6 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
 {
     Ref document = m_document.get();
-    ASSERT(document->settings().storageAccessAPIEnabled());
 
     auto quickCheckResult = hasStorageAccessQuickCheck();
     if (quickCheckResult) {
@@ -148,7 +146,6 @@ void DocumentStorageAccess::requestStorageAccess(Document& document, Ref<Deferre
 std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQuickCheck()
 {
     Ref document = m_document.get();
-    ASSERT(document->settings().storageAccessAPIEnabled());
 
     RefPtr frame = document->frame();
     if (frame && hasFrameSpecificStorageAccess())
@@ -177,7 +174,6 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
 void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
 {
     Ref document = m_document.get();
-    ASSERT(document->settings().storageAccessAPIEnabled());
 
     auto quickCheckResult = requestStorageAccessQuickCheck();
     if (quickCheckResult) {
@@ -270,7 +266,6 @@ void DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(RegistrableD
 void DocumentStorageAccess::requestStorageAccessQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     Ref document = m_document.get();
-    ASSERT(document->settings().storageAccessAPIEnabled());
     RELEASE_ASSERT(document->frame() && document->frame()->page());
 
     auto topFrameDomain = RegistrableDomain(document->topDocument().url());

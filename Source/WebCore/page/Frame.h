@@ -28,6 +28,7 @@
 #include "FrameIdentifier.h"
 #include "FrameTree.h"
 #include "PageIdentifier.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
@@ -45,7 +46,7 @@ class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
-class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame> {
+class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame>, public CanMakeCheckedPtr {
 public:
     virtual ~Frame();
 
@@ -63,8 +64,8 @@ public:
     inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     Settings& settings() const { return m_settings.get(); }
-    Frame& mainFrame() const { return m_mainFrame; }
-    bool isMainFrame() const { return this == &m_mainFrame; }
+    Frame& mainFrame() const { return m_mainFrame.get(); }
+    bool isMainFrame() const { return this == m_mainFrame.ptr(); }
     WEBCORE_EXPORT bool isRootFrame() const;
 
     WEBCORE_EXPORT void detachFromPage();
@@ -99,7 +100,7 @@ private:
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
-    Frame& m_mainFrame;
+    CheckedRef<Frame> m_mainFrame;
     const Ref<Settings> m_settings;
     FrameType m_frameType;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;

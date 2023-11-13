@@ -490,7 +490,7 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
         endOffset = std::min(endOffset, downcast<CharacterData>(*container).length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Range::Extract || action == Range::Clone) {
-            Ref<CharacterData> characters = downcast<CharacterData>(container->cloneNode(true).get());
+            Ref characters = downcast<CharacterData>(container->cloneNode(true));
             auto deleteResult = deleteCharacterData(characters, startOffset, endOffset);
             if (deleteResult.hasException())
                 return deleteResult.releaseException();
@@ -510,10 +510,10 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
         break;
     case Node::PROCESSING_INSTRUCTION_NODE: {
         auto& instruction = downcast<ProcessingInstruction>(*container);
-        endOffset = std::min(endOffset, downcast<ProcessingInstruction>(*container).data().length());
+        endOffset = std::min(endOffset, instruction.data().length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Range::Extract || action == Range::Clone) {
-            Ref processingInstruction = downcast<ProcessingInstruction>(container->cloneNode(true).get());
+            Ref processingInstruction = downcast<ProcessingInstruction>(container->cloneNode(true));
             processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
@@ -715,8 +715,8 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
         return removeResult.releaseException();
 
     unsigned newOffset = referenceNode ? referenceNode->computeNodeIndex() : parent->countChildNodes();
-    if (is<DocumentFragment>(node))
-        newOffset += downcast<DocumentFragment>(node.get()).countChildNodes();
+    if (auto* fragment = dynamicDowncast<DocumentFragment>(node.get()))
+        newOffset += fragment->countChildNodes();
     else
         ++newOffset;
 
@@ -735,9 +735,9 @@ String Range::toString() const
     auto range = makeSimpleRange(*this);
     StringBuilder builder;
     for (Ref node : intersectingNodes(range)) {
-        if (is<Text>(node)) {
+        if (auto* text = dynamicDowncast<Text>(node.get())) {
             auto offsetRange = characterDataOffsetRange(range, node);
-            builder.appendSubstring(downcast<Text>(node.get()).data(), offsetRange.start, offsetRange.end - offsetRange.start);
+            builder.appendSubstring(text->data(), offsetRange.start, offsetRange.end - offsetRange.start);
         }
     }
     return builder.toString();
@@ -750,8 +750,8 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(const String&
     RefPtr<Element> element;
     if (is<Document>(node) || is<DocumentFragment>(node))
         element = nullptr;
-    else if (is<Element>(node))
-        element = &downcast<Element>(node);
+    else if (auto* maybeElement = dynamicDowncast<Element>(node))
+        element = maybeElement;
     else
         element = node.parentElement();
     if (!element || (element->document().isHTMLDocument() && is<HTMLHtmlElement>(*element)))

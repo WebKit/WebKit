@@ -132,7 +132,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
             auto& style = *blendingKeyframe.style();
 
             auto keyframePayload = Protocol::Animation::Keyframe::create()
-                .setOffset(blendingKeyframe.key())
+                .setOffset(blendingKeyframe.offset())
                 .release();
 
             RefPtr<TimingFunction> timingFunction;

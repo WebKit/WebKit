@@ -207,7 +207,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 /*!
  @abstract A Boolean value indicating whether the extension has background content that can run when needed.
- @discussion If this property is `YES`, the extension can run in the background even when no web pages are open.
+ @discussion If this property is `YES`, the extension can run in the background even when no webpages are open.
  */
 @property (nonatomic, readonly) BOOL hasBackgroundContent;
 
@@ -217,6 +217,13 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  error will be reported on iOS if an attempt is made to load a persistent extension.
  */
 @property (nonatomic, readonly) BOOL backgroundContentIsPersistent;
+
+/*!
+ @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.
+ @discussion If this property is `YES`, the extension has content that can be injected by matching against the extension's requested match patterns.
+ @note Once the extension is loaded, use the `hasInjectedContent` property on the extension context, as the injectable content can change after the extension is loaded.
+ */
+@property (nonatomic, readonly) BOOL hasInjectedContent;
 
 /*!
  @abstract A Boolean value indicating whether the extension has an options page.

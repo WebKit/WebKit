@@ -296,6 +296,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return usingPrivateBrowsing ? privateController : normalController;
 }
 
+@interface TestWebExtensionTab () <WKNavigationDelegate>
+@end
+
 @implementation TestWebExtensionTab {
     __weak _WKWebExtensionController *_extensionController;
 }
@@ -321,6 +324,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         configuration.userContentController = userContentController(usingPrivateBrowsing);
 
         _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+        _mainWebView.navigationDelegate = self;
+
         _extensionController = extensionController;
     }
 
@@ -345,6 +350,32 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     configuration.userContentController = userContentController(usingPrivateBrowsing);
 
     _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+    _mainWebView.navigationDelegate = self;
+}
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL | _WKWebExtensionTabChangedPropertiesLoading forTab:self];
+}
+
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
+{
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL forTab:self];
+}
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL | _WKWebExtensionTabChangedPropertiesLoading forTab:self];
+}
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+{
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL forTab:self];
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
 - (WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context
@@ -424,7 +455,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setParentTab:(id<_WKWebExtensionTab>)parentTab forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    _parentTab = parentTab;
+    _parentTab = dynamic_objc_cast<TestWebExtensionTab>(parentTab);
 
     completionHandler(nil);
 }

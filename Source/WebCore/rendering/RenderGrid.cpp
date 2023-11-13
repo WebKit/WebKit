@@ -1248,8 +1248,9 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     bool hasCollapsedTracks = currentGrid().hasAutoRepeatEmptyTracks(direction);
     LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
     tracks.reserveInitialCapacity(numPositions - 1);
-    for (size_t i = 0; i < numPositions - 2; ++i)
-        tracks.append(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
+    tracks.appendUsingFunctor(numPositions - 2, [&](size_t i) {
+        return positions[i + 1] - positions[i] - offsetBetweenTracks - gap;
+    });
     tracks.append(positions[numPositions - 1] - positions[numPositions - 2]);
 
     if (!hasCollapsedTracks)

@@ -4136,17 +4136,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_domPasteRequestHandler)
         return action == @selector(paste:);
 
-    // These are UIKit IPI selectors. We don't want to forward them to the web view.
-    auto editorState = _page->editorState();
-    if (action == @selector(_moveDown:withHistory:) || action == @selector(_moveLeft:withHistory:) || action == @selector(_moveRight:withHistory:)
-        || action == @selector(_moveToEndOfDocument:withHistory:) || action == @selector(_moveToEndOfLine:withHistory:) || action == @selector(_moveToEndOfParagraph:withHistory:)
-        || action == @selector(_moveToEndOfWord:withHistory:) || action == @selector(_moveToStartOfDocument:withHistory:) || action == @selector(_moveToStartOfLine:withHistory:)
-        || action == @selector(_moveToStartOfParagraph:withHistory:) || action == @selector(_moveToStartOfWord:withHistory:) || action == @selector(_moveUp:withHistory:))
-        return !editorState.selectionIsNone;
+    auto& editorState = _page->editorState();
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions) {
+        if (action == @selector(moveInDirection:byGranularity:) || action == @selector(moveInLayoutDirection:)
+            || action == @selector(extendInDirection:byGranularity:) || action == @selector(extendInLayoutDirection:))
+            return !editorState.selectionIsNone;
 
-    if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardByWord) || action == @selector(_deleteForwardAndNotify:) || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine)
-        || action == @selector(_transpose))
-        return editorState.isContentEditable;
+        if (action == @selector(deleteInDirection:toGranularity:))
+            return editorState.isContentEditable;
+    } else
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+    {
+        // These are UIKit IPI selectors. We don't want to forward them to the web view.
+        if (action == @selector(_moveDown:withHistory:) || action == @selector(_moveLeft:withHistory:) || action == @selector(_moveRight:withHistory:)
+            || action == @selector(_moveToEndOfDocument:withHistory:) || action == @selector(_moveToEndOfLine:withHistory:) || action == @selector(_moveToEndOfParagraph:withHistory:)
+            || action == @selector(_moveToEndOfWord:withHistory:) || action == @selector(_moveToStartOfDocument:withHistory:) || action == @selector(_moveToStartOfLine:withHistory:)
+            || action == @selector(_moveToStartOfParagraph:withHistory:) || action == @selector(_moveToStartOfWord:withHistory:) || action == @selector(_moveUp:withHistory:))
+            return !editorState.selectionIsNone;
+
+        if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardByWord) || action == @selector(_deleteForwardAndNotify:)
+            || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine) || action == @selector(_transpose))
+            return editorState.isContentEditable;
+    }
 
     return [_webView canPerformAction:action withSender:sender];
 }
@@ -4376,7 +4388,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)cutForWebView:(id)sender
 {
-    [self executeEditCommandWithCallback:@"cut"];
+    [self _executeEditCommand:@"cut"];
 }
 
 - (void)pasteForWebView:(id)sender
@@ -4429,7 +4441,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    [self executeEditCommandWithCallback:@"toggleBold"];
+    [self _executeEditCommand:@"toggleBold"];
 
     if (self.shouldSynthesizeKeyEvents)
         _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleBoldface);
@@ -4440,7 +4452,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    [self executeEditCommandWithCallback:@"toggleItalic"];
+    [self _executeEditCommand:@"toggleItalic"];
 
     if (self.shouldSynthesizeKeyEvents)
         _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleItalic);
@@ -4451,7 +4463,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
-    [self executeEditCommandWithCallback:@"toggleUnderline"];
+    [self _executeEditCommand:@"toggleUnderline"];
 
     if (self.shouldSynthesizeKeyEvents)
         _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleUnderline);
@@ -6962,7 +6974,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     return _isKeyboardScrollingAnimationRunning;
 }
 
-- (void)executeEditCommandWithCallback:(NSString *)commandName
+- (void)_executeEditCommand:(NSString *)commandName
 {
     _autocorrectionContextNeedsUpdate = YES;
     // FIXME: Editing commands are not considered by WebKit as user initiated even if they are the result
@@ -6977,110 +6989,146 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)_deleteByWord
 {
-    [self executeEditCommandWithCallback:@"deleteWordBackward"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteWordBackward"];
 }
 
 - (void)_deleteForwardByWord
 {
-    [self executeEditCommandWithCallback:@"deleteWordForward"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteWordForward"];
 }
 
 - (void)_deleteToStartOfLine
 {
-    [self executeEditCommandWithCallback:@"deleteToBeginningOfLine"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteToBeginningOfLine"];
 }
 
 - (void)_deleteToEndOfLine
 {
-    [self executeEditCommandWithCallback:@"deleteToEndOfLine"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteToEndOfLine"];
 }
 
 - (void)_deleteForwardAndNotify:(BOOL)notify
 {
-    [self executeEditCommandWithCallback:@"deleteForward"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteForward"];
 }
 
 - (void)_deleteToEndOfParagraph
 {
-    [self executeEditCommandWithCallback:@"deleteToEndOfParagraph"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:@"deleteToEndOfParagraph"];
 }
 
 - (void)_transpose
 {
-    [self executeEditCommandWithCallback:@"transpose"];
+    [self _executeEditCommand:@"transpose"];
 }
 
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveUpAndModifySelection" : @"moveUp"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveUpAndModifySelection" : @"moveUp"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveDown:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveDownAndModifySelection" : @"moveDown"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveDownAndModifySelection" : @"moveDown"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveLeft:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending? @"moveLeftAndModifySelection" : @"moveLeft"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending? @"moveLeftAndModifySelection" : @"moveLeft"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveRight:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveRightAndModifySelection" : @"moveRight"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveRightAndModifySelection" : @"moveRight"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveWordBackwardAndModifySelection" : @"moveWordBackward"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveWordBackwardAndModifySelection" : @"moveWordBackward"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveBackwardAndModifySelection" : @"moveBackward"];
-    [self executeEditCommandWithCallback:extending ? @"moveToBeginningOfParagraphAndModifySelection" : @"moveToBeginningOfParagraph"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveBackwardAndModifySelection" : @"moveBackward"];
+    [self _executeEditCommand:extending ? @"moveToBeginningOfParagraphAndModifySelection" : @"moveToBeginningOfParagraph"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfLine:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveToBeginningOfLineAndModifySelection" : @"moveToBeginningOfLine"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveToBeginningOfLineAndModifySelection" : @"moveToBeginningOfLine"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfDocument:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveToBeginningOfDocumentAndModifySelection" : @"moveToBeginningOfDocument"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveToBeginningOfDocumentAndModifySelection" : @"moveToBeginningOfDocument"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfWord:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveWordForwardAndModifySelection" : @"moveWordForward"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveWordForwardAndModifySelection" : @"moveWordForward"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveForwardAndModifySelection" : @"moveForward"];
-    [self executeEditCommandWithCallback:extending ? @"moveToEndOfParagraphAndModifySelection" : @"moveToEndOfParagraph"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveForwardAndModifySelection" : @"moveForward"];
+    [self _executeEditCommand:extending ? @"moveToEndOfParagraphAndModifySelection" : @"moveToEndOfParagraph"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfLine:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveToEndOfLineAndModifySelection" : @"moveToEndOfLine"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveToEndOfLineAndModifySelection" : @"moveToEndOfLine"];
     return nil;
 }
 
 - (UITextInputArrowKeyHistory *)_moveToEndOfDocument:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:extending ? @"moveToEndOfDocumentAndModifySelection" : @"moveToEndOfDocument"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _executeEditCommand:extending ? @"moveToEndOfDocumentAndModifySelection" : @"moveToEndOfDocument"];
     return nil;
 }
 
@@ -12131,6 +12179,127 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (CGRect)selectionClipRect
 {
     return [self _selectionClipRectInternal];
+}
+
+inline static NSArray<NSString *> *deleteSelectionCommands(UITextStorageDirection direction, UITextGranularity granularity)
+{
+    BOOL backward = direction == UITextStorageDirectionBackward;
+    switch (granularity) {
+    case UITextGranularityCharacter:
+        return @[ backward ? @"DeleteBackward" : @"DeleteForward" ];
+    case UITextGranularityWord:
+        return @[ backward ? @"DeleteWordBackward" : @"DeleteWordForward" ];
+    case UITextGranularitySentence:
+        return @[ backward ? @"MoveToBeginningOfSentenceAndModifySelection" : @"MoveToEndOfSentenceAndModifySelection", @"DeleteBackward" ];
+    case UITextGranularityParagraph:
+        return @[ backward ? @"DeleteToBeginningOfParagraph" : @"DeleteToEndOfParagraph" ];
+    case UITextGranularityLine:
+        return @[ backward ? @"DeleteToBeginningOfLine" : @"DeleteToEndOfLine" ];
+    case UITextGranularityDocument:
+        return @[ backward ? @"MoveToBeginningOfDocumentAndModifySelection" : @"MoveToEndOfDocumentAndModifySelection", @"DeleteBackward" ];
+    }
+    ASSERT_NOT_REACHED();
+    return @[ ];
+}
+
+inline static NSString *moveSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
+{
+    BOOL backward = direction == UITextStorageDirectionBackward;
+    switch (granularity) {
+    case UITextGranularityCharacter:
+        return backward ? @"MoveBackward" : @"MoveForward";
+    case UITextGranularityWord:
+        return backward ? @"MoveWordBackward" : @"MoveWordForward";
+    case UITextGranularitySentence:
+        return backward ? @"MoveToBeginningOfSentence" : @"MoveToEndOfSentence";
+    case UITextGranularityParagraph:
+        return backward ? @"MoveToBeginningOfParagraph" : @"MoveToEndOfParagraph";
+    case UITextGranularityLine:
+        return backward ? @"MoveToBeginningOfLine" : @"MoveToEndOfLine";
+    case UITextGranularityDocument:
+        return backward ? @"MoveToBeginningOfDocument" : @"MoveToEndOfDocument";
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+inline static NSString *extendSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
+{
+    BOOL backward = direction == UITextStorageDirectionBackward;
+    switch (granularity) {
+    case UITextGranularityCharacter:
+        return backward ? @"MoveBackwardAndModifySelection" : @"MoveForwardAndModifySelection";
+    case UITextGranularityWord:
+        return backward ? @"MoveWordBackwardAndModifySelection" : @"MoveWordForwardAndModifySelection";
+    case UITextGranularitySentence:
+        return backward ? @"MoveToBeginningOfSentenceAndModifySelection" : @"MoveToEndOfSentenceAndModifySelection";
+    case UITextGranularityParagraph:
+        return backward ? @"MoveToBeginningOfParagraphAndModifySelection" : @"MoveToEndOfParagraphAndModifySelection";
+    case UITextGranularityLine:
+        return backward ? @"MoveToBeginningOfLineAndModifySelection" : @"MoveToEndOfLineAndModifySelection";
+    case UITextGranularityDocument:
+        return backward ? @"MoveToBeginningOfDocumentAndModifySelection" : @"MoveToEndOfDocumentAndModifySelection";
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+inline static NSString *moveSelectionCommand(UITextLayoutDirection direction)
+{
+    switch (direction) {
+    case UITextLayoutDirectionRight:
+        return @"MoveRight";
+    case UITextLayoutDirectionLeft:
+        return @"MoveLeft";
+    case UITextLayoutDirectionUp:
+        return @"MoveUp";
+    case UITextLayoutDirectionDown:
+        return @"MoveDown";
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
+{
+    switch (direction) {
+    case UITextLayoutDirectionRight:
+        return @"MoveRightAndModifySelection";
+    case UITextLayoutDirectionLeft:
+        return @"MoveLeftAndModifySelection";
+    case UITextLayoutDirectionUp:
+        return @"MoveUpAndModifySelection";
+    case UITextLayoutDirectionDown:
+        return @"MoveDownAndModifySelection";
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (void)deleteInDirection:(UITextStorageDirection)direction toGranularity:(UITextGranularity)granularity
+{
+    for (NSString *command in deleteSelectionCommands(direction, granularity))
+        [self _executeEditCommand:command];
+}
+
+- (void)moveInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
+{
+    [self _executeEditCommand:moveSelectionCommand(direction, granularity)];
+}
+
+- (void)moveInLayoutDirection:(UITextLayoutDirection)direction
+{
+    [self _executeEditCommand:moveSelectionCommand(direction)];
+}
+
+- (void)extendInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
+{
+    [self _executeEditCommand:extendSelectionCommand(direction, granularity)];
+}
+
+- (void)extendInLayoutDirection:(UITextLayoutDirection)direction
+{
+    [self _executeEditCommand:extendSelectionCommand(direction)];
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

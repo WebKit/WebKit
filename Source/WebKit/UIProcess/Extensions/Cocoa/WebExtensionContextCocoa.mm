@@ -395,10 +395,8 @@ const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedC
     return m_extension->staticInjectedContents();
 }
 
-bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
+bool WebExtensionContext::hasInjectedContentForURL(const URL& url)
 {
-    ASSERT(url);
-
     for (auto& injectedContent : injectedContents()) {
         // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
         bool isExcluded = false;
@@ -420,6 +418,11 @@ bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
     }
 
     return false;
+}
+
+bool WebExtensionContext::hasInjectedContent()
+{
+    return !injectedContents().isEmpty();
 }
 
 URL WebExtensionContext::optionsPageURL() const

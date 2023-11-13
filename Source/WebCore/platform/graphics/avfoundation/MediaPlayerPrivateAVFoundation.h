@@ -35,6 +35,7 @@
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -134,12 +135,6 @@ public:
         bool m_finished;
         Function<void()> m_function;
     };
-
-    void scheduleMainThreadNotification(Notification&&);
-    void scheduleMainThreadNotification(Notification::Type, const MediaTime& = MediaTime::zeroTime());
-    void scheduleMainThreadNotification(Notification::Type, bool completed);
-    void dispatchNotification();
-    void clearMainThreadPendingFlag();
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate);
@@ -283,7 +278,6 @@ protected:
     void setHasClosedCaptions(bool);
     void characteristicsChanged();
     void setDelayCharacteristicsChangedNotification(bool);
-    void setDelayCallbacks(bool) const;
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(FloatSize);
     bool isLiveStream() const { return std::isinf(duration()); }
@@ -362,7 +356,6 @@ private:
     mutable MediaTime m_cachedDuration;
     MediaTime m_reportedDuration;
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
-    mutable int m_delayCallbacks;
     int m_delayCharacteristicsChangedNotification;
     bool m_mainThreadCallPending;
     bool m_assetIsPlayable;
@@ -374,7 +367,6 @@ private:
     bool m_cachedHasCaptions;
     bool m_ignoreLoadStateChanges;
     bool m_haveReportedFirstVideoFrame;
-    bool m_inbandTrackConfigurationPending;
     bool m_characteristicsChanged;
     bool m_shouldMaintainAspectRatio;
     bool m_seeking;

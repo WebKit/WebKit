@@ -120,6 +120,7 @@ private:
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
     void serializeConstant(const Type*, ConstantValue);
+    void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -1668,17 +1669,15 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     m_stringBuilder.append(")");
 }
 
-void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
+void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, AST::BinaryOperation operation, AST::Expression& rhs)
 {
-    bool isDiv = binary.operation() == AST::BinaryOperation::Divide;
-    bool isMod = !isDiv && binary.operation() == AST::BinaryOperation::Modulo;
+    bool isDiv = operation == AST::BinaryOperation::Divide;
+    bool isMod = !isDiv && operation == AST::BinaryOperation::Modulo;
 
     if (isDiv || isMod) {
-        auto* rightType = binary.rightExpression().inferredType();
+        auto* rightType = rhs.inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
-        if (satisfies(rightType, Constraints::Integer)) {
-        }
 
         const char* helperFunction = nullptr;
         if (satisfies(rightType, Constraints::Integer)) {
@@ -1691,17 +1690,17 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 
         if (helperFunction) {
             m_stringBuilder.append(helperFunction, "(");
-            visit(binary.leftExpression());
+            visit(lhs);
             m_stringBuilder.append(", ");
-            visit(binary.rightExpression());
+            visit(rhs);
             m_stringBuilder.append(")");
             return;
         }
     }
 
     m_stringBuilder.append("(");
-    visit(binary.leftExpression());
-    switch (binary.operation()) {
+    visit(lhs);
+    switch (operation) {
     case AST::BinaryOperation::Add:
         m_stringBuilder.append(" + ");
         break;
@@ -1760,8 +1759,13 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         m_stringBuilder.append(" || ");
         break;
     }
-    visit(binary.rightExpression());
+    visit(rhs);
     m_stringBuilder.append(")");
+}
+
+void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
+{
+    serializeBinaryExpression(binary.leftExpression(), binary.operation(), binary.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerDereference)
@@ -1856,37 +1860,8 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
-    bool isDiv = statement.operation() == AST::BinaryOperation::Divide;
-    bool isMod = !isDiv && statement.operation() == AST::BinaryOperation::Modulo;
-
-    if (isDiv || isMod) {
-        auto* rightType = statement.rightExpression().inferredType();
-        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
-            rightType = vectorType->element;
-
-        const char* helperFunction = nullptr;
-        if (satisfies(rightType, Constraints::Integer)) {
-            if (isDiv)
-                helperFunction = "__wgslDiv";
-            else
-                helperFunction = "__wgslMod";
-        } else if (isMod)
-            helperFunction = "fmod";
-
-        if (helperFunction) {
-            visit(statement.leftExpression());
-            m_stringBuilder.append(" = ", helperFunction, "(");
-            visit(statement.leftExpression());
-            m_stringBuilder.append(", ");
-            visit(statement.rightExpression());
-            m_stringBuilder.append(")");
-            return;
-        }
-    }
-
-    visit(statement.leftExpression());
-    m_stringBuilder.append(" ", toASCIILiteral(statement.operation()), "= ");
-    visit(statement.rightExpression());
+    m_stringBuilder.append(" = ");
+    serializeBinaryExpression(statement.leftExpression(), statement.operation(), statement.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)

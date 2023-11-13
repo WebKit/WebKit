@@ -497,6 +497,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasAccessToAllHosts();
 }
 
+- (BOOL)hasInjectedContent
+{
+    return _webExtensionContext->hasInjectedContent();
+}
+
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
     NSParameterAssert([url isKindOfClass:NSURL.class]);
@@ -1003,6 +1008,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (BOOL)hasAccessToAllHosts
+{
+    return NO;
+}
+
+- (BOOL)hasInjectedContent
 {
     return NO;
 }

@@ -90,6 +90,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     PostMessageToRemote(WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
     CloseRemoteFrame(WebCore::FrameIdentifier identifier)
+    FocusRemoteFrame(WebCore::FrameIdentifier identifier)
 
     RenderTreeAsText(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
 }

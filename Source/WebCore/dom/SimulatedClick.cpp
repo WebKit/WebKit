@@ -54,10 +54,9 @@ private:
     {
         setUnderlyingEvent(underlyingEvent.get());
 
-        if (is<MouseEvent>(this->underlyingEvent())) {
-            MouseEvent& mouseEvent = downcast<MouseEvent>(*this->underlyingEvent());
-            m_screenLocation = mouseEvent.screenLocation();
-            initCoordinates(mouseEvent.clientLocation());
+        if (auto* mouseEvent = dynamicDowncast<MouseEvent>(this->underlyingEvent())) {
+            m_screenLocation = mouseEvent->screenLocation();
+            initCoordinates(mouseEvent->clientLocation());
         } else if (source == SimulatedClickSource::UserAgent) {
             // If there is no underlying event, we only populate the coordinates for events coming
             // from the user agent (e.g. accessibility). For those coming from JavaScript (e.g.

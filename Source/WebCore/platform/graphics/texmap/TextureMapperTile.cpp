@@ -59,7 +59,7 @@ void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
         OptionSet<BitmapTexture::Flags> flags;
-        if (image->currentFrameKnownToBeOpaque())
+        if (!image->currentFrameKnownToBeOpaque())
             flags.add(BitmapTexture::Flags::SupportsAlpha);
         m_texture = BitmapTexture::create(targetRect.size(), flags);
     }

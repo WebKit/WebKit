@@ -28,6 +28,7 @@
 
 #if ENABLE(TRACKING_PREVENTION)
 
+#include "ITPThirdPartyData.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"

@@ -1497,20 +1497,26 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
         @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
         @"const tabId = tabs[0].id",
 
-        @"let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
-        @"browser.test.assertEq(results[0], 'pink')",
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (changeInfo.url) {",
+        @"    let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
 
-        @"results = await browser.tabs.executeScript(tabId, { frameId: 0, file: 'executeScript.js' })",
-        @"browser.test.assertEq(results[0], 'pink')",
+        @"    results = await browser.tabs.executeScript(tabId, { frameId: 0, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
 
-        @"results = await browser.tabs.executeScript(tabId, { allFrames: true, file: 'executeScript.js' })",
-        @"browser.test.assertEq(results[0], 'pink')",
-        @"browser.test.assertEq(results[1], 'pink')",
+        @"    results = await browser.tabs.executeScript(tabId, { allFrames: true, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
+        @"    browser.test.assertEq(results[1], 'pink')",
 
-        @"results = await browser.tabs.executeScript(tabId, { allFrames: false, code: \"document.body.style.background = 'pink'\" })",
-        @"browser.test.assertEq(results[0], 'pink')",
+        @"    results = await browser.tabs.executeScript(tabId, { allFrames: false, code: \"document.body.style.background = 'pink'\" })",
+        @"    browser.test.assertEq(results[0], 'pink')",
 
-        @"browser.test.notifyPass()"
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"executeScript.js": javaScript }]);
@@ -1520,9 +1526,14 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
     auto *url = urlRequest.URL;
     auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInMainFrame)

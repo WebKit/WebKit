@@ -399,9 +399,9 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         return completionHandler();
     }
 
+    RegistrableDomain navigationDomain(navigation.currentRequest().url());
     if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
-        RegistrableDomain navigationDomain(navigation.currentRequest().url());
         RefPtr remotePageProxy = m_page->remotePageProxyForRegistrableDomain(navigationDomain);
         RegistrableDomain mainFrameDomain(m_page->mainFrame()->url());
 
@@ -420,7 +420,7 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         LocalFrameCreationParameters localFrameCreationParameters {
             m_provisionalFrame->layerHostingContextIdentifier()
         };
-        process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageID());
+        process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageIDInProcessForDomain(navigationDomain));
     }
 
     if (completionHandler)

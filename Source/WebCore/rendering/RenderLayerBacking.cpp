@@ -3987,34 +3987,34 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     for (auto& currentKeyframe : keyframes) {
         const RenderStyle* keyframeStyle = currentKeyframe.style();
-        double key = currentKeyframe.key();
+        double offset = currentKeyframe.offset();
 
         if (!keyframeStyle)
             continue;
             
         auto* tf = currentKeyframe.timingFunction();
-        
-        if (currentKeyframe.containsProperty(CSSPropertyRotate))
-            rotateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->rotate(), tf));
 
-        if (currentKeyframe.containsProperty(CSSPropertyScale))
-            scaleVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->scale(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyRotate))
+            rotateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->rotate(), tf));
 
-        if (currentKeyframe.containsProperty(CSSPropertyTranslate))
-            translateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->translate(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyScale))
+            scaleVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->scale(), tf));
 
-        if (currentKeyframe.containsProperty(CSSPropertyTransform))
-            transformVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->transform(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyTranslate))
+            translateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->translate(), tf));
 
-        if (currentKeyframe.containsProperty(CSSPropertyOpacity))
-            opacityVector.insert(makeUnique<FloatAnimationValue>(key, keyframeStyle->opacity(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyTransform))
+            transformVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->transform(), tf));
 
-        if (currentKeyframe.containsProperty(CSSPropertyFilter))
-            filterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyOpacity))
+            opacityVector.insert(makeUnique<FloatAnimationValue>(offset, keyframeStyle->opacity(), tf));
+
+        if (currentKeyframe.animatesProperty(CSSPropertyFilter))
+            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter(), tf));
 
 #if ENABLE(FILTERS_LEVEL_2)
-        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.containsProperty(CSSPropertyBackdropFilter))
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
+        if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
+            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
 #endif
     }
 

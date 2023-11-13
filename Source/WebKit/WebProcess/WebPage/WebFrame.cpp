@@ -159,7 +159,7 @@ Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, We
     auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame());
     frame->m_coreFrame = coreFrame.get();
 
-    // FIXME: Pass in a name and call FrameTree::setName here. <rdar://116201307>
+    // FIXME: Pass in a name and call FrameTree::setSpecifiedName here. <rdar://116201307>
     return frame;
 }
 
@@ -367,10 +367,11 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
     auto newFrame = ownerElement
         ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
-        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
-
-    if (!parent)
+        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, localFrame->loader().opener());
+    if (!parent) {
+        corePage->setMainFrame(newFrame.copyRef());
         newFrame->takeWindowProxyFrom(*localFrame);
+    }
     if (ownerRenderer)
         ownerRenderer->setWidget(newFrame->view());
 

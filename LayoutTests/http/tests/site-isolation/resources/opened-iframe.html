@@ -1,4 +1,6 @@
 <script>
-    window.customProperty = 42;
-    window.parent.opener.firstSameOriginIframeOpened()
+    onload = ()=>{
+        window.customProperty = 42;
+        window.parent.opener.firstSameOriginIframeOpened()
+    }
 </script>

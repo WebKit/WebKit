@@ -310,6 +310,9 @@ void RtpPacketizerH265::NextAggregatePacket(RtpPacketToSend* rtp_packet,
   while (packet->aggregated) {
     // Add NAL unit length field.
     rtc::ArrayView<const uint8_t> fragment = packet->source_fragment;
+#ifdef WEBRTC_WEBKIT_BUILD
+    RTC_CHECK_LE(index + kHevcLengthFieldSize + fragment.size(), payload_capacity);
+#endif
     ByteWriter<uint16_t>::WriteBigEndian(&buffer[index], fragment.size());
     index += kHevcLengthFieldSize;
     // Add NAL unit.

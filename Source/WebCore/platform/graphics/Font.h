@@ -30,6 +30,7 @@
 #include "RenderingResourceIdentifier.h"
 #include <variant>
 #include <wtf/BitVector.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Hasher.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
@@ -74,7 +75,7 @@ bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 #endif
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
-class Font : public RefCounted<Font>, public CanMakeWeakPtr<Font> {
+class Font : public RefCounted<Font>, public CanMakeWeakPtr<Font>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
 public:
     // Used to create platform fonts.

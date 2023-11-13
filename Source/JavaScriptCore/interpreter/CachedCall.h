@@ -61,6 +61,12 @@ public:
             return;
         }
 
+        if (UNLIKELY(vm.disallowVMEntryCount)) {
+            Interpreter::checkVMEntryPermission();
+            throwStackOverflowError(globalObject, scope);
+            return;
+        }
+
         m_arguments.ensureCapacity(argumentCount);
         if (UNLIKELY(m_arguments.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);

@@ -215,7 +215,8 @@ public:
     void setInspectable(bool);
 
     const InjectedContentVector& injectedContents();
-    bool hasInjectedContentForURL(NSURL *);
+    bool hasInjectedContentForURL(const URL&);
+    bool hasInjectedContent();
 
     URL optionsPageURL() const;
     URL overrideNewTabPageURL() const;

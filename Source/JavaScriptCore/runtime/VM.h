@@ -424,22 +424,30 @@ public:
     };
     JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
-private:
-    VMIdentifier m_identifier;
-    RefPtr<JSLock> m_apiLock;
-    Ref<WTF::RunLoop> m_runLoop;
-
     // Keep super frequently accessed fields top in VM.
+    unsigned disallowVMEntryCount { 0 };
+private:
     void* m_softStackLimit { nullptr };
     Exception* m_exception { nullptr };
     Exception* m_terminationException { nullptr };
     Exception* m_lastException { nullptr };
+public:
+    // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
+    // topEntryFrame.
+    // FIXME: This should be a void*, because it might not point to a CallFrame.
+    // https://bugs.webkit.org/show_bug.cgi?id=160441
+    CallFrame* topCallFrame { nullptr };
+    EntryFrame* topEntryFrame { nullptr };
+private:
+    OptionSet<EntryScopeService> m_entryScopeServices;
+
+    VMIdentifier m_identifier;
+    RefPtr<JSLock> m_apiLock;
+    Ref<WTF::RunLoop> m_runLoop;
 
     WeakRandom m_random;
     WeakRandom m_heapRandom;
     Integrity::Random m_integrityRandom;
-
-    OptionSet<EntryScopeService> m_entryScopeServices;
 
     bool hasEntryScopeServiceRequest(EntryScopeService service)
     {
@@ -502,12 +510,6 @@ public:
     VMType vmType;
     bool m_mightBeExecutingTaintedCode { false };
     ClientData* clientData { nullptr };
-    EntryFrame* topEntryFrame { nullptr };
-    // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
-    // topEntryFrame.
-    // FIXME: This should be a void*, because it might not point to a CallFrame.
-    // https://bugs.webkit.org/show_bug.cgi?id=160441
-    CallFrame* topCallFrame { nullptr };
 #if ENABLE(WEBASSEMBLY)
     Wasm::Context wasmContext;
 #endif
@@ -813,7 +815,6 @@ public:
     void scanSideState(ConservativeRoots&) const;
 
     Interpreter interpreter;
-    unsigned disallowVMEntryCount { 0 };
     VMEntryScope* entryScope { nullptr };
 
     JSObject* stringRecursionCheckFirstObject { nullptr };

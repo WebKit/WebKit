@@ -34,6 +34,7 @@
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "LegacyRenderSVGResource.h"
+#include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"

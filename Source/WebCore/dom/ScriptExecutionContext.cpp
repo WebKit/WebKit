@@ -477,8 +477,8 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
 void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
     Page* page = nullptr;
-    if (is<Document>(this))
-        page = downcast<Document>(this)->page();
+    if (auto* document = dynamicDowncast<Document>(*this))
+        page = document->page();
     // FIXME: allow Workers to mute unhandled promise rejection messages.
 
     if (page && !page->settings().unhandledPromiseRejectionToConsoleEnabled())
@@ -594,8 +594,8 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
     // When initializing ScriptExecutionContext, vm() is not ready.
 
     ASSERT(!m_rejectedPromiseTracker);
-    if (is<WorkerOrWorkletGlobalScope>(*this)) {
-        auto* scriptController = downcast<WorkerOrWorkletGlobalScope>(*this).script();
+    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this)) {
+        auto* scriptController = globalScope->script();
         // Do not re-create the promise tracker if we are in a worker / worklet whose execution is terminating.
         if (!scriptController || scriptController->isTerminatingExecution())
             return nullptr;
@@ -628,13 +628,13 @@ bool ScriptExecutionContext::hasPendingActivity() const
 
 JSC::JSGlobalObject* ScriptExecutionContext::globalObject() const
 {
-    if (is<Document>(*this)) {
-        auto frame = downcast<Document>(*this).frame();
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        auto frame = document->frame();
         return frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr;
     }
 
-    if (is<WorkerOrWorkletGlobalScope>(*this)) {
-        auto script = downcast<WorkerOrWorkletGlobalScope>(*this).script();
+    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this)) {
+        auto script = globalScope->script();
         return script ? script->globalScopeWrapper() : nullptr;
     }
 
@@ -656,9 +656,10 @@ String ScriptExecutionContext::domainForCachePartition() const
 bool ScriptExecutionContext::allowsMediaDevices() const
 {
 #if ENABLE(MEDIA_STREAM)
-    if (!is<Document>(*this))
+    auto* document = dynamicDowncast<Document>(*this);
+    if (!document)
         return false;
-    auto page = downcast<Document>(*this).page();
+    auto page = document->page();
     return page ? !page->settings().mediaCaptureRequiresSecureConnection() : false;
 #else
     return false;
@@ -691,8 +692,8 @@ void ScriptExecutionContext::unregisterServiceWorker(ServiceWorker& serviceWorke
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;
-    if (is<Document>(*this)) {
-        if (auto* window = downcast<Document>(*this).domWindow())
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        if (auto* window = document->domWindow())
             navigator = window->optionalNavigator();
     } else
         navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
@@ -703,8 +704,8 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;
-    if (is<Document>(*this)) {
-        if (auto* window = downcast<Document>(*this).domWindow())
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        if (auto* window = document->domWindow())
             navigator = &window->navigator();
     } else
         navigator = &downcast<WorkerGlobalScope>(*this).navigator();
@@ -772,17 +773,17 @@ bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentif
 
 void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Document&)>&& callback)
 {
-    if (is<Document>(this)) {
-        callback(downcast<Document>(*this));
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        callback(*document);
         return;
     }
 
-    ASSERT(is<WorkerOrWorkletGlobalScope>(this));
-    if (!is<WorkerOrWorkletGlobalScope>(this))
+    auto* workerOrWorketGlobalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this);
+    ASSERT(workerOrWorketGlobalScope);
+    if (!workerOrWorketGlobalScope)
         return;
 
-    RefPtr thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
-    if (thread) {
+    if (RefPtr thread = workerOrWorketGlobalScope->workerOrWorkletThread()) {
         thread->workerLoaderProxy().postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
             callback(downcast<Document>(context));
         });

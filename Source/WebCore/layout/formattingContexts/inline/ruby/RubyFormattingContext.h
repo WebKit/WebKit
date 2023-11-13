@@ -32,8 +32,9 @@
 namespace WebCore {
 namespace Layout {
 
-class Line;
 class InlineFormattingContext;
+class InlineLevelBox;
+class Line;
 struct InlineItemRange;
 
 class RubyFormattingContext {

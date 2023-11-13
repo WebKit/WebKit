@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSPendingSubstitutionValue.h"
 
+#include "CSSProperty.h"
 #include "CSSPropertyParser.h"
 
 namespace WebCore {

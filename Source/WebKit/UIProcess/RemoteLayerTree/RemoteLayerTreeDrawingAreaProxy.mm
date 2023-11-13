@@ -245,6 +245,15 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     std::optional<RequestedScrollData> requestedScroll;
 #endif
 
+    // Process any callbacks for unhiding content early, so that we
+    // set the root node during the same CA transaction.
+    for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
+        if (callbackID == m_replyForUnhidingContent) {
+            m_replyForUnhidingContent = AsyncReplyID { };
+            break;
+        }
+    }
+
     auto commitLayerAndScrollingTrees = [&] {
         if (layerTreeTransaction.hasAnyLayerChanges())
             ++m_countOfTransactionsWithNonEmptyLayerChanges;
@@ -549,17 +558,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    if (m_replyForUnhidingContent && protectedWebPageProxy()->process().hasConnection()) {
-        if (auto replyHandlerToCancel = protectedWebPageProxy()->process().connection()->takeAsyncReplyHandler(m_replyForUnhidingContent))
-            replyHandlerToCancel(nullptr);
-    }
-
-    m_replyForUnhidingContent = protectedWebPageProxy()->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [weakThis = WeakPtr { this }] {
-        if (weakThis) {
-            weakThis->protectedWebPageProxy()->setRemoteLayerTreeRootNode(weakThis->m_remoteLayerTreeHost->rootNode());
-            weakThis->m_replyForUnhidingContent = AsyncReplyID { };
-        }
-    }, identifier());
+    m_replyForUnhidingContent = protectedWebPageProxy()->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] { }, identifier());
     m_remoteLayerTreeHost->detachRootLayer();
 }
 

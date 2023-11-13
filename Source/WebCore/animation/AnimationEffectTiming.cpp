@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "AnimationEffectTiming.h"
+
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 

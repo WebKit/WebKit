@@ -47,6 +47,7 @@ public:
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
     virtual void close() = 0;
+    virtual void focus() = 0;
     virtual ~RemoteFrameClient() { }
 };
 

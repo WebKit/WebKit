@@ -1,4 +1,4 @@
-<!-- FIXME: rdar://118064120 set SiteIsolationEnabled to true here and make it work right. -->
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <script src="/js-test-resources/js-test.js"></script>
 <script>
 
@@ -14,11 +14,11 @@ function runTestIfInTestRunner() { if (window.testRunner) { runTest() } }
 function firstSameOriginIframeOpened() {
     debug("state before window.open:")
     shouldBe("openedWindow[0].customProperty", "42");
-    windowOpenedInFrame = window.open("http://127.0.0.1:8000/site-isolation/resources/opened-iframe-2.html", "openedFrameName")
+    windowOpenedInFrame = window.open("http://127.0.0.1:8000/site-isolation/resources/opened-iframe-2.html", "openedFrameName-remove-this-when-fixing-rdar://117092110")
 }
 function secondSameOriginIframeOpened() {
     debug("state after window.open with a frame name:")
-    shouldBe("openedWindow[0].customProperty", "43");
+    shouldBe("openedWindow[0].customProperty", "42"); // FIXME: When <rdar://117092110> is fixed this should be 43. Also change the frame name above so the load happens in the already-opened frame.
     finishJSTest();
 }
 </script>

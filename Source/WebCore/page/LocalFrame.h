@@ -112,7 +112,7 @@ enum OverflowScrollAction { DoNotPerformOverflowScroll, PerformOverflowScroll };
 using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNode, IntRect* nodeBounds)>;
 #endif
 
-class LocalFrame final : public Frame, public CanMakeCheckedPtr {
+class LocalFrame final : public Frame {
 public:
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);

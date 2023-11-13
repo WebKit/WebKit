@@ -2608,8 +2608,6 @@ webkit.org/b/263783 [ Sonoma+ ] fast/scrolling/scroll-snap-crash.html [ Skip ]
 
 webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]
 
-webkit.org/b/264349 http/tests/site-isolation/frame-access-after-window-open.html [ Timeout ]
-
 webkit.org/b/264527 imported/w3c/web-platform-tests/css/css-cascade/idlharness.html [ Pass Failure ]
 
 webkit.org/b/264607 [ Sonoma+ ] css1/box_properties/acid_test.html [ Pass Timeout ]

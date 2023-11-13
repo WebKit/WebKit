@@ -1595,6 +1595,12 @@ bool WebExtension::hasStaticInjectedContentForURL(NSURL *url)
     return false;
 }
 
+bool WebExtension::hasStaticInjectedContent()
+{
+    populateContentScriptPropertiesIfNeeded();
+    return !m_staticInjectedContents.isEmpty();
+}
+
 NSArray *WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings() const
 {
     NSMutableArray<NSString *> *result = [NSMutableArray array];
