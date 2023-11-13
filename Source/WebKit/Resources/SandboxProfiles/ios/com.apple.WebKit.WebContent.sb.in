@@ -930,23 +930,13 @@
         (global-name "com.apple.diagnosticd")
         (global-name "com.apple.osanalytics.osanalyticshelper")))
 
-(define (mach-extension-list)
-    (global-name
-        "com.apple.frontboard.systemappservices"
-        "com.apple.iconservices"
-        "com.apple.mobileassetd.v2"
-        "com.apple.mobilegestalt.xpc"))
-
-(allow mach-lookup (with telemetry-backtrace)
+(allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (mach-extension-list)))
-
-(with-filter (state-flag "EnableExperimentalSandbox")
-    (deny mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (mach-extension-list))))
+        (global-name
+            "com.apple.frontboard.systemappservices"
+            "com.apple.mobileassetd.v2"
+            "com.apple.mobilegestalt.xpc")))
 
 (allow mach-lookup
     (require-all
@@ -958,7 +948,17 @@
 (deny mach-lookup (with no-report)
     (require-all
         (require-not (extension "com.apple.webkit.extension.mach"))
-        (global-name "com.apple.audio.AudioComponentRegistrar")))
+        (global-name
+            "com.apple.audio.AudioComponentRegistrar"
+        )
+    )
+)
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.iconservices")))
 
 #if HAVE(AGX_COMPILER_SERVICE)
 (allow iokit-open-user-client
