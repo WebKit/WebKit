@@ -547,11 +547,18 @@ BINARY_OPERATION(Divide, Number, [&]<typename T>(T left, T right) -> ConstantRes
     return { { left / right } };
 });
 
-BINARY_OPERATION(Modulo, Number, [&](auto left, auto right) {
+BINARY_OPERATION(Modulo, Number, [&]<typename T>(T left, T right) -> ConstantResult {
     if constexpr (std::is_floating_point_v<decltype(left)>)
-        return fmod(left, right);
-    else
-        return left % right;
+        return { { fmod(left, right) } };
+    else {
+        if (!right)
+            return makeUnexpected("invalid modulo by zero"_s);
+        if constexpr (std::is_signed_v<T>) {
+            if (left == std::numeric_limits<T>::lowest() && right == -1)
+                return makeUnexpected("invalid modulo overflow"_s);
+        }
+        return { { left % right } };
+    }
 });
 
 // Comparison Operations
