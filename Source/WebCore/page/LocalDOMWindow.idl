@@ -62,7 +62,6 @@
     attribute DOMString status;
     [DoNotCheckSecurity] readonly attribute boolean closed;
     undefined stop();
-    [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();
     [DoNotCheckSecurity] undefined blur();
 
     // other browsing contexts

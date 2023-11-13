@@ -1570,4 +1570,45 @@ TEST(SiteIsolation, MainFrameURLAfterFragmentNavigation)
     EXPECT_FALSE(canLoadURLInIFrame(@"/always_blocked"));
 }
 
+TEST(SiteIsolation, FocusOpenedWindow)
+{
+    auto openerHTML = "<script>"
+    "    let w = window.open('https://domain2.com/opened');"
+    "</script>"_s;
+    HTTPServer server({
+        { "/example"_s, { openerHTML } },
+        { "/opened"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openerAndOpenedViews(server);
+
+    RetainPtr<WKFrameInfo> openerInfo;
+    RetainPtr<WKFrameInfo> openedInfo;
+    auto getUpdatedFrameInfo = [&] (WKWebView *openerWebView, WKWebView *openedWebView) {
+        __block bool done = false;
+        [openerWebView _frames:^(_WKFrameTreeNode *mainFrame) {
+            openerInfo = mainFrame.info;
+            done = true;
+        }];
+        Util::run(&done);
+
+        done = false;
+        [openedWebView _frames:^(_WKFrameTreeNode *mainFrame) {
+            openedInfo = mainFrame.info;
+            done = true;
+        }];
+        Util::run(&done);
+    };
+
+    getUpdatedFrameInfo(opener.webView.get(), opened.webView.get());
+    EXPECT_FALSE([openerInfo _isFocused]);
+    EXPECT_FALSE([openedInfo _isFocused]);
+
+    [opener.webView.get() evaluateJavaScript:@"w.focus()" completionHandler:nil];
+
+    do {
+        getUpdatedFrameInfo(opener.webView.get(), opened.webView.get());
+    } while (![openedInfo _isFocused]);
+    EXPECT_FALSE([openerInfo _isFocused]);
+}
+
 }

@@ -104,4 +104,9 @@ void WebRemoteFrameClient::close()
     WebProcess::singleton().send(Messages::WebProcessProxy::CloseRemoteFrame(m_frame->frameID()), 0);
 }
 
+void WebRemoteFrameClient::focus()
+{
+    WebProcess::singleton().send(Messages::WebProcessProxy::FocusRemoteFrame(m_frame->frameID()), 0);
+}
+
 }

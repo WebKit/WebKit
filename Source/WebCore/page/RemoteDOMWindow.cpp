@@ -74,7 +74,9 @@ bool RemoteDOMWindow::closed() const
 
 void RemoteDOMWindow::focus(LocalDOMWindow&)
 {
-    // FIXME: Implemented this. <rdar://116203970>
+    // FIXME(264713): Add security checks here equivalent to LocalDOMWindow::focus().
+    if (m_frame && m_frame->isMainFrame())
+        m_frame->client().focus();
 }
 
 void RemoteDOMWindow::blur()

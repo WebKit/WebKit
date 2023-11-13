@@ -44,7 +44,6 @@
     [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;
     readonly attribute boolean closed;
-    [CallWith=IncumbentWindow] undefined focus();
     undefined blur();
     [Replaceable, ImplementedAs=self] readonly attribute WindowProxy frames;
     [Replaceable] readonly attribute unsigned long length;
