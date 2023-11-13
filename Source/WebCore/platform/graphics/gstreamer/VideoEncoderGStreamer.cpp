@@ -47,8 +47,8 @@ static WorkQueue& gstEncoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalVideoEncoder : public ThreadSafeRefCounted<GStreamerInternalVideoEncoder>
-    , public CanMakeWeakPtr<GStreamerInternalVideoEncoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalVideoEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalVideoEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_NONCOPYABLE(GStreamerInternalVideoEncoder);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -143,8 +143,9 @@ void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame
         else
             resultString = "Encoding failed"_s;
 
-        encoder->postTask([weakEncoder = WeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
-            if (!weakEncoder || weakEncoder->isClosed())
+        encoder->postTask([weakEncoder = ThreadSafeWeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
+            auto encoder = weakEncoder.get();
+            if (!encoder || encoder->isClosed())
                 return;
 
             callback(WTFMove(result));
@@ -181,7 +182,8 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
 
     auto pad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
     g_signal_connect_data(pad.get(), "notify::caps", G_CALLBACK(+[](GObject* pad, GParamSpec*, gpointer userData) {
-        WeakPtr<GStreamerInternalVideoEncoder> encoder(*static_cast<WeakPtr<GStreamerInternalVideoEncoder>*>(userData));
+        auto weakEncoder = static_cast<ThreadSafeWeakPtr<GStreamerInternalVideoEncoder>*>(userData);
+        auto encoder = weakEncoder->get();
         if (!encoder)
             return;
 
@@ -190,8 +192,9 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
         if (!caps)
             return;
 
-        encoder.get()->postTask([weakEncoder = WeakPtr { *encoder.get() }, caps = WTFMove(caps)] {
-            if (!weakEncoder)
+        encoder->postTask([weakEncoder = WTFMove(weakEncoder), caps = WTFMove(caps)] {
+            auto encoder = weakEncoder->get();
+            if (!encoder)
                 return;
 
             VideoEncoder::ActiveConfiguration configuration;
@@ -213,14 +216,14 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
                 GstMappedBuffer buffer(header, GST_MAP_READ);
                 configuration.description = { { buffer.data(), buffer.size() } };
             }
-            weakEncoder.get()->m_descriptionCallback(WTFMove(configuration));
+            encoder->m_descriptionCallback(WTFMove(configuration));
         });
-    }), new WeakPtr { *this }, [](void* data, GClosure*) {
-        delete static_cast<WeakPtr<GStreamerInternalVideoEncoder>*>(data);
+    }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {
+        delete static_cast<ThreadSafeWeakPtr<GStreamerInternalVideoEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = WeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
+        if (!weakThis.get())
             return;
         if (m_isClosed)
             return;
