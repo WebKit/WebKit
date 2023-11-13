@@ -42,20 +42,47 @@
 
 namespace WebCore {
 
-AcceleratedEffectKeyframe AcceleratedEffectKeyframe::clone() const
+AcceleratedEffect::Keyframe::Keyframe(double offset, AcceleratedEffectValues&& values)
+    : m_offset(offset)
+    , m_values(WTFMove(values))
 {
+}
+
+AcceleratedEffect::Keyframe::Keyframe(double offset, AcceleratedEffectValues&& values, RefPtr<TimingFunction>&& timingFunction, std::optional<CompositeOperation> compositeOperation, OptionSet<AcceleratedEffectProperty>&& animatedProperties)
+    : m_offset(offset)
+    , m_values(WTFMove(values))
+    , m_timingFunction(WTFMove(timingFunction))
+    , m_compositeOperation(compositeOperation)
+    , m_animatedProperties(WTFMove(animatedProperties))
+{
+}
+
+bool AcceleratedEffect::Keyframe::animatesProperty(KeyframeInterpolation::Property property) const
+{
+    return WTF::switchOn(property, [&](const AcceleratedEffectProperty acceleratedProperty) {
+        return m_animatedProperties.contains(acceleratedProperty);
+    }, [] (auto&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    });
+}
+
+AcceleratedEffect::Keyframe AcceleratedEffect::Keyframe::clone() const
+{
+    auto clonedAnimatedProperties = m_animatedProperties;
+
     RefPtr<TimingFunction> clonedTimingFunction;
-    if (auto* srcTimingFunction = timingFunction.get())
+    if (auto* srcTimingFunction = m_timingFunction.get())
         clonedTimingFunction = srcTimingFunction->clone();
 
     return {
-        offset,
-        values.clone(),
+        m_offset,
+        m_values.clone(),
         WTFMove(clonedTimingFunction),
-        compositeOperation,
-        animatedProperties
+        m_compositeOperation,
+        WTFMove(clonedAnimatedProperties)
     };
-};
+}
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AcceleratedEffect);
 
@@ -107,7 +134,7 @@ Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, c
     return adoptRef(*new AcceleratedEffect(effect, borderBoxRect));
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<AcceleratedEffectKeyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
 {
     return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
 }
@@ -167,24 +194,17 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         if (animatedProperties.isEmpty())
             continue;
 
-        AcceleratedEffectKeyframe acceleratedKeyframe;
-        acceleratedKeyframe.offset = srcKeyframe.key();
-        acceleratedKeyframe.compositeOperation = srcKeyframe.compositeOperation();
-        acceleratedKeyframe.animatedProperties = WTFMove(animatedProperties);
-
-        acceleratedKeyframe.values = [&]() -> AcceleratedEffectValues {
+        auto values = [&]() -> AcceleratedEffectValues {
             if (auto* style = srcKeyframe.style())
                 return { *style, borderBoxRect };
             return { };
         }();
 
-        acceleratedKeyframe.timingFunction = srcKeyframe.timingFunction();
-
-        m_keyframes.append(WTFMove(acceleratedKeyframe));
+        m_keyframes.append({ srcKeyframe.offset(), WTFMove(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTFMove(animatedProperties) });
     }
 }
 
-AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<AcceleratedEffectKeyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
     : m_timing(timing)
     , m_keyframes(WTFMove(keyframes))
     , m_animationType(type)
@@ -211,18 +231,19 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     m_defaultKeyframeTimingFunction = source.m_defaultKeyframeTimingFunction.copyRef();
 
     for (auto& srcKeyframe : source.m_keyframes) {
-        auto& animatedProperties = srcKeyframe.animatedProperties;
+        auto& animatedProperties = srcKeyframe.animatedProperties();
         if (!animatedProperties.containsAny(propertyFilter))
             continue;
 
-        AcceleratedEffectKeyframe keyframe;
-        keyframe.offset = srcKeyframe.offset;
-        keyframe.values = srcKeyframe.values;
-        keyframe.compositeOperation = srcKeyframe.compositeOperation;
-        keyframe.animatedProperties = srcKeyframe.animatedProperties & propertyFilter;
-        keyframe.timingFunction = srcKeyframe.timingFunction.copyRef();
+        Keyframe keyframe {
+            srcKeyframe.offset(),
+            srcKeyframe.values().clone(),
+            srcKeyframe.timingFunction().get(),
+            srcKeyframe.compositeOperation(),
+            srcKeyframe.animatedProperties() & propertyFilter
+        };
 
-        m_animatedProperties.add(keyframe.animatedProperties);
+        m_animatedProperties.add(keyframe.animatedProperties());
         m_keyframes.append(WTFMove(keyframe));
     }
 }

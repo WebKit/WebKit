@@ -5790,17 +5790,17 @@ struct WebCore::AnimationEffectTiming {
 };
 
 header: <WebCore/AcceleratedEffect.h>
-[CustomHeader] struct WebCore::AcceleratedEffectKeyframe {
-    double offset;
-    WebCore::AcceleratedEffectValues values;
-    RefPtr<WebCore::TimingFunction> timingFunction;
-    std::optional<WebCore::CompositeOperation> compositeOperation;
-    OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties;
+[CustomHeader, Nested] class WebCore::AcceleratedEffect::Keyframe {
+    double offset();
+    WebCore::AcceleratedEffectValues values();
+    RefPtr<WebCore::TimingFunction> timingFunction();
+    std::optional<WebCore::CompositeOperation> compositeOperation();
+    OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties();
 };
 
 [RefCounted] class WebCore::AcceleratedEffect {
     WebCore::AnimationEffectTiming timing();
-    Vector<WebCore::AcceleratedEffectKeyframe> keyframes();
+    Vector<WebCore::AcceleratedEffect::Keyframe> keyframes();
     WebCore::WebAnimationType animationType();
     WebCore::CompositeOperation compositeOperation();
     RefPtr<WebCore::TimingFunction> defaultKeyframeTimingFunction();

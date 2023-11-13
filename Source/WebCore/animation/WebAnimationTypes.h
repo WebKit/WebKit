@@ -72,6 +72,24 @@ using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
 using AnimatableCSSProperty = std::variant<CSSPropertyID, AtomString>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 
+enum class AcceleratedEffectProperty : uint16_t {
+    Invalid = 1 << 0,
+    Opacity = 1 << 1,
+    Transform = 1 << 2,
+    Translate = 1 << 3,
+    Rotate = 1 << 4,
+    Scale = 1 << 5,
+    OffsetPath = 1 << 6,
+    OffsetDistance = 1 << 7,
+    OffsetPosition = 1 << 8,
+    OffsetAnchor = 1 << 9,
+    OffsetRotate = 1 << 10,
+    Filter = 1 << 11,
+#if ENABLE(FILTERS_LEVEL_2)
+    BackdropFilter = 1 << 12
+#endif
+};
+
 struct CSSPropertiesBitSet {
     WTF::BitSet<numCSSProperties> m_properties { };
 };

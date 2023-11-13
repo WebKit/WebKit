@@ -677,6 +677,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/IterationCompositeOperation.h
     animation/KeyframeAnimationOptions.h
     animation/KeyframeEffectOptions.h
+    animation/KeyframeInterpolation.h
     animation/PlaybackDirection.h
     animation/WebAnimationTypes.h
 

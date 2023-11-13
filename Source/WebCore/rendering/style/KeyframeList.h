@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CompositeOperation.h"
+#include "KeyframeInterpolation.h"
 #include "RenderStyle.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
@@ -42,20 +43,24 @@ namespace Style {
 class Resolver;
 }
 
-class KeyframeValue {
+class KeyframeValue final : public KeyframeInterpolation::Keyframe {
 public:
-    KeyframeValue(double key, std::unique_ptr<RenderStyle> style)
-        : m_key(key)
+    KeyframeValue(double offset, std::unique_ptr<RenderStyle> style)
+        : m_offset(offset)
         , m_style(WTFMove(style))
     {
     }
 
+    // KeyframeInterpolation::Keyframe
+    double offset() const final { return m_offset; }
+    std::optional<CompositeOperation> compositeOperation() const final { return m_compositeOperation; }
+    bool animatesProperty(KeyframeInterpolation::Property) const final;
+    bool isKeyframeValue() const final { return true; }
+
     void addProperty(const AnimatableCSSProperty&);
-    bool containsProperty(const AnimatableCSSProperty&) const;
     const HashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
 
-    double key() const { return m_key; }
-    void setKey(double key) { m_key = key; }
+    void setOffset(double offset) { m_offset = offset; }
 
     const RenderStyle* style() const { return m_style.get(); }
     void setStyle(std::unique_ptr<RenderStyle> style) { m_style = WTFMove(style); }
@@ -63,14 +68,13 @@ public:
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>& timingFunction) { m_timingFunction = timingFunction; }
 
-    std::optional<CompositeOperation> compositeOperation() const { return m_compositeOperation; }
     void setCompositeOperation(std::optional<CompositeOperation> op) { m_compositeOperation = op; }
 
     bool containsDirectionAwareProperty() const { return m_containsDirectionAwareProperty; }
     void setContainsDirectionAwareProperty(bool containsDirectionAwareProperty) { m_containsDirectionAwareProperty = containsDirectionAwareProperty; }
 
 private:
-    double m_key;
+    double m_offset;
     HashSet<AnimatableCSSProperty> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
@@ -132,3 +136,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_KEYFRAME_INTERPOLATION_KEYFRAME(KeyframeValue, isKeyframeValue());
