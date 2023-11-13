@@ -1398,11 +1398,9 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const C
 inline Vector<StyleContentAlignmentData> BuilderConverter::convertContentAlignmentDataList(BuilderState& builder, const CSSValue& value)
 {
     auto& list = downcast<CSSValueList>(value);
-    Vector<StyleContentAlignmentData> tracks;
-    tracks.reserveInitialCapacity(list.length());
-    for (auto& value : list)
-        tracks.append(convertContentAlignmentData(builder, downcast<CSSContentDistributionValue>(value)));
-    return tracks;
+    return WTF::map(list, [&](auto& value) {
+        return convertContentAlignmentData(builder, downcast<CSSContentDistributionValue>(value));
+    });
 }
 
 inline MasonryAutoFlow BuilderConverter::convertMasonryAutoFlow(BuilderState&, const CSSValue& value)

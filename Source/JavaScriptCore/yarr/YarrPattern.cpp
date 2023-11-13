@@ -1485,9 +1485,9 @@ public:
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
                 newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-                newAlternative->m_terms.reserveInitialCapacity(alternative->m_terms.size());
-                for (unsigned i = 0; i < alternative->m_terms.size(); ++i)
-                    newAlternative->m_terms.append(copyTerm(alternative->m_terms[i], filterStartsWithBOL));
+                newAlternative->m_terms.appendContainerWithMapping(alternative->m_terms, [&](auto& term) {
+                    return copyTerm(term, filterStartsWithBOL);
+                });
             }
         }
         

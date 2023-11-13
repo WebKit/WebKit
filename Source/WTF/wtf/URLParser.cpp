@@ -2539,20 +2539,18 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
         size_t length = domain.length();
         if (domain.is8Bit()) {
             const LChar* characters = domain.characters8();
-            ascii.reserveInitialCapacity(length);
-            for (size_t i = 0; i < length; ++i) {
+            ascii.appendUsingFunctor(length, [&](size_t i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);
-                ascii.append(toASCIILower(characters[i]));
-            }
+                return toASCIILower(characters[i]);
+            });
         } else {
             const UChar* characters = domain.characters16();
-            ascii.reserveInitialCapacity(length);
-            for (size_t i = 0; i < length; ++i) {
+            ascii.appendUsingFunctor(length, [&](size_t i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);
-                ascii.append(toASCIILower(characters[i]));
-            }
+                return toASCIILower(characters[i]);
+            });
         }
         return ascii;
     }

@@ -101,9 +101,9 @@ CheckSpecial::~CheckSpecial()
 Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 {
     Inst hiddenBranch(m_checkKind, inst.origin);
-    hiddenBranch.args.reserveInitialCapacity(m_numCheckArgs);
-    for (unsigned i = 0; i < m_numCheckArgs; ++i)
-        hiddenBranch.args.append(inst.args[i + 1]);
+    hiddenBranch.args.appendUsingFunctor(m_numCheckArgs, [&](size_t i) {
+        return inst.args[i + 1];
+    });
     ASSERT(hiddenBranch.isTerminal());
     return hiddenBranch;
 }
