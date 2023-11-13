@@ -2533,17 +2533,13 @@ void Node::defaultEventHandler(Event& event)
             if (enclosingLinkEventParentOrSelf())
                 return;
 
-            RenderBox* renderBox = nullptr;
-            for (RenderObject* renderer = this->renderer(); renderer; renderer = renderer->parent()) {
-                auto* maybeRenderBox = dynamicDowncast<RenderBox>(*renderer);
-                if (maybeRenderBox && maybeRenderBox->canBeScrolledAndHasScrollableArea()) {
-                    renderBox = maybeRenderBox;
+            for (auto* renderer = this->renderer(); renderer; renderer = renderer->parent()) {
+                CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer);
+                if (renderBox && renderBox->canBeScrolledAndHasScrollableArea()) {
+                    if (RefPtr frame = document().frame())
+                        frame->checkedEventHandler()->startPanScrolling(*renderBox);
                     break;
                 }
-            }
-            if (renderBox) {
-                if (RefPtr frame = document().frame())
-                    frame->eventHandler().startPanScrolling(*renderBox);
             }
         }
 #endif

@@ -1622,9 +1622,6 @@ const Vector<String>& intlAvailableCalendars()
     static LazyNeverDestroyed<Vector<String>> availableCalendars;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        availableCalendars.construct();
-        ASSERT(availableCalendars->isEmpty());
-
         UErrorCode status = U_ZERO_ERROR;
         auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
         ASSERT(U_SUCCESS(status));
@@ -1638,7 +1635,7 @@ const Vector<String>& intlAvailableCalendars()
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
 
-        availableCalendars->appendUsingFunctor(count, [&](size_t) {
+        availableCalendars.construct(count, [&](size_t) {
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
