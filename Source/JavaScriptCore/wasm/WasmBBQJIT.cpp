@@ -7559,8 +7559,6 @@ public:
 
         constexpr unsigned minCasesForTable = 7;
         if (minCasesForTable <= targets.size()) {
-            Vector<Box<CCallHelpers::Label>> labels;
-            labels.reserveInitialCapacity(targets.size());
             auto* jumpTable = m_callee.addJumpTable(targets.size());
             auto fallThrough = m_jit.branch32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()));
             m_jit.zeroExtend32ToWord(wasmScratchGPR, wasmScratchGPR);
@@ -7568,19 +7566,19 @@ public:
             m_jit.addPtr(TrustedImmPtr(jumpTable->data()), wasmScratchGPR);
             m_jit.farJump(Address(wasmScratchGPR), JSSwitchPtrTag);
 
-            for (unsigned index = 0; index < targets.size(); ++index) {
-                Box<CCallHelpers::Label> label = Box<CCallHelpers::Label>::create(m_jit.label());
-                labels.unsafeAppendWithoutCapacityCheck(label);
-                bool isCodeEmitted = currentControlData().addExit(*this, targets[index]->targetLocations(), results);
+            auto labels = WTF::map(targets, [&](auto& target) {
+                auto label = Box<CCallHelpers::Label>::create(m_jit.label());
+                bool isCodeEmitted = currentControlData().addExit(*this, target->targetLocations(), results);
                 if (isCodeEmitted)
-                    targets[index]->addBranch(m_jit.jump());
+                    target->addBranch(m_jit.jump());
                 else {
                     // It is common that we do not need to emit anything before jumping to the target block.
                     // In that case, we put Box<Label> which will be filled later when the end of the block is linked.
                     // We put direct jump to that block in the link task.
-                    targets[index]->addLabel(WTFMove(label));
+                    target->addLabel(Box { label });
                 }
-            }
+                return label;
+            });
 
             m_jit.addLinkTask([labels = WTFMove(labels), jumpTable](LinkBuffer& linkBuffer) {
                 for (unsigned index = 0; index < labels.size(); ++index)
