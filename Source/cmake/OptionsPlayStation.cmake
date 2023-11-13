@@ -1,7 +1,5 @@
 set(PORT PlayStation)
 
-include(CheckSymbolExists)
-
 string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
 string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
 set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
@@ -21,6 +19,9 @@ WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-dll-attribute-on-redeclaration)
 # The redef wass necessary because our library provides a definition for __cpp_char8_t which
 # other code then assumes we have things like std::u8string which we do not.
 WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-builtin-macro-redefined)
+
+# Set the standard libary version
+WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-sce-stdlib=v1)
 
 set(ENABLE_WEBKIT_LEGACY OFF)
 set(ENABLE_WEBINSPECTORUI OFF)
