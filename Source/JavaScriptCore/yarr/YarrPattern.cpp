@@ -1485,7 +1485,7 @@ public:
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
                 newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-                newAlternative->m_terms.appendContainerWithMapping(alternative->m_terms, [&](auto& term) {
+                newAlternative->m_terms = WTF::map(alternative->m_terms, [&](auto& term) {
                     return copyTerm(term, filterStartsWithBOL);
                 });
             }
