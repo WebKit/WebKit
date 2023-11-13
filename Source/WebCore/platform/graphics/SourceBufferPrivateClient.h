@@ -75,7 +75,6 @@ public:
         IPCError,
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) = 0;
-    virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
     enum class AppendResult : uint8_t {
         Succeeded,
         ReadStreamFailed,

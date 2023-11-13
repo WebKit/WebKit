@@ -1204,12 +1204,6 @@ void SourceBuffer::sourceBufferPrivateDidDropSample()
         m_source->mediaElement()->incrementDroppedFrameCount();
 }
 
-void SourceBuffer::sourceBufferPrivateStreamEndedWithDecodeError()
-{
-    if (!isRemoved())
-        m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
-}
-
 void SourceBuffer::monitorBufferingRate()
 {
     // We avoid the first update of m_averageBufferRate on purpose, but in exchange we get a more accurate m_timeOfBufferingMonitor initial time.

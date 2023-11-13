@@ -451,12 +451,6 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateStreamEndedWithDecodeError()
-{
-    if (m_client)
-        m_client->sourceBufferPrivateStreamEndedWithDecodeError();
-}
-
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;

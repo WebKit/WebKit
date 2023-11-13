@@ -121,14 +121,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
     m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateStreamEndedWithDecodeError(), m_identifier);
-}
-
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
     if (!m_connectionToWebProcess)
