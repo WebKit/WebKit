@@ -30,7 +30,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-inner-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-window.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-after-removing-scroller.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-user-scroll-common.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-with-snap-on-fractional-offset.html
