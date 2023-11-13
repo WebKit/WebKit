@@ -53,16 +53,11 @@ static void retainSendRight(mach_port_t port)
     }
 }
 
-static void releaseSendRight(mach_port_t port)
+void deallocateSendRightSafely(mach_port_t port)
 {
     if (port == MACH_PORT_NULL)
         return;
 
-    deallocateSendRightSafely(port);
-}
-
-void deallocateSendRightSafely(mach_port_t port)
-{
     auto kr = mach_port_deallocate(mach_task_self(), port);
     if (kr == KERN_SUCCESS)
         return;
@@ -98,8 +93,15 @@ MachSendRight MachSendRight::adopt(mach_port_t port)
 MachSendRight MachSendRight::create(mach_port_t port)
 {
     retainSendRight(port);
-
     return adopt(port);
+}
+
+MachSendRight MachSendRight::createFromReceiveRight(mach_port_t receiveRight)
+{
+    ASSERT(MACH_PORT_VALID(receiveRight));
+    if (mach_port_insert_right(mach_task_self(), receiveRight, receiveRight, MACH_MSG_TYPE_MAKE_SEND) == KERN_SUCCESS)
+        return MachSendRight { receiveRight };
+    return { };
 }
 
 MachSendRight::MachSendRight(mach_port_t port)
@@ -120,13 +122,13 @@ MachSendRight::MachSendRight(const MachSendRight& other)
 
 MachSendRight::~MachSendRight()
 {
-    releaseSendRight(m_port);
+    deallocateSendRightSafely(m_port);
 }
 
 MachSendRight& MachSendRight::operator=(MachSendRight&& other)
 {
     if (this != &other) {
-        releaseSendRight(m_port);
+        deallocateSendRightSafely(m_port);
         m_port = other.leakSendRight();
     }
 

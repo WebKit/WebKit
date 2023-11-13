@@ -103,10 +103,10 @@ std::optional<EventSignalPair> createEventSignalPair()
     }
 
     setMachPortQueueLength(listeningPort, 1);
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    auto sendRight = MachSendRight::createFromReceiveRight(listeningPort);
     requestNoSenderNotifications(listeningPort);
 
-    return EventSignalPair { Event { listeningPort }, Signal { MachSendRight::adopt(listeningPort) } };
+    return EventSignalPair { Event { listeningPort }, Signal { WTFMove(sendRight) } };
 }
 
 Event::~Event()

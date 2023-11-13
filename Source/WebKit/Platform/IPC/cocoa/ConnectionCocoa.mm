@@ -179,8 +179,7 @@ void Connection::platformOpen()
         m_isConnected = true;
 
         // Send the initialize message, which contains a send right for the server to use.
-        mach_port_insert_right(mach_task_self(), m_receivePort, m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
-        auto serverSendRight = MachSendRight::adopt(m_receivePort);
+        auto serverSendRight = MachSendRight::createFromReceiveRight(m_receivePort);
 
         // Call Client::didClose() when the serverSendRight gets destroyed.
         requestNoSenderNotifications(m_receivePort);
@@ -595,8 +594,7 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         RELEASE_LOG_ERROR(Process, "Connection::createConnectionIdentifierPair: Could not allocate mach port, returned port was invalid");
         return std::nullopt;
     }
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::adopt(listeningPort) };
+    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::createFromReceiveRight(listeningPort) };
 }
 
 } // namespace IPC
