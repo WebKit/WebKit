@@ -6376,19 +6376,6 @@ StorageAPIEstimateEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
-StorageAccessAPIEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Storage Access API"
-  humanReadableDescription: "Enable Storage Access API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 StorageBlockingPolicy:
   type: uint32_t
   humanReadableName: "Storage Blocking Policy"
