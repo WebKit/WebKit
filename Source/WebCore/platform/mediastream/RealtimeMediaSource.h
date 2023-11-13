@@ -52,6 +52,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -210,6 +211,9 @@ public:
     virtual void ref() const = 0;
     virtual void deref() const = 0;
     virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
+
+    using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;
+    virtual Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&);
 
     using PhotoCapabilitiesHandler = CompletionHandler<void(PhotoCapabilitiesOrError&&)>;
     virtual void getPhotoCapabilities(PhotoCapabilitiesHandler&&);

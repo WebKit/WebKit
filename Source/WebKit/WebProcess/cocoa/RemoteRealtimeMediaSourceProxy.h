@@ -73,6 +73,8 @@ public:
     void stopProducingData();
     void endProducingData();
     void applyConstraints(const WebCore::MediaConstraints&, WebCore::RealtimeMediaSource::ApplyConstraintsHandler&&);
+
+    Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> takePhoto(WebCore::PhotoSettings&&);
     void getPhotoCapabilities(WebCore::RealtimeMediaSource::PhotoCapabilitiesHandler&&);
     Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings();
 

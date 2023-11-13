@@ -39,6 +39,31 @@ struct PhotoSettings {
     std::optional<bool> redEyeReduction;
 };
 
+inline bool operator==(const PhotoSettings& a, const PhotoSettings& b)
+{
+    if (!!a.fillLightMode != !!b.fillLightMode)
+        return false;
+    if (a.fillLightMode && *a.fillLightMode != *b.fillLightMode)
+        return false;
+
+    if (!!a.imageHeight != !!b.imageHeight)
+        return false;
+    if (a.imageHeight && *a.imageHeight != *b.imageHeight)
+        return false;
+
+    if (!!a.imageWidth != !!b.imageWidth)
+        return false;
+    if (a.imageWidth && *a.imageWidth != *b.imageWidth)
+        return false;
+
+    if (!!a.redEyeReduction != !!b.redEyeReduction)
+        return false;
+    if (a.redEyeReduction && *a.redEyeReduction != *b.redEyeReduction)
+        return false;
+
+    return true;
+}
+
 }
 
 #endif

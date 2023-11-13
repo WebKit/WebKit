@@ -111,6 +111,7 @@ public:
     WEBCORE_EXPORT const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
 
+    Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&&);
     void getPhotoCapabilities(RealtimeMediaSource::PhotoCapabilitiesHandler&&);
     Ref<RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings();
 

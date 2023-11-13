@@ -73,6 +73,8 @@ protected:
 
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
+
+    Ref<TakePhotoNativePromise> takePhoto(WebCore::PhotoSettings&&) final;
     void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
     Ref<PhotoSettingsNativePromise> getPhotoSettings() final;
 

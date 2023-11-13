@@ -91,7 +91,6 @@ private:
     GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;

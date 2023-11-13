@@ -35,6 +35,7 @@ enum class TaskSource : uint8_t {
     Gamepad,
     Geolocation,
     IdleTask,
+    ImageCapture,
     IndexedDB,
     MediaElement,
     Microtask,

@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "Blob.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediaStreamTrack.h"
@@ -42,6 +43,8 @@ public:
     static ExceptionOr<Ref<ImageCapture>> create(Document&, Ref<MediaStreamTrack>);
 
     ~ImageCapture();
+
+    void takePhoto(PhotoSettings&&, DOMPromiseDeferred<IDLInterface<Blob>>&&);
 
     using PhotoCapabilitiesPromise = DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>;
     void getPhotoCapabilities(PhotoCapabilitiesPromise&&);
