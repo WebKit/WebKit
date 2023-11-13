@@ -110,6 +110,12 @@ WindowProxy* RemoteDOMWindow::opener() const
     return &openerFrame->windowProxy();
 }
 
+void RemoteDOMWindow::setOpener(WindowProxy*)
+{
+    // FIXME: <rdar://118263373> Implement.
+    // JSLocalDOMWindow::setOpener has some security checks. Are they needed here?
+}
+
 WindowProxy* RemoteDOMWindow::parent() const
 {
     if (!m_frame)

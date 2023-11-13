@@ -28,4 +28,5 @@ interface mixin DOMWindow {
     [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
     [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     [DoNotCheckSecurity, CallWith=IncumbentDocument] undefined close();
+    [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
 };

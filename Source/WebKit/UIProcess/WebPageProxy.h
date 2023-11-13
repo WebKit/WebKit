@@ -521,6 +521,7 @@ public:
 
     Identifier identifier() const;
     WebCore::PageIdentifier webPageID() const;
+    WebCore::PageIdentifier webPageIDInProcessForDomain(const WebCore::RegistrableDomain&) const;
 
     PAL::SessionID sessionID() const;
 
@@ -2304,7 +2305,7 @@ private:
     bool attachmentElementEnabled();
     bool modelElementEnabled();
 
-    void forEachWebContentProcess(Function<void(WebProcessProxy&)>&&);
+    void forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&);
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
 

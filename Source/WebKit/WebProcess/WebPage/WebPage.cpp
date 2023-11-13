@@ -1089,6 +1089,7 @@ void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, st
         ASSERT_NOT_REACHED();
         return;
     }
+    ASSERT(frame->page() == this);
     frame->didCommitLoadInAnotherProcess(layerHostingContextIdentifier);
 }
 
@@ -1099,6 +1100,7 @@ void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
         ASSERT_NOT_REACHED();
         return;
     }
+    ASSERT(frame->page() == this);
     frame->didFinishLoadInAnotherProcess();
 }
 
@@ -1109,6 +1111,7 @@ void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
         ASSERT_NOT_REACHED();
         return;
     }
+    ASSERT(frame->page() == this);
     frame->removeFromTree();
 }
 
