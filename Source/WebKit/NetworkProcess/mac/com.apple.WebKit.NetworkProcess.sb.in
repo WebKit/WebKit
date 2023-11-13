@@ -588,6 +588,9 @@
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix)
+    (when (defined? 'SYS_crossarch_trap)
+        (deny syscall-unix (with no-report) (syscall-number
+            SYS_crossarch_trap)))
     (allow syscall-unix (syscall-number
         SYS___channel_get_info
         SYS___channel_open
@@ -618,6 +621,7 @@
         SYS_fileport_makeport
         SYS_flistxattr
         SYS_flock
+        SYS_fsctl
         SYS_fsetattrlist
         SYS_fsgetpath
         SYS_fstat
