@@ -1951,8 +1951,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 
 webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
-webkit.org/b/263095 [ Sonoma+ ] svg/clip-path/clip-path-objectboundingbox-003.svg [ Pass ImageOnlyFailure ]
-
 webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
