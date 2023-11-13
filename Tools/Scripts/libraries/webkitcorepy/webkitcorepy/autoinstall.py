@@ -405,10 +405,8 @@ class Package(object):
                 else:
                     # We might not need setup.py at all, check if we have dist-info and the library in the temporary location
                     to_be_moved = os.listdir(temp_location)
-                    has_module_or_package = self.name in to_be_moved or '{}.py'.format(self.name) in to_be_moved
                     if (
                         archive.extension != 'whl'
-                        or not has_module_or_package
                         or not any(
                             element.endswith('.dist-info') for element in to_be_moved
                         )
