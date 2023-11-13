@@ -356,6 +356,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = std::min(size.width, logicalSize.width);
+    if (!widthForMetal)
+        return;
+
     auto heightForMetal = std::min(size.height, logicalSize.height);
     auto depthForMetal = std::min(size.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
@@ -382,14 +385,13 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         return;
     }
 
-    constexpr auto levelInfoRowBlockBytes = 0;
     id<MTLTexture> mtlTexture = texture.texture();
     auto textureDimension = texture.dimension();
     NSUInteger maxRowBytes = textureDimension == WGPUTextureDimension_3D ? (2048 * blockSize) : bytesPerRow;
-    if (bytesPerRow % blockSize || (bytesPerRow > maxRowBytes)) {
-        auto blockHeight = Texture::texelBlockHeight(textureFormat);
-        bool isCompressed = Texture::isCompressedFormat(textureFormat);
-
+    bool isCompressed = Texture::isCompressedFormat(textureFormat);
+    auto blockHeight = Texture::texelBlockHeight(textureFormat);
+    auto blockWidth = Texture::texelBlockWidth(textureFormat);
+    if (!isCompressed && (bytesPerRow % blockSize || (bytesPerRow > maxRowBytes))) {
         WGPUExtent3D newSize {
             .width = size.width,
             .height = isCompressed ? blockSize : blockHeight,
@@ -403,9 +405,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 .bytesPerRow = std::min<uint32_t>(maxRowBytes, dataLayout.bytesPerRow),
                 .rowsPerImage = newSize.height
             };
-
-            if (isCompressed)
-                bytesPerRow = levelInfoRowBlockBytes;
 
             for (uint32_t z = 0, endZ = std::max<uint32_t>(1, depthForMetal); z < endZ; ++z) {
                 WGPUImageCopyTexture newDestination = destination;
@@ -424,15 +423,33 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
             return;
         }
 
-        if (heightForMetal == 1) {
-            bytesPerRow = 0;
-            bytesPerImage = 0;
-        } else {
-            bytesPerRow = levelInfoRowBlockBytes;
-            bytesPerImage = 0;
-            if (auto add = widthForMetal % blockSize)
-                widthForMetal = std::min<NSUInteger>(widthForMetal + (blockSize - add), logicalSize.width);
+        ASSERT(heightForMetal == 1);
+        bytesPerRow = 0;
+        bytesPerImage = 0;
+    }
+
+    Vector<uint8_t> newData;
+    const auto levelInfoRowBlockBytes = blockSize * (widthForMetal / blockWidth);
+    const auto newBytesPerRow = blockSize * (widthForMetal / blockWidth);
+    if (isCompressed && levelInfoRowBlockBytes != bytesPerRow && (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)) {
+        auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
+        auto newBytesPerImage = levelInfoRowBlockBytes * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
+        auto maxZ = std::max<size_t>(1, size.depthOrArrayLayers);
+        newData.resize(newBytesPerImage * maxZ);
+        memset(&newData[0], 0, newData.size());
+        for (size_t z = 0; z < maxZ; ++z) {
+            for (size_t y = 0; y < maxY; ++y) {
+                auto sourceBytes = static_cast<const uint8_t*>(data) + y * bytesPerRow + z * bytesPerImage;
+                RELEASE_ASSERT(y * bytesPerRow + z * bytesPerImage + newBytesPerRow <= dataByteSize);
+                auto destBytes = &newData[0] + y * newBytesPerRow + z * newBytesPerImage;
+                memcpy(destBytes, sourceBytes, newBytesPerRow);
+            }
         }
+
+        bytesPerRow = levelInfoRowBlockBytes;
+        dataByteSize = newData.size();
+        bytesPerImage = newBytesPerImage;
+        data = &newData[0];
     }
 
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
