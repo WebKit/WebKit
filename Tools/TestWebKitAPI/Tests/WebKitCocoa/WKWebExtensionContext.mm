@@ -393,6 +393,79 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
 }
 
+TEST(WKWebExtensionContext, ContentScriptsParsing)
+{
+    NSMutableDictionary *testManifestDictionary = [@{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0" } mutableCopy];
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*/" ] } ];
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    auto *webkitURL = [NSURL URLWithString:@"https://webkit.org/"];
+    auto *exampleURL = [NSURL URLWithString:@"https://example.com/"];
+
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*/" ], @"exclude_matches": @[ @"*://*.example.com/" ] } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*.example.com/" ] } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
+
+    // Invalid cases
+
+    testManifestDictionary[@"content_scripts"] = @[ ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_FALSE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @{ @"invalid": @YES };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_FALSE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ ] } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_FALSE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"run_at": @"invalid" } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
+}
+
 TEST(WKWebExtensionContext, OptionsPageURLParsing)
 {
     auto *testManifestDictionary = @{

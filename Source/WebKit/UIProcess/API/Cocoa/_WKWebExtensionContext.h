@@ -330,7 +330,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 - (BOOL)hasAccessToURL:(NSURL *)url inTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(hasAccess(to:in:));
 
 /*!
- @abstract Checks if the currently granted permission match patterns set contains the `<all_urls>` pattern.
+ @abstract A Boolean value indicating if the currently granted permission match patterns set contains the `<all_urls>` pattern.
  @discussion This does not check for any `*` host patterns. In most cases you should use the broader `hasAccessToAllHosts`.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllHosts
@@ -338,11 +338,18 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly) BOOL hasAccessToAllURLs;
 
 /*!
- @abstract Checks if the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
+ @abstract A Boolean value indicating if the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllURLs
  */
 @property (nonatomic, readonly) BOOL hasAccessToAllHosts;
+
+/*!
+ @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.
+ @discussion If this property is `YES`, the extension has content that can be injected by matching against the extension's requested match patterns.
+ @seealso hasInjectedContentForURL:
+ */
+@property (nonatomic, readonly) BOOL hasInjectedContent;
 
 /*!
  @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.

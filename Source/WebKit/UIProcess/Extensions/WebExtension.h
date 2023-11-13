@@ -207,6 +207,7 @@ public:
     CocoaImage *actionIcon(CGSize idealSize);
     NSString *displayActionLabel();
     NSString *actionPopupPath();
+
     bool hasAction();
     bool hasBrowserAction();
     bool hasPageAction();
@@ -236,6 +237,7 @@ public:
 
     const InjectedContentVector& staticInjectedContents();
     bool hasStaticInjectedContentForURL(NSURL *);
+    bool hasStaticInjectedContent();
 
     // Permissions requested by the extension in their manifest.
     // These are not the currently allowed permissions.
