@@ -191,7 +191,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
         commitMTLCommandBuffer(commandBuffer);
 
-    if ([MTLCaptureManager sharedCaptureManager].isCapturing)
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing && m_device.shouldStopCaptureAfterSubmit())
         [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
