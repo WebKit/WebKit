@@ -1670,30 +1670,26 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 {
-    if (binary.operation() == AST::BinaryOperation::Modulo) {
-        auto* leftType = binary.leftExpression().inferredType();
+    bool isDiv = binary.operation() == AST::BinaryOperation::Divide;
+    bool isMod = !isDiv && binary.operation() == AST::BinaryOperation::Modulo;
+
+    if (isDiv || isMod) {
         auto* rightType = binary.rightExpression().inferredType();
-        if (satisfies(leftType, Constraints::Float) || satisfies(rightType, Constraints::Float)) {
-            m_stringBuilder.append("fmod(");
-            visit(binary.leftExpression());
-            m_stringBuilder.append(", ");
-            visit(binary.rightExpression());
-            m_stringBuilder.append(")");
-            return;
+        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
+            rightType = vectorType->element;
+        if (satisfies(rightType, Constraints::Integer)) {
         }
-    }
 
-    const char* helperFunction = nullptr;
-    if (binary.operation() == AST::BinaryOperation::Divide)
-        helperFunction = "__wgslDiv";
-    else if (binary.operation() == AST::BinaryOperation::Modulo)
-        helperFunction = "__wgslMod";
+        const char* helperFunction = nullptr;
+        if (satisfies(rightType, Constraints::Integer)) {
+            if (isDiv)
+                helperFunction = "__wgslDiv";
+            else
+                helperFunction = "__wgslMod";
+        } else if (isMod)
+            helperFunction = "fmod";
 
-    if (helperFunction) {
-        auto* resultType = binary.inferredType();
-        if (auto* vectorType = std::get_if<Types::Vector>(resultType))
-            resultType = vectorType->element;
-        if (satisfies(resultType, Constraints::Integer)) {
+        if (helperFunction) {
             m_stringBuilder.append(helperFunction, "(");
             visit(binary.leftExpression());
             m_stringBuilder.append(", ");
@@ -1860,17 +1856,24 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
-    const char* helperFunction = nullptr;
-    if (statement.operation() == AST::BinaryOperation::Divide)
-        helperFunction = "__wgslDiv";
-    else if (statement.operation() == AST::BinaryOperation::Modulo)
-        helperFunction = "__wgslMod";
+    bool isDiv = statement.operation() == AST::BinaryOperation::Divide;
+    bool isMod = !isDiv && statement.operation() == AST::BinaryOperation::Modulo;
 
-    if (helperFunction) {
+    if (isDiv || isMod) {
         auto* rightType = statement.rightExpression().inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
+
+        const char* helperFunction = nullptr;
         if (satisfies(rightType, Constraints::Integer)) {
+            if (isDiv)
+                helperFunction = "__wgslDiv";
+            else
+                helperFunction = "__wgslMod";
+        } else if (isMod)
+            helperFunction = "fmod";
+
+        if (helperFunction) {
             visit(statement.leftExpression());
             m_stringBuilder.append(" = ", helperFunction, "(");
             visit(statement.leftExpression());

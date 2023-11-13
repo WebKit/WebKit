@@ -178,6 +178,8 @@ fn testDivision() {
    _ = vec2(0.0, 0.0) / vec2(1.0, 1.0);
 }
 
+// RUN: %metal-compile testModulo
+@compute @workgroup_size(1)
 fn testModulo() {
    _ = 0 % 1;
    _ = 0i % 1i;
