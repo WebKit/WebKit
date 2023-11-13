@@ -321,11 +321,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
 
-#if USE(EXTENSIONKIT)
-    // Workaround for crash seen when running tests. See rdar://118186487.
-    unsetenv("BSServiceDomains");
-#endif
-
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
