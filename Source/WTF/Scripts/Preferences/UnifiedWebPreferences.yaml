@@ -7051,16 +7051,19 @@ VerifyWindowOpenUserGestureFromUIProcess:
 
 VerticalFormControlsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: html
   humanReadableName: "Vertical form control support"
   humanReadableDescription: "Enable support for form controls in vertical writing mode"
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 VideoFullscreenRequiresElementFullscreen:
