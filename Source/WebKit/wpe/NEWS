@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.42.2
+=================
+
+What's new in WPE WebKit 2.42.2?
+
+  - Bump Safari version in user agent header.
+  - Fix CSP regression that broke Unity WebGL applications.
+  - Fix the build with GBM disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.42.1
 =================
 
