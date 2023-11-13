@@ -55,7 +55,7 @@ struct GlyphData {
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
-    WeakPtr<const Font> font;
+    CheckedPtr<const Font> font;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous

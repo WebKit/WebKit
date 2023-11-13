@@ -63,7 +63,7 @@ private:
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < GlyphPage::size);
         m_glyphs[index] = glyphData.glyph;
-        m_fonts[index] = glyphData.font;
+        m_fonts[index] = glyphData.font.get();
     }
 
     Glyph m_glyphs[GlyphPage::size] { };
