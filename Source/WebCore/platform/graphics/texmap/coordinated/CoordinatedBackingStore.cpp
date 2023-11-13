@@ -46,11 +46,15 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
         FloatRect unscaledTileRect(update.tileRect);
         unscaledTileRect.scale(1. / m_scale);
 
+        OptionSet<BitmapTexture::Flags> flags;
+        if (update.buffer->supportsAlpha())
+            flags.add(BitmapTexture::Flags::SupportsAlpha);
+
         if (!m_texture || unscaledTileRect != rect()) {
             setRect(unscaledTileRect);
-            m_texture = textureMapper.acquireTextureFromPool(update.tileRect.size(), update.buffer->supportsAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+            m_texture = textureMapper.acquireTextureFromPool(update.tileRect.size(), flags);
         } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
-            m_texture->reset(update.tileRect.size(), update.buffer->supportsAlpha());
+            m_texture->reset(update.tileRect.size(), flags);
 
         m_texture->updateContents(update.buffer->data(), update.sourceRect, update.bufferOffset, update.buffer->stride());
         update.buffer = nullptr;

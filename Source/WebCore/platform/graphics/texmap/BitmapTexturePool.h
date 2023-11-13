@@ -41,7 +41,7 @@ class BitmapTexturePool {
 public:
     BitmapTexturePool();
 
-    RefPtr<BitmapTexture> acquireTexture(const IntSize&, const BitmapTexture::Flags);
+    RefPtr<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
     void releaseUnusedTexturesTimerFired();
 
 private:

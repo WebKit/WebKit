@@ -52,15 +52,12 @@ enum class TextureMapperFlags : uint16_t;
 
 class BitmapTexture final : public RefCounted<BitmapTexture> {
 public:
-    enum Flag {
-        NoFlag = 0,
+    enum class Flags : uint8_t {
         SupportsAlpha = 1 << 0,
         DepthBuffer = 1 << 1,
     };
 
-    typedef unsigned Flags;
-
-    static Ref<BitmapTexture> create(const IntSize& size, const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
+    static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { }, GLint internalFormat = GL_DONT_CARE)
     {
         return adoptRef(*new BitmapTexture(size, flags, internalFormat));
     }
@@ -68,9 +65,9 @@ public:
     WEBCORE_EXPORT ~BitmapTexture();
 
     const IntSize& size() const { return m_size; };
-    Flags flags() const { return m_flags; }
+    OptionSet<Flags> flags() const { return m_flags; }
     GLint internalFormat() const { return m_internalFormat; }
-    bool isOpaque() const { return !(m_flags & SupportsAlpha); }
+    bool isOpaque() const { return !m_flags.contains(Flags::SupportsAlpha); }
 
     void bindAsSurface();
     void initializeStencil();
@@ -81,7 +78,7 @@ public:
     void updateContents(GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
     void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine);
 
-    void reset(const IntSize&, Flags = NoFlag);
+    void reset(const IntSize&, OptionSet<Flags> = { });
 
     int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
 
@@ -103,12 +100,12 @@ public:
     OptionSet<TextureMapperFlags> colorConvertFlags() const { return m_colorConvertFlags; }
 
 private:
-    BitmapTexture(const IntSize&, const Flags, GLint internalFormat);
+    BitmapTexture(const IntSize&, OptionSet<Flags>, GLint internalFormat);
 
     void clearIfNeeded();
     void createFboIfNeeded();
 
-    Flags m_flags { 0 };
+    OptionSet<Flags> m_flags;
     IntSize m_size;
     GLuint m_id { 0 };
     GLuint m_fbo { 0 };

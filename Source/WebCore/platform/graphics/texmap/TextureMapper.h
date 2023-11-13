@@ -21,6 +21,7 @@
 
 #if USE(TEXTURE_MAPPER)
 
+#include "BitmapTexture.h"
 #include "ClipStack.h"
 #include "Color.h"
 #include "FilterOperation.h"
@@ -37,7 +38,6 @@
 
 namespace WebCore {
 
-class BitmapTexture;
 class BitmapTexturePool;
 class GraphicsLayer;
 class TextureMapperGLData;
@@ -90,7 +90,7 @@ public:
 
     RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>&, bool defersLastPass);
 
-    WEBCORE_EXPORT RefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const unsigned = 1);
+    WEBCORE_EXPORT RefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, OptionSet<BitmapTexture::Flags>);
 
 #if USE(GRAPHICS_LAYER_WC)
     WEBCORE_EXPORT void releaseUnusedTexturesNow();
