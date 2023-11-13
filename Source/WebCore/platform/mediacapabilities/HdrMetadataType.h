@@ -36,16 +36,3 @@ enum class HdrMetadataType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::HdrMetadataType> {
-    using values = EnumValues<
-        WebCore::HdrMetadataType,
-        WebCore::HdrMetadataType::SmpteSt2086,
-        WebCore::HdrMetadataType::SmpteSt209410,
-        WebCore::HdrMetadataType::SmpteSt209440
-    >;
-};
-
-}

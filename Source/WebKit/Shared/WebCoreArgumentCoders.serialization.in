@@ -6707,3 +6707,21 @@ enum class WebCore::PaginationMode : uint8_t {
 
 header: <WebCore/RenderObject.h>
 enum class WebCore::RepaintRectCalculation : bool;
+
+[Nested] enum class WebCore::HdrMetadataType : uint8_t {
+    SmpteSt2086,
+    SmpteSt209410,
+    SmpteSt209440,
+};
+
+[Nested] enum class WebCore::TransferFunction : uint8_t {
+     SRGB,
+     PQ,
+     HLG,
+};
+
+[Nested] enum class WebCore::ColorGamut : uint8_t {
+    SRGB,
+    P3,
+    Rec2020,
+};
