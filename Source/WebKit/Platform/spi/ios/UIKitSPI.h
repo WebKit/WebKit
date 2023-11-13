@@ -1233,6 +1233,16 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @end
 
+@protocol UIAsyncTextInput_Staging_117155812 <UIAsyncTextInput>
+
+- (void)deleteInDirection:(UITextStorageDirection)direction toGranularity:(UITextGranularity)granularity;
+- (void)moveInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity;
+- (void)extendInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity;
+- (void)moveInLayoutDirection:(UITextLayoutDirection)direction;
+- (void)extendInLayoutDirection:(UITextLayoutDirection)direction;
+
+@end
+
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 WTF_EXTERN_C_BEGIN
