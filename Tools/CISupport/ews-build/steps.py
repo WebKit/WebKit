@@ -2451,7 +2451,6 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-wk2']
     WINDOWS_CHECKS = ['wincairo']
-    QUEUES_FOR_SAFE_MERGE_QUEUE = EMBEDDED_CHECKS + MACOS_CHECKS + LINUX_CHECKS + WINDOWS_CHECKS
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
     EWS_WEBKIT_PENDING = 2
@@ -2534,7 +2533,13 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
             return defer.returnValue(False if response.status_code // 100 == 4 else None)
 
-        for queue in self.QUEUES_FOR_SAFE_MERGE_QUEUE:
+        # FIXME: safe-merge-queue should obtain skipped status from EWS instead of hardcoding
+        queues_for_safe_merge = EMBEDDED_CHECKS + MACOS_CHECKS
+        if self.getProperty('project') == GITHUB_PROJECTS[0]:
+            queues_for_safe_merge += LINUX_CHECKS
+            queues_for_safe_merge += WINDOWS_CHECKS
+
+        for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
             if queue_data:
                 status = queue_data.get('state', None)
