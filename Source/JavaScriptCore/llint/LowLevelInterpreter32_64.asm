@@ -229,9 +229,6 @@ macro doVMEntry(makeCall)
     # Since we have the guarantee that tX != aY when X != Y, we are safe from
     # aliasing problems with our arguments.
 
-    loadi VM::disallowVMEntryCount[vm], t4
-    btinz t4, .checkVMEntryPermission
-
     if ARMv7
         vmEntryRecord(cfr, t3)
         move t3, sp
@@ -263,7 +260,7 @@ macro doVMEntry(makeCall)
     addp CallFrameHeaderSlots, t4, t4
     lshiftp 3, t4
     subp sp, t4, t3
-    bpa t3, sp, .throwStackOverflow
+    bpa t3, sp, _llint_throw_stack_overflow_error_from_vm_entry
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
@@ -281,9 +278,9 @@ macro doVMEntry(makeCall)
 .stackCheckFailed:
         move t4, entry
         move t5, vm
-        jmp .throwStackOverflow
+        jmp _llint_throw_stack_overflow_error_from_vm_entry
     else
-        bpb t3, VM::m_softStackLimit[vm], .throwStackOverflow
+        bpb t3, VM::m_softStackLimit[vm], _llint_throw_stack_overflow_error_from_vm_entry
     end
 
 .stackHeightOK:
@@ -351,8 +348,13 @@ macro doVMEntry(makeCall)
     popCalleeSaves()
     functionEpilogue()
     ret
+end
 
-.throwStackOverflow:
+_llint_throw_stack_overflow_error_from_vm_entry:
+    const entry = a0
+    const vm = a1
+    const protoCallFrame = a2
+
     subp 8, sp # Align stack for cCall2() to make a call.
     move vm, a0
     move protoCallFrame, a1
@@ -385,26 +387,6 @@ macro doVMEntry(makeCall)
     popCalleeSaves()
     functionEpilogue()
     ret
-
-.checkVMEntryPermission:
-    move vm, a0
-    move protoCallFrame, a1
-    cCall2(_llint_check_vm_entry_permission)
-
-    # Tag is stored in r1 and payload is stored in r0 in little-endian architectures.
-    move UndefinedTag, r1
-    move 0, r0
-
-    if ARMv7
-        subp cfr, CalleeRegisterSaveSize, t3
-        move t3, sp
-    else
-        subp cfr, CalleeRegisterSaveSize, sp
-    end
-    popCalleeSaves()
-    functionEpilogue()
-    ret
-end
 
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
