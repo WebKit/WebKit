@@ -6725,3 +6725,13 @@ enum class WebCore::RepaintRectCalculation : bool;
     P3,
     Rec2020,
 };
+
+#if ENABLE(WEB_AUTHN)
+header: <WebCore/CredentialRequestOptions.h>
+enum class WebCore::MediationRequirement : uint8_t {
+    Silent,
+    Optional,
+    Required,
+    Conditional,
+};
+#endif

@@ -47,19 +47,4 @@ struct CredentialRequestOptions {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CredentialRequestOptions::MediationRequirement> {
-    using values = EnumValues<
-        WebCore::CredentialRequestOptions::MediationRequirement,
-        WebCore::CredentialRequestOptions::MediationRequirement::Silent,
-        WebCore::CredentialRequestOptions::MediationRequirement::Optional,
-        WebCore::CredentialRequestOptions::MediationRequirement::Required,
-        WebCore::CredentialRequestOptions::MediationRequirement::Conditional
-    >;
-};
-
-} // namespace WTF
-
-
 #endif // ENABLE(WEB_AUTHN)
