@@ -486,8 +486,8 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         lastNode = node;
     }
 
-    if (m_rootNode.isDocumentNode()) {
-        if (Element* rootElement = downcast<Document>(m_rootNode).documentElement()) {
+    if (auto* rootDocument = dynamicDowncast<Document>(m_rootNode)) {
+        if (Element* rootElement = rootDocument->documentElement()) {
             if (elements.isEmpty() || elements.last() != rootElement)
                 elements.append(rootElement);
         }
@@ -530,8 +530,11 @@ RefPtr<Element> TreeScope::findAnchor(StringView name)
 static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
-        if (focusedFrame->tree().parent() == currentFrame)
-            return is<LocalFrame>(focusedFrame) ? downcast<LocalFrame>(focusedFrame)->ownerElement() : nullptr;
+        if (focusedFrame->tree().parent() == currentFrame) {
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(focusedFrame))
+                return localFrame->ownerElement();
+            return nullptr;
+        }
     }
     return nullptr;
 }

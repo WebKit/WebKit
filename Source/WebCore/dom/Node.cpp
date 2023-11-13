@@ -225,9 +225,9 @@ void Node::dumpStatistics()
         auto& node = *nodePtr.get();
         if (node.hasRareData()) {
             ++nodesWithRareData;
-            if (is<Element>(node)) {
+            if (auto* element = dynamicDowncast<Element>(node)) {
                 ++elementsWithRareData;
-                if (downcast<Element>(node).hasNamedNodeMap())
+                if (element->hasNamedNodeMap())
                     ++elementsWithNamedNodeMap;
             }
             auto* rareData = node.rareData();
@@ -500,8 +500,8 @@ void Node::setNodeValue(const String&)
 
 RefPtr<NodeList> Node::childNodes()
 {
-    if (is<ContainerNode>(*this))
-        return ensureRareData().ensureNodeLists().ensureChildNodeList(downcast<ContainerNode>(*this));
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
+        return ensureRareData().ensureNodeLists().ensureChildNodeList(*containerNode);
     return ensureRareData().ensureNodeLists().ensureEmptyChildNodeList(*this);
 }
 
@@ -533,30 +533,30 @@ Element* Node::nextElementSibling() const
 
 ExceptionOr<void> Node::insertBefore(Node& newChild, RefPtr<Node>&& refChild)
 {
-    if (!is<ContainerNode>(*this))
-        return Exception { ExceptionCode::HierarchyRequestError };
-    return downcast<ContainerNode>(*this).insertBefore(newChild, WTFMove(refChild));
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
+        return containerNode->insertBefore(newChild, WTFMove(refChild));
+    return Exception { ExceptionCode::HierarchyRequestError };
 }
 
 ExceptionOr<void> Node::replaceChild(Node& newChild, Node& oldChild)
 {
-    if (!is<ContainerNode>(*this))
-        return Exception { ExceptionCode::HierarchyRequestError };
-    return downcast<ContainerNode>(*this).replaceChild(newChild, oldChild);
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
+        return containerNode->replaceChild(newChild, oldChild);
+    return Exception { ExceptionCode::HierarchyRequestError };
 }
 
 ExceptionOr<void> Node::removeChild(Node& oldChild)
 {
-    if (!is<ContainerNode>(*this))
-        return Exception { ExceptionCode::NotFoundError };
-    return downcast<ContainerNode>(*this).removeChild(oldChild);
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
+        return containerNode->removeChild(oldChild);
+    return Exception { ExceptionCode::NotFoundError };
 }
 
 ExceptionOr<void> Node::appendChild(Node& newChild)
 {
-    if (!is<ContainerNode>(*this))
-        return Exception { ExceptionCode::HierarchyRequestError };
-    return downcast<ContainerNode>(*this).appendChild(newChild);
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
+        return containerNode->appendChild(newChild);
+    return Exception { ExceptionCode::HierarchyRequestError };
 }
 
 static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const FixedVector<NodeOrString>& vector)
@@ -699,19 +699,18 @@ void Node::normalize()
     while (RefPtr firstChild = node->firstChild())
         node = WTFMove(firstChild);
     while (node) {
-        NodeType type = node->nodeType();
-        if (type == ELEMENT_NODE)
-            downcast<Element>(*node).normalizeAttributes();
+        if (auto* element = dynamicDowncast<Element>(*node))
+            element->normalizeAttributes();
 
         if (node == this)
             break;
 
-        if (type != TEXT_NODE) {
+        if (node->nodeType() != TEXT_NODE) {
             node = NodeTraversal::nextPostOrder(*node);
             continue;
         }
 
-        RefPtr text = downcast<Text>(node.get());
+        Ref text = downcast<Text>(*node);
 
         // Remove empty text nodes.
         if (!text->length()) {
@@ -844,7 +843,9 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingS
             return incomingStyle;
         if (isDocumentNode())
             return renderStyle();
-        auto* element = is<Element>(this) ? downcast<Element>(this) : parentElementInComposedTree();
+        auto* element = dynamicDowncast<Element>(*this);
+        if (!element)
+            element = parentElementInComposedTree();
         return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;
     }();
 
@@ -872,10 +873,11 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
 LayoutRect Node::renderRect(bool* isReplaced)
 {
     RenderObject* hitRenderer = this->renderer();
-    if (!hitRenderer && is<HTMLAreaElement>(*this)) {
-        auto& area = downcast<HTMLAreaElement>(*this);
-        if (RefPtr imageElement = area.imageElement())
-            hitRenderer = imageElement->renderer();
+    if (!hitRenderer) {
+        if (auto* area = dynamicDowncast<HTMLAreaElement>(*this)) {
+            if (RefPtr imageElement = area->imageElement())
+                hitRenderer = imageElement->renderer();
+        }
     }
     RenderObject* renderer = hitRenderer;
     while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
@@ -1128,7 +1130,8 @@ bool Node::containsIncludingShadowDOM(const Node* node) const
 
 Node* Node::pseudoAwarePreviousSibling() const
 {
-    Element* parentOrHost = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
+    auto* pseudoElement = dynamicDowncast<PseudoElement>(*this);
+    Element* parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
     if (parentOrHost && !previousSibling()) {
         if (isAfterPseudoElement() && parentOrHost->lastChild())
             return parentOrHost->lastChild();
@@ -1140,7 +1143,8 @@ Node* Node::pseudoAwarePreviousSibling() const
 
 Node* Node::pseudoAwareNextSibling() const
 {
-    Element* parentOrHost = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
+    auto* pseudoElement = dynamicDowncast<PseudoElement>(*this);
+    Element* parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
     if (parentOrHost && !nextSibling()) {
         if (isBeforePseudoElement() && parentOrHost->firstChild())
             return parentOrHost->firstChild();
@@ -1152,14 +1156,13 @@ Node* Node::pseudoAwareNextSibling() const
 
 Node* Node::pseudoAwareFirstChild() const
 {
-    if (is<Element>(*this)) {
-        const Element& currentElement = downcast<Element>(*this);
-        Node* first = currentElement.beforePseudoElement();
+    if (auto* currentElement = dynamicDowncast<Element>(*this)) {
+        Node* first = currentElement->beforePseudoElement();
         if (first)
             return first;
-        first = currentElement.firstChild();
+        first = currentElement->firstChild();
         if (!first)
-            first = currentElement.afterPseudoElement();
+            first = currentElement->afterPseudoElement();
         return first;
     }
     return firstChild();
@@ -1167,14 +1170,13 @@ Node* Node::pseudoAwareFirstChild() const
 
 Node* Node::pseudoAwareLastChild() const
 {
-    if (is<Element>(*this)) {
-        const Element& currentElement = downcast<Element>(*this);
-        Node* last = currentElement.afterPseudoElement();
+    if (auto* currentElement = dynamicDowncast<Element>(*this)) {
+        Node* last = currentElement->afterPseudoElement();
         if (last)
             return last;
-        last = currentElement.lastChild();
+        last = currentElement->lastChild();
         if (!last)
-            last = currentElement.beforePseudoElement();
+            last = currentElement->beforePseudoElement();
         return last;
     }
     return lastChild();
@@ -1242,8 +1244,8 @@ bool Node::isClosedShadowHidden(const Node& otherNode) const
                 return false; // treeScopeThatCanAccessOtherNode is a shadow-including inclusive ancestor of this node.
             }
         }
-        auto& root = treeScopeThatCanAccessOtherNode->rootNode();
-        if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).mode() != ShadowRootMode::Open)
+        auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScopeThatCanAccessOtherNode->rootNode());
+        if (shadowRoot && shadowRoot->mode() != ShadowRootMode::Open)
             break;
     }
 
@@ -1305,8 +1307,8 @@ ContainerNode* Node::parentInComposedTree() const
     ASSERT(isMainThreadOrGCThread());
     if (auto* slot = assignedSlot())
         return slot;
-    if (is<ShadowRoot>(*this))
-        return downcast<ShadowRoot>(*this).host();
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this))
+        return shadowRoot->host();
     return parentNode();
 }
 
@@ -1314,13 +1316,13 @@ Element* Node::parentElementInComposedTree() const
 {
     if (auto* slot = assignedSlot())
         return slot;
-    if (is<PseudoElement>(*this))
-        return downcast<PseudoElement>(*this).hostElement();
+    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(*this))
+        return pseudoElement->hostElement();
     if (auto* parent = parentNode()) {
-        if (is<ShadowRoot>(*parent))
-            return downcast<ShadowRoot>(*parent).host();
-        if (is<Element>(*parent))
-            return downcast<Element>(parent);
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*parent))
+            return shadowRoot->host();
+        if (auto* element = dynamicDowncast<Element>(*parent))
+            return element;
     }
     return nullptr;
 }
@@ -1365,17 +1367,14 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
 
 Element* Node::parentOrShadowHostElement() const
 {
-    ContainerNode* parent = parentOrShadowHostNode();
+    auto* parent = parentOrShadowHostNode();
     if (!parent)
         return nullptr;
 
-    if (is<ShadowRoot>(*parent))
-        return downcast<ShadowRoot>(*parent).host();
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*parent))
+        return shadowRoot->host();
 
-    if (!is<Element>(*parent))
-        return nullptr;
-
-    return downcast<Element>(parent);
+    return dynamicDowncast<Element>(*parent);
 }
 
 Node& Node::traverseToRootNode() const
@@ -1390,11 +1389,12 @@ Node& Node::traverseToRootNode() const
 // https://dom.spec.whatwg.org/#concept-shadow-including-root
 Node& Node::shadowIncludingRoot() const
 {
-    auto& root = rootNode();
-    if (!is<ShadowRoot>(root))
-        return root;
-    auto* host = downcast<ShadowRoot>(root).host();
-    return host ? host->shadowIncludingRoot() : root;
+    auto& root = this->rootNode();
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(root)) {
+        auto* host = shadowRoot->host();
+        return host ? host->shadowIncludingRoot() : root;
+    }
+    return root;
 }
 
 Node& Node::getRootNode(const GetRootNodeOptions& options) const
@@ -1450,8 +1450,8 @@ Element* Node::rootEditableElement() const
 {
     Element* result = nullptr;
     for (Node* node = const_cast<Node*>(this); node && node->hasEditableStyle(); node = node->parentNode()) {
-        if (is<Element>(*node))
-            result = downcast<Element>(node);
+        if (auto* element = dynamicDowncast<Element>(*node))
+            result = element;
         if (document().body() == node)
             break;
     }
@@ -1897,10 +1897,11 @@ String Node::debugDescription() const
 
 static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
 {
-    if (!is<Element>(*node))
+    auto* element = dynamicDowncast<Element>(*node);
+    if (!element)
         return;
 
-    const AtomString& attr = downcast<Element>(*node).getAttribute(name);
+    const AtomString& attr = element->getAttribute(name);
     if (attr.isEmpty())
         return;
 
@@ -1939,9 +1940,9 @@ void Node::showNodePathForThis() const
     }
     for (unsigned index = chain.size(); index > 0; --index) {
         const Node* node = chain[index - 1];
-        if (is<ShadowRoot>(*node)) {
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*node)) {
             int count = 0;
-            for (const ShadowRoot* shadowRoot = downcast<ShadowRoot>(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
+            for (; shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
                 ++count;
             fprintf(stderr, "/#shadow-root[%d]", count);
             continue;
@@ -2104,16 +2105,16 @@ static void traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNo
     for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
         moveNode(*node);
 
-        if (!is<Element>(*node))
+        auto* element = dynamicDowncast<Element>(*node);
+        if (!element)
             continue;
-        Element& element = downcast<Element>(*node);
 
-        if (element.hasSyntheticAttrChildNodes()) {
-            for (auto& attr : element.attrNodeList())
+        if (element->hasSyntheticAttrChildNodes()) {
+            for (auto& attr : element->attrNodeList())
                 moveNode(*attr);
         }
 
-        if (auto* shadow = element.shadowRoot())
+        if (auto* shadow = element->shadowRoot())
             moveShadowRoot(*shadow);
     }
 }
@@ -2261,8 +2262,8 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 #endif
 #endif
 
-    if (is<Element>(*this))
-        downcast<Element>(*this).didMoveToNewDocument(oldDocument, newDocument);
+    if (auto* element = dynamicDowncast<Element>(*this))
+        element->didMoveToNewDocument(oldDocument, newDocument);
 }
 
 static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
@@ -2487,8 +2488,9 @@ void Node::dispatchSubtreeModifiedEvent()
 void Node::dispatchDOMActivateEvent(Event& underlyingClickEvent)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
-    int detail = is<UIEvent>(underlyingClickEvent) ? downcast<UIEvent>(underlyingClickEvent).detail() : 0;
-    auto event = UIEvent::create(eventNames().DOMActivateEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes, document().windowProxy(), detail);
+    auto* uiEvent = dynamicDowncast<UIEvent>(underlyingClickEvent);
+    int detail = uiEvent ? uiEvent->detail() : 0;
+    Ref event = UIEvent::create(eventNames().DOMActivateEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes, document().windowProxy(), detail);
     event->setUnderlyingEvent(&underlyingClickEvent);
     dispatchScopedEvent(event);
     if (event->defaultHandled())
@@ -2507,9 +2509,9 @@ void Node::defaultEventHandler(Event& event)
     auto& eventType = event.type();
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.keydownEvent || eventType == eventNames.keypressEvent || eventType == eventNames.keyupEvent) {
-        if (is<KeyboardEvent>(event)) {
+        if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
             if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
+                frame->eventHandler().defaultKeyboardEventHandler(*keyboardEvent);
         }
     } else if (eventType == eventNames.clickEvent) {
         dispatchDOMActivateEvent(event);
@@ -2521,27 +2523,31 @@ void Node::defaultEventHandler(Event& event)
         }
 #endif
     } else if (eventType == eventNames.textInputEvent) {
-        if (is<TextEvent>(event)) {
+        if (RefPtr textEvent = dynamicDowncast<TextEvent>(event)) {
             if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
+                frame->eventHandler().defaultTextInputEventHandler(*textEvent);
         }
 #if ENABLE(PAN_SCROLLING)
-    } else if (eventType == eventNames.mousedownEvent && is<MouseEvent>(event)) {
-        if (downcast<MouseEvent>(event).button() == MouseButton::Middle) {
+    } else if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && eventType == eventNames.mousedownEvent) {
+        if (mouseEvent->button() == MouseButton::Middle) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 
-            RenderObject* renderer = this->renderer();
-            while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
-                renderer = renderer->parent();
-
-            if (renderer) {
+            RenderBox* renderBox = nullptr;
+            for (RenderObject* renderer = this->renderer(); renderer; renderer = renderer->parent()) {
+                auto* maybeRenderBox = dynamicDowncast<RenderBox>(*renderer);
+                if (maybeRenderBox && maybeRenderBox->canBeScrolledAndHasScrollableArea()) {
+                    renderBox = maybeRenderBox;
+                    break;
+                }
+            }
+            if (renderBox) {
                 if (RefPtr frame = document().frame())
-                    frame->eventHandler().startPanScrolling(downcast<RenderBox>(*renderer));
+                    frame->eventHandler().startPanScrolling(*renderBox);
             }
         }
 #endif
-    } else if (eventNames.isWheelEventType(eventType) && is<WheelEvent>(event)) {
+    } else if (auto* wheelEvent = dynamicDowncast<WheelEvent>(event); wheelEvent && eventNames.isWheelEventType(eventType)) {
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;
@@ -2550,29 +2556,32 @@ void Node::defaultEventHandler(Event& event)
         
         if (startNode && startNode->renderer()) {
             if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), downcast<WheelEvent>(event));
+                frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), *wheelEvent);
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    } else if (is<TouchEvent>(event) && eventNames.isTouchRelatedEventType(eventType, *this)) {
+    } else if (auto* touchEvent = dynamicDowncast<TouchEvent>(event); touchEvent && eventNames.isTouchRelatedEventType(eventType, *this)) {
         // Capture the target node's visibility state before dispatching touchStart.
-        if (is<Element>(*this) && eventType == eventNames.touchstartEvent) {
+        if (auto* element = dynamicDowncast<Element>(*this); element && eventType == eventNames.touchstartEvent) {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
             auto& contentChangeObserver = document().contentChangeObserver();
             if (ContentChangeObserver::isVisuallyHidden(*this))
-                contentChangeObserver.setHiddenTouchTarget(downcast<Element>(*this));
+                contentChangeObserver.setHiddenTouchTarget(*element);
             else
                 contentChangeObserver.resetHiddenTouchTarget();
 #endif
         }
 
         RenderObject* renderer = this->renderer();
-        while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
-            renderer = renderer->parent();
+        for (; renderer; renderer = renderer->parent()) {
+            auto* renderBox = dynamicDowncast<RenderBox>(*renderer);
+            if (renderBox && renderBox->canBeScrolledAndHasScrollableArea())
+                break;
+        }
 
         if (renderer && renderer->node()) {
             if (RefPtr frame = document().frame()) {
                 RefPtr rendererNode = renderer->node();
-                frame->eventHandler().defaultTouchEventHandler(*rendererNode, downcast<TouchEvent>(event));
+                frame->eventHandler().defaultTouchEventHandler(*rendererNode, *touchEvent);
             }
         }
 #endif
@@ -2583,9 +2592,10 @@ bool Node::willRespondToMouseMoveEvents() const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if !PLATFORM(IOS_FAMILY)
-    if (!is<Element>(*this))
+    auto* element = dynamicDowncast<Element>(*this);
+    if (!element)
         return false;
-    if (downcast<Element>(*this).isDisabledFormControl())
+    if (element->isDisabledFormControl())
         return false;
 #endif
     auto& eventNames = WebCore::eventNames();
@@ -2623,9 +2633,10 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if !PLATFORM(IOS_FAMILY)
-    if (!is<Element>(*this))
+    auto* element = dynamicDowncast<Element>(*this);
+    if (!element)
         return false;
-    if (downcast<Element>(*this).isDisabledFormControl())
+    if (element->isDisabledFormControl())
         return false;
 #endif
     if (editability != Editability::ReadOnly)
@@ -2646,16 +2657,16 @@ void Node::removedLastRef()
     // An explicit check for Document here is better than a virtual function since it is
     // faster for non-Document nodes, and because the call to removedLastRef that is inlined
     // at all deref call sites is smaller if it's a non-virtual function.
-    if (is<Document>(*this)) {
-        downcast<Document>(*this).removedLastRef();
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        document->removedLastRef();
         return;
     }
 
     // Now it is time to detach the SVGElement from all its properties. These properties
     // may outlive the SVGElement. The only difference after the detach is no commit will
     // be carried out unless these properties are attached to another owner.
-    if (is<SVGElement>(*this))
-        downcast<SVGElement>(*this).detachAllProperties();
+    if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
+        svgElement->detachAllProperties();
 
 #if ASSERT_ENABLED
     m_deletionHasBegun = true;

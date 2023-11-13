@@ -65,10 +65,11 @@ namespace TextNodeTraversal {
 template <class NodeType>
 inline Text* firstTextChildTemplate(NodeType& current)
 {
-    Node* node = current.firstChild();
-    while (node && !is<Text>(*node))
-        node = node->nextSibling();
-    return downcast<Text>(node);
+    for (auto* node = current.firstChild(); node; node = node->nextSibling()) {
+        if (auto* text = dynamicDowncast<Text>(*node))
+            return text;
+    }
+    return nullptr;
 }
 inline Text* firstChild(const Node& current) { return firstTextChildTemplate(current); }
 inline Text* firstChild(const ContainerNode& current) { return firstTextChildTemplate(current); }
@@ -76,10 +77,11 @@ inline Text* firstChild(const ContainerNode& current) { return firstTextChildTem
 template <class NodeType>
 inline Text* firstTextWithinTemplate(NodeType& current)
 {
-    Node* node = current.firstChild();
-    while (node && !is<Text>(*node))
-        node = NodeTraversal::next(*node, &current);
-    return downcast<Text>(node);
+    for (auto* node = current.firstChild(); node; node = NodeTraversal::next(*node, &current)) {
+        if (auto* text = dynamicDowncast<Text>(*node))
+            return text;
+    }
+    return nullptr;
 }
 inline Text* firstWithin(const Node& current) { return firstTextWithinTemplate(current); }
 inline Text* firstWithin(const ContainerNode& current) { return firstTextWithinTemplate(current); }
@@ -87,10 +89,11 @@ inline Text* firstWithin(const ContainerNode& current) { return firstTextWithinT
 template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType& current)
 {
-    Node* node = NodeTraversal::next(current);
-    while (node && !is<Text>(*node))
-        node = NodeTraversal::next(*node);
-    return downcast<Text>(node);
+    for (auto* node = NodeTraversal::next(current); node; node = NodeTraversal::next(*node)) {
+        if (auto* text = dynamicDowncast<Text>(*node))
+            return text;
+    }
+    return nullptr;
 }
 inline Text* next(const Node& current) { return traverseNextTextTemplate(current); }
 inline Text* next(const Text& current) { return traverseNextTextTemplate(current); }
@@ -98,20 +101,22 @@ inline Text* next(const Text& current) { return traverseNextTextTemplate(current
 template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType& current, const Node* stayWithin)
 {
-    Node* node = NodeTraversal::next(current, stayWithin);
-    while (node && !is<Text>(*node))
-        node = NodeTraversal::next(*node, stayWithin);
-    return downcast<Text>(node);
+    for (auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::next(*node, stayWithin)) {
+        if (auto* text = dynamicDowncast<Text>(*node))
+            return text;
+    }
+    return nullptr;
 }
 inline Text* next(const Node& current, const Node* stayWithin) { return traverseNextTextTemplate(current, stayWithin); }
 inline Text* next(const Text& current, const Node* stayWithin) { return traverseNextTextTemplate(current, stayWithin); }
 
 inline Text* nextSibling(const Node& current)
 {
-    Node* node = current.nextSibling();
-    while (node && !is<Text>(*node))
-        node = node->nextSibling();
-    return downcast<Text>(node);
+    for (auto* node = current.nextSibling(); node; node = node->nextSibling()) {
+        if (auto* text = dynamicDowncast<Text>(*node))
+            return text;
+    }
+    return nullptr;
 }
 
 } // namespace TextNodeTraversal

@@ -85,9 +85,10 @@ static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->previousSibling())) {
-        if (!is<Text>(*node))
+        if (auto* maybeText = dynamicDowncast<Text>(*node))
+            text = maybeText;
+        else
             break;
-        text = downcast<Text>(node);
     }
     return text;
 }
@@ -96,9 +97,10 @@ static const Text* latestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->nextSibling())) {
-        if (!is<Text>(*node))
+        if (auto* maybeText = dynamicDowncast<Text>(*node))
+            text = maybeText;
+        else
             break;
-        text = downcast<Text>(node);
     }
     return text;
 }
@@ -164,16 +166,16 @@ Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
 
 static bool isSVGShadowText(const Text& text)
 {
-    auto* parentNode = text.parentNode();
-    ASSERT(parentNode);
-    return is<ShadowRoot>(*parentNode) && downcast<ShadowRoot>(*parentNode).host()->hasTagName(SVGNames::trefTag);
+    ASSERT(text.parentNode());
+    auto* parentShadowRoot = dynamicDowncast<ShadowRoot>(*text.parentNode());
+    return parentShadowRoot && parentShadowRoot->host()->hasTagName(SVGNames::trefTag);
 }
 
 static bool isSVGText(const Text& text)
 {
-    auto* parentNode = text.parentNode();
-    ASSERT(parentNode);
-    return is<SVGElement>(*parentNode) && !downcast<SVGElement>(*parentNode).hasTagName(SVGNames::foreignObjectTag);
+    ASSERT(text.parentNode());
+    auto* parentElement = dynamicDowncast<SVGElement>(*text.parentNode());
+    return parentElement && !parentElement->hasTagName(SVGNames::foreignObjectTag);
 }
 
 RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)

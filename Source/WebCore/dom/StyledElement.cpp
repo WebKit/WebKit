@@ -86,11 +86,16 @@ StylePropertyMap& StyledElement::ensureAttributeStyleMap()
 MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
 {
     RefPtr<StyleProperties>& inlineStyle = ensureUniqueElementData().m_inlineStyle;
-    if (!inlineStyle)
-        inlineStyle = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
-    else if (!is<MutableStyleProperties>(*inlineStyle))
-        inlineStyle = inlineStyle->mutableCopy();
-    return downcast<MutableStyleProperties>(*inlineStyle);
+    if (!inlineStyle) {
+        Ref mutableProperties = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
+        inlineStyle = mutableProperties.copyRef();
+        return mutableProperties.get();
+    }
+    if (RefPtr mutableProperties = dynamicDowncast<MutableStyleProperties>(*inlineStyle))
+        return *mutableProperties;
+    Ref mutableProperties = inlineStyle->mutableCopy();
+    inlineStyle = mutableProperties.copyRef();
+    return mutableProperties.get();
 }
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
@@ -130,13 +135,10 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
 
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
-    if (inlineStyle && !is<MutableStyleProperties>(*inlineStyle))
-        inlineStyle = nullptr;
-
-    if (!inlineStyle)
-        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
+    if (RefPtr mutableStyleProperties = dynamicDowncast<MutableStyleProperties>(inlineStyle))
+        mutableStyleProperties->parseDeclaration(newStyleString, protectedDocument().get());
     else
-        Ref { downcast<MutableStyleProperties>(*inlineStyle) }->parseDeclaration(newStyleString, document());
+        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
 
     if (usesStyleBasedEditability(*inlineStyle))
         protectedDocument()->setHasElementUsingStyleBasedEditability();

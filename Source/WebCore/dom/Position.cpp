@@ -73,11 +73,11 @@ using namespace HTMLNames;
 
 static bool hasInlineRun(RenderObject& renderer)
 {
-    if (is<RenderBox>(renderer) && InlineIterator::boxFor(downcast<RenderBox>(renderer)))
+    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer); renderBox && InlineIterator::boxFor(*renderBox))
         return true;
-    if (is<RenderText>(renderer) && InlineIterator::firstTextBoxFor(downcast<RenderText>(renderer)))
+    if (auto* renderText = dynamicDowncast<RenderText>(renderer); renderText && InlineIterator::firstTextBoxFor(*renderText))
         return true;
-    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(renderer)))
+    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak))
         return true;
     return false;
 }
@@ -210,8 +210,8 @@ Element* Position::containerOrParentElement() const
     auto* container = containerNode();
     if (!container)
         return nullptr;
-    if (is<Element>(container))
-        return downcast<Element>(container);
+    if (auto* element = dynamicDowncast<Element>(*container))
+        return element;
     return container->parentElement();
 }
 
@@ -339,10 +339,11 @@ Position::AnchorType Position::anchorTypeForLegacyEditingPosition(Node* anchorNo
 // FIXME: This method is confusing (does it return anchorNode() or containerNode()?) and should be renamed or removed
 RefPtr<Element> Position::anchorElementAncestor() const
 {
-    RefPtr node = anchorNode();
-    while (node && !is<Element>(*node))
-        node = node->parentNode();
-    return downcast<Element>(WTFMove(node));
+    for (RefPtr node = anchorNode(); node; node = node->parentNode()) {
+        if (auto* element = dynamicDowncast<Element>(*node))
+            return element;
+    }
+    return nullptr;
 }
 
 Position Position::previous(PositionMoveType moveType) const
@@ -757,10 +758,8 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         }
 
         // return current position if it is in rendered text
-        if (is<RenderText>(*renderer)) {
-            auto& textRenderer = downcast<RenderText>(*renderer);
-
-            auto [firstTextBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(textRenderer);
+        if (auto* textRenderer = dynamicDowncast<RenderText>(*renderer)) {
+            auto [firstTextBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(*textRenderer);
             if (!firstTextBox)
                 continue;
 
@@ -869,16 +868,14 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         }
 
         // return current position if it is in rendered text
-        if (is<RenderText>(*renderer)) {
-            auto& textRenderer = downcast<RenderText>(*renderer);
-
-            auto [firstTextBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(textRenderer);
+        if (auto* textRenderer = dynamicDowncast<RenderText>(*renderer)) {
+            auto [firstTextBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(*textRenderer);
             if (!firstTextBox)
                 continue;
 
             if (currentNode.ptr() != startNode) {
                 ASSERT(currentPosition.atStartOfNode());
-                return makeContainerOffsetPosition(currentNode.ptr(), textRenderer.caretMinOffset());
+                return makeContainerOffsetPosition(currentNode.ptr(), textRenderer->caretMinOffset());
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
@@ -936,24 +933,23 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
     for (RenderObject* o = renderer.firstChild(); o && o != stop; o = o->nextInPreOrder()) {
         if (!o->nonPseudoNode())
             continue;
-        if (is<RenderText>(*o)) {
-            if (boundingBoxLogicalHeight(o, downcast<RenderText>(*o).linesBoundingBox()))
+        if (auto* renderText = dynamicDowncast<RenderText>(*o)) {
+            if (boundingBoxLogicalHeight(o, renderText->linesBoundingBox()))
                 return true;
             continue;
         }
-        if (is<RenderLineBreak>(*o)) {
-            if (boundingBoxLogicalHeight(o, downcast<RenderLineBreak>(*o).linesBoundingBox()))
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(*o)) {
+            if (boundingBoxLogicalHeight(o, renderLineBreak->linesBoundingBox()))
                 return true;
             continue;
         }
-        if (is<RenderBox>(*o)) {
-            if (roundToInt(downcast<RenderBox>(*o).logicalHeight()))
+        if (auto* renderBox = dynamicDowncast<RenderBox>(*o)) {
+            if (roundToInt(renderBox->logicalHeight()))
                 return true;
             continue;
         }
-        if (is<RenderInline>(*o)) {
-            const RenderInline& renderInline = downcast<RenderInline>(*o);
-            if (isEmptyInline(renderInline) && boundingBoxLogicalHeight(o, renderInline.linesBoundingBox()))
+        if (auto* renderInline = dynamicDowncast<RenderInline>(*o)) {
+            if (isEmptyInline(*renderInline) && boundingBoxLogicalHeight(o, renderInline->linesBoundingBox()))
                 return true;
             continue;
         }
@@ -1017,8 +1013,8 @@ bool Position::isCandidate() const
         return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsUserSelectNone(node->parentNode());
     }
 
-    if (is<RenderText>(*renderer))
-        return !nodeIsUserSelectNone(node.get()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offset);
+    if (auto* renderText = dynamicDowncast<RenderText>(*renderer))
+        return !nodeIsUserSelectNone(node.get()) && renderText->containsCaretOffset(m_offset);
 
     if (positionBeforeOrAfterNodeIsCandidate(*node)) {
         return ((atFirstEditingPositionForNode() && m_anchorType == PositionIsBeforeAnchor)
@@ -1044,14 +1040,9 @@ bool Position::isCandidate() const
 
 bool Position::isRenderedCharacter() const
 {
-    if (!is<Text>(deprecatedNode()))
-        return false;
-
-    CheckedPtr renderer = downcast<Text>(*deprecatedNode()).renderer();
-    if (!renderer)
-        return false;
-
-    return renderer->containsRenderedCharacterOffset(m_offset);
+    auto* text = dynamicDowncast<Text>(deprecatedNode());
+    CheckedPtr renderer = text ? text->renderer() : nullptr;
+    return renderer && renderer->containsRenderedCharacterOffset(m_offset);
 }
 
 static bool inSameEnclosingBlockFlowElement(Node* a, Node* b)
@@ -1097,14 +1088,16 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!inSameEnclosingBlockFlowElement(node.get(), positionNode.get()))
         return true;
 
-    if (is<RenderText>(*renderer) && !downcast<RenderText>(*renderer).containsCaretOffset(m_offset))
+    auto* textRenderer = dynamicDowncast<RenderText>(*renderer);
+    if (textRenderer && !textRenderer->containsCaretOffset(m_offset))
         return false;
 
-    if (is<RenderText>(*positionRenderer) && !downcast<RenderText>(*positionRenderer).containsCaretOffset(position.m_offset))
+    auto* textPositionRenderer = dynamicDowncast<RenderText>(*positionRenderer);
+    if (textPositionRenderer && !textPositionRenderer->containsCaretOffset(position.m_offset))
         return false;
 
-    unsigned thisRenderedOffset = is<RenderText>(*renderer) ? downcast<RenderText>(*renderer).countRenderedCharacterOffsetsUntil(m_offset) : m_offset;
-    unsigned positionRenderedOffset = is<RenderText>(*positionRenderer) ? downcast<RenderText>(*positionRenderer).countRenderedCharacterOffsetsUntil(position.m_offset) : position.m_offset;
+    unsigned thisRenderedOffset = textRenderer ? textRenderer->countRenderedCharacterOffsetsUntil(m_offset) : m_offset;
+    unsigned positionRenderedOffset = textPositionRenderer ? textPositionRenderer->countRenderedCharacterOffsetsUntil(position.m_offset) : position.m_offset;
 
     if (renderer == positionRenderer && thisRenderedOffset == positionRenderedOffset)
         return false;
@@ -1148,11 +1141,13 @@ Position Position::leadingWhitespacePosition(Affinity affinity, bool considerNon
     Position prev = previousCharacterPosition(affinity);
     RefPtr node = deprecatedNode();
     RefPtr previousNode = prev.deprecatedNode();
-    if (prev != *this && inSameEnclosingBlockFlowElement(node.get(), previousNode.get()) && is<Text>(*previousNode)) {
-        UChar c = downcast<Text>(*previousNode).data()[prev.deprecatedEditingOffset()];
-        if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c)) {
-            if (isEditablePosition(prev))
-                return prev;
+    if (prev != *this && inSameEnclosingBlockFlowElement(node.get(), previousNode.get())) {
+        if (auto* previousText = dynamicDowncast<Text>(*previousNode)) {
+            UChar c = previousText->data()[prev.deprecatedEditingOffset()];
+            if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c)) {
+                if (isEditablePosition(prev))
+                    return prev;
+            }
         }
     }
 
@@ -1183,9 +1178,9 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity) const
 
 static bool isNonTextLeafChild(RenderObject& object)
 {
-    if (is<RenderText>(object))
-        return false;
-    return !downcast<RenderElement>(object).firstChild();
+    if (auto* renderElement = dynamicDowncast<RenderElement>(object))
+        return !renderElement->firstChild();
+    return false;
 }
 
 static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& renderer)
@@ -1199,8 +1194,8 @@ static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& ren
             return { };
         if (isNonTextLeafChild(*next))
             return { };
-        if (is<RenderText>(*next)) {
-            if (auto [box, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(downcast<RenderText>(*next)); box)
+        if (CheckedPtr renderText = dynamicDowncast<RenderText>(*next)) {
+            if (auto box = InlineIterator::firstTextBoxInLogicalOrderFor(*renderText).first)
                 return box;
         }
     }
@@ -1244,10 +1239,8 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         if (!caretOffset)
             box = InlineIterator::boxFor(lineBreakRenderer);
-    } else if (is<RenderText>(*renderer)) {
-        auto& textRenderer = downcast<RenderText>(*renderer);
-
-        auto textBox = InlineIterator::firstTextBoxFor(textRenderer);
+    } else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*renderer)) {
+        auto textBox = InlineIterator::firstTextBoxFor(*textRenderer);
         InlineIterator::TextBoxIterator candidate;
 
         for (; textBox; ++textBox) {
@@ -1276,7 +1269,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
         }
 
         if (candidate && !candidate->nextTextBox() && affinity == Affinity::Downstream) {
-            textBox = searchAheadForBetterMatch(textRenderer);
+            textBox = searchAheadForBetterMatch(*textRenderer);
             if (textBox)
                 caretOffset = textBox->minimumCaretOffset();
         }
@@ -1284,22 +1277,25 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
         box = textBox ? textBox : candidate;
     } else {
         RefPtr node = deprecatedNode();
-        if (canHaveChildrenForEditing(*node) && is<RenderBlockFlow>(*renderer) && hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderBlockFlow>(*renderer))) {
-            // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
-            // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
-            // of RenderObject::createVisiblePosition().
-            Position equivalent = downstreamIgnoringEditingBoundaries(*this);
-            if (equivalent == *this) {
-                equivalent = upstreamIgnoringEditingBoundaries(*this);
-                // FIXME: Can returning nullptr really be correct here?
-                if (equivalent == *this || downstreamIgnoringEditingBoundaries(equivalent) == *this)
-                    return { { }, caretOffset };
-            }
+        if (canHaveChildrenForEditing(*node)) {
+            CheckedPtr renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
+            if (renderBlockFlow && hasRenderedNonAnonymousDescendantsWithHeight(*renderBlockFlow)) {
+                // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
+                // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
+                // of RenderObject::createVisiblePosition().
+                Position equivalent = downstreamIgnoringEditingBoundaries(*this);
+                if (equivalent == *this) {
+                    equivalent = upstreamIgnoringEditingBoundaries(*this);
+                    // FIXME: Can returning nullptr really be correct here?
+                    if (equivalent == *this || downstreamIgnoringEditingBoundaries(equivalent) == *this)
+                        return { { }, caretOffset };
+                }
 
-            return equivalent.inlineBoxAndOffset(Affinity::Upstream, primaryDirection);
+                return equivalent.inlineBoxAndOffset(Affinity::Upstream, primaryDirection);
+            }
         }
-        if (is<RenderBox>(*renderer)) {
-            box = InlineIterator::boxFor(downcast<RenderBox>(*renderer));
+        if (auto* renderBox = dynamicDowncast<RenderBox>(*renderer)) {
+            box = InlineIterator::boxFor(*renderBox);
             if (box && caretOffset > box->minimumCaretOffset() && caretOffset < box->maximumCaretOffset())
                 return { box, caretOffset };
         }

@@ -348,11 +348,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         m_isExternalScript = true;
         Ref script = LoadableModuleScript::create(nonce, element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
-        m_loadableScript = WTFMove(script);
-        if (RefPtr frame = element->document().frame()) {
-            Ref script = downcast<LoadableModuleScript>(*m_loadableScript);
+        m_loadableScript = script.copyRef();
+        if (RefPtr frame = element->document().frame())
             frame->checkedScript()->loadModuleScript(script, moduleScriptRootURL, script->parameters());
-        }
         return true;
     }
 
@@ -371,9 +369,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
             return false;
     }
 
-    m_loadableScript = WTFMove(script);
+    m_loadableScript = script.copyRef();
     if (RefPtr frame = document->frame())
-        frame->checkedScript()->loadModuleScript(downcast<LoadableModuleScript>(*m_loadableScript), sourceCode);
+        frame->checkedScript()->loadModuleScript(script, sourceCode);
     return true;
 }
 
@@ -617,8 +615,8 @@ bool isScriptElement(Element& element)
 
 ScriptElement& downcastScriptElement(Element& element)
 {
-    if (is<HTMLScriptElement>(element))
-        return downcast<HTMLScriptElement>(element);
+    if (auto* htmlElement = dynamicDowncast<HTMLScriptElement>(element))
+        return *htmlElement;
     return downcast<SVGScriptElement>(element);
 }
 

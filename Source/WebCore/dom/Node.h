@@ -896,16 +896,18 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 
 inline void EventTarget::ref()
 {
-    if (LIKELY(isNode()))
-        downcast<Node>(*this).ref();
+    auto* node = dynamicDowncast<Node>(*this);
+    if (LIKELY(node))
+        node->ref();
     else
         refEventTarget();
 }
 
 inline void EventTarget::deref()
 {
-    if (LIKELY(isNode()))
-        downcast<Node>(*this).deref();
+    auto* node = dynamicDowncast<Node>(*this);
+    if (LIKELY(node))
+        node->deref();
     else
         derefEventTarget();
 }

@@ -193,7 +193,8 @@ RefPtr<Element> TreeScopeOrderedMap::getElementByName(const AtomString& key, con
 RefPtr<HTMLMapElement> TreeScopeOrderedMap::getElementByMapName(const AtomString& key, const TreeScope& scope) const
 {
     return downcast<HTMLMapElement>(get(key, scope, [] (const AtomString& key, const Element& element) {
-        return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName() == key;
+        auto* mapElement = dynamicDowncast<HTMLMapElement>(element);
+        return mapElement && mapElement->getName() == key;
     }));
 }
 
@@ -201,7 +202,8 @@ RefPtr<HTMLImageElement> TreeScopeOrderedMap::getElementByUsemap(const AtomStrin
 {
     return downcast<HTMLImageElement>(get(key, scope, [] (const AtomString& key, const Element& element) {
         // FIXME: HTML5 specification says we should match both image and object elements.
-        return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).matchesUsemap(key);
+        auto* imageElement = dynamicDowncast<HTMLImageElement>(element);
+        return imageElement && imageElement->matchesUsemap(key);
     }));
 }
 

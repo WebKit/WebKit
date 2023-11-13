@@ -278,8 +278,8 @@ static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomStr
 template<typename OutputType>
 static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, OutputType& output)
 {
-    if (is<Document>(rootNode) && lowercaseLocalName == HTMLNames::baseTag->localName()) {
-        RefPtr firstBaseElement = downcast<Document>(rootNode).firstBaseElement();
+    if (auto* rootDocument = dynamicDowncast<Document>(rootNode); rootDocument && lowercaseLocalName == HTMLNames::baseTag->localName()) {
+        RefPtr firstBaseElement = rootDocument->firstBaseElement();
         if (!firstBaseElement)
             return;
         if constexpr (std::is_same_v<OutputType, Element*>) {
