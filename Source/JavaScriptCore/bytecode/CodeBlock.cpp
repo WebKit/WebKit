@@ -587,12 +587,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     ConcurrentJSLocker locker(symbolTable->m_lock);
                     auto iter = symbolTable->find(locker, ident.impl());
                     ASSERT(iter != symbolTable->end(locker));
-                    if (bytecode.m_getPutInfo.initializationMode() == InitializationMode::ScopedArgumentInitialization) {
-                        ASSERT(bytecode.m_value.isArgument());
-                        unsigned argumentIndex = bytecode.m_value.toArgument() - 1;
-                        symbolTable->prepareToWatchScopedArgument(iter->value, argumentIndex);
-                    } else
-                        iter->value.prepareToWatch();
+                    iter->value.prepareToWatch();
                     metadata.m_watchpointSet = iter->value.watchpointSet();
                 } else
                     metadata.m_watchpointSet = nullptr;
