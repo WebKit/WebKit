@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,13 +20,14 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaPromiseTypes.h"
 #include "PlatformTimeRanges.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -44,9 +45,8 @@ public:
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
     virtual MediaTime duration() const = 0;
     virtual const PlatformTimeRanges& buffered() const = 0;
-    using MediaTimePromise = NativePromise<MediaTime, int>;
     virtual Ref<MediaTimePromise> waitForTarget(const SeekTarget&) = 0;
-    virtual Ref<GenericPromise> seekToTime(const MediaTime&) = 0;
+    virtual Ref<MediaPromise> seekToTime(const MediaTime&) = 0;
     virtual void monitorSourceBuffers() = 0;
 
 #if !RELEASE_LOG_DISABLED

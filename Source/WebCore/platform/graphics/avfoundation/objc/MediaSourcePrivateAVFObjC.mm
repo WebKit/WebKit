@@ -178,17 +178,17 @@ void MediaSourcePrivateAVFObjC::willSeek()
         downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->willSeek();
 }
 
-Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target)
 {
     if (!m_client)
-        return MediaTimePromise::createAndReject(-1);
+        return MediaTimePromise::createAndReject(PlatformMediaError::ClientDisconnected);
     return m_client->waitForTarget(target);
 }
 
-Ref<GenericPromise> MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
+Ref<MediaPromise> MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
 {
     if (!m_client)
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
     return m_client->seekToTime(time);
 }
 

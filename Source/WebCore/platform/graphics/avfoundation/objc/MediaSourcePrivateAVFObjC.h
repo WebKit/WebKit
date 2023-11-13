@@ -71,8 +71,8 @@ public:
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
 
-    Ref<MediaSourcePrivate::MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    Ref<GenericPromise> seekToTime(const MediaTime&) final;
+    Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
+    Ref<MediaPromise> seekToTime(const MediaTime&) final;
 
     MediaTime duration() const final;
     const PlatformTimeRanges& buffered();

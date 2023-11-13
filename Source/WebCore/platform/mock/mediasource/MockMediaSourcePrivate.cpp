@@ -113,17 +113,17 @@ void MockMediaSourcePrivate::notifyActiveSourceBuffersChanged()
     m_player.notifyActiveSourceBuffersChanged();
 }
 
-Ref<MediaSourcePrivate::MediaTimePromise> MockMediaSourcePrivate::waitForTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MockMediaSourcePrivate::waitForTarget(const SeekTarget& target)
 {
     if (!m_client)
-        return MediaTimePromise::createAndReject(-1);
+        return MediaTimePromise::createAndReject(PlatformMediaError::ClientDisconnected);
     return m_client->waitForTarget(target);
 }
 
-Ref<GenericPromise> MockMediaSourcePrivate::seekToTime(const MediaTime& time)
+Ref<MediaPromise> MockMediaSourcePrivate::seekToTime(const MediaTime& time)
 {
     if (!m_client)
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
     return m_client->seekToTime(time);
 }
 

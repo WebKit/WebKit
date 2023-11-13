@@ -36,6 +36,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "HTMLMediaElement.h"
+#include "MediaPromiseTypes.h"
 #include "MediaSourcePrivateClient.h"
 #include "URLRegistry.h"
 #include <optional>
@@ -159,7 +160,7 @@ private:
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    Ref<GenericPromise> seekToTime(const MediaTime&) final;
+    Ref<MediaPromise> seekToTime(const MediaTime&) final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

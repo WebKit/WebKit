@@ -1584,7 +1584,7 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
     m_queuedAudioDuration = { };
 }
 
-Ref<GenericPromise> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
+Ref<MediaPromise> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -1595,13 +1595,13 @@ Ref<GenericPromise> SourceBufferParserWebM::appendData(Segment&& segment, Append
 
     auto result = m_parser.parse(WTFMove(segment));
     if (result.hasException()) {
-        return GenericPromise::createAndReject(int(result.exception().code()));
+        return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
     }
 
     if (result.returnValue()) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", result.returnValue(), ")");
 
-        return GenericPromise::createAndReject(result.returnValue());
+        return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
     }
 
     // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
@@ -1609,7 +1609,7 @@ Ref<GenericPromise> SourceBufferParserWebM::appendData(Segment&& segment, Append
     // audio buffers.
     flushPendingAudioSamples();
 
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 void SourceBufferParserWebM::flushPendingMediaData()

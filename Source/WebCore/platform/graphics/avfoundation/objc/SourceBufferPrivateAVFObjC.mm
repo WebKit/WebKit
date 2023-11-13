@@ -608,7 +608,7 @@ bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
     return sampleBufferRenderersSupportKeySession();
 }
 
-Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
+Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
@@ -695,7 +695,7 @@ Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>
             weakThis->m_parsingSucceeded = !!result;
             weakThis->appendCompleted();
         }
-        return GenericPromise::createAndSettle(WTFMove(result));
+        return MediaPromise::createAndSettle(WTFMove(result));
     });
 }
 

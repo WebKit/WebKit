@@ -81,7 +81,7 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
-Ref<GenericPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
+Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_mediaSource);
@@ -245,7 +245,7 @@ void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    m_appendPromise->reject(1);
+    m_appendPromise->reject(PlatformMediaError::ParsingError);
     m_appendPromise.reset();
 }
 

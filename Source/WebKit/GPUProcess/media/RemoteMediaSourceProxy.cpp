@@ -83,27 +83,23 @@ const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
     return m_buffered;
 }
 
-Ref<MediaSourcePrivate::MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
+Ref<MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
     if (!m_connectionToWebProcess)
-        return MediaTimePromise::createAndReject(-1);
+        return MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
 
     return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxyWaitForTarget(target), m_identifier)->whenSettled(RunLoop::main(), [](auto&& result) {
-        if (!result)
-            return MediaTimePromise::createAndReject(-1);
-        return MediaTimePromise::createAndSettle(WTFMove(*result));
+        return MediaTimePromise::createAndSettle(!result ? makeUnexpected(PlatformMediaError::IPCError) : WTFMove(*result));
     });
 }
 
-Ref<GenericPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
+Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 {
     if (!m_connectionToWebProcess)
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
     return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxySeekToTime(time), m_identifier)->whenSettled(RunLoop::main(), [](auto&& result) {
-        if (!result)
-            return GenericPromise::createAndReject(-1);
-        return GenericPromise::createAndSettle(WTFMove(*result));
+        return MediaPromise::createAndSettle(!result ? makeUnexpected(PlatformMediaError::IPCError) : WTFMove(*result));
     });
 }
 

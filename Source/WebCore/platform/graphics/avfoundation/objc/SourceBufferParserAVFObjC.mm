@@ -246,7 +246,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-Ref<GenericPromise> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
+Ref<MediaPromise> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     auto sharedBuffer = segment.takeSharedBuffer();
@@ -258,8 +258,8 @@ Ref<GenericPromise> SourceBufferParserAVFObjC::appendData(Segment&& segment, App
     m_parserStateWasReset = false;
 
     if (m_lastErrorCode)
-        return GenericPromise::createAndReject(m_lastErrorCode.value());
-    return GenericPromise::createAndResolve();
+        return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
+    return MediaPromise::createAndResolve();
 }
 
 void SourceBufferParserAVFObjC::flushPendingMediaData()
