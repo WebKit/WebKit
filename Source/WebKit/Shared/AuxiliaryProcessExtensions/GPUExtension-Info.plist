@@ -12,7 +12,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${PRODUCT_BUNDLE_EXECUTABLE}</string>
 	<key>CFBundleVersion</key>
-	<string>${PRODUCT_BUNDLE_VERSION}</string>
+	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_BUNDLE_NAME}</string>
 </dict>

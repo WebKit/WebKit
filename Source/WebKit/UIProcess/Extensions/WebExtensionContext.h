@@ -86,6 +86,13 @@ class WebExtension;
 class WebUserContentControllerProxy;
 struct WebExtensionContextParameters;
 
+enum class WebExtensionContextInstallReason : uint8_t {
+    None,
+    ExtensionInstall,
+    ExtensionUpdate,
+    BrowserUpdate,
+};
+
 class WebExtensionContext : public API::ObjectImpl<API::Object::Type::WebExtensionContext>, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebExtensionContext);
 
@@ -168,12 +175,7 @@ public:
         SkipRequestedPermissions    = 1 << 1, // Don't check requested permissions.
     };
 
-    enum class InstallReason : uint8_t {
-        None,
-        ExtensionInstall,
-        ExtensionUpdate,
-        BrowserUpdate,
-    };
+    using InstallReason = WebExtensionContextInstallReason;
 
     enum class WebViewPurpose : uint8_t {
         Any,
@@ -630,19 +632,5 @@ void WebExtensionContext::sendToContentScriptProcessesForEvent(WebExtensionEvent
 }
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionContext::InstallReason> {
-    using values = EnumValues<
-        WebKit::WebExtensionContext::InstallReason,
-        WebKit::WebExtensionContext::InstallReason::None,
-        WebKit::WebExtensionContext::InstallReason::ExtensionInstall,
-        WebKit::WebExtensionContext::InstallReason::ExtensionUpdate,
-        WebKit::WebExtensionContext::InstallReason::BrowserUpdate
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

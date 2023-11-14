@@ -25,7 +25,9 @@
 #include "config.h"
 #include "FEComposite.h"
 
+#include "FECompositeNeonArithmeticApplier.h"
 #include "FECompositeSoftwareApplier.h"
+#include "FECompositeSoftwareArithmeticApplier.h"
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
@@ -118,7 +120,13 @@ FloatRect FEComposite::calculateImageRect(const Filter& filter, std::span<const 
 
 std::unique_ptr<FilterEffectApplier> FEComposite::createSoftwareApplier() const
 {
-    return FilterEffectApplier::create<FECompositeSoftwareApplier>(*this);
+    if (m_type != FECOMPOSITE_OPERATOR_ARITHMETIC)
+        return FilterEffectApplier::create<FECompositeSoftwareApplier>(*this);
+#if HAVE(ARM_NEON_INTRINSICS)
+    return FilterEffectApplier::create<FECompositeNeonArithmeticApplier>(*this);
+#else
+    return FilterEffectApplier::create<FECompositeSoftwareArithmeticApplier>(*this);
+#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

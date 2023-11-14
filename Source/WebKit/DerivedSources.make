@@ -539,6 +539,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionCommandParameters.serialization.in \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
+	Shared/Extensions/WebExtensionContext.serialization.in \
 	Shared/Extensions/WebExtensionContextParameters.serialization.in \
 	Shared/Extensions/WebExtensionControllerParameters.serialization.in \
 	Shared/Extensions/WebExtensionDynamicScripts.serialization.in \
