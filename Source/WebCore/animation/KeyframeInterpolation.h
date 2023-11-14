@@ -47,6 +47,19 @@ public:
 
         virtual ~Keyframe() = default;
     };
+
+    virtual const Keyframe& keyframeAtIndex(size_t) const = 0;
+    virtual size_t numberOfKeyframes() const = 0;
+
+    struct KeyframeInterval {
+        const Vector<const Keyframe*> endpoints;
+        bool hasImplicitZeroKeyframe { false };
+        bool hasImplicitOneKeyframe { false };
+    };
+
+    const KeyframeInterval interpolationKeyframes(Property, double iterationProgress, const Keyframe& defaultStartKeyframe, const Keyframe& defaultEndKeyframe) const;
+
+    virtual ~KeyframeInterpolation() = default;
 };
 
 } // namespace WebCore

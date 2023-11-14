@@ -54,7 +54,7 @@ namespace Style {
 struct ResolutionContext;
 }
 
-class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingClient {
+class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingClient, public KeyframeInterpolation {
     WTF_MAKE_ISO_ALLOCATED(KeyframeEffect);
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
@@ -263,6 +263,10 @@ private:
     bool ticksContinouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
     bool preventsAnimationReadiness() const final;
+
+    // KeyframeInterpolation
+    const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
+    size_t numberOfKeyframes() const final { return m_blendingKeyframes.size(); }
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 

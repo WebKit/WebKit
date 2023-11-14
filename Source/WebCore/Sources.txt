@@ -575,6 +575,7 @@ animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
+animation/KeyframeInterpolation.cpp
 animation/ScrollTimeline.cpp
 animation/ViewTimeline.cpp
 animation/WebAnimation.cpp

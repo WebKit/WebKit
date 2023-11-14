@@ -263,6 +263,12 @@ bool AcceleratedEffect::animatesTransformRelatedProperty() const
     });
 }
 
+const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t index) const
+{
+    ASSERT(index < m_keyframes.size());
+    return m_keyframes[index];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)

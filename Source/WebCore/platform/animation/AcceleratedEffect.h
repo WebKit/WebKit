@@ -43,7 +43,7 @@ namespace WebCore {
 class IntRect;
 class KeyframeEffect;
 
-class AcceleratedEffect : public RefCounted<AcceleratedEffect> {
+class AcceleratedEffect : public RefCounted<AcceleratedEffect>, public KeyframeInterpolation {
     WTF_MAKE_ISO_ALLOCATED(AcceleratedEffect);
 public:
 
@@ -97,6 +97,10 @@ private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&);
     explicit AcceleratedEffect(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WTF::Seconds> startTime, std::optional<WTF::Seconds> holdTime);
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
+
+    // KeyframeInterpolation
+    const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
+    size_t numberOfKeyframes() const final { return m_keyframes.size(); }
 
     AnimationEffectTiming m_timing;
     Vector<Keyframe> m_keyframes;
