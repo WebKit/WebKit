@@ -304,6 +304,7 @@ public:
     const LayerRepresentation& layer() const { return m_layer; }
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
 
+    bool isAttachedToScrollingStateTree() const { return !!m_scrollingStateTree; }
     ScrollingStateTree& scrollingStateTree() const
     {
         ASSERT(m_scrollingStateTree);
