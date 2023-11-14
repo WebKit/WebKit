@@ -37,7 +37,6 @@
 #include "SpeechSynthesisUtterance.h"
 #include "TextTrackCue.h"
 #include "VTTRegion.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
