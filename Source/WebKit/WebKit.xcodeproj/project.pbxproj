@@ -4943,6 +4943,7 @@
 		465FA7232757D9180072362B /* WebLockRegistryProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebLockRegistryProxy.h; sourceTree = "<group>"; };
 		465FA7242757D9180072362B /* WebLockRegistryProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebLockRegistryProxy.messages.in; sourceTree = "<group>"; };
 		465FA7252757D9180072362B /* WebLockRegistryProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebLockRegistryProxy.cpp; sourceTree = "<group>"; };
+		4666D1452B02E1E800FC5416 /* RTCPacketOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCPacketOptions.serialization.in; sourceTree = "<group>"; };
 		4668A0B827AB603F00C720BC /* WebSharedWorkerObjectConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerObjectConnection.h; sourceTree = "<group>"; };
 		4668A0B927AB603F00C720BC /* WebSharedWorkerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerProvider.cpp; sourceTree = "<group>"; };
 		4668A0BA27AB604000C720BC /* WebSharedWorkerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerProvider.h; sourceTree = "<group>"; };
@@ -8461,6 +8462,7 @@
 				5CDFAD9C2ACFA9480040A8D8 /* RTCNetwork.serialization.in */,
 				41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */,
 				41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */,
+				4666D1452B02E1E800FC5416 /* RTCPacketOptions.serialization.in */,
 				41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */,
