@@ -2327,6 +2327,8 @@
 		F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */; };
 		F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */ = {isa = PBXBuildFile; fileRef = F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */; };
 		F4A7B1C128E4DDC30042C75A /* ShareableBitmapHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */; };
+		F4ABDB632B018C4B00C5471A /* CoreIPCError.h in Headers */ = {isa = PBXBuildFile; fileRef = F4ABDB602B018C1A00C5471A /* CoreIPCError.h */; };
+		F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4ABDB622B018C1B00C5471A /* CoreIPCError.mm */; };
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
 		F4BCBBEC2AC332AA00C1858D /* WKFormAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */; };
 		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
@@ -7566,6 +7568,9 @@
 		F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmapHandle.h; sourceTree = "<group>"; };
 		F4A7B1C228E4FB050042C75A /* ShareableBitmapHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapHandle.cpp; sourceTree = "<group>"; };
 		F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextRecognitionUpdateResult.h; sourceTree = "<group>"; };
+		F4ABDB602B018C1A00C5471A /* CoreIPCError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCError.h; sourceTree = "<group>"; };
+		F4ABDB612B018C1B00C5471A /* CoreIPCError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCError.serialization.in; sourceTree = "<group>"; };
+		F4ABDB622B018C1B00C5471A /* CoreIPCError.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCError.mm; sourceTree = "<group>"; };
 		F4AC655E22A3140E00A05607 /* WebPreferencesDefaultValuesIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesDefaultValuesIOS.mm; path = ios/WebPreferencesDefaultValuesIOS.mm; sourceTree = "<group>"; };
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
 		F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageAnalysisGestureRecognizer.h; path = ios/WKImageAnalysisGestureRecognizer.h; sourceTree = "<group>"; };
@@ -10746,6 +10751,9 @@
 				F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */,
 				F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */,
 				F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */,
+				F4ABDB602B018C1A00C5471A /* CoreIPCError.h */,
+				F4ABDB622B018C1B00C5471A /* CoreIPCError.mm */,
+				F4ABDB612B018C1B00C5471A /* CoreIPCError.serialization.in */,
 				5197FAD22AFD33B0009180C5 /* CoreIPCDictionary.h */,
 				5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */,
 				5197FADE2AFD33B3009180C5 /* CoreIPCDictionary.serialization.in */,
@@ -15030,6 +15038,7 @@
 				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				5CAB7DE128B80FE1002282A6 /* GeneratedSerializers.h in Headers */,
+				F4ABDB632B018C4B00C5471A /* CoreIPCError.h in Headers */,
 				9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
 				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,
@@ -17775,6 +17784,7 @@
 				5131D5462AE9D5230016EF39 /* CoreTextHelpers.mm in Sources */,
 				7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */,
 				7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */,
+				F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */,
 				7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */,
 				7B9FC5D428A53023007570E7 /* PlatformUnifiedSource2.cpp in Sources */,
 				7B9FC5DE28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm in Sources */,

@@ -27,58 +27,61 @@
 
 #if PLATFORM(COCOA)
 
-#include "CoreIPCArray.h"
-#include "CoreIPCCFType.h"
-#include "CoreIPCColor.h"
-#include "CoreIPCData.h"
-#include "CoreIPCDate.h"
-#include "CoreIPCDictionary.h"
-#include "CoreIPCError.h"
-#include "CoreIPCFont.h"
-#include "CoreIPCNumber.h"
-#include "CoreIPCSecureCoding.h"
-#include "CoreIPCString.h"
-#include "CoreIPCURL.h"
-#include <wtf/RetainPtr.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <wtf/text/WTFString.h>
+
+OBJC_CLASS NSError;
 
 namespace WebKit {
 
-class CoreIPCNSCFObject {
+class CoreIPCError {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using ObjectValue = std::variant<
-        std::nullptr_t,
-        CoreIPCArray,
-        CoreIPCCFType,
-        CoreIPCColor,
-        CoreIPCData,
-        CoreIPCDate,
-        CoreIPCDictionary,
-        CoreIPCError,
-        CoreIPCFont,
-        CoreIPCNumber,
-        CoreIPCSecureCoding,
-        CoreIPCString,
-        CoreIPCURL
-    >;
+    static bool hasValidUserInfo(const RetainPtr<CFDictionaryRef>&);
 
-    CoreIPCNSCFObject(id);
+    CoreIPCError(CoreIPCError&&) = default;
+    CoreIPCError& operator=(CoreIPCError&&) = default;
 
-    RetainPtr<id> toID() const;
-
-    static bool valueIsAllowed(IPC::Decoder&, ObjectValue&);
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;
-
-    CoreIPCNSCFObject(ObjectValue&& value)
-        : m_value(WTFMove(value))
+    CoreIPCError(NSError *);
+    CoreIPCError(String&& domain, int64_t code, RetainPtr<CFDictionaryRef>&& userInfo, std::unique_ptr<CoreIPCError>&& underlyingError)
+        : m_domain(WTFMove(domain))
+        , m_code(WTFMove(code))
+        , m_userInfo(WTFMove(userInfo))
+        , m_underlyingError(WTFMove(underlyingError))
     {
     }
 
-    ObjectValue m_value;
+    RetainPtr<id> toID() const;
+
+    String domain() const
+    {
+        return m_domain;
+    }
+
+    int64_t code() const
+    {
+        return m_code;
+    }
+
+    RetainPtr<CFDictionaryRef> userInfo() const
+    {
+        return m_userInfo;
+    }
+
+    const std::unique_ptr<CoreIPCError>& underlyingError() const
+    {
+        return m_underlyingError;
+    }
+
+private:
+    bool isSafeToEncodeUserInfo(id value);
+
+    String m_domain;
+    int64_t m_code;
+    RetainPtr<CFDictionaryRef> m_userInfo;
+    std::unique_ptr<CoreIPCError> m_underlyingError;
 };
 
-} // namespace WebKit
+}
 
 #endif // PLATFORM(COCOA)

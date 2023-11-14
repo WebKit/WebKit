@@ -29,6 +29,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
+#import "CoreIPCError.h"
 #import "DataReference.h"
 #import "StreamConnectionEncoder.h"
 #import <WebCore/AppKitControlSystemImage.h>
@@ -47,145 +48,20 @@
 
 namespace IPC {
 
-static bool isSafeToEncodeUserInfo(id value)
-{
-    if ([value isKindOfClass:NSString.class] || [value isKindOfClass:NSURL.class] || [value isKindOfClass:NSNumber.class])
-        return true;
-
-    if (auto array = dynamic_objc_cast<NSArray>(value)) {
-        for (id object in array) {
-            if (!isSafeToEncodeUserInfo(object))
-                return false;
-        }
-        return true;
-    }
-
-    if (auto dictionary = dynamic_objc_cast<NSDictionary>(value)) {
-        for (id innerValue in dictionary.objectEnumerator) {
-            if (!isSafeToEncodeUserInfo(innerValue))
-                return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-static void encodeNSError(Encoder& encoder, NSError *nsError)
-{
-    String domain = [nsError domain];
-    encoder << domain;
-
-    int64_t code = [nsError code];
-    encoder << code;
-
-    NSDictionary *userInfo = [nsError userInfo];
-
-    RetainPtr<CFMutableDictionaryRef> filteredUserInfo = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, userInfo.count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    [userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*) {
-        if (isSafeToEncodeUserInfo(value))
-            CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFTypeRef)key, (__bridge CFTypeRef)value);
-    }];
-
-    if (NSArray *clientIdentityAndCertificates = [userInfo objectForKey:@"NSErrorClientCertificateChainKey"]) {
-        ASSERT([clientIdentityAndCertificates isKindOfClass:[NSArray class]]);
-        ASSERT(^{
-            for (id object in clientIdentityAndCertificates) {
-                if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID() && CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID())
-                    return false;
-            }
-            return true;
-        }());
-
-        // Turn SecIdentity members into SecCertificate to strip out private key information.
-        id clientCertificates = [NSMutableArray arrayWithCapacity:clientIdentityAndCertificates.count];
-        for (id object in clientIdentityAndCertificates) {
-            if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID()) {
-                [clientCertificates addObject:object];
-                continue;
-            }
-            SecCertificateRef certificate = nil;
-            OSStatus status = SecIdentityCopyCertificate((SecIdentityRef)object, &certificate);
-            RetainPtr<SecCertificateRef> retainCertificate = adoptCF(certificate);
-            // The SecIdentity member is the key information of this attribute. Without it, we should nil
-            // the attribute.
-            if (status != errSecSuccess) {
-                LOG_ERROR("Failed to encode nsError.userInfo[NSErrorClientCertificateChainKey]: %d", status);
-                clientCertificates = nil;
-                break;
-            }
-            [clientCertificates addObject:(__bridge id)certificate];
-        }
-        CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorClientCertificateChainKey"), (__bridge CFTypeRef)clientCertificates);
-    }
-
-    id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
-    if (!peerCertificateChain) {
-        if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
-            peerCertificateChain = (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(peerTrust)).autorelease();
-        }
-    }
-    ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
-    if (peerCertificateChain)
-        CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (__bridge CFTypeRef)peerCertificateChain);
-
-    if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey])
-        CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFStringRef)NSURLErrorFailingURLPeerTrustErrorKey, peerTrust);
-
-    encoder << static_cast<CFDictionaryRef>(filteredUserInfo.get());
-
-    if (id underlyingError = [userInfo objectForKey:NSUnderlyingErrorKey]) {
-        ASSERT([underlyingError isKindOfClass:[NSError class]]);
-        encoder << true;
-        encodeNSError(encoder, underlyingError);
-    } else
-        encoder << false;
-}
-
 void ArgumentCoder<WebCore::ResourceError>::encodePlatformData(Encoder& encoder, const WebCore::ResourceError& resourceError)
 {
-    encodeNSError(encoder, resourceError.nsError());
+    encoder << WebKit::CoreIPCError(resourceError.nsError());
 }
 
-static RetainPtr<NSError> decodeNSError(Decoder& decoder)
-{
-    String domain;
-    if (!decoder.decode(domain))
-        return nil;
 
-    int64_t code;
-    if (!decoder.decode(code))
-        return nil;
-
-    RetainPtr<CFDictionaryRef> userInfo;
-    if (!decoder.decode(userInfo) || !userInfo)
-        return nil;
-
-    bool hasUnderlyingError = false;
-    if (!decoder.decode(hasUnderlyingError))
-        return nil;
-
-    if (hasUnderlyingError) {
-        auto underlyingNSError = decodeNSError(decoder);
-        if (!underlyingNSError)
-            return nil;
-
-        auto mutableUserInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(userInfo.get()) + 1, userInfo.get()));
-        CFDictionarySetValue(mutableUserInfo.get(), (__bridge CFStringRef)NSUnderlyingErrorKey, (__bridge CFTypeRef)underlyingNSError.get());
-        userInfo = WTFMove(mutableUserInfo);
-    }
-
-    return adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:(__bridge NSDictionary *)userInfo.get()]);
-}
 
 bool ArgumentCoder<WebCore::ResourceError>::decodePlatformData(Decoder& decoder, WebCore::ResourceError& resourceError)
 {
-    auto nsError = decodeNSError(decoder);
-    if (!nsError)
+    std::optional<WebKit::CoreIPCError> error;
+    decoder >> error;
+    if (!error)
         return false;
-
-    resourceError = WebCore::ResourceError(nsError.get());
+    resourceError = WebCore::ResourceError(error->toID().get());
     return true;
 }
 
