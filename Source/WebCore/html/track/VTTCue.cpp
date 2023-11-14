@@ -73,12 +73,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr
 };
-static_assert(std::size(displayWritingModeMap) == static_cast<size_t>(WTF::EnumTraits<VTTCue::DirectionSetting>::values::max) + 1, "displayWritingModeMap has wrong size");
+static_assert(std::size(displayWritingModeMap) == static_cast<size_t>(WebCore::VTTDirectionSetting::MaxValue) + 1, "displayWritingModeMap has wrong size");
 
 static const CSSValueID displayAlignmentMap[] = {
     CSSValueStart, CSSValueCenter, CSSValueEnd, CSSValueLeft, CSSValueRight
 };
-static_assert(std::size(displayAlignmentMap) == static_cast<size_t>(WTF::EnumTraits<VTTCue::AlignSetting>::values::max) + 1, "displayAlignmentMap has wrong size");
+static_assert(std::size(displayAlignmentMap) == static_cast<size_t>(WebCore::VTTAlignSetting::MaxValue) + 1, "displayAlignmentMap has wrong size");
 
 static const String& startKeyword()
 {

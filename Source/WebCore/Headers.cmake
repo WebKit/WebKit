@@ -556,6 +556,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/speech/SpeechRecognitionResultData.h
     Modules/speech/SpeechRecognitionUpdate.h
     Modules/speech/SpeechRecognizer.h
+    Modules/speech/SpeechSynthesisErrorCode.h
+    Modules/speech/SpeechSynthesisUtterance.h
+    Modules/speech/SpeechSynthesisVoice.h
 
     Modules/storage/DummyStorageProvider.h
     Modules/storage/StorageConnection.h
@@ -1274,6 +1277,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/track/TextTrackCue.h
     html/track/TrackBase.h
     html/track/VTTCue.h
+    html/track/VTTRegion.h
     html/track/VideoTrack.h
     html/track/VideoTrackClient.h
 

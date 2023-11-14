@@ -6724,6 +6724,35 @@ enum class WebCore::MediationRequirement : uint8_t {
     Required,
     Conditional,
 };
+
+#if ENABLE(VIDEO)
+header: <WebCore/VTTCue.h>
+[Nested] enum class WebCore::VTTDirectionSetting : uint8_t {
+    Horizontal,
+    VerticalGrowingLeft,
+    VerticalGrowingRight,
+};
+
+[Nested] enum class WebCore::VTTLineAlignSetting : uint8_t {
+    Start,
+    Center,
+    End,
+};
+
+[Nested] enum class WebCore::VTTPositionAlignSetting : uint8_t {
+    LineLeft,
+    Center,
+    LineRight,
+    Auto,
+};
+
+[Nested] enum class WebCore::VTTAlignSetting : uint8_t {
+    Start,
+    Center,
+    End,
+    Left,
+    Right,
+};
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

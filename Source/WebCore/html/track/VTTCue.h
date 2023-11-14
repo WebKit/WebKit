@@ -58,6 +58,9 @@ enum class VTTDirectionSetting : uint8_t {
     EmptyString = Horizontal,
     Rl = VerticalGrowingLeft,
     Lr = VerticalGrowingRight,
+
+    // For static-assert convenience.
+    MaxValue = VerticalGrowingRight,
 };
 
 enum class VTTLineAlignSetting : uint8_t {
@@ -79,6 +82,9 @@ enum class VTTAlignSetting : uint8_t {
     End,
     Left,
     Right,
+
+    // For static-assert convenience.
+    MaxValue = Right,
 };
 
 // ----------------------------
@@ -301,45 +307,6 @@ private:
 namespace WTF {
 
 template<> struct LogArgument<WebCore::VTTCue> : LogArgument<WebCore::TextTrackCue> { };
-
-template<> struct EnumTraits<WebCore::VTTCue::DirectionSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::DirectionSetting,
-        WebCore::VTTCue::DirectionSetting::Horizontal,
-        WebCore::VTTCue::DirectionSetting::VerticalGrowingLeft,
-        WebCore::VTTCue::DirectionSetting::VerticalGrowingRight
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::LineAlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::LineAlignSetting,
-        WebCore::VTTCue::LineAlignSetting::Start,
-        WebCore::VTTCue::LineAlignSetting::Center,
-        WebCore::VTTCue::LineAlignSetting::End
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::PositionAlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::PositionAlignSetting,
-        WebCore::VTTCue::PositionAlignSetting::LineLeft,
-        WebCore::VTTCue::PositionAlignSetting::Center,
-        WebCore::VTTCue::PositionAlignSetting::LineRight,
-        WebCore::VTTCue::PositionAlignSetting::Auto
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::AlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::AlignSetting,
-        WebCore::VTTCue::AlignSetting::Start,
-        WebCore::VTTCue::AlignSetting::Center,
-        WebCore::VTTCue::AlignSetting::End,
-        WebCore::VTTCue::AlignSetting::Left,
-        WebCore::VTTCue::AlignSetting::Right
-    >;
-};
 
 }
 
