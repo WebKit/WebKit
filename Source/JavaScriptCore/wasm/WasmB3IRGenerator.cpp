@@ -2922,10 +2922,11 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
 
 auto B3IRGenerator::addRefI31(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    Value* masked = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), get(value), constant(Int64, 0x7fffffff));
-    Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), masked, constant(Int64, 0x1));
-    Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, constant(Int64, 0x1));
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::BitOr, origin(), shiftRight, constant(Int64, JSValue::NumberTag)));
+    Value* masked = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), get(value), constant(Int32, 0x7fffffff));
+    Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), masked, constant(Int32, 0x1));
+    Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, constant(Int32, 0x1));
+    Value* extended = m_currentBlock->appendNew<Value>(m_proc, B3::ZExt32, origin(), shiftRight);
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::BitOr, origin(), extended, constant(Int64, JSValue::NumberTag)));
 
     return { };
 }
@@ -3296,7 +3297,7 @@ auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType struc
             load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), Int32, origin(), payloadBase, fieldOffset);
             break;
         }
-        Value* postProcess = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), load);
+        Value* postProcess = load;
         switch (structGetKind) {
         case ExtGCOpType::StructGetU:
             break;
