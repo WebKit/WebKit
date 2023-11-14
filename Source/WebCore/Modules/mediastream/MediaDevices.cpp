@@ -384,8 +384,13 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 
 void MediaDevices::scheduledEventTimerFired()
 {
-    ASSERT(!isContextStopped());
-    dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    RefPtr document = this->document();
+    if (!document)
+        return;
+
+    document->whenVisible([protectedThis = makePendingActivity(*this), this] {
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 bool MediaDevices::virtualHasPendingActivity() const

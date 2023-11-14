@@ -34,7 +34,6 @@
 #include "WebGPUBufferBindingType.h"
 #include "WebGPUCompareFunction.h"
 #include "WebGPUCompilationMessageType.h"
-#include "WebGPUComputePassTimestampLocation.h"
 #include "WebGPUCullMode.h"
 #include "WebGPUErrorFilter.h"
 #include "WebGPUFeatureName.h"
@@ -45,7 +44,6 @@
 #include "WebGPUPowerPreference.h"
 #include "WebGPUPrimitiveTopology.h"
 #include "WebGPUQueryType.h"
-#include "WebGPURenderPassTimestampLocation.h"
 #include "WebGPUSamplerBindingType.h"
 #include "WebGPUStencilOperation.h"
 #include "WebGPUStorageTextureAccess.h"
@@ -164,16 +162,6 @@ WGPUCompilationMessageType ConvertToBackingContext::convertToBacking(Compilation
         return WGPUCompilationMessageType_Warning;
     case CompilationMessageType::Info:
         return WGPUCompilationMessageType_Info;
-    }
-}
-
-WGPUComputePassTimestampLocation ConvertToBackingContext::convertToBacking(ComputePassTimestampLocation computePassTimestampLocation)
-{
-    switch (computePassTimestampLocation) {
-    case ComputePassTimestampLocation::Beginning:
-        return WGPUComputePassTimestampLocation_Beginning;
-    case ComputePassTimestampLocation::End:
-        return WGPUComputePassTimestampLocation_End;
     }
 }
 
@@ -310,16 +298,6 @@ WGPUQueryType ConvertToBackingContext::convertToBacking(QueryType queryType)
         return WGPUQueryType_Occlusion;
     case QueryType::Timestamp:
         return WGPUQueryType_Timestamp;
-    }
-}
-
-WGPURenderPassTimestampLocation ConvertToBackingContext::convertToBacking(RenderPassTimestampLocation renderPassTimestampLocation)
-{
-    switch (renderPassTimestampLocation) {
-    case RenderPassTimestampLocation::Beginning:
-        return WGPURenderPassTimestampLocation_Beginning;
-    case RenderPassTimestampLocation::End:
-        return WGPURenderPassTimestampLocation_End;
     }
 }
 

@@ -33,6 +33,7 @@
 #include "CoreIPCData.h"
 #include "CoreIPCDate.h"
 #include "CoreIPCDictionary.h"
+#include "CoreIPCError.h"
 #include "CoreIPCFont.h"
 #include "CoreIPCNumber.h"
 #include "CoreIPCSecureCoding.h"
@@ -53,6 +54,7 @@ public:
         CoreIPCData,
         CoreIPCDate,
         CoreIPCDictionary,
+        CoreIPCError,
         CoreIPCFont,
         CoreIPCNumber,
         CoreIPCSecureCoding,

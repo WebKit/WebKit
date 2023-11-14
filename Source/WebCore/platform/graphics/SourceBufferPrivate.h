@@ -180,12 +180,17 @@ protected:
         Function<bool(InitializationSegment&)> check;
         CompletionHandler<void(ReceiveResult)> completionHandler;
     };
+    struct UpdateFormatDescriptionOperation {
+        Ref<TrackInfo> formatDescription;
+        uint64_t trackId;
+        CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)> completionHandler;
+    };
     using SamplesVector = Vector<Ref<MediaSample>>;
     struct AppendCompletedOperation {
         size_t abortCount { 0 };
         Function<void()> preTask;
     };
-    using Operation = std::variant<AppendBufferOperation, InitOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
+    using Operation = std::variant<AppendBufferOperation, InitOperation, UpdateFormatDescriptionOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
     void queueOperation(Operation&&);
 
     MediaTime currentMediaTime() const;
@@ -212,6 +217,7 @@ protected:
     // that would prevent `this` to be deleted in case the SourceBufferClient detaches itself while an initialization
     // is pending. Take a WeakPtr instead.
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&, Function<bool(InitializationSegment&)>&&, CompletionHandler<void(ReceiveResult)>&&);
+    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&, CompletionHandler<void()>&& completionHandler = [] { });
     void provideMediaData(const AtomString& trackID);

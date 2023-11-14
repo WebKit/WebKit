@@ -49,6 +49,8 @@ static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
         return CoreIPCDate(bridge_cast((NSDate *)object));
     case IPC::NSType::Dictionary:
         return CoreIPCDictionary((NSDictionary *)object);
+    case IPC::NSType::Error:
+        return CoreIPCError((NSError *)object);
     case IPC::NSType::Font:
         return CoreIPCFont((WebCore::CocoaFont *)object);
     case IPC::NSType::Number:

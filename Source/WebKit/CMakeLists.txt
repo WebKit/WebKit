@@ -406,6 +406,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/PolicyDecision.serialization.in
     Shared/PrintInfo.serialization.in
     Shared/RTCNetwork.serialization.in
+    Shared/RTCPacketOptions.serialization.in
     Shared/RemoteWorkerInitializationData.serialization.in
     Shared/RemoteWorkerType.serialization.in
     Shared/ResourceLoadInfo.serialization.in
@@ -417,11 +418,13 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ShareableResource.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
+    Shared/URLSchemeTaskParameters.serialization.in
     Shared/UpdateInfo.serialization.in
     Shared/UserContentControllerParameters.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
+    Shared/WebContextMenuItemData.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebCompiledContentRuleListData.serialization.in
     Shared/WebEvent.serialization.in

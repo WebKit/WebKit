@@ -4559,16 +4559,16 @@ void Internals::enableMockMediaCapabilities()
 
 ExceptionOr<void> Internals::beginMediaSessionInterruption(const String& interruptionString)
 {
-    PlatformMediaSession::InterruptionType interruption = PlatformMediaSession::SystemInterruption;
+    PlatformMediaSession::InterruptionType interruption = PlatformMediaSession::InterruptionType::SystemInterruption;
 
     if (equalLettersIgnoringASCIICase(interruptionString, "system"_s))
-        interruption = PlatformMediaSession::SystemInterruption;
+        interruption = PlatformMediaSession::InterruptionType::SystemInterruption;
     else if (equalLettersIgnoringASCIICase(interruptionString, "systemsleep"_s))
-        interruption = PlatformMediaSession::SystemSleep;
+        interruption = PlatformMediaSession::InterruptionType::SystemSleep;
     else if (equalLettersIgnoringASCIICase(interruptionString, "enteringbackground"_s))
-        interruption = PlatformMediaSession::EnteringBackground;
+        interruption = PlatformMediaSession::InterruptionType::EnteringBackground;
     else if (equalLettersIgnoringASCIICase(interruptionString, "suspendedunderlock"_s))
-        interruption = PlatformMediaSession::SuspendedUnderLock;
+        interruption = PlatformMediaSession::InterruptionType::SuspendedUnderLock;
     else
         return Exception { ExceptionCode::InvalidAccessError };
 
@@ -4578,10 +4578,10 @@ ExceptionOr<void> Internals::beginMediaSessionInterruption(const String& interru
 
 void Internals::endMediaSessionInterruption(const String& flagsString)
 {
-    PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::NoFlags;
+    PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::EndInterruptionFlags::NoFlags;
 
     if (equalLettersIgnoringASCIICase(flagsString, "mayresumeplaying"_s))
-        flags = PlatformMediaSession::MayResumePlaying;
+        flags = PlatformMediaSession::EndInterruptionFlags::MayResumePlaying;
 
     PlatformMediaSessionManager::sharedManager().endInterruption(flags);
 }

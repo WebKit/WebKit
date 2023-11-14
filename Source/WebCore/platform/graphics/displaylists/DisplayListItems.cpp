@@ -327,6 +327,34 @@ void DrawDecomposedGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag> flags) con
     }
 }
 
+DrawDisplayListItems::DrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
+    : m_items(items)
+    , m_destination(destination)
+{
+}
+
+DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoint& destination)
+    : m_items(WTFMove(items))
+    , m_destination(destination)
+{
+}
+
+void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap) const
+{
+    context.drawDisplayListItems(m_items, resourceHeap, m_destination);
+}
+
+NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts << items();
+    ts.dumpProperty("destination", destination());
+}
+
 void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
@@ -662,8 +690,8 @@ void FillEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 }
 
 #if ENABLE(VIDEO)
-PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
-    : m_identifier(player.identifier())
+PaintFrameForMedia::PaintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
+    : m_identifier(identifier)
     , m_destination(destination)
 {
 }

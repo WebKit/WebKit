@@ -351,6 +351,7 @@ inline void RenderStyle::setBoxDecorationBreak(BoxDecorationBreak value) { SET_N
 
 #if ENABLE(DARK_MODE_CSS)
 inline void RenderStyle::setColorScheme(StyleColorScheme scheme) { SET(m_rareInheritedData, colorScheme, scheme); }
+inline void RenderStyle::setHasExplicitlySetColorScheme() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetColorScheme, true); }
 #endif
 
 #if ENABLE(FILTERS_LEVEL_2)

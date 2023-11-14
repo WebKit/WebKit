@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,35 @@
 
 #pragma once
 
-#include <cstdint>
+#include "RemoteUserInputEventData.h"
 
-namespace WebCore::WebGPU {
+namespace WebCore {
 
-enum class ComputePassTimestampLocation : uint8_t {
-    Beginning,
-    End,
+class HandleUserInputEventResult {
+public:
+    HandleUserInputEventResult(bool handled)
+        : m_result(handled)
+    {
+    }
+
+    HandleUserInputEventResult(RemoteUserInputEventData remoteUserInputEventData)
+        : m_result(makeUnexpected(remoteUserInputEventData))
+    {
+    }
+
+    bool wasHandled() { return m_result ? *m_result : false; }
+    void setHandled(bool handled)
+    {
+        if (m_result.has_value())
+            m_result = handled;
+    }
+
+    std::optional<RemoteUserInputEventData> remoteUserInputEventData()
+    {
+        return m_result ? std::nullopt : std::optional<RemoteUserInputEventData>(m_result.error());
+    }
+private:
+    Expected<bool, RemoteUserInputEventData> m_result;
 };
 
-} // namespace WebCore::WebGPU
+}

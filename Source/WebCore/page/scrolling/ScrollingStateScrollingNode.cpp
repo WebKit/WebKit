@@ -137,7 +137,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
 {
-    scrollingStateTree().scrollingNodeRemoved();
+    if (isAttachedToScrollingStateTree())
+        scrollingStateTree().scrollingNodeRemoved();
 }
 
 OptionSet<ScrollingStateNode::Property> ScrollingStateScrollingNode::applicableProperties() const

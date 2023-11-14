@@ -123,10 +123,12 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
     if (item->priv->subMenu) {
         Vector<WebContextMenuItemData> subMenuItems;
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
-        return WebContextMenuItemData(item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), subMenuItems);
+        bool checked = false;
+        unsigned indentationLevel = 0;
+        return WebContextMenuItemData(WebCore::SubmenuType, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTFMove(subMenuItems));
     }
 
-    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), item->priv->menuItem->checked());
+    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());
 }
 #endif // ENABLE(CONTEXT_MENUS)
 

@@ -61,14 +61,12 @@ public:
     ~RenderPassEncoder();
 
     void beginOcclusionQuery(uint32_t queryIndex);
-    void beginPipelineStatisticsQuery(const QuerySet&, uint32_t queryIndex);
     void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
     void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void endOcclusionQuery();
     void endPass();
-    void endPipelineStatisticsQuery();
     void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();

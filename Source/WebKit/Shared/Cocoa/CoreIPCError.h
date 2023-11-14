@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,63 @@
 
 #pragma once
 
-#include "WebGPUComputePassTimestampLocation.h"
-#include <cstdint>
+#if PLATFORM(COCOA)
 
-namespace WebCore {
+#import <CoreFoundation/CoreFoundation.h>
+#import <wtf/text/WTFString.h>
 
-enum class GPUComputePassTimestampLocation : uint8_t {
-    Beginning,
-    End,
+OBJC_CLASS NSError;
+
+namespace WebKit {
+
+class CoreIPCError {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static bool hasValidUserInfo(const RetainPtr<CFDictionaryRef>&);
+
+    CoreIPCError(CoreIPCError&&) = default;
+    CoreIPCError& operator=(CoreIPCError&&) = default;
+
+    CoreIPCError(NSError *);
+    CoreIPCError(String&& domain, int64_t code, RetainPtr<CFDictionaryRef>&& userInfo, std::unique_ptr<CoreIPCError>&& underlyingError)
+        : m_domain(WTFMove(domain))
+        , m_code(WTFMove(code))
+        , m_userInfo(WTFMove(userInfo))
+        , m_underlyingError(WTFMove(underlyingError))
+    {
+    }
+
+    RetainPtr<id> toID() const;
+
+    String domain() const
+    {
+        return m_domain;
+    }
+
+    int64_t code() const
+    {
+        return m_code;
+    }
+
+    RetainPtr<CFDictionaryRef> userInfo() const
+    {
+        return m_userInfo;
+    }
+
+    const std::unique_ptr<CoreIPCError>& underlyingError() const
+    {
+        return m_underlyingError;
+    }
+
+private:
+    bool isSafeToEncodeUserInfo(id value);
+
+    String m_domain;
+    int64_t m_code;
+    RetainPtr<CFDictionaryRef> m_userInfo;
+    std::unique_ptr<CoreIPCError> m_underlyingError;
 };
 
-inline WebGPU::ComputePassTimestampLocation convertToBacking(GPUComputePassTimestampLocation computePassTimestampLocation)
-{
-    switch (computePassTimestampLocation) {
-    case GPUComputePassTimestampLocation::Beginning:
-        return WebGPU::ComputePassTimestampLocation::Beginning;
-    case GPUComputePassTimestampLocation::End:
-        return WebGPU::ComputePassTimestampLocation::End;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
-}
+#endif // PLATFORM(COCOA)

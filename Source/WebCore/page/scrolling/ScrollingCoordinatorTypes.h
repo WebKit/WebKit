@@ -28,7 +28,6 @@
 #include "FloatPoint.h"
 #include "KeyboardScroll.h"
 #include "ScrollTypes.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -217,51 +216,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollUpdateType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const RequestedScrollData&);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SynchronousScrollingReason> {
-    using values = EnumValues<
-        WebCore::SynchronousScrollingReason,
-        WebCore::SynchronousScrollingReason::ForcedOnMainThread,
-        WebCore::SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers,
-        WebCore::SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects,
-        WebCore::SynchronousScrollingReason::IsImageDocument,
-        WebCore::SynchronousScrollingReason::HasSlowRepaintObjects,
-        WebCore::SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ScrollRequestType> {
-    using values = EnumValues<
-        WebCore::ScrollRequestType,
-        WebCore::ScrollRequestType::PositionUpdate,
-        WebCore::ScrollRequestType::DeltaUpdate,
-        WebCore::ScrollRequestType::CancelAnimatedScroll
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ScrollingNodeType> {
-    using values = EnumValues<
-        WebCore::ScrollingNodeType,
-        WebCore::ScrollingNodeType::MainFrame,
-        WebCore::ScrollingNodeType::Subframe,
-        WebCore::ScrollingNodeType::FrameHosting,
-        WebCore::ScrollingNodeType::Overflow,
-        WebCore::ScrollingNodeType::OverflowProxy,
-        WebCore::ScrollingNodeType::Fixed,
-        WebCore::ScrollingNodeType::Sticky,
-        WebCore::ScrollingNodeType::Positioned
-    >;
-};
-
-template<> struct EnumTraits<WebCore::KeyboardScrollAction> {
-    using values = EnumValues<
-        WebCore::KeyboardScrollAction,
-        WebCore::KeyboardScrollAction::StartAnimation,
-        WebCore::KeyboardScrollAction::StopWithAnimation,
-        WebCore::KeyboardScrollAction::StopImmediately
-    >;
-};
-
-} // namespace WTF

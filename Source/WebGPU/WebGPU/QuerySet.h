@@ -63,7 +63,7 @@ public:
 
     bool isValid() const { return static_cast<bool>(m_visibilityBuffer) || static_cast<bool>(m_visibilityBuffer); }
 
-    void setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex);
+    void setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex);
     void encodeResolveCommands(id<MTLBlitCommandEncoder>, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const;
 
     Device& device() const { return m_device; }

@@ -50,19 +50,10 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     m_parentEncoder->lock(true);
 
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
-            const auto& timestampWrite = descriptor.timestampWrites[i];
-            switch (timestampWrite.location) {
-            case WGPURenderPassTimestampLocation_Beginning:
-                [m_renderCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
-                break;
-            case WGPURenderPassTimestampLocation_End:
-                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
-                break;
-            case WGPURenderPassTimestampLocation_Force32:
-                ASSERT_NOT_REACHED();
-                break;
-            }
+        if (descriptor.timestampWrites) {
+            const auto& timestampWrite = *descriptor.timestampWrites;
+            [m_renderCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
+            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
         }
     }
 }
@@ -84,12 +75,6 @@ void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
         m_visibilityResultBufferOffset = queryIndex;
         [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
     }
-}
-
-void RenderPassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
-{
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
 }
 
 static void setViewportMinMaxDepthIntoBuffer(auto& fragmentDynamicOffsets, float minDepth, float maxDepth)
@@ -201,11 +186,6 @@ void RenderPassEncoder::endPass()
     m_renderCommandEncoder = nil;
 
     m_parentEncoder->lock(false);
-}
-
-void RenderPassEncoder::endPipelineStatisticsQuery()
-{
-
 }
 
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles)
@@ -390,11 +370,6 @@ void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEn
     WebGPU::fromAPI(renderPassEncoder).beginOcclusionQuery(queryIndex);
 }
 
-void wgpuRenderPassEncoderBeginPipelineStatisticsQuery(WGPURenderPassEncoder renderPassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
-{
-    WebGPU::fromAPI(renderPassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
-}
-
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     WebGPU::fromAPI(renderPassEncoder).draw(vertexCount, instanceCount, firstVertex, firstInstance);
@@ -423,11 +398,6 @@ void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEnco
 void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).endPass();
-}
-
-void wgpuRenderPassEncoderEndPipelineStatisticsQuery(WGPURenderPassEncoder renderPassEncoder)
-{
-    WebGPU::fromAPI(renderPassEncoder).endPipelineStatisticsQuery();
 }
 
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, size_t bundlesCount, const WGPURenderBundle* bundles)

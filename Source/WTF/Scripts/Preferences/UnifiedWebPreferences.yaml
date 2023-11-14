@@ -6670,6 +6670,20 @@ TreatsAnyTextCSSLinkAsStylesheet:
     WebCore:
       default: false
 
+UAVisualTransitionDetectionEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Detect UA visual transitions"
+  humanReadableDescription: "Enable detection of UA visual transitions"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
   type: bool

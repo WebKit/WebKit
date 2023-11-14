@@ -42,7 +42,7 @@
 #import "HTMLFrameSetElement.h"
 #import "HTMLHtmlElement.h"
 #import "HTMLIFrameElement.h"
-#import "HandleMouseEventResult.h"
+#import "HandleUserInputEventResult.h"
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"

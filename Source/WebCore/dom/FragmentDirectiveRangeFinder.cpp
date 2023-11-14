@@ -107,7 +107,7 @@ static const Node& nearestBlockAncestor(const Node& node)
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#get-boundary-point-at-index
-static std::optional<BoundaryPoint> boundaryPointAtIndexInNodes(unsigned index, const Vector<Ref<Node>>& textNodeList, BoundaryPointIsAtEnd isEnd)
+static std::optional<BoundaryPoint> boundaryPointAtIndexInNodes(unsigned index, const Vector<Ref<Text>>& textNodeList, BoundaryPointIsAtEnd isEnd)
 {
     unsigned currentLength = 0;
     
@@ -135,8 +135,13 @@ static bool isVisibleTextNode(const Node& node)
     return node.isTextNode() && node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
 }
 
+static bool isVisibleTextNode(const Text& node)
+{
+    return node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+}
+
 // https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-node-list
-static std::optional<SimpleRange> findRangeFromNodeList(const String& query, const SimpleRange& searchRange, Vector<Ref<Node>>& nodes, WordBounded wordStartBounded, WordBounded wordEndBounded)
+static std::optional<SimpleRange> findRangeFromNodeList(const String& query, const SimpleRange& searchRange, Vector<Ref<Text>>& nodes, WordBounded wordStartBounded, WordBounded wordEndBounded)
 {
     String searchBuffer;
     
@@ -145,7 +150,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     
     StringBuilder searchBufferBuilder;
     for (auto& node : nodes)
-        searchBufferBuilder.append(downcast<Text>(node.get()).data());
+        searchBufferBuilder.append(node->data());
     // FIXME: try to use SearchBuffer in TextIterator.h instead.
     searchBuffer = searchBufferBuilder.toString();
     
@@ -225,7 +230,7 @@ static std::optional<SimpleRange> rangeOfStringInRange(const String& query, Simp
         }
         
         auto& blockAncestor = nearestBlockAncestor(*currentNode);
-        Vector<Ref<Node>> textNodeList;
+        Vector<Ref<Text>> textNodeList;
         // FIXME: this is O^2 since treeOrder will also do traversal, optimize.
         while (currentNode && currentNode->isDescendantOf(blockAncestor) && is_lteq(treeOrder(BoundaryPoint(*currentNode, 0), searchRange.end))) {
             if (currentNode->renderer() && is<Element>(currentNode) && currentNode->renderer()->style().isDisplayBlockLevel())
@@ -235,8 +240,9 @@ static std::optional<SimpleRange> rangeOfStringInRange(const String& query, Simp
                 currentNode = NodeTraversal::nextSkippingChildren(*currentNode);
                 continue;
             }
-            if (currentNode->isTextNode() && isVisibleTextNode(*currentNode))
-                textNodeList.append(*currentNode);
+            auto* textNode = dynamicDowncast<Text>(*currentNode);
+            if (textNode && isVisibleTextNode(*textNode))
+                textNodeList.append(*textNode);
             currentNode = NodeTraversal::next(*currentNode);
         }
 

@@ -72,14 +72,14 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     switch (processType) {
     case ProcessLauncher::ProcessType::Web: {
         if (client && client->shouldEnableLockdownMode())
-            return { "com.apple.WebKit.WebContent"_s, @"com.apple.mobilesafari.WebContentExtension.CaptivePortal" };
-        return { "com.apple.WebKit.WebContent"_s, @"com.apple.mobilesafari.WebContentExtension" };
+            return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension.CaptivePortal" };
+        return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension" };
     }
     case ProcessLauncher::ProcessType::Network:
-        return { "com.apple.WebKit.Networking"_s, @"com.apple.mobilesafari.NetworkingExtension" };
+        return { "com.apple.WebKit.Networking"_s, @"com.apple.WebKit.NetworkingExtension" };
 #if ENABLE(GPU_PROCESS)
     case ProcessLauncher::ProcessType::GPU:
-        return { "com.apple.WebKit.GPU"_s, @"com.apple.mobilesafari.GPUExtension" };
+        return { "com.apple.WebKit.GPU"_s, @"com.apple.WebKit.GPUExtension" };
 #endif
     }
 }

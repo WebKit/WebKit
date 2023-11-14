@@ -1,0 +1,19 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that sending invalid sync messages via the IPC testing API throws the correct errors</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+const defaultTimeout = 1000;
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    
+    assert_throws_js(TypeError,
+        () => { IPC.sendSyncMessage("UI", 0, IPC.messages.IPCTester_SyncPingEmptyReply.name, defaultTimeout, []); },
+        `failed sync message must throw error`);
+}, "Sending sync message with incorrect parameters must throw error");
+
+</script>
+</body>

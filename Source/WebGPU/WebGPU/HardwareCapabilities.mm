@@ -86,9 +86,6 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     if (baseCapabilities.timestampCounterSet)
         features.append(WGPUFeatureName_TimestampQuery);
 
-    if (baseCapabilities.statisticCounterSet)
-        features.append(WGPUFeatureName_PipelineStatisticsQuery);
-
 #if PLATFORM(MAC)
     if (device.supportsBCTextureCompression)
         features.append(WGPUFeatureName_TextureCompressionBC);

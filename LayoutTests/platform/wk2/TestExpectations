@@ -875,8 +875,6 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ 
 
 webkit.org/b/259482 fast/media/managed-media-source-open-crash.html [ Pass Failure ]
 
-webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
-
 webkit.org/b/260926 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-button-click.html [ Pass Failure ]
 
 webkit.org/b/262088 [ Debug ] imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.https.window.html [ Pass Failure ]

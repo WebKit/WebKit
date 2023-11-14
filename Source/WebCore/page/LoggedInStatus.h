@@ -27,7 +27,6 @@
 
 #include "ExceptionOr.h"
 #include "RegistrableDomain.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
@@ -70,16 +69,3 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::LoggedInStatus::AuthenticationType> {
-    using values = EnumValues<
-        WebCore::LoggedInStatus::AuthenticationType,
-        WebCore::LoggedInStatus::AuthenticationType::WebAuthn,
-        WebCore::LoggedInStatus::AuthenticationType::PasswordManager,
-        WebCore::LoggedInStatus::AuthenticationType::Unmanaged
-    >;
-};
-
-} // namespace WTF

@@ -74,7 +74,7 @@ public:
     double zNear { 0 };
     double zFar { 0 };
     RefPtr<BitmapTexture> currentSurface;
-    const BitmapTexture::FilterInfo* filterInfo { nullptr };
+    RefPtr<const FilterOperation> filterOperation;
 
 private:
     class SharedGLData : public RefCounted<SharedGLData> {
@@ -455,7 +455,7 @@ void TextureMapper::drawTexture(const BitmapTexture& texture, const FloatRect& t
     if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
-    SetForScope filterInfo(data().filterInfo, texture.filterInfo());
+    SetForScope filterOperation(data().filterOperation, texture.filterOperation());
 
     drawTexture(texture.id(), texture.colorConvertFlags() | (texture.isOpaque() ? OptionSet<TextureMapperFlags> { } : TextureMapperFlags::ShouldBlend), targetRect, matrix, opacity, allEdgesExposed);
 }
@@ -474,8 +474,7 @@ void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> fl
     if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
-
+    auto filter = data().filterOperation;
     if (filter) {
         options.add(optionsForFilterType(filter->type()));
         if (filter->affectsOpacity())
@@ -539,8 +538,7 @@ void TextureMapper::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, 
     if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
-
+    auto filter = data().filterOperation;
     if (filter) {
         options.add(optionsForFilterType(filter->type()));
         if (filter->affectsOpacity())
@@ -595,8 +593,7 @@ void TextureMapper::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textur
     if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
-
+    auto filter = data().filterOperation;
     if (filter) {
         options.add(optionsForFilterType(filter->type()));
         if (filter->affectsOpacity())
@@ -643,8 +640,7 @@ void TextureMapper::drawTexturePackedYUV(GLuint texture, const std::array<GLfloa
     if (m_wrapMode == WrapMode::Repeat && !GLContext::current()->glExtensions().OES_texture_npot)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
-
+    auto filter = data().filterOperation;
     if (filter) {
         options.add(optionsForFilterType(filter->type()));
         if (filter->affectsOpacity())
@@ -904,7 +900,7 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
     draw(rect, TransformationMatrix(), program.get(), GL_TRIANGLE_FAN, { });
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourceTexture, const BlurFilterOperation& blurFilter)
+RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture>& sourceTexture, const BlurFilterOperation& blurFilter)
 {
     const auto& textureSize = sourceTexture->size();
     float radiusX = floatValueForLength(blurFilter.stdDeviation(), textureSize.width());
@@ -986,7 +982,7 @@ RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture> sourc
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture> sourceTexture, const DropShadowFilterOperation& dropShadowFilter)
+RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>& sourceTexture, const DropShadowFilterOperation& dropShadowFilter)
 {
     const auto& textureSize = sourceTexture->size();
     RefPtr<BitmapTexture> resultTexture = m_texturePool->acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
@@ -1108,11 +1104,10 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>& filter, bool shouldDefer)
+RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>& sourceTexture, const RefPtr<const FilterOperation>& filter, bool shouldDefer)
 {
     if (shouldDefer) {
-        auto filterInfo = BitmapTexture::FilterInfo(filter.copyRef());
-        sourceTexture->setFilterInfo(WTFMove(filterInfo));
+        sourceTexture->setFilterOperation(filter.copyRef());
         return sourceTexture;
     }
 
@@ -1131,7 +1126,27 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>& filter, bool defersLastPass)
+RefPtr<BitmapTexture> TextureMapper::applyFilters(RefPtr<BitmapTexture>& sourceTexture, const FilterOperations& filters, bool defersLastPass)
+{
+    if (filters.isEmpty())
+        return sourceTexture;
+
+    RefPtr<BitmapTexture> previousSurface = currentSurface();
+    RefPtr<BitmapTexture> surface = sourceTexture;
+
+    auto lastFilterIndex = filters.operations().size() - 1;
+    size_t i = 0;
+    for (const auto& filter : filters.operations()) {
+        bool lastFilter = lastFilterIndex == i;
+        surface = applyFilter(surface, filter, defersLastPass && lastFilter);
+        ++i;
+    }
+
+    bindSurface(previousSurface.get());
+    return surface;
+}
+
+RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTexture, const RefPtr<const FilterOperation>& filter, bool defersLastPass)
 {
     switch (filter->type()) {
     case FilterOperation::Type::Grayscale:

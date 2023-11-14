@@ -26,7 +26,6 @@
 #pragma once
 
 #include "WebGPUIntegralTypes.h"
-#include "WebGPURenderPassTimestampLocation.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 

@@ -425,7 +425,7 @@ inline bool EventNames::isTouchScrollBlockingEventType(const AtomString& eventTy
 inline bool EventNames::isTouchRelatedEventType(const AtomString& eventType, const EventTarget& target) const
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
+    if (auto* targetNode = dynamicDowncast<Node>(target); targetNode && targetNode->document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
         if (eventType == mousedownEvent || eventType == mousemoveEvent || eventType == mouseupEvent)
             return true;
     }

@@ -48,6 +48,8 @@ public:
     void cacheFilter(Ref<WebCore::Filter>&&);
     void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
 
+    const WebCore::DisplayList::ResourceHeap& resourceHeap() const { return m_resourceHeap; }
+
     RefPtr<WebCore::NativeImage> cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
     RefPtr<WebCore::Font> cachedFont(WebCore::RenderingResourceIdentifier) const;
     RefPtr<WebCore::DecomposedGlyphs> cachedDecomposedGlyphs(WebCore::RenderingResourceIdentifier) const;

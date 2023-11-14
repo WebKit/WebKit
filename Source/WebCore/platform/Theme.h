@@ -81,8 +81,8 @@ public:
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 
-    virtual bool userPrefersContrast() const;
-    virtual bool userPrefersReducedMotion() const;
+    virtual bool userPrefersContrast() const { return false; }
+    virtual bool userPrefersReducedMotion() const { return false; }
 
 protected:
     Theme() = default;

@@ -1740,7 +1740,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUCompilationMessageType.idl
     Modules/WebGPU/GPUComputePassDescriptor.idl
     Modules/WebGPU/GPUComputePassEncoder.idl
-    Modules/WebGPU/GPUComputePassTimestampLocation.idl
     Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
@@ -1806,7 +1805,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPURenderPassDescriptor.idl
     Modules/WebGPU/GPURenderPassEncoder.idl
     Modules/WebGPU/GPURenderPassLayout.idl
-    Modules/WebGPU/GPURenderPassTimestampLocation.idl
     Modules/WebGPU/GPURenderPassTimestampWrites.idl
     Modules/WebGPU/GPURenderPipeline.idl
     Modules/WebGPU/GPURenderPipelineDescriptor.idl

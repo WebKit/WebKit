@@ -59,6 +59,7 @@ enum class NSType : uint8_t {
     Color,
     Data,
     Date,
+    Error,
     Dictionary,
     Font,
     Number,

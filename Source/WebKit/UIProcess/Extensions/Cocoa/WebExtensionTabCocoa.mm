@@ -144,6 +144,9 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
 
 WebExtensionTabParameters WebExtensionTab::changedParameters(OptionSet<ChangedProperties> changedProperties) const
 {
+    if (changedProperties.isEmpty())
+        changedProperties = this->changedProperties();
+
     bool hasPermission = extensionHasPermission();
 
     return {

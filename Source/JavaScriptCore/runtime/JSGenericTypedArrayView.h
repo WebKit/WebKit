@@ -207,7 +207,7 @@ protected:
     // For NaN, we normalize the NaN to a peticular representation; the sign bit is 0, all exponential bits
     // are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
 
-    template<typename IntegralType> inline bool sortFloat();
+    template<typename IntegralType> inline void sortFloat(ElementType* begin, ElementType* end);
 };
 
 template<typename PassedAdaptor>

@@ -58,8 +58,8 @@ private:
 
     void inflateControlPaintRect(StyleAppearance, const ControlStates&, FloatRect&, float zoomFactor) const final;
 
-    bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;
+    bool userPrefersReducedMotion() const final;
 };
 
 } // namespace WebCore

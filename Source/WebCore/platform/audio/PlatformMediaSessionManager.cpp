@@ -247,7 +247,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
 
     auto sessionType = session.mediaType();
     auto restrictions = this->restrictions(sessionType);
-    if (session.state() == PlatformMediaSession::Interrupted && restrictions & InterruptedPlaybackNotPermitted) {
+    if (session.state() == PlatformMediaSession::State::Interrupted && restrictions & InterruptedPlaybackNotPermitted) {
         ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false because session.state() is Interrupted, and InterruptedPlaybackNotPermitted");
         return false;
     }
@@ -258,12 +258,12 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     }
 
     if (m_currentInterruption)
-        endInterruption(PlatformMediaSession::NoFlags);
+        endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
 
     if (restrictions & ConcurrentPlaybackNotPermitted) {
         forEachMatchingSession([&session](auto& oneSession) {
             return &oneSession != &session
-                && oneSession.state() == PlatformMediaSession::Playing
+                && oneSession.state() == PlatformMediaSession::State::Playing
                 && !oneSession.canPlayConcurrently(session);
         }, [](auto& oneSession) {
             oneSession.pauseSession();
@@ -286,7 +286,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
         const auto& oneSession = *m_sessions[i];
         if (&oneSession == &session)
             pausingSessionIndex = i;
-        else if (oneSession.state() == PlatformMediaSession::Playing)
+        else if (oneSession.state() == PlatformMediaSession::State::Playing)
             lastPlayingSessionIndex = i;
         else
             break;
@@ -308,7 +308,7 @@ void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession& sess
 {
     // Call updateSessionState() synchronously if the new state is Playing to ensure
     // the audio session is active and has the correct category before playback starts.
-    if (session.state() == PlatformMediaSession::Playing)
+    if (session.state() == PlatformMediaSession::State::Playing)
         updateSessionState();
     else
         scheduleUpdateSessionState();
@@ -347,7 +347,7 @@ void PlatformMediaSessionManager::applicationWillBecomeInactive()
     forEachMatchingSession([&](auto& session) {
         return restrictions(session.mediaType()) & InactiveProcessPlaybackRestricted;
     }, [](auto& session) {
-        session.beginInterruption(PlatformMediaSession::ProcessInactive);
+        session.beginInterruption(PlatformMediaSession::InterruptionType::ProcessInactive);
     });
 }
 
@@ -358,7 +358,7 @@ void PlatformMediaSessionManager::applicationDidBecomeActive()
     forEachMatchingSession([&](auto& session) {
         return restrictions(session.mediaType()) & InactiveProcessPlaybackRestricted;
     }, [](auto& session) {
-        session.endInterruption(PlatformMediaSession::MayResumePlaying);
+        session.endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     });
 }
 
@@ -373,9 +373,9 @@ void PlatformMediaSessionManager::applicationDidEnterBackground(bool suspendedUn
 
     forEachSession([&] (auto& session) {
         if (suspendedUnderLock && restrictions(session.mediaType()) & SuspendedUnderLockPlaybackRestricted)
-            session.beginInterruption(PlatformMediaSession::SuspendedUnderLock);
+            session.beginInterruption(PlatformMediaSession::InterruptionType::SuspendedUnderLock);
         else if (restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted)
-            session.beginInterruption(PlatformMediaSession::EnteringBackground);
+            session.beginInterruption(PlatformMediaSession::InterruptionType::EnteringBackground);
     });
 }
 
@@ -391,7 +391,7 @@ void PlatformMediaSessionManager::applicationWillEnterForeground(bool suspendedU
     forEachMatchingSession([&](auto& session) {
         return (suspendedUnderLock && restrictions(session.mediaType()) & SuspendedUnderLockPlaybackRestricted) || restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted;
     }, [](auto& session) {
-        session.endInterruption(PlatformMediaSession::MayResumePlaying);
+        session.endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     });
 }
 
@@ -440,8 +440,8 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
     if (!m_isApplicationInBackground || !(restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted))
         return;
 
-    if (session.state() != PlatformMediaSession::Interrupted)
-        session.beginInterruption(PlatformMediaSession::EnteringBackground);
+    if (session.state() != PlatformMediaSession::State::Interrupted)
+        session.beginInterruption(PlatformMediaSession::InterruptionType::EnteringBackground);
 }
 
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
@@ -480,7 +480,7 @@ void PlatformMediaSessionManager::processSystemWillSleep()
         return;
 
     forEachSession([] (auto& session) {
-        session.beginInterruption(PlatformMediaSession::SystemSleep);
+        session.beginInterruption(PlatformMediaSession::InterruptionType::SystemSleep);
     });
 }
 
@@ -490,7 +490,7 @@ void PlatformMediaSessionManager::processSystemDidWake()
         return;
 
     forEachSession([] (auto& session) {
-        session.endInterruption(PlatformMediaSession::MayResumePlaying);
+        session.endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     });
 }
 
@@ -506,7 +506,7 @@ bool PlatformMediaSessionManager::mediaPlaybackIsPaused(MediaSessionGroupIdentif
 {
     bool mediaPlaybackIsPaused = false;
     forEachSessionInGroup(mediaSessionGroupIdentifier, [&mediaPlaybackIsPaused](auto& session) {
-        if (session.state() == PlatformMediaSession::Paused)
+        if (session.state() == PlatformMediaSession::State::Paused)
             mediaPlaybackIsPaused = true;
     });
     return mediaPlaybackIsPaused;
@@ -522,14 +522,14 @@ void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()
 void PlatformMediaSessionManager::suspendAllMediaPlaybackForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
-        session.beginInterruption(PlatformMediaSession::PlaybackSuspended);
+        session.beginInterruption(PlatformMediaSession::InterruptionType::PlaybackSuspended);
     });
 }
 
 void PlatformMediaSessionManager::resumeAllMediaPlaybackForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
-        session.endInterruption(PlatformMediaSession::MayResumePlaying);
+        session.endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     });
 }
 

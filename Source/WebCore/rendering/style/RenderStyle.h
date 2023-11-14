@@ -868,8 +868,8 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     inline StyleColorScheme colorScheme() const;
-    void setHasExplicitlySetColorScheme(bool v) { m_nonInheritedFlags.hasExplicitlySetColorScheme = v; }
-    bool hasExplicitlySetColorScheme() const { return m_nonInheritedFlags.hasExplicitlySetColorScheme; };
+    inline void setHasExplicitlySetColorScheme();
+    inline bool hasExplicitlySetColorScheme() const;
 #endif
 
     inline TextOrientation textOrientation() const;
@@ -2169,9 +2169,6 @@ private:
 
         unsigned hasExplicitlySetDirection : 1;
         unsigned hasExplicitlySetWritingMode : 1;
-#if ENABLE(DARK_MODE_CSS)
-        unsigned hasExplicitlySetColorScheme : 1;
-#endif
         unsigned usesViewportUnits : 1;
         unsigned usesContainerUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.

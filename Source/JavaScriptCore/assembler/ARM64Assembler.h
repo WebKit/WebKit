@@ -264,7 +264,7 @@ public:
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)
-    typedef enum {
+    typedef enum : uint8_t {
         ConditionEQ,
         ConditionNE,
         ConditionHS, ConditionCS = ConditionHS,
@@ -313,7 +313,7 @@ public:
 
 #define JUMP_ENUM_WITH_SIZE(index, value) (((value) << 4) | (index))
 #define JUMP_ENUM_SIZE(jump) ((jump) >> 4)
-    enum JumpType { JumpFixed = JUMP_ENUM_WITH_SIZE(0, 0),
+    enum JumpType : uint8_t { JumpFixed = JUMP_ENUM_WITH_SIZE(0, 0),
         JumpNoCondition = JUMP_ENUM_WITH_SIZE(1, 1 * sizeof(uint32_t)),
         JumpCondition = JUMP_ENUM_WITH_SIZE(2, 2 * sizeof(uint32_t)),
         JumpCompareAndBranch = JUMP_ENUM_WITH_SIZE(3, 2 * sizeof(uint32_t)),

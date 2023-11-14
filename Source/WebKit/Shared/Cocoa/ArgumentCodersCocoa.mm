@@ -274,6 +274,8 @@ NSType typeFromObject(id object)
         return NSType::Data;
     if ([object isKindOfClass:[NSDate class]])
         return NSType::Date;
+    if ([object isKindOfClass:[NSError class]])
+        return NSType::Error;
     if ([object isKindOfClass:[NSDictionary class]])
         return NSType::Dictionary;
     if ([object isKindOfClass:[CocoaFont class]])

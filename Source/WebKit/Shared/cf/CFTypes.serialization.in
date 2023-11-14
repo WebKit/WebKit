@@ -22,7 +22,7 @@
 
 #if USE(CF)
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createData()] CFDataRef wrapped by WebKit::CoreIPCData {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->data()] CFDataRef wrapped by WebKit::CoreIPCData {
 }
 
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {

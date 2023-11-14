@@ -89,24 +89,20 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
         };
     }
 
-    Vector<WGPURenderPassTimestampWrite> timestampWrites;
-    if (descriptor.timestampWrites && descriptor.timestampWrites->querySet) {
-        timestampWrites.append(WGPURenderPassTimestampWrite {
-            m_convertToBackingContext->convertToBacking(*descriptor.timestampWrites->querySet),
-            descriptor.timestampWrites->beginningOfPassWriteIndex,
-            static_cast<WGPURenderPassTimestampLocation>(descriptor.timestampWrites->endOfPassWriteIndex)
-        });
-    }
+    WGPURenderPassTimestampWrites timestampWrites {
+        .querySet = descriptor.timestampWrites ? m_convertToBackingContext->convertToBacking(*descriptor.timestampWrites->querySet) : nullptr,
+        .beginningOfPassWriteIndex = descriptor.timestampWrites ? descriptor.timestampWrites->beginningOfPassWriteIndex : 0,
+        .endOfPassWriteIndex = descriptor.timestampWrites ? descriptor.timestampWrites->endOfPassWriteIndex : 0
+    };
 
     WGPURenderPassDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        static_cast<uint32_t>(colorAttachments.size()),
-        colorAttachments.data(),
-        depthStencilAttachment ? &depthStencilAttachment.value() : nullptr,
-        descriptor.occlusionQuerySet ? m_convertToBackingContext->convertToBacking(*descriptor.occlusionQuerySet) : nullptr,
-        static_cast<uint32_t>(timestampWrites.size()),
-        timestampWrites.data(),
+        .nextInChain = nullptr,
+        .label = label.data(),
+        .colorAttachmentCount = static_cast<uint32_t>(colorAttachments.size()),
+        .colorAttachments = colorAttachments.data(),
+        .depthStencilAttachment = depthStencilAttachment ? &depthStencilAttachment.value() : nullptr,
+        .occlusionQuerySet = descriptor.occlusionQuerySet ? m_convertToBackingContext->convertToBacking(*descriptor.occlusionQuerySet) : nullptr,
+        .timestampWrites = timestampWrites.querySet ? &timestampWrites : nullptr
     };
 
     return RenderPassEncoderImpl::create(adoptWebGPU(wgpuCommandEncoderBeginRenderPass(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
@@ -116,20 +112,16 @@ Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
-    Vector<WGPUComputePassTimestampWrite> timestampWrites;
-    if (descriptor && descriptor->timestampWrites && descriptor->timestampWrites->querySet) {
-        timestampWrites.append(WGPUComputePassTimestampWrite {
-            m_convertToBackingContext->convertToBacking(*descriptor->timestampWrites->querySet),
-            descriptor->timestampWrites->beginningOfPassWriteIndex,
-            static_cast<WGPUComputePassTimestampLocation>(descriptor->timestampWrites->endOfPassWriteIndex)
-        });
-    }
+    WGPUComputePassTimestampWrites timestampWrites {
+        .querySet = (descriptor && descriptor->timestampWrites) ? m_convertToBackingContext->convertToBacking(*descriptor->timestampWrites->querySet) : nullptr,
+        .beginningOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->beginningOfPassWriteIndex : 0,
+        .endOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->endOfPassWriteIndex : 0
+    };
 
     WGPUComputePassDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        static_cast<uint32_t>(timestampWrites.size()),
-        timestampWrites.data(),
+        .nextInChain = nullptr,
+        .label = label.data(),
+        .timestampWrites = timestampWrites.querySet ? &timestampWrites : nullptr
     };
 
     return ComputePassEncoderImpl::create(adoptWebGPU(wgpuCommandEncoderBeginComputePass(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);

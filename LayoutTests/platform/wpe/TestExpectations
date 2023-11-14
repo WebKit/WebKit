@@ -321,7 +321,6 @@ imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.any.servic
 imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.globalAlpha.canvascopy.worker.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/image-smoothing/image.smoothing.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.ideographic.worker.html [ Failure ]
@@ -1576,7 +1575,7 @@ webkit.org/b/258166 fast/inline/hyphen-across-renderers.html [ ImageOnlyFailure 
 
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?5-6 [ Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html?mouse [ Failure ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.html [ Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.https.html [ Failure ]
 
 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html [ Failure ]

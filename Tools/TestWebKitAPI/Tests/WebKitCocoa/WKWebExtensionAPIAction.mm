@@ -39,6 +39,8 @@ static auto *actionPopupManifest = @{
     @"description": @"Action Test",
     @"version": @"1",
 
+    @"permissions": @[ @"webNavigation" ],
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
@@ -125,7 +127,7 @@ TEST(WKWebExtensionAPIAction, ClickedEvent)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIAction, presentPopupForAction)
+TEST(WKWebExtensionAPIAction, PresentPopupForAction)
 {
     auto *popupPage = @"<b>Hello World!</b>";
 
@@ -183,11 +185,21 @@ TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
     auto *popupPage = @"<b>Hello World!</b>";
 
     auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(await browser.action.getTitle({ }), 'Test Action', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ }), 'popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ }), '', 'Badge text should be')",
+        @"browser.test.assertTrue(await browser.action.isEnabled({ }), 'Action should be enabled')",
+
         @"await browser.action.setTitle({ title: 'Modified Title' })",
         @"await browser.action.setIcon({ path: 'toolbar-48.png' })",
         @"await browser.action.setPopup({ popup: 'alt-popup.html' })",
         @"await browser.action.setBadgeText({ text: '42' })",
         @"await browser.action.disable()",
+
+        @"browser.test.assertEq(await browser.action.getTitle({ }), 'Modified Title', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ }), 'alt-popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ }), '42', 'Badge text should be')",
+        @"browser.test.assertFalse(await browser.action.isEnabled({ }), 'Action should be disabled')",
 
         @"browser.action.openPopup()"
     ]);
@@ -247,11 +259,21 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
     auto *backgroundScript = Util::constructScript(@[
         @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
 
+        @"browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Test Action', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '', 'Badge text should be')",
+        @"browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be enabled')",
+
         @"browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })",
         @"browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })",
         @"browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })",
         @"browser.action.setBadgeText({ text: '42', tabId: currentTab.id })",
         @"browser.action.disable(currentTab.id)",
+
+        @"browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'alt-popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be')",
+        @"browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled')",
 
         @"browser.action.openPopup({ windowId: currentTab.windowId })"
     ]);
@@ -353,10 +375,18 @@ TEST(WKWebExtensionAPIAction, WindowSpecificActionProperties)
         @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
         @"const currentWindowId = currentTab.windowId",
 
+        @"browser.test.assertEq(await browser.action.getTitle({ windowId: currentWindowId }), 'Test Action', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ windowId: currentWindowId }), 'popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ windowId: currentWindowId }), '', 'Badge text should be')",
+
         @"browser.action.setTitle({ title: 'Window Title', windowId: currentWindowId })",
         @"browser.action.setIcon({ path: 'window-toolbar-48.png', windowId: currentWindowId })",
         @"browser.action.setPopup({ popup: 'window-popup.html', windowId: currentWindowId })",
         @"browser.action.setBadgeText({ text: 'W', windowId: currentWindowId })",
+
+        @"browser.test.assertEq(await browser.action.getTitle({ windowId: currentWindowId }), 'Window Title', 'Title should be')",
+        @"browser.test.assertEq(await browser.action.getPopup({ windowId: currentWindowId }), 'window-popup.html', 'Popup should be')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ windowId: currentWindowId }), 'W', 'Badge text should be')",
 
         @"browser.action.openPopup({ windowId: currentWindowId })"
     ]);
@@ -831,6 +861,74 @@ TEST(WKWebExtensionAPIAction, PageAction)
     };
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, ClearTabSpecificActionPropertiesOnNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+
+        @"browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })",
+        @"browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })",
+        @"browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })",
+        @"browser.action.setBadgeText({ text: '42', tabId: currentTab.id })",
+        @"browser.action.disable(currentTab.id)",
+
+        @"browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be before navigation')",
+        @"browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'alt-popup.html', 'Popup should be before navigation')",
+        @"browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be before navigation')",
+        @"browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled before navigation')",
+
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  browser.test.assertEq(details.tabId, currentTab.id, 'Only the tab we expect should be changing')",
+        @"  browser.test.assertEq(details.frameId, 0, 'Only main frame should be changing')",
+
+        @"  browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Test Action', 'Title should be after navigation')",
+        @"  browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), 'popup.html', 'Popup should be after navigation')",
+        @"  browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '', 'Badge text should be after navigation')",
+        @"  browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be enabled after navigation')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto *smallToolbarIcon = Util::makePNGData(CGSizeMake(16, 16), @selector(redColor));
+    auto *largeToolbarIcon = Util::makePNGData(CGSizeMake(32, 32), @selector(blueColor));
+    auto *extraLargeToolbarIcon = Util::makePNGData(CGSizeMake(48, 48), @selector(yellowColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"toolbar-16.png": smallToolbarIcon,
+        @"toolbar-32.png": largeToolbarIcon,
+        @"toolbar-48.png": extraLargeToolbarIcon,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    auto *localhostRequest = server.requestWithLocalhost();
+    auto *addressRequest = server.request();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.URL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:addressRequest.URL];
+
+    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:addressRequest];
+
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

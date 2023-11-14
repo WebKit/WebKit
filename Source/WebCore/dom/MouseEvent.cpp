@@ -178,7 +178,10 @@ bool MouseEvent::isMouseEvent() const
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)
 {
-    return event.type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(event).button() != MouseButton::Right);
+    if (event.type() != eventNames().clickEvent)
+        return false;
+    auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+    return !mouseEvent || mouseEvent->button() != MouseButton::Right;
 }
 
 MouseButton MouseEvent::button() const

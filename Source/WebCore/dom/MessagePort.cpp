@@ -284,10 +284,10 @@ void MessagePort::dispatchMessages()
         auto& vm = globalObject->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        bool contextIsWorker = is<WorkerGlobalScope>(*context);
+        auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
         for (auto& message : messages) {
             // close() in Worker onmessage handler should prevent next message from dispatching.
-            if (contextIsWorker && downcast<WorkerGlobalScope>(*context).isClosing())
+            if (workerGlobalScope && workerGlobalScope->isClosing())
                 return;
 
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
@@ -313,9 +313,10 @@ void MessagePort::dispatchEvent(Event& event)
     if (m_isDetached)
         return;
 
-    auto* context = scriptExecutionContext();
-    if (is<WorkerGlobalScope>(*context) && downcast<WorkerGlobalScope>(*context).isClosing())
-        return;
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
+        if (globalScope->isClosing())
+            return;
+    }
 
     EventTarget::dispatchEvent(event);
 }

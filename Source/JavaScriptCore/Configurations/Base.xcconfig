@@ -158,8 +158,9 @@ WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 
 // Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.4*] = -weak_framework ServiceExtensionsCore
 
-OTHER_LDFLAGS_JAVASCRIPTCORE_DEPS = -fobjc-link-runtime -licucore -framework Security;
+OTHER_LDFLAGS_JAVASCRIPTCORE_DEPS = $(JSC_SEC_LD_FLAGS) -fobjc-link-runtime -licucore -framework Security;
 
 WTF_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libWTF.a;
 WTF_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/libWTF.a;

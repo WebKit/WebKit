@@ -314,6 +314,10 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
     if (videoDecoderBehavior.contains(VideoDecoderBehavior::AvoidIOSurface))
         flags |= kVTRestrictions_AvoidIOSurfaceBackings;
 
+#if ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
+    flags |= kVTRestrictions_RegisterLimitedSystemDecodersWithoutValidation;
+#endif
+
     PAL::softLinkVideoToolboxVTRestrictVideoDecoders(flags, allowedCodecTypeList.data(), allowedCodecTypeList.size());
 }
 
@@ -346,7 +350,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     OSObjectPtr<dispatch_semaphore_t> codeCheckSemaphore;
     if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
@@ -547,7 +551,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     disableURLSchemeCheckInDataDetectors();
 
-#if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC)
+#if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     if (codeCheckSemaphore)
         dispatch_semaphore_wait(codeCheckSemaphore.get(), DISPATCH_TIME_FOREVER);
 #endif

@@ -69,6 +69,8 @@ public:
     WebExtensionTab* tab() { return m_tab.get(); }
     WebExtensionWindow* window() { return m_window.get(); }
 
+    void clearCustomizations();
+
     void propertiesDidChange();
 
     CocoaImage *icon(CGSize);

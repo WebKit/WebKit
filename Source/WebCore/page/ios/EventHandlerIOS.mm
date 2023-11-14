@@ -36,7 +36,7 @@
 #import "DragState.h"
 #import "EventNames.h"
 #import "FocusController.h"
-#import "HandleMouseEventResult.h"
+#import "HandleUserInputEventResult.h"
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"

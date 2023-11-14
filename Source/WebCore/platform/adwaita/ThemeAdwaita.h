@@ -49,8 +49,8 @@ public:
 
     virtual void platformColorsDidChange() { };
 
-    bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;
+    bool userPrefersReducedMotion() const final;
 
     void setAccentColor(const Color&);
     Color accentColor();

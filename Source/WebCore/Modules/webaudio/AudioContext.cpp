@@ -265,7 +265,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
         // Since we update the state asynchronously, we may have been interrupted after the
         // call to resume() and before this lambda runs. In this case, we don't want to
         // reset the state to running.
-        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
+        bool interrupted = m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
         setState(interrupted ? State::Interrupted : State::Running);
         if (interrupted)
             addReaction(State::Running, WTFMove(promise));
@@ -413,7 +413,7 @@ void AudioContext::suspend(ReasonForSuspension)
     if (isClosed() || m_wasSuspendedByScript)
         return;
 
-    m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
+    m_mediaSession->beginInterruption(PlatformMediaSession::InterruptionType::PlaybackSuspended);
     document()->updateIsPlayingMedia();
 }
 
@@ -422,7 +422,7 @@ void AudioContext::resume()
     if (isClosed() || m_wasSuspendedByScript)
         return;
 
-    m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+    m_mediaSession->endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     document()->updateIsPlayingMedia();
 }
 
@@ -442,7 +442,7 @@ void AudioContext::suspendPlayback()
         if (exception)
             return;
 
-        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
+        bool interrupted = m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
         setState(interrupted ? State::Interrupted : State::Suspended);
     });
 }
@@ -498,14 +498,14 @@ bool AudioContext::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSess
 void AudioContext::defaultDestinationWillBecomeConnected()
 {
     // We might need to interrupt if we previously overrode a background interruption.
-    if (!PlatformMediaSessionManager::sharedManager().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::Interrupted)
+    if (!PlatformMediaSessionManager::sharedManager().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::State::Interrupted)
         return;
 
     // We end the overriden interruption (if any) to get the right count of interruptions and start a new interruption.
     m_mediaSession->endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
 
     m_canOverrideBackgroundPlaybackRestriction = false;
-    m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
+    m_mediaSession->beginInterruption(PlatformMediaSession::InterruptionType::EnteringBackground);
     m_canOverrideBackgroundPlaybackRestriction = true;
 }
 

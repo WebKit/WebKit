@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUComputePassTimestampLocation.h>
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
 #include <wtf/Ref.h>

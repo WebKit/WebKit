@@ -618,8 +618,6 @@ Ref<QuerySet> DeviceImpl::createQuerySet(const QuerySetDescriptor& descriptor)
         label.data(),
         m_convertToBackingContext->convertToBacking(descriptor.type),
         descriptor.count,
-        nullptr,
-        0,
     };
 
     return QuerySetImpl::create(adoptWebGPU(wgpuDeviceCreateQuerySet(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);

@@ -106,10 +106,14 @@ void MouseRelatedEvent::initCoordinates()
 
 LocalFrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowProxy)
 {
-    if (!windowProxy || !is<LocalDOMWindow>(windowProxy->window()))
+    if (!windowProxy)
         return nullptr;
 
-    auto* frame = downcast<LocalDOMWindow>(*windowProxy->window()).frame();
+    auto* window = dynamicDowncast<LocalDOMWindow>(windowProxy->window());
+    if (!window)
+        return nullptr;
+
+    auto* frame = window->frame();
     return frame ? frame->view() : nullptr;
 }
 

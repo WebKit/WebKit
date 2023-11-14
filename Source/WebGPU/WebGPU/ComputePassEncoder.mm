@@ -43,19 +43,10 @@ ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeComma
     m_parentEncoder->lock(true);
 
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
-            const auto& timestampWrite = descriptor.timestampWrites[i];
-            switch (timestampWrite.location) {
-            case WGPUComputePassTimestampLocation_Beginning:
-                [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
-                break;
-            case WGPUComputePassTimestampLocation_End:
-                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
-                break;
-            case WGPUComputePassTimestampLocation_Force32:
-                ASSERT_NOT_REACHED();
-                break;
-            }
+        if (descriptor.timestampWrites) {
+            const auto& timestampWrite = *descriptor.timestampWrites;
+            [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
+            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
         }
     }
 }
@@ -68,12 +59,6 @@ ComputePassEncoder::ComputePassEncoder(Device& device)
 ComputePassEncoder::~ComputePassEncoder()
 {
     [m_computeCommandEncoder endEncoding];
-}
-
-void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
-{
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
 }
 
 void ComputePassEncoder::executePreDispatchCommands()
@@ -125,10 +110,6 @@ void ComputePassEncoder::endPass()
     [m_computeCommandEncoder endEncoding];
     m_computeCommandEncoder = nil;
     m_parentEncoder->lock(false);
-}
-
-void ComputePassEncoder::endPipelineStatisticsQuery()
-{
 }
 
 void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
@@ -230,11 +211,6 @@ void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
     WebGPU::fromAPI(computePassEncoder).deref();
 }
 
-void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
-{
-    WebGPU::fromAPI(computePassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
-}
-
 void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
     WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
@@ -248,11 +224,6 @@ void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder com
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::fromAPI(computePassEncoder).endPass();
-}
-
-void wgpuComputePassEncoderEndPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder)
-{
-    WebGPU::fromAPI(computePassEncoder).endPipelineStatisticsQuery();
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)

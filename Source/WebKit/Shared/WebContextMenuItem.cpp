@@ -52,7 +52,9 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
     }
     submenu.shrinkToFit();
 
-    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
+    bool checked = false;
+    unsigned indentationLevel = 0;
+    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::SubmenuType, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTFMove(submenu)))).leakRef();
 }
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()

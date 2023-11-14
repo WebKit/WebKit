@@ -151,7 +151,7 @@ void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& sessio
     MediaSessionManagerCocoa::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
 #if USE(AUDIO_SESSION)
-    if (isApplicationInBackground() && !anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::Playing; }))
+    if (isApplicationInBackground() && !anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::State::Playing; }))
         maybeDeactivateAudioSession();
 #endif
 }

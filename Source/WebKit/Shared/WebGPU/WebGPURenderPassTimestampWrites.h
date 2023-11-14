@@ -29,7 +29,6 @@
 
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPURenderPassTimestampLocation.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
