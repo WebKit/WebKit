@@ -49,6 +49,8 @@ enum class ApplePayButtonType : uint8_t {
     Contribute,
     Tip,
 #endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Continue,
+    Pay,
 };
 
 enum class ApplePayButtonStyle : uint8_t {

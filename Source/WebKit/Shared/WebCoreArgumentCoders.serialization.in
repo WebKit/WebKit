@@ -3269,6 +3269,8 @@ enum class WebCore::ApplePayButtonType : uint8_t {
     Contribute,
     Tip,
 #endif
+    Continue,
+    Pay,
 }
 
 enum class WebCore::ApplePayButtonStyle : uint8_t {

@@ -78,6 +78,16 @@ PASS CSS.supports("-apple-pay-button-type: tip") is supportsVersion
 PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
 PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
 PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: white") is true
+PASS CSS.supports("-apple-pay-button-type: continue") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: white") is true
+PASS CSS.supports("-apple-pay-button-type: pay") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
 PASS CSS.supports("-apple-pay-button-style: white-outline") is true
 PASS CSS.supports("-apple-pay-button-type: plain") is supportsVersion
 PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
@@ -153,6 +163,16 @@ PASS CSS.supports("-apple-pay-button-type: tip") is supportsVersion
 PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
 PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
 PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: white-outline") is true
+PASS CSS.supports("-apple-pay-button-type: continue") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: white-outline") is true
+PASS CSS.supports("-apple-pay-button-type: pay") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
 PASS CSS.supports("-apple-pay-button-style: black") is true
 PASS CSS.supports("-apple-pay-button-type: plain") is supportsVersion
 PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
@@ -225,6 +245,16 @@ PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
 PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
 PASS CSS.supports("-apple-pay-button-style: black") is true
 PASS CSS.supports("-apple-pay-button-type: tip") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: black") is true
+PASS CSS.supports("-apple-pay-button-type: continue") is supportsVersion
+PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
+PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
+PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType
+PASS CSS.supports("-apple-pay-button-style: black") is true
+PASS CSS.supports("-apple-pay-button-type: pay") is supportsVersion
 PASS computedStyle.getPropertyValue("-webkit-appearance") is "-apple-pay-button"
 PASS computedStyle.getPropertyValue("-apple-pay-button-style") is expectedStyle
 PASS computedStyle.getPropertyValue("-apple-pay-button-type") is expectedType

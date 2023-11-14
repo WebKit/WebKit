@@ -75,6 +75,10 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
     case ApplePayButtonType::Tip:
         return PKPaymentButtonTypeTip;
 #endif // HAVE(PASSKIT_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Continue:
+        return PKPaymentButtonTypeContinue;
+    case ApplePayButtonType::Pay:
+        return PKPaymentButtonTypeInStore;
     }
 }
 

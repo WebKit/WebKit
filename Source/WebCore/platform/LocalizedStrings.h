@@ -260,8 +260,10 @@ namespace WebCore {
     String AXApplePaySupportLabel();
     String AXApplePayContributeLabel();
     String AXApplePayTipLabel();
-#endif
-#endif
+#endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    String AXApplePayContinueLabel();
+    String AXApplePayPayLabel();
+#endif // ENABLE(APPLE_PAY)
 
     String AXAutoFillCredentialsLabel();
     String AXAutoFillContactsLabel();

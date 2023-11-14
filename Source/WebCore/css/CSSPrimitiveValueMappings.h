@@ -2314,16 +2314,18 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE ApplePayButtonType
 #if !ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-#define FOR_EACH(CASE) CASE(Plain) CASE(Buy) CASE(SetUp) CASE(Donate) CASE(CheckOut) CASE(Book) CASE(Subscribe)
+#define FOR_EACH(CASE) CASE(Plain) CASE(Buy) CASE(SetUp) CASE(Donate) CASE(CheckOut) CASE(Book) CASE(Subscribe) \
+    CASE(Continue) CASE(Pay)
 #else
 #define FOR_EACH(CASE) CASE(Plain) CASE(Buy) CASE(SetUp) CASE(Donate) CASE(CheckOut) CASE(Book) CASE(Subscribe) \
-    CASE(Reload) CASE(AddMoney) CASE(TopUp) CASE(Order) CASE(Rent) CASE(Support) CASE(Contribute) CASE(Tip)
-#endif
+    CASE(Reload) CASE(AddMoney) CASE(TopUp) CASE(Order) CASE(Rent) CASE(Support) CASE(Contribute) CASE(Tip)     \
+    CASE(Continue) CASE(Pay)
+#endif // !ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#endif
+#endif // ENABLE(APPLE_PAY)
 
 constexpr CSSValueID toCSSValueID(FontVariantPosition position)
 {

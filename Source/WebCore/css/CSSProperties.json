@@ -9275,7 +9275,9 @@
                 {
                     "value": "tip",
                     "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                }
+                },
+                "continue",
+                "pay"
             ],
             "codegen-properties": {
                 "enable-if": "ENABLE_APPLE_PAY",

@@ -974,10 +974,14 @@ String AccessibilityRenderObject::applePayButtonDescription() const
         return AXApplePayContributeLabel();
     case ApplePayButtonType::Tip:
         return AXApplePayTipLabel();
-#endif
+#endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Continue:
+        return AXApplePayContinueLabel();
+    case ApplePayButtonType::Pay:
+        return AXApplePayPayLabel();
     }
 }
-#endif
+#endif // ENABLE(APPLE_PAY)
 
 void AccessibilityRenderObject::titleElementText(Vector<AccessibilityText>& textOrder) const
 {

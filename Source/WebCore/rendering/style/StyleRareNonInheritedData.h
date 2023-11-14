@@ -204,7 +204,7 @@ public:
 
 #if ENABLE(APPLE_PAY)
     unsigned applePayButtonStyle : 2;
-    unsigned applePayButtonType : 4;
+    unsigned applePayButtonType : 5;
 #endif
 
     unsigned breakBefore : 4; // BreakBetween

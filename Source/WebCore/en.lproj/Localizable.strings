@@ -340,6 +340,9 @@
 /* Continue */
 "Continue" = "Continue";
 
+/* Label for the continue with Apple Pay button. */
+"Continue with Apple Pay" = "Continue with Apple Pay";
+
 /* Continue with Touch ID. */
 "Continue with Touch ID." = "Continue with Touch ID.";
 
@@ -927,6 +930,9 @@
 
 /* Title for pause animation action button or context menu item */
 "Pause Animation" = "Pause Animation";
+
+/* Label for the pay with Apple Pay button. */
+"Pay bills or invoices with Apple Pay" = "Pay bills or invoices with Apple Pay";
 
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";

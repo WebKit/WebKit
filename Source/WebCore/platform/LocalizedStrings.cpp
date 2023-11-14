@@ -917,8 +917,19 @@ String AXApplePayTipLabel()
 {
     return WEB_UI_STRING("Tip with Apple Pay", "Label for the tip with Apple Pay button.");
 }
-#endif
-#endif
+#endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+
+String AXApplePayContinueLabel()
+{
+    return WEB_UI_STRING("Continue with Apple Pay", "Label for the continue with Apple Pay button.");
+}
+
+String AXApplePayPayLabel()
+{
+    return WEB_UI_STRING("Pay bills or invoices with Apple Pay", "Label for the pay with Apple Pay button.");
+}
+
+#endif // ENABLE(APPLE_PAY)
 
 String AXAutoFillCredentialsLabel()
 {
