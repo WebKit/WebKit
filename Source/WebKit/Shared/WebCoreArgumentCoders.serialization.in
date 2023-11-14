@@ -6725,3 +6725,48 @@ enum class WebCore::MediationRequirement : uint8_t {
     Conditional,
 };
 #endif
+
+#if ENABLE(CONTEXT_MENUS)
+header: <WebCore/ContextMenuContext.h>
+enum class WebCore::ContextMenuContextType : uint8_t {
+    ContextMenu,
+#if ENABLE(SERVICE_CONTROLS)
+    ServicesMenu,
+#endif
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    MediaControls,
+#endif
+};
+#endif
+
+#if ENABLE(TRACKING_PREVENTION)
+header: <WebCore/CrossSiteNavigationDataTransfer.h>
+[OptionSet] enum class WebCore::CrossSiteNavigationDataTransferFlag : uint8_t {
+    DestinationLinkDecoration,
+    ReferrerLinkDecoration
+};
+#endif
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested, OptionSet] enum class WebCore::SynchronousScrollingReason : uint8_t {
+    ForcedOnMainThread,
+    HasViewportConstrainedObjectsWithoutSupportingFixedLayers,
+    HasNonLayerViewportConstrainedObjects,
+    IsImageDocument,
+    HasSlowRepaintObjects,
+    DescendantScrollersHaveSynchronousScrolling
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested] enum class WebCore::ScrollRequestType : uint8_t {
+    PositionUpdate,
+    DeltaUpdate,
+    CancelAnimatedScroll
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[Nested] enum class WebCore::KeyboardScrollAction : uint8_t {
+    StartAnimation,
+    StopWithAnimation,
+    StopImmediately
+};
