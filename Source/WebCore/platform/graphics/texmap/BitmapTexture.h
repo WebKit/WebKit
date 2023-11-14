@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class FilterOperations;
 class GraphicsLayer;
 class NativeImage;
 class TextureMapper;
@@ -82,16 +81,8 @@ public:
 
     int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
 
-    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilterPass);
-    struct FilterInfo {
-        RefPtr<const FilterOperation> filter;
-
-        FilterInfo(RefPtr<const FilterOperation>&& f = nullptr)
-            : filter(WTFMove(f))
-            { }
-    };
-    const FilterInfo* filterInfo() const { return &m_filterInfo; }
-    void setFilterInfo(FilterInfo&& filterInfo) { m_filterInfo = WTFMove(filterInfo); }
+    RefPtr<const FilterOperation> filterOperation() const { return m_filterOperation; }
+    void setFilterOperation(RefPtr<const FilterOperation>&& filterOperation) { m_filterOperation = WTFMove(filterOperation); }
 
     ClipStack& clipStack() { return m_clipStack; }
 
@@ -116,7 +107,7 @@ private:
     bool m_shouldClear { true };
     ClipStack m_clipStack;
     OptionSet<TextureMapperFlags> m_colorConvertFlags;
-    FilterInfo m_filterInfo;
+    RefPtr<const FilterOperation> m_filterOperation;
     GLint m_internalFormat { 0 };
     GLenum m_format { 0 };
 };

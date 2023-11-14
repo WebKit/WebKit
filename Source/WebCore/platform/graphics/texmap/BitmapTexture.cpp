@@ -24,7 +24,6 @@
 
 #if USE(TEXTURE_MAPPER)
 
-#include "FilterOperations.h"
 #include "GLContext.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -74,7 +73,7 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
     m_flags = flags;
     m_shouldClear = true;
     m_colorConvertFlags = { };
-    m_filterInfo = FilterInfo();
+    m_filterOperation = nullptr;
     if (m_size != size) {
         m_size = size;
         glBindTexture(GL_TEXTURE_2D, m_id);
@@ -178,27 +177,6 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
         return;
 
     updateContents(image.get(), targetRect, IntPoint());
-}
-
-RefPtr<BitmapTexture> BitmapTexture::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters, bool defersLastFilterPass)
-{
-    if (filters.isEmpty())
-        return this;
-
-    RefPtr<BitmapTexture> previousSurface = textureMapper.currentSurface();
-    RefPtr<BitmapTexture> surface = this;
-
-    for (size_t i = 0; i < filters.size(); ++i) {
-        RefPtr<FilterOperation> filter = filters.operations()[i];
-        ASSERT(filter);
-
-        bool lastFilter = (i == filters.size() - 1);
-
-        surface = textureMapper.applyFilter(surface, filter, defersLastFilterPass && lastFilter);
-    }
-
-    textureMapper.bindSurface(previousSurface.get());
-    return surface;
 }
 
 void BitmapTexture::initializeStencil()
