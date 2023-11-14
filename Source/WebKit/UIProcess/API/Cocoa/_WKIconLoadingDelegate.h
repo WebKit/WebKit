@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 - (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler;
+- (void)webView:(WKWebView *)webView shouldLoadIconsWithParameters:(NSArray<_WKLinkIconParameters *> *)parameterIcons completionHandler:(void (^)(NSSet<_WKLinkIconParameters *> *iconsToLoad, void (^didFinishLoadingIcon)(_WKLinkIconParameters *, NSData *)))completionHandler;
 
 @end
 

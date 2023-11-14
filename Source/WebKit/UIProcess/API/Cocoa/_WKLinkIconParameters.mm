@@ -28,6 +28,18 @@
 
 #import <WebCore/LinkIcon.h>
 
+static NSString *stringFromLinkIconType(WKLinkIconType type)
+{
+    switch (type) {
+    case WKLinkIconTypeFavicon:
+        return @"Favicon";
+    case WKLinkIconTypeTouchIcon:
+        return @"TouchIcon";
+    case WKLinkIconTypeTouchPrecomposedIcon:
+        return @"TouchPrecomposedIcon";
+    }
+}
+
 @implementation _WKLinkIconParameters {
     RetainPtr<NSURL> _url;
     WKLinkIconType _iconType;
@@ -89,6 +101,11 @@
 - (NSDictionary *)attributes
 {
     return _attributes.get();
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; url: %@; mimeType: %@; size: %@; iconType: %@; attributes: %@>", self.class, self, self.url, self.mimeType, self.size, stringFromLinkIconType(_iconType), self.attributes];
 }
 
 @end

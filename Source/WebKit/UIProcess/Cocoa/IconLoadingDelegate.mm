@@ -58,6 +58,7 @@ void IconLoadingDelegate::setDelegate(id <_WKIconLoadingDelegate> delegate)
     m_delegate = delegate;
 
     m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler = [delegate respondsToSelector:@selector(webView:shouldLoadIconWithParameters:completionHandler:)];
+    m_delegateMethods.webViewShouldLoadIconsWithParametersCompletionHandler = [delegate respondsToSelector:@selector(webView:shouldLoadIconsWithParameters:completionHandler:)];
 }
 
 IconLoadingDelegate::IconLoadingClient::IconLoadingClient(IconLoadingDelegate& iconLoadingDelegate)
@@ -71,29 +72,59 @@ IconLoadingDelegate::IconLoadingClient::~IconLoadingClient()
 
 typedef void (^IconLoadCompletionHandler)(NSData*);
 
-void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
+typedef void (^BatchIconLoadCompletionHandler)(_WKLinkIconParameters*, NSData*);
+
+void IconLoadingDelegate::IconLoadingClient::getLoadDecisionsForIcons(const Vector<std::pair<WebCore::LinkIcon, uint64_t>>& linkIconIdentifierPairs, Function<void(uint64_t, CompletionHandler<void(API::Data*)>&&)>&& callback)
 {
-    if (!m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler) {
-        completionHandler(nullptr);
+    if (!m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconsWithParametersCompletionHandler
+        && !m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler) {
+        for (auto& linkIconIdentifierPair : linkIconIdentifierPairs)
+            callback(linkIconIdentifierPair.second, nullptr);
         return;
     }
 
     auto delegate = m_iconLoadingDelegate.m_delegate.get();
     if (!delegate) {
-        completionHandler(nullptr);
+        for (auto& linkIconIdentifierPair : linkIconIdentifierPairs)
+            callback(linkIconIdentifierPair.second, nullptr);
         return;
     }
 
-    RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
+    Vector<std::pair<RetainPtr<_WKLinkIconParameters>, uint64_t>> iconParametersIdentifierPairs;
+    RetainPtr<NSMutableArray<_WKLinkIconParameters *>> allIconParameters = [NSMutableArray arrayWithCapacity:linkIconIdentifierPairs.size()];
+    for (auto& linkIconIdentifierPair : linkIconIdentifierPairs) {
+        RetainPtr<_WKLinkIconParameters> iconParameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIconIdentifierPair.first]);
+        [allIconParameters addObject:iconParameters.get()];
+        iconParametersIdentifierPairs.append({ iconParameters, linkIconIdentifierPair.second });
+    }
 
-    [delegate webView:m_iconLoadingDelegate.m_webView shouldLoadIconWithParameters:parameters.get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
+    if (!m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconsWithParametersCompletionHandler) {
+        for (auto& iconParametersIdentifierPair : iconParametersIdentifierPairs) {
+            uint64_t identifier = iconParametersIdentifierPair.second;
+            [delegate webView:m_iconLoadingDelegate.m_webView shouldLoadIconWithParameters:iconParametersIdentifierPair.first.get() completionHandler:makeBlockPtr([identifier, callback = WTFMove(callback)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
+                ASSERT(RunLoop::isMain());
+                if (loadCompletionHandler) {
+                    callback(identifier, [loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {
+                        loadCompletionHandler(wrapper(data));
+                    });
+                } else
+                    callback(identifier, nullptr);
+            }).get()];
+        }
+        return;
+    }
+
+    [delegate webView:m_iconLoadingDelegate.m_webView shouldLoadIconsWithParameters:allIconParameters.get() completionHandler:makeBlockPtr([iconParametersIdentifierPairs = WTFMove(iconParametersIdentifierPairs), callback = WTFMove(callback)] (NSSet<_WKLinkIconParameters *> *iconParametersToLoad, BatchIconLoadCompletionHandler loadCompletionHandler) mutable {
         ASSERT(RunLoop::isMain());
-        if (loadCompletionHandler) {
-            completionHandler([loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {
-                loadCompletionHandler(wrapper(data));
-            });
-        } else
-            completionHandler(nullptr);
+        for (auto& iconParametersIdentifierPair : iconParametersIdentifierPairs) {
+            RetainPtr<_WKLinkIconParameters> iconParameters = iconParametersIdentifierPair.first;
+            if ([iconParametersToLoad containsObject:iconParameters.get()]) {
+                callback(iconParametersIdentifierPair.second, [iconParameters = WTFMove(iconParameters), loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {
+                    loadCompletionHandler(iconParameters.get(), wrapper(data));
+                });
+            } else
+                callback(iconParametersIdentifierPair.second, nullptr);
+        }
     }).get()];
 }
 
