@@ -113,71 +113,31 @@
 
     promise_test(async (test) => {
         await setup(test);
+        assert_equals(document.visibilityState, "visible", "visible1");
 
-        await new Promise((resolve, reject) => {
-            let timeout = setTimeout(() => {
-                console.log("window.onblur took too long");
-                resolve();
-            }, 5000);
+        let promise = new Promise(resolve => document.onvisibilitychange = resolve);
+        testRunner.setPageVisibility("hidden");
+        await promise;
+        assert_equals(document.visibilityState, "hidden", "hidden");
 
-            window.onblur = () => {
-                clearTimeout(timeout);
-                resolve();
-            }
-        
-            internals.setPageIsFocusedAndActive(false);
-        });
+        testRunner.addMockMicrophoneDevice("id3", "microphone 2");
 
-        await new Promise((resolve, reject) => {
-            assert_false(document.hasFocus(), "document.hasFocus()");
+        let testPromise = new Promise(resolve => navigator.mediaDevices.ondevicechange = resolve);
+        testPromise = testPromise.then(test.step_func(() => {
+            assert_equals(document.visibilityState, "visible", "devicechange should only fire when the document is focused and active");
+        }));
 
-            navigator.mediaDevices.ondevicechange = () => {
-                assert_true(document.hasFocus(), "devicechange should only fire when the document is focused and active");
-                resolve();
-            };
+        promise = new Promise(resolve => document.onvisibilitychange = resolve);
+        // Let's delay to give enough time for navigator.mediaDevices.ondevicechange to fire
+        setTimeout(() => {
+            testRunner.setPageVisibility("visible");
+        }, 500);
 
-            setTimeout(() => {
-                internals.setPageIsFocusedAndActive(true);
-            }, 200);
+        await promise;
+        assert_equals(document.visibilityState, "visible", "visible2");
 
-            testRunner.addMockMicrophoneDevice("id3", "microphone 2");
-        });
-
-    }, "'devicechange' event is not fired when the document doesn't has focus or permission to capture");
-
-    promise_test(async (test) => {
-        await setup(test);
-
-        await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
-            .then(s => stream = s);
-
-        await new Promise((resolve, reject) => {
-            let timeout = setTimeout(() => {
-                console.log("window.onblur took too long");
-                resolve();
-            }, 5000);
-
-            window.onblur = () => {
-                clearTimeout(timeout);
-                resolve();
-            }
-        
-            internals.setPageIsFocusedAndActive(false);
-        });
-
-        await new Promise((resolve, reject) => {
-            assert_false(document.hasFocus(), "document.hasFocus()");
-
-            navigator.mediaDevices.ondevicechange = () => {
-                assert_false(document.hasFocus(), "devicechange should fire when the document is not focused but can capture");
-                resolve();
-            };
-
-            testRunner.addMockMicrophoneDevice("id3", "microphone 2");
-        });
-
-    }, "'devicechange' event is fired when the document doesn't has focus but has permission to capture");
-
+        return testPromise;
+    }, "'devicechange' event is not fired when the document is not visible");
     </script>
 </head>
 <body>
