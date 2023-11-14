@@ -527,18 +527,23 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
 
 void SourceBufferPrivateAVFObjC::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
-    if (is<VideoInfo>(formatDescription)) {
-        auto result = m_videoTracks.find(AtomString::number(trackId));
-        if (result != m_videoTracks.end())
-            result->value->setFormatDescription(downcast<VideoInfo>(formatDescription.get()));
-        return;
-    }
+    SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(WTFMove(formatDescription), trackId, [weakThis = WeakPtr { *this }, this](Ref<TrackInfo>&& formatDescription, uint64_t trackId) {
+        if (!weakThis)
+            return;
 
-    if (is<AudioInfo>(formatDescription)) {
-        auto result = m_audioTracks.find(AtomString::number(trackId));
-        if (result != m_audioTracks.end())
-            result->value->setFormatDescription(downcast<AudioInfo>(formatDescription.get()));
-    }
+        if (is<VideoInfo>(formatDescription)) {
+            auto result = m_videoTracks.find(AtomString::number(trackId));
+            if (result != m_videoTracks.end())
+                result->value->setFormatDescription(downcast<VideoInfo>(formatDescription.get()));
+            return;
+        }
+
+        if (is<AudioInfo>(formatDescription)) {
+            auto result = m_audioTracks.find(AtomString::number(trackId));
+            if (result != m_audioTracks.end())
+                result->value->setFormatDescription(downcast<AudioInfo>(formatDescription.get()));
+        }
+    });
 }
 
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)
