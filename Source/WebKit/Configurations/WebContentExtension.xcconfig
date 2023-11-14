@@ -28,4 +28,3 @@ INFOPLIST_KEY_CFBundleDisplayName = WebContentExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContentExtension;
 PRODUCT_BUNDLE_EXECUTABLE = WebContentExtension;
 PRODUCT_BUNDLE_NAME = WebContentExtension;
-PRODUCT_BUNDLE_VERSION = 1.0;
