@@ -1400,10 +1400,12 @@
 ))
 #endif
 
+#if !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.trustd.agent")))
+#endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 (with-filter (system-attribute apple-internal)
