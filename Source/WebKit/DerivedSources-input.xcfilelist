@@ -273,6 +273,7 @@ $(PROJECT_DIR)/Shared/ShareableResource.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
+$(PROJECT_DIR)/Shared/URLSchemeTaskParameters.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserContentControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in

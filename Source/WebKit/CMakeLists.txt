@@ -417,6 +417,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ShareableResource.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
+    Shared/URLSchemeTaskParameters.serialization.in
     Shared/UpdateInfo.serialization.in
     Shared/UserContentControllerParameters.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in

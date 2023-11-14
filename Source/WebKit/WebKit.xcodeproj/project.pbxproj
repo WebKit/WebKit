@@ -4953,6 +4953,7 @@
 		467007CD2AAB7B7300401412 /* GPUProcessPreferencesForWebProcess.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessPreferencesForWebProcess.serialization.in; sourceTree = "<group>"; };
 		4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadObserver.h; sourceTree = "<group>"; };
 		4671FF1E23217EFF001B64C7 /* WebResourceLoadObserver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadObserver.cpp; sourceTree = "<group>"; };
+		46738A512B02C26200F91E59 /* URLSchemeTaskParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = URLSchemeTaskParameters.serialization.in; sourceTree = "<group>"; };
 		467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessDataStoreParameters.h; sourceTree = "<group>"; };
 		46809A7A23D9225300C297D0 /* WebCookieCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieCache.h; sourceTree = "<group>"; };
 		46809A7B23D9225300C297D0 /* WebCookieCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieCache.cpp; sourceTree = "<group>"; };
@@ -8491,6 +8492,7 @@
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
 				5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */,
 				5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */,
+				46738A512B02C26200F91E59 /* URLSchemeTaskParameters.serialization.in */,
 				41FBE821206D87F6000F0741 /* UserContentControllerIdentifier.h */,
 				5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */,
 				516BF1D32AE5FF24009A0204 /* UserContentControllerParameters.serialization.in */,

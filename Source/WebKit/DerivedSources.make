@@ -610,6 +610,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ShareableResource.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
+	Shared/URLSchemeTaskParameters.serialization.in \
 	Shared/UserContentControllerParameters.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
 	Shared/WebCompiledContentRuleListData.serialization.in \

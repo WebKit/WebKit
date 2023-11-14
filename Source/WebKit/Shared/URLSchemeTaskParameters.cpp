@@ -26,64 +26,21 @@
 #include "config.h"
 #include "URLSchemeTaskParameters.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include "WebCoreArgumentCoders.h"
-
 namespace WebKit {
 
-void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
+URLSchemeTaskParameters::URLSchemeTaskParameters(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceRequest&& request, RefPtr<WebCore::FormData>&& requestBody, FrameInfoData&& frameInfo)
+    : handlerIdentifier(handlerIdentifier)
+    , taskIdentifier(taskIdentifier)
+    , request(WTFMove(request))
+    , frameInfo(WTFMove(frameInfo))
 {
-    encoder << handlerIdentifier;
-    encoder << taskIdentifier;
-    encoder << request;
-    if (request.httpBody()) {
-        encoder << true;
-        encoder << request.httpBody();
-    } else
-        encoder << false;
-    encoder << frameInfo;
+    if (requestBody)
+        this->request.setHTTPBody(WTFMove(requestBody));
 }
 
-std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
+RefPtr<WebCore::FormData> URLSchemeTaskParameters::requestBody() const
 {
-    std::optional<WebURLSchemeHandlerIdentifier> handlerIdentifier;
-    decoder >> handlerIdentifier;
-    if (!handlerIdentifier)
-        return std::nullopt;
-    
-    std::optional<WebCore::ResourceLoaderIdentifier> taskIdentifier;
-    decoder >> taskIdentifier;
-    if (!taskIdentifier)
-        return std::nullopt;
-
-    WebCore::ResourceRequest request;
-    if (!decoder.decode(request))
-        return std::nullopt;
-
-    std::optional<bool> hasHTTPBody;
-    decoder >> hasHTTPBody;
-    if (!hasHTTPBody)
-        return std::nullopt;
-    if (*hasHTTPBody) {
-        std::optional<RefPtr<WebCore::FormData>> formData;
-        decoder >> formData;
-        if (!formData)
-            return std::nullopt;
-        request.setHTTPBody(WTFMove(*formData));
-    }
-    
-    std::optional<FrameInfoData> frameInfo;
-    decoder >> frameInfo;
-    if (!frameInfo)
-        return std::nullopt;
-
-    return {{
-        WTFMove(*handlerIdentifier),
-        WTFMove(*taskIdentifier),
-        WTFMove(request),
-        WTFMove(*frameInfo),
-    }};
+    return request.httpBody();
 }
     
 } // namespace WebKit
