@@ -463,21 +463,22 @@ bool FullscreenManager::isFullscreenEnabled() const
 
 static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)
 {
-    if (!is<RenderBox>(renderer) || !renderer->parent() || !containingBlockBeforeStyleResolution)
+    auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+    if (!renderBox || !renderBox->parent() || !containingBlockBeforeStyleResolution)
         return;
-    auto* newContainingBlock = renderer->containingBlock();
+    auto* newContainingBlock = renderBox->containingBlock();
     ASSERT(newContainingBlock);
     if (containingBlockBeforeStyleResolution == newContainingBlock)
         return;
 
     // Let's carry out the same set of tasks we would normally do when containing block changes for out-of-flow content in RenderBox::styleWillChange.
-    ASSERT(renderer->isFixedPositioned());
+    ASSERT(renderBox->isFixedPositioned());
 
-    RenderBlock::removePositionedObject(downcast<RenderBox>(*renderer));
+    RenderBlock::removePositionedObject(*renderBox);
     // This is to make sure we insert the box to the correct containing block list during static position computation.
-    renderer->parent()->setChildNeedsLayout();
+    renderBox->parent()->setChildNeedsLayout();
     newContainingBlock->setChildNeedsLayout();
-    renderer->setNeedsLayout();
+    renderBox->setNeedsLayout();
 }
 
 bool FullscreenManager::willEnterFullscreen(Element& element)
@@ -684,8 +685,10 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRe
         node->protectedDocument()->updateViewportArguments();
 
 #if ENABLE(VIDEO)
-        if (shouldNotifyMediaElement && is<HTMLMediaElement>(node.get()))
-            downcast<HTMLMediaElement>(node.get()).enteredOrExitedFullscreen();
+        if (shouldNotifyMediaElement) {
+            if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node.get()))
+                mediaElement->enteredOrExitedFullscreen();
+        }
 #else
         UNUSED_PARAM(shouldNotifyMediaElement);
 #endif

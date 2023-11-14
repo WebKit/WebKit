@@ -140,7 +140,12 @@ RefPtr<EventTarget> Event::protectedCurrentTarget() const
 void Event::setCurrentTarget(RefPtr<EventTarget>&& currentTarget, std::optional<bool> isInShadowTree)
 {
     m_currentTarget = WTFMove(currentTarget);
-    m_currentTargetIsInShadowTree = isInShadowTree ? *isInShadowTree : (is<Node>(m_currentTarget) && downcast<Node>(*m_currentTarget).isInShadowTree());
+    if (isInShadowTree)
+        m_currentTargetIsInShadowTree = *isInShadowTree;
+    else {
+        auto* targetNode = dynamicDowncast<Node>(m_currentTarget.get());
+        m_currentTargetIsInShadowTree = targetNode && targetNode->isInShadowTree();
+    }
 }
 
 void Event::setEventPath(const EventPath& path)
@@ -168,8 +173,8 @@ void Event::setUnderlyingEvent(Event* underlyingEvent)
 DOMHighResTimeStamp Event::timeStampForBindings(ScriptExecutionContext& context) const
 {
     RefPtr<Performance> performance;
-    if (is<WorkerGlobalScope>(context))
-        performance = &downcast<WorkerGlobalScope>(context).performance();
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
+        performance = &globalScope->performance();
     else if (RefPtr window = downcast<Document>(context).domWindow())
         performance = &window->performance();
 

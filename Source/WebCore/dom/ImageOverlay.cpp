@@ -216,14 +216,14 @@ void removeOverlaySoonIfNeeded(HTMLElement& element)
 
 IntRect containerRect(HTMLElement& element)
 {
-    CheckedPtr renderer = element.renderer();
-    if (!is<RenderImage>(renderer))
+    CheckedPtr renderer = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderer)
         return { };
 
     if (!renderer->opacity())
         return { 0, 0, element.offsetWidth(), element.offsetHeight() };
 
-    return enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+    return enclosingIntRect(renderer->replacedContentRect());
 }
 
 #if ENABLE(IMAGE_ANALYSIS)

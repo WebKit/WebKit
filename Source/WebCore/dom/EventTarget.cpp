@@ -95,7 +95,10 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (!passive.has_value() && Quirks::shouldMakeEventListenerPassive(*this, eventType, listener.get()))
         passive = true;
 
-    bool listenerCreatedFromScript = is<JSEventListener>(listener) && !downcast<JSEventListener>(listener.get()).wasCreatedFromMarkup();
+    bool listenerCreatedFromScript = [&] {
+        auto* jsEventListener = dynamicDowncast<JSEventListener>(listener.get());
+        return jsEventListener && !jsEventListener->wasCreatedFromMarkup();
+    }();
 
     if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once }))
         return false;
@@ -325,9 +328,9 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     ASSERT(scriptExecutionContext());
 
     Ref context = *scriptExecutionContext();
-    bool contextIsDocument = is<Document>(context);
-    if (contextIsDocument)
-        InspectorInstrumentation::willDispatchEvent(downcast<Document>(context.get()), event);
+    auto* document = dynamicDowncast<Document>(context.get());
+    if (document)
+        InspectorInstrumentation::willDispatchEvent(*document, event);
 
     for (auto& registeredListener : listeners) {
         if (UNLIKELY(registeredListener->wasRemoved()))
@@ -372,8 +375,8 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
             event.setInPassiveListener(false);
     }
 
-    if (contextIsDocument)
-        InspectorInstrumentation::didDispatchEvent(downcast<Document>(context.get()), event);
+    if (document)
+        InspectorInstrumentation::didDispatchEvent(*document, event);
 }
 
 Vector<AtomString> EventTarget::eventTypes() const
@@ -413,17 +416,17 @@ void EventTarget::removeAllEventListeners()
 
 void EventTarget::invalidateEventListenerRegions()
 {
-    if (is<Element>(*this)) {
-        downcast<Element>(*this).invalidateEventListenerRegions();
+    if (auto* element = dynamicDowncast<Element>(*this)) {
+        element->invalidateEventListenerRegions();
         return;
     }
 
     // Unable the protect the document as it may have started destruction.
     auto* document = [&]() -> Document* {
-        if (is<Document>(*this))
-            return &downcast<Document>(*this);
-        if (is<LocalDOMWindow>(*this))
-            return downcast<LocalDOMWindow>(*this).document();
+        if (auto* document = dynamicDowncast<Document>(*this))
+            return document;
+        if (auto* window = dynamicDowncast<LocalDOMWindow>(*this))
+            return window->document();
         return nullptr;
     }();
 
