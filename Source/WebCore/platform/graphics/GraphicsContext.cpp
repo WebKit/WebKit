@@ -28,6 +28,7 @@
 
 #include "BidiResolver.h"
 #include "DecomposedGlyphs.h"
+#include "DisplayListReplayer.h"
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FloatRoundedRect.h"
@@ -197,6 +198,13 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     }
 
     bidiRuns.clear();
+}
+
+void GraphicsContext::drawDisplayListItems(const Vector<DisplayList::Item>& items, const DisplayList::ResourceHeap& resourceHeap, const FloatPoint& destination)
+{
+    translate(destination);
+    DisplayList::Replayer(*this, items, resourceHeap).replay();
+    translate(-destination);
 }
 
 static IntSize scaledImageBufferSize(const FloatSize& size, const FloatSize& scale)

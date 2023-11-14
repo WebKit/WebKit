@@ -48,6 +48,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ResetClip()
     DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
+    DrawDisplayListItems(Vector<WebCore::DisplayList::Item> items, WebCore::FloatPoint destination)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatSize imageSize, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)

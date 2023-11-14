@@ -236,6 +236,38 @@ void Recorder::drawGlyphsAndCacheResources(const Font& font, const GlyphBufferGl
     recordDrawGlyphs(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
 }
 
+void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHeap& resourceHeap, const FloatPoint& destination)
+{
+    appendStateChangeItemIfNecessary();
+
+    for (auto& resource : resourceHeap.resources().values()) {
+        WTF::switchOn(resource,
+            [](std::monostate) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<ImageBuffer>& imageBuffer) {
+                recordResourceUse(imageBuffer);
+            }, [&](const Ref<RenderingResource>& renderingResource) {
+                if (auto* image = dynamicDowncast<NativeImage>(renderingResource.ptr()))
+                    recordResourceUse(*image);
+                else if (auto* filter = dynamicDowncast<Filter>(renderingResource.ptr()))
+                    recordResourceUse(*filter);
+                else if (auto* decomposedGlyphs = dynamicDowncast<DecomposedGlyphs>(renderingResource.ptr()))
+                    recordResourceUse(*decomposedGlyphs);
+                else if (auto* gradient = dynamicDowncast<Gradient>(renderingResource.ptr()))
+                    recordResourceUse(*gradient);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<Font>& font) {
+                recordResourceUse(font);
+            }, [&](const Ref<FontCustomPlatformData>&) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        );
+    }
+
+    recordDrawDisplayListItems(items, destination);
+}
+
 void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();

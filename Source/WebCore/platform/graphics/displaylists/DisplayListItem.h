@@ -61,6 +61,7 @@ class DrawFocusRingPath;
 class DrawFocusRingRects;
 class DrawGlyphs;
 class DrawDecomposedGlyphs;
+class DrawDisplayListItems;
 class DrawImageBuffer;
 class DrawLine;
 class DrawLinesForText;
@@ -136,6 +137,7 @@ using Item = std::variant
     , DrawFocusRingRects
     , DrawGlyphs
     , DrawDecomposedGlyphs
+    , DrawDisplayListItems
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText

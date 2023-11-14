@@ -1821,16 +1821,6 @@ struct WebCore::ViewportArguments {
 };
 #endif // ENABLE(META_VIEWPORT)
 
-header: <WebCore/DisplayListItems.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
-    WebCore::PackedColor::RGBA colorData()
-}
-
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineStroke {
-    std::optional<WebCore::PackedColor::RGBA> colorData()
-    std::optional<float> thickness()
-}
-
 header: <WebCore/HTTPHeaderMap.h>
 [Nested, CustomHeader] struct WebCore::HTTPHeaderMap::CommonHeader {
     WebCore::HTTPHeaderName key;

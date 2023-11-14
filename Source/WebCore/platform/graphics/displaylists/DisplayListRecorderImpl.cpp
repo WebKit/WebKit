@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DisplayListRecorder.h"
+#include "DisplayListRecorderImpl.h"
 
 #include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
@@ -187,6 +187,11 @@ void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const Decomposed
     append(DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier()));
 }
 
+void RecorderImpl::recordDrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
+{
+    append(DrawDisplayListItems(items, destination));
+}
+
 void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
@@ -329,7 +334,7 @@ void RecorderImpl::recordFillEllipse(const FloatRect& rect)
 #if ENABLE(VIDEO)
 void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
-    append(PaintFrameForMedia(player, destination));
+    append(PaintFrameForMedia(player.identifier(), destination));
 }
 
 void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* shouldDiscardAlpha */)

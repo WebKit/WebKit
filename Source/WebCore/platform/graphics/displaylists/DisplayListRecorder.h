@@ -144,6 +144,8 @@ protected:
 
     virtual void recordDrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) = 0;
 
+    virtual void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) = 0;
+
 #if USE(CG)
     virtual void recordApplyStrokePattern() = 0;
     virtual void recordApplyFillPattern() = 0;
@@ -231,6 +233,8 @@ private:
     WEBCORE_EXPORT void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) final;
     WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
+
+    WEBCORE_EXPORT void drawDisplayListItems(const Vector<Item>&, const ResourceHeap&, const FloatPoint& destination) final;
 
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
