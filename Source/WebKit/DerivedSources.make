@@ -618,6 +618,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebBackForwardListCounts.serialization.in \
+	Shared/WebContextMenuItemData.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \

@@ -38,20 +38,20 @@ namespace WebKit {
 using namespace WebCore;
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
-    : WebContextMenuItemData(type, action, title, enabled, checked)
+    : WebContextMenuItemData(type, action, String { title }, enabled, checked)
 {
     ASSERT(type != SubmenuType);
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemData& data)
-    : WebContextMenuItemData(data.type() == SubmenuType ? ActionType : data.type(), data.action(), data.title(), data.enabled(), data.checked())
+    : WebContextMenuItemData(data.type() == SubmenuType ? ActionType : data.type(), data.action(), String { data.title() }, data.enabled(), data.checked())
 {
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemGlib& data, Vector<WebContextMenuItemGlib>&& submenu)
-    : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
+    : WebContextMenuItemData(ActionType, data.action(), String { data.title() }, data.enabled(), false)
 {
     m_gAction = data.gAction();
     m_submenuItems = WTFMove(submenu);
@@ -71,7 +71,7 @@ static bool isGActionChecked(GAction* action)
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& title, GVariant* target)
-    : WebContextMenuItemData(g_action_get_state_type(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, title, g_action_get_enabled(action), isGActionChecked(action))
+    : WebContextMenuItemData(g_action_get_state_type(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, String { title }, g_action_get_enabled(action), isGActionChecked(action))
     , m_gAction(action)
     , m_gActionTarget(target)
 {
