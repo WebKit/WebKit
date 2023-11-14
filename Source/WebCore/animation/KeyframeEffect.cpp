@@ -1503,7 +1503,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     KeyframeValue propertySpecificKeyframeWithZeroOffset(0, RenderStyle::clonePtr(targetStyle));
     KeyframeValue propertySpecificKeyframeWithOneOffset(1, RenderStyle::clonePtr(targetStyle));
 
-    auto blendProperty = [&](AnimatableCSSProperty property) {
+    for (auto property : properties) {
         auto interval = interpolationKeyframes(property, iterationProgress, propertySpecificKeyframeWithZeroOffset, propertySpecificKeyframeWithOneOffset);
 
         auto* startKeyframe = interval.endpoints.first();
@@ -1511,7 +1511,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
         if (!is<KeyframeValue>(startKeyframe) || !is<KeyframeValue>(endKeyframe)) {
             ASSERT_NOT_REACHED();
-            return;
+            continue;
         }
 
         auto& startKeyframeValue = downcast<KeyframeValue>(*startKeyframe);
@@ -1520,86 +1520,42 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         auto startKeyframeStyle = RenderStyle::clone(*startKeyframeValue.style());
         auto endKeyframeStyle = RenderStyle::clone(*endKeyframeValue.style());
 
-        auto usedBlendingForAccumulativeIteration = false;
-
-        // 12. For each keyframe in interval endpoints:
-        //     If keyframe has a composite operation that is not replace, or keyframe has no composite operation and the
-        //     composite operation of this keyframe effect is not replace, then perform the following steps:
-        //         1. Let composite operation to use be the composite operation of keyframe, or if it has none, the composite
-        //            operation of this keyframe effect.
-        //         2. Let value to combine be the property value of target property specified on keyframe.
-        //         3. Replace the property value of target property on keyframe with the result of combining underlying value
-        //            (Va) and value to combine (Vb) using the procedure for the composite operation to use corresponding to the
-        //            target property’s animation type.
-        if (CSSPropertyAnimation::isPropertyAdditiveOrCumulative(property)) {
-            // Only do this for the 0 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
-            // for composition" which really means we don't want to do anything but rather just use the underlying style which
-            // is already set on startKeyframe.
-            if (startKeyframeValue.offset() || !interval.hasImplicitZeroKeyframe) {
-                auto startKeyframeCompositeOperation = startKeyframeValue.compositeOperation().value_or(m_compositeOperation);
-                if (startKeyframeCompositeOperation != CompositeOperation::Replace)
-                    CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, targetStyle, *startKeyframeValue.style(), 1, startKeyframeCompositeOperation);
+        KeyframeInterpolation::CompositionCallback composeProperty = [&] (const KeyframeInterpolation::Keyframe& keyframe, CompositeOperation compositeOperation) {
+            if (!is<KeyframeValue>(keyframe)) {
+                ASSERT_NOT_REACHED();
+                return;
             }
 
-            // Only do this for the 1 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
-            // for composition" which really means we don't want to do anything but rather just use the underlying style which
-            // is already set on endKeyframe.
-            if (endKeyframeValue.offset() != 1 || !interval.hasImplicitOneKeyframe) {
-                auto endKeyframeCompositeOperation = endKeyframeValue.compositeOperation().value_or(m_compositeOperation);
-                if (endKeyframeCompositeOperation != CompositeOperation::Replace)
-                    CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, targetStyle, *endKeyframeValue.style(), 1, endKeyframeCompositeOperation);
+            auto& keyframeValue = downcast<KeyframeValue>(keyframe);
+            if (keyframeValue.offset() == startKeyframe->offset())
+                CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, targetStyle, *keyframeValue.style(), 1, compositeOperation);
+            else
+                CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, targetStyle, *keyframeValue.style(), 1, compositeOperation);
+        };
+
+        KeyframeInterpolation::AccumulationCallback accumulateProperty = [&](const KeyframeInterpolation::Keyframe& keyframe) {
+            if (!is<KeyframeValue>(keyframe)) {
+                ASSERT_NOT_REACHED();
+                return;
             }
 
-            // If this keyframe effect has an iteration composite operation of accumulate,
-            if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate && currentIteration && CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(*this, property, startKeyframeStyle, endKeyframeStyle)) {
-                usedBlendingForAccumulativeIteration = true;
-                // apply the following step current iteration times:
-                for (auto i = 0; i < currentIteration; ++i) {
-                    // replace the property value of target property on keyframe with the result of combining the
-                    // property value on the final keyframe in property-specific keyframes (Va) with the property
-                    // value on keyframe (Vb) using the accumulation procedure defined for target property.
-                    if (!startKeyframeValue.offset() && !interval.hasImplicitZeroKeyframe)
-                        CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, *endKeyframeValue.style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
-                    if (endKeyframeValue.offset() == 1 && !interval.hasImplicitOneKeyframe)
-                        CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, *endKeyframeValue.style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
-                }
-            }
-        }
+            auto& keyframeValue = downcast<KeyframeValue>(keyframe);
+            if (keyframeValue.offset() == startKeyframe->offset())
+                CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, *endKeyframeValue.style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
+            else
+                CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, *endKeyframeValue.style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
+        };
 
-        // 13. If there is only one keyframe in interval endpoints return the property value of target property on that keyframe.
-        if (interval.endpoints.size() == 1) {
-            CSSPropertyAnimation::blendProperty(*this, property, targetStyle, startKeyframeStyle, startKeyframeStyle, 0, CompositeOperation::Replace);
-            return;
-        }
+        KeyframeInterpolation::InterpolationCallback interpolateProperty = [&](double intervalProgress, double currentIteration, IterationCompositeOperation iterationCompositeOperation) {
+            CSSPropertyAnimation::blendProperty(*this, property, targetStyle, startKeyframeStyle, endKeyframeStyle, intervalProgress, CompositeOperation::Replace, iterationCompositeOperation, currentIteration);
+        };
 
-        // 14. Let start offset be the computed keyframe offset of the first keyframe in interval endpoints.
-        auto startOffset = startKeyframeValue.offset();
+        KeyframeInterpolation::RequiresBlendingForAccumulativeIterationCallback requiresBlendingForAccumulativeIterationCallback = [&]() {
+            return CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(*this, property, startKeyframeStyle, endKeyframeStyle);
+        };
 
-        // 15. Let end offset be the computed keyframe offset of last keyframe in interval endpoints.
-        auto endOffset = endKeyframeValue.offset();
-
-        // 16. Let interval distance be the result of evaluating (iteration progress - start offset) / (end offset - start offset).
-        auto intervalDistance = (iterationProgress - startOffset) / (endOffset - startOffset);
-
-        // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
-        //     passing interval distance as the input progress.
-        auto transformedDistance = intervalDistance;
-        if (auto duration = iterationDuration()) {
-            auto rangeDuration = (endOffset - startOffset) * duration.seconds();
-            if (auto* timingFunction = timingFunctionForBlendingKeyframe(startKeyframeValue))
-                transformedDistance = timingFunction->transformProgress(intervalDistance, rangeDuration);
-        }
-
-        // 18. Return the result of applying the interpolation procedure defined by the animation type of the target property, to the values of the target
-        //     property specified on the two keyframes in interval endpoints taking the first such value as Vstart and the second as Vend and using transformed
-        //     distance as the interpolation parameter p.
-        auto iterationCompositeOperation = usedBlendingForAccumulativeIteration ? IterationCompositeOperation::Replace : m_iterationCompositeOperation;
-        currentIteration = usedBlendingForAccumulativeIteration ? 0 : currentIteration;
-        CSSPropertyAnimation::blendProperty(*this, property, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace, iterationCompositeOperation, currentIteration);
-    };
-
-    for (auto property : properties)
-        blendProperty(property);
+        interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), composeProperty, accumulateProperty, interpolateProperty, requiresBlendingForAccumulativeIterationCallback);
+    }
 
     // In case one of the animated properties has its value set to "inherit" in one of the keyframes,
     // let's mark the resulting animated style as having an explicitly inherited property such that
@@ -1608,7 +1564,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         targetStyle.setHasExplicitlyInheritedProperties();
 }
 
-TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const KeyframeValue& keyframe) const
+const TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const KeyframeValue& keyframe) const
 {
     if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation())) {
         // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself.
@@ -1624,7 +1580,7 @@ TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const Keyframe
     return keyframe.timingFunction();
 }
 
-TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index) const
+const TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index) const
 {
     if (!m_parsedKeyframes.isEmpty()) {
         if (index >= m_parsedKeyframes.size())
@@ -2285,7 +2241,7 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
     if (m_blendingKeyframes.isEmpty())
         return std::nullopt;
 
-    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, TimingFunction* timingFunction) -> std::optional<double> {
+    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, const TimingFunction* timingFunction) -> std::optional<double> {
         if (!is<StepsTimingFunction>(timingFunction))
             return std::nullopt;
 
@@ -2789,6 +2745,25 @@ const KeyframeInterpolation::Keyframe& KeyframeEffect::keyframeAtIndex(size_t in
 {
     ASSERT(index < m_blendingKeyframes.size());
     return m_blendingKeyframes[index];
+}
+
+const TimingFunction* KeyframeEffect::timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe& keyframe) const
+{
+    if (is<KeyframeValue>(keyframe))
+        return timingFunctionForBlendingKeyframe(downcast<KeyframeValue>(keyframe));
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+bool KeyframeEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property property) const
+{
+    return WTF::switchOn(property, [&](AnimatableCSSProperty& animatableCSSProperty) {
+        return CSSPropertyAnimation::isPropertyAdditiveOrCumulative(animatableCSSProperty);
+    }, [] (auto&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    });
 }
 
 } // namespace WebCore

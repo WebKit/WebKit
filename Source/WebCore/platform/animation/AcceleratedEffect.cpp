@@ -129,6 +129,41 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCS
     }
 }
 
+static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectProperty property)
+{
+    switch (property) {
+    case AcceleratedEffectProperty::Opacity:
+        return CSSPropertyOpacity;
+    case AcceleratedEffectProperty::Transform:
+        return CSSPropertyTransform;
+    case AcceleratedEffectProperty::Translate:
+        return CSSPropertyTranslate;
+    case AcceleratedEffectProperty::Rotate:
+        return CSSPropertyRotate;
+    case AcceleratedEffectProperty::Scale:
+        return CSSPropertyScale;
+    case AcceleratedEffectProperty::OffsetPath:
+        return CSSPropertyOffsetPath;
+    case AcceleratedEffectProperty::OffsetDistance:
+        return CSSPropertyOffsetDistance;
+    case AcceleratedEffectProperty::OffsetPosition:
+        return CSSPropertyOffsetPosition;
+    case AcceleratedEffectProperty::OffsetAnchor:
+        return CSSPropertyOffsetAnchor;
+    case AcceleratedEffectProperty::OffsetRotate:
+        return CSSPropertyOffsetRotate;
+    case AcceleratedEffectProperty::Filter:
+        return CSSPropertyFilter;
+#if ENABLE(FILTERS_LEVEL_2)
+    case AcceleratedEffectProperty::BackdropFilter:
+        return CSSPropertyWebkitBackdropFilter;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return CSSPropertyInvalid;
+    }
+}
+
 Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const IntRect& borderBoxRect)
 {
     return adoptRef(*new AcceleratedEffect(effect, borderBoxRect));
@@ -267,6 +302,38 @@ const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t
 {
     ASSERT(index < m_keyframes.size());
     return m_keyframes[index];
+}
+
+const TimingFunction* AcceleratedEffect::timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe& keyframe) const
+{
+    if (!is<Keyframe>(keyframe)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto& acceleratedEffectKeyframe = downcast<Keyframe>(keyframe);
+    if (m_animationType == WebAnimationType::CSSAnimation || m_animationType == WebAnimationType::CSSTransition) {
+        // If we're dealing with a CSS Animation, the timing function may be specified on the keyframe.
+        if (m_animationType == WebAnimationType::CSSAnimation) {
+            if (auto& timingFunction = acceleratedEffectKeyframe.timingFunction())
+                return timingFunction.get();
+        }
+
+        // Failing that, or for a CSS Transition, the timing function is the default timing function.
+        return m_defaultKeyframeTimingFunction.get();
+    }
+
+    return acceleratedEffectKeyframe.timingFunction().get();
+}
+
+bool AcceleratedEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property property) const
+{
+    return WTF::switchOn(property, [&](const AcceleratedEffectProperty acceleratedProperty) {
+        return CSSPropertyAnimation::isPropertyAdditiveOrCumulative(cssPropertyFromAcceleratedProperty(acceleratedProperty));
+    }, [] (auto&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    });
 }
 
 } // namespace WebCore

@@ -83,7 +83,7 @@ public:
     AnimationEffectTiming timing() const { return m_timing; }
     const Vector<Keyframe>& keyframes() const { return m_keyframes; }
     WebAnimationType animationType() const { return m_animationType; }
-    CompositeOperation compositeOperation() const { return m_compositeOperation; }
+    CompositeOperation compositeOperation() const final { return m_compositeOperation; }
     const RefPtr<TimingFunction>& defaultKeyframeTimingFunction() const { return m_defaultKeyframeTimingFunction; }
     const OptionSet<AcceleratedEffectProperty>& animatedProperties() const { return m_animatedProperties; }
     bool paused() const { return m_paused; }
@@ -99,8 +99,10 @@ private:
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
 
     // KeyframeInterpolation
+    bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
     const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
     size_t numberOfKeyframes() const final { return m_keyframes.size(); }
+    const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
 
     AnimationEffectTiming m_timing;
     Vector<Keyframe> m_keyframes;

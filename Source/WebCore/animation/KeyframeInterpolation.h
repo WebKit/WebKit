@@ -26,6 +26,8 @@
 #pragma once
 
 #include "CompositeOperation.h"
+#include "IterationCompositeOperation.h"
+#include "TimingFunction.h"
 #include "WebAnimationTypes.h"
 #include <optional>
 #include <wtf/Seconds.h>
@@ -48,8 +50,12 @@ public:
         virtual ~Keyframe() = default;
     };
 
+    virtual CompositeOperation compositeOperation() const = 0;
+    virtual bool isPropertyAdditiveOrCumulative(Property) const = 0;
+    virtual IterationCompositeOperation iterationCompositeOperation() const { return IterationCompositeOperation::Replace; }
     virtual const Keyframe& keyframeAtIndex(size_t) const = 0;
     virtual size_t numberOfKeyframes() const = 0;
+    virtual const TimingFunction* timingFunctionForKeyframe(const Keyframe&) const = 0;
 
     struct KeyframeInterval {
         const Vector<const Keyframe*> endpoints;
@@ -58,6 +64,12 @@ public:
     };
 
     const KeyframeInterval interpolationKeyframes(Property, double iterationProgress, const Keyframe& defaultStartKeyframe, const Keyframe& defaultEndKeyframe) const;
+
+    using CompositionCallback = Function<void(const Keyframe&, CompositeOperation)>;
+    using AccumulationCallback = Function<void(const Keyframe&)>;
+    using InterpolationCallback = Function<void(double intervalProgress, double currentIteration, IterationCompositeOperation)>;
+    using RequiresBlendingForAccumulativeIterationCallback = Function<bool()>;
+    void interpolateKeyframes(Property, const KeyframeInterval&, double iterationProgress, double currentIteration, Seconds iterationDuration, const CompositionCallback&, const AccumulationCallback&, const InterpolationCallback&, const RequiresBlendingForAccumulativeIterationCallback&) const;
 
     virtual ~KeyframeInterpolation() = default;
 };

@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "IterationCompositeOperation.h"
 #include "KeyframeEffectOptions.h"
+#include "KeyframeInterpolation.h"
 #include "KeyframeList.h"
 #include "RenderStyle.h"
 #include "Styleable.h"
@@ -211,8 +212,8 @@ private:
     bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double iterationProgress, double currentIteration);
-    TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
-    TimingFunction* timingFunctionForBlendingKeyframe(const KeyframeValue&) const;
+    const TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
+    const TimingFunction* timingFunctionForBlendingKeyframe(const KeyframeValue&) const;
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();
@@ -265,8 +266,12 @@ private:
     bool preventsAnimationReadiness() const final;
 
     // KeyframeInterpolation
+    CompositeOperation compositeOperation() const final { return m_compositeOperation; }
+    IterationCompositeOperation iterationCompositeOperation() const final { return m_iterationCompositeOperation; }
     const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
     size_t numberOfKeyframes() const final { return m_blendingKeyframes.size(); }
+    const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
+    bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 

@@ -121,4 +121,91 @@ const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolati
     return { intervalEndpoints, hasImplicitZeroKeyframe, hasImplicitOneKeyframe };
 }
 
+void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, Seconds iterationDuration, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresBlendingForAccumulativeIterationCallback& requiresBlendingForAccumulativeIterationCallback) const
+{
+    auto& intervalEndpoints = interval.endpoints;
+    if (intervalEndpoints.isEmpty())
+        return;
+
+    auto& startKeyframe = *intervalEndpoints.first();
+    auto& endKeyframe = *intervalEndpoints.last();
+
+    auto usedBlendingForAccumulativeIteration = false;
+
+    // 12. For each keyframe in interval endpoints:
+    //     If keyframe has a composite operation that is not replace, or keyframe has no composite operation and the
+    //     composite operation of this keyframe effect is not replace, then perform the following steps:
+    //         1. Let composite operation to use be the composite operation of keyframe, or if it has none, the composite
+    //            operation of this keyframe effect.
+    //         2. Let value to combine be the property value of target property specified on keyframe.
+    //         3. Replace the property value of target property on keyframe with the result of combining underlying value
+    //            (Va) and value to combine (Vb) using the procedure for the composite operation to use corresponding to the
+    //            target property’s animation type.
+    if (isPropertyAdditiveOrCumulative(property)) {
+        // Only do this for the 0 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
+        // for composition" which really means we don't want to do anything but rather just use the underlying style which
+        // is already set on startKeyframe.
+        if (startKeyframe.offset() || !interval.hasImplicitZeroKeyframe) {
+            auto startKeyframeCompositeOperation = startKeyframe.compositeOperation().value_or(compositeOperation());
+            if (startKeyframeCompositeOperation != CompositeOperation::Replace)
+                compositionCallback(startKeyframe, startKeyframeCompositeOperation);
+        }
+
+        // Only do this for the 1 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
+        // for composition" which really means we don't want to do anything but rather just use the underlying style which
+        // is already set on endKeyframe.
+        if (endKeyframe.offset() != 1 || !interval.hasImplicitOneKeyframe) {
+            auto endKeyframeCompositeOperation = endKeyframe.compositeOperation().value_or(compositeOperation());
+            if (endKeyframeCompositeOperation != CompositeOperation::Replace)
+                compositionCallback(endKeyframe, endKeyframeCompositeOperation);
+        }
+
+        // If this keyframe effect has an iteration composite operation of accumulate,
+        if (iterationCompositeOperation() == IterationCompositeOperation::Accumulate && currentIteration && requiresBlendingForAccumulativeIterationCallback()) {
+            usedBlendingForAccumulativeIteration = true;
+            // apply the following step current iteration times:
+            for (auto i = 0; i < currentIteration; ++i) {
+                // replace the property value of target property on keyframe with the result of combining the
+                // property value on the final keyframe in property-specific keyframes (Va) with the property
+                // value on keyframe (Vb) using the accumulation procedure defined for target property.
+                if (!startKeyframe.offset() && !interval.hasImplicitZeroKeyframe)
+                    accumulationCallback(startKeyframe);
+                if (endKeyframe.offset() == 1 && !interval.hasImplicitOneKeyframe)
+                    accumulationCallback(endKeyframe);
+            }
+        }
+    }
+
+    // 13. If there is only one keyframe in interval endpoints return the property value of target property on that keyframe.
+    if (intervalEndpoints.size() == 1) {
+        interpolationCallback(0, 1, IterationCompositeOperation::Replace);
+        return;
+    }
+
+    // 14. Let start offset be the computed keyframe offset of the first keyframe in interval endpoints.
+    auto startOffset = startKeyframe.offset();
+
+    // 15. Let end offset be the computed keyframe offset of last keyframe in interval endpoints.
+    auto endOffset = endKeyframe.offset();
+
+    // 16. Let interval distance be the result of evaluating (iteration progress - start offset) / (end offset - start offset).
+    auto intervalDistance = (iterationProgress - startOffset) / (endOffset - startOffset);
+
+    // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
+    //     passing interval distance as the input progress.
+    auto transformedDistance = intervalDistance;
+    if (iterationDuration) {
+        auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
+        if (auto* timingFunction = timingFunctionForKeyframe(startKeyframe))
+            transformedDistance = timingFunction->transformProgress(intervalDistance, rangeDuration);
+    }
+
+    // 18. Return the result of applying the interpolation procedure defined by the animation type of the target property, to the values of the target
+    //     property specified on the two keyframes in interval endpoints taking the first such value as Vstart and the second as Vend and using transformed
+    //     distance as the interpolation parameter p.
+    auto iterationCompositeOperation = usedBlendingForAccumulativeIteration ? IterationCompositeOperation::Replace : this->iterationCompositeOperation();
+    currentIteration = usedBlendingForAccumulativeIteration ? 0 : currentIteration;
+    interpolationCallback(transformedDistance, currentIteration, iterationCompositeOperation);
+}
+
 } // namespace WebCore
