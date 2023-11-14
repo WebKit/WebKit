@@ -2352,6 +2352,8 @@ platform/graphics/controls/MeterPart.cpp
 platform/graphics/controls/ProgressBarPart.cpp
 platform/graphics/controls/SliderTrackPart.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
+platform/graphics/cpu/arm/filters/FECompositeNeonArithmeticApplier.cpp
+platform/graphics/cpu/arm/filters/FELightingNEON.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItem.cpp
@@ -2395,6 +2397,7 @@ platform/graphics/filters/SpotLightSource.cpp
 platform/graphics/filters/software/FEBlendSoftwareApplier.cpp
 platform/graphics/filters/software/FEColorMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FEComponentTransferSoftwareApplier.cpp
+platform/graphics/filters/software/FECompositeSoftwareArithmeticApplier.cpp
 platform/graphics/filters/software/FECompositeSoftwareApplier.cpp
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FEDisplacementMapSoftwareApplier.cpp
