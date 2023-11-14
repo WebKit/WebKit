@@ -676,6 +676,12 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
     m_pendingOperations.append({ WTFMove(initOperation) });
 }
 
+void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&& completionHandler)
+{
+    auto updateFormatDescriptionOperation = UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId, WTFMove(completionHandler) };
+    m_pendingOperations.append({ WTFMove(updateFormatDescriptionOperation) });
+}
+
 bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& segment)
 {
     //   * If more than one track for a single type are present (ie 2 audio tracks), then the Track
@@ -741,6 +747,8 @@ void SourceBufferPrivate::processPendingOperations()
         auto operation = m_pendingOperations.takeFirst();
         std::visit(WTF::makeVisitor([&](InitOperation&& initOperation) {
             processInitOperation(WTFMove(initOperation));
+        }, [&](UpdateFormatDescriptionOperation&& operation) {
+            operation.completionHandler(WTFMove(operation.formatDescription), operation.trackId);
         }, [&](SamplesVector&& samples) {
             processMediaSamplesOperation(WTFMove(samples));
         }, [&](ResetParserOperation&&) {

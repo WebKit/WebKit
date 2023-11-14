@@ -2403,11 +2403,6 @@ webkit.org/b/255788 [ Ventura+ Debug ] tiled-drawing/scrolling/scroll-snap/scrol
 
 webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 
-# VP9 is not supported on all Intel HW
-[ x86_64 ] media/media-source/media-source-webm-configuration-change.html [ Pass Failure ]
-[ x86_64 ] media/media-source/media-source-webm-configuration-framerate.html [ Pass Failure ]
-[ x86_64 ] media/media-source/media-source-webm-configuration-vp9-header-color.html [ Pass Failure ]
-
 webkit.org/b/258181 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Slow Failure ]
 
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
