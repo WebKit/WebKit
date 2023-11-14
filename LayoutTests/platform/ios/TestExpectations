@@ -110,7 +110,7 @@ media/encrypted-media/
 printing
 
 # Tests that rely on custom domain names.
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
 

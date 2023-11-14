@@ -615,6 +615,8 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html [ Fai
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Failure ]
 
+webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
