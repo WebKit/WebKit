@@ -859,23 +859,38 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::toAdapt
 template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::sort()
 {
     RELEASE_ASSERT(!isDetached());
+    Vector<ElementType, 16> forShared;
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+    auto lengthValue = integerIndexedObjectLength(this, getter);
+    if (!lengthValue)
+        return false;
+
+    size_t length = lengthValue.value();
+
+    ElementType* originalArray = typedVector();
+    ElementType* array = originalArray;
+    if (isShared()) {
+        forShared.resize(length);
+        WTF::copyElements(forShared.data(), originalArray, length);
+        array = forShared.data();
+    }
+
     switch (Adaptor::typeValue) {
     case TypeFloat32:
-        return sortFloat<int32_t>();
+        sortFloat<int32_t>(array, array + length);
+        break;
     case TypeFloat64:
-        return sortFloat<int64_t>();
-    default: {
-        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        auto lengthValue = integerIndexedObjectLength(this, getter);
-        if (!lengthValue)
-            return false;
-
-        size_t length = lengthValue.value();
-        ElementType* array = typedVector();
+        sortFloat<int64_t>(array, array + length);
+        break;
+    default:
         std::sort(array, array + length);
-        return true;
+        break;
     }
-    }
+
+    if (isShared())
+        WTF::copyElements(originalArray, forShared.data(), length);
+
+    return true;
 }
 
 template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::canAccessRangeQuickly(size_t offset, size_t length)
@@ -933,39 +948,24 @@ inline GCClient::IsoSubspace* JSGenericTypedArrayView<Adaptor>::subspaceFor(VM& 
 }
 
 template<typename Adaptor>  template<typename IntegralType>
-inline bool JSGenericTypedArrayView<Adaptor>::sortFloat()
+inline void JSGenericTypedArrayView<Adaptor>::sortFloat(ElementType* begin, ElementType* end)
 {
     // FIXME: Need to get m_length once.
     ASSERT(sizeof(IntegralType) == sizeof(ElementType));
-
-    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-    auto lengthValue = integerIndexedObjectLength(this, getter);
-    if (!lengthValue)
-        return false;
-
-    size_t length = lengthValue.value();
-
-    auto purifyArray = [&]() {
-        ElementType* array = typedVector();
-        for (size_t i = 0; i < length; i++)
-            array[i] = purifyNaN(array[i]);
-    };
 
     // Since there might be another view that sets the bits of
     // our floats to NaNs with negative sign bits we need to
     // purify the array.
     // We use a separate function here to avoid the strict aliasing rule.
     // We could use a union but ASAN seems to frown upon that.
-    purifyArray();
+    for (auto it = begin; it != end; ++it)
+        *it = purifyNaN(*it);
 
-    IntegralType* array = reinterpret_cast_ptr<IntegralType*>(typedVector());
-    std::sort(array, array + length, [] (IntegralType a, IntegralType b) {
+    std::sort(reinterpret_cast_ptr<IntegralType*>(begin), reinterpret_cast_ptr<IntegralType*>(end), [](IntegralType a, IntegralType b) {
         if (a >= 0 || b >= 0)
             return a < b;
         return a > b;
     });
-
-    return true;
 }
 
 template<typename Adaptor> RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(VM& vm, JSValue value)
