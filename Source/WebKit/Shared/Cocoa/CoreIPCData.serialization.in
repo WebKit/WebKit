@@ -25,7 +25,7 @@
 webkit_platform_headers: "CoreIPCData.h"
 
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCData {
-    IPC::DataReference get();
+    IPC::DataReference dataReference();
 }
 
 #endif // USE(CF)

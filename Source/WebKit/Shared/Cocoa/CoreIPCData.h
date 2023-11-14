@@ -47,33 +47,31 @@ public:
 
     CoreIPCData(CFDataRef cfData)
         : m_cfData(cfData)
-        , m_reference(CFDataGetBytePtr(cfData), CFDataGetLength(cfData))
     {
     }
 
     CoreIPCData(const IPC::DataReference& data)
-        : m_reference(data)
+        : m_cfData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
 
-    RetainPtr<CFDataRef> createData() const
+    RetainPtr<CFDataRef> data() const
     {
-        return adoptCF(CFDataCreate(0, m_reference.data(), m_reference.size()));
+        return m_cfData;
     }
 
-    IPC::DataReference get() const
+    IPC::DataReference dataReference() const
     {
-        return m_reference;
+        return { CFDataGetBytePtr(m_cfData.get()), static_cast<size_t>(CFDataGetLength(m_cfData.get())) };
     }
 
     RetainPtr<id> toID() const
     {
-        return bridge_cast(createData().get());
+        return bridge_cast(data());
     }
 
 private:
     RetainPtr<CFDataRef> m_cfData;
-    IPC::DataReference m_reference;
 };
 
 }
