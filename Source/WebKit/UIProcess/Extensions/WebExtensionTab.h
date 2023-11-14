@@ -48,6 +48,11 @@ class WebProcessProxy;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
+enum class WebExtensionTabImageFormat : uint8_t {
+    PNG,
+    JPEG,
+};
+
 class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
     WTF_MAKE_FAST_ALLOCATED;
@@ -75,10 +80,7 @@ public:
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
-    enum class ImageFormat : uint8_t {
-        PNG,
-        JPEG,
-    };
+    using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
     enum class SkipContainsCheck : bool { No, Yes };
@@ -225,17 +227,5 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionTab::ImageFormat> {
-    using values = EnumValues<
-        WebKit::WebExtensionTab::ImageFormat,
-        WebKit::WebExtensionTab::ImageFormat::PNG,
-        WebKit::WebExtensionTab::ImageFormat::JPEG
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
