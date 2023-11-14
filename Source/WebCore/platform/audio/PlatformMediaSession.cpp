@@ -46,11 +46,11 @@ String convertEnumerationToString(PlatformMediaSession::State state)
         MAKE_STATIC_STRING_IMPL("Paused"),
         MAKE_STATIC_STRING_IMPL("Interrupted"),
     };
-    static_assert(!static_cast<size_t>(PlatformMediaSession::Idle), "PlatformMediaSession::Idle is not 0 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Autoplaying) == 1, "PlatformMediaSession::Autoplaying is not 1 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Playing) == 2, "PlatformMediaSession::Playing is not 2 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Paused) == 3, "PlatformMediaSession::Paused is not 3 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Interrupted) == 4, "PlatformMediaSession::Interrupted is not 4 as expected");
+    static_assert(!static_cast<size_t>(PlatformMediaSession::State::Idle), "PlatformMediaSession::Idle is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::State::Autoplaying) == 1, "PlatformMediaSession::Autoplaying is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::State::Playing) == 2, "PlatformMediaSession::Playing is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::State::Paused) == 3, "PlatformMediaSession::Paused is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::State::Interrupted) == 4, "PlatformMediaSession::Interrupted is not 4 as expected");
     ASSERT(static_cast<size_t>(state) < std::size(values));
     return values[static_cast<size_t>(state)];
 }
@@ -67,14 +67,14 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
         MAKE_STATIC_STRING_IMPL("ProcessInactive"),
         MAKE_STATIC_STRING_IMPL("PlaybackSuspended"),
     };
-    static_assert(!static_cast<size_t>(PlatformMediaSession::NoInterruption), "PlatformMediaSession::NoInterruption is not 0 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SystemSleep) == 1, "PlatformMediaSession::SystemSleep is not 1 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::EnteringBackground) == 2, "PlatformMediaSession::EnteringBackground is not 2 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SystemInterruption) == 3, "PlatformMediaSession::SystemInterruption is not 3 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SuspendedUnderLock) == 4, "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::InvisibleAutoplay) == 5, "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::ProcessInactive) == 6, "PlatformMediaSession::ProcessInactive is not 6 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::PlaybackSuspended) == 7, "PlatformMediaSession::PlaybackSuspended is not 7 as expected");
+    static_assert(!static_cast<size_t>(PlatformMediaSession::InterruptionType::NoInterruption), "PlatformMediaSession::NoInterruption is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::SystemSleep) == 1, "PlatformMediaSession::SystemSleep is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::EnteringBackground) == 2, "PlatformMediaSession::EnteringBackground is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::SystemInterruption) == 3, "PlatformMediaSession::SystemInterruption is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::SuspendedUnderLock) == 4, "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::InvisibleAutoplay) == 5, "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::ProcessInactive) == 6, "PlatformMediaSession::ProcessInactive is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InterruptionType::PlaybackSuspended) == 7, "PlatformMediaSession::PlaybackSuspended is not 7 as expected");
     ASSERT(static_cast<size_t>(type) < std::size(values));
     return values[static_cast<size_t>(type)];
 }
@@ -170,7 +170,7 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
     // When interruptions are overridden, m_interruptionType doesn't get set.
     // Give nested interruptions a chance when the previous interruptions were overridden.
-    if (++m_interruptionCount > 1 && m_interruptionType != NoInterruption)
+    if (++m_interruptionCount > 1 && m_interruptionType != InterruptionType::NoInterruption)
         return;
 
     if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
@@ -180,15 +180,15 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
     m_stateToRestore = state();
     m_notifyingClient = true;
-    setState(Interrupted);
+    setState(State::Interrupted);
     m_interruptionType = type;
     client().suspendPlayback();
     m_notifyingClient = false;
 }
 
-void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
+void PlatformMediaSession::endInterruption(OptionSet<EndInterruptionFlags> flags)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags, ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
+    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
 
     if (!m_interruptionCount) {
         ALWAYS_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
@@ -198,18 +198,18 @@ void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
     if (--m_interruptionCount)
         return;
 
-    if (m_interruptionType == NoInterruption)
+    if (m_interruptionType == InterruptionType::NoInterruption)
         return;
 
     State stateToRestore = m_stateToRestore;
-    m_stateToRestore = Idle;
-    m_interruptionType = NoInterruption;
+    m_stateToRestore = State::Idle;
+    m_interruptionType = InterruptionType::NoInterruption;
     setState(stateToRestore);
 
-    if (stateToRestore == Autoplaying)
+    if (stateToRestore == State::Autoplaying)
         client().resumeAutoplaying();
 
-    bool shouldResume = flags & MayResumePlaying && stateToRestore == Playing;
+    bool shouldResume = flags.contains(EndInterruptionFlags::MayResumePlaying) && stateToRestore == State::Playing;
     client().mayResumePlayback(shouldResume);
 }
 
@@ -219,13 +219,13 @@ void PlatformMediaSession::clientWillBeginAutoplaying()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
-    if (state() == Interrupted) {
-        m_stateToRestore = Autoplaying;
+    if (state() == State::Interrupted) {
+        m_stateToRestore = State::Autoplaying;
         ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Autoplaying\"");
         return;
     }
 
-    setState(Autoplaying);
+    setState(State::Autoplaying);
 }
 
 bool PlatformMediaSession::clientWillBeginPlayback()
@@ -238,13 +238,13 @@ bool PlatformMediaSession::clientWillBeginPlayback()
     SetForScope preparingToPlay(m_preparingToPlay, true);
 
     if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
-        if (state() == Interrupted)
-            m_stateToRestore = Playing;
+        if (state() == State::Interrupted)
+            m_stateToRestore = State::Playing;
         return false;
     }
 
-    m_stateToRestore = Playing;
-    setState(Playing);
+    m_stateToRestore = State::Playing;
+    setState(State::Playing);
     return true;
 }
 
@@ -254,13 +254,13 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
         return true;
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
-    if (state() == Interrupted) {
-        m_stateToRestore = Paused;
+    if (state() == State::Interrupted) {
+        m_stateToRestore = State::Paused;
         ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
         return false;
     }
     
-    setState(Paused);
+    setState(State::Paused);
     PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
 }
@@ -281,8 +281,8 @@ void PlatformMediaSession::pauseSession()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (state() == Interrupted)
-        m_stateToRestore = Paused;
+    if (state() == State::Interrupted)
+        m_stateToRestore = State::Paused;
 
     m_client.suspendPlayback();
 }

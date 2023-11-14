@@ -345,7 +345,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
     // This allows other applications to resume playback after an "alert-like" audio
     // is played by web content.
 
-    if (!anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::Playing; })
+    if (!anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::State::Playing; })
         && session.presentationType() == PlatformMediaSession::MediaType::Audio
         && session.isEnded()
         && session.isLongEnoughForMainContent())
