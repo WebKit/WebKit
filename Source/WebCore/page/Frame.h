@@ -85,6 +85,9 @@ public:
     virtual void didFinishLoadInAnotherProcess() = 0;
 
     virtual FrameView* virtualView() const = 0;
+    virtual void disconnectView() = 0;
+    virtual const Frame* opener() const = 0;
+    virtual Frame* opener() = 0;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);

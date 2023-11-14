@@ -761,9 +761,6 @@ WebPageProxy::~WebPageProxy()
     if (preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
-
-    internals().remotePageProxyInOpenerProcess = nullptr;
-    internals().openedRemotePageProxies.clear();
 }
 
 void WebPageProxy::addAllMessageReceivers()
@@ -1492,6 +1489,9 @@ void WebPageProxy::close()
     // Make sure we don't hold a process assertion after getting closed.
     m_processActivityState.reset();
     internals().audibleActivityTimer.stop();
+
+    internals().remotePageProxyInOpenerProcess = nullptr;
+    internals().openedRemotePageProxies.clear();
 
     stopAllURLSchemeTasks();
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
@@ -5500,11 +5500,11 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 #endif
 }
 
-void WebPageProxy::didCreateSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newFrameID)
+void WebPageProxy::didCreateSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newFrameID, const String& frameName)
 {
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     MESSAGE_CHECK(m_process, parent);
-    parent->didCreateSubframe(newFrameID);
+    parent->didCreateSubframe(newFrameID, frameName);
 }
 
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
@@ -6114,7 +6114,7 @@ void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, WebC
     function(protectedProcess(), webPageID());
 }
 
-void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame)
+void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
 {
     if (!m_preferences->siteIsolationEnabled())
         return;
@@ -6128,7 +6128,7 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess.processID() == newFrame.process().processID())
             return;
-        webProcess.send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID()), pageID);
+        webProcess.send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), frameName), pageID);
     });
 }
 
@@ -6815,7 +6815,7 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameInfoData&& frameInfo
             MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
             RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
             MESSAGE_CHECK(m_process, parentFrame);
-            parentFrame->didCreateSubframe(frameInfo.frameID);
+            parentFrame->didCreateSubframe(frameInfo.frameID, frameInfo.frameName);
         }
     }
 

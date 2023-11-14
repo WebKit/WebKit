@@ -51,7 +51,8 @@ public:
 
     // FIXME: <rdar://118263278> Move this to a pure virtual function on Frame or just a function on Frame, move LocalDOMWindow::opener to DOMWindow.
     void setOpener(Frame* opener) { m_opener = opener; }
-    Frame* opener() const { return m_opener.get(); }
+    Frame* opener() final { return m_opener.get(); }
+    const Frame* opener() const final { return m_opener.get(); }
 
     const RemoteFrameClient& client() const { return m_client.get(); }
     RemoteFrameClient& client() { return m_client.get(); }
@@ -73,6 +74,7 @@ private:
     void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
+    void disconnectView() final;
     DOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;

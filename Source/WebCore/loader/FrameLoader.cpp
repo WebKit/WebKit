@@ -3995,12 +3995,12 @@ RefPtr<LocalFrame> FrameLoader::findFrameForNavigation(const AtomString& name, D
     if (!activeDocument)
         return nullptr;
 
-    RefPtr frame = dynamicDowncast<LocalFrame>(m_frame->tree().findBySpecifiedName(name, activeDocument->frame() ? *activeDocument->protectedFrame() : protectedFrame().get()));
-
-    if (!activeDocument->canNavigate(frame.get()))
+    RefPtr frame = m_frame->tree().findBySpecifiedName(name, activeDocument->frame() ? *activeDocument->protectedFrame() : protectedFrame().get());
+    if (!activeDocument->canNavigate(dynamicDowncast<LocalFrame>(frame.get())))
         return nullptr;
 
-    return frame;
+    // FIXME: <rdar://118363128> This should return a Frame. If a RemoteFrame with the given name exists, we should use that.
+    return dynamicDowncast<LocalFrame>(frame.get());
 }
 
 void FrameLoader::loadSameDocumentItem(HistoryItem& item)
