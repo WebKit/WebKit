@@ -632,9 +632,9 @@ public:
 
         Jump(AssemblerLabel jmp, ARM64Assembler::JumpType type, ARM64Assembler::Condition condition, unsigned bitNumber, ARM64Assembler::RegisterID compareRegister)
             : m_label(jmp)
+            , m_bitNumber(bitNumber)
             , m_type(type)
             , m_condition(condition)
-            , m_bitNumber(bitNumber)
             , m_compareRegister(compareRegister)
         {
             ASSERT((type == ARM64Assembler::JumpTestBit) || (type == ARM64Assembler::JumpTestBitFixedSize));
@@ -703,10 +703,10 @@ public:
         ARMv7Assembler::JumpType m_type { ARMv7Assembler::JumpNoCondition };
         ARMv7Assembler::Condition m_condition { ARMv7Assembler::ConditionInvalid };
 #elif CPU(ARM64)
+        unsigned m_bitNumber { 0 };
         ARM64Assembler::JumpType m_type { ARM64Assembler::JumpNoCondition };
         ARM64Assembler::Condition m_condition { ARM64Assembler::ConditionInvalid };
         bool m_is64Bit { false };
-        unsigned m_bitNumber { 0 };
         ARM64Assembler::RegisterID m_compareRegister { ARM64Registers::InvalidGPRReg };
 #endif
     };
