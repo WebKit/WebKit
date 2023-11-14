@@ -152,6 +152,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
             iter->key,
             SymbolTableEntry(iter->value.varOffset(), iter->value.getAttributes()));
     }
+
     result->m_maxScopeOffset = m_maxScopeOffset;
 
     if (ScopedArgumentsTable* arguments = this->arguments())
