@@ -402,9 +402,6 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     textDecorationLine = other.textDecorationLine;
     hasExplicitlySetDirection = other.hasExplicitlySetDirection;
     hasExplicitlySetWritingMode = other.hasExplicitlySetWritingMode;
-#if ENABLE(DARK_MODE_CSS)
-    hasExplicitlySetColorScheme = other.hasExplicitlySetColorScheme;
-#endif
     usesViewportUnits = other.usesViewportUnits;
     usesContainerUnits = other.usesContainerUnits;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
@@ -1564,7 +1561,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // unicodeBidi
         // hasExplicitlySetDirection
         // hasExplicitlySetWritingMode
-        // hasExplicitlySetColorScheme
         // usesViewportUnits
         // usesContainerUnits
         // hasExplicitlyInheritedProperties
@@ -1810,6 +1806,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // Non animated styles are followings.
         // deprecatedFlexibleBox
         // hasAttrContent
+        // hasExplicitlySetColorScheme
         // appearance
         // effectiveAppearance
         // userDrag
