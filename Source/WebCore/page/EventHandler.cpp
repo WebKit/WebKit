@@ -65,7 +65,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#include "HandleMouseEventResult.h"
+#include "HandleUserInputEventResult.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
@@ -1769,7 +1769,7 @@ static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mou
 
 }
 
-HandleMouseEventResult EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
+HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref frame = m_frame.get();
     RefPtr protectedView { frame->view() };
@@ -2016,7 +2016,7 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
     return m_frame->view();
 }
 
-HandleMouseEventResult EventHandler::mouseMoved(const PlatformMouseEvent& event)
+HandleUserInputEventResult EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
     Ref frame = m_frame.get();
     RefPtr protectedView { frame->view() };
@@ -2085,7 +2085,7 @@ HitTestResult EventHandler::getHitTestResultForMouseEvent(const PlatformMouseEve
     return prepareMouseEvent(request, platformMouseEvent).hitTestResult();
 }
 
-HandleMouseEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
+HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
 {
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
@@ -2239,7 +2239,7 @@ static RefPtr<Node> targetNodeForClickEvent(Node* mousePressNode, Node* mouseRel
     return nullptr;
 }
 
-HandleMouseEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
+HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref frame = m_frame.get();
     RefPtr protectedView { frame->view() };

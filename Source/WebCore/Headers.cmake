@@ -1496,7 +1496,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameView.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
-    page/HandleMouseEventResult.h
+    page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h

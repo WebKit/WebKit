@@ -76,7 +76,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
-#include <WebCore/HandleMouseEventResult.h>
+#include <WebCore/HandleUserInputEventResult.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
@@ -1241,7 +1241,7 @@ bool WebFrame::handleContextMenuEvent(const PlatformMouseEvent& platformMouseEve
 }
 #endif
 
-WebCore::HandleMouseEventResult WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
+WebCore::HandleUserInputEventResult WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
 {
     auto* coreLocalFrame = dynamicDowncast<LocalFrame>(coreFrame());
     if (!coreLocalFrame)

@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-class HandleMouseEventResult {
+class HandleUserInputEventResult {
 public:
-    HandleMouseEventResult(bool handled)
+    HandleUserInputEventResult(bool handled)
         : m_result(handled)
     {
     }
 
-    HandleMouseEventResult(RemoteUserInputEventData remoteUserInputEventData)
+    HandleUserInputEventResult(RemoteUserInputEventData remoteUserInputEventData)
         : m_result(makeUnexpected(remoteUserInputEventData))
     {
     }
