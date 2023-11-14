@@ -83,6 +83,11 @@ extern "C" {
 }
 #endif
 
+#if USE(INLINE_JIT_PERMISSIONS_API)
+#include <wtf/darwin/WeakLinking.h>
+WTF_WEAK_LINK_FORCE_IMPORT(se_memory_inline_jit_restrict_with_witness_supported);
+#endif
+
 namespace JSC {
 
 using namespace WTF;
@@ -412,7 +417,8 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         bool fastJITPermissionsIsSupported = false;
 #if OS(DARWIN) && CPU(ARM64)
 #if USE(INLINE_JIT_PERMISSIONS_API)
-        fastJITPermissionsIsSupported = (se_memory_inline_jit_restrict_with_witness_supported != nullptr) && !!se_memory_inline_jit_restrict_with_witness_supported();
+        fastJITPermissionsIsSupported = (se_memory_inline_jit_restrict_with_witness_supported != nullptr)
+            && !!se_memory_inline_jit_restrict_with_witness_supported();
 #elif USE(PTHREAD_JIT_PERMISSIONS_API)
         fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
 #elif USE(APPLE_INTERNAL_SDK)
