@@ -234,8 +234,6 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
-    const HashSet<uint32_t>& suppliedColors() const { return m_suppliedColors; }
-
     class FontProxy final : public FontSelectorClient {
     public:
         FontProxy() = default;
@@ -455,7 +453,6 @@ private:
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
-    HashSet<uint32_t> m_suppliedColors;
     mutable std::optional<CachedImageData> m_cachedImageData;
     CanvasRenderingContext2DSettings m_settings;
 };

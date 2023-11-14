@@ -520,16 +520,9 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+
     state.fillStyle.applyFillColor(*c);
     state.unparsedFillColor = String();
-
-    if (!style.srgbaColor())
-        return;
-    if (auto color = style.srgbaColor()->tryGetAsSRGBABytes()) {
-        auto colorValue { PackedColor::RGBA { *color }.value };
-        if (m_suppliedColors.isValidValue(colorValue))
-            m_suppliedColors.add(colorValue);
-    }
 }
 
 void CanvasRenderingContext2DBase::setLineWidth(double width)
