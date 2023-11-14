@@ -1331,16 +1331,16 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     ASSERT(newSize <= maxFunctionLocals);
     WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(newSize), "can't allocate memory for ", newSize, " locals");
 
-    for (uint32_t i = 0; i < count; ++i) {
+    m_locals.appendUsingFunctor(count, [&](size_t) {
         Variable* local = m_proc.addVariable(toB3Type(type));
-        m_locals.unsafeAppendWithoutCapacityCheck(local);
         if (type.isV128())
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), v128_t { }, Origin()));
         else {
             auto val = isRefType(type) ? JSValue::encode(jsNull()) : 0;
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
         }
-    }
+        return local;
+    });
     return { };
 }
 
