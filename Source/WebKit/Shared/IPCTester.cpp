@@ -213,6 +213,12 @@ void IPCTester::syncPing(IPC::Connection&, uint32_t value, CompletionHandler<voi
     completionHandler(value + 1);
 }
 
+void IPCTester::syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&& completionHandler)
+{
+    UNUSED_PARAM(value);
+    completionHandler();
+}
+
 void IPCTester::stopIfNeeded()
 {
     if (m_testQueue) {

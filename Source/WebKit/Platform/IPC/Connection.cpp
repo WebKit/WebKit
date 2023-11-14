@@ -1109,6 +1109,8 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
 
 #if ENABLE(IPC_TESTING_API)
     ASSERT(decoder.isValid() || m_ignoreInvalidMessageForTesting);
+    if (!decoder.isValid())
+        replyEncoder->setSyncMessageDeserializationFailure();
 #else
     ASSERT(decoder.isValid());
 #endif

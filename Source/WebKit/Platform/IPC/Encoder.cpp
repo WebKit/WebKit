@@ -114,6 +114,13 @@ void Encoder::setFullySynchronousModeForTesting()
     messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
+#if ENABLE(IPC_TESTING_API)
+void Encoder::setSyncMessageDeserializationFailure()
+{
+    messageFlags().add(MessageFlags::SyncMessageDeserializationFailure);
+}
+#endif
+
 void Encoder::setShouldMaintainOrderingWithAsyncMessages()
 {
     messageFlags().add(MessageFlags::MaintainOrderingWithAsyncMessages);

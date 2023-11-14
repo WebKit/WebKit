@@ -123,6 +123,13 @@ bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
     return m_messageFlags.contains(MessageFlags::MaintainOrderingWithAsyncMessages);
 }
 
+#if ENABLE(IPC_TESTING_API)
+bool Decoder::hasSyncMessageDeserializationFailure() const
+{
+    return m_messageFlags.contains(MessageFlags::SyncMessageDeserializationFailure);
+}
+#endif
+
 #if PLATFORM(MAC)
 void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)
 {
