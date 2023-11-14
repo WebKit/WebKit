@@ -58,9 +58,6 @@ static Ref<SupportedFeatures> supportedFeatures(const Vector<WGPUFeatureName>& f
         case WGPUFeatureName_TimestampQuery:
             result.append("timestamp-query"_s);
             break;
-        case WGPUFeatureName_PipelineStatisticsQuery:
-            result.append("pipeline-statistics-query"_s);
-            break;
         case WGPUFeatureName_TextureCompressionBC:
             result.append("texture-compression-bc"_s);
             break;

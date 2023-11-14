@@ -27,7 +27,6 @@
 
 #include "GPUIntegralTypes.h"
 #include "GPUQuerySet.h"
-#include "GPURenderPassTimestampLocation.h"
 #include "WebGPURenderPassTimestampWrites.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

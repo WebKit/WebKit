@@ -63,9 +63,6 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         buffer.label = fromAPI(label);
         return QuerySet::create(buffer, count, type, *this);
     }
-    case WGPUQueryType_PipelineStatistics:
-        // FIXME: Implement pipeline statistics query sets.
-        return QuerySet::createInvalid(*this);
     case WGPUQueryType_Force32:
         ASSERT_NOT_REACHED("unexpected queryType");
         return QuerySet::createInvalid(*this);
@@ -111,13 +108,12 @@ void QuerySet::setLabel(String&& label)
     // MTLCounterSampleBuffer's label property is read-only.
 }
 
-void QuerySet::setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex)
+void QuerySet::setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex)
 {
     ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
     ASSERT(m_overrideLocations.size() == m_count);
-    ASSERT(myIndex < m_overrideLocations.size());
 
-    m_overrideLocations[myIndex] = { { otherQuerySet, otherIndex } };
+    m_overrideLocations[beginningOfPassIndex] = { { otherQuerySet, endOfPassIndex } };
 }
 
 void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const
@@ -125,9 +121,10 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
     if (!queryCount)
         return;
 
-    auto encode = [&](id<MTLCounterSampleBuffer> counterSampleBuffer, uint32_t localFirstQuery, uint32_t localQueryCount) {
-        ASSERT(localQueryCount);
-        [commandEncoder resolveCounters:counterSampleBuffer inRange:NSMakeRange(localFirstQuery, localQueryCount) destinationBuffer:destination.buffer() destinationOffset:destinationOffset + sizeof(MTLCounterResultTimestamp) * (localFirstQuery - firstQuery)];
+    auto encode = [&](id<MTLCounterSampleBuffer> counterSampleBuffer, uint32_t indexIntoDestinationBuffer) {
+        constexpr auto countersToResolve = 2;
+        RELEASE_ASSERT(counterSampleBuffer.sampleCount >= countersToResolve);
+        [commandEncoder resolveCounters:counterSampleBuffer inRange:NSMakeRange(0, countersToResolve) destinationBuffer:destination.buffer() destinationOffset:destinationOffset + sizeof(MTLCounterResultTimestamp) * indexIntoDestinationBuffer];
     };
 
     struct State {
@@ -135,30 +132,22 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
         uint32_t index;
     };
 
-    auto getState = [&](uint32_t queryIndex) -> State {
-        if (const auto& overrideLocation = m_overrideLocations[queryIndex])
-            return { overrideLocation->other.ptr(), overrideLocation->otherIndex };
-        return { this, queryIndex };
-    };
-
-    auto isSuccessive = [](const State& before, const State& after) {
-        return before.querySet == after.querySet && before.index + 1 == after.index;
-    };
-
-    auto state = getState(firstQuery);
-    auto initialState = state;
-    uint32_t lastBoundary = firstQuery;
-    for (uint32_t i = firstQuery + 1; i < firstQuery + queryCount; ++i) {
-        auto currentState = getState(i);
-        if (isSuccessive(state, currentState)) {
-            state = currentState;
-            continue;
+    auto getState = [&](uint32_t queryIndex) -> std::optional<State> {
+        std::optional<State> result;
+        if (const auto& overrideLocation = m_overrideLocations[queryIndex]) {
+            RELEASE_ASSERT(overrideLocation->otherIndex == queryIndex + 1);
+            result = { overrideLocation->other.ptr(), queryIndex };
         }
-        encode(initialState.querySet->counterSampleBuffer(), initialState.index, i - lastBoundary);
-        initialState = currentState;
-        lastBoundary = i;
+        return result;
+    };
+
+    for (uint32_t i = firstQuery; i < firstQuery + queryCount; ++i) {
+        auto state = getState(i);
+        if (!state)
+            continue;
+
+        encode(state->querySet->counterSampleBuffer(), state->index);
     }
-    encode(state.querySet->counterSampleBuffer(), initialState.index, firstQuery + queryCount - lastBoundary);
 }
 
 } // namespace WebGPU

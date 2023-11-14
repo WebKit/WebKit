@@ -48,7 +48,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUCompilationMessageType.h
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
-    Modules/WebGPU/GPUComputePassTimestampLocation.h
     Modules/WebGPU/GPUComputePassTimestampWrites.h
     Modules/WebGPU/GPUComputePipeline.h
     Modules/WebGPU/GPUComputePipelineDescriptor.h
@@ -106,7 +105,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPURenderPassDescriptor.h
     Modules/WebGPU/GPURenderPassEncoder.h
     Modules/WebGPU/GPURenderPassLayout.h
-    Modules/WebGPU/GPURenderPassTimestampLocation.h
     Modules/WebGPU/GPURenderPassTimestampWrites.h
     Modules/WebGPU/GPURenderPipeline.h
     Modules/WebGPU/GPURenderPipelineDescriptor.h
@@ -209,7 +207,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUCompositorIntegration.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassEncoder.h
-    Modules/WebGPU/InternalAPI/WebGPUComputePassTimestampLocation.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassTimestampWrites.h
     Modules/WebGPU/InternalAPI/WebGPUComputePipeline.h
     Modules/WebGPU/InternalAPI/WebGPUComputePipelineDescriptor.h
@@ -267,7 +264,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPURenderPassDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassEncoder.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassLayout.h
-    Modules/WebGPU/InternalAPI/WebGPURenderPassTimestampLocation.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassTimestampWrites.h
     Modules/WebGPU/InternalAPI/WebGPURenderPipeline.h
     Modules/WebGPU/InternalAPI/WebGPURenderPipelineDescriptor.h

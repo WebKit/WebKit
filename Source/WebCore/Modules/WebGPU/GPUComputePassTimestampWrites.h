@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "GPUComputePassTimestampLocation.h"
 #include "GPUIntegralTypes.h"
 #include "GPUQuerySet.h"
 #include "WebGPUComputePassTimestampWrites.h"

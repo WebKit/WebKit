@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "WebGPUComputePassTimestampLocation.h"
 #include "WebGPUIntegralTypes.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>

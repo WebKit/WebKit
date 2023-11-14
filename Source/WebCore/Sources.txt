@@ -3561,7 +3561,6 @@ JSGPUCompilationMessage.cpp
 JSGPUCompilationMessageType.cpp
 JSGPUComputePassDescriptor.cpp
 JSGPUComputePassEncoder.cpp
-JSGPUComputePassTimestampLocation.cpp
 JSGPUComputePassTimestampWrites.cpp
 JSGPUComputePipeline.cpp
 JSGPUComputePipelineDescriptor.cpp
@@ -3627,7 +3626,6 @@ JSGPURenderPassDepthStencilAttachment.cpp
 JSGPURenderPassDescriptor.cpp
 JSGPURenderPassEncoder.cpp
 JSGPURenderPassLayout.cpp
-JSGPURenderPassTimestampLocation.cpp
 JSGPURenderPassTimestampWrites.cpp
 JSGPURenderPipeline.cpp
 JSGPURenderPipelineDescriptor.cpp

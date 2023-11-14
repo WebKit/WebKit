@@ -59,11 +59,9 @@ public:
 
     ~ComputePassEncoder();
 
-    void beginPipelineStatisticsQuery(const QuerySet&, uint32_t queryIndex);
     void dispatch(uint32_t x, uint32_t y, uint32_t z);
     void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void endPass();
-    void endPipelineStatisticsQuery();
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
