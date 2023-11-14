@@ -55,6 +55,7 @@ public:
     
     History* history() const { return m_history.get(); }
 
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=264748): add logic to determine hasUAVisualTransition value.
     bool hasUAVisualTransition() const { return m_hasUAVisualTransition; }
 
 private:
