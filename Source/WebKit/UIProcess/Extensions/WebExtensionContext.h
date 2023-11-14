@@ -67,7 +67,6 @@
 
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
-OBJC_CLASS NSMapTable;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
@@ -242,14 +241,14 @@ public:
     void grantPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
 
-    void grantPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity());
-    void denyPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity());
+    void grantPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity(), EqualityOnly = EqualityOnly::Yes);
+    void denyPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity(), EqualityOnly = EqualityOnly::Yes);
 
     bool removeGrantedPermissions(PermissionsSet&);
-    bool removeGrantedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
+    bool removeGrantedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly = EqualityOnly::Yes);
 
     bool removeDeniedPermissions(PermissionsSet&);
-    bool removeDeniedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
+    bool removeDeniedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly = EqualityOnly::Yes);
 
     PermissionsMap::KeysConstIteratorRange currentPermissions() { return grantedPermissions().keys(); }
     PermissionMatchPatternsMap::KeysConstIteratorRange currentPermissionMatchPatterns() { return grantedPermissionMatchPatterns().keys(); }
@@ -296,7 +295,12 @@ public:
 
     void didMoveTab(const WebExtensionTab&, size_t oldIndex, const WebExtensionWindow* oldWindow = nullptr);
     void didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab);
-    void didChangeTabProperties(const WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
+    void didChangeTabProperties(WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
+
+    void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didFinishLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
+    void didFailLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
 
     WebExtensionAction& defaultAction();
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
@@ -560,8 +564,6 @@ private:
 
     ListHashSet<URL> m_cachedPermissionURLs;
     HashMap<URL, PermissionState> m_cachedPermissionStates;
-
-    RetainPtr<NSMapTable> m_temporaryTabPermissionMatchPatterns;
 
     bool m_requestedOptionalAccessToAllHosts { false };
     bool m_hasAccessInPrivateBrowsing { false };

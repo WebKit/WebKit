@@ -176,6 +176,20 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
     return m_extensionContext.get();
 }
 
+void WebExtensionAction::clearCustomizations()
+{
+    if (!m_customIcons && !m_customPopupPath.isNull() && !m_customLabel.isNull() && !m_customBadgeText.isNull() && !m_customEnabled)
+        return;
+
+    m_customIcons = nil;
+    m_customPopupPath = nullString();
+    m_customLabel = nullString();
+    m_customBadgeText = nullString();
+    m_customEnabled = std::nullopt;
+
+    propertiesDidChange();
+}
+
 void WebExtensionAction::propertiesDidChange()
 {
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
@@ -226,6 +240,9 @@ String WebExtensionAction::popupPath() const
 
 void WebExtensionAction::setPopupPath(String path)
 {
+    if (m_customPopupPath == path)
+        return;
+
     m_customPopupPath = path;
 
     propertiesDidChange();
@@ -362,6 +379,9 @@ String WebExtensionAction::label(FallbackWhenEmpty fallback) const
 
 void WebExtensionAction::setLabel(String label)
 {
+    if (m_customLabel == label)
+        return;
+
     m_customLabel = label;
 
     propertiesDidChange();
@@ -386,6 +406,9 @@ String WebExtensionAction::badgeText() const
 
 void WebExtensionAction::setBadgeText(String badgeText)
 {
+    if (m_customBadgeText == badgeText)
+        return;
+
     m_customBadgeText = badgeText;
 
     propertiesDidChange();
@@ -410,6 +433,9 @@ bool WebExtensionAction::isEnabled() const
 
 void WebExtensionAction::setEnabled(std::optional<bool> enabled)
 {
+    if (m_customEnabled == enabled)
+        return;
+
     m_customEnabled = enabled;
 
     propertiesDidChange();

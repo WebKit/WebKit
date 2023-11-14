@@ -612,10 +612,19 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     if (matchPatterns.isEmpty())
         return;
 
-    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
+    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
-    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
+    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+
+    // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
+    constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
+    for (auto& tab : openTabs()) {
+        for (auto& matchPattern : matchPatterns) {
+            if (matchPattern->matchesURL(tab->url()))
+                didChangeTabProperties(tab, changedProperties);
+        }
+    }
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), matchPatterns]() {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
@@ -654,7 +663,7 @@ void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime
     postAsyncNotification(_WKWebExtensionContextPermissionsWereDeniedNotification, permissions);
 }
 
-void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate)
+void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
     if (permissionMatchPatterns.isEmpty())
         return;
@@ -665,7 +674,7 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
     for (auto& pattern : permissionMatchPatterns)
         m_grantedPermissionMatchPatterns.add(pattern, expirationDate);
 
-    removeDeniedPermissionMatchPatterns(permissionMatchPatterns, EqualityOnly::Yes);
+    removeDeniedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
     clearCachedPermissionStates();
 
     addInjectedContent(injectedContents(), permissionMatchPatterns);
@@ -673,7 +682,7 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
     postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, permissionMatchPatterns);
 }
 
-void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate)
+void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
     if (permissionMatchPatterns.isEmpty())
         return;
@@ -684,7 +693,7 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
     for (auto& pattern : permissionMatchPatterns)
         m_deniedPermissionMatchPatterns.add(pattern, expirationDate);
 
-    removeGrantedPermissionMatchPatterns(permissionMatchPatterns, EqualityOnly::Yes);
+    removeGrantedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
     clearCachedPermissionStates();
 
     updateInjectedContent();
@@ -704,6 +713,18 @@ bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& 
 
     removeInjectedContent(matchPatternsToRemove);
 
+    // Clear activeTab permissions if the patterns match.
+    for (auto& tab : openTabs()) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (!temporaryPattern)
+            continue;
+
+        for (auto& pattern : matchPatternsToRemove) {
+            if (temporaryPattern->matchesPattern(pattern))
+                tab->setTemporaryPermissionMatchPattern(nullptr);
+        }
+    }
+
     return true;
 }
 
@@ -714,7 +735,7 @@ bool WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToR
 
 bool WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification))
+    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification))
         return false;
 
     updateInjectedContent();
@@ -950,22 +971,22 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     return PermissionState::Unknown;
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& coreURL, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& url, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
-    if (coreURL.isEmpty())
+    if (url.isEmpty())
         return PermissionState::Unknown;
 
-    if (isURLForThisExtension(coreURL))
+    if (isURLForThisExtension(url))
         return PermissionState::GrantedImplicitly;
 
-    NSURL *url = coreURL;
-    ASSERT(url);
-
-    if (!WebExtensionMatchPattern::validSchemes().contains(url.scheme))
+    if (!WebExtensionMatchPattern::validSchemes().contains(url.protocol().toStringWithoutCopying()))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesURL:url])
-        return PermissionState::GrantedExplicitly;
+    if (tab) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && temporaryPattern->matchesURL(url))
+            return PermissionState::GrantedExplicitly;
+    }
 
     bool skipRequestedPermissions = options.contains(PermissionStateOptions::SkipRequestedPermissions);
 
@@ -974,13 +995,13 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     auto& deniedPermissionMatchPatterns = this->deniedPermissionMatchPatterns();
 
     // If the cache still has the URL, then it has not expired.
-    if (m_cachedPermissionURLs.contains(coreURL)) {
-        PermissionState cachedState = m_cachedPermissionStates.get(coreURL);
+    if (m_cachedPermissionURLs.contains(url)) {
+        PermissionState cachedState = m_cachedPermissionStates.get(url);
 
         // We only want to return an unknown cached state if the SkippingRequestedPermissions option isn't used.
         if (cachedState != PermissionState::Unknown || skipRequestedPermissions) {
             // Move the URL to the end, so it stays in the cache longer as a recent hit.
-            m_cachedPermissionURLs.appendOrMoveToLast(coreURL);
+            m_cachedPermissionURLs.appendOrMoveToLast(url);
 
             if ((cachedState == PermissionState::RequestedExplicitly || cachedState == PermissionState::RequestedImplicitly) && skipRequestedPermissions)
                 return PermissionState::Unknown;
@@ -990,8 +1011,8 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     }
 
     auto cacheResultAndReturn = ^PermissionState(PermissionState result) {
-        m_cachedPermissionURLs.appendOrMoveToLast(coreURL);
-        m_cachedPermissionStates.set(coreURL, result);
+        m_cachedPermissionURLs.appendOrMoveToLast(url);
+        m_cachedPermissionStates.set(url, result);
 
         ASSERT(m_cachedPermissionURLs.size() == m_cachedPermissionURLs.size());
 
@@ -1077,8 +1098,11 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExt
     if (!pattern.matchesAllURLs() && !WebExtensionMatchPattern::validSchemes().contains(pattern.scheme()))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesPattern:pattern.wrapper()])
-        return PermissionState::GrantedExplicitly;
+    if (tab) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && temporaryPattern->matchesPattern(pattern))
+            return PermissionState::GrantedExplicitly;
+    }
 
     // Access the maps here to remove any expired entries, and only do it once for this call.
     auto& grantedPermissionMatchPatterns = this->grantedPermissionMatchPatterns();
@@ -1148,20 +1172,21 @@ void WebExtensionContext::setPermissionState(PermissionState state, const String
 {
     ASSERT(!permission.isEmpty());
 
+    auto permissions = PermissionsSet { permission };
+
     switch (state) {
     case PermissionState::DeniedExplicitly:
-        denyPermissions({ permission }, expirationDate);
+        denyPermissions(WTFMove(permissions), expirationDate);
         break;
 
     case PermissionState::Unknown: {
-        PermissionsSet permissionsToRemove = { permission };
-        removeGrantedPermissions(permissionsToRemove);
-        removeDeniedPermissions(permissionsToRemove);
+        removeGrantedPermissions(permissions);
+        removeDeniedPermissions(permissions);
         break;
     }
 
     case PermissionState::GrantedExplicitly:
-        grantPermissions({ permission }, expirationDate);
+        grantPermissions(WTFMove(permissions), expirationDate);
         break;
 
     case PermissionState::DeniedImplicitly:
@@ -1188,20 +1213,22 @@ void WebExtensionContext::setPermissionState(PermissionState state, WebExtension
 {
     ASSERT(pattern.isValid());
 
+    auto patterns = MatchPatternSet { pattern };
+    auto equalityOnly = pattern.matchesAllHosts() ? EqualityOnly::Yes : EqualityOnly::No;
+
     switch (state) {
     case PermissionState::DeniedExplicitly:
-        denyPermissionMatchPatterns({ pattern }, expirationDate);
+        denyPermissionMatchPatterns(WTFMove(patterns), expirationDate, equalityOnly);
         break;
 
     case PermissionState::Unknown: {
-        MatchPatternSet patternsToRemove = { pattern };
-        removeGrantedPermissionMatchPatterns(patternsToRemove, EqualityOnly::Yes);
-        removeDeniedPermissionMatchPatterns(patternsToRemove, EqualityOnly::Yes);
+        removeGrantedPermissionMatchPatterns(patterns, equalityOnly);
+        removeDeniedPermissionMatchPatterns(patterns, equalityOnly);
         break;
     }
 
     case PermissionState::GrantedExplicitly:
-        grantPermissionMatchPatterns({ pattern }, expirationDate);
+        grantPermissionMatchPatterns(WTFMove(patterns), expirationDate, equalityOnly);
         break;
 
     case PermissionState::DeniedImplicitly:
@@ -1628,16 +1655,112 @@ void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const Web
     fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
 }
 
-void WebExtensionContext::didChangeTabProperties(const WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
+void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
 {
     ASSERT(tab.extensionContext() == this);
 
-    RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
+    RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (0x%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
 
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    fireTabsUpdatedEventIfNeeded(tab.parameters(), tab.changedParameters(properties));
+    bool hasChangesPending = !tab.changedProperties().isEmpty();
+    tab.addChangedProperties(properties);
+
+    // If there are already changes pending, don't schedule the event to fire again.
+    if (hasChangesPending)
+        return;
+
+    constexpr auto updatedEventDelay = 25_ms;
+
+    // Fire the updated event after a small delay to coalesce relevant changes together.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(updatedEventDelay.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tab = Ref { tab }]() {
+        RELEASE_LOG_DEBUG(Extensions, "Firing updated tab properties (0x%{public}X) for tab %{public}llu", tab->changedProperties().toRaw(), tab->identifier().toUInt64());
+        fireTabsUpdatedEventIfNeeded(tab->parameters(), tab->changedParameters());
+        tab->clearChangedProperties();
+    }).get());
+}
+
+void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(targetURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    auto tab = getTab(pageID);
+
+    if (tab && isMainFrame(frameID)) {
+        // Clear tab action customizations.
+        if (auto *tabAction = m_actionTabMap.get(*tab))
+            tabAction->clearCustomizations();
+
+        // Clear activeTab permissions and user gesture if the site changed.
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && !temporaryPattern->matchesURL(frameURL))
+            clearUserGesture(*tab);
+
+        // Clear injected styles tied to this specific page.
+        // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's.
+        auto& userContentController = page.get()->userContentController();
+        m_dynamicallyInjectedUserStyleSheets.removeAllMatching([&](auto& styleSheet) {
+            auto styleSheetPageID = styleSheet->userStyleSheet().pageID();
+            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageID())
+                return false;
+
+            userContentController.removeUserStyleSheet(styleSheet);
+            return true;
+        });
+    }
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
+        constexpr auto contentEventType = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
+
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, [&] {
+            sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+            sendToProcessesForEvent(contentEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
 }
 
 WebExtensionAction& WebExtensionContext::defaultAction()
@@ -1692,6 +1815,10 @@ Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionTab* 
 
 void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered userTriggered)
 {
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
     if (tab && userTriggered == UserTriggered::Yes)
         userGesturePerformed(*tab);
 
@@ -1720,6 +1847,10 @@ const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
 
 void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTriggered userTriggered)
 {
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
     auto currentWindow = frontmostWindow();
     auto activeTab = currentWindow ? currentWindow->activeTab() : nullptr;
 
@@ -1736,47 +1867,55 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
 
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 {
-    // Nothing else to do if the extension does not have the activeTab permissions.
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    tab.setActiveUserGesture(true);
+
+    // Nothing else to do if the extension does not have the activeTab permission.
     if (!hasPermission(_WKWebExtensionPermissionActiveTab))
         return;
 
-    NSURL *currentURL = tab.url();
-    if (!currentURL)
+    auto currentURL = tab.url();
+    if (currentURL.isEmpty())
         return;
 
-    _WKWebExtensionMatchPattern *pattern = [m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()];
+    auto pattern = tab.temporaryPermissionMatchPattern();
 
     // Nothing to do if the tab already has a pattern matching the current URL.
-    if (pattern && [pattern matchesURL:currentURL])
+    if (pattern && pattern->matchesURL(currentURL))
         return;
 
     // A pattern should not exist, since it should be cleared in clearUserGesture
     // on any navigation between different hosts.
     ASSERT(!pattern);
 
-    if (!m_temporaryTabPermissionMatchPatterns)
-        m_temporaryTabPermissionMatchPatterns = [NSMapTable weakToStrongObjectsMapTable];
-
     // Grant the tab a temporary permission to access to a pattern matching the current URL's scheme and host for all paths.
-    pattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:currentURL.scheme host:currentURL.host path:@"/*"];
-    [m_temporaryTabPermissionMatchPatterns setObject:pattern forKey:tab.delegate()];
+    pattern = WebExtensionMatchPattern::getOrCreate(currentURL.protocol().toStringWithoutCopying(), currentURL.host().toStringWithoutCopying(), "/*"_s);
+    tab.setTemporaryPermissionMatchPattern(pattern.copyRef());
+
+    // Fire the updated event now that the extension has permission to see the URL and title.
+    didChangeTabProperties(tab, { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title });
 }
 
 bool WebExtensionContext::hasActiveUserGesture(WebExtensionTab& tab) const
 {
-    if (!m_temporaryTabPermissionMatchPatterns)
+    ASSERT(isLoaded());
+    if (!isLoaded())
         return false;
 
-    NSURL *currentURL = tab.url();
-    return [[m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()] matchesURL:currentURL];
+    return tab.hasActiveUserGesture();
 }
 
 void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
 {
-    if (!m_temporaryTabPermissionMatchPatterns)
+    ASSERT(isLoaded());
+    if (!isLoaded())
         return;
 
-    [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab.delegate()];
+    tab.setActiveUserGesture(false);
+    tab.setTemporaryPermissionMatchPattern(nullptr);
 }
 
 void WebExtensionContext::setTestingMode(bool testingMode)
@@ -2061,6 +2200,9 @@ void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
 
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 {
+    if (!storageIsPersistent() || extension().backgroundContentIsPersistent())
+        return;
+
     m_backgroundContentEventListeners.clear();
 
     auto backgroundContentListenersVersionNumber = objectForKey<NSNumber>(m_state, backgroundContentEventListenersVersionKey).unsignedLongValue;
@@ -2083,7 +2225,7 @@ void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 
 void WebExtensionContext::saveBackgroundPageListenersToStorage()
 {
-    if (extension().backgroundContentIsPersistent())
+    if (!storageIsPersistent() || extension().backgroundContentIsPersistent())
         return;
 
     RELEASE_LOG_DEBUG(Extensions, "Saving %{public}u background content event listeners to storage", m_backgroundContentEventListeners.size());
@@ -2473,20 +2615,6 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
         for (auto& userStyleSheet : originInjectedStyleSheets)
             userContentController.removeUserStyleSheet(userStyleSheet);
     }
-
-    auto *tabsToRemove = [NSMutableSet set];
-    for (id<_WKWebExtensionTab> tabDelegate in m_temporaryTabPermissionMatchPatterns.get().keyEnumerator) {
-        auto tab = getOrCreateTab(tabDelegate);
-        NSURL *currentURL = tab->url();
-        if (!currentURL)
-            continue;
-
-        if (pattern.matchesURL(currentURL))
-            [tabsToRemove addObject:tabDelegate];
-    }
-
-    for (id tab in tabsToRemove)
-        [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab];
 }
 
 void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& userContentController)

@@ -42,6 +42,7 @@ OBJC_PROTOCOL(_WKWebExtensionTab);
 namespace WebKit {
 
 class WebExtensionContext;
+class WebExtensionMatchPattern;
 class WebExtensionWindow;
 class WebProcessProxy;
 struct WebExtensionTabParameters;
@@ -88,7 +89,7 @@ public:
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
-    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties>) const;
+    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties> = { }) const;
 
     WebExtensionContext* extensionContext() const;
 
@@ -98,6 +99,16 @@ public:
 
     bool extensionHasAccess() const;
     bool extensionHasPermission() const;
+
+    bool hasActiveUserGesture() { return m_activeUserGesture; }
+    void setActiveUserGesture(bool activeUserGesture) { m_activeUserGesture = activeUserGesture; }
+
+    RefPtr<WebExtensionMatchPattern> temporaryPermissionMatchPattern() { return m_temporaryPermissionMatchPattern; }
+    void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTFMove(matchPattern); }
+
+    OptionSet<ChangedProperties> changedProperties() const { return m_changedProperties; }
+    void addChangedProperties(OptionSet<ChangedProperties> properties) { m_changedProperties.add(properties); }
+    void clearChangedProperties() { m_changedProperties = { }; }
 
     RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
     size_t index() const;
@@ -171,6 +182,9 @@ private:
     WebExtensionTabIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionTab> m_delegate;
+    RefPtr<WebExtensionMatchPattern> m_temporaryPermissionMatchPattern;
+    OptionSet<ChangedProperties> m_changedProperties;
+    bool m_activeUserGesture : 1 { false };
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToWindow : 1 { false };

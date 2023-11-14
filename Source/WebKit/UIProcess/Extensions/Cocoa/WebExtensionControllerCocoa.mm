@@ -259,104 +259,28 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
     return extensions;
 }
 
-// MARK: Web Navigation
-
 void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {
-    auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
-
-    for (auto& context : m_extensionContexts) {
-        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
-            continue;
-
-        if (!context->hasPermission(targetURL))
-            continue;
-
-        auto tab = context->getTab(pageID);
-        if (!tab)
-            continue;
-
-        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
-        });
-    }
+    for (auto& context : m_extensionContexts)
+        context->didStartProvisionalLoadForFrame(pageID, frameID, parentFrameID, targetURL, timestamp);
 }
 
 void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
-    auto contentLoadedtype = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { committedEventType, contentLoadedtype };
-
-    for (auto& context : m_extensionContexts) {
-        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
-            continue;
-
-        if (!context->hasPermission(frameURL))
-            continue;
-
-        for (auto& styleSheet : context->dynamicallyInjectedUserStyleSheets()) {
-            auto page = WebProcessProxy::webPage(pageID);
-            WebUserContentControllerProxy& controller = page.get()->userContentController();
-            controller.removeUserStyleSheet(styleSheet);
-        }
-
-        context->dynamicallyInjectedUserStyleSheets().clear();
-
-        auto tab = context->getTab(pageID);
-        if (!tab)
-            continue;
-
-        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
-            context->sendToProcessesForEvent(contentLoadedtype, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentLoadedtype, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
-        });
-    }
+    for (auto& context : m_extensionContexts)
+        context->didCommitLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
 void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
-
-    for (auto& context : m_extensionContexts) {
-        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
-            continue;
-
-        if (!context->hasPermission(frameURL))
-            continue;
-
-        auto tab = context->getTab(pageID);
-        if (!tab)
-            continue;
-
-        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
-        });
-    }
+    for (auto& context : m_extensionContexts)
+        context->didFinishLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
 void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { eventType };
-
-    for (auto& context : m_extensionContexts) {
-        if (!context->hasPermission(_WKWebExtensionPermissionWebNavigation))
-            continue;
-
-        if (!context->hasPermission(frameURL))
-            continue;
-
-        auto tab = context->getTab(pageID);
-        if (!tab)
-            continue;
-
-        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
-            context->sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
-        });
-    }
+    for (auto& context : m_extensionContexts)
+        context->didFailLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
 } // namespace WebKit

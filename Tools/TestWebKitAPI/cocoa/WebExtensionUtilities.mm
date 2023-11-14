@@ -370,7 +370,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
-    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL forTab:self];
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesTitle | _WKWebExtensionTabChangedPropertiesURL forTab:self];
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
