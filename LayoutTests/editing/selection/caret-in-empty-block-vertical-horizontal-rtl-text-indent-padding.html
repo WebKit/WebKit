@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js" type="text/javascript"></script>
+<style>
+
+.hidden {
+    display: none;
+}
+
+#text, #emptyBlock {
+    border: 1px solid black;
+    inline-size: 100px;
+    text-indent: 20px;
+    padding: 10px 20px 30px 40px;
+    direction: rtl;
+}
+</style>
+</head>
+<body>
+<p>This test verifies that an empty block contenteditable element with indented text and padding, and right-to-left text direction, gets a valid caret rect.</p>
+<div id="text" contenteditable>Some text.</div>
+<div id="emptyBlock" contenteditable></div><br>
+<div id="console"></div>
+</body>
+<script>
+    var text = document.getElementById("text");
+    var emptyBlock = document.getElementById("emptyBlock");
+
+    if (window.internals) {
+        emptyBlock.classList.toggle("hidden");
+        getSelection().collapse(text, 0);
+        var textCaretRect = internals.absoluteCaretBounds();
+
+        text.classList.toggle("hidden");
+        emptyBlock.classList.toggle("hidden");
+
+        getSelection().collapse(emptyBlock, 0);
+        var emptyBlockCaretRect = internals.absoluteCaretBounds();
+
+        ['left', 'top', 'width', 'height'].forEach((property) => {
+            if (Math.abs(emptyBlockCaretRect[property] - textCaretRect[property]) <= 1)
+                testPassed(`caretRect.${property} is correct.`);
+            else
+                testFailed(`caretRect.${property} is incorrect.`);
+        });
+    }
+</script>
+</html>

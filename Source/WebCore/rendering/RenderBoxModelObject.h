@@ -138,6 +138,7 @@ public:
     virtual inline LayoutUnit borderEnd() const;
 
     inline LayoutUnit borderAndPaddingStart() const;
+    inline LayoutUnit borderAndPaddingEnd() const;
     inline LayoutUnit borderAndPaddingBefore() const;
     inline LayoutUnit borderAndPaddingAfter() const;
 
@@ -151,6 +152,7 @@ public:
     inline LayoutUnit borderAndPaddingLogicalHeight() const;
     inline LayoutUnit borderAndPaddingLogicalWidth() const;
     inline LayoutUnit borderAndPaddingLogicalLeft() const;
+    inline LayoutUnit borderAndPaddingLogicalRight() const;
 
     inline LayoutUnit borderLogicalLeft() const;
     inline LayoutUnit borderLogicalRight() const;

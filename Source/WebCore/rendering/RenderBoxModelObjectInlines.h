@@ -29,9 +29,11 @@ inline LayoutUnit RenderBoxModelObject::borderAfter() const { return LayoutUnit(
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingAfter() const { return borderAfter() + paddingAfter(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalHeight() const { return borderAndPaddingBefore() + borderAndPaddingAfter(); }
-inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalLeft() const { return style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalWidth() const { return borderStart() + borderEnd() + paddingStart() + paddingEnd(); }
+inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalLeft() const { return style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalRight() const { return style().isHorizontalWritingMode() ? borderRight() + paddingRight() : borderBottom() + paddingBottom(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingStart() const { return borderStart() + paddingStart(); }
+inline LayoutUnit RenderBoxModelObject::borderAndPaddingEnd() const { return borderEnd() + paddingEnd(); }
 inline LayoutUnit RenderBoxModelObject::borderBefore() const { return LayoutUnit(style().borderBeforeWidth()); }
 inline LayoutUnit RenderBoxModelObject::borderBottom() const { return LayoutUnit(style().borderBottomWidth()); }
 inline LayoutUnit RenderBoxModelObject::borderEnd() const { return LayoutUnit(style().borderEndWidth()); }

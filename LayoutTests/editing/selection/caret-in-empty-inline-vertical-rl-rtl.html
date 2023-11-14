@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js" type="text/javascript"></script>
+<style>
+
+.hidden {
+    display: none;
+}
+
+#text, #emptyInline {
+    border: 1px solid black;
+    inline-size: 100px;
+    writing-mode: vertical-rl;
+    direction: rtl;
+}
+</style>
+</head>
+<body>
+<p>This test verifies that an empty inline contenteditable element with a vertical writing mode, and right-to-left text direction, gets a valid caret rect.</p>
+<div id="text" contenteditable>Some text.</div>
+<div id="emptyInline" contenteditable></div><br>
+<div id="console"></div>
+</body>
+<script>
+    var text = document.getElementById("text");
+    var emptyInline = document.getElementById("emptyInline");
+
+    if (window.internals) {
+        emptyInline.classList.toggle("hidden");
+        getSelection().collapse(text, 0);
+        var textCaretRect = internals.absoluteCaretBounds();
+
+        text.classList.toggle("hidden");
+        emptyInline.classList.toggle("hidden");
+
+        getSelection().collapse(emptyInline, 0);
+        var emptyInlineCaretRect = internals.absoluteCaretBounds();
+
+        ['left', 'top', 'width', 'height'].forEach((property) => {
+            if (Math.abs(emptyInlineCaretRect[property] - textCaretRect[property]) <= 1)
+                testPassed(`caretRect.${property} is correct.`);
+            else
+                testFailed(`caretRect.${property} is incorrect.`);
+        });
+    }
+</script>
+</html>
