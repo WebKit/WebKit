@@ -7419,6 +7419,7 @@
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
 		E3A86FBB26958D830059264D /* WebCaptionPreferencesDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCaptionPreferencesDelegate.h; sourceTree = "<group>"; };
 		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
+		E3A997B92AFFCEA2006C90F1 /* compile-sandbox.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "compile-sandbox.sh"; sourceTree = "<group>"; };
 		E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingProcessExtension.swift; sourceTree = "<group>"; };
 		E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUProcessExtension.swift; sourceTree = "<group>"; };
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
@@ -14221,6 +14222,7 @@
 				535E08CA225460FC00DF00CA /* postprocess-header-rule */,
 				7CDE73A21F9DA59700390312 /* PreferencesTemplates */,
 				0FC0856E187CE0A900780D86 /* __init__.py */,
+				E3A997B92AFFCEA2006C90F1 /* compile-sandbox.sh */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */,
