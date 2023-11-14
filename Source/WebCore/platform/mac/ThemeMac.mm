@@ -711,14 +711,14 @@ void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, const Control
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool ThemeMac::userPrefersReducedMotion() const
-{
-    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];
-}
-
 bool ThemeMac::userPrefersContrast() const
 {
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
+}
+
+bool ThemeMac::userPrefersReducedMotion() const
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];
 }
 
 bool ThemeMac::supportsLargeFormControls()

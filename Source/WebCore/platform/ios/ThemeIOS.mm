@@ -39,14 +39,14 @@ Theme& Theme::singleton()
     return theme;
 }
 
-bool ThemeIOS::userPrefersReducedMotion() const
-{
-    return PAL::softLink_UIKit_UIAccessibilityIsReduceMotionEnabled();
-}
-
 bool ThemeIOS::userPrefersContrast() const
 {
     return PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled();
+}
+
+bool ThemeIOS::userPrefersReducedMotion() const
+{
+    return PAL::softLink_UIKit_UIAccessibilityIsReduceMotionEnabled();
 }
 
 }

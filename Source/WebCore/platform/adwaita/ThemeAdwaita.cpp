@@ -595,11 +595,6 @@ Color ThemeAdwaita::accentColor()
     return m_accentColor;
 }
 
-bool ThemeAdwaita::userPrefersReducedMotion() const
-{
-    return m_prefersReducedMotion;
-}
-
 bool ThemeAdwaita::userPrefersContrast() const
 {
 #if !USE(GTK4)
@@ -607,6 +602,11 @@ bool ThemeAdwaita::userPrefersContrast() const
 #else
     return false;
 #endif
+}
+
+bool ThemeAdwaita::userPrefersReducedMotion() const
+{
+    return m_prefersReducedMotion;
 }
 
 } // namespace WebCore

@@ -79,17 +79,6 @@ void Theme::inflateControlPaintRect(StyleAppearance, const ControlStates&, Float
 {
 }
 
-bool Theme::userPrefersReducedMotion() const
-{
-    return false;
-}
-
-bool Theme::userPrefersContrast() const
-{
-    return false;
-}
-
-
 LengthBox Theme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (appearance) {
