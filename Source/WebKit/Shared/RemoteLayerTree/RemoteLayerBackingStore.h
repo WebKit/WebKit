@@ -172,7 +172,6 @@ private:
         }
 
         void discard();
-        void encode(IPC::Encoder&) const;
     };
 
     bool setBufferVolatile(Buffer&);
