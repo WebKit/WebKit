@@ -125,11 +125,17 @@ public:
 
         StorageType m_value;
     };
+
     using iterator = Iterator<StorageType>;
 
     static constexpr OptionSet fromRaw(StorageType rawValue)
     {
         return OptionSet(static_cast<E>(maskRawValue<E>(rawValue)), FromRawValue);
+    }
+
+    static constexpr OptionSet all()
+    {
+        return fromRaw(std::numeric_limits<StorageType>::max());
     }
 
     constexpr OptionSet() = default;

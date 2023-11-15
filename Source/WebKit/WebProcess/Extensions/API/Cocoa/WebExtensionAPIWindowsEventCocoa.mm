@@ -42,13 +42,13 @@
 
 namespace WebKit {
 
-void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, WindowTypeFilter windowType)
+void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, OptionSet<WindowTypeFilter> windowTypeFilter)
 {
     if (m_listeners.isEmpty())
         return;
 
     for (auto& listener : m_listeners) {
-        if (!listener.second.contains(windowType))
+        if (!listener.second.containsAny(windowTypeFilter))
             continue;
 
         listener.first->call(argument);
