@@ -1247,6 +1247,10 @@ typedef struct {
 
 #endif // !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
 
+@interface UIKeyEventContext (Staging_118307536)
+@property (nonatomic, assign, readwrite) BOOL shouldEvaluateForInputSystemHandling;
+@end
+
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 WTF_EXTERN_C_BEGIN

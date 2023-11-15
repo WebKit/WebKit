@@ -6795,6 +6795,28 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     [self _internalHandleKeyWebEvent:event withCompletionHandler:completionHandler];
 }
 
+- (BOOL)_deferKeyEventToInputMethodEditing:(::WebEvent *)event
+{
+    if (!_page->editorState().isContentEditable && !_treatAsContentEditableUntilNextEditorStateUpdate)
+        return NO;
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions) {
+        RetainPtr inputDelegate = _asyncSystemInputDelegate;
+        if (!inputDelegate)
+            return NO;
+
+        auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
+        if ([context respondsToSelector:@selector(setShouldEvaluateForInputSystemHandling:)])
+            [context setShouldEvaluateForInputSystemHandling:YES];
+        [context setDocumentIsEditable:YES];
+        return [inputDelegate deferEventHandlingToSystemWithContext:context.get()];
+    }
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+    return [[UIKeyboardImpl sharedInstance] handleKeyInputMethodCommandForCurrentEvent];
+}
+
 - (void)_internalHandleKeyWebEvent:(::WebEvent *)event withCompletionHandler:(void (^)(::WebEvent *event, BOOL wasHandled))completionHandler
 {
     if (!isUIThread()) {
@@ -6809,8 +6831,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
-    auto* keyboard = [UIKeyboardImpl sharedInstance];
-    if ((_page->editorState().isContentEditable || _treatAsContentEditableUntilNextEditorStateUpdate) && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
+    if ([self _deferKeyEventToInputMethodEditing:event]) {
         completionHandler(event, YES);
         _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::Yes));
         return;
