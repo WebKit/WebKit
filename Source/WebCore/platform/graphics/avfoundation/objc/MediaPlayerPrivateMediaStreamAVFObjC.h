@@ -181,6 +181,8 @@ private:
     void checkSelectedVideoTrack();
     void updateDisplayLayer();
 
+    enum class SizeChanged : bool { No, Yes };
+    void scheduleTaskForCharacteristicsChanged(SizeChanged);
     void scheduleDeferredTask(Function<void ()>&&);
 
     void layersAreInitialized(IntSize, bool);
@@ -301,7 +303,6 @@ private:
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
     Seconds m_presentationTime { 0 };
-    FloatSize m_videoFrameSize;
     VideoFrameTimeMetadata m_sampleMetadata;
 
     std::optional<CGRect> m_storedBounds;

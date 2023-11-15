@@ -1,0 +1,4 @@
+
+
+PASS Video element and VideoFrame size should be in sync after a resize event
+
