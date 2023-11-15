@@ -360,22 +360,32 @@ void JSModuleNamespaceObject::overrideExports(JSGlobalObject* globalObject, cons
 
 bool JSModuleNamespaceObject::overrideExportValue(JSGlobalObject* globalObject, PropertyName name, JSValue value)
 {
-    auto iterator = m_exports.find(name.uid());
-    if (iterator == m_exports.end())
-        return false;
-
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    JSC::Identifier identifier = Identifier::fromUid(vm, name.uid());
+    auto resolution = moduleRecord()->resolveExport(globalObject, identifier);
 
-    ExportEntry& exportEntry = iterator->value;
-    auto* moduleNamespaceObject = exportEntry.moduleRecord->getModuleNamespace(globalObject);
+    // FIXME: figure out how to do this
+    // Support setting a default export value when it wasn't already exported.
+    // if (resolution.type == AbstractModuleRecord::Resolution::Type::Error && name == "default"_s) {
+    //     resolution.type = AbstractModuleRecord::Resolution::Type::Resolved;
+    //     resolution.localName = identifier;
+    //     resolution.moduleRecord = moduleRecord();
+    // }
+
+    if (resolution.type != AbstractModuleRecord::Resolution::Type::Resolved) {
+        return false;
+    }
+
+    auto* record = resolution.moduleRecord;
+    auto* moduleNamespaceObject = record->getModuleNamespace(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
-    JSModuleEnvironment* moduleEnvironment = exportEntry.moduleRecord->moduleEnvironment();
+    JSModuleEnvironment* moduleEnvironment = record->moduleEnvironment();
 
     bool putResult = false;
     moduleNamespaceObject->m_isOverridingValue = true;
-    symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, name, value, false, true, putResult);
+    symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, resolution.localName, value, false, true, putResult);
     JSC::PutPropertySlot putter = JSC::PutPropertySlot(moduleNamespaceObject, false);
     putResult = moduleNamespaceObject->put(moduleNamespaceObject, globalObject, name, value, putter);
     moduleNamespaceObject->m_isOverridingValue = false;
