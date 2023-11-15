@@ -1860,6 +1860,7 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
+    visit(statement.leftExpression());
     m_stringBuilder.append(" = ");
     serializeBinaryExpression(statement.leftExpression(), statement.operation(), statement.rightExpression());
 }
