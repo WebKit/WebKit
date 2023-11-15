@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div style="height: 2000px"></div>
+<div id="below-viewport-img-container" style="height: 1000px"></div>    
+<script>
+description("Tests that lazy image loading doesn't cause leaks when 'img' element is created and removed dynamically.");
+jsTestIsAsync = true;
+
+checkCount = 0;
+
+const imgCount = 10;
+imgs = [];
+const image_path = 'image.png';
+imgElementIds = [];
+
+function runTest()
+{
+    handle = setInterval(() => {
+        gc();
+        for (let imgElementId of imgElementIds) {
+            if (!internals.isElementAlive(imgElementId)) {
+                clearInterval(handle);
+                testPassed("The img element didn't leak.");
+                finishJSTest();
+                return;
+            }
+        }
+        checkCount++;
+        if (checkCount > 1000) {
+            clearInterval(handle);
+            testFailed("The img elements leaked.");
+            finishJSTest();
+        }
+    }, 10);
+}
+
+onload = () => {
+    for (let i = 0; i < imgCount; i++) {
+        img = document.getElementById("lazy-loaded-img-"+i);
+        imgElementId = internals.elementIdentifier(img);
+        shouldBeTrue("internals.isElementAlive(imgElementId)");
+        imgElementIds.push(imgElementId);
+        document.getElementById('below-viewport-img-container').removeChild(img);
+        img = null;
+    }
+    imgs = [];
+    setTimeout(runTest, 0);
+};
+
+for (let i = 0; i < imgCount; i++) {
+    img = new Image();
+    img.id = "lazy-loaded-img-"+i;
+    img.loading = 'lazy';
+    img.src = image_path;
+    document.getElementById('below-viewport-img-container').append(img);
+    imgs.push(img);
+    img = null;
+}
+
+</script>
+</body>
+</html>
