@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,27 +37,23 @@ class PaintFrequencyTracker {
 public:
     PaintFrequencyTracker() = default;
 
-    void begin(MonotonicTime timestamp)
+    void track(MonotonicTime timestamp)
     {
-        static unsigned paintFrequencyPaintCountThreshold = 30;
-        static Seconds paintFrequencyTimePerFrameThreshold = 32_ms;
+        static unsigned paintFrequencyPaintCountThreshold = 20;
         static Seconds paintFrequencySecondsIdleThreshold = 5_s;
+
+        if (!timestamp)
+            timestamp = MonotonicTime::now();
 
         // Start by assuming the paint frequency is low
         m_paintFrequency = PaintFrequency::Low;
 
-        if (!m_firstPaintTime) {
-            // Handle the first time this method is called.
-            m_firstPaintTime = timestamp;
-        } else if (timestamp - m_lastPaintTime > paintFrequencySecondsIdleThreshold) {
+        if (timestamp - m_lastPaintTime > paintFrequencySecondsIdleThreshold) {
             // It has been 5 seconds since last time we draw this renderer. Reset the state
             // of this object as if, we've just started tracking the paint frequency.
-            m_firstPaintTime = timestamp;
             m_totalPaints = 0;
-        } else if (m_totalPaints >= paintFrequencyPaintCountThreshold && ((m_lastPaintTime - m_firstPaintTime) / m_totalPaints) <= paintFrequencyTimePerFrameThreshold) {
-            // Change the paint frequency to be high only if:
-            //  - This renderer has been painted at least 30 times.
-            //  - The frame rate to paint this renderer has been at least 31.25 FPS.
+        } else if (m_totalPaints >= paintFrequencyPaintCountThreshold) {
+            // Change the paint frequency to be high if this renderer has been painted at least 20 times.
             m_paintFrequency = PaintFrequency::High;
         }
 
@@ -65,16 +61,9 @@ public:
         ++m_totalPaints;
     }
 
-    void end()
-    {
-        ASSERT(m_firstPaintTime);
-        ASSERT(m_firstPaintTime <= m_lastPaintTime);
-    }
-
     bool paintingFrequently() const { return m_paintFrequency == PaintFrequency::High; }
 
 private:
-    MonotonicTime m_firstPaintTime;
     MonotonicTime m_lastPaintTime;
     unsigned m_totalPaints { 0 };
 
@@ -82,22 +71,4 @@ private:
     PaintFrequency m_paintFrequency { PaintFrequency::Low };
 };
 
-class SinglePaintFrequencyTracking {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp)
-        : m_paintFrequencyTracker(paintFrequencyTracker)
-    {
-        m_paintFrequencyTracker.begin(timestamp ? timestamp : MonotonicTime::now());
-    }
-
-    ~SinglePaintFrequencyTracking()
-    {
-        m_paintFrequencyTracker.end();
-    }
-
-private:
-    PaintFrequencyTracker& m_paintFrequencyTracker;
-};
-
-}
+} // namespace WebCore
