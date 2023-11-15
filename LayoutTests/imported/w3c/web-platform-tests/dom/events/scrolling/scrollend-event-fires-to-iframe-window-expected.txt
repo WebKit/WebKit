@@ -1,0 +1,11 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Tests that the target_div within iframe gets scrollend event when touch dragging.
+TIMEOUT Tests that the target_div within iframe gets scrollend event when clicking scrollbar. Test timed out
+NOTRUN Tests that the target_div within iframe gets scrollend event when dragging the scrollbar thumb.
+NOTRUN Tests that the target_div within iframe gets scrollend event when mouse wheel scrolling.
+NOTRUN Tests that the target_div within iframe gets scrollend event when sending DOWN key to the target.
+NOTRUN scrollend fires to iframe window on mousewheelscroll
+

@@ -1,0 +1,14 @@
+Declarative syntax - The *two* templates below should have IDENTICAL STRUCTURE to this one. There are four cases to test: 1. Main document parsing (this chunk) 2. Template parsing (the template below with id=declarative) 3. Template/fragment cloning (a clone of the template with id=declarative) 4. Declarative Shadow DOM parsing (template with id=declarative_shadow_dom and shadowrootmode attribute)
+First Middle Last
+
+Email: Here are some invalid parts that should not get parsed:
+Declarative syntax
+First Middle Last
+
+Email: Here are some invalid parts that should not get parsed:
+
+FAIL Basic declarative DOM Parts (Main Document) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (Template) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (Clone) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (PartClone) template.content.getPartRoot is not a function. (In 'template.content.getPartRoot()', 'template.content.getPartRoot' is undefined)
+

@@ -1,0 +1,19 @@
+Declarative syntax - The *two* templates below should have IDENTICAL STRUCTURE to this one. There are four cases to test: 1. Main document parsing (this chunk) 2. Template parsing (the template below with id=declarative) 3. Template/fragment cloning (a clone of the template with id=declarative) 4. Declarative Shadow DOM parsing (template with id=declarative_shadow_dom and shadowrootmode attribute)
+{{#}} First {{#}} Middle {{/}} Last {{/}} content content content content content content
+
+Declarative syntax
+{{#}} First {{#}} Middle {{/}} Last {{/}} content content content content content content
+
+
+FAIL Basic declarative DOM Parts (Main Document) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (Template) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (Clone) doc.getPartRoot is not a function. (In 'doc.getPartRoot()', 'doc.getPartRoot' is undefined)
+FAIL Basic declarative DOM Parts (PartClone) template.content.getPartRoot is not a function. (In 'template.content.getPartRoot()', 'template.content.getPartRoot' is undefined)
+FAIL Post-parsing structure of child parts, and stickiness document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Parser only behavior - adding parseparts does nothing document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Just parts, no text before document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Self closing elements can't use parseparts document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Second head element can't use parseparts document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Foreign content should support Parts document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Not quite parts syntax - none should become parts, and nothing should crash document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+
