@@ -6716,6 +6716,12 @@ enum class WebCore::RepaintRectCalculation : bool;
     Rec2020,
 };
 
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ByteArrayPixelBuffer {
+    WebCore:: PixelBufferFormat format();
+    WebCore::IntSize size();
+    std::span<const uint8_t> dataSpan();
+}
+
 #if ENABLE(WEB_AUTHN)
 header: <WebCore/CredentialRequestOptions.h>
 enum class WebCore::MediationRequirement : uint8_t {

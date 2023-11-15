@@ -1976,7 +1976,7 @@ template<class Encoder>
 void ArgumentCoder<PixelBuffer>::encode(Encoder& encoder, const PixelBuffer& pixelBuffer)
 {
     if (LIKELY(is<const ByteArrayPixelBuffer>(pixelBuffer))) {
-        downcast<const ByteArrayPixelBuffer>(pixelBuffer).encode(encoder);
+        encoder << downcast<ByteArrayPixelBuffer>(pixelBuffer);
         return;
     }
     ASSERT_NOT_REACHED();
@@ -1984,7 +1984,7 @@ void ArgumentCoder<PixelBuffer>::encode(Encoder& encoder, const PixelBuffer& pix
 
 std::optional<Ref<PixelBuffer>> ArgumentCoder<PixelBuffer>::decode(Decoder& decoder)
 {
-    return ByteArrayPixelBuffer::decode(decoder);
+    return decoder.decode<Ref<ByteArrayPixelBuffer>>();
 }
 
 template
