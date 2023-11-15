@@ -51,6 +51,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
+#include <wtf/NativePromise.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Scope.h>
 #include <wtf/Vector.h>
@@ -186,15 +187,12 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     if (!parser)
         return nullptr;
     auto buffer = SharedBuffer::create(data, dataSize);
-    bool error = false;
+
     std::optional<uint64_t> audioTrackId;
     MediaTime duration;
     RefPtr<AudioTrackPrivateWebM> track;
     Vector<Ref<MediaSampleAVFObjC>> samples;
     parser->setLogger(m_logger, m_logIdentifier);
-    parser->setDidEncounterErrorDuringParsingCallback([&](uint64_t) {
-        error = true;
-    });
     parser->setDidParseInitializationDataCallback([&](SourceBufferParserWebM::InitializationSegment&& init) {
         for (auto& audioTrack : init.audioTracks) {
             if (audioTrack.track && audioTrack.track->trackUID()) {
@@ -219,8 +217,8 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
         track->setDiscardPadding(discardPadding);
     });
     SourceBufferParser::Segment segment(Ref { buffer.get() });
-    parser->appendData(WTFMove(segment));
-    if (!track || error)
+    auto result = parser->appendData(WTFMove(segment));
+    if (!track || !result)
         return nullptr;
     parser->flushPendingAudioSamples();
     return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });

@@ -50,8 +50,8 @@ public:
 
     MockMediaPlayerMediaSource& player() const { return m_player; }
 
-    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
-    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+    Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
+    Ref<GenericPromise> seekToTime(const MediaTime&) final;
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 

@@ -56,6 +56,8 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/NativePromise.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -186,23 +188,21 @@ const PlatformTimeRanges& MediaSource::buffered() const
     return m_buffered;
 }
 
-void MediaSource::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSource::MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
 {
-    if (isClosed()) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (isClosed())
+        return MediaTimePromise::createAndReject(-1);
 
     ALWAYS_LOG(LOGIDENTIFIER, target.time);
 
     // 2.4.3 Seeking
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
-    if (m_seekCompletedHandler) {
+    if (m_seekTargetPromise) {
         ALWAYS_LOG(LOGIDENTIFIER, "Previous seeking to ", m_pendingSeekTarget->time, "pending, cancelling it");
-        m_seekCompletedHandler(MediaTime::invalidTime());
+        m_seekTargetPromise->reject(-1);
     }
-    m_seekCompletedHandler = WTFMove(completionHandler);
+    m_seekTargetPromise.emplace();
     m_pendingSeekTarget = target;
 
     // Run the following steps as part of the "Wait until the user agent has established whether or not the
@@ -220,11 +220,13 @@ void MediaSource::waitForTarget(const SeekTarget& target, CompletionHandler<void
         // than HAVE_METADATA.
         monitorSourceBuffers();
 
-        return;
+        return *m_seekTargetPromise;
     }
     // ↳ Otherwise
     // Continue
+    auto promise = static_cast<Ref<MediaTimePromise>>(*m_seekTargetPromise);
     completeSeek();
+    return promise;
 }
 
 void MediaSource::completeSeek()
@@ -234,7 +236,7 @@ void MediaSource::completeSeek()
     // 2.4.3 Seeking, ctd.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
 
-    ASSERT(m_pendingSeekTarget && m_seekCompletedHandler);
+    ASSERT(m_pendingSeekTarget && m_seekTargetPromise);
 
     ALWAYS_LOG(LOGIDENTIFIER, m_pendingSeekTarget->time);
 
@@ -245,56 +247,33 @@ void MediaSource::completeSeek()
     auto seekTarget = *m_pendingSeekTarget;
     m_pendingSeekTarget.reset();
 
-    struct SeeksCallbackAggregator final : public RefCounted<SeeksCallbackAggregator> {
-        SeeksCallbackAggregator(MediaTime target, MediaSource& source, CompletionHandler<void(const MediaTime&)>&& completionHandler)
-            : time(target)
-            , mediaSource(source)
-            , completionHandler(WTFMove(completionHandler))
-        {
-            ASSERT(this->completionHandler);
+    Ref<MediaTimePromise> promise = SourceBuffer::ComputeSeekPromise::all(RunLoop::current(), WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
+        return sourceBuffer->computeSeekTime(seekTarget);
+    }))->whenSettled(RunLoop::current(), [time = seekTarget.time, protectedThis = Ref { *this }] (auto&& results) mutable {
+        if (!results)
+            return MediaTimePromise::createAndReject(-1);
+        auto seekTime = time;
+        for (auto& result : *results) {
+            if (abs(time - result) > abs(time - seekTime))
+                seekTime = result;
         }
 
-        ~SeeksCallbackAggregator()
-        {
-            auto seekTime = time;
-            for (auto& result : seekResults) {
-                if (result.isInvalid()) {
-                    completionHandler(MediaTime::invalidTime());
-                    return;
-                }
-                if (abs(time - result) > abs(time - seekTime))
-                    seekTime = result;
-            }
-            completionHandler(seekTime);
+        // 4. Resume the seek algorithm at the "Await a stable state" step.
+        protectedThis->monitorSourceBuffers();
 
-            // 4. Resume the seek algorithm at the "Await a stable state" step.
-            mediaSource->monitorSourceBuffers();
-        }
-
-        MediaTime time;
-        Ref<MediaSource> mediaSource;
-        CompletionHandler<void(const MediaTime&)> completionHandler;
-        Vector<MediaTime> seekResults;
-    };
-
-    auto callbackAggregator = adoptRef(*new SeeksCallbackAggregator(seekTarget.time, *this, WTFMove(m_seekCompletedHandler)));
-
-    for (auto& sourceBuffer : *m_activeSourceBuffers) {
-        sourceBuffer->computeSeekTime(seekTarget, [callbackAggregator](const MediaTime& seekTime) {
-            callbackAggregator->seekResults.append(seekTime);
-        });
-    }
+        return MediaTimePromise::createAndResolve(seekTime);
+    });
+    promise->chainTo(WTFMove(*m_seekTargetPromise));
+    m_seekTargetPromise.reset();
 }
 
-void MediaSource::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSource::seekToTime(const MediaTime& time)
 {
-    if (isClosed()) {
-        completionHandler();
-        return;
-    }
+    if (isClosed())
+        return GenericPromise::createAndReject(-1);
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->seekToTime(time);
-    completionHandler();
+    return GenericPromise::createAndResolve();
 }
 
 Ref<TimeRanges> MediaSource::seekable()
@@ -1020,8 +999,10 @@ void MediaSource::detachFromElement(HTMLMediaElement& element)
     m_private = nullptr;
     m_mediaElement = nullptr;
 
-    if (m_seekCompletedHandler)
-        m_seekCompletedHandler(MediaTime::invalidTime());
+    if (m_seekTargetPromise) {
+        m_seekTargetPromise->reject(-1);
+        m_seekTargetPromise.reset();
+    }
 }
 
 void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
@@ -1087,8 +1068,9 @@ void MediaSource::stop()
 
     if (m_mediaElement)
         m_mediaElement->detachMediaSource();
-    if (m_seekCompletedHandler)
-        m_seekCompletedHandler(MediaTime::invalidTime());
+    if (m_seekTargetPromise)
+        m_seekTargetPromise->reject(-1);
+    m_seekTargetPromise.reset();
     m_readyState = ReadyState::Closed;
     m_private = nullptr;
 }
@@ -1130,8 +1112,9 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         updateBufferedIfNeeded(true /* force */);
     } else {
         ASSERT(isClosed());
-        if (m_seekCompletedHandler)
-            m_seekCompletedHandler(MediaTime::invalidTime());
+        if (m_seekTargetPromise)
+            m_seekTargetPromise->reject(-1);
+        m_seekTargetPromise.reset();
         scheduleEvent(eventNames().sourcecloseEvent);
     }
 

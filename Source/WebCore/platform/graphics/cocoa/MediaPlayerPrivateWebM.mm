@@ -58,6 +58,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
@@ -111,7 +112,6 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
     clearTracks();
 
     cancelLoad();
-    abort();
     resetParserState();
 }
 
@@ -1080,13 +1080,6 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
         setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 }
 
-void MediaPlayerPrivateWebM::didEncounterErrorDuringParsing(int32_t code)
-{
-    ERROR_LOG(LOGIDENTIFIER, code);
-
-    m_parsingSucceeded = false;
-}
-
 void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& originalSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
@@ -1136,50 +1129,29 @@ void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
 
     setNetworkState(MediaPlayer::NetworkState::Loading);
 
-    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled.load()] (InitializationSegment&& segment) {
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }] (InitializationSegment&& segment) {
+        if (!weakThis)
             return;
 
         weakThis->didParseInitializationData(WTFMove(segment));
     });
 
-    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled.load()] (int32_t errorCode) {
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
-            return;
-        weakThis->didEncounterErrorDuringParsing(errorCode);
-    });
-
-    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled.load()] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
+        if (!weakThis)
             return;
         weakThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
     });
 
-    m_parsingSucceeded = true;
     m_pendingAppends++;
 
     SourceBufferParser::Segment segment(Ref { buffer });
-    m_appendQueue->dispatch([weakThis = WeakPtr { *this }, this, segment = WTFMove(segment), parser = m_parser, abortCalled = m_abortCalled.load()]() mutable {
-        // Our destructor ensures all dispatched lambdas are executed before destruction
-        ASSERT(weakThis);
-        if (abortCalled != m_abortCalled)
+    invokeAsync(m_appendQueue, [segment = WTFMove(segment), parser = m_parser]() mutable {
+        return GenericPromise::createAndSettle(parser->appendData(WTFMove(segment)));
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }] {
+        if (!weakThis)
             return;
-        parser->appendData(WTFMove(segment), [weakThis = WTFMove(weakThis), abortCalled]() mutable {
-            callOnMainThread([weakThis = WTFMove(weakThis), abortCalled] {
-                if (!weakThis || abortCalled != weakThis->m_abortCalled)
-                    return;
-
-                weakThis->appendCompleted();
-            });
-        });
+        weakThis->appendCompleted();
     });
-}
-
-void MediaPlayerPrivateWebM::abort()
-{
-    ERROR_LOG(LOGIDENTIFIER);
-
-    m_abortCalled++;
 }
 
 void MediaPlayerPrivateWebM::resetParserState()

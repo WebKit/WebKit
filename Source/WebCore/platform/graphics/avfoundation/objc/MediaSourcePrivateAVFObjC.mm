@@ -38,6 +38,7 @@
 #import "SourceBufferPrivateAVFObjC.h"
 #import <objc/runtime.h>
 #import <wtf/Algorithms.h>
+#import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/AtomString.h>
 
@@ -177,22 +178,14 @@ void MediaSourcePrivateAVFObjC::willSeek()
         downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->willSeek();
 }
 
-void MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target)
 {
-    if (!m_client) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
-    m_client->waitForTarget(target, WTFMove(completionHandler));
+    return m_client ? m_client->waitForTarget(target) : MediaTimePromise::createAndReject(-1);
 }
 
-void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
 {
-    if (!m_client) {
-        completionHandler();
-        return;
-    }
-    m_client->seekToTime(time, WTFMove(completionHandler));
+    return m_client ? m_client->seekToTime(time) : GenericPromise::createAndReject(-1);
 }
 
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const

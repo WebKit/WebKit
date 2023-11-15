@@ -74,22 +74,22 @@ public:
         BufferRemoved,
         IPCError,
     };
-    virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) = 0;
+    using ReceiveResultPromise = NativePromise<void, ReceiveResult>;
+    virtual Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) = 0;
     enum class AppendResult : uint8_t {
         Succeeded,
         ReadStreamFailed,
         ParsingFailed
     };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
-    virtual void sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&&) = 0;
+    virtual Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) = 0;
     virtual void sourceBufferPrivateTrackBuffersChanged(const Vector<PlatformTimeRanges>&) { };
-    virtual void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) = 0;
+    virtual Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
-    virtual bool isAsync() const { return false; }
 };
 
 String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult);

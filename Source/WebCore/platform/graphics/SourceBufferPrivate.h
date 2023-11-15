@@ -41,7 +41,9 @@
 #include "SampleMap.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include <optional>
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
@@ -123,7 +125,8 @@ public:
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
-    WEBCORE_EXPORT virtual void computeSeekTime(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
+    using ComputeSeekPromise = NativePromise<MediaTime, int>;
+    WEBCORE_EXPORT virtual Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
     WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 
@@ -167,7 +170,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT void updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&, CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT Ref<GenericPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
 
     struct ResetParserOperation { };
     struct ErrorOperation { };
@@ -177,18 +180,14 @@ protected:
     using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
     struct InitOperation {
         InitializationSegment segment;
-        Function<bool(InitializationSegment&)> check;
-        CompletionHandler<void(ReceiveResult)> completionHandler;
     };
     struct UpdateFormatDescriptionOperation {
         Ref<TrackInfo> formatDescription;
         uint64_t trackId;
-        CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)> completionHandler;
     };
     using SamplesVector = Vector<Ref<MediaSample>>;
     struct AppendCompletedOperation {
         size_t abortCount { 0 };
-        Function<void()> preTask;
     };
     using Operation = std::variant<AppendBufferOperation, InitOperation, UpdateFormatDescriptionOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
     void queueOperation(Operation&&);
@@ -196,7 +195,7 @@ protected:
     MediaTime currentMediaTime() const;
     MediaTime duration() const;
 
-    virtual void appendInternal(Ref<SharedBuffer>&&) = 0;
+    virtual Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
     bool isActive() const { return m_isActive; }
@@ -213,13 +212,15 @@ protected:
 
     void reenqueSamples(const AtomString& trackID);
 
-    // Callbacks must not take a strong reference to this SourceBufferPrivate object in order to avoid cycles
-    // that would prevent `this` to be deleted in case the SourceBufferClient detaches itself while an initialization
-    // is pending. Take a WeakPtr instead.
-    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&, Function<bool(InitializationSegment&)>&&, CompletionHandler<void(ReceiveResult)>&&);
-    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&&);
+    virtual bool precheckInitialisationSegment(const InitializationSegment&) { return true; }
+    virtual void processInitialisationSegment(std::optional<InitializationSegment>&&) { }
+    virtual void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t) { }
+
+    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
+    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
+
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&, CompletionHandler<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
     void provideMediaData(const AtomString& trackID);
 
     virtual bool isMediaSampleAllowed(const MediaSample&) const { return true; }

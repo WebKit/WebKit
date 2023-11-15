@@ -83,24 +83,24 @@ const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
     return m_buffered;
 }
 
-void RemoteMediaSourceProxy::waitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<MediaSourcePrivate::MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return MediaTimePromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::WaitForTarget(target), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxyWaitForTarget(target), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+        return result ? MediaTimePromise::createAndSettle(WTFMove(*result)) : MediaTimePromise::createAndReject(-1);
+    });
 }
 
-void RemoteMediaSourceProxy::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::SeekToTime(time), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxySeekToTime(time), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+        return result ? GenericPromise::createAndSettle(WTFMove(*result)) : GenericPromise::createAndReject(-1);
+    });
 }
 
 void RemoteMediaSourceProxy::monitorSourceBuffers()
