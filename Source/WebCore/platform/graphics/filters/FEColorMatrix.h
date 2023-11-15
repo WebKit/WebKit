@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+// FEColorMatrix is used in the implementation of SVGColorMatixElement, so this enum only contains types specified in https://www.w3.org/TR/filter-effects-1/#feColorMatrixElement.
+// Ideally this platform class wouldn't reflect SVG behavior and would also have values for brightness, contrast, grayscale, invert, opacity and sepia.
 enum ColorMatrixType {
     FECOLORMATRIX_TYPE_UNKNOWN          = 0,
     FECOLORMATRIX_TYPE_MATRIX           = 1,

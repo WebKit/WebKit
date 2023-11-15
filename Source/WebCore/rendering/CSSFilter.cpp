@@ -86,25 +86,29 @@ static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOper
 
 static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
-    ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-    transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation.amount());
-    transferFunction.intercept = 0;
+    auto colorMatrix = brightnessColorMatrix(componentTransferOperation.amount());
 
-    ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+    Vector<float> inputParameters {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), 0, 0,
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), 0, 0,
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), 0, 0,
+        0, 0, 0, 1, 0,
+    };
+
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
-    ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-    transferFunction.slope = amount;
-    transferFunction.intercept = -0.5 * amount + 0.5;
+    auto colorMatrix = contrastColorMatrix(componentTransferOperation.amount());
+    Vector<float> inputParameters {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), colorMatrix.at(0, 3), colorMatrix.at(0, 4),
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), colorMatrix.at(1, 3), colorMatrix.at(1, 4),
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), colorMatrix.at(2, 3), colorMatrix.at(2, 4),
+        colorMatrix.at(3, 0), colorMatrix.at(3, 1), colorMatrix.at(3, 2), colorMatrix.at(3, 3), colorMatrix.at(3, 4),
+    };
 
-    ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createDropShadowEffect(const DropShadowFilterOperation& dropShadowOperation)
@@ -134,26 +138,29 @@ static RefPtr<FilterEffect> createHueRotateEffect(const BasicColorMatrixFilterOp
 
 static RefPtr<FilterEffect> createInvertEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
-    ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-    transferFunction.slope = 1 - 2 * amount;
-    transferFunction.intercept = amount;
+    auto colorMatrix = invertColorMatrix(componentTransferOperation.amount());
+    Vector<float> inputParameters {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), colorMatrix.at(0, 3), colorMatrix.at(0, 4),
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), colorMatrix.at(1, 3), colorMatrix.at(1, 4),
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), colorMatrix.at(2, 3), colorMatrix.at(2, 4),
+        colorMatrix.at(3, 0), colorMatrix.at(3, 1), colorMatrix.at(3, 2), colorMatrix.at(3, 3), colorMatrix.at(3, 4),
+    };
 
-    ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createOpacityEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
-    ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-    transferFunction.slope = amount;
-    transferFunction.intercept = 0;
+    auto colorMatrix = opacityColorMatrix(componentTransferOperation.amount());
 
-    ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(nullFunction, nullFunction, nullFunction, transferFunction);
+    Vector<float> inputParameters {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), colorMatrix.at(0, 3), colorMatrix.at(0, 4),
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), colorMatrix.at(1, 3), colorMatrix.at(1, 4),
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), colorMatrix.at(2, 3), colorMatrix.at(2, 4),
+        colorMatrix.at(3, 0), colorMatrix.at(3, 1), colorMatrix.at(3, 2), colorMatrix.at(3, 3), colorMatrix.at(3, 4),
+    };
+
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createSaturateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
@@ -328,7 +335,7 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
 {
     if (!sourceImage)
         return nullptr;
-    
+
     RefPtr<FilterImage> result = sourceImage;
 
     for (auto& function : m_functions) {
