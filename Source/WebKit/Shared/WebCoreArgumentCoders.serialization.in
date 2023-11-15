@@ -2342,6 +2342,12 @@ class WebCore::CertificateInfo {
 #endif
 }
 
+struct WebCore::Length {
+    [Validator='!std::holds_alternative<unsigned>(*m_value)'] std::variant<int, float, unsigned> m_value;
+    [Validator='m_type == WebCore::LengthType::Fixed'] WebCore::LengthType m_type;
+    bool m_hasQuirk;
+};
+
 [Nested] struct WebCore::PasteboardCustomData::Entry {
     String type;
     String customData;
