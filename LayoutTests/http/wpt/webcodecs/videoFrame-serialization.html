@@ -11,13 +11,16 @@ var defaultInit = {
   duration : 33,
 }
 
-function createDefaultVideoFrame() {
+function createDefaultVideoFrame(timestamp) {
+  if (!timestamp)
+    timestamp = defaultInit.timestamp;
+
   const init = {
     format: 'I420',
-    timestamp: 1234,
+    timestamp,
     codedWidth: 4,
     codedHeight: 2,
-    timestamp: defaultInit.timestamp,
+    timestamp,
     duration: defaultInit.duration
   };
   const data = new Uint8Array([
@@ -77,6 +80,29 @@ promise_test(async t => {
   assert_equals(await promise, defaultInit.timestamp);
   localFrame.close();
 }, 'Verify transferring frames closes them with Worker.postMessage.');
+
+promise_test(async t => {
+  const frame0 = createDefaultVideoFrame(1);
+  const frame1 = createDefaultVideoFrame(2);
+
+  t.add_cleanup(() => {
+    frame0.close();
+    frame1.close();
+  });
+
+  const channel = new MessageChannel;
+  const promise = new Promise(resolve => channel.port2.onmessage = (e) => resolve(e.data));
+  channel.port1.postMessage([frame0, frame1]);
+
+  const frames = await promise;
+  t.add_cleanup(() => {
+    frames[0].close();
+    frames[1].close();
+  });
+
+  assert_equals(frames[0].timestamp, frame0.timestamp);
+  assert_equals(frames[1].timestamp, frame1.timestamp);
+}, 'Verify serializing more than one video frame');
 </script>
 </body>
 </html>
