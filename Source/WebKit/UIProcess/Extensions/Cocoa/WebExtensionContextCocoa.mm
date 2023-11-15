@@ -1674,7 +1674,12 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
     constexpr auto updatedEventDelay = 25_ms;
 
     // Fire the updated event after a small delay to coalesce relevant changes together.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(updatedEventDelay.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tab = Ref { tab }]() {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(updatedEventDelay.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier()]() {
+        // Get the tab again, it might have closed since this was scheduled.
+        RefPtr tab = getTab(tabIdentifier);
+        if (!tab)
+            return;
+
         RELEASE_LOG_DEBUG(Extensions, "Firing updated tab properties (0x%{public}X) for tab %{public}llu", tab->changedProperties().toRaw(), tab->identifier().toUInt64());
         fireTabsUpdatedEventIfNeeded(tab->parameters(), tab->changedParameters());
         tab->clearChangedProperties();
