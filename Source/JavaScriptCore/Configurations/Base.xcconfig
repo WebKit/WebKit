@@ -158,7 +158,13 @@ WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 
 // Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
-JSC_SEC_LD_FLAGS[sdk=iphoneos17.4*] = -weak_framework ServiceExtensionsCore
+
+// Tomorrow me will be smart enough to figure out how to do this properly.
+JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework ServiceExtensionsCore
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.0*][arch=*] =
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.1*][arch=*] =
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.2*][arch=*] =
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*][arch=*] =
 
 OTHER_LDFLAGS_JAVASCRIPTCORE_DEPS = $(JSC_SEC_LD_FLAGS) -fobjc-link-runtime -licucore -framework Security;
 
