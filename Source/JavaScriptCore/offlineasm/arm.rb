@@ -939,6 +939,8 @@ class Instruction
             $asm.puts "dmb sy"
         when "fence"
             $asm.puts "dmb ish"
+        when "writefence"
+            $asm.puts "dmb ishst"
         when "clrbp"
             $asm.puts "bic #{operands[2].armOperand}, #{operands[0].armOperand}, #{operands[1].armOperand}"
         when "globaladdr"

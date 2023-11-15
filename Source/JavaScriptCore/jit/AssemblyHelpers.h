@@ -77,6 +77,33 @@ public:
 #endif
     }
 
+#if USE(JSVALUE32_64)
+    template <typename Tag, typename Payload, typename Dst>
+    void storeAndFence32(Tag&& tag, Payload&& payload, Dst&& dst)
+    {
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+
+        auto const finish = [&](auto&& tagDst) {
+            if (Options::useConcurrentJIT()) {
+                store32(TrustedImm32(JSValue::InvalidTag), tagDst);
+                storeFence();
+                store32(payload, dst);
+                storeFence();
+                store32(tag, tagDst);
+            } else {
+                store32(payload, dst);
+                store32(tag, tagDst);
+            }
+        };
+
+        if constexpr (std::is_pointer_v<std::remove_reference_t<Dst>>) {
+            void* tagAddr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(dst) + TagOffset);
+            finish(tagAddr);
+        } else
+            finish(dst.withOffset(TagOffset));
+    }
+#endif
+
 #if ENABLE(WEBASSEMBLY)
     void prepareWasmCallOperation(GPRReg instanceGPR);
 #endif
@@ -145,38 +172,54 @@ public:
 #endif
     }
 
+#if USE(JSVALUE64)
     template<typename T, typename U>
     void storeCell(T cell, U address)
     {
-#if USE(JSVALUE64)
         store64(cell, address);
-#else
-        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        storePair32(cell, TrustedImm32(JSValue::CellTag), address);
-#endif
     }
+#else
+    void storeCell(GPRReg cell, Address address)
+    {
+        storeAndFence32(TrustedImm32(JSValue::CellTag), cell, address);
+    }
+#endif
 
+#if USE(JSVALUE64)
     template<typename U>
-    void storeCell(JSValueRegs regs, U address)
+    void storeCell(GPRReg cell, U address)
+    {
+        store64(cell, address);
+    }
+#else
+    void storeCell(GPRReg cell, void* address)
+    {
+        storeAndFence32(TrustedImm32(JSValue::CellTag), cell, address);
+    }
+#endif
+
+    void storeCell(JSValueRegs regs, void* address)
     {
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
         move(AssemblyHelpers::TrustedImm32(JSValue::CellTag), regs.tagGPR());
-        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
+        storeAndFence32(regs.tagGPR(), regs.payloadGPR(), address);
 #endif
     }
 
 #if USE(JSVALUE32_64)
+    void storeCell(TrustedImmPtr cell, Address address)
+    {
+#if USE(JSVALUE64)
+        store64(cell, address);
+#else
+        storeAndFence32(TrustedImm32(JSValue::CellTag), TrustedImm32(cell.asIntptr()), address);
+#endif
+    }
+
     void storeCell(const void* address)
     {
-#if ENABLE(CONCURRENT_JS)
-        if (Options::useConcurrentJIT()) {
-            store32Concurrently(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
-            return;
-        }
-#endif
         store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
     }
 #endif
@@ -195,8 +238,7 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
+        storeAndFence32(regs.tagGPR(), regs.payloadGPR(), address);
 #endif
     }
     
@@ -205,8 +247,7 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
+        storeAndFence32(regs.tagGPR(), regs.payloadGPR(), address);
 #endif
     }
     
@@ -215,8 +256,7 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
+        storeAndFence32(regs.tagGPR(), regs.payloadGPR(), address);
 #endif
     }
 
@@ -321,7 +361,7 @@ public:
 #if USE(JSVALUE64)
         store64(TrustedImm64(JSValue::encode(value)), address);
 #else
-        storePair32(TrustedImm32(value.payload()), TrustedImm32(value.tag()), address);
+        storeAndFence32(TrustedImm32(value.tag()), TrustedImm32(value.payload()), address);
 #endif
     }
 
@@ -330,7 +370,7 @@ public:
 #if USE(JSVALUE64)
         store64(TrustedImm64(JSValue::encode(value)), address);
 #else
-        storePair32(TrustedImm32(value.payload()), TrustedImm32(value.tag()), address);
+        storeAndFence32(TrustedImm32(value.tag()), TrustedImm32(value.payload()), address);
 #endif
     }
 

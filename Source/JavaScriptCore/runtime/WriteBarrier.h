@@ -167,7 +167,7 @@ public:
 
     JSValue get() const
     {
-        return JSValue::decode(m_value);
+        return JSValue::decodeConcurrent(&m_value);
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
