@@ -111,6 +111,7 @@ private:
 #endif
 
     Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
+    Ref<Document> protectedTopDocument();
 
     CheckedRef<Document> m_document;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;

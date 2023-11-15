@@ -72,6 +72,11 @@ Element* FullscreenManager::fullscreenElement() const
     return nullptr;
 }
 
+Ref<Document> FullscreenManager::protectedTopDocument()
+{
+    return topDocument();
+}
+
 // https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
 void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefPtr<DeferredPromise>&& promise, FullscreenCheckType checkType)
 {
@@ -414,8 +419,8 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
 
     // Let descendantDocs be an ordered set consisting of doc’s descendant browsing contexts' active documents whose fullscreen element is non-null, if any, in tree order.
     Deque<Ref<Document>> descendantDocuments;
-    for (auto* descendant = currentDocument.frame() ? currentDocument.frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
+    for (RefPtr descendant = currentDocument.frame() ? currentDocument.frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(descendant);
         if (!localFrame || !localFrame->document())
             continue;
         if (localFrame->document()->fullscreenManager().fullscreenElement())
@@ -607,7 +612,7 @@ bool FullscreenManager::didExitFullscreen()
     }
     INFO_LOG(LOGIDENTIFIER);
 
-    finishExitFullscreen(topDocument(), ExitMode::Resize);
+    finishExitFullscreen(protectedTopDocument(), ExitMode::Resize);
 
     if (m_fullscreenElement)
         m_fullscreenElement->didStopBeingFullscreenElement();

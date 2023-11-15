@@ -39,9 +39,9 @@ DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
     RefPtr window { document.domWindow() };
     if (!window || m_didTimeout == DidTimeout::Yes)
         return 0;
-    auto& performance = window->performance();
-    auto now = performance.now();
-    auto deadline = performance.relativeTimeFromTimeOriginInReducedResolution(document.windowEventLoop().computeIdleDeadline() - performance.timeResolution());
+    Ref performance = window->performance();
+    auto now = performance->now();
+    auto deadline = performance->relativeTimeFromTimeOriginInReducedResolution(document.windowEventLoop().computeIdleDeadline() - performance->timeResolution());
     return deadline < now ? 0 : deadline - now;
 }
 
