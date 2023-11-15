@@ -20,9 +20,38 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::URLSchemeTaskParameters {
-    WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier;
-    WebCore::ResourceLoaderIdentifier taskIdentifier;
+[RValue] struct WebKit::LoadParameters {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String topPrivatelyControlledDomain;
+    String host;
+#endif
+    uint64_t navigationID;
+    std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
-    WebKit::FrameInfoData frameInfo;
+    WebKit::SandboxExtension::Handle sandboxExtensionHandle;
+    std::span<const uint8_t> data;
+
+    String MIMEType;
+    String encodingName;
+    String baseURLString;
+    String unreachableURLString;
+    String provisionalLoadErrorURLString;
+    std::optional<WebKit::WebsitePoliciesData> websitePolicies;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
+    WebKit::UserData userData;
+    WebCore::LockHistory lockHistory;
+    WebCore::LockBackForwardList lockBackForwardList;
+    WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility
+    String clientRedirectSourceForHistory;
+    WebCore::SandboxFlags effectiveSandboxFlags;
+    std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
+    std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
+    bool isServiceWorkerLoad;
+
+#if PLATFORM(COCOA)
+    std::optional<double> dataDetectionReferenceDate;
+#endif
+
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };

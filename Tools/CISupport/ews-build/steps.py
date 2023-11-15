@@ -4561,6 +4561,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
     def evaluateCommand(self, cmd):
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
         first_results_flaky_tests = set(self.getProperty('first_run_flakies', []))
+        platform = self.getProperty('platform')
         rc = self.evaluateResult(cmd)
         next_steps = [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
         if first_results_failing_tests:
@@ -4581,9 +4582,12 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
+                next_steps.extend([UnApplyPatch(), RevertPullRequestChanges()])
+                if platform == 'wpe':
+                    next_steps.append(InstallWpeDependencies())
+                elif platform == 'gtk':
+                    next_steps.append(InstallGtkDependencies())
                 next_steps.extend([
-                    UnApplyPatch(),
-                    RevertPullRequestChanges(),
                     CompileWebKitWithoutChange(retry_build_on_failure=True),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
                     RunWebKitTestsWithoutChangeRedTree(),
@@ -4614,6 +4618,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         with_change_repeat_failures_results_flakies = set(self.getProperty('with_change_repeat_failures_results_flakies', []))
         with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
         first_results_flaky_tests = set(self.getProperty('first_run_flakies', []))
+        platform = self.getProperty('platform')
         rc = self.evaluateResult(cmd)
         self.setProperty('with_change_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
@@ -4622,7 +4627,12 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
                 UnApplyPatch(),
-                RevertPullRequestChanges(),
+                RevertPullRequestChanges()])
+            if platform == 'wpe':
+                next_steps.append(InstallWpeDependencies())
+            elif platform == 'gtk':
+                next_steps.append(InstallGtkDependencies())
+            next_steps.extend([
                 CompileWebKitWithoutChange(retry_build_on_failure=True),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 RunWebKitTestsRepeatFailuresWithoutChangeRedTree(),

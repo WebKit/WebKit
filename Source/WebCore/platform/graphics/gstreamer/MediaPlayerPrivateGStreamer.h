@@ -318,7 +318,7 @@ protected:
     static void volumeChangedCallback(MediaPlayerPrivateGStreamer*);
     static void muteChangedCallback(MediaPlayerPrivateGStreamer*);
 
-    void readyTimerFired();
+    void pausedTimerFired();
 
     template <typename TrackPrivateType> void notifyPlayerOfTrack();
 
@@ -339,10 +339,13 @@ protected:
     void updateTextureMapperFlags();
 #endif
 
+    void setCachedPosition(const MediaTime&) const;
+
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
-    mutable std::optional<MediaTime> m_cachedPosition;
+    mutable MediaTime m_cachedPosition;
+    mutable bool m_isCachedPositionValid { false };
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
@@ -545,7 +548,7 @@ private:
     Condition m_drawCondition;
     Lock m_drawLock;
     RunLoop::Timer m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
-    RunLoop::Timer m_readyTimerHandler;
+    RunLoop::Timer m_pausedTimerHandler;
 #if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
     RefPtr<Nicosia::ContentLayer> m_nicosiaLayer;

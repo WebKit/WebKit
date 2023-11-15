@@ -202,8 +202,15 @@ namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message)
 {
-    auto *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alert _setTitleMaximumLineCount:0]; // No limit, we need to make sure the title doesn't get truncated.
+    // FIXME: revisit this once UIKit bug is resolved (see also rdar://101140177).
+    auto alertTitle = adoptNS([[NSMutableAttributedString alloc] initWithString:title]);
+    [alertTitle addAttribute:NSFontAttributeName value:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline] range:NSMakeRange(0, title.length)];
+
+    auto alert = adoptNS([[UIAlertController alloc] init]);
+    alert.get().attributedTitle = alertTitle.get();
+    alert.get().title = title;
+    alert.get().message = message;
+    alert.get().preferredStyle = UIAlertControllerStyleAlert;
     return alert;
 }
 

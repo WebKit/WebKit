@@ -318,14 +318,14 @@ inline Position positionAfterNode(Node* anchorNode)
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
 inline Position firstPositionInNode(Node* anchorNode)
 {
-    if (anchorNode->isTextNode())
+    if (anchorNode->isCharacterData())
         return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
     return Position(anchorNode, Position::PositionIsBeforeChildren);
 }
 
 inline Position lastPositionInNode(Node* anchorNode)
 {
-    if (anchorNode->isTextNode())
+    if (anchorNode->isCharacterData())
         return Position(anchorNode, anchorNode->length(), Position::PositionIsOffsetInAnchor);
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }

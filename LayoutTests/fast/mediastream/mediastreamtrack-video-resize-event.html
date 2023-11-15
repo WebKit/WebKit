@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id='video' width=100px muted autoplay playsinline></video>
+    <br>
+    <script>
+
+var counter = 0;
+async function waitForResize(video)
+{
+    ++counter;
+    await new Promise((resolve, reject) => {
+        video.onresize = resolve;
+        setTimeout(() => reject("validateVideoFrameSize timed out " + counter), 5000);
+    });
+}
+
+async function validateVideoFrameSize(video, width)
+{
+    do {
+        await waitForResize(video);
+    } while (video.videoWidth !== width);
+
+    const frame = new VideoFrame(video);
+    const result = frame.codedWidth == video.videoWidth;
+    frame.close();
+    return result
+}
+
+promise_test(async (t) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { width: 1280 } });
+    if (video.requestVideoFrameCallback)
+        await new Promise((resolve, reject) => {
+            video.requestVideoFrameCallback(resolve);
+            setTimeout(() => reject("video.requestVideoFrameCallback timed out"), 5000);
+        });
+    else {
+       while (!video.videoWidth)
+           await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    video.srcObject.getVideoTracks()[0].applyConstraints({ width: 640 });
+    assert_true(await validateVideoFrameSize(video, 640), "test 1");
+
+    video.srcObject.getVideoTracks()[0].applyConstraints({ width: 1280 });
+    assert_true(await validateVideoFrameSize(video, 1280), "test 2");
+}, "Video element and VideoFrame size should be in sync after a resize event");
+    </script>
+</body>
+</html>

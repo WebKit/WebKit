@@ -34,6 +34,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "FooWrapper.h"
+#include "FormDataReference.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #include "PlatformClass.h"
@@ -297,6 +298,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "memberAfterTuple"_s
+            },
+        } },
+        { "RequestEncodedWithBody"_s, {
+            {
+                "WebCore::ResourceRequest"_s,
+                "request"_s
+            },
+        } },
+        { "RequestEncodedWithBodyRValue"_s, {
+            {
+                "WebCore::ResourceRequest"_s,
+                "request"_s
             },
         } },
         { "WebKit::RValueWithFunctionCalls"_s, {

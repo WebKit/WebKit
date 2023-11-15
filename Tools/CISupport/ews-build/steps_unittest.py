@@ -2974,6 +2974,33 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
         self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
         return rc
 
+    def test_last_try_unexpected_failure_without_list_of_failing_tests_then_schedule_update_libs_and_test_without_patch(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', [])
+        self.setProperty('retry_count', AnalyzeLayoutTestsResultsRedTree.MAX_RETRY)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(InstallWpeDependencies() in next_steps)
+        self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.assertTrue(RunWebKitTestsWithoutChangeRedTree() in next_steps)
+
+    def test_flakies_but_no_failures_then_go_to_analyze_results(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', ['fast/css/flaky1.html', 'fast/svg/flaky2.svg', 'imported/test/flaky3.html'])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(SUCCESS)
+        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(InstallWpeDependencies() in next_steps)
+        self.assertFalse(RunWebKitTestsWithoutChangeRedTree() in next_steps)
+        self.assertTrue(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
 
 class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3050,6 +3077,35 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.assertEqual(fake_flaky_tests, self.getProperty('with_change_repeat_failures_results_flakies'))
         self.assertTrue(self.getProperty('with_change_repeat_failures_results_exceed_failure_limit'))
         return rc
+
+    def test_last_run_with_patch_ends_with_list_of_failing_tests_then_schedule_update_libs_and_test_without_patch(self):
+        self.configureStep()
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html'])
+        self.setProperty('with_change_repeat_failures_results_flakies', [])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(InstallWpeDependencies() in next_steps)
+        self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
+        self.assertTrue(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
+        self.assertFalse(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
+    def test_last_run_with_patch_ends_with_no_failing_tests_then_go_to_analyze(self):
+        self.configureStep()
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', [])
+        self.setProperty('with_change_repeat_failures_results_flakies', ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html'])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(InstallWpeDependencies() in next_steps)
+        self.assertFalse(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
+        self.assertFalse(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
+        self.assertTrue(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
 
 class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

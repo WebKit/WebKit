@@ -73,6 +73,8 @@ namespace JSC { enum class Incredible; }
 namespace Testing { enum class StorageSize : uint8_t; }
 namespace WebCore { class ScrollingStateFrameHostingNode; }
 namespace WebCore { class ScrollingStateFrameHostingNodeWithStuffAfterTuple; }
+struct RequestEncodedWithBody;
+struct RequestEncodedWithBodyRValue;
 #if USE(CFBAR)
 #endif
 namespace WebKit { class RValueWithFunctionCalls; }
@@ -225,6 +227,16 @@ template<> struct ArgumentCoder<WebCore::ScrollingStateFrameHostingNode> {
 template<> struct ArgumentCoder<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple> {
     static void encode(Encoder&, const WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple&);
     static std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RequestEncodedWithBody> {
+    static void encode(Encoder&, const RequestEncodedWithBody&);
+    static std::optional<RequestEncodedWithBody> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RequestEncodedWithBodyRValue> {
+    static void encode(Encoder&, RequestEncodedWithBodyRValue&&);
+    static std::optional<RequestEncodedWithBodyRValue> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<CFFooRef> {

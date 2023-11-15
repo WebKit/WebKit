@@ -44,9 +44,6 @@ struct URLSchemeTaskParameters {
         , frameInfo(WTFMove(frameInfo))
     { }
 
-    // Used by IPC.
-    URLSchemeTaskParameters(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceRequest&&, RefPtr<WebCore::FormData>&& requestBody, FrameInfoData&&);
-
     WebURLSchemeHandlerIdentifier handlerIdentifier;
     WebCore::ResourceLoaderIdentifier taskIdentifier;
     WebCore::ResourceRequest request;

@@ -291,49 +291,97 @@ fn testComparison() {
 
 // 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
 
+// RUN: %metal-compile testBitwise
+@compute @workgroup_size(1)
 fn testBitwise()
 {
-  {
-    _ = ~0;
-    _ = ~0i;
-    _ = ~0u;
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = ~(-1);
+        const x2: i32 = ~1i;
+        const x3: u32 = ~1u;
+        const x4: vec2<u32> = ~vec2(-1);
+        const x5: vec2<i32> = ~vec2(0i);
+        const x6: vec2<u32> = ~vec2(0u);
+        let x7: i32 = ~i;
+        let x8: u32 = ~u;
+    }
 
-  {
-    _ = 0 & 1;
-    _ = 0i & 1i;
-    _ = 0u & 1u;
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 & 1;
+        const x2: i32 = 0i & 1i;
+        const x3: u32 = 0u & 1u;
+        const x4: vec2<u32> = vec2(0) & vec2(1);
+        const x5: vec2<i32> = vec2(0i) & vec2(1i);
+        const x6: vec2<u32> = vec2(0u) & vec2(1u);
+        let x7: i32 = i & 1;
+        let x8: u32 = u & 1;
+        i &= 1;
+        u &= 1;
+    }
 
-  {
-    _ = 0 | 1;
-    _ = 0i | 1i;
-    _ = 0u | 1u;
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 | 1;
+        const x2: i32 = 0i | 1i;
+        const x3: u32 = 0u | 1u;
+        const x4: vec2<u32> = vec2(0) | vec2(1);
+        const x5: vec2<i32> = vec2(0i) | vec2(1);
+        const x6: vec2<u32> = vec2(0u) | vec2(1);
+        let x7: i32 = i | 1;
+        let x8: u32 = u | 1;
+        i |= 1;
+        u |= 1;
+    }
 
-  {
-    _ = 0 ^ 1;
-    _ = 0i ^ 1i;
-    _ = 0u ^ 1u;
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 ^ 1;
+        const x2: i32 = 0i ^ 1i;
+        const x3: u32 = 0u ^ 1u;
+        const x4: vec2<u32> = vec2(0) ^ vec2(1);
+        const x5: vec2<i32> = vec2(0i) ^ vec2(1i);
+        const x6: vec2<u32> = vec2(0u) ^ vec2(1u);
+        let x7: i32 = i ^ 1;
+        let x8: u32 = u ^ 1;
+        i ^= 1;
+        u ^= 1;
+    }
 
-  {
-    const x: u32 = 1 << 2;
-    _ = 1i << 2u;
-    _ = 1u << 2u;
-    _ = vec2(1) << vec2(2);
-    _ = vec2(1i) << vec2(2u);
-    _ = vec2(1u) << vec2(2u);
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 1 << 2;
+        const x2: i32 = 1i << 2u;
+        const x3: u32 = 1u << 2u;
+        const x4: vec2<u32> = vec2(1) << vec2(2);
+        const x5: vec2<i32> = vec2(1i) << vec2(2u);
+        const x6: vec2<u32> = vec2(1u) << vec2(2u);
+        let x7: i32 = i << 1;
+        let x8: u32 = u << 1;
+        i <<= 1;
+        u <<= 1;
+    }
 
-  {
-    const x: u32 = 1 >> 2;
-    _ = 1i >> 2u;
-    _ = 1u >> 2u;
-    _ = vec2(1) >> vec2(2);
-    _ = vec2(1i) >> vec2(2u);
-    _ = vec2(1u) >> vec2(2u);
-  }
+    {
+        var i = 0i;
+        var u = 0u;
+        const x: u32 = 1 >> 2;
+        const x2: i32 = 1i >> 2u;
+        const x3: u32 = 1u >> 2u;
+        const x4: vec2<u32> = vec2(1) >> vec2(2);
+        const x5: vec2<i32> = vec2(1i) >> vec2(2u);
+        const x6: vec2<u32> = vec2(1u) >> vec2(2u);
+        let x7: i32 = i >> 1;
+        let x8: u32 = u >> 1;
+        i >>= 1;
+        u >>= 1;
+    }
 }
 
 // 8.13. Address-Of Expression (https://www.w3.org/TR/WGSL/#address-of-expr)
