@@ -216,6 +216,14 @@ class WebKit::TemplateTest {
     int memberAfterTuple
 }
 
+struct RequestEncodedWithBody {
+    [EncodeRequestBody] WebCore::ResourceRequest request;
+};
+
+[RValue] struct RequestEncodedWithBodyRValue {
+    [EncodeRequestBody] WebCore::ResourceRequest request;
+};
+
 CFFooRef wrapped by WebKit::FooWrapper {
 }
 

@@ -34,6 +34,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "FooWrapper.h"
+#include "FormDataReference.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #include "RValueWithFunctionCalls.h"
@@ -1086,6 +1087,69 @@ std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> A
             WTFMove(otherMember),
             WTFMove(*memberAfterTuple)
         )
+    };
+}
+
+void ArgumentCoder<RequestEncodedWithBody>::encode(Encoder& encoder, const RequestEncodedWithBody& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.request)>, WebCore::ResourceRequest>);
+    struct ShouldBeSameSizeAsRequestEncodedWithBody : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<RequestEncodedWithBody>, false> {
+        WebCore::ResourceRequest request;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsRequestEncodedWithBody) == sizeof(RequestEncodedWithBody));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(RequestEncodedWithBody, request)
+    >::value);
+
+    encoder << instance.request;
+    encoder << IPC::FormDataReference { instance.request.httpBody() };
+}
+
+std::optional<RequestEncodedWithBody> ArgumentCoder<RequestEncodedWithBody>::decode(Decoder& decoder)
+{
+    auto request = decoder.decode<WebCore::ResourceRequest>();
+    if (request) {
+        if (auto requestBody = decoder.decode<IPC::FormDataReference>())
+            request->setHTTPBody(requestBody->takeData());
+    }
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        RequestEncodedWithBody {
+            WTFMove(*request)
+        }
+    };
+}
+
+void ArgumentCoder<RequestEncodedWithBodyRValue>::encode(Encoder& encoder, RequestEncodedWithBodyRValue&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.request)>, WebCore::ResourceRequest>);
+    struct ShouldBeSameSizeAsRequestEncodedWithBodyRValue : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<RequestEncodedWithBodyRValue>, false> {
+        WebCore::ResourceRequest request;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsRequestEncodedWithBodyRValue) == sizeof(RequestEncodedWithBodyRValue));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(RequestEncodedWithBodyRValue, request)
+    >::value);
+
+    RefPtr requestBody = instance.request.httpBody();
+    encoder << WTFMove(instance.request);
+    encoder << IPC::FormDataReference { WTFMove(requestBody) };
+}
+
+std::optional<RequestEncodedWithBodyRValue> ArgumentCoder<RequestEncodedWithBodyRValue>::decode(Decoder& decoder)
+{
+    auto request = decoder.decode<WebCore::ResourceRequest>();
+    if (request) {
+        if (auto requestBody = decoder.decode<IPC::FormDataReference>())
+            request->setHTTPBody(requestBody->takeData());
+    }
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        RequestEncodedWithBodyRValue {
+            WTFMove(*request)
+        }
     };
 }
 

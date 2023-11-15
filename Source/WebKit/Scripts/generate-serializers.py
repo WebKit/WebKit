@@ -43,6 +43,7 @@ import sys
 # Supported member attributes:
 #
 # BitField - work around the need for http://wg21.link/P0572 and don't check that the serialization order matches the memory layout.
+# EncodeRequestBody - Include the body of the WebCore::ResourceRequest when encoding (by default, it is omitted).
 # Validator - additional C++ to validate the value when decoding
 # NotSerialized - member is present in structure but intentionally not serialized.
 # SecureCodingAllowed - ObjC classes to allow when decoding.
@@ -585,9 +586,15 @@ def encode_type(type):
             result.append('        encoder << instance.' + member.name + ';')
         else:
             if type.rvalue and '()' not in member.name:
+                if 'EncodeRequestBody' in member.attributes:
+                    result.append('    RefPtr ' + member.name + 'Body = instance.' + member.name + '.httpBody();')
                 result.append('    encoder << WTFMove(instance.' + member.name + ');')
+                if 'EncodeRequestBody' in member.attributes:
+                    result.append('    encoder << IPC::FormDataReference { WTFMove(' + member.name + 'Body) };')
             else:
                 result.append('    encoder << instance.' + member.name + ';')
+                if 'EncodeRequestBody' in member.attributes:
+                    result.append('    encoder << IPC::FormDataReference { instance.' + member.name + '.httpBody() };')
         if member.condition is not None:
             result.append('#endif')
 
@@ -668,6 +675,11 @@ def decode_type(type):
         else:
             assert len(decodable_classes) == 0
             result.append('    auto ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
+            if 'EncodeRequestBody' in member.attributes:
+                result.append('    if (' + sanitized_variable_name + ') {')
+                result.append('        if (auto ' + sanitized_variable_name + 'Body = decoder.decode<IPC::FormDataReference>())')
+                result.append('            ' + sanitized_variable_name + '->setHTTPBody(' + sanitized_variable_name + 'Body->takeData());')
+                result.append('    }')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:
@@ -1237,6 +1249,7 @@ def main(argv):
     using_statements = []
     headers = []
     header_set = set()
+    header_set.add(ConditionalHeader('"FormDataReference.h"', None))
     additional_forward_declarations_set = set()
     file_extension = argv[1]
     skip = False
