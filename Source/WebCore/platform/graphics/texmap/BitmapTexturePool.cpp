@@ -28,7 +28,6 @@
 #include "BitmapTexturePool.h"
 
 #if USE(TEXTURE_MAPPER)
-#include "BitmapTexture.h"
 
 namespace WebCore {
 
