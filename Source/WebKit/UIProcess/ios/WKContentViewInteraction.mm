@@ -10037,13 +10037,6 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     return webRequest;
 }
 
-- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
-{
-    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
-        capturedCompletionHandler();
-    });
-}
-
 - (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
@@ -10073,7 +10066,14 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     }];
 }
 
-#endif
+#endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
+
+- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
+{
+    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
+        capturedCompletionHandler();
+    });
+}
 
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
 {
