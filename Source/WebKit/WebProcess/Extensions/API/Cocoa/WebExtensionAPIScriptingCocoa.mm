@@ -41,6 +41,7 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionDynamicScripts.h"
 #import "WebExtensionFrameIdentifier.h"
+#import "WebExtensionRegisteredScriptParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionTabIdentifier.h"
@@ -51,6 +52,7 @@
 static NSString * const allFramesKey = @"allFrames";
 static NSString * const argsKey = @"args";
 static NSString * const argumentsKey = @"arguments";
+static NSString * const cssKey = @"css";
 static NSString * const filesKey = @"files";
 static NSString * const frameIDsKey = @"frameIds";
 static NSString * const funcKey = @"func";
@@ -59,107 +61,92 @@ static NSString * const tabIDKey = @"tabId";
 static NSString * const targetKey = @"target";
 static NSString * const worldKey = @"world";
 
-static NSString * const  cssKey = @"css";
+static NSString * const excludeMatchesKey = @"excludeMatches";
+static NSString * const idKey = @"id";
+static NSString * const idsKey = @"ids";
+static NSString * const jsKey = @"js";
+static NSString * const matchesKey = @"matches";
+static NSString * const persistAcrossSessionsKey = @"persistAcrossSessions";
+static NSString * const runAtKey = @"runAt";
 
 static NSString * const mainWorld = @"MAIN";
 static NSString * const isolatedWorld = @"ISOLATED";
 
+static NSString * const documentEnd = @"document_end";
+static NSString * const documentIdle = @"document_idle";
+static NSString * const documentStart = @"document_start";
+
 // FIXME: <https://webkit.org/b/261765> Consider adding support for cssOrigin.
 // FIXME: <https://webkit.org/b/261765> Consider adding support for injectImmediately.
+// FIXME: <https://webkit.org/b/264829> Add support for matchOriginAsFallback.
 
 namespace WebKit {
 
-static inline void parseTargetInjectionOptions(NSDictionary *targetInfo, WebExtensionScriptInjectionParameters& parameters, NSString **outExceptionString)
+NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& parametersVector, bool returnExecutionResultOnly)
 {
-    NSNumber *tabID = targetInfo[tabIDKey];
-    std::optional<WebExtensionTabIdentifier> identifier = toWebExtensionTabIdentifier(tabID.doubleValue);
-    if (!identifier) {
-        *outExceptionString = toErrorString(nil, tabIDKey, @"'%@' is not a tab identifier", tabID);
-        return;
-    }
+    auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
 
-    parameters.tabIdentifier = identifier;
-
-    if (NSArray *frameIDs = targetInfo[frameIDsKey]) {
-        Vector<WebExtensionFrameIdentifier> frames;
-        for (NSNumber *frameID in frameIDs) {
-            auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
-            if (!isValid(identifier)) {
-                *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
-                return;
-            }
-
-            frames.append(identifier.value());
+    // tabs.executeScript() only returns an array of the injection result.
+    if (returnExecutionResultOnly) {
+        for (auto& parameters : parametersVector) {
+            if (parameters.result)
+                [results addObject:parameters.result.value()];
+            else
+                [results addObject:NSNull.null];
         }
 
-        parameters.frameIDs = frames;
-        return;
+        return [results copy];
     }
 
-    if (!boolForKey(targetInfo, allFramesKey, false))
-        parameters.frameIDs = Vector { WebExtensionFrameConstants::MainFrameIdentifier };
-}
+    for (auto& parameters : parametersVector) {
+        auto *result = [NSMutableDictionary dictionaryWithCapacity:3];
 
-static inline void parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters)
-{
-    if (script[funcKey] || script[functionKey]) {
-        NSString *key = script[funcKey] ? funcKey : functionKey;
-        parameters.function = script[key];
+        if (parameters.result)
+            result[@"result"] = parameters.result.value();
+        else
+            result[@"result"] = NSNull.null;
+
+        ASSERT(parameters.frameID);
+        if (parameters.frameID)
+            result[@"frameId"] = @(WebKit::toWebAPI(parameters.frameID.value()));
+
+        if (parameters.error)
+            result[@"error"] = parameters.error.value();
+
+        [results addObject:result];
     }
 
-    if (script[argsKey] || script[argumentsKey]) {
-        NSString *key = script[argsKey] ? argsKey : argumentsKey;
-        parameters.arguments = makeVector<String>(script[key]);
-    }
-
-    if (NSArray *files = script[filesKey])
-        parameters.files = makeVector<String>(files);
-
-    parameters.world = WebExtensionContentWorldType::ContentScript;
-    if ([(NSString *)script[worldKey] isEqualToString:mainWorld])
-        parameters.world = WebExtensionContentWorldType::Main;
-}
-
-static inline void parseCSSInjectionOptions(NSDictionary *cssInfo, WebExtensionScriptInjectionParameters& parameters)
-{
-    if (NSString *css = cssInfo[cssKey])
-        parameters.css = css;
-
-    if (NSArray *files = cssInfo[filesKey])
-        parameters.files = makeVector<String>(files);
-
-    parameters.world = WebExtensionContentWorldType::ContentScript;
+    return [results copy];
 }
 
 void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/executeScript
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/executeScript
 
     if (!validateScript(script, outExceptionString))
         return;
 
     // A JSValue cannot be transferred across processes, so we must convert it to a string before passing it along.
-    if (JSValue *func = script[funcKey] ?: script[functionKey]) {
-        ASSERT(func.isObject);
-        NSString *key = script[funcKey] ? funcKey : functionKey;
-        script = mergeDictionariesAndSetValues(script, @{ key: func.toString });
+    if (JSValue *function = script[funcKey] ?: script[functionKey]) {
+        ASSERT(function.isObject);
+        script = mergeDictionariesAndSetValues(script, @{ functionKey: function.toString });
     }
 
     WebExtensionScriptInjectionParameters parameters;
     parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
     parseScriptInjectionOptions(script, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback), this](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebExtensionDynamicScripts::Error error) {
         if (error)
             callback->reportError(error.value());
         else
-            callback->call(toWebAPI(results.value()));
+            callback->call(toWebAPI(results.value(), false));
     }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/insertCSS
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/insertCSS
 
     if (!validateCSS(cssInfo, outExceptionString))
         return;
@@ -178,7 +165,7 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
 
 void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/removeCSS
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/removeCSS
 
     if (!validateCSS(cssInfo, outExceptionString))
         return;
@@ -195,30 +182,76 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPIScripting::registerContentScripts(NSObject *scripts, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIScripting::registerContentScripts(NSObject *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/registerContentScripts
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/registerContentScripts
 
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    NSArray<NSDictionary<NSString *, id> *> *scripts = dynamic_objc_cast<NSArray>(details);
+
+    if (!validateRegisteredScripts(scripts, true, outExceptionString))
+        return;
+
+    Vector<WebExtensionRegisteredScriptParameters> parameters;
+    parseRegisteredContentScripts(scripts, parameters);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/getRegisteredContentScripts
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/getRegisteredContentScripts
 
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    if (!validateFilter(filter, outExceptionString))
+        return;
+
+    Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
-void WebExtensionAPIScripting::updateContentScripts(NSObject *scripts, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIScripting::updateContentScripts(NSObject *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/updateContentScripts
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/updateContentScripts
 
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    NSArray<NSDictionary<NSString *, id> *> *scripts = dynamic_objc_cast<NSArray>(details);
+
+    if (!validateRegisteredScripts(scripts, false, outExceptionString))
+        return;
+
+    Vector<WebExtensionRegisteredScriptParameters> parameters;
+    parseRegisteredContentScripts(scripts, parameters);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/scripting/unregisterContentScripts
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/unregisterContentScripts
 
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    if (!validateFilter(filter, outExceptionString))
+        return;
+
+    Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
 bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **outExceptionString)
@@ -277,12 +310,8 @@ bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **o
         }
     }
 
-    if (NSString *world = script[worldKey]) {
-        if (![world isEqualToString:isolatedWorld] && ![world isEqualToString:mainWorld]) {
-            *outExceptionString = toErrorString(nil, worldKey, @"it must specify either 'ISOLATED' or 'MAIN'");
-            return false;
-        }
-    }
+    if (!hasValidExecutionWorld(script, outExceptionString))
+        return false;
 
     return true;
 }
@@ -349,29 +378,188 @@ bool WebExtensionAPIScripting::validateCSS(NSDictionary *cssInfo, NSString **out
     return true;
 }
 
-NSArray* WebExtensionAPIScripting::toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& parametersVector)
+bool WebExtensionAPIScripting::validateRegisteredScripts(NSArray *scripts, bool isRegisteringScript, NSString **outExceptionString)
 {
-    auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
+    static NSArray<NSString *> *requiredKeys = @[
+        idKey,
+    ];
 
-    for (auto& parameters : parametersVector) {
-        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
+    static NSDictionary<NSString *, id> *keyTypes = @{
+        allFramesKey: @YES.class,
+        cssKey: @[ NSString.class ],
+        excludeMatchesKey: @[ NSString.class ],
+        idKey: NSString.class,
+        jsKey: @[ NSString.class ],
+        matchesKey: @[ NSString.class ],
+        persistAcrossSessionsKey: @YES.class,
+        runAtKey: NSString.class,
+        worldKey: NSString.class,
+    };
 
-        if (parameters.result)
-            result[@"result"] = (NSString *)parameters.result.value();
-        else
-            result[@"result"] = NSNull.null;
-
-        ASSERT(parameters.frameID);
-        if (parameters.frameID)
-            result[@"frameId"] = @(WebKit::toWebAPI(parameters.frameID.value()));
-
-        if (parameters.error)
-            result[@"error"] = (NSString *)parameters.error.value();
-
-        [results addObject:result];
+    if (![scripts isKindOfClass:NSArray.class]) {
+        *outExceptionString = toErrorString(nil, @"details", @"an array is expected");
+        return false;
     }
 
-    return [results copy];
+    for (NSDictionary *script in scripts) {
+        if (!validateDictionary(script, @"scripts", requiredKeys, keyTypes, outExceptionString))
+            return false;
+
+        NSString *scriptID = script[idKey];
+        if (!scriptID.length) {
+            *outExceptionString = toErrorString(nil, idKey, @"it must not be empty");
+            return false;
+        }
+
+        if ([scriptID characterAtIndex:0] == '_') {
+            *outExceptionString = toErrorString(nil, idKey, @"it must not start with '_'");
+            return false;
+        }
+
+        NSArray *matchPatterns = script[matchesKey];
+        if (isRegisteringScript && !matchPatterns.count) {
+            *outExceptionString = toErrorString(nil, matchesKey, @"it must specify at least one match pattern for script with ID '%@'", script[idKey]);
+            return false;
+        }
+
+        if (matchPatterns && !matchPatterns.count) {
+            *outExceptionString = toErrorString(nil, matchesKey, @"it must not be empty");
+            return false;
+        }
+
+        NSArray *jsFiles = script[jsKey];
+        NSArray *cssFiles = script[cssKey];
+        if (isRegisteringScript && !jsFiles.count && !cssFiles.count) {
+            *outExceptionString = toErrorString(nil, @"details", @"it must specify at least one 'css' or 'js' file");
+            return false;
+        }
+
+        if (NSString *injectionTime = script[runAtKey]) {
+            if (![injectionTime isEqualToString:documentIdle] || ![injectionTime isEqualToString:documentStart] || ![injectionTime isEqualToString:documentEnd]) {
+                *outExceptionString = toErrorString(nil, runAtKey, @"it must be one of the following: 'document_end', 'document_idle', or 'document_start'");
+                return false;
+            }
+        }
+
+        if (!hasValidExecutionWorld(script, outExceptionString))
+            return false;
+    }
+
+    return true;
+}
+
+bool WebExtensionAPIScripting::validateFilter(NSDictionary *filter, NSString **outExceptionString)
+{
+    static NSDictionary<NSString *, id> *keyTypes = @{
+        idsKey: @[ NSString.class ],
+    };
+
+    return validateDictionary(filter, @"filter", nil, keyTypes, outExceptionString);
+}
+
+void WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetInfo, WebExtensionScriptInjectionParameters& parameters, NSString **outExceptionString)
+{
+    NSNumber *tabID = targetInfo[tabIDKey];
+    auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
+    if (!tabIdentifier) {
+        *outExceptionString = toErrorString(nil, tabIDKey, @"'%@' is not a tab identifier", tabID);
+        return;
+    }
+
+    parameters.tabIdentifier = tabIdentifier;
+
+    if (NSArray *frameIDs = targetInfo[frameIDsKey]) {
+        Vector<WebExtensionFrameIdentifier> frames;
+        for (NSNumber *frameID in frameIDs) {
+            auto frameIdentifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
+            if (!isValid(frameIdentifier)) {
+                *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
+                return;
+            }
+
+            frames.append(frameIdentifier.value());
+        }
+
+        parameters.frameIDs = frames;
+        return;
+    }
+
+    if (!boolForKey(targetInfo, allFramesKey, false))
+        parameters.frameIDs = Vector { WebExtensionFrameConstants::MainFrameIdentifier };
+}
+
+void WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters)
+{
+    if (script[functionKey])
+        parameters.function = script[functionKey];
+
+    if (script[argsKey] || script[argumentsKey]) {
+        auto *key = script[argsKey] ? argsKey : argumentsKey;
+        parameters.arguments = makeVector<String>(script[key]);
+    }
+
+    if (NSArray *files = script[filesKey])
+        parameters.files = makeVector<String>(files);
+
+    if ([(NSString *)script[worldKey] isEqualToString:mainWorld])
+        parameters.world = WebExtensionContentWorldType::Main;
+}
+
+void WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, WebExtensionScriptInjectionParameters& parameters)
+{
+    if (NSString *css = cssInfo[cssKey])
+        parameters.css = css;
+
+    if (NSArray *files = cssInfo[filesKey])
+        parameters.files = makeVector<String>(files);
+}
+
+void WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, Vector<WebExtensionRegisteredScriptParameters>& parametersVector)
+{
+    for (NSDictionary *script in scripts) {
+        WebExtensionRegisteredScriptParameters parameters;
+
+        parameters.identifier = script[idKey];
+
+        parameters.allFrames = boolForKey(script, allFramesKey, false);
+        parameters.persistAcrossSessions = boolForKey(script, persistAcrossSessionsKey, true);
+
+        if (NSArray *cssFiles = script[cssKey])
+            parameters.css = makeVector<String>(cssFiles);
+
+        if (NSArray *jsFiles = script[jsKey])
+            parameters.js = makeVector<String>(jsFiles);
+
+        if (NSArray *matchPatterns = script[matchesKey])
+            parameters.matchPatterns = makeVector<String>(matchPatterns);
+
+        if (NSArray *excludedMatchPatterns = script[excludeMatchesKey])
+            parameters.excludedMatchPatterns = makeVector<String>(excludedMatchPatterns);
+
+        if ([script[worldKey] isEqualToString:mainWorld])
+            parameters.world = WebExtensionContentWorldType::Main;
+
+        if (NSString *injectionTime = script[runAtKey]) {
+            if ([injectionTime isEqualToString:documentEnd])
+                parameters.injectionTime = WebExtension::InjectionTime::DocumentEnd;
+            else if ([injectionTime isEqualToString:documentIdle])
+                parameters.injectionTime = WebExtension::InjectionTime::DocumentIdle;
+            else
+                parameters.injectionTime = WebExtension::InjectionTime::DocumentStart;
+        }
+    }
+}
+
+bool WebExtensionAPIScripting::hasValidExecutionWorld(NSDictionary *script, NSString **outExceptionString)
+{
+    if (NSString *world = script[worldKey]) {
+        if (![world isEqualToString:isolatedWorld] && ![world isEqualToString:mainWorld]) {
+            *outExceptionString = toErrorString(nil, worldKey, @"it must specify either 'ISOLATED' or 'MAIN'");
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace WebKit

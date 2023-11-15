@@ -78,6 +78,10 @@ messages -> WebExtensionContext {
     ScriptingExecuteScript(WebKit::WebExtensionScriptInjectionParameters parameters) -> (std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebKit::WebExtensionDynamicScripts::Error error);
     ScriptingInsertCSS(WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionDynamicScripts::Error error);
     ScriptingRemoveCSS(WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingRegisterScripts(Vector<WebKit::WebExtensionRegisteredScriptParameters> scripts) -> (WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingUpdateRegisteredScripts(Vector<WebKit::WebExtensionRegisteredScriptParameters> scripts) -> (WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingGetRegisteredScripts(Vector<String> scriptIDs) -> (std::optional<Vector<WebKit::WebExtensionRegisteredScriptParameters>> scripts, WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingUnregisterScripts(Vector<String> scriptIDs) -> (std::optional<Vector<WebKit::WebExtensionRegisteredScriptParameters>> scripts, WebKit::WebExtensionDynamicScripts::Error error);
 
     // Tabs APIs
     TabsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);

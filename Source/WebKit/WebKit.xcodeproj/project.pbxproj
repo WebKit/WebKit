@@ -1871,6 +1871,7 @@
 		B65DA1D3294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B65DA1D2294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B65DA1DD294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B68437B329A3E2F500472D1B /* _WKWebExtensionLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = B6217BB0299C39F000498BF8 /* _WKWebExtensionLocalization.h */; };
+		B69E1A682AFF5F0C000FB98E /* WebExtensionRegisteredScriptParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */; };
 		B6CCAAB929A445E90092E846 /* JSWebExtensionAPILocalization.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6CCAAB729A445E90092E846 /* JSWebExtensionAPILocalization.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B6D031052AC1F241006C8E0B /* WebExtensionDynamicScripts.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D031032AC1F240006C8E0B /* WebExtensionDynamicScripts.h */; };
 		B6D031062AC1F241006C8E0B /* WebExtensionDynamicScriptsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D031042AC1F241006C8E0B /* WebExtensionDynamicScriptsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -6672,6 +6673,7 @@
 		B65DA1D2294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIPermissionsCocoa.mm; sourceTree = "<group>"; };
 		B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIPermissionsCocoa.mm; sourceTree = "<group>"; };
 		B6746A9C2AA8CC79002B244A /* WebExtensionAPIScripting.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIScripting.idl; sourceTree = "<group>"; };
+		B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionRegisteredScriptParameters.h; sourceTree = "<group>"; };
 		B6CCAAB629A445E90092E846 /* JSWebExtensionAPILocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPILocalization.h; sourceTree = "<group>"; };
 		B6CCAAB729A445E90092E846 /* JSWebExtensionAPILocalization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPILocalization.mm; sourceTree = "<group>"; };
 		B6D031032AC1F240006C8E0B /* WebExtensionDynamicScripts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionDynamicScripts.h; sourceTree = "<group>"; };
@@ -12499,6 +12501,7 @@
 				1C4EBD712ABA47610005868F /* WebExtensionMessageSenderParameters.h */,
 				1C4EBD732ABA481B0005868F /* WebExtensionMessageSenderParameters.serialization.in */,
 				1C9A15C72ABDEEB4002CC12A /* WebExtensionPortChannelIdentifier.h */,
+				B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */,
 				B6D031082AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h */,
 				B624FF1A2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h */,
 				1C4957A22A983E39007D0B64 /* WebExtensionTab.serialization.in */,
@@ -15605,6 +15608,7 @@
 				1C73167B2AC1E676007FADA4 /* WebExtensionMessagePort.h in Headers */,
 				1C4EBD722ABA47610005868F /* WebExtensionMessageSenderParameters.h in Headers */,
 				1C9A15C82ABDEEB4002CC12A /* WebExtensionPortChannelIdentifier.h in Headers */,
+				B69E1A682AFF5F0C000FB98E /* WebExtensionRegisteredScriptParameters.h in Headers */,
 				B6D0310A2AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h in Headers */,
 				B624FF1B2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h in Headers */,
 				1C66BDDC2A8ADB94009D4452 /* WebExtensionTab.h in Headers */,

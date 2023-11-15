@@ -86,6 +86,33 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 } }), /it must specify either 'css' or 'files'./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
 
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts(), /a required argument is missing/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts({}), /an array is expected/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{}]), /it is missing required keys: 'id'/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: 0 }]), /'id' is expected to be a string, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '' }]), /it must not be empty/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '_0' }]), /it must not start with '_'/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0' }]), /it must specify at least one match pattern for script with ID '0'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [] }]), /it must specify at least one match pattern for script with ID '0'/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ] }]), /it must specify at least one 'css' or 'js' file/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], runAt: 'invalid_runAt' }]), /it must be one of the following: 'document_end', 'document_idle', or 'document_start'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '_0' }]), /it must not start with '_'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ ], js: ['path/to/file'] }]), /it must not be empty/i)",
+        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts([]), /an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: 0 }), /'ids' is expected to be an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: [ 0 ] }), /'ids' is expected to be strings in an array, but a number was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts([]), /an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: 0 }), /'ids' is expected to be an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: [ 0 ] }), /'ids' is expected to be strings in an array, but a number was provided/i)",
+
         @"browser.test.notifyPass()"
     ]);
 

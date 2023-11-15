@@ -185,20 +185,6 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
     return [result copy];
 }
 
-NSArray *toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& parametersVector)
-{
-    auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
-
-    for (auto& parameters : parametersVector) {
-        if (parameters.result)
-            [results addObject:parameters.result.value()];
-        else
-            [results addObject:NSNull.null];
-    }
-
-    return [results copy];
-}
-
 bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
     if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))
@@ -1049,7 +1035,7 @@ void WebExtensionAPITabs::executeScript(WebPage *page, double tabID, NSDictionar
             return;
         }
 
-        callback->call(toWebAPI(results.value()));
+        callback->call(toWebAPI(results.value(), true));
     }, extensionContext().identifier());
 }
 
