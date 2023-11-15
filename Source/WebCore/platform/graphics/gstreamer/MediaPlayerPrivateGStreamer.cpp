@@ -1343,22 +1343,23 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
     if (m_isEndReached)
         return m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
 
-    if (m_cachedPosition) {
-        GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.value().toString().utf8().data());
-        return m_cachedPosition.value();
+    if (m_isCachedPositionValid) {
+        GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.toString().utf8().data());
+        return m_cachedPosition;
     }
 
     GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
     GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
 
-    MediaTime playbackPosition = MediaTime::zeroTime();
+    // Cached position is marked as non valid here but we might fail to get a new one so initializing to this as "educated guess".
+    MediaTime playbackPosition = m_cachedPosition;
 
     if (GST_CLOCK_TIME_IS_VALID(gstreamerPosition))
         playbackPosition = MediaTime(gstreamerPosition, GST_SECOND);
     else if (m_canFallBackToLastFinishedSeekPosition)
         playbackPosition = m_seekTarget.time;
 
-    m_cachedPosition = playbackPosition;
+    setCachedPosition(playbackPosition);
     invalidateCachedPositionOnNextIteration();
     return playbackPosition;
 }
@@ -2770,7 +2771,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
         // HTMLMediaElement. In some cases like reverse playback the
         // position is not always reported as 0 for instance.
         if (!m_isSeeking) {
-            m_cachedPosition = m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
+            setCachedPosition(m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime());
             GST_DEBUG("Position adjusted: %s", currentMediaTime().toString().utf8().data());
         }
     }
@@ -3679,9 +3680,15 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
         player->sizeChanged();
 }
 
+void MediaPlayerPrivateGStreamer::setCachedPosition(const MediaTime& cachedPosition) const
+{
+    m_cachedPosition = cachedPosition;
+    m_isCachedPositionValid = true;
+}
+
 void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
 {
-    m_cachedPosition.reset();
+    m_isCachedPositionValid = false;
 }
 
 void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const

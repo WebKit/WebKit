@@ -87,6 +87,8 @@ struct WebKitMediaSrcPrivate {
 
     // Only used by URI Handler API implementation.
     GUniquePtr<char> uri;
+
+    WeakPtr<MediaPlayerPrivateGStreamerMSE> player;
 };
 
 static void webKitMediaSrcUriHandlerInit(gpointer, gpointer);
@@ -98,6 +100,7 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
 static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParamSpec*);
 static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
 static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
+static MediaPlayerPrivateGStreamerMSE* webKitMediaSrcPlayer(WebKitMediaSrc*);
 
 #define webkit_media_src_parent_class parent_class
 
@@ -334,6 +337,16 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
         gst_element_add_pad(GST_ELEMENT(source), GST_PAD(stream->pad.get()));
     }
     GST_DEBUG_OBJECT(source, "All pads added");
+}
+
+static MediaPlayerPrivateGStreamerMSE* webKitMediaSrcPlayer(WebKitMediaSrc* source)
+{
+    return source->priv->player.get();
+}
+
+void webKitMediaSrcSetPlayer(WebKitMediaSrc* source, WeakPtr<MediaPlayerPrivateGStreamerMSE>&& player)
+{
+    source->priv->player = WTFMove(player);
 }
 
 static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomString& name)
@@ -623,11 +636,27 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         // The resulting segment is brand new, but with a different start time.
         WebKitMediaSrcPrivate* priv = stream->source->priv;
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
+        streamingMembers->segment.base = 0;
         streamingMembers->segment.rate = priv->rate;
         streamingMembers->segment.start = streamingMembers->segment.time = priv->startTime;
+    } else {
+        // In the case of non-seeking flushes we don't reset the timeline, so instead we need to increase the `base` field
+        // by however running time we're starting after the flush.
+        MediaPlayerPrivateGStreamerMSE* player = webKitMediaSrcPlayer(stream->source);
+        if (player) {
+            MediaTime streamTime = player->currentMediaTime();
+            GstClockTime pipelineStreamTime = toGstClockTime(streamTime);
+            DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
+            // We need to increase the base by the running time accumulated during the previous segment.
+            GstClockTime pipelineRunningTime = gst_segment_to_running_time(&streamingMembers->segment, GST_FORMAT_TIME, pipelineStreamTime);
+            if ((GST_CLOCK_TIME_IS_VALID(pipelineRunningTime))) {
+                GST_DEBUG_OBJECT(stream->source, "Resetting segment to current pipeline running time (%" GST_TIME_FORMAT " and stream time (%" GST_TIME_FORMAT " = %s)",
+                    GST_TIME_ARGS(pipelineRunningTime), GST_TIME_ARGS(pipelineStreamTime), streamTime.toString().ascii().data());
+                streamingMembers->segment.base = pipelineRunningTime;
+                streamingMembers->segment.start = streamingMembers->segment.time = static_cast<GstClockTime>(pipelineStreamTime);
+            }
+        }
     }
-    // In the case of non-seeking flushes we don't reset the timeline, so the buffers will
-    // have the same running time as before and we don't need to alter the segment.
 
     if (!skipFlush) {
         // By taking the stream lock we are waiting for the streaming thread task to stop if it hadn't yet.
@@ -657,6 +686,11 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         // Since FLUSH_STOP is a synchronized event, we send it while we still hold the stream lock of the pad.
         gst_pad_push_event(stream->pad.get(), gst_event_new_flush_stop(isSeekingFlush));
         GST_DEBUG_OBJECT(stream->pad.get(), "FLUSH_STOP sent.");
+
+        {
+            DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
+            streamingMembers->hasPoppedFirstObject = false;
+        }
 
         GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
         gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.get(), nullptr);
