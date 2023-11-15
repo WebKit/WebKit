@@ -215,7 +215,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     else
         m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestPermissionForXRSessionOrigin:mode:grantedFeatures:consentRequiredFeatures:consentOptionalFeatures:completionHandler:)];
 
-#if TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
     if ([delegate respondsToSelector:@selector(_webView:startXRSessionWithFeatures:completionHandler:)])
         m_delegateMethods.webViewStartXRSessionWithCompletionHandler = true;
     else
