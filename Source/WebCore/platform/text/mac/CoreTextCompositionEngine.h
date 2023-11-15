@@ -29,24 +29,101 @@
 
 using CharacterClass = uint8_t;
 
-namespace CompositionRules {
+namespace WebCore {
 
-typedef enum : uint8_t {
-    _______ = 0,
-    _1_4_be,
-    _1_4_af,
-    _1_8_be,
-    _1_8_af,
-    _1_25_be,
-    _1_2_be,
-    _1_2_af,
-    _note3_,
-    _note5_,
-    _1_4_af_re, // Reduce 1/4 em after previous char.
-    _1_4_be_re, // Reduce 1/4 em before current char.
-    _1_2_eq_re, // Reduce 1/4 em after previous char and reduce 1/4 em before current char.
-} CharacterSpacingType;
+enum class TextSpacingSupportedLanguage : uint8_t;
 
-CharacterSpacingType characterSpacing(CTCompositionLanguage, bool, UTF32Char, UTF32Char);
+// Each glyph has some spacing on its left and right: |left-space|A|right-after|left-space|B|right-space|
+// Spacing is processed for a pair of adjacent glyphs. Here 'A' is the current glyph and 'B' the next.
+struct CJKAdjustingSpacing {
+    CGFloat currentRightSpace = 0.0; // Space to the right of current glyph (l-s): |A|r-s|
+    CGFloat nextLeftSpace = 0.0; // Space to the left of next glyph (r-s):               |r-s|B|
 
-} // namespace CompositionRules
+    // FIXME: Implement optical bound adjustment rdar://116480457
+    bool shouldAdjustCurrentRightOpticalBound = false; // current glyph requires optical bound adjusting to the right. This adjustment is calculated based on the glyph's optical bounds.
+    bool shouldAdjustNextLeftOpticalBound = false; // next glyph requires calculated optical bound adjusting to the left.This adjustment is calculated based on the glyph's optical bounds.
+    bool shouldAdjustCurrentRightFixedOpticalBound = false; // current glyph requires fixed optical bound adjusting to the right. This adjustment is fixed and introduced by the engine.
+    bool shouldAdjustNextLeftFixedOpticalBound = false; // next glyph requires fixed optical bound adjusting to the left. This adjustment is fixed and introduced by the engine.
+};
+
+struct CJKCompositionEngine {
+
+enum class CJKCompositionCharacterClass : uint8_t {
+    OpeningMarks,
+    OpeningMarks_o,	// needs optical bounds adjustment
+    OpeningMarks_c,	// Chinese only
+    ClosingMarks,
+    ClosingMarks_o,	// needs optical bounds adjustment
+    ClosingMarks_c,	// Chinese only
+    StopMarks,
+    StopMarks_s,	// Soft stops
+    StopMarks_j,	// Japanese only
+    StopMarks_c,	// FULLWIDTH QUESTION MARK/EXCLAMATION MARK/COLON/SEMICOLON
+    MiddleDots,		// Japaense only
+    Foreign,		// Roman, etc.
+    Whitespace,
+    Inseparable,	// '…'
+    Other,
+    NumClasses
+};
+
+static CJKCompositionCharacterClass characterClass(UChar32 character, uint32_t generalCategoryMask);
+// FIXME: implement optical bounds adjustment rdar://116480457
+static CGFloat leftOpticalBoundsAdjustment();
+static CGFloat rightOpticalBoundsAdjustment();
+};
+
+struct CJKCompositionRules {
+enum class AditionalSpacingType : uint8_t {
+    ______,		// do nothing
+    ba_1_4,		// Add 1/4 em to the right optical edge of prev char, and add 1/4 em to the left optical edge current char.
+    ba_1_5,		// Add 1/5 em to the right optical edge of prev char, and add 1/5 em to the left optical edge current char.
+    pa_1_5,		// Add 1/5 em to the right optical edge of prev char.
+    pa_1_4,		// Add 1/4 em to the right optical edge of prev char.
+    pa_2_5,		// Add 2/5 em to the right optical edge prev char.
+    ca_2_5,		// Add 2/5 em to the left optical edge current char.
+    p__0__,		// Appears like nothing was added or removed.   NOTE: Half-width is assumed, so this actually means "adding 1/2 to the right side of previous char".
+    ps_0__,		// Appears like nothing was added or removed.   NOTE: Centered Half-width is assumed, so this actually means "adding 1/4 to the right side of previous char".
+    cs_0__,		// Appears like nothing was added or removed.   NOTE: Centered Half-width is assumed, so this actually means "adding 1/4 to the left side of current char".
+    p__1_4,		// Remove 1/4 from the right side of previous char.  Note: This means "adding 1/4 to previous char".
+    pa_1_8,		// Add 1/8 to the right side of previous char.  // NOTE: This is actual size, not assuming Half-width.
+    ca_1_8,		// Add 1/8 to the left side of current char.	// NOTE: This is actual size, not assuming Half-width.
+    ca_1_4,		// Add 1/4 to the left side of current char.	// NOTE: This is actual size, not assuming Half-width.
+    ca_1_5,		// Add 1/5 to the left side of current char.	// NOTE: This is actual size, not assuming Half-width.
+    NumberOfAdditionalSpacingTypes
+};
+
+enum class CharacterClass : uint8_t {
+    // CoreText denomination.
+    OpeningMarks,
+    OpeningMarks3,
+    ClosingMarks,
+    ClosingMarks3,
+    StopMarks,
+    Latin,
+    Other,
+    Inseparable,
+    // MiddleDots,
+    NumberOfClasses // Reserved for counting the total number of classes.
+};
+
+    static CharacterClass characterClass(UChar32, TextSpacingSupportedLanguage, uint32_t);
+    static CJKAdjustingSpacing characterSpacing(UChar32 currentCharacter, UChar32 nextCharacter, TextSpacingSupportedLanguage language, uint32_t currentCharGeneralCategoryMask);
+
+    static bool isSoftStop(UChar32 stopChar);
+    static bool isNoLeftMarginOpeningMark(UChar32 openingChar);
+    static bool isNoRightMarginClosingMark(UChar32 closingChar);
+    static bool isLatinOpening(UChar32 charCode);
+    static bool isLatinClosing(UChar32 charCode);
+    static bool isLeftQuotationMark(UChar32 charCode);
+    static bool isRightQuotationMark(UChar32 charCode);
+    static bool isDigit(UChar32 charCode);
+    static bool isChineseMonthOrDay(UChar32 charCode);
+    static bool isOpening(UChar32 character);
+    static bool isClosing(UChar32 character);
+
+    static bool shouldGlyphImageLeftFlush(TextSpacingSupportedLanguage, bool, UChar32, bool *hasNoMargin);
+    static bool shouldGlyphImageRightFlush(TextSpacingSupportedLanguage, bool, UChar32, bool *hasNoMargin);
+};
+
+} // namespace WebCore
