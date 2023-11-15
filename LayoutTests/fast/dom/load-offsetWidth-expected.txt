@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: This test should not crash
+

@@ -2470,20 +2470,25 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     updateStyleIfNeeded();
 
-    CheckedPtr renderer = element.renderer();
-    if (!renderer || renderer->needsLayout()) {
-        // If we don't have a renderer or if the renderer needs layout for any reason, give up.
+    bool isVertical = false;
+    bool hasSpecifiedLogicalHeight = false;
+    if (CheckedPtr renderer = element.renderer()) {
+        if (renderer->needsLayout()) {
+            // If the renderer needs layout for any reason, give up.
+            requireFullLayout = true;
+        }
+
+        isVertical = !renderer->isHorizontalWritingMode();
+        hasSpecifiedLogicalHeight = renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
+    } else // If we don't have a renderer, give up
         requireFullLayout = true;
-    }
 
     // Turn off this optimization for input elements with shadow content.
     if (is<HTMLInputElement>(element))
         requireFullLayout = true;
 
-    bool isVertical = renderer && !renderer->isHorizontalWritingMode();
     bool checkingLogicalWidth = (dimensionsCheck.contains(DimensionsCheck::Width) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Height) && isVertical);
     bool checkingLogicalHeight = (dimensionsCheck.contains(DimensionsCheck::Height) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Width) && isVertical);
-    bool hasSpecifiedLogicalHeight = renderer && renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
 
     if (!requireFullLayout) {
         CheckedPtr<RenderBox> previousBox;
