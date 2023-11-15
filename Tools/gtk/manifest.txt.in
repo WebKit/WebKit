@@ -107,4 +107,4 @@ file Tools/PlatformGTK.cmake
 
 directory ${CMAKE_BINARY_DIR}/Documentation/javascriptcoregtk-${WEBKITGTK_API_VERSION} Documentation/jsc-glib-${WEBKITGTK_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}
-directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION}
+directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-process-extension-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-process-extension-${WEBKITGTK_API_VERSION}
