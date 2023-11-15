@@ -1,0 +1,50 @@
+Tests functionality of awaitPromise parameter in Runtime.callFunctionOn.
+
+
+
+== Running test suite: Runtime.callFunction.awaitPromise
+-- Running test case: NoAwaitSyncFunction
+PASS: Should return the JSON object.
+
+-- Running test case: NoAwaitReturnHandleSyncFunction
+PASS: Should not throw an error.
+{"preview":{"type":"object","description":"Object","lossless":true,"properties":[{"name":"a","type":"number","value":"2023"}]}}
+
+-- Running test case: NoAwaitSyncFunctionException
+PASS: Should throw an error.
+PASS: Should return the error.
+
+-- Running test case: NoAwaitAsyncFunction
+PASS: Should return empty object.
+
+-- Running test case: NoAwaitPromiseRejection
+PASS: Should not throw an error.
+PASS: Should return empty object.
+
+-- Running test case: NoAwaitWrongObjectIdError
+PASS: Received protocol error
+
+-- Running test case: NoAwaitNotAFunctionError
+PASS: Received protocol error
+
+-- Running test case: AwaitSyncFunction
+PASS: Should return the JSON object.
+
+-- Running test case: AwaitAsyncFunction
+PASS: Should return the JSON object.
+
+-- Running test case: AwaitReturnHandleAsyncFunction
+PASS: Should not throw an error.
+{"preview":{"type":"object","description":"Object","lossless":true,"properties":[{"name":"a","type":"number","value":"2023"}]}}
+
+-- Running test case: AwaitPromiseFromAnotherFrame
+PASS: Should return the JSON object from iframe.
+
+-- Running test case: AwaitPromiseRejection
+PASS: Should throw an error.
+PASS: Should throw the JSON object.
+
+-- Running test case: AwaitReturnHandlePromiseRejection
+PASS: Should throw an error.
+{"preview":{"type":"object","description":"Object","lossless":true,"properties":[{"name":"a","type":"number","value":"2023"}]}}
+
