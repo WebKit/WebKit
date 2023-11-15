@@ -657,6 +657,7 @@ public:
     inline Page* page() const; // Defined in Page.h.
     inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     const Settings& settings() const { return m_settings.get(); }
+    Ref<Settings> protectedSettings() const;
     EditingBehavior editingBehavior() const;
 
     Quirks& quirks() { return m_quirks; }

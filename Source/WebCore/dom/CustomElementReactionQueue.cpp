@@ -353,7 +353,7 @@ inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
         return;
     }
 
-    auto& vm = state->vm();
+    Ref vm = state->vm();
     JSC::JSLockHolder lock(vm);
 
     JSC::Exception* previousException = nullptr;

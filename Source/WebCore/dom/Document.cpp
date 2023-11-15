@@ -8107,6 +8107,11 @@ EditingBehavior Document::editingBehavior() const
     return EditingBehavior { settings().editingBehaviorType() };
 }
 
+Ref<Settings> Document::protectedSettings() const
+{
+    return const_cast<Settings&>(m_settings.get());
+}
+
 float Document::deviceScaleFactor() const
 {
     float deviceScaleFactor = 1.0;
