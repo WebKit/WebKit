@@ -469,6 +469,12 @@
 /* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
 "Easy Reader (text track)" = "Easy Reader";
 
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path */
+"Empty `declarative_net_request` JSON path." = "Empty `declarative_net_request` JSON path.";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id */
+"Empty `declarative_net_request` ruleset id." = "Empty `declarative_net_request` ruleset id.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for background */
 "Empty or invalid `background` manifest entry." = "Empty or invalid `background` manifest entry.";
 
@@ -531,6 +537,12 @@
 
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
+"Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
+"Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
@@ -781,6 +793,9 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
 "Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
 
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
+"Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
+
 /* Validation message for input form controls requiring a constrained value according to pattern */
 "Match the requested format" = "Match the requested format";
 
@@ -972,6 +987,9 @@
 
 /* Previous Page context menu item */
 "Previous Page" = "Previous Page";
+
+/* Title for the webarea while the accessibility tree is being built. */
+"Processing page" = "Processing page";
 
 /* Undo action name */
 "Raise Baseline (Undo action name)" = "Raise Baseline";
@@ -1444,6 +1462,9 @@
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
 
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
+"`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";
+
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */
 "activate" = "activate";
 
@@ -1785,9 +1806,6 @@
 
 /* accessibility label for a date field year input. */
 "year" = "year";
-
-/* Accessibility message to indicate that a page is being processed to be accessed. */
-"Processing page" = "Processing page";
 
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
