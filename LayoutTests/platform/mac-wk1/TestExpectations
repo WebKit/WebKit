@@ -1551,6 +1551,7 @@ accessibility/parent-delete.html [ Failure ]
 accessibility/mac/basic-embed-pdf-accessibility.html [ Skip ]
 accessibility/mac/iframe-pdf.html [ Skip ]
 accessibility/mac/scrolling-in-pdf-crash.html [ Skip ]
+accessibility/mac/widget-visibility.html [ Skip ]
 
 # rdar://problem/26478296
 svg/hixie/text/003.html [ Failure ]

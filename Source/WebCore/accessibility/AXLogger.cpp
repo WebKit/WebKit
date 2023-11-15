@@ -688,6 +688,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXValueChanged:
         stream << "AXValueChanged";
         break;
+    case AXObjectCache::AXNotification::AXVisibilityChanged:
+        stream << "AXVisibilityChanged";
+        break;
     case AXObjectCache::AXNotification::AXScrolledToAnchor:
         stream << "AXScrolledToAnchor";
         break;

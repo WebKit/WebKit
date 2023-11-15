@@ -218,7 +218,7 @@ public:
     bool isRequired() const override { return false; }
     bool supportsRequiredAttribute() const override { return false; }
     bool isExpanded() const override;
-    bool isVisible() const override { return true; }
+    bool isVisible() const override { return !isHidden(); }
     virtual bool isCollapsed() const { return false; }
     void setIsExpanded(bool) override { }
     FloatRect unobscuredContentRect() const override;
@@ -460,6 +460,7 @@ public:
     Widget* widget() const override { return nullptr; }
     PlatformWidget platformWidget() const override { return nullptr; }
     Widget* widgetForAttachmentView() const override { return nullptr; }
+    bool isPlugin() const override { return false; }
 
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;

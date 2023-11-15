@@ -30,6 +30,7 @@
 
 #include "AccessibilityNodeObject.h"
 #include "LayoutRect.h"
+#include "PluginViewBase.h"
 #include "RenderObject.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -104,6 +105,7 @@ public:
     Widget* widgetForAttachmentView() const override;
     AccessibilityChildrenVector documentLinks() override;
     LocalFrameView* documentFrameView() const override;
+    bool isPlugin() const final { return is<PluginViewBase>(widget()); }
 
     void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
