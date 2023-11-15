@@ -86,6 +86,7 @@ public:
 
     virtual FrameView* virtualView() const = 0;
     virtual void disconnectView() = 0;
+    virtual void setOpener(Frame*) = 0;
     virtual const Frame* opener() const = 0;
     virtual Frame* opener() = 0;
 

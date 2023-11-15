@@ -290,11 +290,11 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     bool created;
     WindowFeatures features;
-    auto frame = WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), features, created);
+    RefPtr frame = dynamicDowncast<LocalFrame>(WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), features, created));
     if (!frame)
         return;
 
-    frame->loader().setOpener(mainFrame.copyRef());
+    frame->loader().setOpener(mainFrame.ptr());
     frame->page()->setOpenedByDOM();
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?

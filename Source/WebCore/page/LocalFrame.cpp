@@ -971,6 +971,11 @@ void LocalFrame::disconnectView()
     setView(nullptr);
 }
 
+void LocalFrame::setOpener(Frame* opener)
+{
+    loader().setOpener(opener);
+}
+
 const Frame* LocalFrame::opener() const
 {
     return loader().opener();

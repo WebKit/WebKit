@@ -1508,6 +1508,7 @@ void LocalDOMWindow::setStatus(const String& string)
 
 WindowProxy* LocalDOMWindow::opener() const
 {
+    // FIXME: <rdar://118263278> Move LocalDOMWindow::opener and RemoteDOMWindow::opener to DOMWindow.
     RefPtr frame = this->frame();
     if (!frame)
         return nullptr;
@@ -2611,23 +2612,24 @@ ExceptionOr<RefPtr<LocalFrame>> LocalDOMWindow::createWindow(const String& urlSt
 
     bool noopener = windowFeatures.wantsNoOpener();
     if (!noopener)
-        newFrame->checkedLoader()->setOpener(&openerFrame);
+        newFrame->setOpener(&openerFrame);
 
     if (created)
         newFrame->checkedPage()->setOpenedByDOM();
 
-    if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
-        return noopener ? RefPtr<LocalFrame> { nullptr } : newFrame;
+    RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
+    if (localNewFrame && localNewFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
+        return noopener ? RefPtr<LocalFrame> { nullptr } : localNewFrame;
 
-    if (prepareDialogFunction)
-        prepareDialogFunction(*newFrame->document()->protectedWindow());
+    if (prepareDialogFunction && localNewFrame)
+        prepareDialogFunction(*localNewFrame->document()->protectedWindow());
 
     if (created) {
         ResourceRequest resourceRequest { completedURL, referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         FrameLoader::addSameSiteInfoToRequestIfNeeded(resourceRequest, openerFrame.protectedDocument().get());
         FrameLoadRequest frameLoadRequest { activeWindow.protectedDocument().releaseNonNull(), activeWindow.document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
         frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
-        newFrame->checkedLoader()->changeLocation(WTFMove(frameLoadRequest));
+        newFrame->changeLocation(WTFMove(frameLoadRequest));
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = UserGestureIndicator::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
         newFrame->checkedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);
@@ -2637,7 +2639,7 @@ ExceptionOr<RefPtr<LocalFrame>> LocalDOMWindow::createWindow(const String& urlSt
     if (!newFrame->page())
         return RefPtr<LocalFrame> { nullptr };
 
-    return noopener ? RefPtr<LocalFrame> { nullptr } : newFrame;
+    return noopener ? RefPtr<LocalFrame> { nullptr } : localNewFrame;
 }
 
 ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlStringToOpen, const AtomString& frameName, const String& windowFeaturesString)
