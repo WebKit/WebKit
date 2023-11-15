@@ -27,8 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class TapHandlingResult : uint8_t  {
@@ -38,18 +36,5 @@ enum class TapHandlingResult : uint8_t  {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::TapHandlingResult> {
-    using values = EnumValues <
-    WebKit::TapHandlingResult,
-    WebKit::TapHandlingResult::DidNotHandleTapAsClick,
-    WebKit::TapHandlingResult::NonMeaningfulClick,
-    WebKit::TapHandlingResult::MeaningfulClick
-    >;
-};
-
-} // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY)

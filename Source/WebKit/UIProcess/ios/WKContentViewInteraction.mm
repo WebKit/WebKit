@@ -4741,11 +4741,11 @@ static TextStream& operator<<(TextStream& stream, WebKit::GestureRecognizerState
 static inline UIWKSelectionFlags toUIWKSelectionFlags(OptionSet<WebKit::SelectionFlags> flags)
 {
     NSInteger uiFlags = UIWKNone;
-    if (flags.contains(WebKit::WordIsNearTap))
+    if (flags.contains(WebKit::SelectionFlags::WordIsNearTap))
         uiFlags |= UIWKWordIsNearTap;
-    if (flags.contains(WebKit::SelectionFlipped))
+    if (flags.contains(WebKit::SelectionFlags::SelectionFlipped))
         uiFlags |= UIWKSelectionFlipped;
-    if (flags.contains(WebKit::PhraseBoundaryChanged))
+    if (flags.contains(WebKit::SelectionFlags::PhraseBoundaryChanged))
         uiFlags |= UIWKPhraseBoundaryChanged;
 
     return static_cast<UIWKSelectionFlags>(uiFlags);
@@ -4755,11 +4755,11 @@ static inline OptionSet<WebKit::SelectionFlags> toSelectionFlags(UIWKSelectionFl
 {
     OptionSet<WebKit::SelectionFlags> flags;
     if (uiFlags & UIWKWordIsNearTap)
-        flags.add(WebKit::WordIsNearTap);
+        flags.add(WebKit::SelectionFlags::WordIsNearTap);
     if (uiFlags & UIWKSelectionFlipped)
-        flags.add(WebKit::SelectionFlipped);
+        flags.add(WebKit::SelectionFlags::SelectionFlipped);
     if (uiFlags & UIWKPhraseBoundaryChanged)
-        flags.add(WebKit::PhraseBoundaryChanged);
+        flags.add(WebKit::SelectionFlags::PhraseBoundaryChanged);
     return flags;
 }
 
@@ -4776,9 +4776,9 @@ static TextStream& operator<<(TextStream& stream, OptionSet<WebKit::SelectionFla
         didAppend = true;
     };
 
-    appendIf(WebKit::WordIsNearTap, "WordIsNearTap");
-    appendIf(WebKit::SelectionFlipped, "SelectionFlipped");
-    appendIf(WebKit::PhraseBoundaryChanged, "PhraseBoundaryChanged");
+    appendIf(WebKit::SelectionFlags::WordIsNearTap, "WordIsNearTap");
+    appendIf(WebKit::SelectionFlags::SelectionFlipped, "SelectionFlipped");
+    appendIf(WebKit::SelectionFlags::PhraseBoundaryChanged, "PhraseBoundaryChanged");
 
     if (!didAppend)
         stream << "None";

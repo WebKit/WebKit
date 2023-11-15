@@ -1466,9 +1466,9 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
         auto startPosition = VisiblePosition { makeDeprecatedLegacyPosition(markedRange->start) };
         position = std::clamp(position, startPosition, VisiblePosition { makeDeprecatedLegacyPosition(markedRange->end) });
         if (wkGestureState != GestureRecognizerState::Began)
-            flags = distanceBetweenPositions(startPosition, frame->selection().selection().start()) != distanceBetweenPositions(startPosition, position) ? PhraseBoundaryChanged : OptionSet<SelectionFlags> { };
+            flags = distanceBetweenPositions(startPosition, frame->selection().selection().start()) != distanceBetweenPositions(startPosition, position) ? SelectionFlags::PhraseBoundaryChanged : OptionSet<SelectionFlags> { };
         else
-            flags = PhraseBoundaryChanged;
+            flags = SelectionFlags::PhraseBoundaryChanged;
         range = makeSimpleRange(position);
         break;
     }
@@ -1476,7 +1476,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     case GestureType::OneFingerTap: {
         auto [adjustedPosition, withinWordBoundary] = wordBoundaryForPositionWithoutCrossingLine(position);
         if (withinWordBoundary == WithinWordBoundary::Yes)
-            flags = WordIsNearTap;
+            flags = SelectionFlags::WordIsNearTap;
         range = makeSimpleRange(adjustedPosition);
         break;
     }
@@ -1865,7 +1865,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         frame->selection().setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
     
     if (selectionFlipped == SelectionWasFlipped::Yes)
-        flags = SelectionFlipped;
+        flags = SelectionFlags::SelectionFlipped;
 
     completionHandler(point, selectionTouch, flags);
 }
