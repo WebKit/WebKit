@@ -101,6 +101,82 @@ function createInternalReadableStreamFromUnderlyingSource(underlyingSource, stra
     return stream;
 }
 
+function createInternalReadableStreamFromAsyncIterable(asyncIterable)
+{
+    "use strict";
+
+    let iterator;
+    {
+        const asyncIteratorMethod = asyncIterable.@@asyncIterator;
+        if (!@isUndefinedOrNull(asyncIteratorMethod)) {
+            if (!@isCallable(asyncIteratorMethod))
+                @throwTypeError("ReadableStream.from requires that the property of the first argument, iterable[Symbol.asyncIterator], when exists, be a function");
+            iterator = asyncIteratorMethod.@call(asyncIterable);
+            if (!@isObject(iterator))
+                @throwTypeError("The return value of asyncIterable[Symbol.asyncIterator] must be an object.");
+        } else {
+            const iteratorMethod = asyncIterable.@@iterator;
+            if (!@isCallable(iteratorMethod))
+                @throwTypeError("ReadableStream.from requires that the property of the first argument, iterable[Symbol.iterator], when exists, be a function");
+            const syncIterator = iteratorMethod.@call(asyncIterable);
+            if (!@isObject(syncIterator))
+                @throwTypeError("The return value of asyncIterable[Symbol.iterator] must be an object.");
+            iterator = @createAsyncFromSyncIterator(syncIterator, syncIterator.next);
+        }
+    }
+
+    const nextMethod = iterator.next;
+
+    let stream;
+
+    const source = {};
+    @putByIdDirectPrivate(source, "pull", function pull() {
+        let result;
+        try {
+            result = nextMethod.@call(iterator);
+        } catch (e) {
+            return @Promise.@reject(e);
+        }
+
+        return @Promise.@resolve(result).@then((iterResult) => {
+            if (!@isObject(iterResult)) {
+                @throwTypeError("The result of calling next on an iterator was not an object.");
+            }
+            const controller = @getByIdDirectPrivate(stream, "readableStreamController");
+            if (!@readableStreamDefaultControllerCanCloseOrEnqueue(controller))
+                return;
+            if (iterResult.done) {
+                @readableStreamDefaultControllerClose(controller);
+            } else {
+                @readableStreamDefaultControllerEnqueue(controller, iterResult.value);
+            }
+        });
+    });
+    @putByIdDirectPrivate(source, "cancel", function cancel(reason) {
+        try {
+            const returnMethod = iterator.return;
+            if (@isUndefinedOrNull(returnMethod))
+                return @Promise.@resolve(@undefined);
+            if (!@isCallable(returnMethod))
+                @throwTypeError("iterator.return was present but not callable");
+            const returnResult = returnMethod.@call(iterator, reason);
+            return @Promise.@resolve(returnResult).@then((iterResult) => {
+                if (!@isObject(iterResult)) {
+                    @throwTypeError("The result of calling return on an iterator was not an object.");
+                }
+            });
+        } catch (e) {
+            return @Promise.@reject(e);
+        }
+    });
+
+    const strategy = {};
+    @putByIdDirectPrivate(strategy, "highWaterMark", 0);
+
+    stream = @createInternalReadableStreamFromUnderlyingSource(source, strategy);
+    return stream;
+}
+
 function readableStreamGetReaderForBindings(stream, options)
 {
     "use strict";

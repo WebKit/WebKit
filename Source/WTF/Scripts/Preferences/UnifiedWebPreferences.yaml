@@ -5255,6 +5255,20 @@ ReadableByteStreamAPIEnabled:
     WebKit:
       default: false
 
+ReadableStreamFromAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "ReadableStream.from() API"
+  humanReadableDescription: "Enable ReadableStream.from() API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 RemotePlaybackEnabled:
   type: bool

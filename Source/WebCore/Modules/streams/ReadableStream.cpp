@@ -71,6 +71,16 @@ Ref<ReadableStream> ReadableStream::create(Ref<InternalReadableStream>&& interna
     return adoptRef(*new ReadableStream(WTFMove(internalReadableStream)));
 }
 
+ExceptionOr<Ref<ReadableStream>> ReadableStream::from(JSDOMGlobalObject& globalObject, JSC::JSValue asyncIterable)
+{
+    RefPtr protectedContext { globalObject.scriptExecutionContext() };
+    auto result = InternalReadableStream::createFromAsyncIterable(globalObject, asyncIterable);
+    if (result.hasException())
+        return result.releaseException();
+
+    return adoptRef(*new ReadableStream(result.releaseReturnValue()));
+}
+
 ReadableStream::ReadableStream(Ref<InternalReadableStream>&& internalReadableStream)
     : m_internalReadableStream(WTFMove(internalReadableStream))
 {
