@@ -1238,6 +1238,15 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @end
 
+#if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
+
+typedef struct {
+    NSInteger offset;
+    NSInteger length;
+} UIDirectionalTextRange;
+
+#endif // !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
+
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 WTF_EXTERN_C_BEGIN

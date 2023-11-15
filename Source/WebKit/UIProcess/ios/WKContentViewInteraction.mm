@@ -2616,21 +2616,11 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     return [_inputPeripheral assistantView];
 }
 
-- (CGRect)_selectionClipRectInternal
-{
-    if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
-        return _focusedElementInformation.interactionRect;
-
-    if (_page->editorState().hasVisualData() && !_page->editorState().visualData->selectionClipRect.isEmpty())
-        return _page->editorState().visualData->selectionClipRect;
-
-    return CGRectNull;
-}
-
 - (CGRect)_selectionClipRect
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
-    return [self _selectionClipRectInternal];
+
+    return self.selectionClipRect;
 }
 
 static BOOL isBuiltInScrollViewPanGestureRecognizer(UIGestureRecognizer *recognizer)
@@ -4148,7 +4138,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             || action == @selector(extendInDirection:byGranularity:) || action == @selector(extendInLayoutDirection:))
             return !editorState.selectionIsNone;
 
-        if (action == @selector(deleteInDirection:toGranularity:))
+        if (action == @selector(deleteInDirection:toGranularity:) || action == @selector(transposeCharacters))
             return editorState.isContentEditable;
     } else
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
@@ -5272,9 +5262,9 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (BOOL)_selectionAtDocumentStart
 {
-    if (!_page->editorState().postLayoutData)
-        return NO;
-    return !_page->editorState().postLayoutData->characterBeforeSelection;
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    return self.selectionAtDocumentStart;
 }
 
 - (CGRect)textFirstRect
@@ -7043,7 +7033,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)_transpose
 {
-    [self _executeEditCommand:@"transpose"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self transposeCharacters];
 }
 
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
@@ -8437,7 +8429,9 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)_shouldSuppressSelectionCommands
 {
-    return !!_suppressSelectionAssistantReasons;
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    return self.shouldSuppressEditMenu;
 }
 
 - (void)_startSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason
@@ -10022,12 +10016,19 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     return webRequest;
 }
 
-- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
 {
-    // UIKit is putting casted signed integers into NSRange. Cast them back to reveal any negative values.
-    _page->updateSelectionWithDelta(static_cast<int64_t>(deltaRange.location), static_cast<int64_t>(deltaRange.length), [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
+    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
         capturedCompletionHandler();
     });
+}
+
+- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    // UIKit is putting casted signed integers into NSRange. Cast them back to reveal any negative values.
+    [self _internalAdjustSelectionWithOffset:static_cast<NSInteger>(deltaRange.location) lengthDelta:static_cast<NSInteger>(deltaRange.length) completionHandler:completionHandler];
 }
 
 - (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
@@ -12195,11 +12196,6 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 #endif // ENABLE(REVEAL)
 
-- (CGRect)selectionClipRect
-{
-    return [self _selectionClipRectInternal];
-}
-
 inline static NSArray<NSString *> *deleteSelectionCommands(UITextStorageDirection direction, UITextGranularity granularity)
 {
     BOOL backward = direction == UITextStorageDirectionBackward;
@@ -12321,7 +12317,40 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     [self _executeEditCommand:extendSelectionCommand(direction)];
 }
 
+- (void)adjustSelection:(UIDirectionalTextRange)range completionHandler:(void (^)(void))completionHandler
+{
+    [self _internalAdjustSelectionWithOffset:range.offset lengthDelta:range.length completionHandler:completionHandler];
+}
+
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+- (CGRect)selectionClipRect
+{
+    if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
+        return _focusedElementInformation.interactionRect;
+
+    if (_page->editorState().hasVisualData() && !_page->editorState().visualData->selectionClipRect.isEmpty())
+        return _page->editorState().visualData->selectionClipRect;
+
+    return CGRectNull;
+}
+
+- (void)transposeCharacters
+{
+    [self _executeEditCommand:@"transpose"];
+}
+
+- (BOOL)selectionAtDocumentStart
+{
+    if (!_page->editorState().postLayoutData)
+        return NO;
+    return !_page->editorState().postLayoutData->characterBeforeSelection;
+}
+
+- (BOOL)shouldSuppressEditMenu
+{
+    return !!_suppressSelectionAssistantReasons;
+}
 
 #pragma mark - UIAsyncTextInteractionDelegate
 
