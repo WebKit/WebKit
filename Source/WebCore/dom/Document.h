@@ -1098,7 +1098,7 @@ public:
     const URL& firstPartyForCookies() const { return m_firstPartyForCookies; }
     void setFirstPartyForCookies(const URL& url) { m_firstPartyForCookies = url; }
 
-    bool isFullyActive() const;
+    WEBCORE_EXPORT bool isFullyActive() const;
 
     // The full URL corresponding to the "site for cookies" in the Same-Site Cookies spec.,
     // <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00>. It is either

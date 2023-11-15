@@ -6778,8 +6778,6 @@ imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-whe
 
 webkit.org/b/263413 media/media-source/media-source-first-sample-pts-non-zero-canplay-without-renderer.html [ Timeout ]
 
-webkit.org/b/263879 http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html [ Pass Failure ]
-
 # webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ]

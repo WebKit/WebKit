@@ -199,6 +199,7 @@ public:
     ExceptionOr<String> elementRenderTreeAsText(Element&);
     bool hasPausedImageAnimations(Element&);
 
+    bool isFullyActive(Document&);
     bool isPaintingFrequently(Element&);
     void incrementFrequentPaintCounter(Element&);
 

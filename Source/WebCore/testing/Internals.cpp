@@ -1365,6 +1365,12 @@ bool Internals::hasPausedImageAnimations(Element& element)
 {
     return element.renderer() && element.renderer()->hasPausedImageAnimations();
 }
+
+bool Internals::isFullyActive(Document& document)
+{
+    return document.isFullyActive();
+}
+
     
 bool Internals::isPaintingFrequently(Element& element)
 {
