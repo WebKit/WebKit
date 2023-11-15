@@ -2476,6 +2476,12 @@ void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& comple
     if (completedURL.protocolIsJavaScript() && frameElement() && !frameElement()->protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, completedURL.string(), frameElement()))
         return;
 
+    RefPtr localParent = dynamicDowncast<LocalFrame>(frame->tree().parent());
+    // If the loader for activeWindow's frame (browsing context) has no outgoing referrer, set its outgoing referrer
+    // to the URL of its parent frame's Document.
+    if (RefPtr activeFrame = activeWindow.frame(); activeFrame && activeFrame->loader().outgoingReferrer().isEmpty() && localParent)
+        activeFrame->loader().setOutgoingReferrer(document()->completeURL(localParent->document()->url().strippedForUseAsReferrer()));
+
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
