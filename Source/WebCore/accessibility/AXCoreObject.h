@@ -1156,6 +1156,7 @@ public:
     virtual Widget* widget() const = 0;
     virtual PlatformWidget platformWidget() const = 0;
     virtual Widget* widgetForAttachmentView() const = 0;
+    virtual bool isPlugin() const = 0;
 
     // FIXME: Remove the following methods from the AXCoreObject interface and instead use methods such as axScrollView() if needed.
     virtual Page* page() const = 0;

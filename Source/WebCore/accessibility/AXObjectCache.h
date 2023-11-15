@@ -59,6 +59,7 @@ class Page;
 class RenderBlock;
 class RenderObject;
 class RenderText;
+class RenderWidget;
 class Scrollbar;
 class ScrollView;
 class VisiblePosition;
@@ -203,6 +204,7 @@ public:
     void onTitleChange(Document&);
     void onValidityChange(Element&);
     void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
+    void onWidgetVisibilityChanged(RenderWidget*);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -386,6 +388,7 @@ public:
         AXTextCompositionEnded,
         AXURLChanged,
         AXValueChanged,
+        AXVisibilityChanged,
         AXScrolledToAnchor,
         AXLabelCreated,
         AXLiveRegionCreated,
@@ -793,6 +796,7 @@ inline void AXObjectCache::onFocusChange(Node*, Node*) { }
 inline void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState>) { }
 inline void AXObjectCache::onPopoverToggle(const HTMLElement&) { }
 inline void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar&) { }
+inline void AXObjectCache::onWidgetVisibilityChanged(Widget&) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
 inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }

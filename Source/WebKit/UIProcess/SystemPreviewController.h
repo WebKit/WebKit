@@ -44,6 +44,10 @@ OBJC_CLASS _WKPreviewControllerDelegate;
 OBJC_CLASS _WKSystemPreviewDataTaskDelegate;
 #endif
 
+namespace WebCore {
+class SecurityOriginData;
+}
+
 namespace WebKit {
 
 class WebPageProxy;

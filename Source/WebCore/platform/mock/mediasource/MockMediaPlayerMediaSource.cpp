@@ -33,7 +33,9 @@
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -217,11 +219,11 @@ MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
 void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
     m_seekCompleted = false;
-    m_mediaSourcePrivate->waitForTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& seekTime) {
-        if (!weakThis || !seekTime.isValid())
+    m_mediaSourcePrivate->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { this }](auto&& result) {
+        if (!weakThis || !result)
             return;
 
-        m_mediaSourcePrivate->seekToTime(seekTime, [this, weakThis, seekTime] {
+        m_mediaSourcePrivate->seekToTime(*result)->whenSettled(RunLoop::current(), [this, weakThis, seekTime = *result] {
             if (!weakThis)
                 return;
             m_seekCompleted = true;

@@ -963,6 +963,8 @@
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */; };
 		3A12CDBB29D4D30200D57EAE /* WebSWRegistrationStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */; };
+		3A18A2EF2AFF004C00DB976C /* _WKArchiveConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A18A2EE2AFF004C00DB976C /* _WKArchiveConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3A18A2F52B02969900DB976C /* _WKArchiveExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A18A2F32B02969800DB976C /* _WKArchiveExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3A7D62D629D38DD300D57DAC /* ServiceWorkerStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */; };
 		3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */; };
 		3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */; };
@@ -4677,6 +4679,10 @@
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
+		3A18A2EE2AFF004C00DB976C /* _WKArchiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKArchiveConfiguration.h; sourceTree = "<group>"; };
+		3A18A2F02AFF006C00DB976C /* _WKArchiveConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKArchiveConfiguration.mm; sourceTree = "<group>"; };
+		3A18A2F22B02969800DB976C /* _WKArchiveExclusionRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKArchiveExclusionRule.mm; sourceTree = "<group>"; };
+		3A18A2F32B02969800DB976C /* _WKArchiveExclusionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKArchiveExclusionRule.h; sourceTree = "<group>"; };
 		3A5B68962AC266D400B11868 /* WKARPresentationSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKARPresentationSession.h; sourceTree = "<group>"; };
 		3A5B68972AC266D400B11868 /* WKARPresentationSession.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKARPresentationSession.mm; sourceTree = "<group>"; };
 		3A7D62D229D35D9D00D57DAC /* WebSWRegistrationStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWRegistrationStore.cpp; sourceTree = "<group>"; };
@@ -10344,6 +10350,10 @@
 				63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */,
 				63108F951F96719C00A0DB84 /* _WKApplicationManifest.mm */,
 				63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */,
+				3A18A2EE2AFF004C00DB976C /* _WKArchiveConfiguration.h */,
+				3A18A2F02AFF006C00DB976C /* _WKArchiveConfiguration.mm */,
+				3A18A2F32B02969800DB976C /* _WKArchiveExclusionRule.h */,
+				3A18A2F22B02969800DB976C /* _WKArchiveExclusionRule.mm */,
 				F44291911FA59107002CC93E /* _WKAttachment.h */,
 				F44291931FA59311002CC93E /* _WKAttachment.mm */,
 				F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */,
@@ -14635,6 +14645,8 @@
 				449316A625DC9D0000AA66DE /* _WKAppHighlightInternal.h in Headers */,
 				63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */,
 				63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */,
+				3A18A2EF2AFF004C00DB976C /* _WKArchiveConfiguration.h in Headers */,
+				3A18A2F52B02969900DB976C /* _WKArchiveExclusionRule.h in Headers */,
 				F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */,
 				F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */,
 				5790A67025679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h in Headers */,

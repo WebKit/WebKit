@@ -616,6 +616,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::IsRowHeader:
             propertyMap.set(AXPropertyName::IsRowHeader, axObject.isRowHeader());
             break;
+        case AXPropertyName::IsVisible:
+            propertyMap.set(AXPropertyName::IsVisible, axObject.isVisible());
+            break;
         case AXPropertyName::MaxValueForRange:
             propertyMap.set(AXPropertyName::MaxValueForRange, axObject.maxValueForRange());
             break;

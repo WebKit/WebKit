@@ -17,7 +17,7 @@ addEventListener("message", (event) => {
     } else if (event.data == 'second ping') {
         firstOpenedWindow.postMessage('sent to first window, which should be reused', '*')
     } else if (event.data.startsWith('opened window received')) {
-        testFailed("first opened window should have been reused"); // FIXME: <rdar://118363128> Reuse the main frame and make this test not fail with site isolation enabled.
+        testFailed("first opened window should have been reused");
         finishJSTest();
     } else if (event.data.startsWith('second opened window received')) {
         shouldBe("event.data", "'second opened window received: sent to first window, which should be reused'");

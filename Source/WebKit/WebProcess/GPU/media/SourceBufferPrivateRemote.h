@@ -75,7 +75,7 @@ private:
     // SourceBufferPrivate overrides
     void setActive(bool) final;
     void append(Ref<WebCore::SharedBuffer>&&) final;
-    void appendInternal(Ref<WebCore::SharedBuffer>&&) final;
+    Ref<GenericPromise> appendInternal(Ref<WebCore::SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void abort() final;
     void resetParserState() final;
@@ -102,7 +102,7 @@ private:
     void setAppendWindowEnd(const MediaTime&) final;
     Vector<WebCore::PlatformTimeRanges> trackBuffersRanges() const final { return m_trackBufferRanges; };
 
-    void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    Ref<ComputeSeekPromise> computeSeekTime(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&) final;
 
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;
@@ -115,7 +115,7 @@ private:
     void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResult)>&&);
+    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&&);
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);

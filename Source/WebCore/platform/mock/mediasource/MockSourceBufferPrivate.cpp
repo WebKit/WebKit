@@ -38,6 +38,7 @@
 #include "MockTracks.h"
 #include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/NativePromise.h>
 #include <wtf/StringPrintStream.h>
 
 namespace WebCore {
@@ -139,12 +140,11 @@ MockMediaSourcePrivate* MockSourceBufferPrivate::mediaSourcePrivate() const
     return static_cast<MockMediaSourcePrivate*>(m_mediaSource.get());
 }
 
-void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
+Ref<GenericPromise> MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
 {
     m_inputBuffer.appendVector(data->extractData());
-    bool parsingSucceeded = true;
 
-    while (m_inputBuffer.size() && parsingSucceeded) {
+    while (m_inputBuffer.size()) {
         auto buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
         uint64_t boxLength = MockBox::peekLength(buffer.ptr());
         if (boxLength > buffer->byteLength())
@@ -157,12 +157,14 @@ void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
         } else if (type == MockSampleBox::type()) {
             MockSampleBox sampleBox = MockSampleBox(buffer.ptr());
             didReceiveSample(sampleBox);
-        } else
-            parsingSucceeded = false;
+        } else {
+            m_inputBuffer.clear();
+            return GenericPromise::createAndReject(-1);
+        }
         m_inputBuffer.remove(0, boxLength);
     }
 
-    SourceBufferPrivate::appendCompleted(parsingSucceeded);
+    return GenericPromise::createAndResolve();
 }
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)
@@ -193,10 +195,7 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
         }
     }
 
-    SourceBufferPrivate::didReceiveInitializationSegment(
-        WTFMove(segment),
-        [] (auto&) { return true; },
-        [] (auto) { });
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(segment));
 }
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)

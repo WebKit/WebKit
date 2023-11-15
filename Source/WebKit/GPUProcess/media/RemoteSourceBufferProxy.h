@@ -71,17 +71,16 @@ private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
 
     // SourceBufferPrivateClient
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) final;
+    Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
-    void sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
-    void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory) final;
-    bool isAsync() const final { return true; }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -111,7 +110,7 @@ private:
     void setTimestampOffset(const MediaTime&);
     void setAppendWindowStart(const MediaTime&);
     void setAppendWindowEnd(const MediaTime&);
-    void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
+    void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::SourceBufferPrivate::ComputeSeekPromise::Result&&)>&&);
     void seekToTime(const MediaTime&);
     void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
     void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);

@@ -232,6 +232,9 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [_popoverWell setWebDelegate:self];
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
+#if HAVE(NSCOLORWELL_SUPPORTS_ALPHA)
+    [_popoverWell setSupportsAlpha:NO];
+#endif
 
     RetainPtr<NSColorList> suggestedColors;
     if (suggestions.size()) {

@@ -245,7 +245,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags flags)
+Expected<void, int> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     auto sharedBuffer = segment.takeSharedBuffer();
@@ -255,7 +255,10 @@ void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<
     else
         [m_parser appendStreamData:nsData.get()];
     m_parserStateWasReset = false;
-    completionHandler();
+
+    if (m_lastErrorCode)
+        return makeUnexpected(m_lastErrorCode.value());
+    return { };
 }
 
 void SourceBufferParserAVFObjC::flushPendingMediaData()
@@ -344,10 +347,7 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error)
 {
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, error);
-    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, error = retainPtr(error)] {
-        if (m_didEncounterErrorDuringParsingCallback)
-            m_didEncounterErrorDuringParsingCallback(error.get().code);
-    });
+    m_lastErrorCode.emplace([error code]);
 }
 
 void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)

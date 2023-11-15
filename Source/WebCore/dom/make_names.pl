@@ -984,6 +984,7 @@ sub printTagNameCppFile
     for my $namespace (sort keys %allCppNamespaces) {
         print F "#include \"${namespace}Names.h\"\n";
     }
+    print F "#include <wtf/text/FastCharacterComparison.h>\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
@@ -1201,6 +1202,7 @@ sub printNodeNameCppFile
         print F "#include \"${namespace}Names.h\"\n";
     }
     print F "#include \"Namespace.h\"\n";
+    print F "#include <wtf/text/FastCharacterComparison.h>\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
@@ -1347,13 +1349,22 @@ sub generateFindNameForLength
                 print F "${indent}if (buffer[$currentIndex] == '$letter') {\n";
             } else {
                 my $bufferStart = $currentIndex > 0 ? "buffer.data() + $currentIndex" : "buffer.data()";
-                print F "${indent}static constexpr characterType rest[] = { ";
-                for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
-                    my $letter = substr($string, $index, 1);
-                    print F "'$letter', ";
+                if ($lengthToCompare <= 8) {
+                    print F "${indent}if (compareCharacters($bufferStart";
+                    for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
+                        my $letter = substr($string, $index, 1);
+                        print F ", '$letter'";
+                    }
+                    print F ")) {\n";
+                } else {
+                    print F "${indent}static constexpr characterType rest[] = { ";
+                    for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
+                        my $letter = substr($string, $index, 1);
+                        print F "'$letter', ";
+                    }
+                    print F "};\n";
+                    print F "${indent}if (WTF::equal($bufferStart, rest, $lengthToCompare)) {\n";
                 }
-                print F "};\n";
-                print F "${indent}if (WTF::equal($bufferStart, rest, $lengthToCompare)) {\n";
             }
             print F "$indent    return ${enumClass}::$enumValue;\n";
             print F "$indent}\n";

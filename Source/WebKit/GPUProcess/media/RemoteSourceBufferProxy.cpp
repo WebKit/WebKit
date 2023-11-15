@@ -76,12 +76,10 @@ void RemoteSourceBufferProxy::disconnect()
     m_connectionToWebProcess = nullptr;
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
+Ref<RemoteSourceBufferProxy::ReceiveResultPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    if (!m_remoteMediaPlayerProxy) {
-        completionHandler(ReceiveResult::ClientDisconnected);
-        return;
-    }
+    if (!m_remoteMediaPlayerProxy)
+        return ReceiveResultPromise::createAndReject(ReceiveResult::ClientDisconnected);
 
     InitializationSegmentInfo segmentInfo;
     segmentInfo.duration = segment.duration;
@@ -113,12 +111,12 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), identifier };
     });
 
-    if (!m_connectionToWebProcess) {
-        completionHandler(ReceiveResult::IPCError);
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return ReceiveResultPromise::createAndReject(ReceiveResult::IPCError);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+        return ReceiveResultPromise::createAndSettle(!result ? makeUnexpected(ReceiveResult::IPCError) : WTFMove(*result));
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
@@ -129,14 +127,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampCha
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndReject(-1);
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier)->whenSettled(RunLoop::current(), [] {
+        return GenericPromise::createAndResolve();
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>& trackBuffers)
@@ -146,14 +144,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vecto
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateTrackBuffersChanged(trackBuffers), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered)
 {
-    if (!m_connectionToWebProcess) {
-        completionHandler();
-        return;
-    }
+    if (!m_connectionToWebProcess)
+        return GenericPromise::createAndResolve();
 
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), WTFMove(completionHandler), m_identifier);
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), m_identifier)->whenSettled(RunLoop::current(), [] {
+        return GenericPromise::createAndResolve();
+    });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)
@@ -329,9 +327,9 @@ void RemoteSourceBufferProxy::setAppendWindowEnd(const MediaTime& appendWindowEn
     m_sourceBufferPrivate->setAppendWindowEnd(appendWindowEnd);
 }
 
-void RemoteSourceBufferProxy::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void RemoteSourceBufferProxy::computeSeekTime(const SeekTarget& target, CompletionHandler<void(SourceBufferPrivate::ComputeSeekPromise::Result&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->computeSeekTime(target, WTFMove(completionHandler));
+    m_sourceBufferPrivate->computeSeekTime(target)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::seekToTime(const MediaTime& time)

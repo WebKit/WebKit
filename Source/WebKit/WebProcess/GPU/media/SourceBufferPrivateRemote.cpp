@@ -115,9 +115,10 @@ void SourceBufferPrivateRemote::resetParserState()
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
+Ref<GenericPromise> SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
 {
     ASSERT_NOT_REACHED();
+    return GenericPromise::createAndReject(-1);
 }
 
 void SourceBufferPrivateRemote::resetParserStateInternal()
@@ -209,8 +210,7 @@ void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const 
     gpuProcessConnection->connection().sendWithAsyncReply(
         Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](WebCore::PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
             m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-            setBufferedRanges(WTFMove(buffered));
-            completionHandler();
+            setBufferedRanges(WTFMove(buffered))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
         },
         m_remoteSourceBufferIdentifier);
 }
@@ -349,15 +349,15 @@ void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindow
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning()) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!isGPURunning())
+        return ComputeSeekPromise::createAndReject(-1);
 
-    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), WTFMove(completionHandler), m_remoteSourceBufferIdentifier);
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+        return result ? ComputeSeekPromise::createAndSettle(*result) : ComputeSeekPromise::createAndReject(-1);
+    });
 }
 
 void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
@@ -410,10 +410,10 @@ void SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trac
     }, m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate) {
-        completionHandler(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected);
+        completionHandler(makeUnexpected(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected));
         return;
     }
 
@@ -448,7 +448,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         return info;
     });
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
@@ -469,14 +469,14 @@ void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampC
 void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
     if (m_client)
-        m_client->sourceBufferPrivateDurationChanged(duration, WTFMove(completionHandler));
+        m_client->sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
     else
         completionHandler();
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
 {
-    setBufferedRanges(WTFMove(timeRanges), WTFMove(completionHandler));
+    setBufferedRanges(WTFMove(timeRanges))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges)

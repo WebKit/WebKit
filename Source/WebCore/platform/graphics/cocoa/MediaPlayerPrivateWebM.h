@@ -208,11 +208,9 @@ private:
 
     using InitializationSegment = SourceBufferParserWebM::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
-    void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
 
     void append(SharedBuffer&);
-    void abort();
     void resetParserState();
 
     void flush();
@@ -312,7 +310,6 @@ private:
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
-    bool m_parsingSucceeded { true };
     bool m_processingInitializationSegment { false };
 };
 

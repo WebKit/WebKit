@@ -196,7 +196,7 @@ bool WebExtensionAPIWindows::parsePopulateTabs(NSDictionary *options, PopulateTa
 bool WebExtensionAPIWindows::parseWindowTypesFilter(NSDictionary *options, OptionSet<WindowTypeFilter>& windowTypeFilter, NSString *sourceKey, NSString **outExceptionString)
 {
     // All windows match by default.
-    windowTypeFilter = WindowTypeFilter::All;
+    windowTypeFilter = OptionSet<WindowTypeFilter>::all();
 
     static NSDictionary<NSString *, id> *types = @{
         windowTypesKey: @[ NSString.class ],
@@ -584,20 +584,20 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
     return *m_onFocusChanged;
 }
 
-inline WebExtensionAPIWindows::WindowTypeFilter toWindowTypeFilter(WebExtensionWindow::Type type)
+inline OptionSet<WebExtensionWindowTypeFilter> toWindowTypeFilter(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
-        return WebExtensionAPIWindows::WindowTypeFilter::Normal;
+        return WebExtensionWindowTypeFilter::Normal;
 
     case WebExtensionWindow::Type::Popup:
-        return WebExtensionAPIWindows::WindowTypeFilter::Popup;
+        return WebExtensionWindowTypeFilter::Popup;
     }
 }
 
 void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, const std::optional<WebExtensionWindowParameters>& windowParameters)
 {
-    auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : WebExtensionAPIWindows::WindowTypeFilter::All;
+    auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : OptionSet<WebExtensionWindowTypeFilter>::all();
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& windowsObject = namespaceObject.windows();

@@ -64,7 +64,7 @@ public:
     void evaluate(Protocol::ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
     void awaitPromise(const String& promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&&);
     void evaluateOnCallFrame(Protocol::ErrorString&, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
-    void callFunctionOn(Protocol::ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown);
+    void callFunctionOn(const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, bool awaitPromise, AsyncCallCallback&&);
     void getFunctionDetails(Protocol::ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>& result);
     void functionDetails(Protocol::ErrorString&, JSC::JSValue, RefPtr<Protocol::Debugger::FunctionDetails>& result);
     void getPreview(Protocol::ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>& result);

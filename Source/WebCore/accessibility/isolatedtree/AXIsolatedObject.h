@@ -447,6 +447,7 @@ private:
     bool isOnScreen() const final;
     bool isOffScreen() const final;
     bool isPressed() const final;
+    // FIXME: isVisible should be accurate for all objects, not just widgets, on COCOA.
     bool isVisible() const final { return boolAttributeValue(AXPropertyName::IsVisible); }
     bool isSelectedOptionActive() const final;
     bool hasBoldFont() const final { return boolAttributeValue(AXPropertyName::HasBoldFont); }
@@ -494,6 +495,7 @@ private:
     Widget* widget() const final;
     PlatformWidget platformWidget() const final;
     Widget* widgetForAttachmentView() const final;
+    bool isPlugin() const final { return boolAttributeValue(AXPropertyName::IsPlugin); }
 
     HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const final;
 #if PLATFORM(COCOA)

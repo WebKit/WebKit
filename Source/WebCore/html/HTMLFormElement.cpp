@@ -282,7 +282,8 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (!targetFrame)
         targetFrame = frame.get();
     auto formState = FormState::create(*this, textFieldValues(), document(), NotSubmittedByJavaScript);
-    targetFrame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
+    if (RefPtr localTargetFrame = dynamicDowncast<LocalFrame>(targetFrame))
+        localTargetFrame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
 
     Ref protectedThis { *this };
 

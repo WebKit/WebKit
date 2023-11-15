@@ -105,6 +105,8 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
 #import "_WKAppHighlightInternal.h"
+#import "_WKArchiveConfiguration.h"
+#import "_WKArchiveExclusionRule.h"
 #import "_WKDataTaskInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
@@ -134,6 +136,7 @@
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MarkupExclusionRule.h>
 #import <WebCore/Pagination.h>
 #import <WebCore/Permissions.h>
 #import <WebCore/PlatformScreen.h>
@@ -3322,7 +3325,36 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->saveResources(_page->mainFrame(), directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+    _page->saveResources(_page->mainFrame(), { }, directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
+
+        completionHandler(nil);
+    });
+}
+
+- (void)_archiveWithConfiguration:(_WKArchiveConfiguration*)configuration completionHandler:(void (^)(NSError *error))completionHandler
+{
+    THROW_IF_SUSPENDED;
+
+    if (!configuration)
+        [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
+
+    Vector<WebCore::MarkupExclusionRule> markupExclusionRules;
+    for (_WKArchiveExclusionRule *rule in configuration.exclusionRules) {
+        if (!rule.elementLocalName && (!rule.attributeLocalNames || !rule.attributeLocalNames.count))
+            continue;
+        Vector<std::pair<AtomString, AtomString>> attibutes;
+        for (unsigned index = 0; index < rule.attributeLocalNames.count; ++index) {
+            NSString *attributeLocalName = [rule.attributeLocalNames objectAtIndex:index];
+            NSString *attributeValue = [rule.attributeValues objectAtIndex:index];
+            if (attributeLocalName && !attributeLocalName.length)
+                attibutes.append({ AtomString { attributeLocalName }, attributeValue });
+        }
+        markupExclusionRules.append(WebCore::MarkupExclusionRule { AtomString { rule.elementLocalName }, WTFMove(attibutes) });
+    }
+
+    _page->saveResources(_page->mainFrame(), WTFMove(markupExclusionRules), configuration.directory.path, configuration.suggestedFileName, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
 

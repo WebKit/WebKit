@@ -37,6 +37,7 @@
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebCore/UTIUtilities.h>
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/FoundationSPI.h>
@@ -364,7 +365,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 namespace WebKit {
 
-void SystemPreviewController::begin(const URL& url, const SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
+void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (m_state != State::Initial) {
         RELEASE_LOG(SystemPreview, "SystemPreview didn't start because an existing preview is in progress");

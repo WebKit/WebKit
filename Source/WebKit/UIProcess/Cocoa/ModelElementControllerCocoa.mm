@@ -32,6 +32,7 @@
 
 #import "Logging.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/LayoutPoint.h>
 #import <WebCore/LayoutUnit.h>
 #import <WebCore/ResourceError.h>

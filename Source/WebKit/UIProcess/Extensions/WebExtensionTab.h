@@ -67,7 +67,6 @@ public:
     explicit WebExtensionTab(const WebExtensionContext&, _WKWebExtensionTab *);
 
     enum class ChangedProperties : uint16_t {
-        None       = 0,
         Audible    = 1 << 1,
         Loading    = 1 << 2,
         Muted      = 1 << 3,
@@ -77,7 +76,6 @@ public:
         Title      = 1 << 7,
         URL        = 1 << 8,
         ZoomFactor = 1 << 9,
-        All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
     using ImageFormat = WebExtensionTabImageFormat;
@@ -227,5 +225,24 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionTab::ChangedProperties> {
+    using values = EnumValues<
+        WebKit::WebExtensionTab::ChangedProperties,
+        WebKit::WebExtensionTab::ChangedProperties::Audible,
+        WebKit::WebExtensionTab::ChangedProperties::Loading,
+        WebKit::WebExtensionTab::ChangedProperties::Muted,
+        WebKit::WebExtensionTab::ChangedProperties::Pinned,
+        WebKit::WebExtensionTab::ChangedProperties::ReaderMode,
+        WebKit::WebExtensionTab::ChangedProperties::Size,
+        WebKit::WebExtensionTab::ChangedProperties::Title,
+        WebKit::WebExtensionTab::ChangedProperties::URL,
+        WebKit::WebExtensionTab::ChangedProperties::ZoomFactor
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

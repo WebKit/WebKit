@@ -146,6 +146,7 @@ enum class AXPropertyName : uint16_t {
     IsMathMultiscript,
     IsMathToken,
     IsMultiSelectable,
+    IsPlugin,
     IsPressed,
     IsRequired,
     IsRowHeader,

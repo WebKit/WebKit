@@ -50,7 +50,7 @@ private:
     MockMediaSourcePrivate* mediaSourcePrivate() const;
 
     // SourceBufferPrivate overrides
-    void appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;

@@ -49,8 +49,7 @@ public:
 
     RemoteDOMWindow& window() const;
 
-    // FIXME: <rdar://118263278> Move this to a pure virtual function on Frame or just a function on Frame, move LocalDOMWindow::opener to DOMWindow.
-    void setOpener(Frame* opener) { m_opener = opener; }
+    void setOpener(Frame* opener) final { m_opener = opener; }
     Frame* opener() final { return m_opener.get(); }
     const Frame* opener() const final { return m_opener.get(); }
 

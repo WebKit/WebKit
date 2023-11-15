@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
+#import "WKWebView.h"
 #import "WebAutomationSessionMacros.h"
 #import "WebPageProxy.h"
 #import "_WKTouchEventGenerator.h"

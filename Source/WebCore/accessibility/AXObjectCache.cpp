@@ -4263,6 +4263,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXKeyShortcutsChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::KeyShortcuts);
             break;
+        case AXVisibilityChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IsVisible);
+            break;
         case AXActiveDescendantChanged:
         case AXRoleChanged:
         case AXControlledObjectsChanged:
@@ -4913,6 +4916,16 @@ void AXObjectCache::selectedTextRangeTimerFired()
     m_lastDebouncedTextRangeObject = { };
 }
 #endif
+
+void AXObjectCache::onWidgetVisibilityChanged(RenderWidget* widget)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* axWidget = get(widget))
+        postNotification(axWidget, nullptr, AXVisibilityChanged);
+#else
+    UNUSED_PARAM(widget);
+#endif
+}
 
 } // namespace WebCore
 

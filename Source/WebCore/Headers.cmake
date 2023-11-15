@@ -1088,6 +1088,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/FrameSelection.h
     editing/HTMLInterchange.h
     editing/InlineRunAndOffset.h
+    editing/MarkupExclusionRule.h
     editing/SelectionGeometryGatherer.h
     editing/SerializedAttachmentData.h
     editing/SmartReplace.h

@@ -43,6 +43,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NativePromise.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -128,17 +130,14 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
         m_client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
-void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
 {
-    if (m_buffered == timeRanges) {
-        completionHandler();
-        return;
-    }
+    if (m_buffered == timeRanges)
+        return GenericPromise::createAndResolve();
     m_buffered = WTFMove(timeRanges);
     if (isAttached())
-        m_client->sourceBufferPrivateBufferedChanged(buffered(), WTFMove(completionHandler));
-    else
-        completionHandler();
+        return m_client->sourceBufferPrivateBufferedChanged(buffered());
+    return GenericPromise::createAndResolve();
 }
 
 Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
@@ -148,7 +147,7 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     });
 }
 
-void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers)
 {
     // 3.1 Attributes, buffered
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
@@ -163,10 +162,8 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTi
 
     // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
     // a single range of {0, 0}.
-    if (highestEndTime.isNegativeInfinite()) {
-        setBufferedRanges({ }, WTFMove(completionHandler));
-        return;
-    }
+    if (highestEndTime.isNegativeInfinite())
+        return setBufferedRanges({ });
 
     // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
     PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
@@ -190,7 +187,7 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTi
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
-    setBufferedRanges(WTFMove(intersectionRanges), WTFMove(completionHandler));
+    return setBufferedRanges(WTFMove(intersectionRanges));
 }
 
 void SourceBufferPrivate::advanceOperationState()
@@ -223,22 +220,9 @@ void SourceBufferPrivate::rewindOperationState()
     }
 }
 
-void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, Function<void()>&& preAppendCompletedTask)
-{
-    DEBUG_LOG(LOGIDENTIFIER);
-
-    rewindOperationState();
-    if (parsingSucceeded)
-        queueOperation(AppendCompletedOperation { m_abortCount, WTFMove(preAppendCompletedTask) });
-    else
-        queueOperation(ErrorOperation { });
-}
-
 void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperation&& operation)
 {
     DEBUG_LOG(LOGIDENTIFIER);
-
-    operation.preTask();
 
     // Resolve the changes in TrackBuffers' buffered ranges
     // into the SourceBuffer's buffered ranges
@@ -246,27 +230,24 @@ void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperati
     if (isAttached())
         m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
 
-    updateBufferedFromTrackBuffers(trackBuffers, [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
+    Vector<Ref<GenericPromise>> promises;
+    promises.append(updateBufferedFromTrackBuffers(trackBuffers));
+    if (m_client) {
+        if (m_groupEndTimestamp > duration()) {
+            // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+            // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+            // duration set to the maximum of the current duration and the group end timestamp.
+            promises.append(m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp));
+        }
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    }
+
+    GenericPromise::all(RunLoop::current(), promises)->whenSettled(RunLoop::current(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
         if (!weakSelf || !isAttached())
             return;
 
-        auto completionHandler = CompletionHandler<void()>([weakSelf = WTFMove(weakSelf), this, operation = WTFMove(operation)] {
-            if (!weakSelf || !isAttached())
-                return;
-
-            if (operation.abortCount == m_abortCount)
-                m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
-            m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-        });
-
-        // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
-        // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
-        // duration set to the maximum of the current duration and the group end timestamp.
-        if (m_groupEndTimestamp > duration()) {
-            m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp, WTFMove(completionHandler));
-            return;
-        }
-        completionHandler();
+        if (operation.abortCount == m_abortCount)
+            m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
     });
 }
 
@@ -282,12 +263,10 @@ void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
     reenqueueMediaForTime(*trackBuffer, trackID, currentMediaTime());
 }
 
-void SourceBufferPrivate::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
 {
-    if (!isAttached()) {
-        completionHandler(MediaTime::invalidTime());
-        return;
-    }
+    if (!isAttached())
+        return ComputeSeekPromise::createAndReject(-1);
 
     auto seekTime = target.time;
 
@@ -306,7 +285,7 @@ void SourceBufferPrivate::computeSeekTime(const SeekTarget& target, CompletionHa
     if (seekTime.hasDoubleValue())
         seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
 
-    completionHandler(seekTime);
+    return ComputeSeekPromise::createAndResolve(seekTime);
 }
 
 void SourceBufferPrivate::seekToTime(const MediaTime& time)
@@ -540,7 +519,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
 
-    updateBufferedFromTrackBuffers(trackBuffers, WTFMove(completionHandler));
+    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 size_t SourceBufferPrivate::platformEvictionThreshold() const
@@ -670,16 +649,14 @@ void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
         trackBuffer->setNeedRandomAccessFlag(true);
 }
 
-void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment, Function<bool(InitializationSegment&)>&& initSegmentCheck, CompletionHandler<void(ReceiveResult)>&& completionHandler)
+void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    auto initOperation = InitOperation { WTFMove(segment), WTFMove(initSegmentCheck), WTFMove(completionHandler) };
-    m_pendingOperations.append({ WTFMove(initOperation) });
+    m_pendingOperations.append({ InitOperation { WTFMove(segment) } });
 }
 
-void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId, CompletionHandler<void(Ref<TrackInfo>&&, uint64_t)>&& completionHandler)
+void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
-    auto updateFormatDescriptionOperation = UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId, WTFMove(completionHandler) };
-    m_pendingOperations.append({ WTFMove(updateFormatDescriptionOperation) });
+    m_pendingOperations.append({ UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId } });
 }
 
 bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& segment)
@@ -748,16 +725,22 @@ void SourceBufferPrivate::processPendingOperations()
         std::visit(WTF::makeVisitor([&](InitOperation&& initOperation) {
             processInitOperation(WTFMove(initOperation));
         }, [&](UpdateFormatDescriptionOperation&& operation) {
-            operation.completionHandler(WTFMove(operation.formatDescription), operation.trackId);
+            processFormatDescriptionForTrackId(WTFMove(operation.formatDescription), operation.trackId);
         }, [&](SamplesVector&& samples) {
             processMediaSamplesOperation(WTFMove(samples));
         }, [&](ResetParserOperation&&) {
             resetParserStateInternal();
         }, [&](AppendBufferOperation&& buffer) {
             advanceOperationState();
-            appendInternal(WTFMove(buffer));
-        }, [&](AppendCompletedOperation&& appendComplete) {
-            processAppendCompletedOperation(WTFMove(appendComplete));
+            appendInternal(WTFMove(buffer))->whenSettled(RunLoop::current(), [this, strongThis = Ref { *this }, abortCount = m_abortCount] (auto&& result) mutable {
+                rewindOperationState();
+                if (result)
+                    queueOperation(AppendCompletedOperation { abortCount });
+                else
+                    queueOperation(ErrorOperation { });
+            });
+        }, [&](AppendCompletedOperation&& operation) {
+            processAppendCompletedOperation(WTFMove(operation));
         }, [&](ErrorOperation&&) {
             abortPendingOperations();
             processError();
@@ -770,7 +753,7 @@ void SourceBufferPrivate::abortPendingOperations()
     for (auto& operation : std::exchange(m_pendingOperations, { })) {
         if (!std::holds_alternative<InitOperation>(operation))
             continue;
-        std::get<InitOperation>(operation).completionHandler(ReceiveResult::AppendError);
+        processInitialisationSegment({ });
     }
     m_operationState = OperationState::Idle;
 }
@@ -788,42 +771,30 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
 {
     auto& segment = initOperation.segment;
     if ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment))
-        || !initOperation.check(segment)) {
+        || !precheckInitialisationSegment(segment)) {
         m_didReceiveInitializationSegmentErrored = true;
-        initOperation.completionHandler(ReceiveResult::AppendError);
+        processInitialisationSegment({ });
         return;
     }
 
     advanceOperationState();
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(initOperation.completionHandler)] (auto result) mutable {
-        auto completeProcess = [this, weakThis = WeakPtr { *this }, result, completionHandler = WTFMove(completionHandler)] () mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis) {
-                completionHandler(ReceiveResult::ClientDisconnected);
-                return;
-            }
-
-            if (!m_errored) {
-                rewindOperationState();
-                m_didReceiveInitializationSegmentErrored |= result != ReceiveResult::Succeeded;
-
-                m_receivedFirstInitializationSegment = true;
-                m_pendingInitializationSegmentForChangeType = false;
-            }
-
-            completionHandler(result);
-
-            processPendingOperations();
-        };
-        if (!m_client || !m_client->isAsync()) {
-            // We want to avoid re-entrancy in the case the SourceBufferClient's
-            // sourceBufferPrivateDidReceiveInitializationSegment immediately ran the completionHander
-            // So we queue a task to continue later on.
-            callOnMainThread(WTFMove(completeProcess));
+    auto segmentCopy = segment;
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable {
+        if (!weakThis)
             return;
+
+        if (!m_errored) {
+            rewindOperationState();
+            m_didReceiveInitializationSegmentErrored |= !result;
+
+            m_receivedFirstInitializationSegment = true;
+            m_pendingInitializationSegmentForChangeType = false;
         }
-        completeProcess();
+
+        processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+
+        processPendingOperations();
     });
 }
 

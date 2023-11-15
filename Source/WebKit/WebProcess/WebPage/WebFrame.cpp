@@ -405,6 +405,7 @@ void WebFrame::removeFromTree()
         corePage->removeRootFrame(*localFrame);
     if (RefPtr parent = coreFrame->tree().parent())
         parent->tree().removeChild(*coreFrame);
+    coreFrame->disconnectView();
 }
 
 void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -431,10 +432,13 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
     auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
     m_coreFrame = localFrame.ptr();
-    if (localFrame->isMainFrame())
-        corePage->setMainFrame(localFrame);
+    remoteFrame->setView(nullptr);
     localFrame->init();
     localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+    if (localFrame->isMainFrame()) {
+        corePage->setMainFrame(localFrame);
+        localFrame->takeWindowProxyFrom(*remoteFrame);
+    }
 
     if (layerHostingContextIdentifier)
         setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
@@ -1113,7 +1117,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContin
 }
 
 #if PLATFORM(COCOA)
-RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const String& mainResourceFileName)
+RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& mainResourceFileName)
 {
     Ref document = *coreLocalFrame()->document();
     auto archive = LegacyWebArchive::create(document, [this, callback, context](auto& frame) -> bool {
@@ -1124,7 +1128,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
         ASSERT(webFrame);
 
         return callback(toAPI(this), toAPI(webFrame.get()), context);
-    }, mainResourceFileName);
+    }, exclusionRules, mainResourceFileName);
 
     if (!archive)
         return nullptr;

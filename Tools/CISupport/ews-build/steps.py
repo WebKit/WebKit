@@ -2449,7 +2449,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
-    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-wk2']
+    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-wk2', 'api-wpe']
     WINDOWS_CHECKS = ['wincairo']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1

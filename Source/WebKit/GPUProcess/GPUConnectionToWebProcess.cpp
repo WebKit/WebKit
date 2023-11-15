@@ -938,61 +938,50 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 {
 #if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
-        remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return true;
+        return remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
     }
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerProxy::messageReceiverName()) {
-        remoteMediaPlayerManagerProxy().didReceiveSyncPlayerMessage(connection, decoder, replyEncoder);
-        return true;
+        return remoteMediaPlayerManagerProxy().didReceiveSyncPlayerMessage(connection, decoder, replyEncoder);
     }
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
-        cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return true;
+        return cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
     }
 
     if (decoder.messageReceiverName() == Messages::RemoteCDMProxy::messageReceiverName()) {
-        cdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
-        return true;
+        return cdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
     }
 
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceProxy::messageReceiverName()) {
-        cdmFactoryProxy().didReceiveSyncCDMInstanceMessage(connection, decoder, replyEncoder);
-        return true;
+        return cdmFactoryProxy().didReceiveSyncCDMInstanceMessage(connection, decoder, replyEncoder);
     }
 
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSessionProxy::messageReceiverName()) {
-        cdmFactoryProxy().didReceiveSyncCDMInstanceSessionMessage(connection, decoder, replyEncoder);
-        return true;
+        return cdmFactoryProxy().didReceiveSyncCDMInstanceSessionMessage(connection, decoder, replyEncoder);
     }
 #endif
 #if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
-        audioSessionProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return true;
+        return audioSessionProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
     }
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
-        legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return true;
+        return legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
     }
 
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMProxy::messageReceiverName()) {
-        legacyCdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
-        return true;
+        return legacyCdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
     }
 
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMSessionProxy::messageReceiverName()) {
-        legacyCdmFactoryProxy().didReceiveSyncCDMSessionMessage(connection, decoder, replyEncoder);
-        return true;
+        return legacyCdmFactoryProxy().didReceiveSyncCDMSessionMessage(connection, decoder, replyEncoder);
     }
 #endif
 #if HAVE(AVASSETREADER)
     if (decoder.messageReceiverName() == Messages::RemoteImageDecoderAVFProxy::messageReceiverName()) {
-        imageDecoderAVFProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return true;
+        return imageDecoderAVFProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
     }
 #endif
 #if ENABLE(WEBGL)
@@ -1002,8 +991,7 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #endif
 #if ENABLE(IPC_TESTING_API)
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
-        m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return true;
+        return m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
     }
 #endif
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);

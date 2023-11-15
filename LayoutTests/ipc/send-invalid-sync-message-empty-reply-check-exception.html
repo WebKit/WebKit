@@ -13,7 +13,16 @@ promise_test(async t => {
     assert_throws_js(TypeError,
         () => { IPC.sendSyncMessage("UI", 0, IPC.messages.IPCTester_SyncPingEmptyReply.name, defaultTimeout, []); },
         `failed sync message must throw error`);
-}, "Sending sync message with incorrect parameters must throw error");
+}, "Sending sync message to the UI process with incorrect parameters must throw error");
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    
+    assert_throws_js(TypeError,
+        () => { IPC.sendSyncMessage("GPU", 0, IPC.messages.IPCTester_SyncPingEmptyReply.name, defaultTimeout, []); },
+        `failed sync message must throw error`);
+}, "Sending sync message to the GPU process with incorrect parameters must throw error");
 
 </script>
 </body>

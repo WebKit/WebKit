@@ -1430,7 +1430,7 @@ private:
 
         auto index = m_serializedVideoFrames.find(videoFrame.ptr());
         if (index == notFound) {
-            index = m_serializedVideoChunks.size();
+            index = m_serializedVideoFrames.size();
             m_serializedVideoFrames.append(WTFMove(videoFrame));
         }
         write(WebCodecsVideoFrameTag);
@@ -1460,7 +1460,7 @@ private:
 
         auto index = m_serializedAudioData.find(audioData.ptr());
         if (index == notFound) {
-            index = m_serializedVideoChunks.size();
+            index = m_serializedAudioData.size();
             m_serializedAudioData.append(WTFMove(audioData));
         }
         write(WebCodecsAudioDataTag);
