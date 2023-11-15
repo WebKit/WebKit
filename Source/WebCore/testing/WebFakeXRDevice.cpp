@@ -120,8 +120,8 @@ void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOr
         // so notify the input sources have been initialized with an empty list. This is not a problem because
         // WPT tests rely on requestAnimationFrame updates to test the input sources.
         callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() {
-            auto strongThis = weakThis.get();
-            if (!strongThis)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             if (m_trackingAndRenderingClient)
                 m_trackingAndRenderingClient->sessionDidInitializeInputSources({ });

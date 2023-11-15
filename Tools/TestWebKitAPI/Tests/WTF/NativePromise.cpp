@@ -113,8 +113,8 @@ public:
 
     void dispatch()
     {
-        m_workQueue->dispatch([strongThis = RefPtr { this }] {
-            strongThis->run();
+        m_workQueue->dispatch([protectedThis = RefPtr { this }] {
+            protectedThis->run();
         });
     }
 

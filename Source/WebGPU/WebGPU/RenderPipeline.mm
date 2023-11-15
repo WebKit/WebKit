@@ -694,7 +694,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
     auto pipeline = createRenderPipeline(descriptor);
-    instance().scheduleWork([strongThis = Ref { *this }, pipeline, callback = WTFMove(callback)]() mutable {
+    instance().scheduleWork([protectedThis = Ref { *this }, pipeline, callback = WTFMove(callback)]() mutable {
         callback(WGPUCreatePipelineAsyncStatus_Success, WTFMove(pipeline), { });
     });
 }

@@ -3261,8 +3261,8 @@ void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandl
 
 void WebPage::markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason dontRetryReason)
 {
-    tryMarkLayersVolatile([dontRetryReason, strongThis = Ref { *this }](bool didSucceed) {
-        strongThis->tryMarkLayersVolatileCompletionHandler(dontRetryReason, didSucceed);
+    tryMarkLayersVolatile([dontRetryReason, protectedThis = Ref { *this }](bool didSucceed) {
+        protectedThis->tryMarkLayersVolatileCompletionHandler(dontRetryReason, didSucceed);
     });
 }
 

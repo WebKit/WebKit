@@ -666,19 +666,19 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     auto handleItemSelected = [weakThis = WeakPtr { *this }, idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
         if (!weakThis)
             return;
-        Ref strongThis = *weakThis;
+        Ref protectedThis = *weakThis;
 
-        auto invokeCallbackAtScopeExit = makeScopeExit([strongThis] {
-            if (auto showMediaControlsContextMenuCallback = std::exchange(strongThis->m_showMediaControlsContextMenuCallback, nullptr))
+        auto invokeCallbackAtScopeExit = makeScopeExit([protectedThis] {
+            if (auto showMediaControlsContextMenuCallback = std::exchange(protectedThis->m_showMediaControlsContextMenuCallback, nullptr))
                 showMediaControlsContextMenuCallback->handleEvent();
         });
 
         if (selectedItemID == invalidMenuItemIdentifier)
             return;
 
-        if (!strongThis->m_mediaElement)
+        if (!protectedThis->m_mediaElement)
             return;
-        auto& mediaElement = *strongThis->m_mediaElement;
+        auto& mediaElement = *protectedThis->m_mediaElement;
 
         UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &mediaElement.document());
 

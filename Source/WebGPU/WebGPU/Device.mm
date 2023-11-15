@@ -151,13 +151,14 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
 {
 #if PLATFORM(MAC)
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
-        RefPtr<Device> strongThis = weakThis.get();
-        if (!strongThis)
+        RefPtr<Device> protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        strongThis->instance().scheduleWork([strongThis = WTFMove(strongThis), device = device]() {
-            if (![strongThis->m_device isEqual:device])
+        auto& instance = protectedThis->instance();
+        instance.scheduleWork([protectedThis = WTFMove(protectedThis), device = device]() {
+            if (![protectedThis->m_device isEqual:device])
                 return;
-            strongThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
+            protectedThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
         });
     });
 

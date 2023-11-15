@@ -690,7 +690,7 @@ private:
                 }
                 return;
             }
-            m_targetQueue->dispatch([this, strongThis = Ref { *this }, promise = Ref { promise }, operation = *promise.m_result ? "Resolving" : "Rejecting"] () mutable {
+            m_targetQueue->dispatch([this, protectedThis = Ref { *this }, promise = Ref { promise }, operation = *promise.m_result ? "Resolving" : "Rejecting"] () mutable {
                 PROMISE_LOG(operation, " then() call made from ", m_logSiteIdentifier, "[", promise.get(), " callback:", (const void*)this, "]");
                 if (m_disconnected) {
                     PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
