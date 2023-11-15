@@ -233,7 +233,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_pickerView setControl:self];
 
     CGRect frame = [_pickerView frame];
-    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
+    frame.size = view.sizeForLegacyFormControlPickerViews;
     [_pickerView setFrame:frame];
 
     return self;

@@ -1272,6 +1272,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+    _isHandlingActiveKeyEvent = NO;
+    _isHandlingActivePressesEvent = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -1807,6 +1809,9 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (superDidResign) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+
+        _isHandlingActiveKeyEvent = NO;
+        _isHandlingActivePressesEvent = NO;
 
         if (_keyWebEventHandler) {
             RunLoop::main().dispatch([weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
@@ -6184,10 +6189,8 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     if (_isHidingKeyboard && _isChangingFocus)
         return;
 
-    auto* keyboard = [UIKeyboardImpl sharedInstance];
-
     WebKit::InsertTextOptions options;
-    options.processingUserGesture = keyboard.isCallingInputDelegate;
+    options.processingUserGesture = _isHandlingActiveKeyEvent || _isHandlingActivePressesEvent;
     options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 
@@ -6755,6 +6758,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = YES;
     [super pressesBegan:presses withEvent:event];
 }
 
@@ -6763,6 +6767,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = NO;
     [super pressesEnded:presses withEvent:event];
 }
 
@@ -6779,6 +6784,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = NO;
     [super pressesCancelled:presses withEvent:event];
 }
 
@@ -6799,28 +6805,31 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     [self _internalHandleKeyWebEvent:event withCompletionHandler:completionHandler];
 }
 
-- (void)_internalHandleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
+- (void)_internalHandleKeyWebEvent:(::WebEvent *)event withCompletionHandler:(void (^)(::WebEvent *event, BOOL wasHandled))completionHandler
 {
     if (!isUIThread()) {
         RELEASE_LOG_FAULT(KeyHandling, "%s was invoked on a background thread.", __PRETTY_FUNCTION__);
-        completionHandler(theEvent, NO);
+        completionHandler(event, NO);
         return;
     }
+
+    if (event.type == WebEventKeyDown)
+        _isHandlingActiveKeyEvent = YES;
 
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
     auto* keyboard = [UIKeyboardImpl sharedInstance];
     if ((_page->editorState().isContentEditable || _treatAsContentEditableUntilNextEditorStateUpdate) && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
-        completionHandler(theEvent, YES);
-        _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::Yes));
+        completionHandler(event, YES);
+        _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::Yes));
         return;
     }
 
-    if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::No)))
+    if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::No)))
         _keyWebEventHandler = makeBlockPtr(completionHandler);
     else
-        completionHandler(theEvent, NO);
+        completionHandler(event, NO);
 }
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
@@ -6830,7 +6839,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
     if (!(event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged))
         [_keyboardScrollingAnimator handleKeyEvent:event];
-    
+
+    if (event.type == WebEventKeyUp)
+        _isHandlingActiveKeyEvent = NO;
+
     if (auto handler = WTFMove(_keyWebEventHandler)) {
         handler(event, eventWasHandled);
         return;
@@ -12079,6 +12091,13 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (BOOL)isPresentingEditMenu
 {
     return _isPresentingEditMenu;
+}
+
+- (CGSize)sizeForLegacyFormControlPickerViews
+{
+    auto size = self.window.bounds.size;
+    size.height = 0; // Fall back to the default input view height.
+    return size;
 }
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
