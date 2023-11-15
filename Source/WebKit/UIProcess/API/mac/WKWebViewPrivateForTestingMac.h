@@ -52,6 +52,8 @@
 
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
 
+- (void)_setSelectedColorForColorPicker:(NSColor *)color;
+
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
 
 @end

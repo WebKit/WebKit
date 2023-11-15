@@ -1114,6 +1114,7 @@
 		E3F8AB92241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */; };
 		E3FCFB7F274B70D5000E6B69 /* SentinelLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3FCFB7E274B70D5000E6B69 /* SentinelLinkedList.cpp */; };
 		E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E5036F77211BC22800BFDBE2 /* color-drop.html */; };
+		E51A740E2B0442180047FEB1 /* ColorInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E51A740D2B0442180047FEB1 /* ColorInputTests.mm */; };
 		E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */; };
 		E540058827B3A8B20005653A /* contenteditable-user-select-user-drag.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E540058727B3A8320005653A /* contenteditable-user-select-user-drag.html */; };
 		E57B44C129ABFB3B006069DE /* qr-code.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = E57B44C029ABFAA4006069DE /* qr-code.png */; };
@@ -3422,6 +3423,7 @@
 		E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Deque.cpp; sourceTree = "<group>"; };
 		E4C9ABC71B3DB1710040A987 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		E5036F77211BC22800BFDBE2 /* color-drop.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-drop.html"; sourceTree = "<group>"; };
+		E51A740D2B0442180047FEB1 /* ColorInputTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorInputTests.mm; sourceTree = "<group>"; };
 		E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTitlebarSeparatorTests.mm; sourceTree = "<group>"; };
 		E540058727B3A8320005653A /* contenteditable-user-select-user-drag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "contenteditable-user-select-user-drag.html"; sourceTree = "<group>"; };
 		E57B44C029ABFAA4006069DE /* qr-code.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qr-code.png"; sourceTree = "<group>"; };
@@ -5536,6 +5538,7 @@
 				93CFA8681CEBCFED000565A8 /* CandidateTests.mm */,
 				290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */,
 				F43CAB1C278A326500C8D0A2 /* CloseWhileCommittingLoad.mm */,
+				E51A740D2B0442180047FEB1 /* ColorInputTests.mm */,
 				A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */,
 				5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */,
 				37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */,
@@ -6399,6 +6402,7 @@
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
 				F43CAB1D278A326500C8D0A2 /* CloseWhileCommittingLoad.mm in Sources */,
 				6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */,
+				E51A740E2B0442180047FEB1 /* ColorInputTests.mm in Sources */,
 				7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */,
 				1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */,
 				7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */,

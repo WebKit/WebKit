@@ -31,10 +31,11 @@
 #import "AudioSessionRoutingArbitratorProxy.h"
 #import "WKNSData.h"
 #import "WKWebViewMac.h"
-#import "_WKFrameHandleInternal.h"
+#import "WebColorPicker.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
+#import "_WKFrameHandleInternal.h"
 
 @implementation WKWebView (WKTestingMac)
 
@@ -120,6 +121,11 @@
 - (BOOL)_secureEventInputEnabledForTesting
 {
     return _impl->inSecureInputState();
+}
+
+- (void)_setSelectedColorForColorPicker:(NSColor *)color
+{
+    _page->colorPickerClient().didChooseColor(WebCore::colorFromCocoaColor(color));
 }
 
 @end
