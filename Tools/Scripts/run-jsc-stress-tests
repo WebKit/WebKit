@@ -222,6 +222,7 @@ def usage
     puts "                            no-cjit-validate-phases, no-cjit-collect-continuously, dfg-eager"
     puts "                            and for FTL platforms: no-ftl, ftl-eager-no-cjit and"
     puts "                            ftl-no-cjit-small-pool."
+    puts "--no-retry                  Disable auto retry"
     exit 1
 end
 
@@ -260,7 +261,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--debug', GetoptLong::NO_ARGUMENT],
                ['--release', GetoptLong::NO_ARGUMENT],
                ['--quick', '-q', GetoptLong::NO_ARGUMENT],
-               ['--basic', GetoptLong::NO_ARGUMENT]).each {
+               ['--basic', GetoptLong::NO_ARGUMENT],
+               ['--no-retry', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -361,6 +363,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $buildType = "debug"
     when '--release'
         $buildType = "release"
+    when '--no-retry'
+        ITERATION_LIMITS.infraIterationsFloor = 1
+        ITERATION_LIMITS.iterationsCeiling = 1
     end
 }
 

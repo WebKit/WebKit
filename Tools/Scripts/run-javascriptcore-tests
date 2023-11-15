@@ -80,6 +80,8 @@ my $buildbotWorker;
 my $buildJSC = 1;
 my $copyJSC = 1;
 
+my $noRetry;
+
 use constant {
     ENV_VAR_SAYS_DO_RUN => 4,
     ENV_VAR_SAYS_DONT_RUN => 3,
@@ -307,6 +309,7 @@ Usage: $programName [options] [options to pass to build system]
   --builder-name:               The name of the buildbot builder tests were run on.
   --build-number:               The buildbot build number tests are associated with.
   --buildbot-worker:            The buildbot worker tests were run on.
+  --no-retry:                   Disable retry
 
 Environment Variables:
   - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run testmasm by default.
@@ -375,6 +378,7 @@ GetOptions(
     'builder-name=s' => \$builderName,
     'build-number=s' => \$buildNumber,
     'buildbot-worker=s' => \$buildbotWorker,
+    'no-retry' => \$noRetry,
 );
 
 my $specificTestsSpecified = 0;
@@ -918,6 +922,10 @@ sub runJSCStressTests
     if ($filter) {
         push(@jscStressDriverCmd, "--filter");
         push(@jscStressDriverCmd, $filter);
+    }
+
+    if ($noRetry) {
+        push(@jscStressDriverCmd, "--no-retry");
     }
 
     push(@jscStressDriverCmd, ("--verbose") x $verbose) if ($verbose > 0);

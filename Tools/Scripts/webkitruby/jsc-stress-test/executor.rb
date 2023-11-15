@@ -35,7 +35,7 @@ class BaseTestsExecutor
         @treatFailingAsFlaky = treatFailingAsFlaky
         @infraIterationsFloor = iterationLimits.infraIterationsFloor
         @iterationsCeiling = iterationLimits.iterationsCeiling
-        if @iterationsCeiling < @infraIterationsFloor
+        if @infraIterationsFloor != 1 && @iterationsCeiling !=1 && @iterationsCeiling < @infraIterationsFloor
             raise "iterationsCeiling (#{@iterationsCeiling} < @infraIterationsFloor (#{@infraIterationsFloor}"
         end
         @maxIterations = setMaxIterations(initialMaxAllowedIterations(runlist))
