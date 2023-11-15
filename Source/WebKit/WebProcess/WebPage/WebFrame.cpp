@@ -1117,7 +1117,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContin
 }
 
 #if PLATFORM(COCOA)
-RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const String& mainResourceFileName)
+RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& mainResourceFileName)
 {
     Ref document = *coreLocalFrame()->document();
     auto archive = LegacyWebArchive::create(document, [this, callback, context](auto& frame) -> bool {
@@ -1128,7 +1128,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
         ASSERT(webFrame);
 
         return callback(toAPI(this), toAPI(webFrame.get()), context);
-    }, mainResourceFileName);
+    }, exclusionRules, mainResourceFileName);
 
     if (!archive)
         return nullptr;

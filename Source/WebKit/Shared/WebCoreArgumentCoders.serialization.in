@@ -6799,3 +6799,8 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     StopWithAnimation,
     StopImmediately
 };
+
+struct WebCore::MarkupExclusionRule {
+    AtomString elementLocalName;
+    Vector<std::pair<AtomString, AtomString>> attributes;
+};

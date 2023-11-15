@@ -40,6 +40,7 @@
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
+#include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -206,7 +207,7 @@ public:
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
-    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const String& mainResourceFileName = { });
+    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules = { }, const String& mainResourceFileName = { });
 #endif
 
     RefPtr<WebImage> createSelectionSnapshot() const;

@@ -34,6 +34,8 @@
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/_WKArchiveConfiguration.h>
+#import <WebKit/_WKArchiveExclusionRule.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -1508,6 +1510,72 @@ TEST(WebArchive, SaveResourcesCSSImportRule)
         EXPECT_TRUE([savedStyleResource containsString:@"url(\"image.png\")"]);
         EXPECT_TRUE([savedStyleResource containsString:@"color: fuchsia"]);
 
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
+static const char* htmlDataBytesForExclusionRules = R"TESTRESOURCE(
+<a href="foo.html" target="_blank">Blank</a>
+<a href="#bar" target="_self">Self</a>
+<textarea disabled hidden>Text</textarea>
+<button disabled>Button</button>
+<script>
+window.webkit.messageHandlers.testHandler.postMessage("done");
+</script>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesExclusionRules)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForExclusionRules length:strlen(htmlDataBytesForExclusionRules)];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        }
+
+        EXPECT_TRUE(data);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    RetainPtr<_WKArchiveConfiguration> archiveConfiguration = adoptNS([[_WKArchiveConfiguration alloc] init]);
+    archiveConfiguration.get().directory = directoryURL.get();
+    archiveConfiguration.get().suggestedFileName = @"host";
+    archiveConfiguration.get().exclusionRules = @[
+        adoptNS([[_WKArchiveExclusionRule alloc] initWithElementLocalName:@"script" attributeLocalNames:nil attributeValues:nil]).get(),
+        adoptNS([[_WKArchiveExclusionRule alloc] initWithElementLocalName:nil attributeLocalNames:@[@"disabled", @"hidden"] attributeValues:@[@"", @""]]).get(),
+        adoptNS([[_WKArchiveExclusionRule alloc] initWithElementLocalName:@"a" attributeLocalNames:@[@"target"] attributeValues:@[@"_blank"]]).get(),
+    ];
+    [webView _archiveWithConfiguration:archiveConfiguration.get() completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        EXPECT_FALSE([savedMainResource containsString:@"script"]);
+        EXPECT_FALSE([savedMainResource containsString:@"hidden"]);
+        EXPECT_FALSE([savedMainResource containsString:@"target=\"_blank\""]);
         saved = true;
     }];
     Util::run(&saved);

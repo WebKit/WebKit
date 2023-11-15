@@ -253,6 +253,8 @@ UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.mm
 UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
 UIProcess/API/Cocoa/_WKAppHighlight.mm
 UIProcess/API/Cocoa/_WKApplicationManifest.mm
+UIProcess/API/Cocoa/_WKArchiveConfiguration.mm
+UIProcess/API/Cocoa/_WKArchiveExclusionRule.mm
 UIProcess/API/Cocoa/_WKAttachment.mm
 UIProcess/API/Cocoa/_WKAutomationSession.mm
 UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm

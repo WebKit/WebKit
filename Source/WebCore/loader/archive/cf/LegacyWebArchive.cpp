@@ -446,7 +446,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFilePath)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& customMarkupExclusionRules, const String& mainResourceFilePath)
 {
     auto* frame = node.document().frame();
     if (!frame)
@@ -455,19 +455,17 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     // If the page was loaded with JavaScript enabled, we don't want to archive <noscript> tags
     // In practice we don't actually know whether scripting was enabled when the page was originally loaded
     // but we can approximate that by checking if scripting is enabled right now.
-    std::unique_ptr<Vector<QualifiedName>> tagNamesToFilter;
-    if (frame->page() && frame->page()->settings().isScriptEnabled()) {
-        tagNamesToFilter = makeUnique<Vector<QualifiedName>>();
-        tagNamesToFilter->append(HTMLNames::noscriptTag);
-    }
+    auto markupExclusionRules = customMarkupExclusionRules;
+    if (frame->page() && frame->page()->settings().isScriptEnabled())
+        markupExclusionRules.append(MarkupExclusionRule { AtomString { "noscript"_s }, { } });
 
     Vector<Ref<Node>> nodeList;
-    String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, tagNamesToFilter.get(), std::nullopt, { }, { }, ShouldIncludeShadowDOM::Yes);
+    String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, std::nullopt, { }, { }, ShouldIncludeShadowDOM::Yes, markupExclusionRules);
     auto nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node.document()) + markupString;
 
-    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), mainResourceFilePath);
+    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -616,7 +614,7 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     return uniqueCSSStyleSheets;
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainFrameFilePath)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -642,7 +640,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node.get()).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
-            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), mainFrameFilePath)) {
+            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), markupExclusionRules, mainFrameFilePath)) {
                 auto subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {
@@ -726,7 +724,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             extension = makeString(".", extension);
         auto mainFrameFilePathWithExtension = mainFrameFilePath.endsWith(extension) ? mainFrameFilePath : makeString(mainFrameFilePath, extension);
         auto filePathWithExtension = frame.isMainFrame() ? mainFrameFilePathWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
-        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, nullptr, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes);
+        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes, markupExclusionRules);
         mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), filePathWithExtension);
     }
 
