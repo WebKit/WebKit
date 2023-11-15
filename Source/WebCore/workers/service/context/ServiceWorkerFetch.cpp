@@ -131,8 +131,8 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
 
     if (response->isBodyReceivedByChunk()) {
         client->setCancelledCallback([response = WeakPtr { response.get() }] {
-            if (response)
-                response->cancelStream();
+            if (RefPtr protectedResponse = response.get())
+                protectedResponse->cancelStream();
         });
         response->consumeBodyReceivedByChunk([client = WTFMove(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
             if (result.hasException()) {
