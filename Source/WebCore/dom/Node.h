@@ -204,6 +204,7 @@ public:
 
     bool isElementNode() const { return hasNodeFlag(NodeFlag::IsElement); }
     bool isContainerNode() const { return hasNodeFlag(NodeFlag::IsContainerNode); }
+    bool isCharacterData() const { return hasNodeFlag(NodeFlag::IsCharacterData); }
     bool isTextNode() const { return hasNodeFlag(NodeFlag::IsText); }
     bool isHTMLElement() const { return hasNodeFlag(NodeFlag::IsHTMLElement); }
     bool isSVGElement() const { return hasNodeFlag(NodeFlag::IsSVGElement); }

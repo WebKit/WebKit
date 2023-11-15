@@ -3518,9 +3518,6 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 [ Debug ] fast/history/page-cache-closed-audiocontext.html [ Crash ]
 [ Debug ] fast/media/mq-resolution.html [ Crash ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
-[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-deleteData.html [ Crash ]
-[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-insertData.html [ Crash ]
-[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-replaceData.html [ Crash ]
 [ Debug ] imported/blink/fast/hidpi/border-background-align.html [ Crash ]
 [ Debug ] imported/blink/svg/zoom/text/lowdpi-zoom-text.html [ Crash ]
 
