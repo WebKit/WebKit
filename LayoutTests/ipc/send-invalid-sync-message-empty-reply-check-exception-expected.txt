@@ -1,3 +1,4 @@
 
-PASS Sending sync message with incorrect parameters must throw error
+PASS Sending sync message to the UI process with incorrect parameters must throw error
+PASS Sending sync message to the GPU process with incorrect parameters must throw error
 
