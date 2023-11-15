@@ -286,7 +286,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue 
     wrapFunction.appendArgument(generatePreview);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
-    if (!callResult)
+    if (!callResult || !callResult.value())
         return nullptr;
 
     auto resultValue = toInspectorValue(globalObject(), callResult.value());
@@ -309,7 +309,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(const Str
     wrapFunction.appendArgument(generatePreview);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
-    if (!callResult)
+    if (!callResult || !callResult.value())
         return nullptr;
 
     if (callResult.value().isNull())
@@ -338,7 +338,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC::JSValue t
         wrapFunction.appendArgument(columns);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
-    if (!callResult)
+    if (!callResult || !callResult.value())
         return nullptr;
 
     auto resultValue = toInspectorValue(globalObject(), callResult.value());
@@ -359,7 +359,7 @@ RefPtr<Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(JSC::JSVal
     wrapFunction.appendArgument(value);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
-    if (!callResult)
+    if (!callResult || !callResult.value())
         return nullptr;
 
     auto resultValue = toInspectorValue(globalObject(), callResult.value());
@@ -411,7 +411,7 @@ JSC::JSValue InjectedScript::findObjectById(const String& objectId) const
 
     auto callResult = callFunctionWithEvalEnabled(function);
     ASSERT(callResult);
-    if (!callResult)
+    if (!callResult || !callResult.value())
         return { };
     return callResult.value();
 }
@@ -449,7 +449,7 @@ JSC::JSObject* InjectedScript::createCommandLineAPIObject(JSC::JSValue callFrame
 
     auto callResult = callFunctionWithEvalEnabled(function);
     ASSERT(callResult);
-    return callResult ? asObject(callResult.value()) : nullptr;
+    return callResult && callResult.value() ? asObject(callResult.value()) : nullptr;
 }
 
 JSC::JSValue InjectedScript::arrayFromVector(Vector<JSC::JSValue>&& vector)
