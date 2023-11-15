@@ -1,18 +1,23 @@
 <html>
     <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
         <script>
+            jsTestIsAsync = true;
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            function moveFocus() {
+            async function moveFocus() {
                 var ifrm = document.getElementById("rte");
                 ifrm.contentWindow.focus();
+                await UIHelper.ensurePresentationUpdate();
             }
             
-            function init() {
+            async function init() {
                 var ifrm = document.getElementById("rte");
                 ifrm.contentDocument.designMode = "on";
                 ifrm.contentWindow.focus();
+                await UIHelper.ensurePresentationUpdate();
                 
                 if (window.testRunner) {
                     eventSender.keyDown('T');
@@ -34,6 +39,7 @@
                     eventSender.keyDown('S');
                 }
                 document.getElementById('res').innerHTML = ifrm.contentDocument.body.innerHTML;
+                finishJSTest();
             }
         </script>
     </head>
