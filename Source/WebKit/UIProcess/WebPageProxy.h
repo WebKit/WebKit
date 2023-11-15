@@ -3013,7 +3013,9 @@ private:
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
 #endif
 
+#if PLATFORM(MAC)
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;
+#endif
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
 
