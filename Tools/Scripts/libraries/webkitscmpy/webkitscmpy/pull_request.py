@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import re
 
 from .commit import Commit
@@ -58,6 +59,37 @@ class PullRequest(object):
                 self.author,
                 datetime.utcfromtimestamp(self.timestamp) if self.timestamp else '-',
                 self.content,
+            )
+
+    class Status(object):
+        class Encoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, dict):
+                    return {key: self.default(value) for key, value in obj.items()}
+                if isinstance(obj, list):
+                    return [self.default(value) for value in obj]
+                if not isinstance(obj, PullRequest.Status):
+                    return super(PullRequest.Status.Encoder, self).default(obj)
+
+                return dict(
+                    name=obj.name,
+                    status=obj.status,
+                    description=obj.description,
+                    url=obj.url,
+                )
+
+        def __init__(self, name=None, status=None, description=None, url=None):
+            self.name = name
+            self.status = status
+            if status not in ('error', 'failure', 'pending', 'success'):
+                raise ValueError('Invalid status, got {!r}'.format(status))
+
+            self.description = description
+            self.url = url
+
+        def __repr__(self):
+            return "Status(name={!r}, status={!r}, url={!r})".format(
+                self.name or '?', self.status, self.url or '?',
             )
 
 
@@ -156,6 +188,7 @@ class PullRequest(object):
         self._blockers = None
         self._metadata = metadata
         self._comments = None
+        self._statuses = None
         self.generator = generator
         self.url = url
 
@@ -214,6 +247,12 @@ class PullRequest(object):
         if not self.generator:
             raise self.Exception('No associated pull-request generator')
         return self.generator.review(self, comment=comment, approve=approve)
+
+    @property
+    def statuses(self):
+        if self._statuses is None and self.generator:
+            self._statuses = list(self.generator.statuses(self))
+        return self._statuses
 
     def __repr__(self):
         return 'PR {}{}'.format(self.number, ' | {}'.format(self.title) if self.title else '')

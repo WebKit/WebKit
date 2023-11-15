@@ -33,7 +33,7 @@ class BitBucket(mocks.Requests):
 
     def __init__(
         self, remote='bitbucket.example.com/projects/WEBKIT/repos/webkit', datafile=None,
-        default_branch='main', git_svn=False,
+        default_branch='main', git_svn=False, statuses=None,
     ):
         if not scmremote.BitBucket.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid BitBucket remote'.format(remote))
@@ -65,6 +65,7 @@ class BitBucket(mocks.Requests):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
+        self.statuses = statuses or {}
 
     def resolve_all_commits(self, branch):
         all_commits = self.commits[branch][:]
@@ -335,5 +336,25 @@ class BitBucket(mocks.Requests):
                 self.pull_requests[existing]['state'] = 'OPEN'
                 return mocks.Response.fromJson({})
             return mocks.Response.create404(url)
+
+        # Commit status
+        status_base = '{}/rest/build-status/1.0/commits/'.format(self.hosts[0])
+        if stripped_url.startswith(status_base):
+            ref = stripped_url.split('/')[-1]
+            return mocks.Response.fromJson(
+                dict(values=[
+                    dict(
+                        key=status['name'],
+                        name=status['name'],
+                        url=status.get('url'),
+                        state=dict(
+                            success='SUCCESSFUL',
+                            failure='FAILED',
+                            pending='INPROGRESS',
+                        ).get(status.get('status') or 'pending', 'FAILED'),
+                        description=status.get('description'),
+                    ) for status in self.statuses.get(ref[:Commit.HASH_LABEL_SIZE]) or []
+                ])
+            )
 
         return mocks.Response.create404(url)
