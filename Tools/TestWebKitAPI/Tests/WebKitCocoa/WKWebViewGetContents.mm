@@ -28,8 +28,12 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
+#import "TestResourceLoadDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
+#import <WebKit/NSAttributedStringPrivate.h>
+#import <WebKit/_WKResourceLoadInfo.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -408,4 +412,42 @@ TEST(WKWebView, AttributedStringFromList)
     checkListAtIndex(5, @"Three", secondList);
     checkListAtIndex(6, @"•", secondList);
     checkListAtIndex(7, @"Four", secondList);
+}
+
+TEST(WKWebView, DoNotAllowNetworkLoads)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    NSString *markup = @""
+        "<body>"
+        "<strong>Hello</strong>"
+        "<img src='https://webkit.org/nonexistent-image.png'>"
+        "</body>";
+
+    __block bool attemptedImageLoad = false;
+    auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *info, NSURLRequest *) {
+        if (info.resourceType == _WKResourceLoadInfoResourceTypeImage)
+            attemptedImageLoad = true;
+    }];
+
+    __block bool done = false;
+    __block RetainPtr<NSAttributedString> resultString;
+    __block RetainPtr<NSError> resultError;
+    [NSAttributedString _loadFromHTMLWithOptions:@{ _WKAllowNetworkLoadsOption : @NO } contentLoader:^(WKWebView *webView) {
+        webView._resourceLoadDelegate = resourceLoadDelegate.get();
+        return [webView loadHTMLString:markup baseURL:nil];
+    } completionHandler:^(NSAttributedString *string, NSDictionary *, NSError *error) {
+        resultString = string;
+        resultError = error;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_NULL(resultError);
+
+    auto helloRange = [[resultString string] rangeOfString:@"Hello"];
+    EXPECT_EQ(helloRange.location, 0U);
+    EXPECT_EQ(helloRange.length, 5U);
+    EXPECT_FALSE(attemptedImageLoad);
 }
