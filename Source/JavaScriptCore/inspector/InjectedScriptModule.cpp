@@ -76,6 +76,10 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         WTFLogAlways("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), line, column);
         RELEASE_ASSERT_NOT_REACHED();
     }
+    if (!hasInjectedModuleResult.value()) {
+        WTFLogAlways("VM is terminated when calling 'injectModule' for '%s'\n", name().utf8().data());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     if (!hasInjectedModuleResult.value().isBoolean() || !hasInjectedModuleResult.value().asBoolean()) {
         ScriptFunctionCall function(injectedScript.globalObject(), injectedScript.injectedScriptObject(), "injectModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());

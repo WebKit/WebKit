@@ -184,8 +184,10 @@ private:
 
 #if ENABLE(WEBXR)
         void requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&) final;
-        void startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&&) final;
+#if PLATFORM(IOS_FAMILY)
+        void startXRSession(WebPageProxy&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&&) final;
         void endXRSession(WebPageProxy&) final;
+#endif
 #endif
 
         void updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;

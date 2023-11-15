@@ -70,6 +70,11 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMImplementation);
 
+Ref<Document> DOMImplementation::protectedDocument()
+{
+    return m_document.get();
+}
+
 DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)
 {
@@ -80,7 +85,7 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomS
     auto parseResult = Document::parseQualifiedName(qualifiedName);
     if (parseResult.hasException())
         return parseResult.releaseException();
-    return DocumentType::create(m_document, qualifiedName, publicId, systemId);
+    return DocumentType::create(protectedDocument(), qualifiedName, publicId, systemId);
 }
 
 static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, const Settings& settings)
@@ -98,7 +103,7 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, con
 
 ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType* documentType)
 {
-    auto document = createXMLDocument(namespaceURI, m_document->settings());
+    Ref document = createXMLDocument(namespaceURI, m_document->protectedSettings());
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
     document->setContextDocument(m_document->contextDocument());
     document->setSecurityOriginPolicy(m_document->securityOriginPolicy());
@@ -131,7 +136,7 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
 {
-    auto document = HTMLDocument::create(nullptr, m_document->settings(), URL(), { });
+    Ref document = HTMLDocument::create(nullptr, m_document->protectedSettings(), URL(), { });
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });

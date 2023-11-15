@@ -382,6 +382,7 @@ $(PROJECT_DIR)/Shared/cf/CFTypes.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCBoolean.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCNumber.serialization.in
 $(PROJECT_DIR)/Shared/ios/DynamicViewportSizeUpdate.serialization.in
+$(PROJECT_DIR)/Shared/ios/GestureTypes.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationRequest.serialization.in
 $(PROJECT_DIR)/Shared/ios/WebAutocorrectionContext.serialization.in

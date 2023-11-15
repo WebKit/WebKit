@@ -116,7 +116,6 @@ private:
 
 bool isValid(std::optional<WebExtensionTabIdentifier>, NSString **outExceptionString);
 NSDictionary *toWebAPI(const WebExtensionTabParameters&);
-NSArray *toWebAPI(Vector<WebExtensionScriptInjectionResultParameters>& injectionResults);
 
 } // namespace WebKit
 

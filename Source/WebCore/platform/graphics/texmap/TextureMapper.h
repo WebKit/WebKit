@@ -21,7 +21,7 @@
 
 #if USE(TEXTURE_MAPPER)
 
-#include "BitmapTexture.h"
+#include "BitmapTexturePool.h"
 #include "ClipStack.h"
 #include "Color.h"
 #include "FilterOperation.h"
@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class BitmapTexturePool;
 class GraphicsLayer;
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
@@ -97,8 +96,6 @@ public:
 #endif
 
 private:
-    std::unique_ptr<BitmapTexturePool> m_texturePool;
-
     bool isInMaskMode() const { return m_isMaskMode; }
     const TransformationMatrix& patternTransform() const { return m_patternTransform; }
 
@@ -126,6 +123,7 @@ private:
 
     void updateProjectionMatrix();
 
+    BitmapTexturePool m_texturePool;
     bool m_isMaskMode { false };
     TransformationMatrix m_patternTransform;
     WrapMode m_wrapMode { WrapMode::Stretch };

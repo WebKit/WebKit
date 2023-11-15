@@ -357,7 +357,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 @interface UIKeyboard ()
 + (instancetype)activeKeyboard;
-+ (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 + (BOOL)isInHardwareKeyboardMode;
 + (BOOL)isOnScreen;
 + (BOOL)usesInputSystemUI;
@@ -371,16 +370,12 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @interface UIKeyboardImpl ()
 + (UIKeyboardImpl *)activeInstance;
 + (UIKeyboardImpl *)sharedInstance;
-+ (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 - (BOOL)handleKeyTextCommandForCurrentEvent;
 - (BOOL)handleKeyAppCommandForCurrentEvent;
 - (BOOL)handleKeyInputMethodCommandForCurrentEvent;
-- (BOOL)isCallingInputDelegate;
-- (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 - (BOOL)autocorrectSpellingEnabled;
 - (void)clearShiftState;
-- (void)deleteFromInput;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;
 - (void)replaceText:(id)replacement;
 @property (nonatomic, readwrite, retain) UIResponder <UIKeyInput> *delegate;
@@ -1242,6 +1237,15 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)extendInLayoutDirection:(UITextLayoutDirection)direction;
 
 @end
+
+#if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
+
+typedef struct {
+    NSInteger offset;
+    NSInteger length;
+} UIDirectionalTextRange;
+
+#endif // !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 

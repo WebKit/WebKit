@@ -73,6 +73,11 @@ RemoteDOMWindow& RemoteFrame::window() const
     return m_window.get();
 }
 
+void RemoteFrame::disconnectView()
+{
+    m_view = nullptr;
+}
+
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
     m_preventsParentFromBeingComplete = false;

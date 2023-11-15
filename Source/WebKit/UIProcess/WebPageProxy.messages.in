@@ -115,7 +115,7 @@ messages -> WebPageProxy {
 
     # Frame lifetime messages
     DidCreateMainFrame(WebCore::FrameIdentifier frameID)
-    DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID)
+    DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
 
     # Frame load messages
     DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)

@@ -228,8 +228,8 @@ static std::optional<SimpleRange> rangeOfStringInRange(const String& query, Simp
             } while (is<DocumentType>(currentNode));
             continue;
         }
-        
-        auto& blockAncestor = nearestBlockAncestor(*currentNode);
+
+        Ref blockAncestor = nearestBlockAncestor(*currentNode);
         Vector<Ref<Text>> textNodeList;
         // FIXME: this is O^2 since treeOrder will also do traversal, optimize.
         while (currentNode && currentNode->isDescendantOf(blockAncestor) && is_lteq(treeOrder(BoundaryPoint(*currentNode, 0), searchRange.end))) {
@@ -267,13 +267,13 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
 {
     auto newRange = range;
     while (!newRange.collapsed()) {
-        auto& node = newRange.startContainer();
+        Ref node = newRange.startContainer();
         auto offset = newRange.startOffset();
         
         // This check is not in the spec.
         // I believe there is an error in the spec which I have filed an issue for
         // https://github.com/WICG/scroll-to-text-fragment/issues/189
-        if (offset == node.length()) {
+        if (offset == node->length()) {
             if (auto newStart = NodeTraversal::next(node)) {
                 newRange.start = { *newStart, 0 };
                 continue;
@@ -297,7 +297,7 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
             continue;
         }
 
-        auto string = node.textContent();
+        auto string = node->textContent();
 
         if (string.substringSharingImpl(offset, 6) == "&nbsp;"_s)
             offset += 6;
@@ -308,14 +308,14 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
         if (!isUnicodeWhitespace(string[offset]))
             return newRange;
         offset++;
-        
-        if (offset >= node.length()) {
+
+        if (offset >= node->length()) {
             if (auto newStart = NodeTraversal::next(node))
                 newRange.start = { *newStart, 0 };
             else
                 return newRange;
         } else
-            newRange.start = { node, offset };
+            newRange.start = { node.get(), offset };
     }
     return newRange;
 }

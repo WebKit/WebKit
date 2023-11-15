@@ -367,7 +367,7 @@ void WebFrameProxy::disconnect()
         m_parentFrame->m_childFrames.remove(*this);
 }
 
-void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
@@ -381,8 +381,9 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
 
     auto child = WebFrameProxy::create(*m_page, m_process, frameID);
     child->m_parentFrame = *this;
+    child->m_frameName = frameName;
     if (m_page)
-        m_page->createRemoteSubframesInOtherProcesses(child);
+        m_page->createRemoteSubframesInOtherProcesses(child, frameName);
     m_childFrames.add(WTFMove(child));
 }
 
@@ -496,6 +497,7 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
 {
     return {
         m_frameID,
+        m_frameName,
         WTF::map(m_childFrames, [] (auto& frame) {
             return frame->frameTreeCreationParameters();
         })

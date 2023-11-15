@@ -966,6 +966,21 @@ DOMWindow* LocalFrame::virtualWindow() const
     return window();
 }
 
+void LocalFrame::disconnectView()
+{
+    setView(nullptr);
+}
+
+const Frame* LocalFrame::opener() const
+{
+    return loader().opener();
+}
+
+Frame* LocalFrame::opener()
+{
+    return loader().opener();
+}
+
 FrameView* LocalFrame::virtualView() const
 {
     return m_view.get();

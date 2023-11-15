@@ -22,7 +22,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-headers: "WebExtensionScriptInjectionParameters.h" "WebExtensionScriptInjectionResultParameters.h"
+headers: "WebExtensionScriptInjectionParameters.h" "WebExtensionScriptInjectionResultParameters.h" "WebExtensionRegisteredScriptParameters.h" "WebExtension.h"
 
 struct WebKit::WebExtensionScriptInjectionParameters {
     std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier;
@@ -43,5 +43,28 @@ struct WebKit::WebExtensionScriptInjectionResultParameters {
     std::optional<String> result;
     std::optional<WebKit::WebExtensionFrameIdentifier> frameID;
 }
+
+struct WebKit::WebExtensionRegisteredScriptParameters {
+
+    std::optional<Vector<String>> css;
+    std::optional<Vector<String>> js;
+
+    String identifier;
+    WebKit::WebExtension::InjectionTime injectionTime;
+
+    std::optional<Vector<String>> excludedMatchPatterns;
+    std::optional<Vector<String>> matchPatterns;
+
+    bool allFrames;
+    bool persistAcrossSessions;
+
+    WebKit::WebExtensionContentWorldType world;
+}
+
+[Nested] enum class WebKit::WebExtension::InjectionTime : uint8_t {
+    DocumentIdle,
+    DocumentStart,
+    DocumentEnd,
+};
 
 #endif

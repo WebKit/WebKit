@@ -1,0 +1,11 @@
+Verifies window.open with a target name correctly reuses a main frame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL first opened window should have been reused
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+click to run test manually in a browser

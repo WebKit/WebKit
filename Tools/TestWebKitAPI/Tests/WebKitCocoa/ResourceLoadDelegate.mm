@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestResourceLoadDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -36,50 +37,6 @@
 #import <WebKit/_WKResourceLoadDelegate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <wtf/RetainPtr.h>
-
-@interface TestResourceLoadDelegate : NSObject <_WKResourceLoadDelegate>
-
-@property (nonatomic, copy) void (^didSendRequest)(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *);
-@property (nonatomic, copy) void (^didPerformHTTPRedirection)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *, NSURLRequest *);
-@property (nonatomic, copy) void (^didReceiveChallenge)(WKWebView *, _WKResourceLoadInfo *, NSURLAuthenticationChallenge *);
-@property (nonatomic, copy) void (^didReceiveResponse)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *);
-@property (nonatomic, copy) void (^didCompleteWithError)(WKWebView *, _WKResourceLoadInfo *, NSError *, NSURLResponse *);
-
-@end
-
-@implementation TestResourceLoadDelegate
-
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didSendRequest:(NSURLRequest *)request
-{
-    if (_didSendRequest)
-        _didSendRequest(webView, resourceLoad, request);
-}
-
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didPerformHTTPRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request
-{
-    if (_didPerformHTTPRedirection)
-        _didPerformHTTPRedirection(webView, resourceLoad, response, request);
-}
-
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (_didReceiveChallenge)
-        _didReceiveChallenge(webView, resourceLoad, challenge);
-}
-
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveResponse:(NSURLResponse *)response
-{
-    if (_didReceiveResponse)
-        _didReceiveResponse(webView, resourceLoad, response);
-}
-
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(NSError *)error response:(NSURLResponse *)response
-{
-    if (_didCompleteWithError)
-        _didCompleteWithError(webView, resourceLoad, error, response);
-}
-
-@end
 
 TEST(ResourceLoadDelegate, Basic)
 {

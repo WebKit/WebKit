@@ -1271,7 +1271,7 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     "<iframe src='https://domain2.com/subframe'></iframe>"_s;
 
     auto subframeHTML = "<script>"
-    "    addEventListener('mousemove', window.parent.postMessage('mousemove', '*'));"
+    "    addEventListener('mousemove', (event) => { window.parent.postMessage('mousemove', '*') });"
     "    addEventListener('mousedown', (event) => { window.parent.postMessage('mousedown,' + event.pageX + ',' + event.pageY, '*') });"
     "    addEventListener('mouseup', (event) => { window.parent.postMessage('mouseup,' + event.pageX + ',' + event.pageY, '*') });"
     "</script>"_s;
@@ -1293,6 +1293,7 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
 
     CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(50, 50) toView:nil];
     [webView mouseEnterAtPoint:eventLocationInWindow];
+    [webView mouseMoveToPoint:eventLocationInWindow withFlags:0];
     [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
     [webView mouseUpAtPoint:eventLocationInWindow];
     [webView waitForPendingMouseEvents];
@@ -1317,11 +1318,10 @@ TEST(SiteIsolation, DragEvents)
     auto subframeHTML = "<body>"
     "<div id='draggable' draggable='true' style='width: 100px; height: 100px; background-color: blue;'></div>"
     "<script>"
-    "    draggable.addEventListener('dragstart', window.parent.postMessage('dragstart', '*'));"
-    "    draggable.addEventListener('drag', window.parent.postMessage('drag', '*'));"
-    "    draggable.addEventListener('dragend', window.parent.postMessage('dragend', '*'));"
-    "    draggable.addEventListener('dragenter', window.parent.postMessage('dragenter', '*'));"
-    "    draggable.addEventListener('dragleave', window.parent.postMessage('dragleave', '*'));"
+    "    draggable.addEventListener('dragstart', (event) => { window.parent.postMessage('dragstart', '*') });"
+    "    draggable.addEventListener('dragend', (event) => { window.parent.postMessage('dragend', '*') });"
+    "    draggable.addEventListener('dragenter', (event) => { window.parent.postMessage('dragenter', '*') });"
+    "    draggable.addEventListener('dragleave', (event) => { window.parent.postMessage('dragleave', '*') });"
     "</script>"
     "</body>"_s;
 
@@ -1344,12 +1344,11 @@ TEST(SiteIsolation, DragEvents)
     [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 150)];
 
     NSArray<NSString *> *events = [webView objectByEvaluatingJavaScript:@"window.events"];
-    EXPECT_EQ(5U, events.count);
+    EXPECT_EQ(4U, events.count);
     EXPECT_WK_STREQ("dragstart", events[0]);
-    EXPECT_WK_STREQ("drag", events[1]);
-    EXPECT_WK_STREQ("dragend", events[2]);
-    EXPECT_WK_STREQ("dragenter", events[3]);
-    EXPECT_WK_STREQ("dragleave", events[4]);
+    EXPECT_WK_STREQ("dragenter", events[1]);
+    EXPECT_WK_STREQ("dragleave", events[2]);
+    EXPECT_WK_STREQ("dragend", events[3]);
 }
 #endif
 

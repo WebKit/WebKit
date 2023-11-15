@@ -46,6 +46,7 @@
 
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";
 NSString * const _WKReadAccessFileURLsOption = @"_WKReadAccessFileURLsOption";
+NSString * const _WKAllowNetworkLoadsOption = @"_WKAllowNetworkLoadsOption";
 
 constexpr CGRect webViewRect = { { 0, 0 }, { 800, 600 } };
 constexpr NSTimeInterval defaultTimeoutInterval = 60;
@@ -118,7 +119,7 @@ constexpr NSUInteger maximumReadOnlyAccessPaths = 2;
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView;
 + (void)cacheWebView:(WKWebView *)webView;
-+ (void)maybeConsumeBundlePaths:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options;
++ (void)invalidateGlobalConfigurationIfNeeded:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options;
 + (void)validateEntry:(id)maybeFileURL;
 
 @end
@@ -136,6 +137,10 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
     static NeverDestroyed<RetainPtr<WKWebViewConfiguration>> configuration;
     return configuration;
 }
+
+// FIXME (264780): This should ideally default to `NO`, but making this change would break
+// copy/paste from Chrome or Firefox on macOS into TextEdit and other native apps.
+static BOOL shouldAllowNetworkLoads = YES;
 
 static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 {
@@ -174,6 +179,9 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 #endif
 
         [configuration preferences]._defaultFontSize = 12;
+
+        if (!shouldAllowNetworkLoads)
+            [configuration _setAllowedNetworkHosts:NSSet.set];
     }
 
     return configuration.get();
@@ -208,12 +216,21 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
     [self clearConfigurationAndRaiseExceptionIfNecessary:errorMessage];
 }
 
-+ (void)maybeConsumeBundlePaths:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options
++ (void)maybeUpdateShouldAllowNetworkLoads:(id)allowNetworkLoadsValue
 {
-    id maybeReadAccessFileURLs = options[_WKReadAccessFileURLsOption];
-    if (!maybeReadAccessFileURLs)
+    auto *allowNetworkLoadsAsNumber = dynamic_objc_cast<NSNumber>(allowNetworkLoadsValue);
+    if (!allowNetworkLoadsAsNumber)
+        [self clearConfigurationAndRaiseExceptionIfNecessary:@"The value associated with _WKAllowNetworkLoadsOption must be an NSNumber."];
+
+    if (allowNetworkLoadsAsNumber.boolValue == shouldAllowNetworkLoads)
         return;
 
+    shouldAllowNetworkLoads = allowNetworkLoadsAsNumber.boolValue;
+    [self clearConfiguration];
+}
+
++ (void)maybeConsumeBundlePaths:(id)maybeReadAccessFileURLs
+{
     NSString *errorMessage = nil;
     auto* readAccessFileURLs = dynamic_objc_cast<NSArray<NSURL *>>(maybeReadAccessFileURLs);
     if (!readAccessFileURLs)
@@ -234,6 +251,15 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
     else
         [readOnlyAccessPaths() removeAllObjects];
     [self clearConfiguration];
+}
+
++ (void)invalidateGlobalConfigurationIfNeeded:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options
+{
+    if (id maybeReadAccessFileURLs = options[_WKReadAccessFileURLsOption])
+        [self maybeConsumeBundlePaths:maybeReadAccessFileURLs];
+
+    if (id allowNetworkLoads = options[_WKAllowNetworkLoadsOption])
+        [self maybeUpdateShouldAllowNetworkLoads:allowNetworkLoads];
 }
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView
@@ -322,7 +348,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
     auto runConversion = ^{
         __block auto finished = NO;
 
-        [_WKAttributedStringWebViewCache maybeConsumeBundlePaths:options];
+        [_WKAttributedStringWebViewCache invalidateGlobalConfigurationIfNeeded:options];
         __block auto webView = [_WKAttributedStringWebViewCache retrieveOrCreateWebView];
         __block auto navigationDelegate = adoptNS([[_WKAttributedStringNavigationDelegate alloc] init]);
 

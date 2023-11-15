@@ -177,8 +177,8 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
     m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, originQuotaRatio, totalQuotaRatio, standardVolumeCapacity, volumeCapacityOverride, level]() mutable {
         assertIsCurrent(workQueue());
 
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         m_defaultOriginQuota = defaultOriginQuota;
@@ -217,7 +217,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
         }
 #endif
 
-        RunLoop::main().dispatch([strongThis = WTFMove(strongThis)] { });
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -404,19 +404,19 @@ void NetworkStorageManager::prepareForEviction()
     assertIsCurrent(workQueue());
 
     RunLoop::main().dispatch([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis || m_closed || !m_process)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis || m_closed || !m_process)
             return;
 
         m_process->registrableDomainsWithLastAccessedTime(m_sessionID, [this, weakThis = WTFMove(weakThis)](auto result) mutable {
-            auto strongThis = weakThis.get();
-            if (!strongThis || m_closed)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis || m_closed)
                 return;
 
             m_queue->dispatch([weakThis = WTFMove(weakThis), result = crossThreadCopy(WTFMove(result))]() mutable {
-                if (auto strongThis = weakThis.get()) {
-                    strongThis->donePrepareForEviction(WTFMove(result));
-                    RunLoop::main().dispatch([strongThis = WTFMove(strongThis)] { });
+                if (auto protectedThis = weakThis.get()) {
+                    protectedThis->donePrepareForEviction(WTFMove(result));
+                    RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
                 }
             });
         });
@@ -547,9 +547,9 @@ OriginQuotaManager::Parameters NetworkStorageManager::originQuotaManagerParamete
         standardReportedQuota *= defaultThirdPartyOriginQuotaRatio;
     }
     OriginQuotaManager::NotifySpaceGrantedFunction notifySpaceGrantedFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t spaceRequested) {
-        if (auto strongThis = weakThis.get()) {
-            strongThis->spaceGrantedForOrigin(origin, spaceRequested);
-            RunLoop::main().dispatch([strongThis = WTFMove(strongThis)] { });
+        if (auto protectedThis = weakThis.get()) {
+            protectedThis->spaceGrantedForOrigin(origin, spaceRequested);
+            RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
         }
     };
     // Use std::ceil instead of implicit conversion to make result more definitive.
@@ -656,8 +656,8 @@ void NetworkStorageManager::fetchRegistrableDomainsForPersist()
         return didFetchRegistrableDomainsForPersist({ });
 
     m_process->registrableDomainsExemptFromWebsiteDataDeletion(m_sessionID, [weakThis = ThreadSafeWeakPtr { *this }](HashSet<WebCore::RegistrableDomain>&& domains) mutable {
-        if (auto strongThis = weakThis.get())
-            strongThis->didFetchRegistrableDomainsForPersist(std::forward<decltype(domains)>(domains));
+        if (auto protectedThis = weakThis.get())
+            protectedThis->didFetchRegistrableDomainsForPersist(std::forward<decltype(domains)>(domains));
     });
 }
 
@@ -671,8 +671,8 @@ void NetworkStorageManager::didFetchRegistrableDomainsForPersist(HashSet<WebCore
     m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, domains = crossThreadCopy(WTFMove(domains))]() mutable {
         assertIsCurrent(workQueue());
 
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         m_domainsExemptFromEviction = WTFMove(domains);
@@ -712,8 +712,8 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
 
     m_persistCompletionHandlers.append({ origin, WTFMove(completionHandler) });
     RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        if (auto strongThis = weakThis.get())
-            strongThis->fetchRegistrableDomainsForPersist();
+        if (auto protectedThis = weakThis.get())
+            protectedThis->fetchRegistrableDomainsForPersist();
     });
 }
 

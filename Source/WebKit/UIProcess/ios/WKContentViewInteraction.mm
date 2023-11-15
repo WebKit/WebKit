@@ -1272,6 +1272,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+    _isHandlingActiveKeyEvent = NO;
+    _isHandlingActivePressesEvent = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -1807,6 +1809,9 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (superDidResign) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+
+        _isHandlingActiveKeyEvent = NO;
+        _isHandlingActivePressesEvent = NO;
 
         if (_keyWebEventHandler) {
             RunLoop::main().dispatch([weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
@@ -2611,21 +2616,11 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     return [_inputPeripheral assistantView];
 }
 
-- (CGRect)_selectionClipRectInternal
-{
-    if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
-        return _focusedElementInformation.interactionRect;
-
-    if (_page->editorState().hasVisualData() && !_page->editorState().visualData->selectionClipRect.isEmpty())
-        return _page->editorState().visualData->selectionClipRect;
-
-    return CGRectNull;
-}
-
 - (CGRect)_selectionClipRect
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
-    return [self _selectionClipRectInternal];
+
+    return self.selectionClipRect;
 }
 
 static BOOL isBuiltInScrollViewPanGestureRecognizer(UIGestureRecognizer *recognizer)
@@ -4143,7 +4138,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             || action == @selector(extendInDirection:byGranularity:) || action == @selector(extendInLayoutDirection:))
             return !editorState.selectionIsNone;
 
-        if (action == @selector(deleteInDirection:toGranularity:))
+        if (action == @selector(deleteInDirection:toGranularity:) || action == @selector(transposeCharacters))
             return editorState.isContentEditable;
     } else
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
@@ -4746,11 +4741,11 @@ static TextStream& operator<<(TextStream& stream, WebKit::GestureRecognizerState
 static inline UIWKSelectionFlags toUIWKSelectionFlags(OptionSet<WebKit::SelectionFlags> flags)
 {
     NSInteger uiFlags = UIWKNone;
-    if (flags.contains(WebKit::WordIsNearTap))
+    if (flags.contains(WebKit::SelectionFlags::WordIsNearTap))
         uiFlags |= UIWKWordIsNearTap;
-    if (flags.contains(WebKit::SelectionFlipped))
+    if (flags.contains(WebKit::SelectionFlags::SelectionFlipped))
         uiFlags |= UIWKSelectionFlipped;
-    if (flags.contains(WebKit::PhraseBoundaryChanged))
+    if (flags.contains(WebKit::SelectionFlags::PhraseBoundaryChanged))
         uiFlags |= UIWKPhraseBoundaryChanged;
 
     return static_cast<UIWKSelectionFlags>(uiFlags);
@@ -4760,11 +4755,11 @@ static inline OptionSet<WebKit::SelectionFlags> toSelectionFlags(UIWKSelectionFl
 {
     OptionSet<WebKit::SelectionFlags> flags;
     if (uiFlags & UIWKWordIsNearTap)
-        flags.add(WebKit::WordIsNearTap);
+        flags.add(WebKit::SelectionFlags::WordIsNearTap);
     if (uiFlags & UIWKSelectionFlipped)
-        flags.add(WebKit::SelectionFlipped);
+        flags.add(WebKit::SelectionFlags::SelectionFlipped);
     if (uiFlags & UIWKPhraseBoundaryChanged)
-        flags.add(WebKit::PhraseBoundaryChanged);
+        flags.add(WebKit::SelectionFlags::PhraseBoundaryChanged);
     return flags;
 }
 
@@ -4781,9 +4776,9 @@ static TextStream& operator<<(TextStream& stream, OptionSet<WebKit::SelectionFla
         didAppend = true;
     };
 
-    appendIf(WebKit::WordIsNearTap, "WordIsNearTap");
-    appendIf(WebKit::SelectionFlipped, "SelectionFlipped");
-    appendIf(WebKit::PhraseBoundaryChanged, "PhraseBoundaryChanged");
+    appendIf(WebKit::SelectionFlags::WordIsNearTap, "WordIsNearTap");
+    appendIf(WebKit::SelectionFlags::SelectionFlipped, "SelectionFlipped");
+    appendIf(WebKit::SelectionFlags::PhraseBoundaryChanged, "PhraseBoundaryChanged");
 
     if (!didAppend)
         stream << "None";
@@ -5267,9 +5262,9 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (BOOL)_selectionAtDocumentStart
 {
-    if (!_page->editorState().postLayoutData)
-        return NO;
-    return !_page->editorState().postLayoutData->characterBeforeSelection;
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    return self.selectionAtDocumentStart;
 }
 
 - (CGRect)textFirstRect
@@ -6184,10 +6179,8 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     if (_isHidingKeyboard && _isChangingFocus)
         return;
 
-    auto* keyboard = [UIKeyboardImpl sharedInstance];
-
     WebKit::InsertTextOptions options;
-    options.processingUserGesture = keyboard.isCallingInputDelegate;
+    options.processingUserGesture = _isHandlingActiveKeyEvent || _isHandlingActivePressesEvent;
     options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 
@@ -6755,6 +6748,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = YES;
     [super pressesBegan:presses withEvent:event];
 }
 
@@ -6763,6 +6757,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = NO;
     [super pressesEnded:presses withEvent:event];
 }
 
@@ -6779,6 +6774,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _tryToHandlePressesEvent:event])
         return;
 
+    _isHandlingActivePressesEvent = NO;
     [super pressesCancelled:presses withEvent:event];
 }
 
@@ -6799,28 +6795,31 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     [self _internalHandleKeyWebEvent:event withCompletionHandler:completionHandler];
 }
 
-- (void)_internalHandleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
+- (void)_internalHandleKeyWebEvent:(::WebEvent *)event withCompletionHandler:(void (^)(::WebEvent *event, BOOL wasHandled))completionHandler
 {
     if (!isUIThread()) {
         RELEASE_LOG_FAULT(KeyHandling, "%s was invoked on a background thread.", __PRETTY_FUNCTION__);
-        completionHandler(theEvent, NO);
+        completionHandler(event, NO);
         return;
     }
+
+    if (event.type == WebEventKeyDown)
+        _isHandlingActiveKeyEvent = YES;
 
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
     auto* keyboard = [UIKeyboardImpl sharedInstance];
     if ((_page->editorState().isContentEditable || _treatAsContentEditableUntilNextEditorStateUpdate) && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
-        completionHandler(theEvent, YES);
-        _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::Yes));
+        completionHandler(event, YES);
+        _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::Yes));
         return;
     }
 
-    if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::No)))
+    if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::No)))
         _keyWebEventHandler = makeBlockPtr(completionHandler);
     else
-        completionHandler(theEvent, NO);
+        completionHandler(event, NO);
 }
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
@@ -6830,7 +6829,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
     if (!(event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged))
         [_keyboardScrollingAnimator handleKeyEvent:event];
-    
+
+    if (event.type == WebEventKeyUp)
+        _isHandlingActiveKeyEvent = NO;
+
     if (auto handler = WTFMove(_keyWebEventHandler)) {
         handler(event, eventWasHandled);
         return;
@@ -7031,7 +7033,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)_transpose
 {
-    [self _executeEditCommand:@"transpose"];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self transposeCharacters];
 }
 
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
@@ -8425,7 +8429,9 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)_shouldSuppressSelectionCommands
 {
-    return !!_suppressSelectionAssistantReasons;
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    return self.shouldSuppressEditMenu;
 }
 
 - (void)_startSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason
@@ -10010,12 +10016,19 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     return webRequest;
 }
 
-- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
 {
-    // UIKit is putting casted signed integers into NSRange. Cast them back to reveal any negative values.
-    _page->updateSelectionWithDelta(static_cast<int64_t>(deltaRange.location), static_cast<int64_t>(deltaRange.length), [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
+    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
         capturedCompletionHandler();
     });
+}
+
+- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    // UIKit is putting casted signed integers into NSRange. Cast them back to reveal any negative values.
+    [self _internalAdjustSelectionWithOffset:static_cast<NSInteger>(deltaRange.location) lengthDelta:static_cast<NSInteger>(deltaRange.length) completionHandler:completionHandler];
 }
 
 - (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
@@ -12081,6 +12094,13 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     return _isPresentingEditMenu;
 }
 
+- (CGSize)sizeForLegacyFormControlPickerViews
+{
+    auto size = self.window.bounds.size;
+    size.height = 0; // Fall back to the default input view height.
+    return size;
+}
+
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #pragma mark - UIAsyncTextInputClient (and related)
@@ -12175,11 +12195,6 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 }
 
 #endif // ENABLE(REVEAL)
-
-- (CGRect)selectionClipRect
-{
-    return [self _selectionClipRectInternal];
-}
 
 inline static NSArray<NSString *> *deleteSelectionCommands(UITextStorageDirection direction, UITextGranularity granularity)
 {
@@ -12302,7 +12317,40 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     [self _executeEditCommand:extendSelectionCommand(direction)];
 }
 
+- (void)adjustSelection:(UIDirectionalTextRange)range completionHandler:(void (^)(void))completionHandler
+{
+    [self _internalAdjustSelectionWithOffset:range.offset lengthDelta:range.length completionHandler:completionHandler];
+}
+
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+- (CGRect)selectionClipRect
+{
+    if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
+        return _focusedElementInformation.interactionRect;
+
+    if (_page->editorState().hasVisualData() && !_page->editorState().visualData->selectionClipRect.isEmpty())
+        return _page->editorState().visualData->selectionClipRect;
+
+    return CGRectNull;
+}
+
+- (void)transposeCharacters
+{
+    [self _executeEditCommand:@"transpose"];
+}
+
+- (BOOL)selectionAtDocumentStart
+{
+    if (!_page->editorState().postLayoutData)
+        return NO;
+    return !_page->editorState().postLayoutData->characterBeforeSelection;
+}
+
+- (BOOL)shouldSuppressEditMenu
+{
+    return !!_suppressSelectionAssistantReasons;
+}
 
 #pragma mark - UIAsyncTextInteractionDelegate
 

@@ -1119,6 +1119,115 @@ TEST(WKWebExtension, CommandsParsing)
     EXPECT_EQ(testExtension.errors.count, 1ul);
 }
 
+TEST(WKWebExtension, DeclarativeNetRequestParsing)
+{
+    NSMutableDictionary *testManifestDictionary = [@{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"test",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    } mutableCopy];
+
+    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_TRUE(testExtension.hasContentModificationRules);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    // Missing id
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[
+            @{
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            }
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasContentModificationRules);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    // Missing enabled
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[
+            @{
+                @"id": @"test",
+                @"path": @"rules.json"
+            }
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasContentModificationRules);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    // Missing path
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[
+            @{
+                @"id": @"test",
+                @"enabled": @YES
+            }
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasContentModificationRules);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    // Duplicate names
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[
+            @{
+                @"id": @"test",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            },
+            @{
+                @"id": @"test",
+                @"enabled": @YES,
+                @"path": @"rules2.json"
+            }
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    // There should still be the first rule loaded.
+    EXPECT_TRUE(testExtension.hasContentModificationRules);
+    // But also an error.
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    // One valid rule, one invalid
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[
+            @{
+                @"id": @"test",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            },
+            @{
+                @"enabled": @YES,
+                @"path": @"rules2.json"
+            }
+        ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    // There should still be the first rule loaded.
+    EXPECT_TRUE(testExtension.hasContentModificationRules);
+    // But also an error.
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

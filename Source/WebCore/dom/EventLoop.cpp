@@ -159,13 +159,14 @@ EventLoopTimerHandle::EventLoopTimerHandle(EventLoopTimerHandle&&) = default;
 
 EventLoopTimerHandle::~EventLoopTimerHandle()
 {
-    if (!m_timer)
+    RefPtr timer = std::exchange(m_timer, nullptr);
+    if (!timer)
         return;
-    if (auto* group = m_timer->group(); group && m_timer->refCount() == 1) {
-        if (m_timer->type() == EventLoopTimer::Type::OneShot)
-            group->removeScheduledTimer(*m_timer);
+    if (auto* group = timer->group(); group && timer->refCount() == 1) {
+        if (timer->type() == EventLoopTimer::Type::OneShot)
+            group->removeScheduledTimer(*timer);
         else
-            group->removeRepeatingTimer(*m_timer);
+            group->removeRepeatingTimer(*timer);
     }
 }
 

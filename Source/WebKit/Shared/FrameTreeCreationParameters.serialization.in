@@ -22,5 +22,6 @@
 
 struct WebKit::FrameTreeCreationParameters {
     WebCore::FrameIdentifier frameID;
+    String frameName;
     Vector<WebKit::FrameTreeCreationParameters> children;
 };

@@ -231,7 +231,7 @@ IntRect containerRect(HTMLElement& element)
 static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
 {
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.document(), false);
+    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.protectedDocument(), false);
     style->setTextContent(String { shadowStyle });
     shadowRoot.appendChild(WTFMove(style));
 }
@@ -406,8 +406,9 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             }
 
             if (line.hasTrailingNewline) {
-                lineElements.lineBreak = HTMLBRElement::create(document.get());
-                lineContainer->appendChild(*lineElements.lineBreak);
+                Ref lineBreak = HTMLBRElement::create(document.get());
+                lineContainer->appendChild(lineBreak.get());
+                lineElements.lineBreak = WTFMove(lineBreak);
             }
 
             elements.lines.append(WTFMove(lineElements));

@@ -88,17 +88,20 @@ static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotion
 
 std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::acceleration() const
 {
-    return convert(m_deviceMotionData->acceleration());
+    RefPtr acceleration = m_deviceMotionData->acceleration();
+    return convert(acceleration.get());
 }
 
 std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::accelerationIncludingGravity() const
 {
-    return convert(m_deviceMotionData->accelerationIncludingGravity());
+    RefPtr accelerationIncludingGravity = m_deviceMotionData->accelerationIncludingGravity();
+    return convert(accelerationIncludingGravity.get());
 }
 
 std::optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate() const
 {
-    return convert(m_deviceMotionData->rotationRate());
+    RefPtr rotationRate = m_deviceMotionData->rotationRate();
+    return convert(rotationRate.get());
 }
 
 std::optional<double> DeviceMotionEvent::interval() const

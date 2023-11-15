@@ -657,6 +657,7 @@ public:
     inline Page* page() const; // Defined in Page.h.
     inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
     const Settings& settings() const { return m_settings.get(); }
+    Ref<Settings> protectedSettings() const;
     EditingBehavior editingBehavior() const;
 
     Quirks& quirks() { return m_quirks; }
@@ -1098,7 +1099,7 @@ public:
     const URL& firstPartyForCookies() const { return m_firstPartyForCookies; }
     void setFirstPartyForCookies(const URL& url) { m_firstPartyForCookies = url; }
 
-    bool isFullyActive() const;
+    WEBCORE_EXPORT bool isFullyActive() const;
 
     // The full URL corresponding to the "site for cookies" in the Same-Site Cookies spec.,
     // <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00>. It is either

@@ -82,14 +82,14 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (frame && hasFrameSpecificStorageAccess())
         return true;
 
-    auto& securityOrigin = document->securityOrigin();
-    if (!frame || securityOrigin.isOpaque())
+    Ref securityOrigin = document->securityOrigin();
+    if (!frame || securityOrigin->isOpaque())
         return false;
 
     if (frame->isMainFrame())
         return true;
 
-    if (securityOrigin.equal(&document->topOrigin()))
+    if (securityOrigin->equal(&document->topOrigin()))
         return true;
 
     if (!frame->page())

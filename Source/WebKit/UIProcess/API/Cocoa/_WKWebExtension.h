@@ -246,6 +246,9 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  */
 @property (nonatomic, readonly) BOOL hasCommands;
 
+/*! @abstract A boolean value indicating whether the extension includes rules used for content modification or blocking. */
+@property (nonatomic, readonly) BOOL hasContentModificationRules;
+
 @end
 
 NS_ASSUME_NONNULL_END

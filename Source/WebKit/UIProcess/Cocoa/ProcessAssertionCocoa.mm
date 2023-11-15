@@ -468,8 +468,8 @@ void ProcessAssertion::acquireSync()
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
         RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
-            if (auto strongThis = weakThis.get())
-                strongThis->processAssertionWasInvalidated();
+            if (auto protectedThis = weakThis.get())
+                protectedThis->processAssertionWasInvalidated();
         });
     } else
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
@@ -568,7 +568,7 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
     ProcessAssertion::processAssertionWasInvalidated();
 
     // Calling ProcessAssertion::processAssertionWasInvalidated() may have destroyed |this|.
-    if (auto strongThis = weakThis.get())
+    if (auto protectedThis = weakThis.get())
         updateRunInBackgroundCount();
 }
 

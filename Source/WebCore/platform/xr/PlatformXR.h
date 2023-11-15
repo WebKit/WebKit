@@ -94,6 +94,7 @@ enum class XRTargetRayMode {
     Gaze,
     TrackedPointer,
     Screen,
+    TransientPointer,
 };
 
 // https://immersive-web.github.io/webxr/#feature-descriptor
@@ -833,7 +834,8 @@ template<> struct EnumTraits<PlatformXR::XRTargetRayMode> {
         PlatformXR::XRTargetRayMode,
         PlatformXR::XRTargetRayMode::Gaze,
         PlatformXR::XRTargetRayMode::TrackedPointer,
-        PlatformXR::XRTargetRayMode::Screen
+        PlatformXR::XRTargetRayMode::Screen,
+        PlatformXR::XRTargetRayMode::TransientPointer
     >;
 };
 

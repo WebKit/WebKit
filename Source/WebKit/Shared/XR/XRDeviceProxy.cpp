@@ -80,8 +80,8 @@ void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOrigin
     // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
     // should delay this call after the WebXRSession has finished construction.
     callOnMainRunLoop([this, weakThis = ThreadSafeWeakPtr { *this }]() {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         if (trackingAndRenderingClient())

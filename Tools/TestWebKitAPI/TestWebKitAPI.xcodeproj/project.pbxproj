@@ -3576,6 +3576,8 @@
 		F4BDA42E27F8BF2F00F9647D /* FullscreenVideoTextRecognition.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenVideoTextRecognition.mm; sourceTree = "<group>"; };
 		F4BDA42F27F8CF5600F9647D /* element-fullscreen.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-fullscreen.html"; sourceTree = "<group>"; };
 		F4BFA68C1E4AD08000154298 /* LegacyDragAndDropTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyDragAndDropTests.mm; sourceTree = "<group>"; };
+		F4C192CD2B027C93001F75CE /* TestResourceLoadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestResourceLoadDelegate.h; path = cocoa/TestResourceLoadDelegate.h; sourceTree = "<group>"; };
+		F4C192CE2B027C93001F75CE /* TestResourceLoadDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestResourceLoadDelegate.mm; path = cocoa/TestResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "enormous-video-with-sound.html"; sourceTree = "<group>"; };
 		F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewInsetTests.mm; sourceTree = "<group>"; };
 		F4CB8A7B2856447F0017ECD3 /* TestPDFHostViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestPDFHostViewController.h; sourceTree = "<group>"; };
@@ -3853,6 +3855,8 @@
 				516281242325C17B00BB7E42 /* TestPDFDocument.mm */,
 				A14FC58D1B8AE36500D107EB /* TestProtocol.h */,
 				A14FC58E1B8AE36500D107EB /* TestProtocol.mm */,
+				F4C192CD2B027C93001F75CE /* TestResourceLoadDelegate.h */,
+				F4C192CE2B027C93001F75CE /* TestResourceLoadDelegate.mm */,
 				5CBAA7F324327F6B00564A8B /* TestUIDelegate.h */,
 				5CBAA7F424327F6B00564A8B /* TestUIDelegate.mm */,
 				B63EF53E2995797F00A190A3 /* TestWebExtensionsDelegate.h */,

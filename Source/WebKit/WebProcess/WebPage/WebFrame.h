@@ -83,7 +83,7 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName);
     ~WebFrame();
 
     void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);

@@ -1052,19 +1052,19 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters& treeCreationParameters)
 {
-    auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID);
+    auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.frameName);
     for (auto& parameters : treeCreationParameters.children)
         constructFrameTree(frame, parameters);
 }
 
-void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID)
+void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName)
 {
     RefPtr parentFrame = WebProcess::singleton().webFrame(parentID);
     if (!parentFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
-    WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID);
+    WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, newChildFrameName);
 }
 
 void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
@@ -3261,8 +3261,8 @@ void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandl
 
 void WebPage::markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason dontRetryReason)
 {
-    tryMarkLayersVolatile([dontRetryReason, strongThis = Ref { *this }](bool didSucceed) {
-        strongThis->tryMarkLayersVolatileCompletionHandler(dontRetryReason, didSucceed);
+    tryMarkLayersVolatile([dontRetryReason, protectedThis = Ref { *this }](bool didSucceed) {
+        protectedThis->tryMarkLayersVolatileCompletionHandler(dontRetryReason, didSucceed);
     });
 }
 

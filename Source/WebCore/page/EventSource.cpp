@@ -136,8 +136,8 @@ void EventSource::scheduleInitialConnect()
 
     auto* context = scriptExecutionContext();
     m_connectTimer = context->eventLoop().scheduleTask(0_s, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
-        if (RefPtr strongThis = weakThis.get())
-            strongThis->connect();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->connect();
     });
 }
 
@@ -147,8 +147,8 @@ void EventSource::scheduleReconnect()
     m_state = CONNECTING;
     auto* context = scriptExecutionContext();
     m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
-        if (RefPtr strongThis = weakThis.get())
-            strongThis->connect();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->connect();
     });
     dispatchErrorEvent();
 }

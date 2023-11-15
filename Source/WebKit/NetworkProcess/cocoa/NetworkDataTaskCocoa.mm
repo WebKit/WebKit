@@ -460,14 +460,14 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.setFirstPartyForCookies(request.url());
 
     NetworkTaskCocoa::willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }, redirectResponse] (WebCore::ResourceRequest&& request) mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return completionHandler({ });
         if (!m_client)
             return completionHandler({ });
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis] (WebCore::ResourceRequest&& request) mutable {
-            auto strongThis = weakThis.get();
-            if (!strongThis || !m_session)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis || !m_session)
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);

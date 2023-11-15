@@ -2141,8 +2141,6 @@
     io_server_version
     io_service_add_interest_notification_64
     io_service_add_notification_bin_64
-    io_service_get_matching_service_bin
-    io_service_get_matching_services_bin
     io_service_open_extended
     mach_exception_raise
     mach_memory_entry_ownership
@@ -2176,6 +2174,10 @@
     io_connect_method
     io_connect_method_var_output
     io_connect_set_notification_port_64))
+
+(define (kernel-mig-routines-iokit-service) (kernel-mig-routine
+    io_service_get_matching_service_bin
+    io_service_get_matching_services_bin))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
     task_threads_from_user
@@ -2221,6 +2223,12 @@
                 (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
 #endif
 #if HAVE(SANDBOX_STATE_FLAGS)
+#if ENABLE(IOKIT_SERVICE_SYSCALL_BLOCKING_IN_WEBCONTENT)
+            (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+                (allow mach-message-send (kernel-mig-routines-iokit-service)))
+#else
+            (allow mach-message-send (kernel-mig-routines-iokit-service))
+#endif
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
                 (allow mach-message-send (kernel-mig-routines-downlevels))
                 (allow mach-message-send (kernel-mig-routines-iokit)))
@@ -2228,6 +2236,7 @@
                 (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit))
+            (allow mach-message-send (kernel-mig-routines-iokit-service))
 #endif
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
             ;; <rdar://105161083>

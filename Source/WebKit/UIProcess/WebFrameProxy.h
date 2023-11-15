@@ -149,7 +149,7 @@ public:
     void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
     void disconnect();
-    void didCreateSubframe(WebCore::FrameIdentifier);
+    void didCreateSubframe(WebCore::FrameIdentifier, const String& frameName);
     ProcessID processID() const;
     void prepareForProvisionalNavigationInProcess(WebProcessProxy&, const API::Navigation&, CompletionHandler<void()>&&);
 
@@ -182,6 +182,7 @@ private:
 
     String m_MIMEType;
     String m_title;
+    String m_frameName;
     bool m_containsPluginDocument { false };
     WebCore::CertificateInfo m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;

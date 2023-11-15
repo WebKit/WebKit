@@ -545,6 +545,14 @@ void ImageLoader::timerFired()
     m_protectedElement = nullptr;
 }
 
+bool ImageLoader::hasPendingActivity() const
+{
+    // Because of lazy image loading, an image's load may be deferred indefinitely. To avoid leaking the element, we only
+    // protect it once the load has actually started.
+    bool imageWillBeLoadedLater = m_image && !m_image->isLoading() && m_image->stillNeedsLoad();
+    return (m_hasPendingLoadEvent && !imageWillBeLoadedLater) || m_hasPendingErrorEvent;
+}
+
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, const AtomString& eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &loadEventSender());

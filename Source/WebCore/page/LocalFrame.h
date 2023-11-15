@@ -320,7 +320,10 @@ private:
     void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
+    void disconnectView() final;
     DOMWindow* virtualWindow() const final;
+    const Frame* opener() const final;
+    Frame* opener();
 
     WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 

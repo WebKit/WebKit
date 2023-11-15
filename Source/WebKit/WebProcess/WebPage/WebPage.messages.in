@@ -194,7 +194,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadSimulatedRequestAndResponse(struct WebKit::LoadParameters loadParameters, WebCore::ResourceResponse simulatedResponse)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
-    CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID)
+    CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, String frameName)
 
     GetFrameInfo(WebCore::FrameIdentifier frameID) -> (std::optional<WebKit::FrameInfoData> data)
     GetFrameTree() -> (struct WebKit::FrameTreeNodeData data)

@@ -320,6 +320,28 @@ class BitBucket(Scm):
 
             return None if failed else pull_request
 
+        def statuses(self, pull_request):
+            response = requests.get(
+                'https://{domain}/rest/build-status/1.0/commits/{ref}'.format(
+                    domain=self.repository.domain,
+                    ref=pull_request.hash,
+                ),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to fetch build-status for {}\n'.format(pull_request.hash[:Commit.HASH_LABEL_SIZE]))
+                return
+            for status in response.json().get('values') or []:
+                yield PullRequest.Status(
+                    name=status.get('name') or status.get('key'),
+                    url=status.get('url'),
+                    status=dict(
+                        SUCCESSFUL='success',
+                        INPROGRESS='pending',
+                        FAILED='failure',
+                    ).get(status.get('state'), 'error'),
+                    description=status.get('description'),
+                )
+
 
     @classmethod
     def is_webserver(cls, url):

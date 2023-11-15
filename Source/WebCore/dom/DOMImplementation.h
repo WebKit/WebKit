@@ -48,6 +48,8 @@ public:
     static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
 
 private:
+    Ref<Document> protectedDocument();
+
     CheckedRef<Document> m_document;
 };
 

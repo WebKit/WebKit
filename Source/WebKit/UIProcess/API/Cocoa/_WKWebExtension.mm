@@ -275,6 +275,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->hasCommands();
 }
 
+- (BOOL)hasContentModificationRules
+{
+    return _webExtension->hasContentModificationRules();
+}
+
 - (BOOL)_backgroundContentIsServiceWorker
 {
     return _webExtension->backgroundContentIsServiceWorker();
@@ -450,6 +455,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 }
 
 - (BOOL)hasCommands
+{
+    return NO;
+}
+
+- (BOOL)hasContentModificationRules
 {
     return NO;
 }

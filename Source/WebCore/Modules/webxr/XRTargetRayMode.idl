@@ -31,5 +31,6 @@
 ] enum XRTargetRayMode {
     "gaze",
     "tracked-pointer",
-    "screen"
+    "screen",
+    "transient-pointer"
 };

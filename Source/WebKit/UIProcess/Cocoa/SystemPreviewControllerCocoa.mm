@@ -390,12 +390,12 @@ void SystemPreviewController::begin(const URL& url, const SecurityOriginData& to
         if (!weakThis)
             return completionHandler();
 
-        auto strongThis = weakThis.get();
+        auto protectedThis = weakThis.get();
 
         _WKDataTask *dataTask = wrapper(task);
-        strongThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:strongThis]);
-        [dataTask setDelegate:strongThis->m_wkSystemPreviewDataTaskDelegate.get()];
-        strongThis->takeActivityToken();
+        protectedThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:protectedThis]);
+        [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
+        protectedThis->takeActivityToken();
         completionHandler();
     });
 

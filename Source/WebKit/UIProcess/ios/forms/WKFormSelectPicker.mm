@@ -168,7 +168,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
 
     CGRect frame = self.frame;
-    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
+    frame.size = view.sizeForLegacyFormControlPickerViews;
     [self setFrame:frame];
 
     [self reloadAllComponents];

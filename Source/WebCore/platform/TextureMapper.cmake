@@ -23,6 +23,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/nicosia/NicosiaAnimation.h
 
     platform/graphics/texmap/BitmapTexture.h
+    platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h

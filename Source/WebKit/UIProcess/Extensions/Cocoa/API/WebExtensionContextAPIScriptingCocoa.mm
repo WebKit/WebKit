@@ -38,6 +38,7 @@
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionRegisteredScriptParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionTabIdentifier.h"
@@ -139,6 +140,34 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     removeStyleSheets(styleSheetPairs, webView, injectedFrames, *this);
 
     completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::scriptingRegisterScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+{
+    // FIXME: <https://webkit.org/b/261769> Implement this.
+
+    completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+{
+    // FIXME: <https://webkit.org/b/261769> Implement this.
+
+    completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error)>&& completionHandler)
+{
+    // FIXME: <https://webkit.org/b/261769> Implement this.
+
+    completionHandler({ }, std::nullopt);
+}
+
+void WebExtensionContext::scriptingUnregisterScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error)>&& completionHandler)
+{
+    // FIXME: <https://webkit.org/b/261769> Implement this.
+
+    completionHandler({ }, std::nullopt);
 }
 
 } // namespace WebKit

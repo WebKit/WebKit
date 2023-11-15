@@ -38,6 +38,7 @@ cocoa/TestInspectorURLSchemeHandler.mm
 cocoa/TestLegacyDownloadDelegate.mm
 cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
+cocoa/TestResourceLoadDelegate.mm
 cocoa/TestUIDelegate.mm
 cocoa/TestWKWebView.mm
 cocoa/TestWebExtensionsDelegate.mm

@@ -58,8 +58,8 @@ void FileSystemDirectoryHandle::getFileHandle(const String& name, const FileSyst
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        auto strongThis = weakThis.get();
-        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        auto protectedThis = weakThis.get();
+        RefPtr context = protectedThis ? protectedThis->scriptExecutionContext() : nullptr;
         if (!context)
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
 
@@ -78,8 +78,8 @@ void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, const Fil
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        auto strongThis = weakThis.get();
-        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        auto protectedThis = weakThis.get();
+        RefPtr context = protectedThis ? protectedThis->scriptExecutionContext() : nullptr;
         if (!context)
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
 
@@ -127,8 +127,8 @@ void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<
             return completionHandler(result.releaseException());
 
         auto [identifier, isDirectory] = result.returnValue()->release();
-        auto strongThis = weakThis.get();
-        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        auto protectedThis = weakThis.get();
+        RefPtr context = protectedThis ? protectedThis->scriptExecutionContext() : nullptr;
         if (!context)
             return completionHandler(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
 

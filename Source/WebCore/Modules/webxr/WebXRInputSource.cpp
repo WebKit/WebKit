@@ -136,8 +136,11 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
     if (!m_connected) {
         // A user agent MUST dispatch a selectend event on an XRSession when one of its XRInputSources ends 
         // when an XRInputSource that has begun a primary select action is disconnected.
-        if (m_selectStarted)
+        if (m_selectStarted) {
+            if (targetRayMode() == PlatformXR::XRTargetRayMode::TransientPointer)
+                events.append(createEvent(eventNames().selectEvent));
             events.append(createEvent(eventNames().selectendEvent));
+        }
 
         // A user agent MUST dispatch a squeezeend event on an XRSession when one of its XRInputSources ends 
         // when an XRInputSource that has begun a primary squeeze action is disconnected.

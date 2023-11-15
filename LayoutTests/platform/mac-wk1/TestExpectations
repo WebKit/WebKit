@@ -1016,6 +1016,11 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
 media/media-can-play-webm.html [ Failure ]
 
+# VP9/VP8 are not supported on WK1 and turned off by default
+media/media-source/media-source-webm-configuration-change.html [ Failure ]
+media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
+media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
+
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 
@@ -2687,8 +2692,6 @@ fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
 
 # SVG gradients are not bit-for-bit equivalent through a scale.
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
-
-webkit.org/b/263568 [ arm64 ] media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
 
 # rdar://117432620 [ arm64 ] 2 tests in imported/w3c/web-platform-tests/css/css-backgrounds/background-size have constant image failure
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
