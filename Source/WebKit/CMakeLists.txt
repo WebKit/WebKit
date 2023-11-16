@@ -567,13 +567,11 @@ set(WebCore_SERIALIZATION_IN_FILES
     IndexedDB.serialization.in
     LayoutMilestones.serialization.in
     MDNSRegisterError.serialization.in
-    MediaPlaybackTargetContext.serialization.in
     MediaProducer.serialization.in
     PlatformEvent.serialization.in
     PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
     PlatformWheelEvent.serialization.in
-    PlaybackSessionModel.serialization.in
     ProtectionSpaceBase.serialization.in
     ScrollTypes.serialization.in
     WebGPU.serialization.in
