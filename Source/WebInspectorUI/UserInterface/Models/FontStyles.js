@@ -122,43 +122,41 @@ WI.FontStyles = class FontStyles
     writeFontVariation(tag, value) {
         let targetPropertyName = WI.FontStyles.fontPropertyForAxisTag(tag);
 
-        // Check if the target property exists
         let cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, false);
 
         if (cssProperty) {
-            // The existing property exists, get its value
             let existingValue = cssProperty.rawValue;
 
-            // Check if the existing value contains !important
             let isImportant = existingValue.includes("!important");
 
-            // Check if existing property is font-weight
-            let isFontWeight = targetPropertyName === "font-weight";
-
-            // Update value without marking it as important if it is not already important
             if (!isImportant) {
-                cssProperty.rawValue = isFontWeight
-                    ? `font-weight: ${WI.FontStyles.axisValueToFontPropertyValue(tag, value)} !important`
-                    : `${existingValue} ${WI.FontStyles.axisValueToFontPropertyValue(tag, value)}`;
+                if (targetPropertyName === "font-weight") {
+                    cssProperty.rawValue = `${value}`;
+                } else {
+                    cssProperty.rawValue = existingValue.includes(tag)
+                        ? existingValue.replace(new RegExp(`"${tag}"[^,]*`), `"${tag}" ${value}`)
+                        : `${existingValue}, "${tag}" ${value}`;
+                }
             }
         } else {
-            // The property doesn't exist, create a new one
             this._authoredFontVariationSettingsMap.set(tag, value);
             let axes = [];
             for (let [tag, value] of this._authoredFontVariationSettingsMap) {
                 axes.push(`"${tag}" ${value}`);
             }
 
-            //FIXME: change font-variation-settings to font-weight under style attribute
-            targetPropertyName = "font-variation-settings";
-            let targetPropertyValue = axes.join(", ");
+            let targetPropertyValue = axes.join(', ');
 
             const createIfMissing = true;
             cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
 
             if (cssProperty) {
-                // Set the value without marking it as important
-                cssProperty.rawValue = targetPropertyValue;
+                cssProperty.rawValue = targetPropertyName === "font-weight" ? `${value}` : "";
+
+                if (targetPropertyName === "word-break" && value === "break-word") {
+                    targetPropertyValue -= "break-word";
+                    cssProperty.rawValue = "";
+                }
             }
         }
     }
