@@ -27,7 +27,8 @@
 [
     Conditional=MEDIA_SOURCE,
     EnabledBySetting=MediaSourceEnabled|ManagedMediaSourceEnabled,
-    ImplementedBy=AudioTrackMediaSource
+    ImplementedBy=AudioTrackMediaSource,
+    Exposed=(Window,DedicatedWorker)
 ] partial interface AudioTrack {
     readonly attribute SourceBuffer? sourceBuffer;
 };
