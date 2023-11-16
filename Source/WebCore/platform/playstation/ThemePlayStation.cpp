@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +24,15 @@
  */
 
 #include "config.h"
-#include "RenderThemePlayStation.h"
+#include "ThemePlayStation.h"
 
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-RenderTheme& RenderTheme::singleton()
+Theme& Theme::singleton()
 {
-    static NeverDestroyed<RenderThemePlayStation> theme;
+    static NeverDestroyed<ThemePlayStation> theme;
     return theme;
 }
 
