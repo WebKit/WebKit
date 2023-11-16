@@ -128,7 +128,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
         auto pathElement = mPath.pathElement();
         if (pathElement) {
-            m_animationPath = pathFromGraphicsElement(pathElement.get());
+            m_animationPath = pathFromGraphicsElement(*pathElement);
             foundMPath = true;
             break;
         }

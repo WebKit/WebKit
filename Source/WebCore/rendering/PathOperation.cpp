@@ -59,7 +59,7 @@ ReferencePathOperation::ReferencePathOperation(const String& url, const AtomStri
     , m_fragment(fragment)
 {
     if (is<SVGPathElement>(element) || is<SVGGeometryElement>(element))
-        m_path = pathFromGraphicsElement(element.get());
+        m_path = pathFromGraphicsElement(*element);
 }
 
 ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
