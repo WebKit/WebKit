@@ -1,3 +1,4 @@
+include(platform/Adwaita.cmake)
 include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
 include(platform/FreeType.cmake)
@@ -55,7 +56,6 @@ list(APPEND WebCore_SOURCES
 
     platform/playstation/MIMETypeRegistryPlayStation.cpp
     platform/playstation/PlatformScreenPlayStation.cpp
-    platform/playstation/ScrollbarThemePlayStation.cpp
     platform/playstation/UserAgentPlayStation.cpp
     platform/playstation/WidgetPlayStation.cpp
 
@@ -63,8 +63,6 @@ list(APPEND WebCore_SOURCES
     platform/text/LocaleICU.cpp
 
     platform/unix/LoggingUnix.cpp
-
-    rendering/RenderThemePlayStation.cpp
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
