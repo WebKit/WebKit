@@ -1049,6 +1049,37 @@ TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
     Util::runFor(100_ms);
 }
 
+TEST(KeyboardInputTests, CharactersAroundCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:delegate.get()];
+
+    bool focused = false;
+    [delegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id<_WKFocusedElementInfo>) {
+        focused = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<input autofocus autocapitalize='words' value='foo bar' type='text' />"];
+    Util::run(&focused);
+
+    auto testSelection = [&](unsigned selectionOffset, UTF32Char twoCharactersBefore, UTF32Char characterBefore, UTF32Char characterAfter) {
+        auto script = [NSString stringWithFormat:@"document.querySelector('input').setSelectionRange(%u, %u)", selectionOffset, selectionOffset];
+        [webView objectByEvaluatingJavaScript:script];
+        [webView waitForNextPresentationUpdate];
+
+        auto contentView = [webView textInputContentView];
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:-2], twoCharactersBefore);
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:-1], characterBefore);
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:0], characterAfter);
+    };
+
+    testSelection(1, '\0', 'f', 'o');
+    testSelection(3, 'o', 'o', ' ');
+    testSelection(7, 'a', 'r', '\0');
+}
+
 #if HAVE(REDESIGNED_TEXT_CURSOR)
 
 TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)

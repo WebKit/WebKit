@@ -430,7 +430,25 @@ private:
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+enum class TextPositionAnchor : uint8_t {
+    Start = 1 << 0,
+    End = 1 << 1
+};
+
 } // namespace WebKit
+
+@interface WKRelativeTextPosition : UITextPosition
+- (instancetype)initWithAnchors:(OptionSet<WebKit::TextPositionAnchor>)start offset:(NSInteger)offset;
+@property (nonatomic, readonly) OptionSet<WebKit::TextPositionAnchor> anchors;
+@property (nonatomic, readonly, getter=isRelativeToStart) BOOL relativeToStart;
+@property (nonatomic, readonly) NSInteger offset;
+@end
+
+@interface WKRelativeTextRange : UITextRange
+- (instancetype)initWithStart:(UITextPosition *)start end:(UITextPosition *)end;
+@property (nonatomic, readonly) WKRelativeTextPosition *start;
+@property (nonatomic, readonly) WKRelativeTextPosition *end;
+@end
 
 constexpr float highlightDelay = 0.12;
 constexpr float tapAndHoldDelay = 0.75;
@@ -458,11 +476,10 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @end
 
-@interface WKTextPosition : UITextPosition {
-    CGRect _positionRect;
-}
+@interface WKTextPosition : UITextPosition
 
 @property (nonatomic) CGRect positionRect;
+@property (nonatomic) OptionSet<WebKit::TextPositionAnchor> anchors;
 
 + (WKTextPosition *)textPositionWithRect:(CGRect)positionRect;
 
@@ -493,6 +510,132 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 @end
 
 #endif
+
+inline static UITextPosition *positionWithOffsetFrom(UITextPosition *position, NSInteger offset)
+{
+    if (!offset)
+        return position;
+
+    if (auto concretePosition = dynamic_objc_cast<WKTextPosition>(position); !concretePosition.anchors.isEmpty())
+        return adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:concretePosition.anchors offset:offset]).autorelease();
+
+    if (auto relativePosition = dynamic_objc_cast<WKRelativeTextPosition>(position))
+        return adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:[relativePosition anchors] offset:offset + [relativePosition offset]]).autorelease();
+
+    return nil;
+}
+
+inline static std::pair<OptionSet<WebKit::TextPositionAnchor>, NSInteger> anchorsAndOffset(UITextPosition *position)
+{
+    if (auto concretePosition = dynamic_objc_cast<WKTextPosition>(position); concretePosition.anchors)
+        return { concretePosition.anchors, 0 };
+
+    if (auto relativePosition = dynamic_objc_cast<WKRelativeTextPosition>(position))
+        return { relativePosition.anchors, relativePosition.offset };
+
+    return { { }, 0 };
+}
+
+inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range, const WebKit::EditorState::PostLayoutData& data, std::optional<UChar32> lastInsertedCharacterOverride)
+{
+    auto start = range.start;
+    auto end = range.end;
+    if (!start || !end)
+        return nil;
+
+    if (!start.relativeToStart || !end.relativeToStart)
+        return nil;
+
+    auto startOffset = start.offset;
+    auto endOffset = end.offset;
+    if (startOffset < -2 || endOffset > 1 || startOffset >= endOffset)
+        return nil;
+
+    StringBuilder string;
+    string.reserveCapacity(endOffset - startOffset);
+    auto appendIfNonZero = [&string](auto character) {
+        if (character)
+            string.appendCharacter(character);
+    };
+    for (auto offset = startOffset; offset < endOffset; ++offset) {
+        switch (offset) {
+        case -2:
+            appendIfNonZero(data.twoCharacterBeforeSelection);
+            break;
+        case -1: {
+            appendIfNonZero(lastInsertedCharacterOverride.value_or(data.characterBeforeSelection));
+            break;
+        }
+        case 0:
+            appendIfNonZero(data.characterAfterSelection);
+            break;
+        }
+    }
+    return string.toString();
+}
+
+@implementation WKRelativeTextPosition
+
+- (instancetype)initWithAnchors:(OptionSet<WebKit::TextPositionAnchor>)anchors offset:(NSInteger)offset
+{
+    if (self = [super init]) {
+        _anchors = anchors;
+        _offset = offset;
+    }
+    return self;
+}
+
+- (BOOL)isRelativeToStart
+{
+    return _anchors.contains(WebKit::TextPositionAnchor::Start);
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"WKRelativeTextPosition(%s, %d)", _anchors.contains(WebKit::TextPositionAnchor::Start) ? "start" : "end", static_cast<int>(_offset)];
+}
+
+@end
+
+@implementation WKRelativeTextRange {
+    RetainPtr<WKRelativeTextPosition> _start;
+    RetainPtr<WKRelativeTextPosition> _end;
+}
+
+- (instancetype)initWithStart:(UITextPosition *)start end:(UITextPosition *)end
+{
+    if (self = [super init]) {
+        auto [startAnchors, startOffset] = anchorsAndOffset(start);
+        auto [endAnchors, endOffset] = anchorsAndOffset(end);
+        if (!startAnchors.isEmpty() && !endAnchors.isEmpty()) {
+            _start = adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:startAnchors offset:startOffset]);
+            _end = adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:endAnchors offset:endOffset]);
+        }
+    }
+    return self;
+}
+
+- (WKRelativeTextPosition *)start
+{
+    return _start.get();
+}
+
+- (WKRelativeTextPosition *)end
+{
+    return _end.get();
+}
+
+- (BOOL)isEmpty
+{
+    return [_start offset] == [_end offset];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"WKRelativeTextRange(start=%@, end=%@)", _start.get(), _end.get()];
+}
+
+@end
 
 @interface WKAutocorrectionRects : UIWKAutocorrectionRects
 + (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
@@ -5244,27 +5387,6 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     });
 }
 
-- (UTF32Char)_characterInRelationToCaretSelection:(int)amount
-{
-    if (amount == -1 && _lastInsertedCharacterToOverrideCharacterBeforeSelection)
-        return *_lastInsertedCharacterToOverrideCharacterBeforeSelection;
-
-    auto& state = _page->editorState();
-    if (!state.isContentEditable || state.selectionIsNone || state.selectionIsRange || !state.postLayoutData)
-        return 0;
-
-    switch (amount) {
-    case 0:
-        return state.postLayoutData->characterAfterSelection;
-    case -1:
-        return state.postLayoutData->characterBeforeSelection;
-    case -2:
-        return state.postLayoutData->twoCharacterBeforeSelection;
-    default:
-        return 0;
-    }
-}
-
 - (BOOL)_selectionAtDocumentStart
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
@@ -5768,8 +5890,14 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return nil;
 
     auto& editorState = _page->editorState();
-    if (self.selectedTextRange == range && editorState.hasPostLayoutData() && editorState.selectionIsRange)
+    if (!editorState.hasPostLayoutData())
+        return nil;
+
+    if (self.selectedTextRange == range && editorState.selectionIsRange)
         return editorState.postLayoutData->wordAtSelection;
+
+    if (auto relativeRange = dynamic_objc_cast<WKRelativeTextRange>(range))
+        return textRelativeToSelectionStart(relativeRange, *editorState.postLayoutData, _lastInsertedCharacterToOverrideCharacterBeforeSelection);
 
     return nil;
 }
@@ -6055,12 +6183,12 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition
 {
-    return nil;
+    return adoptNS([[WKRelativeTextRange alloc] initWithStart:fromPosition end:toPosition]).autorelease();
 }
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset
 {
-    return nil;
+    return positionWithOffsetFrom(position, offset);
 }
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position inDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset
@@ -13758,7 +13886,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WKTextRange
 
-+(WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength
++ (WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength
 {
     auto range = adoptNS([[WKTextRange alloc] init]);
     [range setIsNone:isNone];
@@ -13784,14 +13912,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKTextPosition *)start
 {
-    WKTextPosition *pos = [WKTextPosition textPositionWithRect:self.startRect];
-    return pos;
+    WKTextPosition *position = [WKTextPosition textPositionWithRect:self.startRect];
+    OptionSet anchors { WebKit::TextPositionAnchor::Start };
+    if (self.isEmpty)
+        anchors.add(WebKit::TextPositionAnchor::End);
+    position.anchors = anchors;
+    return position;
 }
 
-- (UITextPosition *)end
+- (WKTextPosition *)end
 {
-    WKTextPosition *pos = [WKTextPosition textPositionWithRect:self.endRect];
-    return pos;
+    WKTextPosition *position = [WKTextPosition textPositionWithRect:self.endRect];
+    OptionSet anchors { WebKit::TextPositionAnchor::End };
+    if (self.isEmpty)
+        anchors.add(WebKit::TextPositionAnchor::Start);
+    position.anchors = anchors;
+    return position;
 }
 
 - (BOOL)isEmpty
