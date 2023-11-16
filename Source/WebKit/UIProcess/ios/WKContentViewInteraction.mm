@@ -3921,7 +3921,12 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)replaceForWebView:(id)sender
 {
-    [[UIKeyboardImpl sharedInstance] replaceText:sender];
+    static BOOL responderSupportsReplace = [UIResponder instancesRespondToSelector:@selector(replace:)];
+    if (!responderSupportsReplace) {
+        [[UIKeyboardImpl sharedInstance] replaceText:sender];
+        return;
+    }
+    [super replace:sender];
 }
 
 #define WEBCORE_COMMAND_FOR_WEBVIEW(command) \
