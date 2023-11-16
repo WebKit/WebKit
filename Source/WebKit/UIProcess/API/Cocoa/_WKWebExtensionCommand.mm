@@ -116,7 +116,7 @@ using CocoaModifierFlags = UIKeyModifierFlags;
 
 - (void)setModifierFlags:(CocoaModifierFlags)modifierFlags
 {
-    auto optionSet = OptionSet<WebKit::WebExtension::ModifierFlags>::fromRaw(modifierFlags);
+    auto optionSet = OptionSet<WebKit::WebExtension::ModifierFlags>::fromRaw(modifierFlags) & WebKit::WebExtension::allModifierFlags();
     NSAssert(optionSet.toRaw() == modifierFlags, @"Invalid parameter: an unsupported modifier flag was provided");
 
     _webExtensionCommand->setModifierFlags(optionSet);

@@ -78,6 +78,21 @@ public:
         ZoomFactor = 1 << 9,
     };
 
+    static constexpr OptionSet<ChangedProperties> allChangedProperties()
+    {
+        return {
+            ChangedProperties::Audible,
+            ChangedProperties::Loading,
+            ChangedProperties::Muted,
+            ChangedProperties::Pinned,
+            ChangedProperties::ReaderMode,
+            ChangedProperties::Size,
+            ChangedProperties::Title,
+            ChangedProperties::URL,
+            ChangedProperties::ZoomFactor,
+        };
+    }
+
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
