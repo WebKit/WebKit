@@ -91,7 +91,7 @@ public:
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCSemaphore* toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { m_semaphore.encode(encoder); }
+    void encode(IPC::Encoder& encoder) const { encoder << m_semaphore; }
     IPC::Semaphore exchange(IPC::Semaphore&& semaphore = { })
     {
         return std::exchange(m_semaphore, WTFMove(semaphore));

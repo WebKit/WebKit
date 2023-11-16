@@ -77,19 +77,6 @@ bool Semaphore::waitFor(Timeout timeout)
     return WAIT_OBJECT_0 == WaitForSingleObject(m_semaphoreHandle.get(), milliseconds);
 }
 
-void Semaphore::encode(Encoder& encoder) const
-{
-    encoder << Win32Handle { m_semaphoreHandle };
-}
-
-std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
-{
-    auto semaphoreHandle = decoder.decode<Win32Handle>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    return Semaphore { WTFMove(*semaphoreHandle) };
-}
-
 void Semaphore::destroy()
 {
     m_semaphoreHandle = { };

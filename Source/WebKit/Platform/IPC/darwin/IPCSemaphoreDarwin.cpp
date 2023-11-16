@@ -93,19 +93,6 @@ MachSendRight Semaphore::createSendRight() const
     return MachSendRight::create(m_semaphore);
 }
 
-void Semaphore::encode(Encoder& encoder) const
-{
-    encoder << createSendRight();
-}
-
-std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
-{
-    MachSendRight sendRight;
-    if (!decoder.decode(sendRight))
-        return std::nullopt;
-    return std::optional<Semaphore> { std::in_place, WTFMove(sendRight) };
-}
-
 void Semaphore::destroy()
 {
     if (m_sendRight) {
