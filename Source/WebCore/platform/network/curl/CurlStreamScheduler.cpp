@@ -40,7 +40,7 @@ CurlStreamScheduler::~CurlStreamScheduler()
     ASSERT(isMainThread());
 }
 
-CurlStreamID CurlStreamScheduler::createStream(const URL& url, CurlStream::Client& client)
+CurlStreamID CurlStreamScheduler::createStream(const URL& url, CurlStream::Client& client, CurlStream::ServerTrustEvaluation serverTrustEvaluation)
 {
     ASSERT(isMainThread());
 
@@ -51,8 +51,8 @@ CurlStreamID CurlStreamScheduler::createStream(const URL& url, CurlStream::Clien
     auto streamID = m_currentStreamID;
     m_clientList.add(streamID, &client);
 
-    callOnWorkerThread([this, streamID, url = url.isolatedCopy()]() mutable {
-        m_streamList.add(streamID, CurlStream::create(*this, streamID, WTFMove(url)));
+    callOnWorkerThread([this, streamID, url = url.isolatedCopy(), serverTrustEvaluation]() mutable {
+        m_streamList.add(streamID, CurlStream::create(*this, streamID, WTFMove(url), serverTrustEvaluation));
     });
 
     return streamID;

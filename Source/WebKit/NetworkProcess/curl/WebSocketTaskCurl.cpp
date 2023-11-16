@@ -26,22 +26,26 @@
 #include "config.h"
 #include "WebSocketTaskCurl.h"
 
-#include "NetworkSession.h"
+#include "NetworkSessionCurl.h"
 #include "NetworkSocketChannel.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/CurlStreamScheduler.h>
-#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/WebSocketHandshake.h>
 
 namespace WebKit {
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin)
     : m_channel(channel)
+    , m_webProxyPageID(webProxyPageID)
     , m_request(request.isolatedCopy())
     , m_protocol(protocol)
     , m_scheduler(WebCore::CurlContext::singleton().streamScheduler())
 {
-    if (request.url().protocolIs("wss"_s) && WebCore::DeprecatedGlobalSettings::allowsAnySSLCertificate())
-        WebCore::CurlContext::singleton().sslHandle().setIgnoreSSLErrors(true);
+    // We use topOrigin in case of service worker websocket connections, for which pageID does not link to a real page.
+    // In that case, let's only call the callback for same origin loads.
+    if (clientOrigin.topOrigin == clientOrigin.clientOrigin)
+        m_topOrigin = clientOrigin.topOrigin;
 
     m_streamID = m_scheduler.createStream(request.url(), *this);
     m_channel.didSendHandshakeRequest(WebCore::ResourceRequest(m_request));
@@ -91,6 +95,11 @@ void WebSocketTask::cancel()
 void WebSocketTask::resume()
 {
 
+}
+
+NetworkSessionCurl* WebSocketTask::networkSession()
+{
+    return static_cast<NetworkSessionCurl*>(m_channel.session());
 }
 
 void WebSocketTask::didOpen(WebCore::CurlStreamID)
@@ -218,9 +227,29 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
     }
 }
 
-void WebSocketTask::didFail(WebCore::CurlStreamID, CURLcode errorCode)
+void WebSocketTask::didFail(WebCore::CurlStreamID, CURLcode errorCode, WebCore::CertificateInfo&& certificateInfo)
 {
-    didFail(makeString("WebSocket network error: error code "_s, static_cast<uint32_t>(errorCode)));
+    auto reason = makeString("WebSocket network error: error code "_s, static_cast<uint32_t>(errorCode));
+
+    if (errorCode == CURLE_PEER_FAILED_VERIFICATION && networkSession()) {
+        RELEASE_ASSERT(m_state == State::Connecting);
+        destructStream();
+
+        tryServerTrustEvaluation({ m_request.url(), WTFMove(certificateInfo), WebCore::ResourceError(errorCode, m_request.url()) }, WTFMove(reason));
+        return;
+    }
+
+    didFail(WTFMove(reason));
+}
+
+void WebSocketTask::tryServerTrustEvaluation(WebCore::AuthenticationChallenge&& challenge, String&& errorReason)
+{
+    networkSession()->didReceiveChallenge(*this, WTFMove(challenge), [this, errorReason = WTFMove(errorReason)](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+        if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty())
+            m_streamID = m_scheduler.createStream(m_request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Disable);
+        else
+            didFail(WTFMove(errorReason));
+    });
 }
 
 bool WebSocketTask::appendReceivedBuffer(const WebCore::SharedBuffer& buffer)
