@@ -325,7 +325,7 @@ protected:
 
     bool shouldEnableInheritURIQueryComponent() const;
 
-private:
+protected:
     ThreadSafeWeakPtr<MediaPlayer> m_player;
 
     Function<void()> m_pendingSeek;
@@ -354,7 +354,6 @@ private:
     mutable MediaTime m_cachedMaxTimeSeekable;
     mutable MediaTime m_cachedMinTimeSeekable;
     mutable MediaTime m_cachedDuration;
-    MediaTime m_reportedDuration;
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     int m_delayCharacteristicsChangedNotification;
     bool m_mainThreadCallPending;

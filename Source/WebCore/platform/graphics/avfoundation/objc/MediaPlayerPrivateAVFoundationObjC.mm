@@ -1773,7 +1773,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
         m_cachedSeekableRanges = [m_avPlayerItem seekableTimeRanges];
 
     if (![m_cachedSeekableRanges count])
-        return platformDuration();
+        return durationMediaTime();
 
     MediaTime maxTimeSeekable;
     for (NSValue *thisRangeValue in m_cachedSeekableRanges.get()) {
@@ -3752,9 +3752,22 @@ void MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange(FloatSize siz
 
 void MediaPlayerPrivateAVFoundationObjC::durationDidChange(const MediaTime& duration)
 {
+    if (m_cachedDuration == duration)
+        return;
+
+    INFO_LOG(LOGIDENTIFIER, duration);
+    bool cachedDurationWasValid = m_cachedDuration.isValid();
+
     m_cachedDuration = duration;
 
-    invalidateCachedDuration();
+    // Don't fire a durationChanged() callback if we are updating from an invalid
+    // cachedDuration; this will lead to double "durationchanged" events fired from
+    // the HTMLMediaElement.
+    if (!cachedDurationWasValid)
+        return;
+
+    if (auto player = this->player())
+        player->durationChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)

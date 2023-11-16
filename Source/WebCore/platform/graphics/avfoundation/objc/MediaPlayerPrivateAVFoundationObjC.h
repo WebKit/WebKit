@@ -438,7 +438,6 @@ private:
     RetainPtr<NSArray> m_cachedTracks;
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
-    MediaTime m_cachedDuration;
     mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
     mutable MediaTime m_cachedCurrentMediaTime { -1, 1, 0 };
     mutable MediaTime m_lastPeriodicObserverMediaTime;
