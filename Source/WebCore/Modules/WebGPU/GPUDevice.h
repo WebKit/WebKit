@@ -93,9 +93,9 @@ public:
 
     Ref<GPUQueue> queue() const;
 
-    void destroy();
+    void destroy(ScriptExecutionContext&);
 
-    Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
+    ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
@@ -126,6 +126,8 @@ public:
 
     WebGPU::Device& backing() { return m_backing; }
     const WebGPU::Device& backing() const { return m_backing; }
+    void removeBufferToUnmap(GPUBuffer&);
+    void addBufferToUnmap(GPUBuffer&);
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -148,6 +150,7 @@ private:
     Ref<WebGPU::Device> m_backing;
     Ref<GPUQueue> m_queue;
     Ref<GPUPipelineLayout> m_autoPipelineLayout;
+    HashSet<GPUBuffer*> m_buffersToUnmap;
     bool m_waitingForDeviceLostPromise { false };
 };
 

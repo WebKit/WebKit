@@ -44,8 +44,8 @@ interface GPUBuffer {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219 The next two lines should be able to say "optional thingy = 0" instead of just "optional thingy".
     Promise<undefined> mapAsync(GPUMapModeFlags mode, optional GPUSize64 offset, optional GPUSize64 size);
     ArrayBuffer getMappedRange(optional GPUSize64 offset, optional GPUSize64 size);
-    undefined unmap();
+    [CallWith=CurrentScriptExecutionContext] undefined unmap();
 
-    undefined destroy();
+    [CallWith=CurrentScriptExecutionContext] undefined destroy();
 };
 GPUBuffer includes GPUObjectBase;

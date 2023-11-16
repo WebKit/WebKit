@@ -107,8 +107,23 @@ Ref<GPUQueue> GPUDevice::queue() const
     return m_queue;
 }
 
-void GPUDevice::destroy()
+void GPUDevice::addBufferToUnmap(GPUBuffer& buffer)
 {
+    m_buffersToUnmap.add(&buffer);
+}
+
+void GPUDevice::removeBufferToUnmap(GPUBuffer& buffer)
+{
+    m_buffersToUnmap.remove(&buffer);
+}
+
+void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
+{
+    for (auto& buffer : m_buffersToUnmap)
+        buffer->destroy(scriptExecutionContext);
+
+    m_buffersToUnmap.clear();
+
     m_backing->destroy();
 }
 
@@ -129,12 +144,15 @@ GPUDevice::LostPromise& GPUDevice::lost()
     return m_lostPromise;
 }
 
-Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
+ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {
     auto bufferSize = bufferDescriptor.size;
+    if (bufferSize > limits()->maxBufferSize())
+        return Exception { ExceptionCode::RangeError };
+
     auto usage = bufferDescriptor.usage;
     auto mappedAtCreation = bufferDescriptor.mappedAtCreation;
-    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation);
+    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation, *this);
 }
 
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
