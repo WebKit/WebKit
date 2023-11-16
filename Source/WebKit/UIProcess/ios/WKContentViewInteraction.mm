@@ -10934,10 +10934,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
     if (interactionInformation.cursor) {
         WebCore::Cursor::Type cursorType = interactionInformation.cursor->type();
-        if (cursorType == WebCore::Cursor::Hand)
+        if (cursorType == WebCore::Cursor::Type::Hand)
             return [UIPointerRegion regionWithRect:interactionInformation.bounds identifier:pointerRegionIdentifier];
 
-        if (cursorType == WebCore::Cursor::IBeam && expandedLineRect.contains(location))
+        if (cursorType == WebCore::Cursor::Type::IBeam && expandedLineRect.contains(location))
             return [UIPointerRegion regionWithRect:expandedLineRect identifier:pointerRegionIdentifier];
     }
 
@@ -10981,10 +10981,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (_positionInformation.cursor && [region.identifier isEqual:pointerRegionIdentifier]) {
         WebCore::Cursor::Type cursorType = _positionInformation.cursor->type();
 
-        if (cursorType == WebCore::Cursor::Hand)
+        if (cursorType == WebCore::Cursor::Type::Hand)
             return [UIPointerStyle systemPointerStyle];
 
-        if (cursorType == WebCore::Cursor::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
+        if (cursorType == WebCore::Cursor::Type::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
             return iBeamCursor();
     }
 

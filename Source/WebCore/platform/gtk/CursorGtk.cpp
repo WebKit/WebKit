@@ -75,125 +75,127 @@ static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSp
 
 void Cursor::ensurePlatformCursor() const
 {
-    if (m_platformCursor || m_type == Cursor::Pointer)
+    if (m_platformCursor || m_type == Type::Pointer)
         return;
 
     switch (m_type) {
-    case Cursor::Pointer:
+    case Type::Pointer:
         // A null GdkCursor is the default cursor for the window.
         m_platformCursor = 0;
         break;
-    case Cursor::Cross:
+    case Type::Cross:
         m_platformCursor = createNamedCursor("crosshair");
         break;
-    case Cursor::Hand:
+    case Type::Hand:
         m_platformCursor = createNamedCursor("pointer");
         break;
-    case Cursor::IBeam:
+    case Type::IBeam:
         m_platformCursor = createNamedCursor("text");
         break;
-    case Cursor::Wait:
+    case Type::Wait:
         m_platformCursor = createNamedCursor("wait");
         break;
-    case Cursor::Help:
+    case Type::Help:
         m_platformCursor = createNamedCursor("help");
         break;
-    case Cursor::Move:
-    case Cursor::MiddlePanning:
+    case Type::Move:
+    case Type::MiddlePanning:
         m_platformCursor = createNamedCursor("move");
         break;
-    case Cursor::EastResize:
-    case Cursor::EastPanning:
+    case Type::EastResize:
+    case Type::EastPanning:
         m_platformCursor = createNamedCursor("e-resize");
         break;
-    case Cursor::NorthResize:
-    case Cursor::NorthPanning:
+    case Type::NorthResize:
+    case Type::NorthPanning:
         m_platformCursor = createNamedCursor("n-resize");
         break;
-    case Cursor::NorthEastResize:
-    case Cursor::NorthEastPanning:
+    case Type::NorthEastResize:
+    case Type::NorthEastPanning:
         m_platformCursor = createNamedCursor("ne-resize");
         break;
-    case Cursor::NorthWestResize:
-    case Cursor::NorthWestPanning:
+    case Type::NorthWestResize:
+    case Type::NorthWestPanning:
         m_platformCursor = createNamedCursor("nw-resize");
         break;
-    case Cursor::SouthResize:
-    case Cursor::SouthPanning:
+    case Type::SouthResize:
+    case Type::SouthPanning:
         m_platformCursor = createNamedCursor("s-resize");
         break;
-    case Cursor::SouthEastResize:
-    case Cursor::SouthEastPanning:
+    case Type::SouthEastResize:
+    case Type::SouthEastPanning:
         m_platformCursor = createNamedCursor("se-resize");
         break;
-    case Cursor::SouthWestResize:
-    case Cursor::SouthWestPanning:
+    case Type::SouthWestResize:
+    case Type::SouthWestPanning:
         m_platformCursor = createNamedCursor("sw-resize");
         break;
-    case Cursor::WestResize:
-    case Cursor::WestPanning:
+    case Type::WestResize:
+    case Type::WestPanning:
         m_platformCursor = createNamedCursor("w-resize");
         break;
-    case Cursor::NorthSouthResize:
+    case Type::NorthSouthResize:
         m_platformCursor = createNamedCursor("ns-resize");
         break;
-    case Cursor::EastWestResize:
+    case Type::EastWestResize:
         m_platformCursor = createNamedCursor("ew-resize");
         break;
-    case Cursor::NorthEastSouthWestResize:
+    case Type::NorthEastSouthWestResize:
         m_platformCursor = createNamedCursor("nesw-resize");
         break;
-    case Cursor::NorthWestSouthEastResize:
+    case Type::NorthWestSouthEastResize:
         m_platformCursor = createNamedCursor("nwse-resize");
         break;
-    case Cursor::ColumnResize:
+    case Type::ColumnResize:
         m_platformCursor = createNamedCursor("col-resize");
         break;
-    case Cursor::RowResize:
+    case Type::RowResize:
         m_platformCursor = createNamedCursor("row-resize");
         break;
-    case Cursor::VerticalText:
+    case Type::VerticalText:
         m_platformCursor = createNamedCursor("vertical-text");
         break;
-    case Cursor::Cell:
+    case Type::Cell:
         m_platformCursor = createNamedCursor("cell");
         break;
-    case Cursor::ContextMenu:
+    case Type::ContextMenu:
         m_platformCursor = createNamedCursor("context-menu");
         break;
-    case Cursor::Alias:
+    case Type::Alias:
         m_platformCursor = createNamedCursor("alias");
         break;
-    case Cursor::Progress:
+    case Type::Progress:
         m_platformCursor = createNamedCursor("progress");
         break;
-    case Cursor::NoDrop:
+    case Type::NoDrop:
         m_platformCursor = createNamedCursor("no-drop");
         break;
-    case Cursor::NotAllowed:
+    case Type::NotAllowed:
         m_platformCursor = createNamedCursor("not-allowed");
         break;
-    case Cursor::Copy:
+    case Type::Copy:
         m_platformCursor = createNamedCursor("copy");
         break;
-    case Cursor::None:
+    case Type::None:
         m_platformCursor = createNamedCursor("none");
         break;
-    case Cursor::ZoomIn:
+    case Type::ZoomIn:
         m_platformCursor = createNamedCursor("zoom-in");
         break;
-    case Cursor::ZoomOut:
+    case Type::ZoomOut:
         m_platformCursor = createNamedCursor("zoom-out");
         break;
-    case Cursor::Grab:
+    case Type::Grab:
         m_platformCursor = createNamedCursor("grab");
         break;
-    case Cursor::Grabbing:
+    case Type::Grabbing:
         m_platformCursor = createNamedCursor("grabbing");
         break;
-    case Cursor::Custom:
+    case Type::Custom:
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
         break;
+    case Type::Invalid:
+        ASSERT_NOT_REACHED();
     }
 }
 

@@ -628,7 +628,7 @@ void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
     encoder << cursor.type();
         
-    if (cursor.type() != Cursor::Custom)
+    if (cursor.type() != Cursor::Type::Custom)
         return;
 
     if (cursor.image()->isNull()) {
@@ -650,10 +650,10 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
     if (!decoder.decode(type))
         return false;
 
-    if (type > Cursor::Custom)
+    if (type > Cursor::Type::Custom)
         return false;
 
-    if (type != Cursor::Custom) {
+    if (type != Cursor::Type::Custom) {
         const Cursor& cursorReference = Cursor::fromType(type);
         // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
         // This will avoid having to re-create the platform cursors over and over.
