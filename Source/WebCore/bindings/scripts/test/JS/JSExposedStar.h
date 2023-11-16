@@ -61,10 +61,6 @@ public:
     {
         return static_cast<ExposedStar&>(Base::wrapped());
     }
-    Ref<ExposedStar> protectedWrapped() const
-    {
-        return wrapped();
-    }
 protected:
     JSExposedStar(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedStar>&&);
 

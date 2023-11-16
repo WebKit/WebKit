@@ -27,9 +27,10 @@
 
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapper.h"
-#include "ShadowRealmGlobalScope.h"
 
 namespace WebCore {
+
+class ShadowRealmGlobalScope;
 
 class JSShadowRealmGlobalScopeBase : public JSDOMGlobalObject {
 public:
