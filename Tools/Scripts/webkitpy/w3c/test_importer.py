@@ -307,7 +307,15 @@ class TestImporter(object):
         #FIXME: Clean also the expected files stored in all platform specific folders.
         directory = self.filesystem.join(self.destination_directory, filename)
         tests = LayoutTestFinder(self.port, None).find_tests_by_path([directory])
-        baselines_for_tests = {self.port.expected_filename(test.test_path, '.txt') for test in tests}
+        baselines_for_tests = {
+            self.filesystem.join(
+                platform_dir or self.port.layout_tests_dir(), baseline_filename
+            )
+            for test in tests
+            for platform_dir, baseline_filename in self.port.expected_baselines(
+                test.test_path, ".txt", all_baselines=True
+            )
+        }
         for relative_path in self.filesystem.files_under(directory, file_filter=self._is_baseline):
             path = self.filesystem.join(directory, relative_path)
             if path not in baselines_for_tests:
