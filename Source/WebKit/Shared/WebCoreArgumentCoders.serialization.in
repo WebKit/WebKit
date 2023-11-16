@@ -6818,3 +6818,9 @@ struct WebCore::MarkupExclusionRule {
     AtomString elementLocalName;
     Vector<std::pair<AtomString, AtomString>> attributes;
 };
+
+header: <WebCore/Font.h>
+[Nested] enum class WebCore::FontOrigin : bool;
+[Nested] enum class WebCore::FontIsInterstitial : bool;
+[Nested] enum class WebCore::FontVisibility : bool;
+[Nested] enum class WebCore::FontIsOrientationFallback : bool;

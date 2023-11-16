@@ -740,7 +740,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
         case CSSFontFaceSource::Status::Pending:
         case CSSFontFaceSource::Status::Loading: {
             Font::Visibility visibility = WebCore::visibility(status(), fontLoadTiming());
-            return Font::create(FontCache::forCurrentThread().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
+            return Font::create(FontCache::forCurrentThread().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::IsInterstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success: {
             FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities, fontPaletteValues, fontFeatureValues, m_sizeAdjust };

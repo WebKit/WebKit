@@ -494,7 +494,7 @@ std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder&
     if (!origin)
         return std::nullopt;
 
-    std::optional<Font::Interstitial> isInterstitial;
+    std::optional<Font::IsInterstitial> isInterstitial;
     decoder >> isInterstitial;
     if (!isInterstitial)
         return std::nullopt;
@@ -504,7 +504,7 @@ std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder&
     if (!visibility)
         return std::nullopt;
 
-    std::optional<Font::OrientationFallback> isTextOrientationFallback;
+    std::optional<Font::IsOrientationFallback> isTextOrientationFallback;
     decoder >> isTextOrientationFallback;
     if (!isTextOrientationFallback)
         return std::nullopt;
