@@ -148,7 +148,7 @@ QueueView.prototype = {
             return;
 
         let messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
-        messageElement.textContent = (didOverflow ? "more than " : "") + totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "commit behind" : "commits behind");
+        messageElement.textContent = (didOverflow ? "> " : "") + totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "commit behind" : "commits behind");
         const status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
         this.element.appendChild(status.element);
 
