@@ -329,7 +329,12 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
     // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
     if (m_isServerRedirect) {
-        m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
+        // FIXME: When <rdar://116203552> is fixed we should not need this case here
+        // because main frame redirect messages won't come from the web content process.
+        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+            m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(m_request.url());
+        else
+            m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
         m_page->didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
     } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty()) {
         // In case of a process swap after response policy, the didStartProvisionalLoad already happened but the new main frame doesn't know about it
