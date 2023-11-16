@@ -213,13 +213,13 @@ void MockSourceBufferPrivate::removedFromMediaSource()
 
 MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
 {
-    return m_mediaSource ? m_mediaSource->player().readyState() : MediaPlayer::ReadyState::HaveNothing;
+    return m_mediaSource && m_mediaSource->player() ? m_mediaSource->player()->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    if (m_mediaSource)
-        m_mediaSource->player().setReadyState(readyState);
+    if (m_mediaSource && m_mediaSource->player())
+        m_mediaSource->player()->setReadyState(readyState);
 }
 
 void MockSourceBufferPrivate::setActive(bool isActive)
