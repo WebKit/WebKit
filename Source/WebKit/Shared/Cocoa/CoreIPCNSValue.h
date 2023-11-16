@@ -27,39 +27,42 @@
 
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/KeyValuePair.h>
+#include "ArgumentCodersCocoa.h"
+#include "CoreIPCSecureCoding.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
+
+OBJC_CLASS NSValue;
 
 namespace WebKit {
 
-class CoreIPCNSCFObject;
+class CoreIPCSecureCoding;
 
-class CoreIPCDictionary {
-    WTF_MAKE_FAST_ALLOCATED;
+class CoreIPCNSValue {
 public:
-    CoreIPCDictionary(NSDictionary *);
-
-    CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
-        : CoreIPCDictionary(dictionary.get())
+    CoreIPCNSValue(NSValue *);
+    CoreIPCNSValue(const RetainPtr<NSValue>& value)
+        : CoreIPCNSValue(value.get())
     {
     }
 
     RetainPtr<id> toID() const;
 
+    static bool shouldWrapValue(NSValue *);
+
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
+    friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;
 
-    using ValueType = Vector<KeyValuePair<UniqueRef<CoreIPCNSCFObject>, UniqueRef<CoreIPCNSCFObject>>>;
+    using WrappedNSValue = std::variant<NSRange>;
+    using Value = std::variant<WrappedNSValue, CoreIPCSecureCoding>;
 
-    CoreIPCDictionary(ValueType&& keyValuePairs)
-        : m_keyValuePairs(WTFMove(keyValuePairs))
+    static Value valueFromNSValue(NSValue *);
+
+    CoreIPCNSValue(Value&& value)
+        : m_value(WTFMove(value))
     {
     }
 
-    ValueType m_keyValuePairs;
+    Value m_value;
 };
 
 } // namespace WebKit

@@ -57,7 +57,10 @@
 #include "InternalsAdditions.h"
 #endif
 
+#if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
+#endif
+
 OBJC_CLASS VKCImageAnalysis;
 
 namespace WebCore {

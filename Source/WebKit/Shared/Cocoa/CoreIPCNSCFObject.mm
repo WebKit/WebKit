@@ -43,6 +43,10 @@ static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
         return CoreIPCArray((NSArray *)object);
     case IPC::NSType::Color:
         return CoreIPCColor((WebCore::CocoaColor *)object);
+#if ENABLE(DATA_DETECTION)
+    case IPC::NSType::DDScannerResult:
+        return CoreIPCDDScannerResult((DDScannerResult *)object);
+#endif
     case IPC::NSType::Data:
         return CoreIPCData((NSData *)object);
     case IPC::NSType::Date:
@@ -53,6 +57,8 @@ static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
         return CoreIPCError((NSError *)object);
     case IPC::NSType::Font:
         return CoreIPCFont((WebCore::CocoaFont *)object);
+    case IPC::NSType::NSValue:
+        return CoreIPCNSValue((NSValue *)object);
     case IPC::NSType::Number:
         return CoreIPCNumber(bridge_cast((NSNumber *)object));
     case IPC::NSType::SecureCoding:

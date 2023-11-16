@@ -25,43 +25,46 @@
 
 #pragma once
 
+#if ENABLE(DATA_DETECTION)
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/KeyValuePair.h>
+#include "ArgumentCodersCocoa.h"
+#include "CoreIPCDictionary.h"
+#include "CoreIPCSecureCoding.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
+
+OBJC_CLASS DDScannerResult;
 
 namespace WebKit {
 
 class CoreIPCNSCFObject;
 
-class CoreIPCDictionary {
-    WTF_MAKE_FAST_ALLOCATED;
+class CoreIPCDDScannerResult {
 public:
-    CoreIPCDictionary(NSDictionary *);
-
-    CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
-        : CoreIPCDictionary(dictionary.get())
+    CoreIPCDDScannerResult(DDScannerResult *);
+    CoreIPCDDScannerResult(const RetainPtr<DDScannerResult>& result)
+        : CoreIPCDDScannerResult(result.get())
     {
     }
 
     RetainPtr<id> toID() const;
 
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
+    friend struct IPC::ArgumentCoder<CoreIPCDDScannerResult, void>;
 
-    using ValueType = Vector<KeyValuePair<UniqueRef<CoreIPCNSCFObject>, UniqueRef<CoreIPCNSCFObject>>>;
+    using Value = std::variant<CoreIPCDictionary, CoreIPCSecureCoding>;
 
-    CoreIPCDictionary(ValueType&& keyValuePairs)
-        : m_keyValuePairs(WTFMove(keyValuePairs))
+    static Value valueFromDDScannerResult(DDScannerResult *);
+
+    CoreIPCDDScannerResult(Value&& value)
+        : m_value(WTFMove(value))
     {
     }
 
-    ValueType m_keyValuePairs;
+    Value m_value;
 };
 
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)
+#endif // ENABLE(DATA_DETECTION)

@@ -35,13 +35,7 @@ namespace WebKit {
 CoreIPCSecureCoding::CoreIPCSecureCoding(NSObject<NSSecureCoding> *object)
     : m_secureCoding(object)
 {
-    RELEASE_ASSERT(!m_secureCoding || IPC::typeFromObject(object) == IPC::NSType::SecureCoding);
-}
-
-CoreIPCSecureCoding::CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&& object)
-    : m_secureCoding(WTFMove(object))
-{
-    RELEASE_ASSERT(!m_secureCoding || IPC::typeFromObject(m_secureCoding.get()) == IPC::NSType::SecureCoding);
+    RELEASE_ASSERT(!m_secureCoding || [object conformsToProtocol:@protocol(NSSecureCoding)]);
 }
 
 } // namespace WebKit

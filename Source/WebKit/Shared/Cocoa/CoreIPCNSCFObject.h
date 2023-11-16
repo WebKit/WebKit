@@ -30,11 +30,13 @@
 #include "CoreIPCArray.h"
 #include "CoreIPCCFType.h"
 #include "CoreIPCColor.h"
+#include "CoreIPCDDScannerResult.h"
 #include "CoreIPCData.h"
 #include "CoreIPCDate.h"
 #include "CoreIPCDictionary.h"
 #include "CoreIPCError.h"
 #include "CoreIPCFont.h"
+#include "CoreIPCNSValue.h"
 #include "CoreIPCNumber.h"
 #include "CoreIPCSecureCoding.h"
 #include "CoreIPCString.h"
@@ -51,11 +53,15 @@ public:
         CoreIPCArray,
         CoreIPCCFType,
         CoreIPCColor,
+#if ENABLE(DATA_DETECTION)
+        CoreIPCDDScannerResult,
+#endif
         CoreIPCData,
         CoreIPCDate,
         CoreIPCDictionary,
         CoreIPCError,
         CoreIPCFont,
+        CoreIPCNSValue,
         CoreIPCNumber,
         CoreIPCSecureCoding,
         CoreIPCString,

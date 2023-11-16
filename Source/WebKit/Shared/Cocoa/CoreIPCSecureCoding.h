@@ -33,9 +33,13 @@
 namespace WebKit {
 
 class CoreIPCSecureCoding {
+WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCSecureCoding(NSObject<NSSecureCoding> *);
-    CoreIPCSecureCoding(RetainPtr<NSObject<NSSecureCoding>>&&);
+    CoreIPCSecureCoding(const RetainPtr<NSObject<NSSecureCoding>>& object)
+        : CoreIPCSecureCoding(object.get())
+    {
+    }
 
     RetainPtr<id> toID() const { return m_secureCoding; }
 

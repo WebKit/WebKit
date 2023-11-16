@@ -621,11 +621,6 @@ bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(De
 
 #if ENABLE(DATA_DETECTION)
 
-template<> Class getClass<DDScannerResult>()
-{
-    return PAL::getDDScannerResultClass();
-}
-
 void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, const WebCore::DataDetectorElementInfo& info)
 {
     encoder << info.result.get();

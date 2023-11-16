@@ -23,44 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "CoreIPCNSValue.h"
 
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/KeyValuePair.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
-
 namespace WebKit {
 
-class CoreIPCNSCFObject;
+CoreIPCNSValue::Value CoreIPCNSValue::valueFromNSValue(NSValue *nsValue)
+{
+    if (!shouldWrapValue(nsValue))
+        return CoreIPCSecureCoding { nsValue };
 
-class CoreIPCDictionary {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CoreIPCDictionary(NSDictionary *);
+    if (!strcmp(nsValue.objCType, @encode(NSRange)))
+        return WrappedNSValue { nsValue.rangeValue };
 
-    CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
-        : CoreIPCDictionary(dictionary.get())
-    {
-    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    RetainPtr<id> toID() const;
+CoreIPCNSValue::CoreIPCNSValue(NSValue *value)
+    : m_value(valueFromNSValue(value))
+{
+}
 
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
+RetainPtr<id> CoreIPCNSValue::toID() const
+{
+    RetainPtr<id> result;
 
-    using ValueType = Vector<KeyValuePair<UniqueRef<CoreIPCNSCFObject>, UniqueRef<CoreIPCNSCFObject>>>;
+    auto nsValueFromWrapped = [](const WrappedNSValue& wrappedValue) {
+        RetainPtr<id> result;
 
-    CoreIPCDictionary(ValueType&& keyValuePairs)
-        : m_keyValuePairs(WTFMove(keyValuePairs))
-    {
-    }
+        WTF::switchOn(wrappedValue, [&](const NSRange& range) {
+            result = [NSValue valueWithRange:range];
+        });
 
-    ValueType m_keyValuePairs;
-};
+        return result;
+    };
+
+    WTF::switchOn(m_value,
+        [&](const CoreIPCNSValue::WrappedNSValue& wrappedValue) {
+            result = nsValueFromWrapped(wrappedValue);
+        }, [&](const CoreIPCSecureCoding& secureCoding) {
+            result = secureCoding.toID();
+        }
+    );
+
+    return result;
+}
+
+bool CoreIPCNSValue::shouldWrapValue(NSValue *value)
+{
+    return !strcmp(value.objCType, @encode(NSRange));
+}
 
 } // namespace WebKit
 

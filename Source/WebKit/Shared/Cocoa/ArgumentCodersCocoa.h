@@ -31,6 +31,10 @@
 
 #import <wtf/RetainPtr.h>
 
+#if ENABLE(DATA_DETECTION)
+OBJC_CLASS DDScannerResult;
+#endif
+
 namespace IPC {
 
 #ifdef __OBJC__
@@ -57,6 +61,9 @@ public:
 enum class NSType : uint8_t {
     Array,
     Color,
+#if ENABLE(DATA_DETECTION)
+    DDScannerResult,
+#endif
     Data,
     Date,
     Error,
@@ -66,12 +73,16 @@ enum class NSType : uint8_t {
     SecureCoding,
     String,
     URL,
+    NSValue,
     CF,
     Unknown,
 };
 NSType typeFromObject(id);
 bool isSerializableValue(id);
 
+#if ENABLE(DATA_DETECTION)
+template<> Class getClass<DDScannerResult>();
+#endif
 
 void encodeObjectWithWrapper(Encoder&, id);
 std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Class>& allowedClasses);

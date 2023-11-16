@@ -261,6 +261,13 @@ using namespace WebCore;
 
 #pragma mark - Helpers
 
+#if ENABLE(DATA_DETECTION)
+template<> Class getClass<DDScannerResult>()
+{
+    return PAL::getDDScannerResultClass();
+}
+#endif
+
 NSType typeFromObject(id object)
 {
     ASSERT(object);
@@ -270,6 +277,10 @@ NSType typeFromObject(id object)
         return NSType::Array;
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
+#if ENABLE(DATA_DETECTION)
+    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:[PAL::getDDScannerResultClass() class]])
+        return NSType::DDScannerResult;
+#endif
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
     if ([object isKindOfClass:[NSDate class]])
@@ -282,6 +293,8 @@ NSType typeFromObject(id object)
         return NSType::Font;
     if ([object isKindOfClass:[NSNumber class]])
         return NSType::Number;
+    if ([object isKindOfClass:[NSValue class]])
+        return NSType::NSValue;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
