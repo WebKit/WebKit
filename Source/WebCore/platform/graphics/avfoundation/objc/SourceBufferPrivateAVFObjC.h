@@ -153,7 +153,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, Ref<SourceBufferParser>&&);
 
-    void didParseInitializationData(InitializationSegment&&);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
 

@@ -43,7 +43,6 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
-#include <wtf/NativePromise.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -66,10 +65,7 @@ SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent)
 {
 }
 
-SourceBufferPrivate::~SourceBufferPrivate()
-{
-    abortPendingOperations();
-}
+SourceBufferPrivate::~SourceBufferPrivate() = default;
 
 void SourceBufferPrivate::removedFromMediaSource()
 {
@@ -188,67 +184,6 @@ Ref<GenericPromise> SourceBufferPrivate::updateBufferedFromTrackBuffers(const Ve
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
     return setBufferedRanges(WTFMove(intersectionRanges));
-}
-
-void SourceBufferPrivate::advanceOperationState()
-{
-    switch (m_operationState) {
-    case OperationState::Idle:
-        m_operationState = OperationState::ProcessingAppend;
-        break;
-    case OperationState::ProcessingAppend:
-        m_operationState = OperationState::ProcessingInit;
-        break;
-    case OperationState::ProcessingInit:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
-void SourceBufferPrivate::rewindOperationState()
-{
-    switch (m_operationState) {
-    case OperationState::Idle:
-        ASSERT_NOT_REACHED();
-        break;
-    case OperationState::ProcessingAppend:
-        m_operationState = OperationState::Idle;
-        break;
-    case OperationState::ProcessingInit:
-        m_operationState = OperationState::ProcessingAppend;
-        break;
-    }
-}
-
-void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperation&& operation)
-{
-    DEBUG_LOG(LOGIDENTIFIER);
-
-    // Resolve the changes in TrackBuffers' buffered ranges
-    // into the SourceBuffer's buffered ranges
-    auto trackBuffers = trackBuffersRanges();
-    if (isAttached())
-        m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
-
-    Vector<Ref<GenericPromise>> promises;
-    promises.append(updateBufferedFromTrackBuffers(trackBuffers));
-    if (m_client) {
-        if (m_groupEndTimestamp > duration()) {
-            // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
-            // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
-            // duration set to the maximum of the current duration and the group end timestamp.
-            promises.append(m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp));
-        }
-        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-    }
-
-    GenericPromise::all(RunLoop::current(), promises)->whenSettled(RunLoop::current(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
-        if (!weakSelf || !isAttached())
-            return;
-
-        if (operation.abortCount == m_abortCount)
-            m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
-    });
 }
 
 void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
@@ -651,12 +586,40 @@ void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
 
 void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    m_pendingOperations.append({ InitOperation { WTFMove(segment) } });
+    processPendingMediaSamples();
+
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [segment = WTFMove(segment), weakThis = WeakPtr { *this }, this](auto&& result) mutable -> Ref<GenericPromise> {
+        if (!weakThis)
+            return GenericPromise::createAndReject(-1);
+
+        if (!result || ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment)) || !precheckInitialisationSegment(segment))) {
+            processInitialisationSegment({ });
+            return GenericPromise::createAndReject(-1);
+        }
+
+        auto segmentCopy = segment;
+        return m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable -> Ref<GenericPromise> {
+            if (!weakThis)
+                return GenericPromise::createAndReject(-1);
+
+            m_receivedFirstInitializationSegment = true;
+            m_pendingInitializationSegmentForChangeType = false;
+
+            processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+
+            return result ? GenericPromise::createAndResolve() : GenericPromise::createAndReject(-1);
+        });
+    });
 }
 
 void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
-    m_pendingOperations.append({ UpdateFormatDescriptionOperation { WTFMove(formatDescription), trackId } });
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, formatDescription = WTFMove(formatDescription), trackId] (auto&& result) mutable {
+        if (!weakThis || !result)
+            return GenericPromise::createAndReject(-1);
+        processFormatDescriptionForTrackId(WTFMove(formatDescription), trackId);
+        return GenericPromise::createAndResolve();
+    });
 }
 
 bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& segment)
@@ -692,122 +655,91 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
     if (!isAttached())
         return;
 
-    if (m_pendingOperations.isEmpty() || !std::holds_alternative<SamplesVector>(m_pendingOperations.last()))
-        m_pendingOperations.append({ SamplesVector { } }); // This is a new operation.
-
     DEBUG_LOG(LOGIDENTIFIER, sample.get());
-    std::get<SamplesVector>(m_pendingOperations.last()).append(WTFMove(sample));
+
+    m_pendingSamples.append(WTFMove(sample));
 }
 
 void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
-    queueOperation(WTFMove(buffer));
-}
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable -> Ref<GenericPromise> {
+        if (!weakThis || !result)
+            return GenericPromise::createAndReject(-1);
 
-void SourceBufferPrivate::queueOperation(Operation&& operation)
-{
-    m_pendingOperations.append(WTFMove(operation));
-    processPendingOperations();
-}
+        if (buffer->isEmpty())
+            return GenericPromise::createAndResolve();
 
-void SourceBufferPrivate::processPendingOperations()
-{
-    while (!m_pendingOperations.isEmpty()) {
-        if (!isAttached() || m_errored) {
-            abortPendingOperations();
-            return;
-        }
-        if (m_didReceiveInitializationSegmentErrored || m_didReceiveSampleErrored)
-            m_pendingOperations.prepend(ErrorOperation { });
-        else if (m_operationState != OperationState::Idle)
-            return;
-        auto operation = m_pendingOperations.takeFirst();
-        std::visit(WTF::makeVisitor([&](InitOperation&& initOperation) {
-            processInitOperation(WTFMove(initOperation));
-        }, [&](UpdateFormatDescriptionOperation&& operation) {
-            processFormatDescriptionForTrackId(WTFMove(operation.formatDescription), operation.trackId);
-        }, [&](SamplesVector&& samples) {
-            processMediaSamplesOperation(WTFMove(samples));
-        }, [&](ResetParserOperation&&) {
-            resetParserStateInternal();
-        }, [&](AppendBufferOperation&& buffer) {
-            advanceOperationState();
-            appendInternal(WTFMove(buffer))->whenSettled(RunLoop::current(), [this, strongThis = Ref { *this }, abortCount = m_abortCount] (auto&& result) mutable {
-                rewindOperationState();
-                if (result)
-                    queueOperation(AppendCompletedOperation { abortCount });
-                else
-                    queueOperation(ErrorOperation { });
-            });
-        }, [&](AppendCompletedOperation&& operation) {
-            processAppendCompletedOperation(WTFMove(operation));
-        }, [&](ErrorOperation&&) {
-            abortPendingOperations();
-            processError();
-        }), WTFMove(operation));
-    };
-}
+        // We have fully completed the previous append operation, we can start a new promise chain.
+        m_currentAppendProcessing = GenericPromise::createAndResolve();
 
-void SourceBufferPrivate::abortPendingOperations()
-{
-    for (auto& operation : std::exchange(m_pendingOperations, { })) {
-        if (!std::holds_alternative<InitOperation>(operation))
-            continue;
-        processInitialisationSegment({ });
-    }
-    m_operationState = OperationState::Idle;
-}
+        if (abortCount != m_abortCount)
+            return GenericPromise::createAndResolve();
 
-void SourceBufferPrivate::processError()
-{
-    m_didReceiveInitializationSegmentErrored = false;
-    m_didReceiveSampleErrored = false;
-    m_errored = true;
-    // SourceBuffer will run https://w3c.github.io/media-source/#dfn-end-of-stream with error set to "decode".
-    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
-}
-
-void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
-{
-    auto& segment = initOperation.segment;
-    if ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment))
-        || !precheckInitialisationSegment(segment)) {
-        m_didReceiveInitializationSegmentErrored = true;
-        processInitialisationSegment({ });
-        return;
-    }
-
-    advanceOperationState();
-
-    auto segmentCopy = segment;
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable {
+        // Before the promise returned by appendInternal is resolved, the various callbacks would have been called and populating m_currentAppendProcessing.
+        return appendInternal(WTFMove(buffer));
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) mutable -> Ref<GenericPromise> {
         if (!weakThis)
-            return;
+            return GenericPromise::createAndReject(-1);
 
-        if (!m_errored) {
-            rewindOperationState();
-            m_didReceiveInitializationSegmentErrored |= !result;
+        processPendingMediaSamples();
 
-            m_receivedFirstInitializationSegment = true;
-            m_pendingInitializationSegmentForChangeType = false;
+        // We need to wait for m_currentAppendOperation to be settled (which will occur once all the init and media segments have been processed)
+        return m_currentAppendProcessing->whenSettled(RunLoop::current(), [previousResult = WTFMove(result)](auto&& result) {
+            return (previousResult && result) ? GenericPromise::createAndResolve() : GenericPromise::createAndReject(-1);
+        });
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { * this }, this, abortCount = m_abortCount](auto&& result) mutable {
+        if (!weakThis || !result)
+            return GenericPromise::createAndReject(-1);
+
+        if (abortCount != m_abortCount)
+            return GenericPromise::createAndResolve();
+
+        // Resolve the changes in TrackBuffers' buffered ranges
+        // into the SourceBuffer's buffered ranges
+        auto trackBuffers = trackBuffersRanges();
+        if (isAttached())
+            m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
+
+        Vector<Ref<GenericPromise>> promises;
+        promises.append(updateBufferedFromTrackBuffers(trackBuffers));
+        if (m_client) {
+            if (m_groupEndTimestamp > duration()) {
+                // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+                // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+                // duration set to the maximum of the current duration and the group end timestamp.
+                promises.append(m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp));
+            }
+            m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
         }
 
-        processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+        return GenericPromise::all(RunLoop::current(), promises);
+    })->whenSettled(RunLoop::current(), [weakSelf = WeakPtr { *this }, this, abortCount = m_abortCount](auto&& result) mutable {
+        if (!weakSelf || !isAttached())
+            return GenericPromise::createAndReject(-1);
 
-        processPendingOperations();
+        if (abortCount == m_abortCount)
+            m_client->sourceBufferPrivateAppendComplete(result ? SourceBufferPrivateClient::AppendResult::Succeeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
+        return GenericPromise::createAndResolve();
     });
 }
 
-void SourceBufferPrivate::processMediaSamplesOperation(SamplesVector&& mediaSamples)
+void SourceBufferPrivate::processPendingMediaSamples()
 {
-    for (auto& samples : mediaSamples) {
-        if (m_didReceiveSampleErrored)
-            return;
-        processMediaSample(WTFMove(samples));
-    }
+    if (m_pendingSamples.isEmpty())
+        return;
+    auto samples = std::exchange(m_pendingSamples, { });
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, samples = WTFMove(samples)](auto&& result) mutable {
+        if (!weakThis || !result)
+            return GenericPromise::createAndReject(-1);
+        for (auto& sample : samples) {
+            if (!processMediaSample(WTFMove(sample)))
+                return GenericPromise::createAndReject(-1);
+        }
+        return GenericPromise::createAndResolve();
+    });
 }
 
-void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
+bool SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
 {
     // 3.5.1 Segment Parser Loop
     // 6.1 If the first initialization segment received flag is false, (Note: Issue # 155 & changeType()
@@ -818,13 +750,11 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
     //  of SourceBufferPrivate. That's why this check can't really be done in appendInternal.
     //  unless we force some kind of design with state machine switching.
 
-    if (!m_receivedFirstInitializationSegment || m_pendingInitializationSegmentForChangeType) {
-        m_didReceiveSampleErrored = true;
-        return;
-    }
+    if (!m_receivedFirstInitializationSegment || m_pendingInitializationSegmentForChangeType)
+        return false;
 
     if (!isMediaSampleAllowed(sample))
-        return;
+        return true;
 
     // 3.5.8 Coded Frame Processing
     // http://www.w3.org/TR/media-source/#sourcebuffer-coded-frame-processing
@@ -891,7 +821,7 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
             // The client managed to append a sample with a trackID not present in the initialization
             // segment. This would be a good place to post an message to the developer console.
             m_client->sourceBufferPrivateDidDropSample();
-            return;
+            return true;
         }
         TrackBuffer& trackBuffer = it->value;
 
@@ -993,7 +923,7 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
             }
             trackBuffer.setNeedRandomAccessFlag(true);
             m_client->sourceBufferPrivateDidDropSample();
-            return;
+            return true;
         }
 
         // 1.10 If the need random access point flag on track buffer equals true, then run the following steps:
@@ -1002,7 +932,7 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
             // to the top of the loop to start processing the next coded frame.
             if (!sample->isSync()) {
                 m_client->sourceBufferPrivateDidDropSample();
-                return;
+                return true;
             }
 
             // 1.11.2 Set the need random access point flag on track buffer to false.
@@ -1234,6 +1164,7 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
     // Step 5 will be handlded by SourceBufferPrivate::appendCompleted()
 
     updateHighestPresentationTimestamp();
+    return true;
 }
 
 void SourceBufferPrivate::abort()
@@ -1243,18 +1174,27 @@ void SourceBufferPrivate::abort()
 
 void SourceBufferPrivate::resetParserState()
 {
-    queueOperation(ResetParserOperation { });
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) mutable {
+        if (!weakThis)
+            return GenericPromise::createAndReject(-1);
+        resetParserStateInternal();
+        return GenericPromise::createAndSettle(WTFMove(result));
+    });
 }
 
 void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "isActive = ", isActive());
-    if (isActive()) {
-        evictFrames(maximumBufferSize, maximumBufferSize, currentTime);
-        return;
-    }
-    resetTrackBuffers();
-    clearTrackBuffers(true);
+
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, maximumBufferSize, currentTime](auto&& result) mutable {
+        if (isActive())
+            evictFrames(maximumBufferSize, maximumBufferSize, currentTime);
+        else {
+            resetTrackBuffers();
+            clearTrackBuffers(true);
+        }
+        return GenericPromise::createAndSettle(WTFMove(result));
+    });
 }
 
 bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime)
