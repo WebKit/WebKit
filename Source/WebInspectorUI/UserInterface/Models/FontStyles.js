@@ -145,7 +145,7 @@ WI.FontStyles = class FontStyles
                 axes.push(`"${tag}" ${value}`);
             }
 
-            let targetPropertyValue = axes.join(', ');
+            let targetPropertyValue = axes.join(", ");
 
             const createIfMissing = true;
             cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
