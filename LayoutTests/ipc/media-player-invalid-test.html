@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html><head>
+<script src="fuzz_tools.js"></script>
+<script src="argumentParser.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(() => {
+        testRunner.notifyDone();
+    }, 2000);
+    testRunner.dumpAsText();
+}
+
+function fuzz() {
+    if (window.IPC && IPC) {
+      $F.GPUOutgoingHandler[IPC.messages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer.name]=parseMessage;
+      video=document.createElement('video');
+      video.src='abc';
+    }
+}
+function parseMessage(msg) {
+  let parseResults=ArgumentParser.parseMessage(msg,'GPU');
+  o17=parseResults['WebCore::MediaPlayerIdentifier'][0];
+  o19=parseResults['GPUConnection'][0];
+  o20=parseResults['clz_RemoteMediaPlayerManagerProxyConnection'][0];
+  IPC.sendMessage('GPU',o19,IPCmessages.GPUConnectionToWebProcess_EnableMockMediaSource.name,[]);
+  window.setTimeout(timeout_159,200);
+}
+function timeout_159() {
+  IPC.sendMessage('GPU',o20,IPCmessages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer.name,[{type: 'uint64_t',value: o17},{type: 'uint8_t',value: 8},{type: 'String',value: ''},{type: 'String',value: ''},{type: 'String',value: ''},{type: 'String',value: ''},{type: 'Vector',value: [[{type: 'String',value: "pageUp:"}],[{type: 'String',value: ''}]]},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'String',value: ''}],[{type: 'String',value: ''}],[{type: 'String',value: ''}],[{type: 'String',value: "video/mpeg"}],[{type: 'String',value: ''}],[{type: 'String',value: "http"}],[{type: 'String',value: "a"}],[{type: 'String',value: ''}],[{type: 'String',value: ''}]]},{type: 'bool',value: 0},{type: 'bool',value: 1},{type: 'Vector',value: []},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'uint32_t',value: 476}],[{type: 'uint32_t',value: 555}]]},{type: 'bool',value: 0},{type: 'uint32_t',value: 697},{type: 'uint32_t',value: 644},{type: 'uint32_t',value: 543},{type: 'uint32_t',value: 460},{type: 'Vector',value: [[{type: 'String',value: "page-6"}],[{type: 'String',value: ''}]]},{type: 'Vector',value: []},{type: 'uint8_t',value: 0},{type: 'String',value: "file:///tmp/ipcfuzz"},{type: 'String',value: "file:///etc/passwd"},{type: 'bool',value: 1},{type: 'uint16_t',value: 47385},{type: 'uint32_t',value: 174},{type: 'uint32_t',value: 632},{type: 'float',value: 341},{type: 'float',value: 1316.9076250987036},{type: 'uint64_t',value: 1009},{type: 'bool',value: 1},{type: 'bool',value: 1},{type: 'bool',value: 0},{type: 'bool',value: 0},{type: 'bool',value: 1}]);
+  o112=2395;
+  IPC.sendMessage("GPU",o17,IPC.messages.RemoteMediaPlayerProxy_LoadMediaSource.name, [{type:"String", value: ''},{type:"String", value: ''},{type: "bool", value: 0},{type: "uint64_t", value: o112}]);
+  IPC.sendMessage('GPU',o20,IPC.messages.RemoteMediaPlayerManagerProxy_DeleteMediaPlayer.name,[{type: 'uint64_t',value: o17}]);
+  IPC.sendMessage('GPU',o112,IPCmessages.RemoteMediaSourceProxy_MarkEndOfStream.name,[{type: 'bool',value: 0}]);
+}
+</script></head>
+<body onload='fuzz()'>
+    This test passes if it does not crash.
+</body>
+</html>

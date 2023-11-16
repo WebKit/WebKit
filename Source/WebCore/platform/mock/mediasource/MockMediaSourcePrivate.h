@@ -54,7 +54,7 @@ public:
     MediaTime duration();
     const PlatformTimeRanges& buffered();
 
-    MockMediaPlayerMediaSource& player() const { return m_player; }
+    WeakPtr<MockMediaPlayerMediaSource> player() const { return m_player; }
 
     void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
     void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
@@ -93,7 +93,7 @@ private:
 
     friend class MockSourceBufferPrivate;
 
-    MockMediaPlayerMediaSource& m_player;
+    WeakPtr<MockMediaPlayerMediaSource> m_player;
     WeakPtr<MediaSourcePrivateClient> m_client;
     Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
     Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
