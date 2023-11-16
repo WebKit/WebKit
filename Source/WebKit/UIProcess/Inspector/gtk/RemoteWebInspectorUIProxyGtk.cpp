@@ -34,6 +34,7 @@
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
+#include "WebProcessPool.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/GtkVersioning.h>
 #include <wtf/text/Base64.h>

@@ -32,6 +32,7 @@
 #include "JSPhotoCapabilities.h"
 #include "TaskSource.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
