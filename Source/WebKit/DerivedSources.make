@@ -498,6 +498,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	NetworkProcess/Classifier/StorageAccessStatus.serialization.in \
 	NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in \
 	NetworkProcess/storage/FileSystemStorageError.serialization.in \
+	Platform/IPC/FormDataReference.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
