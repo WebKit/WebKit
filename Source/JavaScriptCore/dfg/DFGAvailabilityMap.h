@@ -39,7 +39,7 @@ struct AvailabilityMap {
     
     void dump(PrintStream& out) const;
     
-    friend bool operator==(const AvailabilityMap&, const AvailabilityMap&) = default;
+    bool operator==(const AvailabilityMap& other) const;
     
     void merge(const AvailabilityMap& other);
     
