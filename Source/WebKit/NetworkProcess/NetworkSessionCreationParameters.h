@@ -54,9 +54,6 @@ namespace WebKit {
 enum class AllowsCellularAccess : bool { No, Yes };
 
 struct NetworkSessionCreationParameters {
-    void encode(IPC::Encoder&) &&;
-    static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
-    
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
     Markable<WTF::UUID> dataStoreIdentifier;
     String boundInterfaceIdentifier;
