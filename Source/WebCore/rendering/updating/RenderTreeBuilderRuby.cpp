@@ -42,68 +42,14 @@ static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
     return *lineageOfType<RenderRubyRun>(child).first();
 }
 
-static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
-{
-    ASSERT(!object
-        || !isRuby(object->parent())
-        || is<RenderRubyRun>(*object)
-        || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == DisplayType::InlineBlock)
-        || object->isRenderMultiColumnFlow()
-        || object->isRenderMultiColumnSet());
-
-    return object
-        && isRuby(object->parent())
-        && is<RenderBlock>(*object)
-        && !is<RenderRubyRun>(*object);
-}
-
-static inline bool isRubyBeforeBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->previousSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::Before;
-}
-
-static inline bool isRubyAfterBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->nextSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::After;
-}
-
 #if ASSERT_ENABLED
 static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
 {
     return object.isRenderRubyRun()
-    || object.isBeforeContent()
-    || object.isAfterContent()
     || object.isRenderMultiColumnFlow()
-    || object.isRenderMultiColumnSet()
-    || isAnonymousRubyInlineBlock(&object);
+    || object.isRenderMultiColumnSet();
 }
 #endif // ASSERT_ENABLED
-
-static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->firstChild();
-    return isRubyBeforeBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->lastChild();
-    return isRubyAfterBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static auto createAnonymousRubyInlineBlock(RenderObject& ruby)
-{
-    auto newBlock = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), DisplayType::InlineBlock));
-    newBlock->initializeStyle();
-    return newBlock;
-}
 
 RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
     : m_builder(builder)
@@ -241,42 +187,11 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    // Insert :before and :after content before/after the RenderRubyRun(s)
-    if (child.isBeforeContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content in an anonymous inline-block.
-        auto* beforeBlock = rubyBeforeBlock(&parent);
-        if (!beforeBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            beforeBlock = newBlock.get();
-            m_builder.blockFlowBuilder().attach(parent, WTFMove(newBlock), parent.firstChild());
-        }
-        beforeChild = nullptr;
-        return *beforeBlock;
-    }
-
-    if (child.isAfterContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* afterBlock = rubyAfterBlock(&parent);
-        if (!afterBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            afterBlock = newBlock.get();
-            m_builder.blockFlowBuilder().attach(parent, WTFMove(newBlock), nullptr);
-        }
-        beforeChild = nullptr;
-        return *afterBlock;
-    }
-
     // If the child is a ruby run, just add it normally.
     if (child.isRenderRubyRun())
         return parent;
 
-    if (beforeChild && !parent.isBeforeOrAfterContent(beforeChild)) {
+    if (beforeChild) {
         // insert child into run
         ASSERT(!beforeChild->isRenderRubyRun());
         auto* run = beforeChild->parent();
@@ -303,42 +218,11 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    // Insert :before and :after content before/after the RenderRubyRun(s)
-    if (child.isBeforeContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* beforeBlock = rubyBeforeBlock(&parent);
-        if (!beforeBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            beforeBlock = newBlock.get();
-            m_builder.inlineBuilder().attach(parent, WTFMove(newBlock), parent.firstChild());
-        }
-        beforeChild = nullptr;
-        return *beforeBlock;
-    }
-
-    if (child.isAfterContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* afterBlock = rubyAfterBlock(&parent);
-        if (!afterBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            afterBlock = newBlock.get();
-            m_builder.inlineBuilder().attach(parent, WTFMove(newBlock), nullptr);
-        }
-        beforeChild = nullptr;
-        return *afterBlock;
-    }
-
     // If the child is a ruby run, just add it normally.
     if (child.isRenderRubyRun())
         return parent;
 
-    if (beforeChild && !parent.isBeforeOrAfterContent(beforeChild)) {
+    if (beforeChild) {
         // insert child into run
         ASSERT(!beforeChild->isRenderRubyRun());
         auto* run = beforeChild->parent();
@@ -410,20 +294,10 @@ RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsInline& parent, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
+    // If the child's parent is *this (must be a ruby run), just use the normal remove method.
     if (child.parent() == &parent) {
         ASSERT(isRubyChildForNormalRemoval(child));
         return m_builder.detachFromRenderElement(parent, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = m_builder.detach(parent, child);
-        m_builder.destroy(parent);
-        return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
@@ -432,20 +306,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsInline& pare
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsBlock& parent, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
+    // If the child's parent is *this (must be a ruby run), just use the normal remove method.
     if (child.parent() == &parent) {
         ASSERT(isRubyChildForNormalRemoval(child));
         return m_builder.blockBuilder().detach(parent, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = m_builder.detach(parent, child);
-        m_builder.destroy(parent);
-        return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
