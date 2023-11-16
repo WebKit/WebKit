@@ -305,43 +305,24 @@ BuildbotQueue.prototype = {
 
     compareIterationsByRevisions: function(a, b)
     {
-        var sortedRepositories = Dashboard.sortedRepositories;
-        for (var i = 0; i < sortedRepositories.length; ++i) {
-            var repositoryName = sortedRepositories[i].name;
-            var trac = sortedRepositories[i].trac;
-            console.assert(trac);
-            var indexA = trac.indexOfRevision(a.revision[repositoryName]);
-            var indexB = trac.indexOfRevision(b.revision[repositoryName]);
+        const sortedRepositories = Dashboard.sortedRepositories;
+        for (let i = 0; i < sortedRepositories.length; ++i) {
+            const repositoryName = sortedRepositories[i].name;
+            const commitStore = sortedRepositories[i].commitStore;
+            if (!commitStore)
+                return 0;
+
+            const indexA = commitStore.indexOfRef(a.revision[repositoryName]);
+            const indexB = commitStore.indexOfRef(b.revision[repositoryName]);
+
             if (indexA !== -1 && indexB !== -1) {
-                var result = indexB - indexA;
+                let result = indexB - indexA;
                 if (result)
                     return result;
             }
         }
 
         return 0;
-    },
-
-    // Re-insert the iteration if its sort order changed (which happens once details about it get loaded).
-    updateIterationPosition: function(iteration)
-    {
-        var oldIndex;
-        var inserted = false;
-        for (var i = 0; i < this.iterations.length; ++i) {
-            if (!inserted && this.compareIterations(this.iterations[i], iteration) > 0) {
-                this.iterations.splice(i, 0, iteration);
-                if (oldIndex !== undefined)
-                    break;
-                inserted = true;
-                continue;
-            }
-            if (this.iterations[i] === iteration) {
-                oldIndex = i;
-                if (inserted)
-                    break;
-            }
-        }
-        this.iterations.splice(oldIndex, 1);
     },
 
     sortIterations: function()

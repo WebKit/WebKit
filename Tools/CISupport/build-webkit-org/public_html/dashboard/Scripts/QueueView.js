@@ -108,42 +108,48 @@ QueueView.prototype = {
 
     _appendPendingRevisionCount: function(queue, latestIterationGetter)
     {
-        var latestProductiveIteration = latestIterationGetter();
+        const latestProductiveIteration = latestIterationGetter();
         if (!latestProductiveIteration)
             return;
 
-        var totalRevisionsBehind = 0;
+        let totalRevisionsBehind = 0;
+        let didOverflow = false;
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
-        var branches = queue.branches;
-        for (var i = 0; i < branches.length; ++i) {
-            var branch = branches[i];
+        const branches = queue.branches;
+        for (let i = 0; i < branches.length; ++i) {
+            const branch = branches[i];
             if (branch.name === 'trunk')
                 branch.name = 'main';
-            var repository = branch.repository;
-            var repositoryName = repository.name;
-            var commits = repository.commits;
-            var latestProductiveIdentifier = latestProductiveIteration.revision[repositoryName];
+            const repository = branch.repository;
+            const repositoryName = repository.name;
+            const commitStore = repository.commitStore;
+            const latestProductiveIdentifier = latestProductiveIteration.revision[repositoryName];
             if (!latestProductiveIdentifier)
                 continue;
-            if (!commits)
+            if (!commitStore)
                 continue;
-            var head = commits.heads[branch.name];
-            if (!head) {
-                commits.heads[branch.name] = null;
+
+            didOverflow = true;
+            if (!commitStore.commitsByBranch[branch.name])
                 continue;
-            }
-            totalRevisionsBehind = commits.branchPosition(commits.heads[branch.name].identifier) - commits.branchPosition(latestProductiveIdentifier);
+            const head = commitStore.commitsByBranch[branch.name][0];
+            if (!head)
+                continue;
+            const latestProductiveIdentifierBranchPosition = commitStore.branchPosition(latestProductiveIdentifier);
+            if (!latestProductiveIdentifierBranchPosition)
+                continue;
+            totalRevisionsBehind += commitStore.branchPosition(commitStore.repr(head)) - latestProductiveIdentifierBranchPosition;
+            didOverflow = false;
         }
 
         if (!totalRevisionsBehind)
             return;
 
-        commits.fetch(branch.name, Math.min(totalRevisionsBehind, QueueView.MAX_POPOVER));
-        var messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
-        messageElement.textContent = totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "commit behind" : "commits behind");
-        var status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
+        let messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
+        messageElement.textContent = (didOverflow ? "more than " : "") + totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "commit behind" : "commits behind");
+        const status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
         this.element.appendChild(status.element);
 
         new PopoverTracker(messageElement, this._presentPopoverForPendingCommits.bind(this, latestIterationGetter), queue);
@@ -158,9 +164,9 @@ QueueView.prototype = {
 
             var linkElement = document.createElement("a");
             linkElement.className = "revision";
-            linkElement.href = commits.urlFor(commit.identifier);
+            linkElement.href = commits.urlFor(commits.repr(commit));
             linkElement.target = "_blank";
-            linkElement.textContent = this._formatRevisionForDisplay(commit.identifier, branch.repository);
+            linkElement.textContent = this._formatRevisionForDisplay(commits.repr(commit), branch.repository);
             result.appendChild(linkElement);
 
             var authorElement = document.createElement("span");
@@ -190,36 +196,39 @@ QueueView.prototype = {
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        var shouldAddDivider = false;
-        var branches = queue.branches;
-        for (var i = 0; i < branches.length; ++i) {
-            var branch = branches[i];
-            var repository = branch.repository;
-            var repositoryName = repository.name;
-            var commits = repository.commits;
-            if (!commits.heads[branch.name])
+        let shouldAddDivider = false;
+        const branches = queue.branches;
+        for (let i = 0; i < branches.length; ++i) {
+            const branch = branches[i];
+            const repository = branch.repository;
+            const repositoryName = repository.name;
+            const commitStore = repository.commitStore;
+            if (!commitStore)
+                continue;
+            const head = commitStore.commitsByBranch[branch.name][0];
+            if (!head)
                 continue;
 
-            var commitList = [];
-            var latestProductiveIdentifier = latestProductiveIteration.revision[repositoryName];
-            for (const identifier of commits.lastNIdentifiers(branch.name, QueueView.MAX_POPOVER)) {
-                if (identifier == latestProductiveIdentifier)
+            let commitList = [];
+            const latestProductiveIdentifier = latestProductiveIteration.revision[repositoryName];
+            for (const commit of commitStore.commitsByBranch[branch.name]) {
+                if (commit.identifier == latestProductiveIdentifier || commit.hash == latestProductiveIdentifier)
                     break;
-                if (commits.commits[identifier])
-                    commitList.push(commits.commits[identifier]);
+                commitList.push(commit);
+                if (commitList.length > QueueView.MAX_POPOVER)
+                    break;
             }
             if (!commitList.length)
                 continue
-            var lines = this._popoverLinesForCommitRange(commits, branch, commitList);
-            var length = lines.length;
+            const lines = this._popoverLinesForCommitRange(commitStore, branch, commitList);
             if (length && shouldAddDivider)
                 this._addDividerToPopover(content);
-            for (var j = 0; j < length; ++j)
+            for (let j = 0; j < lines.length; ++j)
                 content.appendChild(lines[j]);
             shouldAddDivider = shouldAddDivider || length > 0;
         }
 
-        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        const rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
         popover.content = content;
         popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
 

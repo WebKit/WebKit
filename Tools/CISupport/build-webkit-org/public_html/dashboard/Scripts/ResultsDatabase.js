@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var settings = new Settings;
-var buildbots = [ new WebKitBuildbot ];
-Dashboard.Repository.OpenSource.commitStore = new CommitsWebKitOrg("https://commits.webkit.org/");
-if (typeof Bugzilla !== "undefined")
-    var bugzilla = new Bugzilla;
-if (typeof BubbleQueueServer !== "undefined")
-    var bubbleQueueServer = new BubbleQueueServer;
-if (typeof TestHistory !== "undefined")
-    var testHistory = new TestHistory;
+ResultsDatabase = function(url, repository_id)
+{
+    CommitStore.call(this);
+
+    console.assert(url);
+    this.url = url;
+    this.repository_id = repository_id;
+};
+
+BaseObject.addConstructorFunctions(ResultsDatabase);
+
+ResultsDatabase.prototype = {
+    constructor: ResultsDatabase,
+    __proto__: CommitStore.prototype,
+
+    urlFor: function(ref) {
+        return `${this.url}/commit/info?repository_id=${this.repository_id}&ref=${ref}`;
+    },
+    fetch: function(branch, count) {
+        let self = this;
+
+        JSON.load(`${self.url}/api/commits?repository_id=${this.repository_id}&branch=${branch}&limit=${2 * count}`, function(data) {
+            data.forEach((commit) => {
+                self.addCommit(commit);
+            });
+        });
+    },
+};
