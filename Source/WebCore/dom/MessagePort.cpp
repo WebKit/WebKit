@@ -155,7 +155,7 @@ MessagePort::~MessagePort()
 
 void MessagePort::entangle()
 {
-    MessagePortChannelProvider::fromContext(*scriptExecutionContext()).entangleLocalPortInThisProcessToRemote(m_identifier, m_remoteIdentifier);
+    MessagePortChannelProvider::fromContext(*protectedScriptExecutionContext()).entangleLocalPortInThisProcessToRemote(m_identifier, m_remoteIdentifier);
 }
 
 ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
@@ -189,7 +189,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
 
     LOG(MessagePorts, "Actually posting message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
-    MessagePortChannelProvider::fromContext(*scriptExecutionContext()).postMessageToRemote(WTFMove(message), m_remoteIdentifier);
+    MessagePortChannelProvider::fromContext(*protectedScriptExecutionContext()).postMessageToRemote(WTFMove(message), m_remoteIdentifier);
     return { };
 }
 
@@ -281,7 +281,7 @@ void MessagePort::dispatchMessages()
 
         ASSERT(context->isContextThread());
         auto* globalObject = context->globalObject();
-        auto& vm = globalObject->vm();
+        Ref vm = globalObject->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
         auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
@@ -294,7 +294,7 @@ void MessagePort::dispatchMessages()
             auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
             if (UNLIKELY(scope.exception())) {
                 // Currently, we assume that the only way we can get here is if we have a termination.
-                RELEASE_ASSERT(vm.hasPendingTerminationException());
+                RELEASE_ASSERT(vm->hasPendingTerminationException());
                 return;
             }
 
@@ -313,7 +313,7 @@ void MessagePort::dispatchEvent(Event& event)
     if (m_isDetached)
         return;
 
-    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
+    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
         if (globalScope->isClosing())
             return;
     }
