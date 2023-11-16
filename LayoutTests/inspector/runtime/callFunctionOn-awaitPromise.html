@@ -188,7 +188,7 @@ function test()
         async test() {
             let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
             let result = await RuntimeAgent.callFunctionOn.invoke({
-                functionDeclaration: "async function() { return frames[0].iframePromise; }",
+                functionDeclaration: "function() { return frames[0].iframePromise; }",
                 awaitPromise: true,
                 returnByValue: true,
                 objectId: thisObject.result.objectId,
