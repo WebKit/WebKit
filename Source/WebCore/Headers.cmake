@@ -1395,6 +1395,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/MixedContentChecker.h
     loader/NavigationAction.h
     loader/NavigationRequester.h
+    loader/NavigationScheduler.h
     loader/NetscapePlugInStreamLoader.h
     loader/PCMSites.h
     loader/PCMTokens.h

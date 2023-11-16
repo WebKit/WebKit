@@ -226,7 +226,7 @@ private:
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, CompletionHandler<void()>&& completionHandler)
+    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, CompletionHandler<void(bool)>&& completionHandler)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true)
         , m_completionHandler(WTFMove(completionHandler))
     {
@@ -235,7 +235,7 @@ public:
     ~ScheduledLocationChange()
     {
         if (m_completionHandler)
-            m_completionHandler();
+            m_completionHandler(false);
     }
 
     void fire(Frame& frame) override
@@ -251,11 +251,11 @@ public:
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
         frame.changeLocation(WTFMove(frameLoadRequest));
-        completionHandler();
+        completionHandler(true);
     }
 
 private:
-    CompletionHandler<void()> m_completionHandler;
+    CompletionHandler<void(bool)> m_completionHandler;
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
@@ -508,10 +508,10 @@ LockBackForwardList NavigationScheduler::mustLockBackForwardList(Frame& targetFr
     return LockBackForwardList::No;
 }
 
-void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, SecurityOrigin& securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, CompletionHandler<void()>&& completionHandler)
+void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, SecurityOrigin& securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, CompletionHandler<void(ScheduleLocationChangeResult)>&& completionHandler)
 {
     if (!shouldScheduleNavigation(url))
-        return completionHandler();
+        return completionHandler(ScheduleLocationChangeResult::Stopped);
 
     if (lockBackForwardList == LockBackForwardList::No)
         lockBackForwardList = mustLockBackForwardList(m_frame);
@@ -535,14 +535,16 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
         frameLoadRequest.setShouldOpenExternalURLsPolicy(initiatingDocument.shouldOpenExternalURLsPolicyToPropagate());
         if (loader)
             loader->changeLocation(WTFMove(frameLoadRequest));
-        return completionHandler();
+        return completionHandler(ScheduleLocationChangeResult::Completed);
     }
 
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = loader && !loader->stateMachine().committedFirstRealDocumentLoad();
 
-    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, WTFMove(completionHandler)));
+    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, [completionHandler = WTFMove(completionHandler)] (bool hasStarted) mutable {
+        completionHandler(hasStarted ? ScheduleLocationChangeResult::Started : ScheduleLocationChangeResult::Stopped);
+    }));
 }
 
 void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submission)

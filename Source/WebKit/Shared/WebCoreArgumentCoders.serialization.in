@@ -5226,6 +5226,13 @@ enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldAllow,
 };
 
+header: <WebCore/NavigationScheduler.h>
+enum class WebCore::ScheduleLocationChangeResult : uint8_t {
+    Stopped,
+    Completed,
+    Started
+};
+
 header: <WebCore/DocumentLoader.h>
 [CustomHeader] enum class WebCore::MouseEventPolicy : uint8_t {
     Default,

@@ -238,6 +238,7 @@
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
+#include <WebCore/NavigationScheduler.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -6942,19 +6943,19 @@ void WebPage::canceledComposition()
     sendEditorStateUpdate();
 }
 
-void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(bool)>&& callback)
+void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(WebCore::ScheduleLocationChangeResult)>&& callback)
 {
 #if ENABLE(SERVICE_WORKER)
     RefPtr document = Document::allDocumentsMap().get(documentIdentifier);
     if (!document) {
-        callback(false);
+        callback(WebCore::ScheduleLocationChangeResult::Stopped);
         return;
     }
     document->navigateFromServiceWorker(url, WTFMove(callback));
 #else
     UNUSED_PARAM(documentIdentifier);
     UNUSED_PARAM(url);
-    callback(false);
+    callback(ScheduleLocationChangeResult::Stopped);
 #endif
 }
 

@@ -244,11 +244,11 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
 
     RefPtr frame = ownerElement.contentFrame();
     if (frame) {
-        CompletionHandler<void()> stopDelayingLoadEvent = [] { };
+        CompletionHandler<void(ScheduleLocationChangeResult)> stopDelayingLoadEvent = [] (ScheduleLocationChangeResult) { };
         if (upgradedRequestURL.protocolIsJavaScript()) {
             Ref ownerDocument = ownerElement.document();
             ownerDocument->incrementLoadEventDelayCount();
-            stopDelayingLoadEvent = [ownerDocument = WTFMove(ownerDocument)] {
+            stopDelayingLoadEvent = [ownerDocument = WTFMove(ownerDocument)] (ScheduleLocationChangeResult) {
                 ownerDocument->decrementLoadEventDelayCount();
             };
         }
