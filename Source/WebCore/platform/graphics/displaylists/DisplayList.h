@@ -27,7 +27,7 @@
 
 #include "DisplayListItems.h"
 #include "DisplayListResourceHeap.h"
-#include <wtf/Noncopyable.h>
+#include "RenderingResource.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,10 +38,17 @@ class TextStream;
 namespace WebCore {
 namespace DisplayList {
 
-class DisplayList {
-    WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
+struct ReplayResult {
+    RefPtr<DisplayList> trackedDisplayList;
+    std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
+    StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
+};
+
+class DisplayList : public RenderingResource {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    DisplayList() = default;
+    WEBCORE_EXPORT static Ref<DisplayList> create(RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    WEBCORE_EXPORT static Ref<DisplayList> create(Vector<Item>&&, ResourceHeap&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
     WEBCORE_EXPORT void append(Item&&);
     void shrinkToFit();
@@ -51,6 +58,8 @@ public:
 
     const Vector<Item>& items() const { return m_items; }
     Vector<Item>& items() { return m_items; }
+
+    WEBCORE_EXPORT Vector<RenderingResourceIdentifier> resourceIdentifiers() const;
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
     void cacheImageBuffer(ImageBuffer&);
@@ -59,11 +68,19 @@ public:
     void cacheDecomposedGlyphs(DecomposedGlyphs&);
     void cacheGradient(Gradient&);
     void cacheFilter(Filter&);
+    void cacheDisplayList(DisplayList&);
+
+    WEBCORE_EXPORT ReplayResult replay(GraphicsContext&, const FloatRect& initialClip = { }, bool trackReplayList = false) const;
 
     WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;
 
 private:
+    DisplayList(RenderingResourceIdentifier);
+    DisplayList(Vector<Item>&&, ResourceHeap&&, RenderingResourceIdentifier);
+
+    bool isDisplayList() const final { return true; }
+
     Vector<Item> m_items;
     ResourceHeap m_resourceHeap;
 };
@@ -72,3 +89,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&)
 
 } // DisplayList
 } // WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DisplayList::DisplayList)
+    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isDisplayList(); }
+SPECIALIZE_TYPE_TRAITS_END()

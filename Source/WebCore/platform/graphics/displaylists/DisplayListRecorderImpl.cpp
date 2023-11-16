@@ -187,9 +187,9 @@ void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const Decomposed
     append(DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier()));
 }
 
-void RecorderImpl::recordDrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
+void RecorderImpl::recordDrawDisplayList(DisplayList& displayList, const FloatPoint& destination)
 {
-    append(DrawDisplayListItems(items, destination));
+    append(DrawDisplayList(displayList.renderingResourceIdentifier(), destination));
 }
 
 void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -466,6 +466,12 @@ bool RecorderImpl::recordResourceUse(Gradient& gradient)
 bool RecorderImpl::recordResourceUse(Filter& filter)
 {
     m_displayList.cacheFilter(filter);
+    return true;
+}
+
+bool RecorderImpl::recordResourceUse(DisplayList& displayList)
+{
+    m_displayList.cacheDisplayList(displayList);
     return true;
 }
 

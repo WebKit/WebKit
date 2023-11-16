@@ -152,6 +152,44 @@ void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
     }
 }
 
+void RemoteResourceCacheProxy::recordDisplayListUse(DisplayList::DisplayList& displayList)
+{
+    auto addResult = m_renderingResources.ensure(displayList.renderingResourceIdentifier(), [&] {
+        return ThreadSafeWeakPtr<RenderingResource> { displayList };
+    });
+
+    if (!addResult.isNewEntry)
+        return;
+
+    for (auto& resource : displayList.resourceHeap().resources()) {
+        WTF::switchOn(resource,
+            [](std::monostate) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<ImageBuffer>& imageBuffer) {
+                recordImageBufferUse(imageBuffer);
+            }, [&](const Ref<RenderingResource>& renderingResource) {
+                if (auto* image = dynamicDowncast<NativeImage>(renderingResource.ptr()))
+                    recordNativeImageUse(*image);
+                else if (auto* filter = dynamicDowncast<Filter>(renderingResource.ptr()))
+                    recordFilterUse(*filter);
+                else if (auto* decomposedGlyphs = dynamicDowncast<DecomposedGlyphs>(renderingResource.ptr()))
+                    recordDecomposedGlyphsUse(*decomposedGlyphs);
+                else if (auto* gradient = dynamicDowncast<Gradient>(renderingResource.ptr()))
+                    recordGradientUse(*gradient);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<Font>& font) {
+                recordFontUse(font);
+            }, [&](const Ref<FontCustomPlatformData>&) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        );
+    }
+
+    displayList.addObserver(*this);
+    m_remoteRenderingBackendProxy.cacheDisplayList(displayList);
+}
+
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     if (isMainRunLoop())

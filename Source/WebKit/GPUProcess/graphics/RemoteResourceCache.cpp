@@ -54,6 +54,11 @@ void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
     m_resourceHeap.add(WTFMove(filter));
 }
 
+void RemoteResourceCache::cacheDisplayList(Ref<DisplayList::DisplayList>&& displayList)
+{
+    m_resourceHeap.add(WTFMove(displayList));
+}
+
 RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
@@ -92,6 +97,11 @@ RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier
 RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFilter(renderingResourceIdentifier);
+}
+
+RefPtr<DisplayList::DisplayList> RemoteResourceCache::cachedDisplayList(RenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getDisplayList(renderingResourceIdentifier);
 }
 
 void RemoteResourceCache::releaseAllResources()

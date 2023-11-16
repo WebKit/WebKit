@@ -32,7 +32,6 @@
 #include "CanvasRenderingContext.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
-#include "DisplayListReplayer.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
 #include "ScriptExecutionContext.h"
@@ -128,8 +127,7 @@ void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
         return;
     auto& displayList = m_recordingContext->displayList();
     if (!displayList.isEmpty()) {
-        DisplayList::Replayer replayer(target, displayList);
-        replayer.replay(FloatRect { { }, size() });
+        displayList.replay(target, FloatRect { { }, size() });
         displayList.clear();
     }
 }

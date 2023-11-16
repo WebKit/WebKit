@@ -55,6 +55,7 @@ public:
     virtual bool isGradient() const { return false; }
     virtual bool isDecomposedGlyphs() const { return false; }
     virtual bool isFilter() const { return false; }
+    virtual bool isDisplayList() const { return false; }
 
     bool hasValidRenderingResourceIdentifier() const
     {

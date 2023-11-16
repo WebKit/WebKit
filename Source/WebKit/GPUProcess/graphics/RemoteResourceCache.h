@@ -46,6 +46,7 @@ public:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void cacheFilter(Ref<WebCore::Filter>&&);
+    void cacheDisplayList(Ref<WebCore::DisplayList::DisplayList>&&);
     void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
 
     const WebCore::DisplayList::ResourceHeap& resourceHeap() const { return m_resourceHeap; }
@@ -55,6 +56,7 @@ public:
     RefPtr<WebCore::DecomposedGlyphs> cachedDecomposedGlyphs(WebCore::RenderingResourceIdentifier) const;
     RefPtr<WebCore::Gradient> cachedGradient(WebCore::RenderingResourceIdentifier) const;
     RefPtr<WebCore::Filter> cachedFilter(WebCore::RenderingResourceIdentifier) const;
+    RefPtr<WebCore::DisplayList::DisplayList> cachedDisplayList(WebCore::RenderingResourceIdentifier) const;
     RefPtr<WebCore::FontCustomPlatformData> cachedFontCustomPlatformData(WebCore::RenderingResourceIdentifier) const;
 
     void releaseAllResources();

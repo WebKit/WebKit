@@ -31,7 +31,6 @@
 #include "Animation.h"
 #include "DisplayList.h"
 #include "DisplayListRecorderImpl.h"
-#include "DisplayListReplayer.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsLayerAsyncContentsDisplayDelegateCocoa.h"
@@ -365,7 +364,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
     return PlatformCAAnimationCocoa::create(type, keyPath);
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, RefPtr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {
@@ -1883,7 +1882,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
         TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
 
-        m_displayList = makeUnique<DisplayList::DisplayList>();
+        m_displayList = DisplayList::DisplayList::create();
         
         FloatRect initialClip(boundsOrigin(), size());
 
@@ -1911,13 +1910,11 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
 {
     m_hasEverPainted = true;
     if (m_displayList) {
-        DisplayList::Replayer replayer(context, *m_displayList);
-        
         if (UNLIKELY(isTrackingDisplayListReplay())) {
-            auto replayList = replayer.replay(clip, isTrackingDisplayListReplay()).trackedDisplayList;
-            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
+            auto replayList = m_displayList->replay(context, clip, isTrackingDisplayListReplay()).trackedDisplayList;
+            layerDisplayListMap().add(this, std::make_pair(clip, WTFMove(replayList)));
         } else
-            replayer.replay(clip);
+            m_displayList->replay(context, clip);
 
         return;
     }

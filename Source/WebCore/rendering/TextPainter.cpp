@@ -24,7 +24,6 @@
 #include "TextPainter.h"
 
 #include "DisplayListRecorderImpl.h"
-#include "DisplayListReplayer.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorTextBox.h"
@@ -121,7 +120,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else {
         // Replaying back a whole cached glyph run to the GraphicsContext.
-        m_context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), textOrigin);
+        m_context.drawDisplayList(*m_glyphDisplayList, textOrigin);
     }
     m_glyphDisplayList = nullptr;
 }

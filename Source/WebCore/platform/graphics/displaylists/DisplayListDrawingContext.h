@@ -48,9 +48,9 @@ public:
     WEBCORE_EXPORT void replayDisplayList(GraphicsContext&);
 
 protected:
+    Ref<DisplayList> m_displayList;
     RecorderImpl m_context;
-    DisplayList m_displayList;
-    std::unique_ptr<DisplayList> m_replayedDisplayList;
+    RefPtr<DisplayList> m_replayedDisplayList;
     bool m_tracksDisplayListReplay { false };
 };
 

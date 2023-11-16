@@ -39,6 +39,28 @@
 namespace WebCore {
 namespace DisplayList {
 
+Ref<DisplayList> DisplayList::create(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    return adoptRef(*new DisplayList(renderingResourceIdentifier));
+}
+
+Ref<DisplayList> DisplayList::create(Vector<Item>&& items, ResourceHeap&& resourceHeap, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    return adoptRef(*new DisplayList(WTFMove(items), WTFMove(resourceHeap), renderingResourceIdentifier));
+}
+
+DisplayList::DisplayList(RenderingResourceIdentifier renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+{
+}
+
+DisplayList::DisplayList(Vector<Item>&& items, ResourceHeap&& resourceHeap, RenderingResourceIdentifier renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_items(WTFMove(items))
+    , m_resourceHeap(WTFMove(resourceHeap))
+{
+}
+
 void DisplayList::append(Item&& item)
 {
     m_items.append(WTFMove(item));
@@ -60,6 +82,14 @@ bool DisplayList::isEmpty() const
     return m_items.isEmpty();
 }
 
+Vector<RenderingResourceIdentifier> DisplayList::resourceIdentifiers() const
+{
+    Vector<RenderingResourceIdentifier> resourceIdentifiers;
+    auto resourceIdentifiersRange = m_resourceHeap.resourceIdentifiers();
+    resourceIdentifiers.appendRange(resourceIdentifiersRange.begin(), resourceIdentifiersRange.end());
+    return resourceIdentifiers;
+}
+
 void DisplayList::cacheImageBuffer(ImageBuffer& imageBuffer)
 {
     m_resourceHeap.add(Ref { imageBuffer });
@@ -67,7 +97,7 @@ void DisplayList::cacheImageBuffer(ImageBuffer& imageBuffer)
 
 void DisplayList::cacheNativeImage(NativeImage& image)
 {
-    m_resourceHeap.add(Ref { image });
+    m_resourceHeap.add(Ref<RenderingResource> { image });
 }
 
 void DisplayList::cacheFont(Font& font)
@@ -77,17 +107,54 @@ void DisplayList::cacheFont(Font& font)
 
 void DisplayList::cacheDecomposedGlyphs(DecomposedGlyphs& decomposedGlyphs)
 {
-    m_resourceHeap.add(Ref { decomposedGlyphs });
+    m_resourceHeap.add(Ref<RenderingResource> { decomposedGlyphs });
 }
 
 void DisplayList::cacheGradient(Gradient& gradient)
 {
-    m_resourceHeap.add(Ref { gradient });
+    m_resourceHeap.add(Ref<RenderingResource> { gradient });
 }
 
 void DisplayList::cacheFilter(Filter& filter)
 {
-    m_resourceHeap.add(Ref { filter });
+    m_resourceHeap.add(Ref<RenderingResource> { filter });
+}
+
+void DisplayList::cacheDisplayList(DisplayList& displayList)
+{
+    RELEASE_ASSERT(&displayList != this);
+    m_resourceHeap.add(Ref<RenderingResource> { displayList });
+}
+
+ReplayResult DisplayList::replay(GraphicsContext& context, const FloatRect& initialClip, bool trackReplayList) const
+{
+    LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
+    UNUSED_PARAM(initialClip);
+
+    RefPtr<DisplayList> replayList;
+    if (UNLIKELY(trackReplayList))
+        replayList = DisplayList::create();
+
+#if !LOG_DISABLED
+    size_t i = 0;
+#endif
+    ReplayResult result;
+    for (auto& item : m_items) {
+        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
+
+        auto applyResult = applyItem(context, m_resourceHeap, item);
+        if (applyResult.stopReason) {
+            result.reasonForStopping = *applyResult.stopReason;
+            result.missingCachedResourceIdentifier = WTFMove(applyResult.resourceIdentifier);
+            break;
+        }
+
+        if (UNLIKELY(trackReplayList))
+            replayList->items().append(item);
+    }
+
+    result.trackedDisplayList = WTFMove(replayList);
+    return result;
 }
 
 String DisplayList::asText(OptionSet<AsTextFlag> flags) const

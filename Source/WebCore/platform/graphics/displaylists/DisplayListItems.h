@@ -29,6 +29,7 @@
 #include "ControlPart.h"
 #include "DashArray.h"
 #include "DisplayListItem.h"
+#include "DisplayListResourceHeap.h"
 #include "Filter.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
@@ -499,15 +500,15 @@ class DrawGlyphs {
 public:
     static constexpr char name[] = "draw-glyphs";
 
+    WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
+    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&);
+
     RenderingResourceIdentifier fontIdentifier() const { return m_fontIdentifier; }
     PositionedGlyphs positionedGlyphs() const { return m_positionedGlyphs; }
     const FloatPoint& localAnchor() const { return m_positionedGlyphs.localAnchor; }
     FloatPoint anchorPoint() const { return m_positionedGlyphs.localAnchor; }
     FontSmoothingMode fontSmoothingMode() const { return m_positionedGlyphs.smoothingMode; }
     const Vector<GlyphBufferGlyph>& glyphs() const { return m_positionedGlyphs.glyphs; }
-
-    WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
-    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&, const Font&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -538,22 +539,20 @@ private:
     RenderingResourceIdentifier m_decomposedGlyphsIdentifier;
 };
 
-class DrawDisplayListItems {
+class DrawDisplayList {
 public:
-    static constexpr char name[] = "draw-display-list-items";
+    static constexpr char name[] = "draw-display-list";
 
-    DrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination);
-    WEBCORE_EXPORT DrawDisplayListItems(Vector<Item>&&, const FloatPoint& destination);
+    WEBCORE_EXPORT DrawDisplayList(RenderingResourceIdentifier displayListIdentifier, const FloatPoint& destination);
 
-    const Vector<Item>& items() const { return m_items; }
+    RenderingResourceIdentifier displayListIdentifier() const { return m_displayListIdentifier; }
     FloatPoint destination() const { return m_destination; }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, const ResourceHeap&) const;
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, DisplayList&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Vector<Item> m_items;
+    RenderingResourceIdentifier m_displayListIdentifier;
     FloatPoint m_destination;
 };
 

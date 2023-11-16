@@ -39,6 +39,9 @@ class Gradient;
 class ImageBuffer;
 class NativeImage;
 struct FontCustomPlatformData;
+namespace DisplayList {
+class DisplayList;
+}
 }
 
 namespace WebKit {
@@ -63,6 +66,7 @@ public:
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
+    void recordDisplayListUse(WebCore::DisplayList::DisplayList&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
 
     void didPaintLayers();

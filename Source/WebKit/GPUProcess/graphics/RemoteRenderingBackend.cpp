@@ -317,6 +317,13 @@ void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
     m_remoteResourceCache.cacheFilter(WTFMove(filter));
 }
 
+void RemoteRenderingBackend::cacheDisplayList(Vector<DisplayList::Item>&& items, Vector<RenderingResourceIdentifier>&& resourceIdentifiers, RenderingResourceIdentifier displayListIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+    auto displayList = DisplayList::DisplayList::create(WTFMove(items), { m_remoteResourceCache.resourceHeap(), resourceIdentifiers }, displayListIdentifier);
+    m_remoteResourceCache.cacheDisplayList(WTFMove(displayList));
+}
+
 void RemoteRenderingBackend::releaseAllDrawingResources()
 {
 

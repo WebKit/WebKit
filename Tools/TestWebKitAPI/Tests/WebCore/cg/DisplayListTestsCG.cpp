@@ -30,7 +30,6 @@
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/DisplayListReplayer.h>
 #include <WebCore/DisplayListResourceHeap.h>
 #include <WebCore/Filter.h>
 #include <WebCore/Gradient.h>
@@ -55,17 +54,16 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
 
-    DisplayList list;
+    auto list = DisplayList::create();
 
-    list.append(SetInlineFillColor(Color::green));
-    list.append(FillRect(contextBounds));
-    list.append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
-    list.append(SetInlineStroke(Color::red));
-    list.append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
+    list->append(SetInlineFillColor(Color::green));
+    list->append(FillRect(contextBounds));
+    list->append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
+    list->append(SetInlineStroke(Color::red));
+    list->append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
 
     {
-        Replayer replayer { context, list };
-        auto result = replayer.replay();
+        auto result = list->replay(context);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::MissingCachedResource);
         EXPECT_EQ(result.missingCachedResourceIdentifier, imageBufferIdentifier);
     }
@@ -74,8 +72,9 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         ResourceHeap resourceHeap;
         resourceHeap.add(imageBuffer.releaseNonNull());
 
-        Replayer replayer { context, list.items(), resourceHeap };
-        auto result = replayer.replay();
+        auto list2 = DisplayList::create(Vector<Item> { list->items() }, WTFMove(resourceHeap));
+
+        auto result = list2->replay(context);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     }
@@ -90,11 +89,10 @@ TEST(DisplayListTests, ItemValidationFailure)
     auto runTestWithInvalidIdentifier = [&](RenderingResourceIdentifier identifier) {
         EXPECT_FALSE(identifier.isValid());
 
-        DisplayList list;
-        list.append(ClipToImageBuffer(identifier, FloatRect { }));
+        auto list = DisplayList::create();
+        list->append(ClipToImageBuffer(identifier, FloatRect { }));
 
-        Replayer replayer { context, list };
-        auto result = replayer.replay();
+        auto result = list->replay(context);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };

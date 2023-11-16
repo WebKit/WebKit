@@ -28,7 +28,7 @@
 
 #include "BidiResolver.h"
 #include "DecomposedGlyphs.h"
-#include "DisplayListReplayer.h"
+#include "DisplayList.h"
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FloatRoundedRect.h"
@@ -200,10 +200,10 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.clear();
 }
 
-void GraphicsContext::drawDisplayListItems(const Vector<DisplayList::Item>& items, const DisplayList::ResourceHeap& resourceHeap, const FloatPoint& destination)
+void GraphicsContext::drawDisplayList(DisplayList::DisplayList& displayList, const FloatPoint& destination)
 {
     translate(destination);
-    DisplayList::Replayer(*this, items, resourceHeap).replay();
+    displayList.replay(*this);
     translate(-destination);
 }
 
