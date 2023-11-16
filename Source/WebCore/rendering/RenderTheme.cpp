@@ -932,10 +932,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #endif
     case StyleAppearance::CapsLockIndicator:
         return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
-#if ENABLE(APPLE_PAY)
-    case StyleAppearance::ApplePayButton:
-        return paintApplePayButton(box, paintInfo, integralSnappedRect);
-#endif
 #if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         return paintListButton(box, paintInfo, devicePixelSnappedRect);

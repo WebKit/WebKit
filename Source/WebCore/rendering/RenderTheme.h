@@ -348,7 +348,6 @@ protected:
 
 #if ENABLE(APPLE_PAY)
     virtual void adjustApplePayButtonStyle(RenderStyle&, const Element*) const { }
-    virtual bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
