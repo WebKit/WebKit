@@ -126,7 +126,7 @@ void RenderThemeCocoa::paintFileUploadIconDecorations(const RenderObject&, const
     thumbnailRect.contract(2 * kThumbnailBorderStrokeWidth, 2 * kThumbnailBorderStrokeWidth);
     thumbnailRect.move(kThumbnailBorderStrokeWidth, kThumbnailBorderStrokeWidth);
 
-    if (fileUploadDecorations == MultipleFiles) {
+    if (fileUploadDecorations == FileUploadDecorations::MultipleFiles) {
         // Smaller thumbnails for multiple selection appearance.
         thumbnailPictureFrameRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
         thumbnailRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
