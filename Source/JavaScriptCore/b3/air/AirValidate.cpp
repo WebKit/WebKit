@@ -116,6 +116,14 @@ public:
                     VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) <= 8, ("At ", inst, " in ", *block));
                     VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) >= 2, ("At ", inst, " in ", *block));
                     break;
+                case ExtractRegister64:
+                    VALIDATE(inst.args[2].isImm(), ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args[2].asTrustedImm32().m_value < 64, ("At ", inst, " in ", *block));
+                    break;
+                case ExtractRegister32:
+                    VALIDATE(inst.args[2].isImm(), ("At ", inst, " in ", *block));
+                    VALIDATE(inst.args[2].asTrustedImm32().m_value < 32, ("At ", inst, " in ", *block));
+                    break;
                 default:
                     break;
                 }
