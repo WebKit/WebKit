@@ -1092,7 +1092,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-dur
 
 # Crash in bug #176019.
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure ]
 
 webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
@@ -1219,6 +1218,9 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Pass Timeout ]
 
 webkit.org/b/264708 [ Debug ] media/media-source/media-source-error-crash.html [ Pass Crash ]
+webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Pass Crash ]
+
+webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2661,6 +2663,10 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 #////////////////////////////////////////////////////////////////////////////////////////
 # NEEDS TRIAGING. If unsure, put it in this section.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/264936 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Crash ]
+
+webkit.org/b/264933 fast/mediastream/image-capture-take-photo.html [ Pass Failure Crash ]
 
 webkit.org/b/264700 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 webkit.org/b/264700 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass ImageOnlyFailure ]

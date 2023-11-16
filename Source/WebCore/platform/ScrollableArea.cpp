@@ -176,12 +176,23 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
 
+    if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
+        scrollAnimator().cancelAnimations();
+
+    if (position == scrollPosition())
+        return;
+
+    auto previousScrollType = currentScrollType();
+    setCurrentScrollType(options.type);
+
     bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
     if (!startedAnimation)
         startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
+
+    setCurrentScrollType(previousScrollType);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)

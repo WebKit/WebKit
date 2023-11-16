@@ -2796,18 +2796,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LayoutMilestones.serialization.in
     page/MediaProducer.serialization.in
 
-    platform/graphics/ca/PlatformCALayer.messages.in
-
     platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in
     platform/PlatformWheelEvent.serialization.in
     platform/ScrollTypes.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
-
-    platform/cocoa/PlaybackSessionModel.serialization.in
-
-    platform/graphics/cocoa/MediaPlaybackTargetContext.serialization.in
 
     platform/graphics/InbandTextTrackPrivate.serialization.in
 
