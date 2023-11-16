@@ -985,11 +985,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
 {
     auto defaultUserPreferences = JSON::ArrayOf<Protocol::Page::UserPreference>::create();
 
-#if USE(NEW_THEME)
     bool prefersReducedMotion = Theme::singleton().userPrefersReducedMotion();
-#else
-    bool prefersReducedMotion = false;
-#endif
 
     auto prefersReducedMotionUserPreference = Protocol::Page::UserPreference::create()
         .setName(Protocol::Page::UserPreferenceName::PrefersReducedMotion)
@@ -998,11 +994,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
 
     defaultUserPreferences->addItem(WTFMove(prefersReducedMotionUserPreference));
 
-#if USE(NEW_THEME)
     bool prefersContrast = Theme::singleton().userPrefersContrast();
-#else
-    bool prefersContrast = false;
-#endif
 
     auto prefersContrastUserPreference = Protocol::Page::UserPreference::create()
         .setName(Protocol::Page::UserPreferenceName::PrefersContrast)
