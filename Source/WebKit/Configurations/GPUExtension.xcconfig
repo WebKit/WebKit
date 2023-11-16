@@ -25,6 +25,6 @@
 
 INFOPLIST_FILE = Shared/AuxiliaryProcessExtensions/GPUExtension-Info.plist;
 INFOPLIST_KEY_CFBundleDisplayName = GPUExtension;
-PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.GPUExtension;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.GPU;
 PRODUCT_BUNDLE_EXECUTABLE = GPUExtension;
 PRODUCT_BUNDLE_NAME = GPUExtension;
