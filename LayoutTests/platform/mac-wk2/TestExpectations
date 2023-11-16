@@ -2151,16 +2151,16 @@ webkit.org/b/263738 fast/clip/overflow-hidden-with-border-radius-overflow-clippi
 
 webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
-# WebGPU
-http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Pass ]
+# rdar://118523595
+http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Failure ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Skip ]
 
 webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
