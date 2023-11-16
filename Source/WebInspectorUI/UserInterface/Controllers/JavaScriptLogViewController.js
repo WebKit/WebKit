@@ -51,6 +51,8 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this._sessions = [];
         this._currentSessionOrGroup = null;
 
+        this._failedSourceMapsGroup = null;
+
         this.messagesAlternateClearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._element);
 
         this._messagesFindNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
@@ -115,6 +117,8 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         this._sessions.push(consoleSession);
         this._currentSessionOrGroup = consoleSession;
+
+        this._failedSourceMapsGroup = null;
 
         this._element.appendChild(consoleSession.element);
 
@@ -371,10 +375,31 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
                 this._currentSessionOrGroup = group;
             } else
                 this._currentSessionOrGroup.addMessageView(messageView);
+            
+            // FIXME: <https://webkit.org/b/264490> (Improve failed SourceMap error grouping to avoid unnecessary work)
+            if (WI.settings.experimentalGroupSourceMapErrors.value && WI.consoleManager.failedSourceMapConsoleMessages.has(messageView.message))
+                this._addConsoleMessageToConsoleSourceMapErrorGroup(messageView);
         }
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
             this.delegate.didAppendConsoleMessageView(messageView);
+    }
+    
+    _addConsoleMessageToConsoleSourceMapErrorGroup(messageView)
+    {
+        if (!this._firstSourceMapErrorMessageView) {
+            this._firstSourceMapErrorMessageView = messageView;
+            return;
+        }
+        
+        if (!this._failedSourceMapsGroup) {
+            let currentTopLevelSession = this._sessions.lastValue;
+            this._failedSourceMapsGroup = new WI.ConsoleSourceMapMessageGroup;
+            currentTopLevelSession.append(this._failedSourceMapsGroup.element);
+            this._failedSourceMapsGroup.addMessageView(this._firstSourceMapErrorMessageView);
+        }
+
+        this._failedSourceMapsGroup.addMessageView(messageView);
     }
 
     _handleShowConsoleMessageTimestampsSettingChanged()

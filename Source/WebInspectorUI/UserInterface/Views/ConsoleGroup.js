@@ -34,10 +34,13 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
         super();
 
         this._parentGroup = parentGroup;
+        this._element = null;
     }
 
     // Public
 
+    get element() { return this._element; }
+    
     get parentGroup()
     {
         return this._parentGroup;
@@ -47,8 +50,7 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
     {
         var groupElement = document.createElement("div");
         groupElement.className = "console-group";
-        groupElement.group = this;
-        this.element = groupElement;
+        this._element = groupElement;
 
         var titleElement = messageView.element;
         titleElement.classList.add(WI.LogContentView.ItemWrapperStyleClassName);
@@ -79,6 +81,35 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
     {
         this._messagesElement.appendChild(messageOrGroupElement);
     }
+    
+    // FIXME: <https://webkit.org/b/264489> We should merge this logic with `WI.ConsoleMessageView.prototype.render`
+    setMessageLevel(messageLevel)
+    {
+        console.assert(this._element);
+  
+        switch (messageLevel) {
+        case WI.ConsoleMessage.MessageLevel.Log:
+            this._element.classList.add("console-log-level");
+            this._element.setAttribute("data-labelprefix", WI.UIString("Log: "));
+            break;
+        case WI.ConsoleMessage.MessageLevel.Info:
+            this._element.classList.add("console-info-level");
+            this._element.setAttribute("data-labelprefix", WI.UIString("Info: "));
+            break;
+        case WI.ConsoleMessage.MessageLevel.Debug:
+            this._element.classList.add("console-debug-level");
+            this._element.setAttribute("data-labelprefix", WI.UIString("Debug: "));
+            break;
+        case WI.ConsoleMessage.MessageLevel.Warning:
+            this._element.classList.add("console-warning-level");
+            this._element.setAttribute("data-labelprefix", WI.UIString("Warning: "));
+            break;
+        case WI.ConsoleMessage.MessageLevel.Error:
+            this._element.classList.add("console-error-level");
+            this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
+            break;
+        }
+    }
 
     // Private
 
@@ -93,10 +124,7 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
         if (groupTitleElement) {
             var groupElement = groupTitleElement.closest(".console-group");
             if (groupElement)
-                if (groupElement.classList.contains("collapsed"))
-                    groupElement.classList.remove("collapsed");
-                else
-                    groupElement.classList.add("collapsed");
+                groupElement.classList.toggle("collapsed");
             groupTitleElement.scrollIntoViewIfNeeded(true);
         }
     }

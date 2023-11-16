@@ -411,6 +411,7 @@ localizedStrings["Connection Closed"] = "Connection Closed";
 localizedStrings["Connection ID"] = "Connection ID";
 localizedStrings["Connection:"] = "Connection:";
 localizedStrings["Console"] = "Console";
+localizedStrings["Console:"] = "Console:";
 localizedStrings["Console Evaluation"] = "Console Evaluation";
 localizedStrings["Console Evaluation %d"] = "Console Evaluation %d";
 localizedStrings["Console Profile Recorded"] = "Console Profile Recorded";
@@ -826,6 +827,7 @@ localizedStrings["Group by Event @ Node Event Listeners"] = "Group by Event";
 /* Group DOM event listeners by DOM node */
 localizedStrings["Group by Target @ Node Event Listeners"] = "Group by Target";
 localizedStrings["Grouping Method"] = "Grouping Method";
+localizedStrings["Group source map network errors"] = "Group source map network errors";
 localizedStrings["HAR Export (%s)"] = "HAR Export (%s)";
 localizedStrings["HAR Import"] = "HAR Import";
 localizedStrings["HAR Import Error: %s"] = "HAR Import Error: %s";
@@ -1555,6 +1557,7 @@ localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
 localizedStrings["Source Maps:"] = "Source Maps:";
+localizedStrings["Source Map loading errors"] = "Source Map loading errors";
 localizedStrings["Sources"] = "Sources";
 /* Name of Sources Tab */
 localizedStrings["Sources Tab Name"] = "Sources";

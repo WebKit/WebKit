@@ -238,6 +238,7 @@ WI.settings = {
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
     experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
+    experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
 
     // Protocol
