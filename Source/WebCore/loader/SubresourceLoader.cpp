@@ -724,15 +724,19 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
 
     if (m_state != Initialized)
         return;
-    ASSERT(!reachedTerminalState());
-    ASSERT(!m_resource->resourceToRevalidate());
-    // FIXME (129394): We should cancel the load when a decode error occurs instead of continuing the load to completion.
-    ASSERT(!m_resource->errorOccurred() || m_resource->status() == CachedResource::DecodeError || !m_resource->isLoading());
-    LOG(ResourceLoading, "Received '%s'.", m_resource->url().string().latin1().data());
-    logResourceLoaded(m_frame.get(), m_resource->type());
 
-    Ref<SubresourceLoader> protectedThis(*this);
-    CachedResourceHandle<CachedResource> protectResource(m_resource.get());
+    Ref protectedThis { *this };
+
+    ASSERT(!reachedTerminalState());
+    CachedResourceHandle resource = m_resource.get();
+    if (!resource)
+        return;
+
+    ASSERT(!resource->resourceToRevalidate());
+    // FIXME (129394): We should cancel the load when a decode error occurs instead of continuing the load to completion.
+    ASSERT(!resource->errorOccurred() || resource->status() == CachedResource::DecodeError || !resource->isLoading());
+    LOG(ResourceLoading, "Received '%s'.", resource->url().string().latin1().data());
+    logResourceLoaded(m_frame.get(), resource->type());
 
     m_loadTiming.markEndTime();
 
@@ -742,22 +746,22 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         // This is the legacy path for platforms (and ResourceHandle paths) that do not provide
         // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
         // that they populated partial load timing information on the ResourceResponse.
-        const auto* timing = m_resource->response().deprecatedNetworkLoadMetricsOrNull();
+        const auto* timing = resource->response().deprecatedNetworkLoadMetricsOrNull();
         reportResourceTiming(timing ? *timing : NetworkLoadMetrics::emptyMetrics());
     }
 
-    if (m_resource->type() != CachedResource::Type::MainResource)
+    if (resource->type() != CachedResource::Type::MainResource)
         tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
     m_state = Finishing;
-    m_resource->finishLoading(resourceData(), networkLoadMetrics);
+    resource->finishLoading(resourceData(), networkLoadMetrics);
 
     if (wasCancelled()) {
         SUBRESOURCELOADER_RELEASE_LOG("didFinishLoading: was canceled");
         return;
     }
 
-    m_resource->finish();
+    resource->finish();
     ASSERT(!reachedTerminalState());
     didFinishLoadingOnePart(networkLoadMetrics);
     notifyDone(LoadCompletionType::Finish);
