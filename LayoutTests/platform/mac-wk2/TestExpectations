@@ -1927,8 +1927,6 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 
 webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
 
-webkit.org/b/262079 [ Ventura+ arm64 ] fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
-
 # webkit.org/b/262216 (REGRESSION(268472@main): 5 tests under http/tests/contentextensions/ are consistently failing.)
 http/tests/contentextensions/main-resource-redirect-blocked.py [ Pass Failure ]
 http/tests/contentextensions/main-resource-redirect-error.html [ Pass Failure ]
