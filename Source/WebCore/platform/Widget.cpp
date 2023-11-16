@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Widget.h"
 
+#include "HostWindow.h"
 #include "IntRect.h"
 #include "LocalFrameView.h"
 #include "NotImplemented.h"
@@ -69,6 +70,12 @@ void Widget::removeFromParent()
 {
     if (parent())
         parent()->removeChild(*this);
+}
+
+void Widget::setCursor(const Cursor& cursor)
+{
+    if (auto* view = root())
+        view->hostWindow()->setCursor(cursor);
 }
 
 IntRect Widget::convertFromRootView(const IntRect& rootRect) const
@@ -125,7 +132,6 @@ IntPoint Widget::convertToRootView(const IntPoint& localPoint) const
     return localPoint;
 }
 
-
 FloatPoint Widget::convertFromRootView(const FloatPoint& rootPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
@@ -179,40 +185,6 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
     }
     return convertFromRootToContainingWindow(this, localPoint);
 }
-
-#if !PLATFORM(COCOA)
-
-Widget::Widget(PlatformWidget widget)
-{
-    init(widget);
-}
-
-IntRect Widget::frameRect() const
-{
-    return m_frame;
-}
-
-IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
-{
-    return rect;
-}
-
-IntRect Widget::convertFromContainingWindowToRoot(const Widget*, const IntRect& rect)
-{
-    return rect;
-}
-
-IntPoint Widget::convertFromRootToContainingWindow(const Widget*, const IntPoint& point)
-{
-    return point;
-}
-
-IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint& point)
-{
-    return point;
-}
-
-#endif // !PLATFORM(COCOA)
 
 IntRect Widget::convertToContainingView(const IntRect& localRect) const
 {
@@ -274,50 +246,68 @@ FloatPoint Widget::convertFromContainingView(const FloatPoint& parentPoint) cons
     return convertFromContainingView(IntPoint(parentPoint));
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
+#if !PLATFORM(COCOA)
+
+Widget::Widget(PlatformWidget widget)
+{
+    init(widget);
+}
 
 Widget::~Widget()
 {
     ASSERT(!parent());
-    notImplemented();
 }
 
 void Widget::setFrameRect(const IntRect& rect)
 {
     m_frame = rect;
-    notImplemented();
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
+IntRect Widget::frameRect() const
 {
-    notImplemented();
-}
-
-void Widget::setFocus(bool)
-{
-    notImplemented();
-}
-
-void Widget::setCursor(const Cursor&)
-{
-    notImplemented();
+    return m_frame;
 }
 
 void Widget::show()
 {
-    notImplemented();
 }
 
 void Widget::hide()
 {
-    notImplemented();
+}
+
+void Widget::setFocus(bool)
+{
 }
 
 void Widget::setIsSelected(bool)
 {
-    notImplemented();
 }
 
-#endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
+{
+}
+
+IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
+{
+    return rect;
+}
+
+IntRect Widget::convertFromContainingWindowToRoot(const Widget*, const IntRect& rect)
+{
+    return rect;
+}
+
+IntPoint Widget::convertFromRootToContainingWindow(const Widget*, const IntPoint& point)
+{
+    return point;
+}
+
+IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint& point)
+{
+    return point;
+}
+
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebCore

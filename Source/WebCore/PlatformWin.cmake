@@ -115,7 +115,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WebCoreInstanceHandle.cpp
     platform/win/WebCoreTextRenderer.cpp
     platform/win/WheelEventWin.cpp
-    platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
     platform/win/WindowsKeyNames.cpp
 )
