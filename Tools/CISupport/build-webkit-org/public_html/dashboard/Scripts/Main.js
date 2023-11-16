@@ -344,11 +344,11 @@ function documentReady()
     }
 }
 
-var sortedRepositories = Dashboard.sortedRepositories;
-for (var i = 0; i < sortedRepositories.length; ++i) {
-    var commits = sortedRepositories[i].commits;
-    if (typeof commits !== "undefined")
-        commits.startPeriodicUpdates();
+const sortedRepositories = Dashboard.sortedRepositories;
+for (let i = 0; i < sortedRepositories.length; ++i) {
+    const commitStore = sortedRepositories[i].commitStore;
+    if (typeof commitStore !== "undefined")
+        commitStore.startPeriodicUpdates();
 }
 
 document.addEventListener("DOMContentLoaded", documentReady);

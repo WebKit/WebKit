@@ -187,14 +187,19 @@ CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& 
         }
     }
 
+    auto isExcludedSubtree = [this](RenderElement* renderer, bool intersects) {
+        return renderer->style().overflowAnchor() == OverflowAnchor::None || renderer->isStickilyPositioned() || renderer->isFixedPositioned() || renderer->isPseudoElement() || renderer->isAnonymousBlock() || (renderer->isAbsolutelyPositioned() && absolutePositionedElementOutsideScroller(*renderer, m_owningScrollableArea)) || (!intersects && renderer->style().containsPaint());
+    };
+
     if (auto renderer = element.renderer()) {
-        // TODO: we need to think about position: absolute
         // TODO: figure out how to get scrollable area for renderer to check if it is maintaining scroll anchor
-        if (renderer->style().overflowAnchor() == OverflowAnchor::None || renderer->isStickilyPositioned() || renderer->isFixedPositioned() || renderer->isPseudoElement() || renderer->isAnonymousBlock() || (renderer->isAbsolutelyPositioned() && absolutePositionedElementOutsideScroller(*renderer, m_owningScrollableArea)))
+        auto boxRect = renderer->absoluteBoundingBoxRect();
+        bool intersects = containingRect.intersects(boxRect);
+
+        if (isExcludedSubtree(renderer, intersects))
             return CandidateExaminationResult::Exclude;
         if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
             return CandidateExaminationResult::Skip;
-        auto boxRect = renderer->absoluteBoundingBoxRect();
         if (!boxRect.width() || !boxRect.height())
             return CandidateExaminationResult::Skip;
         if (containingRect.contains(boxRect))
@@ -202,7 +207,7 @@ CandidateExaminationResult ScrollAnchoringController::examineCandidate(Element& 
         auto isScrollingNode = false;
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
             isScrollingNode = renderBox->hasPotentiallyScrollableOverflow();
-        if (containingRect.intersects(boxRect))
+        if (intersects)
             return isScrollingNode ? CandidateExaminationResult::Select : CandidateExaminationResult::Descend;
         if (isScrollingNode)
             return CandidateExaminationResult::Exclude;

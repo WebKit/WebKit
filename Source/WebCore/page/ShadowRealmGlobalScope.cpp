@@ -28,7 +28,6 @@
 
 #include "JSDOMGlobalObject.h"
 #include "JSShadowRealmGlobalScope.h"
-#include "JSShadowRealmGlobalScopeBase.h"
 #include "ScriptModuleLoader.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -60,10 +59,5 @@ ScriptModuleLoader& ShadowRealmGlobalScope::moduleLoader()
 }
 
 ShadowRealmGlobalScope::~ShadowRealmGlobalScope() = default;
-
-JSShadowRealmGlobalScopeBase* ShadowRealmGlobalScope::wrapper()
-{
-    return m_wrapper.get();
-}
 
 } // namespace WebCore

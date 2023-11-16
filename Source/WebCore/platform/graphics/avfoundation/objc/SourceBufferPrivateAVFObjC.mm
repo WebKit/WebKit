@@ -434,13 +434,6 @@ void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const InitializationSeg
     }
 }
 
-void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegment&& segment)
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    didReceiveInitializationSegment(WTFMove(segment));
-}
-
 bool SourceBufferPrivateAVFObjC::precheckInitialisationSegment(const InitializationSegment& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -622,7 +615,7 @@ Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>
         ASSERT(isMainThread());
         if (!weakThis)
             return;
-        weakThis->didParseInitializationData(WTFMove(segment));
+        weakThis->didReceiveInitializationSegment(WTFMove(segment));
     });
 
     m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {

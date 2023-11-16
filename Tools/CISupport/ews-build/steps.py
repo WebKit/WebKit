@@ -2534,10 +2534,10 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             return defer.returnValue(False if response.status_code // 100 == 4 else None)
 
         # FIXME: safe-merge-queue should obtain skipped status from EWS instead of hardcoding
-        queues_for_safe_merge = EMBEDDED_CHECKS + MACOS_CHECKS
+        queues_for_safe_merge = self.EMBEDDED_CHECKS + self.MACOS_CHECKS
         if self.getProperty('project') == GITHUB_PROJECTS[0]:
-            queues_for_safe_merge += LINUX_CHECKS
-            queues_for_safe_merge += WINDOWS_CHECKS
+            queues_for_safe_merge += self.LINUX_CHECKS
+            queues_for_safe_merge += self.WINDOWS_CHECKS
 
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)

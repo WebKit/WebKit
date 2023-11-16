@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Widget.h"
-
-#include "HostWindow.h"
-#include "LocalFrameView.h"
-#include "NotImplemented.h"
-
-namespace WebCore {
-
-Widget::~Widget()
+ResultsDatabase = function(url, repository_id)
 {
-    ASSERT(!parent());
-    notImplemented();
-}
+    CommitStore.call(this);
 
-void Widget::setFrameRect(const IntRect& rect)
-{
-    m_frame = rect;
-    notImplemented();
-}
+    console.assert(url);
+    this.url = url;
+    this.repository_id = repository_id;
+};
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
-{
-    notImplemented();
-}
+BaseObject.addConstructorFunctions(ResultsDatabase);
 
-void Widget::setFocus(bool)
-{
-    notImplemented();
-}
+ResultsDatabase.prototype = {
+    constructor: ResultsDatabase,
+    __proto__: CommitStore.prototype,
 
-void Widget::setCursor(const Cursor& cursor)
-{
-    if (auto* view = root())
-        view->hostWindow()->setCursor(cursor);
-}
+    urlFor: function(ref) {
+        return `${this.url}/commit/info?repository_id=${this.repository_id}&ref=${ref}`;
+    },
+    fetch: function(branch, count) {
+        let self = this;
 
-void Widget::show()
-{
-    notImplemented();
-}
-
-void Widget::hide()
-{
-    notImplemented();
-}
-
-void Widget::setIsSelected(bool)
-{
-    notImplemented();
-}
-
-} // namespace WebCore
+        JSON.load(`${self.url}/api/commits?repository_id=${this.repository_id}&branch=${branch}&limit=${2 * count}`, function(data) {
+            data.forEach((commit) => {
+                self.addCommit(commit);
+            });
+        });
+    },
+};

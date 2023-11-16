@@ -6607,12 +6607,13 @@ header: <WebCore/WheelEventTestMonitor.h>
 
 header: <WebCore/CrossOriginAccessControl.h>
 [OptionSet] enum class WebCore::HTTPHeadersToKeepFromCleaning : uint8_t {
-    ContentType,
-    Referer,
-    Origin,
-    UserAgent,
     AcceptEncoding,
     CacheControl,
+    ContentType,
+    Origin,
+    Pragma,
+    Referer,
+    UserAgent,
 };
 
 enum class WebCore::ExceptionCode : uint8_t {

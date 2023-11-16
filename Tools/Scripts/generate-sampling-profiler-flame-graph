@@ -1,0 +1,230 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'rubygems'
+require 'getoptlong'
+
+begin
+    require 'json'
+rescue LoadError
+    $stderr.puts "Error: some required gems are not installed!"
+    $stderr.puts
+    $stderr.puts "Try running:"
+    $stderr.puts
+    $stderr.puts "sudo gem install json"
+    exit 1
+end
+
+$rootDirectory = File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
+
+def render samples, title
+    template = <<-RESULT
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>JSC Sampling Profiler Output</title>
+<!-- d3-flamegraph.css -->
+<style>
+#{ IO::read(File.join($rootDirectory, "Source", "ThirdParty", "d3flamegraphjs", "d3-flamegraph.css")) }
+</style>
+<style>
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-family: Menlo, monospace;
+    font-size: 14px;
+    color: #212529;
+}
+
+.header {
+    padding-bottom: 20px;
+    padding-right: 15px;
+    padding-left: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.header h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 40px;
+    color: #6c757d;
+}
+
+.container {
+    max-width: 1230px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.d3-flame-graph rect {
+    stroke-width: 1.0px;
+}
+
+.float-right {
+    float: right;
+}
+
+#details {
+    padding: 15px;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="float-right">
+                <form id="form">
+                    <button onclick="javascript:resetZoom();">Reset zoom</button>
+                    <button onclick="javascript:clear();">Clear</button>
+                    <input type="text" id="term">
+                    <button onclick="javascript:search();">Search</button>
+                </form>
+            </div>
+            <h3>JSC Sampling Profiler Output</h3>
+        </div>
+        <div id="chart"></div>
+        <div id="details"></div>
+    </div>
+
+<!-- D3.js -->
+<script>
+#{ IO::read(File.join($rootDirectory, "Source", "ThirdParty", "d3js", "d3.v7.min.js")) }
+</script>
+
+<!-- d3-flamegraph -->
+<script>
+#{ IO::read(File.join($rootDirectory, "Source", "ThirdParty", "d3flamegraphjs", "d3-flamegraph.min.js")) }
+</script>
+
+<!-- d3-flamegraph-tooltip -->
+<script>
+#{ IO::read(File.join($rootDirectory, "Source", "ThirdParty", "d3flamegraphjs", "d3-flamegraph-tooltip.min.js")) }
+</script>
+
+<script type="application/json" id="data">
+#{ JSON.generate(samples, :max_nesting => 10000) }
+</script>
+
+<script>
+let tip = flamegraph.tooltip.defaultFlamegraphTooltip().text(d => `name: ${d.data.name}, value: ${d.data.value}`);
+let flameGraph = flamegraph()
+    .width(1200)
+    .cellHeight(18)
+    .transitionDuration(200)
+    .transitionEase(d3.easeCubic)
+    .sort(true)
+    .tooltip(tip)
+    .title(#{ JSON.generate(title) })
+    .selfValue(false)
+    .setDetailsElement(document.getElementById("details"));
+
+let data = JSON.parse(document.getElementById("data").textContent);
+
+d3.select("#chart").datum(data).call(flameGraph);
+
+document.getElementById("form").addEventListener("submit", event => {
+    event.preventDefault();
+    search();
+}, false);
+
+function search() {
+    let term = document.getElementById("term").value;
+    flameGraph.search(term);
+}
+
+function clear() {
+    document.getElementById('term').value = '';
+    flameGraph.clear();
+}
+
+function resetZoom() {
+    flameGraph.resetZoom();
+}
+</script>
+</body>
+</html>
+    RESULT
+end
+
+def newChild name
+    {
+        "name" => name,
+        "value" => 0,
+        "children" => [],
+    }
+end
+
+def update cursor, name
+    cursor["value"] += 1
+    cursor["children"].each {|child|
+        if child["name"] == name
+            return child
+        end
+    }
+    child = newChild(name)
+    cursor["children"].push child
+    child
+end
+
+def reconstruct database
+    result = newChild("root")
+    database["traces"].each do |stackTrace|
+        cursor = result
+        next if stackTrace["frames"].empty?
+        stackTrace["frames"].reverse.map do |frame|
+            hash, category, offset = frame["location"].split(":")
+            cursor = update(cursor, "#{frame["name"]}#{hash}")
+        end
+        cursor["value"] += 1
+    end
+    result
+end
+
+$flameGraphTitle = ""
+GetoptLong.new(['--title', '-t', GetoptLong::REQUIRED_ARGUMENT]).each do |opt, arg|
+    case opt
+    when '--title'
+      $flameGraphTitle = arg
+    end
+end
+
+def main
+  json = nil
+  if ARGV.empty?
+      json = JSON.parse(STDIN.read)
+  else
+      json = JSON::parse(IO::read(ARGV[0]))
+  end
+  puts render(reconstruct(json), $flameGraphTitle)
+end
+
+main
+
+# vim: set sw=4 ts=4 et tw=80 :

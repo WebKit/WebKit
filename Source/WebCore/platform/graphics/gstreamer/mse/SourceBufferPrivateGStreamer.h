@@ -42,8 +42,8 @@
 #include "SourceBufferPrivateClient.h"
 #include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <optional>
 #include <wtf/LoggerHelper.h>
-#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
@@ -73,8 +73,6 @@ public:
     bool precheckInitialisationSegment(const InitializationSegment&) final;
     void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
 
-    void didReceiveInitializationSegment(InitializationSegment&&);
-    void didReceiveSample(Ref<MediaSample>&&);
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
@@ -95,6 +93,8 @@ public:
     size_t platformEvictionThreshold() const final;
 
 private:
+    friend class AppendPipeline;
+
     SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
 
     void notifyClientWhenReadyForMoreSamples(const AtomString&) override;

@@ -47,6 +47,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
@@ -172,28 +173,14 @@ public:
 protected:
     WEBCORE_EXPORT Ref<GenericPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
 
-    struct ResetParserOperation { };
-    struct ErrorOperation { };
-    using AppendBufferOperation = Ref<SharedBuffer>;
-
-    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
-    struct InitOperation {
-        InitializationSegment segment;
-    };
-    struct UpdateFormatDescriptionOperation {
-        Ref<TrackInfo> formatDescription;
-        uint64_t trackId;
-    };
-    using SamplesVector = Vector<Ref<MediaSample>>;
-    struct AppendCompletedOperation {
-        size_t abortCount { 0 };
-    };
-    using Operation = std::variant<AppendBufferOperation, InitOperation, UpdateFormatDescriptionOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
-    void queueOperation(Operation&&);
-
     MediaTime currentMediaTime() const;
     MediaTime duration() const;
+
+    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
+    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
+    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
+    WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
+    WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
 
     virtual Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
@@ -216,11 +203,6 @@ protected:
     virtual void processInitialisationSegment(std::optional<InitializationSegment>&&) { }
     virtual void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t) { }
 
-    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
-    WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
-
-    WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
     void provideMediaData(const AtomString& trackID);
 
     virtual bool isMediaSampleAllowed(const MediaSample&) const { return true; }
@@ -254,33 +236,19 @@ private:
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
+    Ref<GenericPromise> m_currentSourceBufferOperation { GenericPromise::createAndResolve() };
+
     bool m_shouldGenerateTimestamps { false };
     bool m_receivedFirstInitializationSegment { false };
     bool m_pendingInitializationSegmentForChangeType { false };
-    bool m_didReceiveInitializationSegmentErrored { false };
-    bool m_didReceiveSampleErrored { false };
-    bool m_errored { false };
     size_t m_abortCount { 0 };
 
-    void processPendingOperations();
-    void abortPendingOperations();
-    void processInitOperation(InitOperation&&);
-    void processMediaSamplesOperation(SamplesVector&&);
-    void processAppendCompletedOperation(AppendCompletedOperation&&);
-    void processError();
+    void processPendingMediaSamples();
+    bool processMediaSample(Ref<MediaSample>&&);
 
-    void processMediaSample(Ref<MediaSample>&&);
-
-    Deque<Operation> m_pendingOperations;
-    enum class OperationState : uint8_t {
-        Idle,
-        ProcessingAppend,
-        ProcessingInit
-    };
-    OperationState m_operationState { OperationState::Idle };
-
-    void advanceOperationState();
-    void rewindOperationState();
+    using SamplesVector = Vector<Ref<MediaSample>>;
+    SamplesVector m_pendingSamples;
+    Ref<GenericPromise> m_currentAppendProcessing { GenericPromise::createAndResolve() };
 
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };

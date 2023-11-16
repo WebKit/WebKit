@@ -10068,13 +10068,6 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
 
-- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
-{
-    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
-        capturedCompletionHandler();
-    });
-}
-
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
 {
     _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ElementContext>& placeholder) {
@@ -12344,6 +12337,13 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+- (void)_internalAdjustSelectionWithOffset:(NSInteger)offset lengthDelta:(NSInteger)lengthDelta completionHandler:(void (^)(void))completionHandler
+{
+    _page->updateSelectionWithDelta(offset, lengthDelta, [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
+        capturedCompletionHandler();
+    });
+}
 
 - (CGRect)selectionClipRect
 {

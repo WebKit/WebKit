@@ -74,16 +74,16 @@
 # ================================================================================
 # Web Inspector
 
-/Source/JavaScriptCore/debugger @patrickangle
-/Source/JavaScriptCore/inspector @patrickangle
-/Source/WebCore/inspector @patrickangle
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle
+/Source/WebCore/inspector @dcrousso @patrickangle
 /Source/WebInspectorUI @dcrousso @patrickangle
-/Source/WebKit/UIProcess/Inspector @patrickangle
-/Source/WebKit/WebProcess/Inspector @patrickangle
-/Tools/Scripts/webkitpy/inspector @patrickangle
-/LayoutTests/http/tests/inspector @patrickangle
-/LayoutTests/http/tests/websocket/tests/hybi/inspector @patrickangle
-/LayoutTests/inspector @patrickangle
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
+/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
+/LayoutTests/inspector @dcrousso @patrickangle
 
 # ================================================================================
 # WebCore

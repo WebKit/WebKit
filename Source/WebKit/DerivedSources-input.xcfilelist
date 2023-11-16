@@ -127,6 +127,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoadParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
+$(PROJECT_DIR)/NetworkProcess/NetworkSessionCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkTransportChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in
@@ -144,6 +145,7 @@ $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in
 $(PROJECT_DIR)/NetworkProcess/webtransport/NetworkTransportSession.messages.in
+$(PROJECT_DIR)/Platform/IPC/FormDataReference.serialization.in
 $(PROJECT_DIR)/Platform/IPC/StreamServerConnection.serialization.in
 $(PROJECT_DIR)/Platform/SharedMemory.serialization.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in

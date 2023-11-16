@@ -61,10 +61,6 @@ public:
     {
         return static_cast<TestEventConstructor&>(Base::wrapped());
     }
-    Ref<TestEventConstructor> protectedWrapped() const
-    {
-        return wrapped();
-    }
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&);
 

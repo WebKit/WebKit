@@ -38,11 +38,11 @@ BuildbotQueueView = function(queues)
         queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
-    var sortedRepositories = Dashboard.sortedRepositories;
-    for (var i = 0; i < sortedRepositories.length; i++) {
-        var trac = sortedRepositories[i].trac;
-        if (trac)
-            trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
+    const sortedRepositories = Dashboard.sortedRepositories;
+    for (let i = 0; i < sortedRepositories.length; i++) {
+        const commitStore = sortedRepositories[i].commitStore;
+        if (commitStore)
+            commitStore.addEventListener(CommitStore.Event.CommitsUpdated, this._newCommitsRecorded, this);
     }
 };
 
@@ -164,13 +164,13 @@ BuildbotQueueView.prototype = {
 
     _presentPopoverForRevisionRange: function(element, popover, context)
     {
-        var content = document.createElement("div");
+        let content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        // FIXME: Nothing guarantees that Trac has historical data for these revisions.
-        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.branch, context.firstRevision, context.lastRevision);
+        // FIXME: Nothing guarantees that the commitStore has historical data for these revisions.
+        const linesForCommits = this._popoverLinesForCommitRange(context.commitStore, context.branch, context.firstRevision, context.lastRevision);
 
-        var line = document.createElement("div");
+        let line = document.createElement("div");
         line.className = "title";
 
         if (linesForCommits.length) {
@@ -182,10 +182,10 @@ BuildbotQueueView.prototype = {
             content.appendChild(line);
         }
 
-        for (var i = 0; i != linesForCommits.length; ++i)
+        for (let i = 0; i != linesForCommits.length; ++i)
             content.appendChild(linesForCommits[i]);
 
-        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        const rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
         popover.content = content;
         popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
 
@@ -194,39 +194,42 @@ BuildbotQueueView.prototype = {
 
     _revisionContentWithPopoverForIteration: function(iteration, previousIteration, branch)
     {
-        var repository = branch.repository;
-        var repositoryName = repository.name;
+        const repository = branch.repository;
+        const repositoryName = repository.name;
         console.assert(iteration.revision[repositoryName]);
-        var trac = repository.trac;
-        var content = document.createElement("span");
+        const commitStore = repository.commitStore;
+        let content = document.createElement("span");
         content.textContent = this._formatRevisionForDisplay(iteration.revision[repositoryName], repository);
         content.classList.add("revision-number");
 
         if (!previousIteration)
             return content;
+        if (!commitStore)
+            return content;
 
-        var previousIterationRevision = previousIteration.revision[repositoryName];
+        const previousIterationRevision = previousIteration.revision[repositoryName];
         console.assert(previousIterationRevision);
-        var previousIterationRevisionIndex = trac.indexOfRevision(previousIterationRevision);
+        const previousIterationRevisionIndex = commitStore.indexOfRef(previousIterationRevision);
         if (previousIterationRevisionIndex === -1)
             return content;
 
-        var firstRevision = trac.nextRevision(branch.name, previousIterationRevision);
-        if (firstRevision === Trac.NO_MORE_REVISIONS)
+        const firstRevision = commitStore.nextRevision(branch.name, previousIterationRevision);
+        if (firstRevision === CommitStore.NO_MORE_REVISIONS)
             return content;
-        var firstRevisionIndex = trac.indexOfRevision(firstRevision);
-        console.assert(firstRevisionIndex !== -1);
+        const firstRevisionIndex = commitStore.indexOfRef(firstRevision);
+        if (firstRevisionIndex < 0)
+            return content;
 
-        var lastRevision = iteration.revision[repositoryName];
-        var lastRevisionIndex = trac.indexOfRevision(lastRevision);
+        const lastRevision = iteration.revision[repositoryName];
+        const lastRevisionIndex = commitStore.indexOfRef(lastRevision);
         if (lastRevisionIndex === -1)
             return content;
 
         if (firstRevisionIndex > lastRevisionIndex)
             return content;
 
-        var context = {
-            trac: trac,
+        const context = {
+            commitStore: commitStore,
             branch: branch,
             firstRevision: firstRevision,
             lastRevision: lastRevision,

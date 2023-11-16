@@ -196,12 +196,6 @@ void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& t
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }
 
-void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(InitializationSegment&& initializationSegment)
-{
-    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment));
-}
-
-
 bool SourceBufferPrivateGStreamer::precheckInitialisationSegment(const InitializationSegment& segment)
 {
     for (auto& trackInfo : segment.videoTracks) {
@@ -232,21 +226,21 @@ void SourceBufferPrivateGStreamer::processInitialisationSegment(std::optional<In
         static_cast<MediaSourcePrivateGStreamer*>(m_mediaSource.get())->startPlaybackIfHasAllTracks();
 }
 
-void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)
-{
-    SourceBufferPrivate::didReceiveSample(WTFMove(sample));
-}
-
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    m_appendPromise->resolve();
-    m_appendPromise.reset();
+    // TODO: didReceiveAllPendingSamples is called even when an error occurred.
+    if (m_appendPromise) {
+        m_appendPromise->resolve();
+        m_appendPromise.reset();
+    }
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    m_appendPromise->reject(1);
-    m_appendPromise.reset();
+    if (m_appendPromise) {
+        m_appendPromise->reject(1);
+        m_appendPromise.reset();
+    }
 }
 
 #if !RELEASE_LOG_DISABLED

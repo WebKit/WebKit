@@ -60,10 +60,6 @@ public:
     {
         return static_cast<TestDefaultToJSONIndirectInheritance&>(Base::wrapped());
     }
-    Ref<TestDefaultToJSONIndirectInheritance> protectedWrapped() const
-    {
-        return wrapped();
-    }
 protected:
     JSTestDefaultToJSONIndirectInheritance(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONIndirectInheritance>&&);
 

@@ -364,6 +364,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
+    NetworkProcess/NetworkSessionCreationParameters.serialization.in
 
     NetworkProcess/Classifier/ITPThirdPartyData.serialization.in
     NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.serialization.in
@@ -373,6 +374,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     NetworkProcess/storage/FileSystemStorageError.serialization.in
 
+    Platform/IPC/FormDataReference.serialization.in
     Platform/IPC/StreamServerConnection.serialization.in
 
     Platform/SharedMemory.serialization.in

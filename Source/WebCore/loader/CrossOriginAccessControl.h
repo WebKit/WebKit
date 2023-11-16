@@ -70,7 +70,8 @@ enum class HTTPHeadersToKeepFromCleaning : uint8_t {
     Origin = 1 << 2,
     UserAgent = 1 << 3,
     AcceptEncoding = 1 << 4,
-    CacheControl = 1 << 5
+    CacheControl = 1 << 5,
+    Pragma = 1 << 6
 };
 
 OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeepFromCleaning(const HTTPHeaderMap&);

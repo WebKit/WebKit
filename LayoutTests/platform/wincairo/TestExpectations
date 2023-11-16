@@ -938,7 +938,6 @@ http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
 http/tests/workers/service/service-worker-cache-api.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
-http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
 http/tests/workers/service/shownotification-denied.html [ Failure ]
 http/wpt/push-api/pushManager.any.html [ Failure ]
 http/wpt/push-api/pushManager.any.serviceworker.html [ Failure ]
@@ -2663,11 +2662,6 @@ webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
 webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
 
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
-
-webkit.org/b/264433 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Skip ] # Timeout
-webkit.org/b/264433 http/tests/websocket/tests/hybi/simple-wss.html [ Skip ] # Failure
-webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-websockets.sub.tentative.html [ Skip ] # Failure
-webkit.org/b/264433 imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Skip ] # Failure
 
 imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.html [ Skip ] # Failure

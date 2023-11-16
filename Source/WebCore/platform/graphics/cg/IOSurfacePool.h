@@ -36,6 +36,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -78,7 +79,11 @@ private:
     typedef HashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
     typedef HashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
 
-    static constexpr size_t defaultMaximumBytesCached { 1024 * 1024 * 64 };
+#if PLATFORM(MAC)
+    static constexpr size_t defaultMaximumBytesCached { 256 * MB };
+#else
+    static constexpr size_t defaultMaximumBytesCached { 64 * MB };
+#endif
 
     // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
     // they can't be immediately returned when requested (but will be freed up in the future).

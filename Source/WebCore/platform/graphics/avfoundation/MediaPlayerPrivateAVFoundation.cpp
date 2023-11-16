@@ -64,7 +64,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
     , m_cachedDuration(MediaTime::invalidTime())
-    , m_reportedDuration(MediaTime::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::invalidTime())
     , m_delayCharacteristicsChangedNotification(0)
     , m_mainThreadCallPending(false)
@@ -706,18 +705,6 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
 {
     m_cachedDuration = MediaTime::invalidTime();
-
-    // For some media files, reported duration is estimated and updated as media is loaded
-    // so report duration changed when the estimate is upated.
-    MediaTime duration = this->durationMediaTime();
-    if (duration != m_reportedDuration) {
-        INFO_LOG(LOGIDENTIFIER, duration);
-        if (m_reportedDuration.isValid()) {
-            if (auto player = m_player.get())
-                player->durationChanged();
-        }
-        m_reportedDuration = duration;
-    }
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
