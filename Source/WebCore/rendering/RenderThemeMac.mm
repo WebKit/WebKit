@@ -797,33 +797,31 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
 {
     auto appearance = renderer.style().effectiveAppearance();
 
-#if USE(NEW_THEME)
     switch (appearance) {
+    case StyleAppearance::Button:
     case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio:
-    case StyleAppearance::PushButton:
-    case StyleAppearance::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
 #endif
     case StyleAppearance::DefaultButton:
-    case StyleAppearance::Button:
     case StyleAppearance::InnerSpinButton:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Radio:
+    case StyleAppearance::SquareButton:
     case StyleAppearance::Switch:
-            return RenderTheme::adjustRepaintRect(renderer, rect);
-    default:
-            break;
-    }
-#endif
-
-    float zoomLevel = renderer.style().effectiveZoom();
-
-    if (appearance == StyleAppearance::Menulist) {
+        RenderTheme::adjustRepaintRect(renderer, rect);
+        break;
+    case StyleAppearance::Menulist: {
+        auto zoomLevel = renderer.style().effectiveZoom();
         setPopupButtonCellState(renderer, IntSize(rect.size()));
-        IntSize size = popupButtonSizes()[[popupButton() controlSize]];
+        auto size = popupButtonSizes()[[popupButton() controlSize]];
         size.setHeight(size.height() * zoomLevel);
         size.setWidth(rect.width());
         rect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
+        break;
+    }
+    default:
+        break;
     }
 }
 
