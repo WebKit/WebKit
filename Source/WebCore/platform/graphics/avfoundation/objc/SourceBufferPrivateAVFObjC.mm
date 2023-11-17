@@ -681,15 +681,13 @@ Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>
     return invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser]() mutable {
         return GenericPromise::createAndSettle(parser->appendData(WTFMove(data)));
     })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }](auto&& result) {
-        if (weakThis) {
-            weakThis->m_parsingSucceeded = !!result;
-            weakThis->appendCompleted();
-        }
+        if (weakThis)
+            weakThis->appendCompleted(!!result);
         return GenericPromise::createAndSettle(WTFMove(result));
     });
 }
 
-void SourceBufferPrivateAVFObjC::appendCompleted()
+void SourceBufferPrivateAVFObjC::appendCompleted(bool success)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -703,7 +701,7 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
         m_hasSessionSemaphore = nil;
     }
 
-    if (auto player = this->player(); player && m_parsingSucceeded)
+    if (auto player = this->player(); player && success)
         player->setLoadingProgresssed(true);
 }
 

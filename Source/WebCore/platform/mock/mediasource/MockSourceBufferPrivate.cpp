@@ -215,9 +215,9 @@ void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
         mediaSourcePrivate()->player().setReadyState(readyState);
 }
 
-void MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
 {
-    completionHandler(copyToVector(m_enqueuedSamples));
+    return SamplesPromise::createAndResolve(copyToVector(m_enqueuedSamples));
 }
 
 MediaTime MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(const AtomString&)

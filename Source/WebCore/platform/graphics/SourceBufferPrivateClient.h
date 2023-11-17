@@ -76,12 +76,6 @@ public:
     };
     using ReceiveResultPromise = NativePromise<void, ReceiveResult>;
     virtual Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) = 0;
-    enum class AppendResult : uint8_t {
-        Succeeded,
-        ReadStreamFailed,
-        ParsingFailed
-    };
-    virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
     virtual Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) = 0;
     virtual void sourceBufferPrivateTrackBuffersChanged(const Vector<PlatformTimeRanges>&) { };
     virtual Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
@@ -117,15 +111,6 @@ template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> 
         WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected,
         WebCore::SourceBufferPrivateClient::ReceiveResult::BufferRemoved,
         WebCore::SourceBufferPrivateClient::ReceiveResult::IPCError
-    >;
-};
-
-template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::AppendResult> {
-    using values = EnumValues<
-        WebCore::SourceBufferPrivateClient::AppendResult,
-        WebCore::SourceBufferPrivateClient::AppendResult::Succeeded,
-        WebCore::SourceBufferPrivateClient::AppendResult::ReadStreamFailed,
-        WebCore::SourceBufferPrivateClient::AppendResult::ParsingFailed
     >;
 };
 

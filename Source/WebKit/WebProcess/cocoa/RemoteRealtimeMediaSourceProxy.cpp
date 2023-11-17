@@ -115,8 +115,7 @@ void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& co
 
 Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSourceProxy::takePhoto(PhotoSettings&& settings)
 {
-    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::TakePhoto(identifier(), WTFMove(settings)))->whenSettled(RunLoop::main(), [](Messages::UserMediaCaptureManagerProxy::TakePhoto::Promise::Result&& result) {
-
+    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::TakePhoto(identifier(), WTFMove(settings)))->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::TakePhoto::Promise::Result&& result) {
         if (result)
             return WebCore::RealtimeMediaSource::TakePhotoNativePromise::createAndSettle(WTFMove(result.value()));
 
@@ -131,8 +130,7 @@ void RemoteRealtimeMediaSourceProxy::getPhotoCapabilities(WebCore::RealtimeMedia
 
 Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoSettings()
 {
-    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings(identifier()))->whenSettled(RunLoop::main(), [](Messages::UserMediaCaptureManagerProxy::GetPhotoSettings::Promise::Result&& result) {
-
+    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings(identifier()))->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::GetPhotoSettings::Promise::Result&& result) {
         if (result)
             return WebCore::RealtimeMediaSource::PhotoSettingsNativePromise::createAndSettle(WTFMove(result.value()));
 

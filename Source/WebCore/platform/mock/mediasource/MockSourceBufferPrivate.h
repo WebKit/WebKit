@@ -63,7 +63,7 @@ private:
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
 
-    void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) final;
 

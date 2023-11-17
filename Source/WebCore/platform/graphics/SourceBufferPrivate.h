@@ -94,7 +94,7 @@ public:
 
     WEBCORE_EXPORT virtual void setActive(bool);
 
-    WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT virtual Ref<GenericPromise> append(Ref<SharedBuffer>&&);
 
     virtual void abort();
     // Overrides must call the base class.
@@ -117,7 +117,7 @@ public:
     virtual void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
-    WEBCORE_EXPORT virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT virtual Ref<GenericPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;
@@ -151,8 +151,9 @@ public:
     WEBCORE_EXPORT virtual void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime);
 
     // Internals Utility methods
-    WEBCORE_EXPORT virtual void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
-    WEBCORE_EXPORT virtual void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
+    using SamplesPromise = NativePromise<Vector<String>, int>;
+    WEBCORE_EXPORT virtual Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&);
+    WEBCORE_EXPORT virtual Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
     virtual void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) { }
 

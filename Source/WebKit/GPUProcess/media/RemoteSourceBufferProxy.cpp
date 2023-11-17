@@ -170,14 +170,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
-}
-
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
     if (!m_connectionToWebProcess)
@@ -194,15 +186,19 @@ void RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost(uint64_t 
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(GenericPromise::Result, uint64_t, const MediaTime&)>&& completionHandler)
 {
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return completionHandler(std::nullopt);
+        return completionHandler(makeUnexpected(-1), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
 
-    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()));
+    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (handle && m_connectionToWebProcess)
+        m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
-    completionHandler(sharedMemory->createHandle(SharedMemory::Protection::ReadOnly));
+    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+        completionHandler(WTFMove(result), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
+    });
 }
 
 void RemoteSourceBufferProxy::abort()
@@ -252,7 +248,7 @@ void RemoteSourceBufferProxy::startChangingType()
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto buffered = m_sourceBufferPrivate->buffered();
         completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
     });
@@ -349,18 +345,18 @@ void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemote
         m_sourceBufferPrivate->updateTrackIds(WTFMove(trackIdPairs));
 }
 
-void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
     ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
     ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
-void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
     ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
     ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)

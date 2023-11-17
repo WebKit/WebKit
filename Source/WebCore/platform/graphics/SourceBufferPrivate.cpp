@@ -249,23 +249,20 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
     updateBufferedFromTrackBuffers({ });
 }
 
-void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId)
 {
     auto* trackBuffer = m_trackBufferMap.get(trackId);
-    if (!trackBuffer) {
-        completionHandler({ });
-        return;
-    }
+    if (!trackBuffer)
+        return SamplesPromise::createAndResolve(Vector<String> { });
 
-    auto sampleDescriptions = WTF::map(trackBuffer->samples().decodeOrder(), [](auto& entry) {
+    return SamplesPromise::createAndResolve(WTF::map(trackBuffer->samples().decodeOrder(), [](auto& entry) {
         return toString(*entry.second);
-    });
-    completionHandler(WTFMove(sampleDescriptions));
+    }));
 }
 
-void SourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
 {
-    completionHandler({ });
+    return SamplesPromise::createAndResolve(Vector<String> { });
 }
 
 void SourceBufferPrivate::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffer, const AtomString& trackID)
@@ -410,13 +407,11 @@ MediaTime SourceBufferPrivate::findPreviousSyncSamplePresentationTime(const Medi
     return previousSyncSamplePresentationTime;
 }
 
-void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&& completionHandler)
+Ref<GenericPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
 {
     ASSERT(start < end);
-    if (start >= end) {
-        completionHandler();
-        return;
-    }
+    if (start >= end)
+        return GenericPromise::createAndResolve();
 
     // 3.5.9 Coded Frame Removal Algorithm
     // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-removal
@@ -452,7 +447,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         client().sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
 
-    updateBufferedFromTrackBuffers(trackBuffers)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    return updateBufferedFromTrackBuffers(trackBuffers);
 }
 
 size_t SourceBufferPrivate::platformEvictionThreshold() const
@@ -658,17 +653,20 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
     m_pendingSamples.append(WTFMove(sample));
 }
 
-void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
+Ref<GenericPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
+    GenericPromise::Producer producer;
+    auto promise = producer.promise();
+
     m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable -> Ref<GenericPromise> {
         if (!weakThis || !result)
             return GenericPromise::createAndReject(-1);
 
-        if (buffer->isEmpty())
-            return GenericPromise::createAndResolve();
-
         // We have fully completed the previous append operation, we can start a new promise chain.
         m_currentAppendProcessing = GenericPromise::createAndResolve();
+
+        if (buffer->isEmpty())
+            return GenericPromise::createAndResolve();
 
         if (abortCount != m_abortCount)
             return GenericPromise::createAndResolve();
@@ -708,14 +706,11 @@ void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         client().sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
         return GenericPromise::all(RunLoop::current(), promises);
-    })->whenSettled(RunLoop::current(), [weakSelf = WeakPtr { *this }, this, abortCount = m_abortCount](auto&& result) mutable {
-        if (!weakSelf || !isAttached())
-            return GenericPromise::createAndReject(-1);
-
-        if (abortCount == m_abortCount)
-            client().sourceBufferPrivateAppendComplete(result ? SourceBufferPrivateClient::AppendResult::Succeeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
-        return GenericPromise::createAndResolve();
+    })->whenSettled(RunLoop::current(), [producer = WTFMove(producer)](auto&& result) mutable {
+        producer.settle(result);
+        return GenericPromise::createAndSettle(WTFMove(result));
     });
+    return promise;
 }
 
 void SourceBufferPrivate::processPendingMediaSamples()

@@ -74,7 +74,7 @@ private:
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
-    void append(Ref<WebCore::SharedBuffer>&&) final;
+    Ref<GenericPromise> append(Ref<WebCore::SharedBuffer>&&) final;
     Ref<GenericPromise> appendInternal(Ref<WebCore::SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void abort() final;
@@ -93,7 +93,7 @@ private:
     void setGroupStartTimestamp(const MediaTime&) final;
     void setGroupStartTimestampToEndTimestamp() final;
     void setShouldGenerateTimestamps(bool) final;
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, CompletionHandler<void()>&&) final;
+    Ref<GenericPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime) final;
     void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime) final;
     void resetTimestampOffsetInTrackBuffers() final;
     void startChangingType() final;
@@ -111,12 +111,12 @@ private:
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime) final;
 
     // Internals Utility methods
-    void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
-    void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&&);
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
+    void takeOwnershipOfMemory(WebKit::SharedMemory::Handle&&);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&&);

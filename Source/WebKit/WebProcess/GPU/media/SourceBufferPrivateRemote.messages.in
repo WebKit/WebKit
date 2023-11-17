@@ -27,7 +27,7 @@
 
 messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> (WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result result)
-    SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, MediaTime timeStampOffset)
+    TakeOwnershipOfMemory(WebKit::SharedMemory::Handle remoteData)
     SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
     SourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges buffered) -> ()
     SourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers)

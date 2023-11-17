@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,9 +40,9 @@
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
 #include "TextTrackClient.h"
-#include "Timer.h"
 #include "VideoTrackClient.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Observer.h>
 
 namespace WebCore {
@@ -159,13 +159,11 @@ private:
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
-    void stop() final;
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
     // SourceBufferPrivateClient
     Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
-    void sourceBufferPrivateAppendComplete(AppendResult) final;
     Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
@@ -198,7 +196,7 @@ private:
     void scheduleEvent(const AtomString& eventName);
 
     ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
-    void appendBufferTimerFired();
+    void sourceBufferPrivateAppendComplete(GenericPromise::Result&&);
     void resetParserState();
 
     void setActive(bool);
@@ -209,8 +207,6 @@ private:
 
     void monitorBufferingRate();
 
-    void removeTimerFired();
-
     void reportExtraMemoryAllocated(uint64_t extraMemory);
 
     void appendError(bool);
@@ -220,8 +216,9 @@ private:
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
     friend class Internals;
-    WEBCORE_EXPORT void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
-    WEBCORE_EXPORT void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
+    using SamplesPromise = NativePromise<Vector<String>, int>;
+    WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&);
+    WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
 
@@ -232,7 +229,6 @@ private:
     WTF::Observer<WebCoreOpaqueRoot()> m_opaqueRootProvider;
 
     RefPtr<SharedBuffer> m_pendingAppendData;
-    Timer m_appendBufferTimer;
 
     RefPtr<VideoTrackList> m_videoTracks;
     RefPtr<AudioTrackList> m_audioTracks;
@@ -259,16 +255,15 @@ private:
     // Can grow and shrink.
     uint64_t m_extraMemoryCost { 0 };
 
-    MediaTime m_pendingRemoveStart;
-    MediaTime m_pendingRemoveEnd;
-    Timer m_removeTimer;
-
     bool m_updating { false };
     bool m_receivedFirstInitializationSegment { false };
     bool m_active { false };
     bool m_shouldGenerateTimestamps { false };
     bool m_pendingInitializationSegmentForChangeType { false };
     Ref<TimeRanges> m_buffered;
+    NativePromiseRequest<GenericPromise> m_appendBufferPromise;
+    NativePromiseRequest<GenericPromise> m_removeCodedFramesPromise;
+
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
