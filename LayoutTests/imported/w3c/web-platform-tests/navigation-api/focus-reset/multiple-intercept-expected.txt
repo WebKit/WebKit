@@ -1,0 +1,8 @@
+
+FAIL (not provided) + after-transition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL (not provided) + manual promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL after-transition + manual promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL after-transition + (not provided) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL manual + after-transition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL manual + (not provided) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+

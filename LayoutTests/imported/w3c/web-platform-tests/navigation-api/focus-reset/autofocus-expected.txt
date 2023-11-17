@@ -1,0 +1,21 @@
+
+FAIL An element with autofocus, present before navigation, gets focused assert_equals: Focus moves to the autofocused button after the transition expected Element node <button autofocus=""></button> but got Element node <button></button>
+FAIL Two elements with autofocus, present before navigation; the first gets focused assert_equals: Focus moves to the first autofocused button after the transition expected Element node <button autofocus=""></button> but got Element node <button autofocus=""></button>
+FAIL An element with autofocus, present before navigation but disabled before finished, does not get focused assert_equals: Focus gets reset after the transition expected Element node <body>
+
+<script type="module">
+promise_setup(async () => ... but got Element node <button></button>
+FAIL An element with autofocus, present before navigation but with its autofocus attribute removed before finished, does not get focused assert_equals: Focus gets reset after the transition expected Element node <body>
+
+<script type="module">
+promise_setup(async () => ... but got Element node <button></button>
+FAIL Two elements with autofocus, present before navigation, but the first gets disabled; the second gets focused assert_equals: Disabling the initially-focused button temporarily resets focus to the body expected Element node <body>
+
+<script type="module">
+promise_setup(async () => ... but got Element node <button autofocus="" disabled=""></button>
+FAIL An element with autofocus, introduced between committed and finished, gets focused assert_equals: Focus moves to the autofocused button after the transition expected Element node <button autofocus=""></button> but got Element node <button></button>
+FAIL An element with autofocus, introduced after finished, does not get focused assert_equals: Focus gets reset after the transition expected Element node <body>
+
+<script type="module">
+promise_setup(async () => ... but got Element node <button></button>
+

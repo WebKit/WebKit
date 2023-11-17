@@ -1,0 +1,4 @@
+
+
+FAIL entry.sameDocument after cross-document navigation null is not an object (evaluating 'i_entry.sameDocument')
+

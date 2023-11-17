@@ -1,0 +1,10 @@
+
+FAIL after-transition + after-transition assert_equals: expected "#1" but got ""
+FAIL after-transition + (not provided) assert_equals: expected "#2" but got ""
+FAIL after-transition + immediate assert_equals: expected true but got false
+FAIL immediate + after-transition assert_equals: expected "#4" but got ""
+FAIL immediate + (not provided) assert_equals: expected true but got false
+FAIL immediate + immediate assert_equals: expected true but got false
+FAIL (not provided) + after-transition assert_equals: expected "#7" but got ""
+FAIL (not provided) + immediate assert_equals: expected true but got false
+

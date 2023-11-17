@@ -1,0 +1,3 @@
+
+FAIL navigation.traverseTo() should work in an iframe that is not present in all history entries assert_equals: expected 1 but got 0
+

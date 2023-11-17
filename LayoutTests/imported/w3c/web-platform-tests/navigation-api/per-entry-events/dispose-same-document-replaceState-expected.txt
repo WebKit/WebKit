@@ -1,0 +1,3 @@
+
+FAIL dispose events when doing a same-document replace using history.replaceState() null is not an object (evaluating 'navigation.currentEntry.index')
+

@@ -1,0 +1,3 @@
+
+FAIL window.stop() cancels the navigate event's intercept() and signals event.signal undefined is not an object (evaluating 'abort_signal.aborted')
+

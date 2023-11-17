@@ -1,0 +1,3 @@
+
+FAIL navigation.navigate() returns a finished promise that awaits all promises if event.intercept() is called multiple times assert_equals: expected "#1" but got ""
+

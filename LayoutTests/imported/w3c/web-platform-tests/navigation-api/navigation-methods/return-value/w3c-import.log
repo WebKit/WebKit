@@ -1,0 +1,86 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-already-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-out-of-bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-intercept-rejected.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward-already-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward-intercept-rejected.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-204-205-download.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-already-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-detach-in-onnavigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-detach-in-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-file-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-initial-about-blank-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-rejected.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted-within-onnavigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-invalid-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-javascript-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-beforeunload-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-detached-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-unload-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-unserializable-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-already-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-detach-in-onnavigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-detach-in-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-intercept-rejected.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-detached-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-unload-unserializablestate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-unserializable-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-already-detached.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-cross-document-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-current.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-detach-cross-document-before-navigate-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-detach-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-detach-same-document-before-navigate-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-detach-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-intercept-rejected.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-invalid-key.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-repeated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo.html

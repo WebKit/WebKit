@@ -1,0 +1,3 @@
+
+FAIL entry.getState() after history.replaceState() null is not an object (evaluating 'navigation.currentEntry.getState')
+

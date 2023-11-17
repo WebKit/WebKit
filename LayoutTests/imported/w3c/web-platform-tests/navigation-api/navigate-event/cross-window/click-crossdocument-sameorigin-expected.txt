@@ -1,0 +1,6 @@
+Click me
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT clicking on an <a> element that navigates cross-document targeting a same-origin window Test timed out
+

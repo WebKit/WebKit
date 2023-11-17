@@ -1,0 +1,3 @@
+
+FAIL currententrychange fires for navigation.updateCurrentEntry() assert_equals: expected 1 but got 0
+

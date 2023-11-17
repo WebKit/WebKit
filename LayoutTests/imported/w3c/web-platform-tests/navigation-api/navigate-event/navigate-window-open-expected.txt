@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT window.open() fires navigate event in target window but not source Test timed out
+

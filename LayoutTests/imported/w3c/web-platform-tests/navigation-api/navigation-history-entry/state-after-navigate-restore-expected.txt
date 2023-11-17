@@ -1,0 +1,4 @@
+
+
+FAIL entry.getState() is properly restored after cross-document back assert_equals: expected 1 but got 0
+

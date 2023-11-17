@@ -1,0 +1,96 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-does-not-fire-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defaultPrevented-navigation-preempted.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defaultPrevented-window-stop-after-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/event-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-after-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-and-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-canceled-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-cross-document-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-detach-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-null-or-undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-returns-non-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-throws.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-multiple-times-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-multiple-times.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-navigation-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-on-synthetic-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-popstate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-resolve.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-same-document-history-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-download-userInitiated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-download.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-same-origin-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-userInitiated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-with-target.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-after-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-dynamic-index.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-back-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-get.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requestSubmit.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-traverse.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-userInitiated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-with-target.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-after-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-after-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-noop.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-go-0.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-iframe-location.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-location.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-meta-refresh.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document-in-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-svg-anchor-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-to-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-to-srcdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-window-open-self.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-window-open.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigatesuccess-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigatesuccess-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-back-cross-document-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-back-same-document-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-in-iframe-same-document-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-navigates-top-and-same-doc-child-and-cross-doc-child.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-top-cancels-cross-document-child.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-in-unload-then-remove-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-detach-in-onnavigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-after-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop.html

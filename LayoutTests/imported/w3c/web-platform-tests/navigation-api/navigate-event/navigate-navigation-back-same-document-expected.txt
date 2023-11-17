@@ -1,0 +1,3 @@
+
+FAIL navigate event for navigation.back() - same-document null is not an object (evaluating 'navigation.currentEntry.key')
+

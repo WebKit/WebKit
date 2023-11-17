@@ -1,0 +1,4 @@
+
+
+FAIL navigate() from <iframe> with src="" but still on initial about:blank works null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.url')
+

@@ -1,0 +1,4 @@
+
+
+FAIL entry.getState() behavior after navigating away and back assert_equals: expected 1 but got 0
+

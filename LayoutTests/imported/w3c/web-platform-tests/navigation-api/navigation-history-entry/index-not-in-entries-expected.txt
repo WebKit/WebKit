@@ -1,0 +1,4 @@
+
+
+FAIL entry.index should return -1 when not in navigation.entries() null is not an object (evaluating 'navigation.currentEntry.index')
+

@@ -1,0 +1,3 @@
+
+FAIL navigation.activation.entry should be orphaned by history.replaceState() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigation.activation.entry')"
+

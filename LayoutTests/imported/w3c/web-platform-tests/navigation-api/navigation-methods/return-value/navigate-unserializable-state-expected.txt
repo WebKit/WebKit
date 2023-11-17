@@ -1,0 +1,4 @@
+
+FAIL navigate() with an unserializable state (WritableStream) assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+FAIL navigate() with an unserializable state (SharedArrayBuffer) assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+
