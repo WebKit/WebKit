@@ -7657,6 +7657,7 @@
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
+		FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SandboxExtension.serialization.in; sourceTree = "<group>"; };
 		FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportBidirectionalStream.h; sourceTree = "<group>"; };
 		FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportBidirectionalStream.cpp; sourceTree = "<group>"; };
 		FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportReceiveStream.cpp; sourceTree = "<group>"; };
@@ -8505,6 +8506,7 @@
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
+				FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
 				2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */,
 				2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */,

@@ -28,10 +28,7 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
-#import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
-#import "Decoder.h"
-#import "Encoder.h"
 #import "Logging.h"
 #import "WebCoreArgumentCoders.h"
 #import <string.h>
@@ -41,98 +38,95 @@
 
 namespace WebKit {
 
-class SandboxExtensionImpl {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken = std::nullopt, OptionSet<SandboxExtension::Flags> flags = SandboxExtension::Flags::Default)
-    {
-        std::unique_ptr<SandboxExtensionImpl> impl { new SandboxExtensionImpl(path, type, auditToken, flags) };
-        if (!impl->m_token)
-            return nullptr;
-        return impl;
-    }
+std::unique_ptr<SandboxExtensionImpl> SandboxExtensionImpl::create(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+{
+    std::unique_ptr<SandboxExtensionImpl> impl { new SandboxExtensionImpl(path, type, auditToken, flags) };
+    if (!impl->m_token)
+        return nullptr;
+    if (!impl->m_token[0]) // Make sure strlen is > 0 without iterating the whole string.
+        return nullptr;
+    ASSERT(strlen(impl->m_token));
+    return impl;
+}
 
-    SandboxExtensionImpl(const char* serializedFormat, size_t length)
-        : m_token { strndup(serializedFormat, length) }
-    {
-    }
+SandboxExtensionImpl::SandboxExtensionImpl(std::span<const uint8_t> serializedFormat)
+    : m_token { strndup(reinterpret_cast<const char*>(serializedFormat.data()), serializedFormat.size()) }
+{
+    ASSERT(!serializedFormat.empty());
+}
 
-    ~SandboxExtensionImpl()
-    {
-        if (!m_token)
-            return;
-        auto length = strlen(m_token);
-        memset_s(m_token, length, 0, length);
-        free(m_token);
-    }
+SandboxExtensionImpl::~SandboxExtensionImpl()
+{
+    if (!m_token)
+        return;
+    auto length = strlen(m_token);
+    memset_s(m_token, length, 0, length);
+    free(m_token);
+}
 
-    bool WARN_UNUSED_RETURN consume()
-    {
-        m_handle = sandbox_extension_consume(m_token);
+bool WARN_UNUSED_RETURN SandboxExtensionImpl::consume()
+{
+    m_handle = sandbox_extension_consume(m_token);
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-        return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
+    return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
-        if (m_handle == -1) {
-            LOG_ERROR("Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
-            return false;
-        }
-        return true;
+    if (m_handle == -1) {
+        LOG_ERROR("Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
+        return false;
+    }
+    return true;
 #endif
-    }
+}
 
-    bool invalidate()
-    {
-        return !sandbox_extension_release(std::exchange(m_handle, 0));
-    }
+bool SandboxExtensionImpl::invalidate()
+{
+    return !sandbox_extension_release(std::exchange(m_handle, 0));
+}
 
-    const char* WARN_UNUSED_RETURN getSerializedFormat(size_t& length)
-    {
-        length = strlen(m_token);
-        return m_token;
-    }
+std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
+{
+    ASSERT(m_token);
+    ASSERT(strlen(m_token));
+    return { reinterpret_cast<const uint8_t*>(m_token), strlen(m_token) };
+}
 
-private:
-    char* sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
-    {
-        uint32_t extensionFlags = 0;
-        if (flags & SandboxExtension::Flags::NoReport)
-            extensionFlags |= SANDBOX_EXTENSION_NO_REPORT;
-        if (flags & SandboxExtension::Flags::DoNotCanonicalize)
-            extensionFlags |= SANDBOX_EXTENSION_CANONICAL;
+char* SandboxExtensionImpl::sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+{
+    uint32_t extensionFlags = 0;
+    if (flags & SandboxExtension::Flags::NoReport)
+        extensionFlags |= SANDBOX_EXTENSION_NO_REPORT;
+    if (flags & SandboxExtension::Flags::DoNotCanonicalize)
+        extensionFlags |= SANDBOX_EXTENSION_CANONICAL;
 
-        switch (type) {
-        case SandboxExtension::Type::ReadOnly:
-            return sandbox_extension_issue_file(APP_SANDBOX_READ, path, extensionFlags);
-        case SandboxExtension::Type::ReadWrite:
-            return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, extensionFlags);
-        case SandboxExtension::Type::Mach:
-            if (!auditToken)
-                return sandbox_extension_issue_mach("com.apple.webkit.extension.mach", path, extensionFlags);
-            return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach", path, extensionFlags, *auditToken);
-        case SandboxExtension::Type::IOKit:
-            if (!auditToken)
-                return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit", path, extensionFlags);
-            return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit", path, extensionFlags, *auditToken);
-        case SandboxExtension::Type::Generic:
-            return sandbox_extension_issue_generic(path, extensionFlags);
-        case SandboxExtension::Type::ReadByProcess:
-            if (!auditToken)
-                return nullptr;
+    switch (type) {
+    case SandboxExtension::Type::ReadOnly:
+        return sandbox_extension_issue_file(APP_SANDBOX_READ, path, extensionFlags);
+    case SandboxExtension::Type::ReadWrite:
+        return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, extensionFlags);
+    case SandboxExtension::Type::Mach:
+        if (!auditToken)
+            return sandbox_extension_issue_mach("com.apple.webkit.extension.mach", path, extensionFlags);
+        return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach", path, extensionFlags, *auditToken);
+    case SandboxExtension::Type::IOKit:
+        if (!auditToken)
+            return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit", path, extensionFlags);
+        return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit", path, extensionFlags, *auditToken);
+    case SandboxExtension::Type::Generic:
+        return sandbox_extension_issue_generic(path, extensionFlags);
+    case SandboxExtension::Type::ReadByProcess:
+        if (!auditToken)
+            return nullptr;
 #if PLATFORM(MAC)
-            extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
+        extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
 #endif
-            return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
-        }
+        return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
     }
+}
 
-    SandboxExtensionImpl(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
-        : m_token { sandboxExtensionForType(path, type, auditToken, flags) }
-    {
-    }
-
-    char* m_token;
-    int64_t m_handle { 0 };
-};
+SandboxExtensionImpl::SandboxExtensionImpl(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+    : m_token { sandboxExtensionForType(path, type, auditToken, flags) }
+{
+}
 
 SandboxExtensionHandle::SandboxExtensionHandle()
 {
@@ -145,37 +139,6 @@ SandboxExtensionHandle::~SandboxExtensionHandle()
 {
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
-}
-
-void SandboxExtensionHandle::encode(IPC::Encoder& encoder) &&
-{
-    if (!m_sandboxExtension) {
-        encoder << IPC::DataReference();
-        return;
-    }
-
-    size_t length = 0;
-    const char* serializedFormat = m_sandboxExtension->getSerializedFormat(length);
-    ASSERT(serializedFormat);
-
-    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length);
-
-    // Encoding will destroy the sandbox extension locally.
-    m_sandboxExtension = 0;
-}
-
-auto SandboxExtensionHandle::decode(IPC::Decoder& decoder) -> std::optional<SandboxExtensionHandle>
-{
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return std::nullopt;
-
-    if (dataReference.empty())
-        return {{ }};
-
-    SandboxExtensionHandle handle;
-    handle.m_sandboxExtension = makeUnique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
-    return WTFMove(handle);
 }
 
 RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
