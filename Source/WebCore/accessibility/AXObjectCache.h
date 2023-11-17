@@ -277,7 +277,7 @@ public:
     bool nodeIsTextControl(const Node*);
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
-    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
+    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onPaint(const RenderObject&, IntRect&&) const;
@@ -483,7 +483,7 @@ public:
     AXTreeData treeData();
 
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
-    std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
+    std::optional<ListHashSet<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
     void updateRelations(Element&, const QualifiedName&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -632,10 +632,10 @@ private:
     // Relationships between objects.
     static Vector<QualifiedName>& relationAttributes();
     static AXRelationType attributeToRelationType(const QualifiedName&);
-    enum class AddingSymmetricRelation : bool { No, Yes };
+    enum class AddSymmetricRelation : bool { No, Yes };
     static AXRelationType symmetricRelation(AXRelationType);
     void addRelation(Element*, Element*, AXRelationType);
-    void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddingSymmetricRelation = AddingSymmetricRelation::No);
+    void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddSymmetricRelation = AddSymmetricRelation::Yes);
     void removeRelationByID(AXID originID, AXID targetID, AXRelationType);
     void addRelations(Element&, const QualifiedName&);
     void removeRelations(Element&, AXRelationType);
@@ -731,6 +731,18 @@ private:
     ListHashSet<RefPtr<AXCoreObject>> m_deferredParentChangedList;
 #endif
 };
+
+template<typename U>
+inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs) const
+{
+    ASSERT(isMainThread());
+
+    return WTF::compactMap(axIDs, [&](auto& axID) -> std::optional<RefPtr<AXCoreObject>> {
+        if (auto* object = objectForID(axID))
+            return RefPtr { object };
+        return std::nullopt;
+    });
+}
 
 class AXAttributeCacheEnabler
 {
