@@ -24,6 +24,7 @@
  */
 
 #import "_WKSystemPreferences.h"
+#import <wtf/text/ASCIILiteral.h>
 
 constexpr auto LDMEnabledKey = "LDMGlobalEnabled";
 constexpr auto WKLockdownModeEnabledKey = "WKLockdownModeEnabled"_s;
