@@ -157,7 +157,7 @@ private:
     bool isMediaSampleAllowed(const MediaSample&) const final;
 
     // SourceBufferPrivate overrides
-    Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserStateInternal() final;
     MediaPlayer::ReadyState readyState() const final;

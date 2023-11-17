@@ -344,7 +344,7 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     // 5. Return control to the caller and run the rest of the steps asynchronously.
     invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this, start, end] {
         if (isRemoved())
-            return GenericPromise::createAndReject(-1);
+            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
         // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
         return m_private->removeCodedFrames(start, end, m_source->currentTime());
     })->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }] {
@@ -547,14 +547,14 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this]() mutable {
         // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
         if (!m_pendingAppendData || m_pendingAppendData->isEmpty())
-            return GenericPromise::createAndResolve();
+            return MediaPromise::createAndResolve();
         return m_private->append(m_pendingAppendData.releaseNonNull());
     })->whenSettled(RunLoop::current(), *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
 
     return { };
 }
 
-void SourceBuffer::sourceBufferPrivateAppendComplete(GenericPromise::Result&& result)
+void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& result)
 {
     m_appendBufferPromise.complete();
 
@@ -663,10 +663,10 @@ void SourceBuffer::setActive(bool active)
         m_source->sourceBufferDidChangeActiveState(*this, active);
 }
 
-Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
 {
     if (isRemoved())
-        return ReceiveResultPromise::createAndReject(ReceiveResult::BufferRemoved);
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -689,7 +689,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
     // with the decode error parameter set to true and abort these steps.
     if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
         // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-        return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+        return MediaPromise::createAndReject(PlatformMediaError::AppendError);
     }
 
     // 3. If the first initialization segment flag is true, then run the following steps:
@@ -698,7 +698,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
         // with the decode error parameter set to true and abort these steps.
         if (!validateInitializationSegment(segment)) {
             // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-            return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+            return MediaPromise::createAndReject(PlatformMediaError::AppendError);
         }
 
         Vector<std::pair<AtomString, AtomString>> trackIdPairs;
@@ -775,7 +775,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
             for (auto& audioTrackInfo : segment.audioTracks) {
                 if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                     continue;
-                return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
             }
         }
 
@@ -783,7 +783,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
             for (auto& videoTrackInfo : segment.videoTracks) {
                 if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                     continue;
-                return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
             }
         }
 
@@ -912,7 +912,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
         for (auto& sourceBuffer : *m_source->sourceBuffers()) {
             if (!sourceBuffer->m_receivedFirstInitializationSegment)
-                return ReceiveResultPromise::createAndResolve();
+                return MediaPromise::createAndResolve();
         }
 
         // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
@@ -926,7 +926,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
     if (activeTrackFlag && m_private->readyState() > MediaPlayer::ReadyState::HaveCurrentData)
         m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
-    return ReceiveResultPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
@@ -1138,15 +1138,15 @@ void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
     m_bufferedSinceLastMonitor += frameDuration;
 }
 
-Ref<GenericPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
     if (isRemoved())
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
     m_source->setDurationInternal(duration);
     if (m_textTracks)
         m_textTracks->setDuration(duration);
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
@@ -1307,7 +1307,7 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-Ref<GenericPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
 {
     ASSERT(ranges != m_buffered->ranges(), "sourceBufferPrivateBufferedChanged should only be called if the ranges did change");
 #if ENABLE(MANAGED_MEDIA_SOURCE)
@@ -1325,7 +1325,7 @@ Ref<GenericPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const Platf
 #endif
     m_buffered = TimeRanges::create(ranges);
     setBufferedDirty(true);
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 bool SourceBuffer::isBufferedDirty() const

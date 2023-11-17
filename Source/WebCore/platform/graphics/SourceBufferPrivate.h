@@ -94,7 +94,7 @@ public:
 
     WEBCORE_EXPORT virtual void setActive(bool);
 
-    WEBCORE_EXPORT virtual Ref<GenericPromise> append(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT virtual Ref<MediaPromise> append(Ref<SharedBuffer>&&);
 
     virtual void abort();
     // Overrides must call the base class.
@@ -117,7 +117,7 @@ public:
     virtual void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
-    WEBCORE_EXPORT virtual Ref<GenericPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
+    WEBCORE_EXPORT virtual Ref<MediaPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;
@@ -126,7 +126,7 @@ public:
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
-    using ComputeSeekPromise = NativePromise<MediaTime, int>;
+    using ComputeSeekPromise = MediaTimePromise;
     WEBCORE_EXPORT virtual Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
     WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
@@ -172,7 +172,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT Ref<GenericPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
+    WEBCORE_EXPORT Ref<MediaPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
 
     MediaTime currentMediaTime() const;
     MediaTime duration() const;
@@ -181,9 +181,9 @@ protected:
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
     WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT Ref<GenericPromise> setBufferedRanges(PlatformTimeRanges&&);
+    WEBCORE_EXPORT Ref<MediaPromise> setBufferedRanges(PlatformTimeRanges&&);
 
-    virtual Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
+    virtual Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
     bool isActive() const { return m_isActive; }
@@ -239,7 +239,7 @@ private:
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
-    Ref<GenericPromise> m_currentSourceBufferOperation { GenericPromise::createAndResolve() };
+    Ref<MediaPromise> m_currentSourceBufferOperation { MediaPromise::createAndResolve() };
 
     bool m_shouldGenerateTimestamps { false };
     bool m_receivedFirstInitializationSegment { false };
@@ -251,7 +251,7 @@ private:
 
     using SamplesVector = Vector<Ref<MediaSample>>;
     SamplesVector m_pendingSamples;
-    Ref<GenericPromise> m_currentAppendProcessing { GenericPromise::createAndResolve() };
+    Ref<MediaPromise> m_currentAppendProcessing { MediaPromise::createAndResolve() };
 
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };

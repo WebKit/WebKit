@@ -29,7 +29,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
     SetMode(WebCore::SourceBufferAppendMode appendMode)
-    Append(IPC::SharedBufferReference data) -> (Expected<void, int> result, uint64_t totalTrackBufferSizeInBytes, MediaTime timestampOffset)
+    Append(IPC::SharedBufferReference data) -> (WebCore::MediaPromise::Result result, uint64_t totalTrackBufferSizeInBytes, MediaTime timestampOffset)
     Abort()
     ResetParserState()
     RemovedFromMediaSource()

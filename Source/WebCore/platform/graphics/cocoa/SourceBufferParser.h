@@ -96,7 +96,7 @@ public:
 
     // appendData will be called on the SourceBufferPrivateAVFObjC data parser queue.
     // Other methods will be called on the main thread, but only once appendData has returned.
-    virtual Expected<void, int> appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
+    virtual Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void setShouldProvideMediaDataForTrackID(bool, uint64_t) = 0;
     virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;

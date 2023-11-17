@@ -245,7 +245,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-Expected<void, int> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
+Expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     auto sharedBuffer = segment.takeSharedBuffer();
@@ -257,7 +257,7 @@ Expected<void, int> SourceBufferParserAVFObjC::appendData(Segment&& segment, App
     m_parserStateWasReset = false;
 
     if (m_lastErrorCode)
-        return makeUnexpected(m_lastErrorCode.value());
+        return makeUnexpected(PlatformMediaError::ParsingError);
     return { };
 }
 

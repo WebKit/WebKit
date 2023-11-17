@@ -80,19 +80,21 @@ SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
     gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::SourceBufferPrivateRemote::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
-Ref<GenericPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
+Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
     return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *static_cast<SourceBufferPrivate*>(this) }, this](auto&& result) {
-        if (!result || !weakThis)
-            return GenericPromise::createAndReject(-1);
+        if (!result)
+            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+        if (!weakThis)
+            return MediaPromise::createAndReject(PlatformMediaError::SourceRemoved);
 
         m_totalTrackBufferSizeInBytes = std::get<uint64_t>(*result);
         setTimestampOffset(std::get<MediaTime>(*result));
-        return GenericPromise::createAndSettle(std::get<GenericPromise::Result>(*result));
+        return MediaPromise::createAndSettle(std::get<MediaPromise::Result>(*result));
     });
 }
 
@@ -123,10 +125,10 @@ void SourceBufferPrivateRemote::resetParserState()
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
 }
 
-Ref<GenericPromise> SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
+Ref<MediaPromise> SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
 {
     ASSERT_NOT_REACHED();
-    return GenericPromise::createAndReject(-1);
+    return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 }
 
 void SourceBufferPrivateRemote::resetParserStateInternal()
@@ -207,16 +209,16 @@ void SourceBufferPrivateRemote::setMode(SourceBufferAppendMode mode)
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetMode(mode), m_remoteSourceBufferIdentifier);
 }
 
-Ref<GenericPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime)
+Ref<MediaPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
     return gpuProcessConnection->connection().sendWithPromisedReply(
         Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }] (auto&& result) mutable {
             if (!result)
-                return GenericPromise::createAndReject(-1);
+                return MediaPromise::createAndReject(PlatformMediaError::IPCError);
             m_totalTrackBufferSizeInBytes = std::get<uint64_t>(*result);
             return setBufferedRanges(WTFMove(std::get<WebCore::PlatformTimeRanges>(*result)));
         });
@@ -360,10 +362,10 @@ Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeS
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
-        return ComputeSeekPromise::createAndReject(-1);
+        return ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
 
     return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
-        return result ? ComputeSeekPromise::createAndSettle(*result) : ComputeSeekPromise::createAndReject(-1);
+        return result ? ComputeSeekPromise::createAndSettle(*result) : ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
     });
 }
 
@@ -417,10 +419,10 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamp
     });
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&& completionHandler)
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
     if (!isAttached() || !m_mediaPlayerPrivate) {
-        completionHandler(makeUnexpected(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected));
+        completionHandler(makeUnexpected(WebCore::PlatformMediaError::ClientDisconnected));
         return;
     }
 

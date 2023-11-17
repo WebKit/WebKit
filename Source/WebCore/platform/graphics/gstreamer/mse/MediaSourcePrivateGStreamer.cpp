@@ -139,18 +139,18 @@ void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
     m_playerPrivate.setReadyState(state);
 }
 
-Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateGStreamer::waitForTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaSourcePrivateGStreamer::waitForTarget(const SeekTarget& target)
 {
     if (m_mediaSource)
         return m_mediaSource->waitForTarget(target);
-    return MediaTimePromise::createAndReject(-1);
+    return MediaTimePromise::createAndReject(PlatformMediaError::SourceRemoved);
 }
 
-Ref<GenericPromise> MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time)
+Ref<MediaPromise> MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time)
 {
     if (m_mediaSource)
         return m_mediaSource->seekToTime(time);
-    return GenericPromise::createAndReject(-1);
+    return MediaPromise::createAndReject(PlatformMediaError::SourceRemoved);
 }
 
 MediaTime MediaSourcePrivateGStreamer::duration() const

@@ -163,10 +163,10 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // SourceBufferPrivateClient
-    Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
-    Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
+    Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
+    Ref<MediaPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
-    Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
+    Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
@@ -196,7 +196,7 @@ private:
     void scheduleEvent(const AtomString& eventName);
 
     ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
-    void sourceBufferPrivateAppendComplete(GenericPromise::Result&&);
+    void sourceBufferPrivateAppendComplete(MediaPromise::Result&&);
     void resetParserState();
 
     void setActive(bool);
@@ -261,8 +261,8 @@ private:
     bool m_shouldGenerateTimestamps { false };
     bool m_pendingInitializationSegmentForChangeType { false };
     Ref<TimeRanges> m_buffered;
-    NativePromiseRequest<GenericPromise> m_appendBufferPromise;
-    NativePromiseRequest<GenericPromise> m_removeCodedFramesPromise;
+    NativePromiseRequest<MediaPromise> m_appendBufferPromise;
+    NativePromiseRequest<MediaPromise> m_removeCodedFramesPromise;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
