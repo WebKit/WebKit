@@ -219,16 +219,7 @@ bool JSTestIndexedSetterThrowingException::put(JSCell* cell, JSGlobalObject* lex
     }
 
     throwScope.assertNoException();
-    PropertyDescriptor ownDescriptor;
-    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);;
-    bool ignoreNamedProperties = true;
-    bool hasOwnProperty = legacyPlatformObjectGetOwnProperty(thisObject, lexicalGlobalObject, propertyName, slot, ignoreNamedProperties);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    if (hasOwnProperty) {
-        ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
-        RETURN_IF_EXCEPTION(throwScope, false);
-    }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));
 }
 
 bool JSTestIndexedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)

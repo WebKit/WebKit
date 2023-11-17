@@ -62,42 +62,42 @@ struct CSSParserContext {
     String charset;
     CSSParserMode mode { HTMLStandardMode };
     std::optional<StyleRuleType> enclosingRuleType;
-    bool isHTMLDocument { false };
+    bool isHTMLDocument : 1 { false };
 
     // This is only needed to support getMatchedCSSRules.
-    bool hasDocumentSecurityOrigin { false };
+    bool hasDocumentSecurityOrigin : 1 { false };
 
-    bool isContentOpaque { false };
-    bool useSystemAppearance { false };
-    bool shouldIgnoreImportRules { false };
+    bool isContentOpaque : 1 { false };
+    bool useSystemAppearance : 1 { false };
+    bool shouldIgnoreImportRules : 1 { false };
 
     // Settings, excluding those affecting properties.
-    bool colorContrastEnabled { false };
-    bool colorMixEnabled { false };
-    bool constantPropertiesEnabled { false };
-    bool counterStyleAtRuleImageSymbolsEnabled { false };
-    bool relativeColorSyntaxEnabled { false };
-    bool springTimingFunctionEnabled { false };
+    bool colorContrastEnabled : 1 { false };
+    bool colorMixEnabled : 1 { false };
+    bool constantPropertiesEnabled : 1 { false };
+    bool counterStyleAtRuleImageSymbolsEnabled : 1 { false };
+    bool relativeColorSyntaxEnabled : 1 { false };
+    bool springTimingFunctionEnabled : 1 { false };
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    bool transformStyleOptimized3DEnabled { false };
+    bool transformStyleOptimized3DEnabled : 1 { false };
 #endif
-    bool useLegacyBackgroundSizeShorthandBehavior { false };
-    bool focusVisibleEnabled { false };
-    bool hasPseudoClassEnabled { false };
-    bool cascadeLayersEnabled { false };
-    bool overflowClipEnabled { false };
-    bool gradientPremultipliedAlphaInterpolationEnabled { false };
-    bool gradientInterpolationColorSpacesEnabled { false };
-    bool subgridEnabled { false };
-    bool masonryEnabled { false };
-    bool cssNestingEnabled { false };
-    bool cssPaintingAPIEnabled { false };
-    bool cssScopeAtRuleEnabled { false };
-    bool cssTextUnderlinePositionLeftRightEnabled { false };
-    bool cssWordBreakAutoPhraseEnabled { false };
-    bool popoverAttributeEnabled { false };
-    bool sidewaysWritingModesEnabled { false };
-    bool cssTextWrapPrettyEnabled { false };
+    bool useLegacyBackgroundSizeShorthandBehavior : 1 { false };
+    bool focusVisibleEnabled : 1 { false };
+    bool hasPseudoClassEnabled : 1 { false };
+    bool cascadeLayersEnabled : 1 { false };
+    bool overflowClipEnabled : 1 { false };
+    bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };
+    bool gradientInterpolationColorSpacesEnabled : 1 { false };
+    bool subgridEnabled : 1 { false };
+    bool masonryEnabled : 1 { false };
+    bool cssNestingEnabled : 1 { false };
+    bool cssPaintingAPIEnabled : 1 { false };
+    bool cssScopeAtRuleEnabled : 1 { false };
+    bool cssTextUnderlinePositionLeftRightEnabled : 1 { false };
+    bool cssWordBreakAutoPhraseEnabled : 1 { false };
+    bool popoverAttributeEnabled : 1 { false };
+    bool sidewaysWritingModesEnabled : 1 { false };
+    bool cssTextWrapPrettyEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

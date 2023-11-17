@@ -5097,6 +5097,7 @@ RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(autoValue.releaseNonNull(), ratioList.releaseNonNull());
 }
 
+// Keep in sync with the single keyword value fast path of CSSParserFastPaths's parseDisplay.
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSSParserMode mode)
 {
     // Parse single keyword values
