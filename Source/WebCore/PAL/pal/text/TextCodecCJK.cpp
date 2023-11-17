@@ -53,111 +53,111 @@ TextCodecCJK::TextCodecCJK(Encoding encoding)
 void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     // https://encoding.spec.whatwg.org/#names-and-labels
-    auto registerAliases = [&] (std::initializer_list<const char*> list) {
-        for (auto* alias : list)
+    auto registerAliases = [&] (std::initializer_list<ASCIILiteral> list) {
+        for (auto& alias : list)
             registrar(alias, *list.begin());
     };
 
     registerAliases({
-        "Big5",
-        "big5-hkscs",
-        "cn-big5",
-        "csbig5",
-        "x-x-big5"
+        "Big5"_s,
+        "big5-hkscs"_s,
+        "cn-big5"_s,
+        "csbig5"_s,
+        "x-x-big5"_s
     });
 
     registerAliases({
-        "EUC-JP",
-        "cseucpkdfmtjapanese",
-        "x-euc-jp"
+        "EUC-JP"_s,
+        "cseucpkdfmtjapanese"_s,
+        "x-euc-jp"_s
     });
 
     registerAliases({
-        "Shift_JIS",
-        "csshiftjis",
-        "ms932",
-        "ms_kanji",
-        "shift-jis",
-        "sjis",
-        "windows-31j",
-        "x-sjis"
+        "Shift_JIS"_s,
+        "csshiftjis"_s,
+        "ms932"_s,
+        "ms_kanji"_s,
+        "shift-jis"_s,
+        "sjis"_s,
+        "windows-31j"_s,
+        "x-sjis"_s
     });
 
     registerAliases({
-        "EUC-KR",
-        "cseuckr",
-        "csksc56011987",
-        "iso-ir-149",
-        "korean",
-        "ks_c_5601-1987",
-        "ks_c_5601-1989",
-        "ksc5601",
-        "ksc_5601",
-        "windows-949",
+        "EUC-KR"_s,
+        "cseuckr"_s,
+        "csksc56011987"_s,
+        "iso-ir-149"_s,
+        "korean"_s,
+        "ks_c_5601-1987"_s,
+        "ks_c_5601-1989"_s,
+        "ksc5601"_s,
+        "ksc_5601"_s,
+        "windows-949"_s,
 
         // These aliases are not in the specification, but WebKit has historically supported them.
-        "x-windows-949",
-        "x-uhc",
+        "x-windows-949"_s,
+        "x-uhc"_s,
     });
 
     registerAliases({
-        "ISO-2022-JP",
-        "csiso2022jp"
+        "ISO-2022-JP"_s,
+        "csiso2022jp"_s
     });
 
     registerAliases({
-        "GBK",
-        "chinese",
-        "csgb2312",
-        "csiso58gb231280",
-        "gb2312",
-        "gb_2312",
-        "gb_2312-80",
-        "iso-ir-58",
-        "x-gbk",
+        "GBK"_s,
+        "chinese"_s,
+        "csgb2312"_s,
+        "csiso58gb231280"_s,
+        "gb2312"_s,
+        "gb_2312"_s,
+        "gb_2312-80"_s,
+        "iso-ir-58"_s,
+        "x-gbk"_s,
 
         // These aliases are not in the specification, but WebKit has historically supported them.
-        "cn-gb",
-        "csgb231280",
-        "x-euc-cn",
-        "euc-cn",
-        "cp936",
-        "ms936",
-        "gb2312-1980",
-        "windows-936",
-        "windows-936-2000"
+        "cn-gb"_s,
+        "csgb231280"_s,
+        "x-euc-cn"_s,
+        "euc-cn"_s,
+        "cp936"_s,
+        "ms936"_s,
+        "gb2312-1980"_s,
+        "windows-936"_s,
+        "windows-936-2000"_s
     });
 
     registerAliases({
-        "gb18030",
+        "gb18030"_s,
 
         // These aliases are not in the specification, but WebKit has historically supported them.
-        "ibm-1392",
-        "windows-54936"
+        "ibm-1392"_s,
+        "windows-54936"_s
     });
 }
 
 void TextCodecCJK::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("EUC-JP", [] {
+    registrar("EUC-JP"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::EUC_JP);
     });
-    registrar("Big5", [] {
+    registrar("Big5"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::Big5);
     });
-    registrar("Shift_JIS", [] {
+    registrar("Shift_JIS"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::Shift_JIS);
     });
-    registrar("EUC-KR", [] {
+    registrar("EUC-KR"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::EUC_KR);
     });
-    registrar("ISO-2022-JP", [] {
+    registrar("ISO-2022-JP"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::ISO2022JP);
     });
-    registrar("GBK", [] {
+    registrar("GBK"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::GBK);
     });
-    registrar("gb18030", [] {
+    registrar("gb18030"_s, [] {
         return makeUnique<TextCodecCJK>(Encoding::GB18030);
     });
 }

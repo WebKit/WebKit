@@ -58,9 +58,9 @@ public:
 
 Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling);
 
-using EncodingNameRegistrar = void (*)(const char* alias, const char* name);
+using EncodingNameRegistrar = void (*)(ASCIILiteral alias, ASCIILiteral name);
 
 using NewTextCodecFunction = Function<std::unique_ptr<TextCodec>()>;
-using TextCodecRegistrar = void (*)(const char* name, NewTextCodecFunction&&);
+using TextCodecRegistrar = void (*)(ASCIILiteral name, NewTextCodecFunction&&);
 
 } // namespace PAL
