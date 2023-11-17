@@ -57,7 +57,7 @@ public:
     using WebCore::SampleBufferDisplayLayer::Client::WeakPtrImplType;
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
-    void initialize(bool hideRootLayer, WebCore::IntSize, LayerInitializationCallback&&);
+    void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -80,6 +80,7 @@ private:
     void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;

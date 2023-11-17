@@ -171,6 +171,7 @@ private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
     void setResourceOwner(const ProcessIdentity&) final { ASSERT_NOT_REACHED(); }
     void renderVideoWillBeDestroyed() final { destroyLayers(); }
+    void setShouldMaintainAspectRatio(bool) final;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
@@ -308,6 +309,7 @@ private:
     std::optional<CGRect> m_storedBounds;
     static NativeImageCreator m_nativeImageCreator;
     LayerHostingContextIDCallback m_layerHostingContextIDCallback;
+    bool m_shouldMaintainAspectRatio { true };
 };
 
 }

@@ -59,9 +59,9 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
     gpuProcessConnection->addClient(*this);
 }
 
-void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool)>&& callback)
+void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size, shouldMaintainAspectRatio }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
         m_hostingContextID = contextId;
@@ -169,6 +169,11 @@ void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection
     m_didFail = true;
     if (m_client)
         m_client->sampleBufferDisplayLayerStatusDidFail();
+}
+
+void SampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
+{
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetShouldMaintainAspectRatio { shouldMaintainAspectRatio }, m_identifier);
 }
 
 }

@@ -75,16 +75,16 @@ bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& con
     return true;
 }
 
-void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, LayerCreationCallback&& callback)
+void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, bool shouldMaintainAspectRatio, LayerCreationCallback&& callback)
 {
-    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, hideRootLayer, size, callback = WTFMove(callback)]() mutable {
+    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, hideRootLayer, size, shouldMaintainAspectRatio, callback = WTFMove(callback)]() mutable {
         auto layer = RemoteSampleBufferDisplayLayer::create(m_connectionToWebProcess, identifier, m_connection.copyRef());
         if (!layer) {
             callback({ });
             return;
         }
         auto& layerReference = *layer;
-        layerReference.initialize(hideRootLayer, size, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
+        layerReference.initialize(hideRootLayer, size, shouldMaintainAspectRatio, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
             m_queue->dispatch([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
                 Locker lock(m_layersLock);
                 ASSERT(!m_layers.contains(identifier));
