@@ -826,6 +826,8 @@ static String styleValidityToToString(Style::Validity validity)
     switch (validity) {
     case Style::Validity::Valid:
         return "NoStyleChange"_s;
+    case Style::Validity::AnimationInvalid:
+        return "AnimationInvalid"_s;
     case Style::Validity::ElementInvalid:
         return "InlineStyleChange"_s;
     case Style::Validity::SubtreeInvalid:

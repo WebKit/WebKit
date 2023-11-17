@@ -129,6 +129,9 @@ void TreeResolver::popScope()
 
 ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext)
 {
+    if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
+        return { RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
+
     auto& element = styleable.element;
 
     if (element.hasCustomStyleResolveCallbacks()) {
@@ -595,6 +598,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
         if (!styleable.hasKeyframeEffects()) {
             styleable.setLastStyleChangeEventStyle(nullptr);
+            styleable.setHasPropertiesOverridenAfterAnimation(false);
             return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { } };
         }
 
@@ -618,6 +622,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedProperties, styleable.hasRunningTransitions(), *resolvedStyle.matchResult, element, resolutionContext);
             ASSERT(styleable.keyframeEffectStack());
             styleable.keyframeEffectStack()->cascadeDidOverrideProperties(overriddenAnimatedProperties, document);
+            styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
@@ -727,20 +732,22 @@ void TreeResolver::popParentsToDepth(unsigned depth)
         popParent();
 }
 
-static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
-{
-    if (!pseudoElement)
-        return false;
-    return pseudoElement->needsStyleRecalc();
-}
 
 auto TreeResolver::determineResolutionType(const Element& element, const RenderStyle* existingStyle, DescendantsToResolve parentDescendantsToResolve, Change parentChange) -> std::optional<ResolutionType>
 {
-    if (element.styleValidity() != Validity::Valid)
-        return ResolutionType::Full;
-    if (shouldResolvePseudoElement(element.beforePseudoElement()))
-        return ResolutionType::Full;
-    if (shouldResolvePseudoElement(element.afterPseudoElement()))
+    auto combinedValidity = [&] {
+        auto validity = element.styleValidity();
+        if (auto* pseudoElement = element.beforePseudoElement())
+            validity = std::max(validity, pseudoElement->styleValidity());
+        if (auto* pseudoElement = element.afterPseudoElement())
+            validity = std::max(validity, pseudoElement->styleValidity());
+        return validity;
+    }();
+
+    if (combinedValidity == Validity::AnimationInvalid && parentDescendantsToResolve == DescendantsToResolve::None)
+        return ResolutionType::AnimationOnly;
+
+    if (combinedValidity != Validity::Valid)
         return ResolutionType::Full;
 
     switch (parentDescendantsToResolve) {

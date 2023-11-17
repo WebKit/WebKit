@@ -58,9 +58,10 @@ public:
     void cssAnimationsDidUpdate() { m_hasPendingKeyframesUpdate = false; }
     void keyframesRuleDidChange() { m_hasPendingKeyframesUpdate = true; }
     bool hasPendingKeyframesUpdate() const { return m_hasPendingKeyframesUpdate; }
+    bool hasPropertiesOverridenAfterAnimation() const { return m_hasPropertiesOverridenAfterAnimation; }
+    void setHasPropertiesOverridenAfterAnimation(bool value) { m_hasPropertiesOverridenAfterAnimation = value; }
 
 private:
-
     std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
     std::unique_ptr<const RenderStyle> m_lastStyleChangeEventStyle;
     AnimationCollection m_animations;
@@ -69,6 +70,7 @@ private:
     AnimatableCSSPropertyToTransitionMap m_runningTransitionsByProperty;
     PseudoId m_pseudoId;
     bool m_hasPendingKeyframesUpdate { false };
+    bool m_hasPropertiesOverridenAfterAnimation { false };
 };
 
 } // namespace WebCore

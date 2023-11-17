@@ -159,7 +159,8 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         invalidateAssignedElements(downcast<HTMLSlotElement>(element));
 
     switch (element.styleValidity()) {
-    case Style::Validity::Valid: {
+    case Validity::Valid:
+    case Validity::AnimationInvalid: {
         for (auto& ruleSet : m_ruleSets) {
             ElementRuleCollector ruleCollector(element, *ruleSet, selectorMatchingState);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
@@ -172,10 +173,10 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
 
         return CheckDescendants::Yes;
     }
-    case Style::Validity::ElementInvalid:
+    case Validity::ElementInvalid:
         return CheckDescendants::Yes;
-    case Style::Validity::SubtreeInvalid:
-    case Style::Validity::SubtreeAndRenderersInvalid:
+    case Validity::SubtreeInvalid:
+    case Validity::SubtreeAndRenderersInvalid:
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();
