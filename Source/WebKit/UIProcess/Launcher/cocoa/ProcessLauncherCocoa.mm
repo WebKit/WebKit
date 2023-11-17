@@ -418,6 +418,10 @@ void ProcessLauncher::terminateProcess()
 
 void ProcessLauncher::platformInvalidate()
 {
+#if USE(EXTENSIONKIT)
+    [m_process invalidate];
+#endif
+
     terminateXPCConnection();
 }
 

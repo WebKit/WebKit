@@ -41,6 +41,8 @@ typedef void(^_SEServiceInteruptionHandler)();
 
 @interface _SECapabilities : NSObject
 +(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name;
++(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name environmentIdentifier:(NSString*)environmentIdentifier;
++(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name environmentIdentifier:(NSString*)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;
 @end
 
 NS_REFINED_FOR_SWIFT
