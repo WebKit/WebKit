@@ -4614,6 +4614,8 @@ webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputm
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
 
+webkit.org/b/265053 imported/w3c/web-platform-tests/css/css-sizing/button-min-width.html [ Failure ]
+
 # webkit.org/b/263439 [ iOS ] Several WPTs using wheel actions are timing out after b243272
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html [ Skip ]
