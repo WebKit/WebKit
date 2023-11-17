@@ -34,6 +34,8 @@
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 #import "ScrollingTreeOverflowScrollProxyNodeCocoa.h"
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
+#import "ScrollingTreePluginHostingNode.h"
+#import "ScrollingTreePluginScrollingNodeMac.h"
 #import "ScrollingTreePositionedNodeCocoa.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
@@ -64,6 +66,10 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
         return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
     case ScrollingNodeType::FrameHosting:
         return ScrollingTreeFrameHostingNode::create(*this, nodeID);
+    case ScrollingNodeType::PluginScrolling:
+        return ScrollingTreePluginScrollingNodeMac::create(*this, nodeID);
+    case ScrollingNodeType::PluginHosting:
+        return ScrollingTreePluginHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeMac::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:

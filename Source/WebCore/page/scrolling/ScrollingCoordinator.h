@@ -183,7 +183,7 @@ public:
     virtual bool hasSubscrollers() const { return false; }
 
     // Generated a unique id for scrolling nodes.
-    ScrollingNodeID uniqueScrollingNodeID();
+    WEBCORE_EXPORT ScrollingNodeID uniqueScrollingNodeID();
 
     bool shouldUpdateScrollLayerPositionSynchronously(const LocalFrameView&) const;
 

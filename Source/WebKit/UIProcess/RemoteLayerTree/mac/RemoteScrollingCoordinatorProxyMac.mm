@@ -34,11 +34,13 @@
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
+#import <WebCore/ScrollingStatePluginScrollingNode.h>
 #import <WebCore/ScrollingStatePositionedNode.h>
 #import <WebCore/ScrollingStateTree.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#import <WebCore/ScrollingTreePluginScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WheelEventDeltaFilter.h>
 
@@ -217,8 +219,24 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
                 scrollingStateNode.setHorizontalScrollbarLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.horizontalScrollbarLayer() }));
             break;
         }
+        case ScrollingNodeType::PluginScrolling: {
+            ScrollingStatePluginScrollingNode& scrollingStateNode = downcast<ScrollingStatePluginScrollingNode>(currNode);
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
+                scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrolledContentsLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
+                scrollingStateNode.setVerticalScrollbarLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.verticalScrollbarLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
+                scrollingStateNode.setHorizontalScrollbarLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.horizontalScrollbarLayer() }));
+            break;
+        }
         case ScrollingNodeType::OverflowProxy:
         case ScrollingNodeType::FrameHosting:
+        case ScrollingNodeType::PluginHosting:
         case ScrollingNodeType::Fixed:
         case ScrollingNodeType::Sticky:
         case ScrollingNodeType::Positioned:

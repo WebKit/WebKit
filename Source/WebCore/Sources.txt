@@ -2039,6 +2039,8 @@ page/scrolling/ScrollingStateFrameScrollingNode.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingStateOverflowScrollingNode.cpp
+page/scrolling/ScrollingStatePluginHostingNode.cpp
+page/scrolling/ScrollingStatePluginScrollingNode.cpp
 page/scrolling/ScrollingStatePositionedNode.cpp
 page/scrolling/ScrollingStateScrollingNode.cpp
 page/scrolling/ScrollingStateStickyNode.cpp
@@ -2053,6 +2055,8 @@ page/scrolling/ScrollingTreeLatchingController.cpp
 page/scrolling/ScrollingTreeNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
+page/scrolling/ScrollingTreePluginHostingNode.cpp
+page/scrolling/ScrollingTreePluginScrollingNode.cpp
 page/scrolling/ScrollingTreePositionedNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp

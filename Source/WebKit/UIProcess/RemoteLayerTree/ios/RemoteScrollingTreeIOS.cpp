@@ -31,6 +31,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #include "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
+#include "ScrollingTreePluginScrollingNodeIOS.h"
 #include <WebCore/ScrollingTreeFixedNodeCocoa.h>
 
 namespace WebKit {
@@ -64,7 +65,11 @@ Ref<ScrollingTreeNode> RemoteScrollingTreeIOS::createScrollingTreeNode(Scrolling
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
 
+    case ScrollingNodeType::PluginScrolling:
+        return ScrollingTreePluginScrollingNodeIOS::create(*this, nodeID);
+
     case ScrollingNodeType::FrameHosting:
+    case ScrollingNodeType::PluginHosting:
     case ScrollingNodeType::OverflowProxy:
     case ScrollingNodeType::Fixed:
     case ScrollingNodeType::Sticky:

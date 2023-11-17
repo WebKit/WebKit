@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+    <style>
+        embed {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                document.getElementById('scrollingtree').textContent = internals.scrollingStateTreeAsText();
+            
+            testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <embed src="../../../fast/images/resources/green_rectangle.pdf">
+    <pre id="scrollingtree"></pre>
+</body>
+</html>

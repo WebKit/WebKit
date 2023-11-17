@@ -279,9 +279,11 @@ public:
     bool isFixedNode() const { return m_nodeType == ScrollingNodeType::Fixed; }
     bool isStickyNode() const { return m_nodeType == ScrollingNodeType::Sticky; }
     bool isPositionedNode() const { return m_nodeType == ScrollingNodeType::Positioned; }
-    bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
+    bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode() || isPluginScrollingNode(); }
     bool isFrameScrollingNode() const { return m_nodeType == ScrollingNodeType::MainFrame || m_nodeType == ScrollingNodeType::Subframe; }
     bool isFrameHostingNode() const { return m_nodeType == ScrollingNodeType::FrameHosting; }
+    bool isPluginScrollingNode() const { return m_nodeType == ScrollingNodeType::PluginScrolling; }
+    bool isPluginHostingNode() const { return m_nodeType == ScrollingNodeType::PluginHosting; }
     bool isOverflowScrollingNode() const { return m_nodeType == ScrollingNodeType::Overflow; }
     bool isOverflowScrollProxyNode() const { return m_nodeType == ScrollingNodeType::OverflowProxy; }
 

@@ -1,0 +1,56 @@
+PASS internals.numberOfScrollableAreas() became 1
+PASS internals.numberOfScrollableAreas() became 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Before installing PDF:
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
+  (behavior for fixed 1)
+)
+
+After installing PDF:
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
+  (synchronous event dispatch region for event wheel
+    at (8,23) size 300x300)
+  (behavior for fixed 1)
+)
+
+After removing PDF:
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
+  (behavior for fixed 1)
+)
+
+

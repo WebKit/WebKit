@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        embed {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
+            if (!window.internals)
+                return;
+
+            const pdf = document.getElementById("pdf");
+
+            document.getElementById('scrollingtree').textContent = "Before installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+
+            pdf.src = "../../../fast/images/resources/green_rectangle.pdf";
+
+            shouldBecomeEqual("internals.numberOfScrollableAreas()", "1", function () {
+                document.getElementById('scrollingtree').textContent += "After installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+
+                pdf.parentElement.removeChild(pdf);
+
+                shouldBecomeEqual("internals.numberOfScrollableAreas()", "0", function () {
+
+                    document.getElementById('scrollingtree').textContent += "After removing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+
+                    finishJSTest();
+                });
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <embed id="pdf">
+    <pre id="scrollingtree"></pre>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

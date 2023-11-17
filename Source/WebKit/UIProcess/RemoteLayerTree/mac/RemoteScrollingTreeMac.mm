@@ -33,6 +33,8 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #import "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
+#import "ScrollingTreePluginScrollingNodeRemoteMac.h"
+#import <WebCore/EventRegion.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollingThread.h>
@@ -123,7 +125,11 @@ Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(Scrolling
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeRemoteMac::create(*this, nodeID);
 
+    case ScrollingNodeType::PluginScrolling:
+        return ScrollingTreePluginScrollingNodeRemoteMac::create(*this, nodeID);
+
     case ScrollingNodeType::FrameHosting:
+    case ScrollingNodeType::PluginHosting:
     case ScrollingNodeType::OverflowProxy:
     case ScrollingNodeType::Fixed:
     case ScrollingNodeType::Sticky:

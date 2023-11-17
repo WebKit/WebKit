@@ -109,7 +109,7 @@ public:
 
     virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
 
-    virtual bool wantsWheelEvents() const { return true; }
+    virtual bool wantsWheelEvents() const = 0;
     virtual bool handleMouseEvent(const WebMouseEvent&) = 0;
     virtual bool handleWheelEvent(const WebWheelEvent&) = 0;
     virtual bool handleMouseEnterEvent(const WebMouseEvent&) = 0;
@@ -233,6 +233,7 @@ protected:
 
     WeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
+    WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;
 
     PDFPluginIdentifier m_identifier;
 

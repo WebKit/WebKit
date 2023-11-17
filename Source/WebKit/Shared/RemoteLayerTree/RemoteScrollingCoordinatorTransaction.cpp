@@ -36,6 +36,8 @@
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
 #include <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
+#include <WebCore/ScrollingStatePluginHostingNode.h>
+#include <WebCore/ScrollingStatePluginScrollingNode.h>
 #include <WebCore/ScrollingStatePositionedNode.h>
 #include <WebCore/ScrollingStateStickyNode.h>
 #include <WebCore/ScrollingStateTree.h>
@@ -219,6 +221,15 @@ static void dump(TextStream& ts, const ScrollingStateStickyNode& node, bool chan
         ts << node.viewportConstraints();
 }
 
+static void dump(TextStream& ts, const ScrollingStatePluginHostingNode& node, bool changedPropertiesOnly)
+{
+}
+
+static void dump(TextStream& ts, const ScrollingStatePluginScrollingNode& node, bool changedPropertiesOnly)
+{
+    dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
+}
+
 static void dump(TextStream& ts, const ScrollingStatePositionedNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RelatedOverflowScrollingNodes))
@@ -242,6 +253,12 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
         break;
     case ScrollingNodeType::FrameHosting:
         dump(ts, downcast<ScrollingStateFrameHostingNode>(node), changedPropertiesOnly);
+        break;
+    case ScrollingNodeType::PluginScrolling:
+        dump(ts, downcast<ScrollingStatePluginScrollingNode>(node), changedPropertiesOnly);
+        break;
+    case ScrollingNodeType::PluginHosting:
+        dump(ts, downcast<ScrollingStatePluginHostingNode>(node), changedPropertiesOnly);
         break;
     case ScrollingNodeType::Overflow:
         dump(ts, downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);

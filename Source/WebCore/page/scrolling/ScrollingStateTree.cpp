@@ -35,6 +35,8 @@
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateOverflowScrollProxyNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
+#include "ScrollingStatePluginHostingNode.h"
+#include "ScrollingStatePluginScrollingNode.h"
 #include "ScrollingStatePositionedNode.h"
 #include "ScrollingStateStickyNode.h"
 #include <wtf/text/CString.h>
@@ -130,6 +132,10 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
         return ScrollingStateFrameScrollingNode::create(*this, nodeType, nodeID);
     case ScrollingNodeType::FrameHosting:
         return ScrollingStateFrameHostingNode::create(*this, nodeID);
+    case ScrollingNodeType::PluginScrolling:
+        return ScrollingStatePluginScrollingNode::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::PluginHosting:
+        return ScrollingStatePluginHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         return ScrollingStateOverflowScrollingNode::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:
@@ -370,6 +376,10 @@ bool ScrollingStateTree::isValid() const
         case ScrollingNodeType::Subframe:
             break;
         case ScrollingNodeType::FrameHosting:
+            break;
+        case ScrollingNodeType::PluginScrolling:
+            break;
+        case ScrollingNodeType::PluginHosting:
             break;
         case ScrollingNodeType::Overflow:
             break;

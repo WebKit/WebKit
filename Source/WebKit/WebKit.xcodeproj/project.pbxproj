@@ -4163,6 +4163,8 @@
 		2D1DE35B2AFA46BA00D955D4 /* FileSystemStorageError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = FileSystemStorageError.serialization.in; sourceTree = "<group>"; };
 		2D1E8221216FFF5000A15265 /* WKWebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKWebEvent.h; path = ios/WKWebEvent.h; sourceTree = "<group>"; };
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
+		2D222D3E2B04B363009F4ADD /* ScrollingTreePluginScrollingNodeIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreePluginScrollingNodeIOS.h; sourceTree = "<group>"; };
+		2D222D3F2B04B364009F4ADD /* ScrollingTreePluginScrollingNodeIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreePluginScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemoteIOSurfaceBackend.h; sourceTree = "<group>"; };
 		2D25F32925758E9100231A8B /* ImageBufferRemoteIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemoteIOSurfaceBackend.cpp; sourceTree = "<group>"; };
 		2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeToolsSPI.h; sourceTree = "<group>"; };
@@ -4238,6 +4240,8 @@
 		2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSnapshotStore.h; sourceTree = "<group>"; };
 		2D6CD118189058A500E5A4A0 /* ViewSnapshotStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewSnapshotStoreMac.mm; sourceTree = "<group>"; };
 		2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewSnapshotStore.cpp; sourceTree = "<group>"; };
+		2D6FC80E2B05C98B00C87B49 /* ScrollingTreePluginScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreePluginScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
+		2D6FC80F2B05C98B00C87B49 /* ScrollingTreePluginScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreePluginScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
 		2D7303781A7C2B7500F8F487 /* WKPageNavigationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageNavigationClient.h; sourceTree = "<group>"; };
 		2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKLayoutMode.h; sourceTree = "<group>"; };
 		2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKLayoutMode.h; sourceTree = "<group>"; };
@@ -9697,6 +9701,8 @@
 				E40C1F9521F0B97F00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.mm */,
 				0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */,
 				0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */,
+				2D222D3E2B04B363009F4ADD /* ScrollingTreePluginScrollingNodeIOS.h */,
+				2D222D3F2B04B364009F4ADD /* ScrollingTreePluginScrollingNodeIOS.mm */,
 				0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */,
 				0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */,
 			);
@@ -14570,6 +14576,8 @@
 				E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */,
 				0F73B767222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.cpp */,
 				0F73B768222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.h */,
+				2D6FC80F2B05C98B00C87B49 /* ScrollingTreePluginScrollingNodeRemoteMac.cpp */,
+				2D6FC80E2B05C98B00C87B49 /* ScrollingTreePluginScrollingNodeRemoteMac.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";

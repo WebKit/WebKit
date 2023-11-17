@@ -65,8 +65,9 @@ private:
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
+    bool wantsWheelEvents() const override { return false; }
     bool handleMouseEvent(const WebMouseEvent&) override;
-    bool handleWheelEvent(const WebWheelEvent&) override;
+    bool handleWheelEvent(const WebWheelEvent&) override { return false; }
     bool handleMouseEnterEvent(const WebMouseEvent&) override;
     bool handleMouseLeaveEvent(const WebMouseEvent&) override;
     bool handleContextMenuEvent(const WebMouseEvent&) override;
@@ -100,8 +101,13 @@ private:
 
     void didChangeSettings() override;
 
+    bool usesAsyncScrolling() const final { return true; }
+    WebCore::ScrollingNodeID scrollingNodeID() const final { return m_scrollingNodeID; }
+
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
+    void updateScrollingExtents();
+    ScrollingCoordinator* scrollingCoordinator();
 
     // HUD Actions.
 #if ENABLE(PDF_HUD)
@@ -115,9 +121,11 @@ private:
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
-    RefPtr<WebCore::GraphicsLayer> m_clippingLayer;
-    RefPtr<WebCore::GraphicsLayer> m_scrollingLayer;
+    RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
+    RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
+
+    WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
 };
 
 } // namespace WebKit

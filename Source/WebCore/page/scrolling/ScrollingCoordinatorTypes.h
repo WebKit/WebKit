@@ -47,6 +47,8 @@ enum class ScrollingNodeType : uint8_t {
     MainFrame,
     Subframe,
     FrameHosting,
+    PluginScrolling,
+    PluginHosting,
     Overflow,
     OverflowProxy,
     Fixed,
