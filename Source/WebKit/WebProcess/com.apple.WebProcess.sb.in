@@ -81,10 +81,6 @@
         "com.apple.axserver"
         "com.apple.tsm.portname"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-(allow mach-register (local-name-prefix ""))
-#endif
-
 ;;; Allow read access to standard system paths.
 (allow file-read*
     (require-all (file-mode #o0004)
@@ -92,9 +88,6 @@
     (subpath "/Library/Apple/System")
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
     (subpath "/System")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-    (subpath "/private/var/db/dyld")
-#endif
     (subpath "/private/var/db/timezone")
     (subpath "/usr/lib")
     (subpath "/usr/share"))))
@@ -168,7 +161,7 @@
             iokit-external-method
         )
         (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 0
                 47
@@ -177,7 +170,7 @@
 #endif
         )
         (allow iokit-external-method
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 0
                 1
@@ -230,7 +223,7 @@
             )
 #endif
         )
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
         (if (equal? (param "CPU") "arm64")
             (allow iokit-external-method
                 (iokit-method-number
@@ -258,7 +251,7 @@
             iokit-external-method
         )
         (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 17
                 40
@@ -266,7 +259,7 @@
 #endif
         )
         (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 0
                 1
@@ -321,11 +314,9 @@
             iokit-external-trap
         )
         (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 1
             )
-#endif
         )
     )
 )
@@ -337,12 +328,10 @@
             iokit-external-trap
         )
         (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 8
                 28
             )
-#endif
         )
     )
 )
@@ -426,11 +415,9 @@
                     iokit-external-method
                 )
                 (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                     (iokit-method-number
                         120
                     )
-#endif
                 )
                 (deny
                     iokit-async-external-method
@@ -459,11 +446,9 @@
                     iokit-external-method
                 )
                 (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                     (iokit-method-number
                         120
                     )
-#endif
                 )
                 (deny
                     iokit-async-external-method
@@ -481,7 +466,7 @@
     )
 
     ;; QuartzCore
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if PLATFORM(MAC)
     (deny IOKIT_OPEN_USER_CLIENT (with no-report)
         (iokit-registry-entry-class "AGPMClient"))
 #else
@@ -503,14 +488,12 @@
                     iokit-external-method
                 )
                 (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                     (iokit-method-number
                         0
                         1
                         3
                         11
                     )
-#endif
                 )
                 (deny
                     iokit-external-trap
@@ -559,13 +542,11 @@
                     iokit-external-method
                 )
                 (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                     (iokit-method-number
                         0
                         1
                         3
                     )
-#endif
                 )
                 (deny
                     iokit-async-external-method
@@ -592,18 +573,10 @@
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (allow process-info-pidinfo (target self))
-#else
-(allow process-info-pidinfo)
-#endif
 (allow process-info-setcontrol (target self))
 (allow process-info-dirtycontrol (target self))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (allow process-codesigning-status* (target self))
-#else
-(allow process-codesigning-status*)
-#endif
 
 (deny sysctl*)
 (allow sysctl-read
@@ -914,9 +887,6 @@
     (iokit-property "mt-device-id")
     (iokit-property "name")
     (iokit-property "nv-stats")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-    (iokit-property "od-server-name") ;; Needed by LaunchServices
-#endif
     (iokit-property "parser-options")
     (iokit-property "parser-type")
     (iokit-property "pci-aspm-default")
@@ -942,9 +912,7 @@
     (iokit-property "PanicOnGPUHang")
     (iokit-property "TelemetryDisable")
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
-#endif
 )
 
 ;; <rdar://97677559>
@@ -1017,19 +985,8 @@
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
-(allow mach-lookup
-    (xpc-service-name "com.apple.audio.SandboxHelper"))
-#else
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.SandboxHelper"))
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-(allow mach-lookup
-    (xpc-service-name-regex #"\.apple-extension-service$")
-)
-#endif
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
@@ -1188,7 +1145,6 @@
                 iokit-external-method
             )
             (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                 (iokit-method-number
                     0
                     1
@@ -1196,7 +1152,6 @@
                     4
                     5
                 )
-#endif
             )
             (deny
                 iokit-async-external-method
@@ -1225,7 +1180,6 @@
                 iokit-external-method
             )
             (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
                 (iokit-method-number
                     0
                     1
@@ -1233,7 +1187,6 @@
                     4
                     5
                 )
-#endif
             )
             (deny
                 iokit-async-external-method
@@ -1306,9 +1259,7 @@
                     "AppleAVDUserClient"
                 )
             )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (AppleAVDUserClientMessageFilter)
-#endif
         )
         ; else
         (allow IOKIT_OPEN_USER_CLIENT
@@ -1328,9 +1279,7 @@
                     "IOMobileFramebufferUserClient"
                 )
             )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (IOMobileFramebufferUserClientMessageFilter)
-#endif
         )
         ; else
         (allow IOKIT_OPEN_USER_CLIENT
@@ -1350,9 +1299,7 @@
                     "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
                 )
             )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (IOSurfaceAcceleratorClientMessageFilter)
-#endif
         )
         ; else
         (allow IOKIT_OPEN_USER_CLIENT
@@ -1376,29 +1323,14 @@
 )
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-(allow mach-lookup
-    (global-name "com.apple.tccd.system"))
-#else
 (deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system"))
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name
-            "com.apple.mobileassetd"
-            "com.apple.mobileassetd.v2"
-)))
-#else
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.mobileassetd.v2")
 ))
-#endif
 
 #if !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
 (allow mach-lookup
@@ -1426,15 +1358,8 @@
 (allow mach-lookup (global-name "com.apple.CARenderServer"))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
-(allow mach-lookup
-    (global-name "com.apple.PowerManagement.control")
-    (global-name "com.apple.SystemConfiguration.configd")
-    (global-name "com.apple.assertiond.processassertionconnection"))
-#else
 (deny mach-lookup (with no-report)
     (global-name "com.apple.PowerManagement.control"))
-#endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
 (allow mach-lookup
@@ -1449,11 +1374,7 @@
 )
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with no-report)
-#else
-(allow mach-lookup
-#endif
     (global-name "com.apple.lsd.mapdb")
 )
 
@@ -1471,19 +1392,9 @@
     (global-name "com.apple.ViewBridgeAuxiliary")
     (global-name "com.apple.windowserver.active"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with no-report)
     (global-name "com.apple.CoreDisplay.Notification"))
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-;; Needed to support encrypted media playback <rdar://problem/40038478>
-(allow mach-lookup
-    (global-name "com.apple.SecurityServer")
-    (global-name "com.apple.ocspd"))
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
     (allow file-write*
@@ -1496,9 +1407,6 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.system.opendirectoryd.libinfo")))
-#else
-(allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
-#endif
 
 
 (allow file-read*
@@ -1512,34 +1420,16 @@
 )
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 (deny mach-lookup (with no-report)
     (global-name-prefix "com.apple.distributed_notifications"))
-#else
-(allow mach-lookup
-    (global-name-prefix "com.apple.distributed_notifications"))
-#endif
 
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
-(allow ipc-posix-shm
-    (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
-#endif
 
 ;; Graphics
 (system-graphics)
 
 ;; Networking
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
-(allow network-outbound
-       ;; Local mDNSResponder for DNS, arbitrary outbound TCP
-       ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
-       ;; Remove this permission when <rdar://problem/38240572> is fixed.
-       (literal "/private/var/run/mDNSResponder")
-       (remote tcp)
-)
-#endif
 
 ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
 (with-filter (system-attribute apple-internal)
@@ -1735,14 +1625,12 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup
     (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.cookied")
     (global-name "com.apple.coreservices.launchservicesd")
 )
-#endif
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
@@ -1758,21 +1646,13 @@
             "com.apple.iconservices"
             "com.apple.iconservices.store")))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-(allow mach-lookup
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.mach"))
-        (global-name "com.apple.audio.AudioComponentRegistrar")))
-#else
 (deny mach-lookup (with no-report)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
-#endif
 
 ;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny file-ioctl)
 (allow file-ioctl (literal "/dev/dtracehelper"))
 (deny socket-ioctl)
@@ -1834,11 +1714,8 @@
     ;; setsockopt
     (deny socket-option-set)
 )
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
 (disable-syscall-inference)
-#endif
 
 (define (syscall-unix-only-in-use-before-launch)
     (syscall-number
@@ -1945,10 +1822,8 @@
         SYS___pthread_kill
         SYS_openat_nocancel ;; Used when dumping the GC heap.
         SYS_psynch_rw_rdlock
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-        SYS_rmdir
-#endif
 #if !PLATFORM(MAC)
+        SYS_rmdir
         SYS_abort_with_payload
         SYS_fgetattrlist
         SYS_fstat64_extended
@@ -2102,7 +1977,6 @@
                 (mach-bootstrap-message-numbers)))))
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 #if HAVE(SANDBOX_STATE_FLAGS)
 (allow mach-bootstrap
     (apply-message-filter
@@ -2118,13 +1992,6 @@
 #else
     (allow-mach-bootstrap-with-filter))
 #endif // HAVE(SANDBOX_STATE_FLAGS)
-#else
-    (allow mach-bootstrap
-        (apply-message-filter
-            (deny xpc-message-send)
-            (allow xpc-message-send
-                (mach-bootstrap-message-numbers)))))
-#endif
 
 (define (kernel-mig-routines-in-use) (kernel-mig-routine
     _mach_make_memory_entry
@@ -2350,9 +2217,7 @@
                     "AppleAVDUserClient"
                 )
             )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (AppleAVDUserClientMessageFilter)
-#endif
         )
         ; else
         (allow IOKIT_OPEN_USER_CLIENT
@@ -2372,9 +2237,7 @@
                     "IOSurfaceAcceleratorClient"
                 )
             )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (IOSurfaceAcceleratorClientMessageFilter)
-#endif
         )
         ; else
         (allow IOKIT_OPEN_USER_CLIENT
@@ -2454,15 +2317,12 @@
             (xpc-service-name "com.apple.MTLCompilerService"))))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
 (deny darwin-notification-post)
 (allow darwin-notification-post
     (notification-name
         "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
         "com.apple.webinspectord.availability_check"))
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
 (deny file-read* (with no-report)
     (home-literal "/Library/Preferences/com.apple.CFNetwork.plist")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
@@ -2470,7 +2330,6 @@
     (literal "/Library/Preferences/com.apple.networkd.plist")
 #endif
 )
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 (with-filter (webcontent-process-launched)
