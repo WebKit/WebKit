@@ -35,12 +35,11 @@
 #include "Logging.h"
 #include "PixelBuffer.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
-#endif
-
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#if USE(GSTREAMER)
 #include "VideoFrameGStreamer.h"
+#endif
 #endif
 
 namespace WebCore {
