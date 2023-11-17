@@ -429,11 +429,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     }
 
     Vector<uint8_t> newData;
-    const auto levelInfoRowBlockBytes = blockSize * (widthForMetal / blockWidth);
-    const auto newBytesPerRow = blockSize * (widthForMetal / blockWidth);
-    if (isCompressed && levelInfoRowBlockBytes != bytesPerRow && (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)) {
+    const auto newBytesPerRow = blockSize * ((widthForMetal / blockWidth) + ((widthForMetal % blockWidth) ? 1 : 0));
+    if (isCompressed && newBytesPerRow != bytesPerRow && (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)) {
+
         auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
-        auto newBytesPerImage = levelInfoRowBlockBytes * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
+        auto newBytesPerImage = newBytesPerRow * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
         auto maxZ = std::max<size_t>(1, size.depthOrArrayLayers);
         newData.resize(newBytesPerImage * maxZ);
         memset(&newData[0], 0, newData.size());
@@ -446,7 +446,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
             }
         }
 
-        bytesPerRow = levelInfoRowBlockBytes;
+        bytesPerRow = newBytesPerRow;
         dataByteSize = newData.size();
         bytesPerImage = newBytesPerImage;
         data = &newData[0];

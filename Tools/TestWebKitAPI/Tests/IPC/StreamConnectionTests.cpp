@@ -215,7 +215,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
     auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
+    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     MockMessageReceiver mockClientReceiver;
     clientConnection->open(mockClientReceiver);
@@ -233,7 +233,7 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
     auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
+    auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     serverQueue().dispatch([this, serverConnection] {
         assertIsCurrent(serverQueue());
@@ -255,7 +255,7 @@ public:
         auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2());
         ASSERT(!!connectionPair);
         auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
+        auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle), { }).releaseNonNull();
         m_clientConnection = WTFMove(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);

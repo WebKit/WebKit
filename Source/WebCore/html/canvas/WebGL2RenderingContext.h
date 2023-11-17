@@ -342,6 +342,8 @@ private:
     GCGLint m_max3DTextureSize { 0 };
     GCGLint m_max3DTextureLevel { 0 };
     GCGLint m_maxArrayTextureLayers { 0 };
+
+    friend class ScopedWebGLRestoreFramebuffer;
 };
 
 } // namespace WebCore

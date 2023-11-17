@@ -2430,6 +2430,11 @@ void Element::invalidateStyleInternal()
     Node::invalidateStyle(Style::Validity::ElementInvalid);
 }
 
+void Element::invalidateStyleForAnimation()
+{
+    Node::invalidateStyle(Style::Validity::AnimationInvalid);
+}
+
 void Element::invalidateStyleForSubtreeInternal()
 {
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
@@ -4626,6 +4631,23 @@ void Element::setLastStyleChangeEventStyle(PseudoId pseudoId, std::unique_ptr<co
         animationData->setLastStyleChangeEventStyle(WTFMove(style));
     else if (style)
         ensureAnimationRareData(pseudoId).setLastStyleChangeEventStyle(WTFMove(style));
+}
+
+bool Element::hasPropertiesOverridenAfterAnimation(PseudoId pseudoId) const
+{
+    if (auto* animationData = animationRareData(pseudoId))
+        return animationData->hasPropertiesOverridenAfterAnimation();
+    return false;
+}
+
+void Element::setHasPropertiesOverridenAfterAnimation(PseudoId pseudoId, bool value)
+{
+    if (auto* animationData = animationRareData(pseudoId)) {
+        animationData->setHasPropertiesOverridenAfterAnimation(value);
+        return;
+    }
+    if (value)
+        ensureAnimationRareData(pseudoId).setHasPropertiesOverridenAfterAnimation(true);
 }
 
 void Element::cssAnimationsDidUpdate(PseudoId pseudoId)

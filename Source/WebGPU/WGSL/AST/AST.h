@@ -45,6 +45,7 @@
 #include "ASTContinueStatement.h"
 #include "ASTDecrementIncrementStatement.h"
 #include "ASTDiagnosticAttribute.h"
+#include "ASTDiagnosticDirective.h"
 #include "ASTDirective.h"
 #include "ASTDiscardStatement.h"
 #include "ASTElaboratedTypeExpression.h"

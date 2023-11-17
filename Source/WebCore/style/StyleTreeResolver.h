@@ -60,7 +60,7 @@ public:
     bool hasUnresolvedQueryContainers() const { return m_hasUnresolvedQueryContainers; }
 
 private:
-    enum class ResolutionType : uint8_t { FastPathInherit, Full };
+    enum class ResolutionType : uint8_t { AnimationOnly, FastPathInherit, Full };
     ResolvedStyle styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&);
 
     void resolveComposedTree();

@@ -153,6 +153,16 @@ struct Styleable {
         element.setLastStyleChangeEventStyle(pseudoId, WTFMove(style));
     }
 
+    bool hasPropertiesOverridenAfterAnimation() const
+    {
+        return element.hasPropertiesOverridenAfterAnimation(pseudoId);
+    }
+
+    void setHasPropertiesOverridenAfterAnimation(bool value) const
+    {
+        element.setHasPropertiesOverridenAfterAnimation(pseudoId, value);
+    }
+
     void keyframesRuleDidChange() const
     {
         element.keyframesRuleDidChange(pseudoId);

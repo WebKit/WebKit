@@ -95,6 +95,7 @@ static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffe
 {
     auto arrayBuffer = ArrayBuffer::create(source, byteLength);
     cachedArrayBuffer = arrayBuffer.ptr();
+    cachedArrayBuffer->pin();
     device.addBufferToUnmap(buffer);
     return arrayBuffer;
 }
@@ -134,6 +135,7 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
     if (m_arrayBuffer && m_arrayBuffer->data()) {
         memcpy(m_mappedRange.source, m_arrayBuffer->data(), m_mappedRange.byteLength);
         JSC::ArrayBufferContents emptyBuffer;
+        m_arrayBuffer->unpin();
         m_arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);
     }
 

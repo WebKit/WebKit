@@ -352,9 +352,31 @@ void Parser<Lexer>::consume()
 template<typename Lexer>
 Result<void> Parser<Lexer>::parseShader()
 {
-    // FIXME: parse directives here.
+    START_PARSE();
     disambiguateTemplates();
+    while (current().type != TokenType::EndOfFile) {
+        switch (current().type) {
+        case TokenType::KeywordEnable:
+            if (auto result = parseEnableDirective(); !result)
+                return makeUnexpected(result.error());
+            break;
+        case TokenType::KeywordRequires:
+            if (auto result = parseRequireDirective(); !result)
+                return makeUnexpected(result.error());
+            break;
+        case TokenType::KeywordDiagnostic: {
+            consume();
+            PARSE(diagnostic, Diagnostic);
+            auto& directive = MAKE_ARENA_NODE(DiagnosticDirective, WTFMove(diagnostic));
+            m_shaderModule.directives().append(directive);
+            break;
+        }
+        default:
+            goto declarations;
+        }
+    }
 
+    declarations:
     while (current().type != TokenType::EndOfFile) {
         if (current().type == TokenType::Semicolon) {
             consume();
@@ -366,6 +388,46 @@ Result<void> Parser<Lexer>::parseShader()
             return makeUnexpected(globalExpected.error());
     }
 
+    return { };
+}
+
+template<typename Lexer>
+Result<void> Parser<Lexer>::parseEnableDirective()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordEnable);
+    do {
+        CONSUME_TYPE_NAMED(identifier, Identifier);
+        auto* extension = parseExtension(identifier.ident);
+        if (!extension)
+            FAIL("Expected 'f16'"_s);
+        m_shaderModule.enabledExtensions().add(*extension);
+
+        if (current().type != TokenType::Comma)
+            break;
+        CONSUME_TYPE(Comma);
+    } while (current().type != TokenType::Semicolon);
+    CONSUME_TYPE(Semicolon);
+    return { };
+}
+
+template<typename Lexer>
+Result<void> Parser<Lexer>::parseRequireDirective()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordRequires);
+    do {
+        CONSUME_TYPE_NAMED(identifier, Identifier);
+        auto* languageFeature = parseLanguageFeature(identifier.ident);
+        if (!languageFeature)
+            FAIL("Expected 'readonly_and_readwrite_storage_textures'"_s);
+        m_shaderModule.requiredFeatures().add(*languageFeature);
+
+        if (current().type != TokenType::Comma)
+            break;
+        CONSUME_TYPE(Comma);
+    } while (current().type != TokenType::Semicolon);
+    CONSUME_TYPE(Semicolon);
     return { };
 }
 
@@ -663,24 +725,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
         RETURN_ARENA_NODE(ConstAttribute);
 
     if (ident.ident == "diagnostic"_s) {
-        CONSUME_TYPE(ParenLeft);
-        PARSE(severity, Identifier);
-        auto* severityControl = parseSeverityControl(severity);
-        if (!severityControl)
-            FAIL("Unknown severity control. Expected 'error', 'info', 'off' or 'warning'"_s);
-        CONSUME_TYPE(Comma);
-
-        PARSE(name, Identifier);
-        std::optional<AST::Identifier> suffix;
-        if (current().type == TokenType::Period) {
-            consume();
-            PARSE(suffix, Identifier);
-            suffix = WTFMove(suffix);
-        }
-        if (current().type == TokenType::Comma)
-            consume();
-        CONSUME_TYPE(ParenRight);
-        RETURN_ARENA_NODE(DiagnosticAttribute, *severityControl, AST::TriggeringRule { WTFMove(name), WTFMove(suffix) });
+        PARSE(diagnostic, Diagnostic);
+        RETURN_ARENA_NODE(DiagnosticAttribute, WTFMove(diagnostic));
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
@@ -692,6 +738,30 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
         RETURN_ARENA_NODE(StageAttribute, ShaderStage::Fragment);
 
     FAIL("Unknown attribute. Supported attributes are 'align', 'binding', 'builtin', 'compute', 'const', 'diagnostic', 'fragment', 'group', 'id', 'interpolate', 'invariant', 'location', 'must_use', 'size', 'vertex', 'workgroup_size'."_s);
+}
+
+template<typename Lexer>
+Result<AST::Diagnostic> Parser<Lexer>::parseDiagnostic()
+{
+    START_PARSE();
+    CONSUME_TYPE(ParenLeft);
+    PARSE(severity, Identifier);
+    auto* severityControl = parseSeverityControl(severity);
+    if (!severityControl)
+        FAIL("Unknown severity control. Expected 'error', 'info', 'off' or 'warning'"_s);
+    CONSUME_TYPE(Comma);
+
+    PARSE(name, Identifier);
+    std::optional<AST::Identifier> suffix;
+    if (current().type == TokenType::Period) {
+        consume();
+        PARSE(suffix, Identifier);
+        suffix = WTFMove(suffix);
+    }
+    if (current().type == TokenType::Comma)
+        consume();
+    CONSUME_TYPE(ParenRight);
+    return AST::Diagnostic { *severityControl, AST::TriggeringRule { WTFMove(name), WTFMove(suffix) } };
 }
 
 template<typename Lexer>

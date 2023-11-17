@@ -81,6 +81,8 @@ ENUM_DEFINE(InterpolationSampling);
 ENUM_DEFINE(ShaderStage);
 ENUM_DEFINE(SeverityControl);
 ENUM_DEFINE(Builtin);
+ENUM_DEFINE(Extension);
+ENUM_DEFINE(LanguageFeature);
 
 #undef ENUM_DEFINE
 #undef ENUM_DEFINE_PRINT_INTERNAL

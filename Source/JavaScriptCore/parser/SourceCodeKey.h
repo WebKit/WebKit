@@ -56,7 +56,7 @@ public:
     {
     }
 
-    friend bool operator==(SourceCodeFlags, SourceCodeFlags) = default;
+    friend bool operator==(const SourceCodeFlags&, const SourceCodeFlags&) = default;
 
     unsigned bits() { return m_flags; }
 

@@ -27,14 +27,9 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
-#include "WGSLEnums.h"
+#include "ASTDiagnostic.h"
 
 namespace WGSL::AST {
-
-struct TriggeringRule {
-    Identifier name;
-    std::optional<Identifier> suffix;
-};
 
 class DiagnosticAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(DiagnosticAttribute);
@@ -42,14 +37,12 @@ public:
     NodeKind kind() const override;
 
 private:
-    DiagnosticAttribute(SourceSpan span, SeverityControl severity, TriggeringRule&& triggeringRule)
+    DiagnosticAttribute(SourceSpan span, Diagnostic&& diagnostic)
         : Attribute(span)
-        , m_severity(severity)
-        , m_triggeringRule(WTFMove(triggeringRule))
+        , m_diagnostic(WTFMove(diagnostic))
     { }
 
-    SeverityControl m_severity;
-    TriggeringRule m_triggeringRule;
+    Diagnostic m_diagnostic;
 };
 
 } // namespace WGSL::AST

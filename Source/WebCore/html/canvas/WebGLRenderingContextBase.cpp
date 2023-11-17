@@ -133,6 +133,7 @@
 #include "WebGLTexture.h"
 #include "WebGLTransformFeedback.h"
 #include "WebGLUniformLocation.h"
+#include "WebGLUtilities.h"
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include "WebXRSystem.h"
@@ -298,195 +299,9 @@ static const GCGLenum supportedTypesOESTextureHalfFloat[] = {
     GraphicsContextGL::HALF_FLOAT_OES,
 };
 
-// Set UNPACK_ALIGNMENT to 1, all other parameters to 0.
-class ScopedTightUnpackParameters {
-public:
-    explicit ScopedTightUnpackParameters(WebGLRenderingContextBase& context, bool enabled = true)
-        : m_context(enabled ? &context : nullptr)
-    {
-        if (!m_context)
-            return;
-        set(m_context->unpackPixelStoreParameters(), tightUnpack);
-    }
-
-    ~ScopedTightUnpackParameters()
-    {
-        if (!m_context)
-            return;
-        set(tightUnpack, m_context->unpackPixelStoreParameters());
-    }
-private:
-    using PixelStoreParameters =  WebGLRenderingContextBase::PixelStoreParameters;
-    static constexpr PixelStoreParameters tightUnpack { 1, 0, 0, 0, 0 };
-    void set(const PixelStoreParameters& oldValues, const PixelStoreParameters& newValues)
-    {
-        auto* context = m_context->graphicsContextGL();
-        if (oldValues.alignment != newValues.alignment)
-            context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, newValues.alignment);
-        if (oldValues.rowLength != newValues.rowLength)
-            context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, newValues.rowLength);
-        if (oldValues.imageHeight != newValues.imageHeight)
-            context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, newValues.imageHeight);
-        if (oldValues.skipPixels != newValues.skipPixels)
-            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, newValues.skipPixels);
-        if (oldValues.skipRows != newValues.skipRows)
-            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, newValues.skipRows);
-        if (oldValues.skipImages != newValues.skipImages)
-            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, newValues.skipImages);
-    }
-    WebGLRenderingContextBase* const m_context;
-};
-
-class ScopedDisableRasterizerDiscard {
-public:
-    explicit ScopedDisableRasterizerDiscard(WebGLRenderingContextBase& context)
-        : m_context(context.m_rasterizerDiscardEnabled ? &context : nullptr)
-    {
-        if (!m_context)
-            return;
-        m_context->graphicsContextGL()->disable(GraphicsContextGL::RASTERIZER_DISCARD);
-    }
-
-    ~ScopedDisableRasterizerDiscard()
-    {
-        if (!m_context)
-            return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::RASTERIZER_DISCARD);
-    }
-
-private:
-    WebGLRenderingContextBase* const m_context;
-};
-
-class ScopedEnableBackbuffer {
-public:
-    explicit ScopedEnableBackbuffer(WebGLRenderingContextBase& context)
-        : m_context(context.m_backDrawBuffer == GraphicsContextGL::NONE ? &context : nullptr)
-    {
-        if (!m_context)
-            return;
-        GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
-        if (m_context->isWebGL2())
-            m_context->graphicsContextGL()->drawBuffers(value);
-        else
-            m_context->graphicsContextGL()->drawBuffersEXT(value);
-    }
-
-    ~ScopedEnableBackbuffer()
-    {
-        if (!m_context)
-            return;
-        GCGLenum value[1] { GraphicsContextGL::NONE };
-        if (m_context->isWebGL2())
-            m_context->graphicsContextGL()->drawBuffers(value);
-        else
-            m_context->graphicsContextGL()->drawBuffersEXT(value);
-    }
-
-private:
-    WebGLRenderingContextBase* const m_context;
-};
-
-class ScopedDisableScissorTest {
-public:
-    explicit ScopedDisableScissorTest(WebGLRenderingContextBase& context)
-        : m_context(context.m_scissorEnabled ? &context : nullptr)
-    {
-        if (!m_context)
-            return;
-        m_context->graphicsContextGL()->disable(GraphicsContextGL::SCISSOR_TEST);
-    }
-
-    ~ScopedDisableScissorTest()
-    {
-        if (!m_context)
-            return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::SCISSOR_TEST);
-    }
-
-private:
-    WebGLRenderingContextBase* const m_context;
-};
 
 #define ADD_VALUES_TO_SET(set, arr) \
     set.add(arr, arr + std::size(arr))
-
-InspectorScopedShaderProgramHighlight::InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase& context, WebGLProgram* program)
-    : m_context(context)
-    , m_program(program)
-{
-    showHighlight();
-}
-
-InspectorScopedShaderProgramHighlight::~InspectorScopedShaderProgramHighlight()
-{
-    hideHighlight();
-}
-
-void InspectorScopedShaderProgramHighlight::showHighlight()
-{
-    if (!m_program || LIKELY(!InspectorInstrumentation::isWebGLProgramHighlighted(m_context, *m_program)))
-        return;
-
-    if (m_context.m_framebufferBinding)
-        return;
-
-    auto& gl = *m_context.graphicsContextGL();
-
-    // When OES_draw_buffers_indexed extension is enabled,
-    // these state queries return the state for draw buffer 0.
-    // Constant blend color is always the same for all draw buffers.
-    gl.getFloatv(GraphicsContextGL::BLEND_COLOR, m_savedBlend.color);
-    m_savedBlend.equationRGB = gl.getInteger(GraphicsContextGL::BLEND_EQUATION_RGB);
-    m_savedBlend.equationAlpha = gl.getInteger(GraphicsContextGL::BLEND_EQUATION_ALPHA);
-    m_savedBlend.srcRGB = gl.getInteger(GraphicsContextGL::BLEND_SRC_RGB);
-    m_savedBlend.dstRGB = gl.getInteger(GraphicsContextGL::BLEND_DST_RGB);
-    m_savedBlend.srcAlpha = gl.getInteger(GraphicsContextGL::BLEND_SRC_ALPHA);
-    m_savedBlend.dstAlpha = gl.getInteger(GraphicsContextGL::BLEND_DST_ALPHA);
-    m_savedBlend.enabled = gl.isEnabled(GraphicsContextGL::BLEND);
-
-    static const GCGLfloat red = 111.0 / 255.0;
-    static const GCGLfloat green = 168.0 / 255.0;
-    static const GCGLfloat blue = 220.0 / 255.0;
-    static const GCGLfloat alpha = 2.0 / 3.0;
-    gl.blendColor(red, green, blue, alpha);
-
-    if (m_context.m_oesDrawBuffersIndexed) {
-        gl.enableiOES(GraphicsContextGL::BLEND, 0);
-        gl.blendEquationiOES(0, GraphicsContextGL::FUNC_ADD);
-        gl.blendFunciOES(0, GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
-    } else {
-        gl.enable(GraphicsContextGL::BLEND);
-        gl.blendEquation(GraphicsContextGL::FUNC_ADD);
-        gl.blendFunc(GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
-    }
-
-    m_didApply = true;
-}
-
-void InspectorScopedShaderProgramHighlight::hideHighlight()
-{
-    if (!m_didApply)
-        return;
-
-    auto& gl = *m_context.graphicsContextGL();
-
-    gl.blendColor(m_savedBlend.color[0], m_savedBlend.color[1], m_savedBlend.color[2], m_savedBlend.color[3]);
-
-    if (m_context.m_oesDrawBuffersIndexed) {
-        gl.blendEquationSeparateiOES(0, m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
-        gl.blendFuncSeparateiOES(0, m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
-        if (!m_savedBlend.enabled)
-            gl.disableiOES(GraphicsContextGL::BLEND, 0);
-    } else {
-        gl.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
-        gl.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
-        if (!m_savedBlend.enabled)
-            gl.disable(GraphicsContextGL::BLEND);
-    }
-
-    m_didApply = false;
-}
 
 static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 {
@@ -1763,8 +1578,7 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
-
+        ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         m_context->drawArrays(mode, first, count);
     }
 
@@ -1784,8 +1598,7 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
-
+        ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         m_context->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
     }
     markContextChangedAndNotifyCanvasObserver();
@@ -5712,8 +5525,7 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
-
+        ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         m_context->drawArraysInstanced(mode, first, count, primcount);
     }
 
@@ -5733,8 +5545,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
-
+        ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
     }
 

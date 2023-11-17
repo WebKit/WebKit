@@ -377,10 +377,26 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
     , m_reason(reason)
 {
 #if USE(EXTENSIONKIT)
-    if (AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
+    if (process.extensionProcess()) {
         NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
         NSString *runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
-        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName];
+#if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)
+        auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName = RetainPtr<NSString>(runningBoardAssertionName)] () {
+            auto strongThis = weakThis.get();
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.get(), strongThis ? strongThis->m_pid : 0);
+            if (strongThis)
+                strongThis->processAssertionWasInvalidated();
+        };
+        auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName = RetainPtr<NSString>(runningBoardAssertionName)] () {
+            auto strongThis = weakThis.get();
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.get(), strongThis ? strongThis->m_pid : 0);
+            if (strongThis)
+                strongThis->processAssertionWillBeInvalidated();
+        };
+        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier() willInvalidate: willInvalidateBlock didInvalidate: didInvalidateBlock];
+#else
+        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier()];
+#endif
         m_process = process.extensionProcess();
         if (m_capabilities)
             return;
@@ -461,7 +477,8 @@ void ProcessAssertion::acquireSync()
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;
         }
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability with error %@", this, error);
+        NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability %@ with error %@", this, runningBoardAssertionName, error);
     }
 #endif
     NSError *acquisitionError = nil;

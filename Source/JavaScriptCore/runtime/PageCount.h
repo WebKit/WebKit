@@ -97,7 +97,7 @@ public:
     bool operator<(const PageCount& other) const { return m_pageCount < other.m_pageCount; }
     bool operator>(const PageCount& other) const { return m_pageCount > other.m_pageCount; }
     bool operator>=(const PageCount& other) const { return m_pageCount >= other.m_pageCount; }
-    friend bool operator==(PageCount, PageCount) = default;
+    friend bool operator==(const PageCount&, const PageCount&) = default;
     PageCount operator+(const PageCount& other) const
     {
         if (sumOverflows<uint32_t>(m_pageCount, other.m_pageCount))

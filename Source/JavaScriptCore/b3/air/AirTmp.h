@@ -185,7 +185,7 @@ public:
         return !!*this;
     }
 
-    friend bool operator==(Tmp, Tmp) = default;
+    friend bool operator==(const Tmp&, const Tmp&) = default;
 
     void dump(PrintStream& out) const;
 

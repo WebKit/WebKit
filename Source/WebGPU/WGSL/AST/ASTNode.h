@@ -51,6 +51,7 @@ enum class NodeKind : uint8_t {
     WorkgroupSizeAttribute,
 
     Directive,
+    DiagnosticDirective,
 
     // Expression
     BinaryExpression,

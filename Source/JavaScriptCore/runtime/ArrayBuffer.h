@@ -301,6 +301,7 @@ public:
     
     inline void pin();
     inline void unpin();
+    inline bool isDetachable() const;
     inline void pinAndLock();
     inline bool isLocked();
 
@@ -398,6 +399,11 @@ void ArrayBuffer::pin()
 void ArrayBuffer::unpin()
 {
     m_pinCount--;
+}
+
+bool ArrayBuffer::isDetachable() const
+{
+    return !m_pinCount && !m_locked && !isShared();
 }
 
 void ArrayBuffer::pinAndLock()

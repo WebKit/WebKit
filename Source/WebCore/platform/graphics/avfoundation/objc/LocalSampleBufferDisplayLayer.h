@@ -66,7 +66,7 @@ public:
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
-    void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) final;
+    void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&& logIdentifier) final { m_logIdentifier = WTFMove(logIdentifier); }
 #endif
@@ -84,6 +84,7 @@ public:
     void enqueueVideoFrame(VideoFrame&) final;
     void clearVideoFrames() final;
     void setRenderPolicy(RenderPolicy) final;
+    void setShouldMaintainAspectRatio(bool) final;
 
 private:
     void enqueueBufferInternal(CVPixelBufferRef, MediaTime);

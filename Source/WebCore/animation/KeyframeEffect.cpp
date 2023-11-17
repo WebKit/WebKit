@@ -91,7 +91,7 @@ KeyframeEffect::ParsedKeyframe::~ParsedKeyframe() = default;
 static inline void invalidateElement(const std::optional<const Styleable>& styleable)
 {
     if (styleable)
-        styleable->element.invalidateStyleInternal();
+        styleable->element.invalidateStyleForAnimation();
 }
 
 String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID property)
@@ -786,8 +786,14 @@ ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGl
 ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
     auto processKeyframesResult = processKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput));
-    if (!processKeyframesResult.hasException() && animation())
+    if (!processKeyframesResult.hasException() && animation()) {
         animation()->effectTimingDidChange();
+
+        // Need a full style invalidation since the new keyframes may interact differently with the base style.
+        if (auto target = targetStyleable())
+            target->element.invalidateStyleInternal();
+    }
+
     return processKeyframesResult;
 }
 

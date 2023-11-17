@@ -288,8 +288,12 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
         return;
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments))
+    if (UNLIKELY(!arguments)) {
+#if ENABLE(IPC_TESTING_API)
+        connection.sendDeserializationErrorSyncReply(syncRequestID);
+#endif
         return;
+    }
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;

@@ -56,9 +56,9 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     ASSERT(m_sampleBufferDisplayLayer);
 }
 
-void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, LayerInitializationCallback&& callback)
+void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, LayerInitializationCallback&& callback)
 {
-    m_sampleBufferDisplayLayer->initialize(hideRootLayer, size, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool didSucceed) mutable {
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool didSucceed) mutable {
         if (!weakThis || !didSucceed)
             return callback({ });
         m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
@@ -145,6 +145,11 @@ void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore
 void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
     m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
+}
+
+void RemoteSampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
+{
+    m_sampleBufferDisplayLayer->setShouldMaintainAspectRatio(shouldMaintainAspectRatio);
 }
 
 }

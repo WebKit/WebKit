@@ -67,7 +67,7 @@ public:
 private:
     GStreamerInternalVideoEncoder(const String& codecName, VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&, VideoEncoder::PostTaskCallback&&);
 
-    const String m_codecName;
+    String m_codecName;
     VideoEncoder::DescriptionCallback m_descriptionCallback;
     VideoEncoder::OutputCallback m_outputCallback;
     VideoEncoder::PostTaskCallback m_postTaskCallback;
@@ -90,8 +90,9 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     registerWebKitGStreamerVideoEncoder();
     auto& scanner = GStreamerRegistryScanner::singleton();
     if (!scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName)) {
-        postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
-            callback(makeUnexpected(makeString("No GStreamer encoder found for codec "_s, codecName)));
+        auto errorMessage = makeString("No GStreamer encoder found for codec "_s, codecName);
+        postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
+            callback(makeUnexpected(WTFMove(errorMessage)));
         });
         return;
     }

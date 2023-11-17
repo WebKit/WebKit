@@ -1,1 +1,3 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :while_mapped:
+

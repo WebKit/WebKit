@@ -160,7 +160,7 @@ public:
     bool operator!() const { return !isSet(); }
     explicit operator bool() const { return isSet(); }
     
-    friend bool operator==(Edge, Edge) = default;
+    friend bool operator==(const Edge&, const Edge&) = default;
 
     void dump(PrintStream&) const;
     

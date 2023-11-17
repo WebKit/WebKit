@@ -99,6 +99,12 @@ namespace WGSL {
     value(VertexIndex, vertex_index) \
     value(WorkgroupId, workgroup_id) \
 
+#define ENUM_Extension(value) \
+    value(F16, f16, 1 << 0) \
+
+#define ENUM_LanguageFeature(value) \
+    value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 0)
+
 #define ENUM_DECLARE_VALUE(__value, _, ...) \
     __value __VA_OPT__(=) __VA_ARGS__,
 
@@ -123,6 +129,8 @@ ENUM_DECLARE(InterpolationSampling);
 ENUM_DECLARE(ShaderStage);
 ENUM_DECLARE(SeverityControl);
 ENUM_DECLARE(Builtin);
+ENUM_DECLARE(Extension);
+ENUM_DECLARE(LanguageFeature);
 
 #undef ENUM_DECLARE
 

@@ -435,7 +435,7 @@ public:
             masm->invalidateAllTempRegisters();
         }
 
-        friend bool operator==(Label, Label) = default;
+        friend bool operator==(const Label&, const Label&) = default;
 
         bool isSet() const { return m_label.isSet(); }
     private:

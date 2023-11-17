@@ -296,6 +296,7 @@ private:
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setShouldMaintainAspectRatio(bool) final;
 
     friend class MediaSourcePrivateAVFObjC;
 
@@ -361,6 +362,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     uint64_t m_lastConvertedSampleCount { 0 };
     ProcessIdentity m_resourceOwner;
+    bool m_shouldMaintainAspectRatio { true };
 };
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);

@@ -57,7 +57,7 @@ public:
 
     virtual ~SampleBufferDisplayLayer() = default;
 
-    virtual void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) = 0;
+    virtual void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) = 0;
 #if !RELEASE_LOG_DISABLED
     virtual void setLogIdentifier(String&&) = 0;
 #endif
@@ -78,6 +78,7 @@ public:
     virtual void clearVideoFrames() = 0;
 
     virtual PlatformLayer* rootLayer() = 0;
+    virtual void setShouldMaintainAspectRatio(bool) = 0;
 
     enum class RenderPolicy { TimingInfo, Immediately };
     virtual void setRenderPolicy(RenderPolicy) { };

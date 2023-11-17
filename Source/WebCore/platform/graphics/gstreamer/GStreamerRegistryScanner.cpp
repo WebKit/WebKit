@@ -748,18 +748,21 @@ bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
 
 MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
 {
-    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+    VideoDecodingLimits* videoDecodingLimits = nullptr;
 #ifdef VIDEO_DECODING_LIMIT
+    static std::optional<VideoDecodingLimits> videoDecodingLimitsDefaults;
     static std::once_flag onceFlag;
     if (configuration == Configuration::Decoding) {
         std::call_once(onceFlag, [] {
-            videoDecodingLimits = videoDecoderLimitsDefaults();
-            if (!videoDecodingLimits) {
+            videoDecodingLimitsDefaults = videoDecoderLimitsDefaults();
+            if (!videoDecodingLimitsDefaults) {
                 GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
                 ASSERT_NOT_REACHED();
                 return;
             }
         });
+        if (videoDecodingLimitsDefaults)
+            videoDecodingLimits = &*videoDecodingLimitsDefaults;
     }
 #endif
 

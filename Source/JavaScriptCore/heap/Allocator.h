@@ -52,7 +52,7 @@ public:
     
     LocalAllocator* localAllocator() const { return m_localAllocator; }
     
-    friend bool operator==(Allocator, Allocator) = default;
+    friend bool operator==(const Allocator&, const Allocator&) = default;
     explicit operator bool() const { return *this != Allocator(); }
     
 private:

@@ -39,7 +39,6 @@ public:
     void updateCancelButtonVisibility() const;
 
     void addSearchResult();
-    void stopSearchEventTimer();
 
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();

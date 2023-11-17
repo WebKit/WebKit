@@ -73,10 +73,11 @@ class TestDownloader(object):
             }
         ]
 
-    def __init__(self, repository_directory, host, options):
+    def __init__(self, repository_directory, port, options):
         self._options = options
-        self._host = host
-        self._filesystem = host.filesystem
+        self._port = port
+        self._host = port.host
+        self._filesystem = port.host.filesystem
         self._test_suites = []
 
         self.repository_directory = repository_directory
@@ -91,7 +92,7 @@ class TestDownloader(object):
             self.paths_to_import.extend([self._filesystem.join(test_repository['name'], path) for path in test_repository['paths_to_import']])
 
         webkit_finder = WebKitFinder(self._filesystem)
-        self.import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
+        self.import_expectations_path = port.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
         if not self._filesystem.isfile(self.import_expectations_path):
             _log.warning('Unable to read import expectation file: %s' % self.import_expectations_path)
         if not self._options.import_all:

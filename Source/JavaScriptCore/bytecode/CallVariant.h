@@ -146,7 +146,7 @@ public:
         return m_callee == deletedToken();
     }
     
-    friend bool operator==(CallVariant, CallVariant) = default;
+    friend bool operator==(const CallVariant&, const CallVariant&) = default;
     
     bool operator<(const CallVariant& other) const
     {

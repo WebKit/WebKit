@@ -64,7 +64,7 @@ public:
     void dump(PrintStream&) const;
     
     // Comparison methods useful for bisection.
-    friend bool operator==(CodeBlockHash, CodeBlockHash) = default;
+    friend bool operator==(const CodeBlockHash&, const CodeBlockHash&) = default;
     bool operator<(const CodeBlockHash& other) const { return hash() < other.hash(); }
     bool operator>(const CodeBlockHash& other) const { return hash() > other.hash(); }
     bool operator<=(const CodeBlockHash& other) const { return hash() <= other.hash(); }

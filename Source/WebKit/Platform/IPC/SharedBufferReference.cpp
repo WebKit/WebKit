@@ -36,69 +36,38 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-void SharedBufferReference::encode(Encoder& encoder) const
+#if !USE(UNIX_DOMAIN_SOCKETS)
+SharedBufferReference::SharedBufferReference(std::optional<SerializableBuffer>&& serializableBuffer)
 {
-#if USE(UNIX_DOMAIN_SOCKETS)
-    encoder << m_buffer;
-#else
-    encoder << isNull();
+    if (!serializableBuffer)
+        return;
+
+    if (!serializableBuffer->size) {
+        m_buffer = SharedBuffer::create();
+        return;
+    }
+
+    if (!serializableBuffer->handle)
+        return;
+
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(*serializableBuffer->handle), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer || sharedMemoryBuffer->size() < serializableBuffer->size)
+        return;
+
+    m_size = serializableBuffer->size;
+    m_memory = WTFMove(sharedMemoryBuffer);
+}
+
+auto SharedBufferReference::serializableBuffer() const -> std::optional<SerializableBuffer>
+{
     if (isNull())
-        return;
-    encoder << m_size;
+        return std::nullopt;
     if (!m_size)
-        return;
-
-    std::optional<SharedMemory::Handle> handle;
-    {
-        auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(*m_buffer);
-        handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
-    }
-    encoder << WTFMove(handle);
-#endif
+        return SerializableBuffer { 0, std::nullopt };
+    auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(*m_buffer);
+    return SerializableBuffer { m_size, sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly) };
 }
-
-std::optional<SharedBufferReference> SharedBufferReference::decode(Decoder& decoder)
-{
-    RefPtr<SharedBuffer> buffer;
-#if USE(UNIX_DOMAIN_SOCKETS)
-    if (!decoder.decode(buffer))
-        return std::nullopt;
-    return { IPC::SharedBufferReference(WTFMove(buffer)) };
-#else
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return std::nullopt;
-
-    if (*isNull)
-        return { IPC::SharedBufferReference { WTFMove(buffer) } };
-
-    size_t bufferSize = 0;
-    if (!decoder.decode(bufferSize))
-        return std::nullopt;
-
-    if (!bufferSize) {
-        buffer = SharedBuffer::create();
-        return { IPC::SharedBufferReference(WTFMove(buffer)) };
-    }
-
-    auto handle = decoder.decode<std::optional<SharedMemory::Handle>>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-
-    if (!*handle)
-        return std::nullopt;
-
-    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(**handle), SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return std::nullopt;
-
-    if (sharedMemoryBuffer->size() < bufferSize)
-        return std::nullopt;
-
-    return { IPC::SharedBufferReference { sharedMemoryBuffer.releaseNonNull(), bufferSize } };
 #endif
-}
 
 RefPtr<WebCore::SharedBuffer> SharedBufferReference::unsafeBuffer() const
 {

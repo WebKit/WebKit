@@ -43,7 +43,10 @@ public:
 
     // Shader Module
     virtual void visit(ShaderModule&);
+
+    // Directive
     virtual void visit(AST::Directive&);
+    virtual void visit(AST::DiagnosticDirective&);
 
     // Attribute
     virtual void visit(AST::Attribute&);

@@ -286,7 +286,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
         return Error::StreamConnectionEncodingError;
     }
     auto wakeUpResult = m_buffer.release(encoder.size());
-    wakeUpServer(wakeUpResult);
+    wakeUpServerBatched(wakeUpResult);
     m_currentDestinationID = destinationID;
     return Error::NoError;
 }
