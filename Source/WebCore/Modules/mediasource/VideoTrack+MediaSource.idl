@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/media-source/#video-track-extensions
+// FIXME: Extend this interface to 'DedicatedWorker' in future.
+
 [
     Conditional=MEDIA_SOURCE,
     EnabledBySetting=MediaSourceEnabled|ManagedMediaSourceEnabled ,
-    ImplementedBy=VideoTrackMediaSource
+    ImplementedBy=VideoTrackMediaSource,
+    Exposed=Window
 ] partial interface VideoTrack {
     readonly attribute SourceBuffer? sourceBuffer;
 };
