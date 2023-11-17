@@ -99,6 +99,7 @@ bool defaultGamepadVibrationActuatorEnabled();
 
 bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldDropNearSuspendedAssertionAfterDelay();
+bool defaultShouldTakeNearSuspendedAssertion();
 bool defaultShowModalDialogEnabled();
 bool defaultLiveRangeSelectionEnabled();
 
