@@ -70,7 +70,7 @@ public:
         iterator& operator++() { m_node = m_node->next(); return *this; }
         // postfix ++ intentionally omitted
 
-        friend bool operator==(iterator, iterator) = default;
+        friend bool operator==(const iterator&, const iterator&) = default;
 
     private:
         DebuggerScope* m_node;

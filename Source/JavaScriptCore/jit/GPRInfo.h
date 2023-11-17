@@ -71,7 +71,7 @@ public:
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     explicit operator bool() const { return m_gpr != InvalidGPRReg; }
 
-    friend constexpr bool operator==(JSValueRegs, JSValueRegs) = default;
+    friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
 
     constexpr GPRReg gpr() const { return m_gpr; }
     constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
@@ -196,7 +196,7 @@ public:
             || static_cast<GPRReg>(m_payloadGPR) != InvalidGPRReg;
     }
 
-    friend constexpr bool operator==(JSValueRegs, JSValueRegs) = default;
+    friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
     
     constexpr GPRReg tagGPR() const { return m_tagGPR; }
     constexpr GPRReg payloadGPR() const { return m_payloadGPR; }

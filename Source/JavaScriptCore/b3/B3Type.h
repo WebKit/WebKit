@@ -77,7 +77,7 @@ public:
     inline bool isTuple() const;
     inline bool isVector() const;
 
-    friend bool operator==(Type, Type) = default;
+    friend bool operator==(const Type&, const Type&) = default;
 
 private:
     TypeKind m_kind { Void };
