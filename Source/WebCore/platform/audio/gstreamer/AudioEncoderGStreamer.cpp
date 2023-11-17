@@ -62,7 +62,7 @@ public:
 private:
     GStreamerInternalAudioEncoder(const String& codecName, AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&, AudioEncoder::PostTaskCallback&&, GRefPtr<GstElement>&&);
 
-    const String m_codecName;
+    String m_codecName;
     AudioEncoder::DescriptionCallback m_descriptionCallback;
     AudioEncoder::OutputCallback m_outputCallback;
     AudioEncoder::PostTaskCallback m_postTaskCallback;
@@ -88,8 +88,9 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
     if (codecName.startsWith("pcm-"_s)) {
         auto components = codecName.split('-');
         if (components.size() != 2) {
-            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
-                callback(makeUnexpected(makeString("Invalid LPCM codec string: "_s, codecName)));
+            auto errorMessage = makeString("Invalid LPCM codec string: "_s, codecName);
+            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
+                callback(makeUnexpected(WTFMove(errorMessage)));
             });
             return;
         }
@@ -98,8 +99,9 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto& scanner = GStreamerRegistryScanner::singleton();
         auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName);
         if (!lookupResult) {
-            postTaskCallback([callback = WTFMove(callback), codecName]() mutable {
-                callback(makeUnexpected(makeString("No GStreamer encoder found for codec ", codecName)));
+            auto errorMessage = makeString("No GStreamer encoder found for codec "_s, codecName);
+            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
+                callback(makeUnexpected(WTFMove(errorMessage)));
             });
             return;
         }
