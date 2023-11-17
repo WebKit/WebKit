@@ -143,9 +143,7 @@ CoreIPCError::CoreIPCError(NSError *nsError)
                 [clientCertificates addObject:(__bridge id)certificate];
             }
             CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorClientCertificateChainKey"), (__bridge CFTypeRef)clientCertificates);
-        } else
-            LOG_ERROR("NSErrorClientCertificateChainKey's value is not an NSArray");
-
+        }
     }
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
