@@ -232,7 +232,7 @@ static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     }
     parameterArray[index] = nullptr;
 
-#if !PLATFORM(WIN) && !HAVE(LIBXSLT_FIX_FOR_RADAR_71864140)
+#if !PLATFORM(WIN) && !PLATFORM(COCOA)
     RELEASE_ASSERT(index <= std::numeric_limits<int>::max());
 #endif
 
