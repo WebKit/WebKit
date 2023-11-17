@@ -313,8 +313,6 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
             putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)), attributes);
 
         putDirect(vm, vm.propertyNames->stack, jsString(vm, WTFMove(m_stackString)), attributes);
-    } else {
-        putDirect(vm, vm.propertyNames->stack, jsEmptyString(vm), PropertyAttribute::DontEnum | 0);
     }
 
     m_errorInfoMaterialized = true;
