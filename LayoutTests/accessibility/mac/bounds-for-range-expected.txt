@@ -64,7 +64,6 @@ AXStyleTextMarkerRangeForTextMarker
 AXLengthForTextMarkerRange
 AXBoundsForRange
 AXStringForRange
-AXUIElementCountForSearchPredicate
 AXUIElementsForSearchPredicate
 AXEndTextMarkerForBounds
 AXStartTextMarkerForBounds
