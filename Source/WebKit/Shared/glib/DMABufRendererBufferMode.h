@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class DMABufRendererBufferMode : uint8_t {
@@ -35,15 +33,3 @@ enum class DMABufRendererBufferMode : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::DMABufRendererBufferMode> {
-    using values = EnumValues<
-        WebKit::DMABufRendererBufferMode,
-        WebKit::DMABufRendererBufferMode::Hardware,
-        WebKit::DMABufRendererBufferMode::SharedMemory
-    >;
-};
-
-} // namespace WTF

@@ -27,36 +27,23 @@
 
 #if USE(GBM)
 
-#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
-struct DMABufRendererBufferFormat {
-    enum class Usage : uint8_t {
-        Rendering,
-        Mapping,
-        Scanout
-    };
+enum class DMABufRendererBufferFormatUsage : uint8_t {
+    Rendering,
+    Mapping,
+    Scanout
+};
 
+struct DMABufRendererBufferFormat {
+    using Usage = DMABufRendererBufferFormatUsage;
     Usage usage { Usage::Rendering };
     uint32_t fourcc { 0 };
     Vector<uint64_t, 1> modifiers;
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::DMABufRendererBufferFormat::Usage> {
-    using values = EnumValues<
-        WebKit::DMABufRendererBufferFormat::Usage,
-        WebKit::DMABufRendererBufferFormat::Usage::Rendering,
-        WebKit::DMABufRendererBufferFormat::Usage::Mapping,
-        WebKit::DMABufRendererBufferFormat::Usage::Scanout
-    >;
-};
-
-} // namespace WTF
 
 #endif // USE(GBM)
