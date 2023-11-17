@@ -79,15 +79,15 @@ def argument_parser():
 
 class TestExpectationUpdater(object):
 
-    def __init__(self, host, bugzilla_id, is_bug_id=True, bot_filter_name=None, attachment_fetcher=None):
+    def __init__(self, port, bugzilla_id, is_bug_id=True, bot_filter_name=None, attachment_fetcher=None):
         self.attachment_fetcher = bugzilla.Bugzilla() if attachment_fetcher is None else attachment_fetcher
 
-        self.filesystem = host.filesystem
+        self.filesystem = port.host.filesystem
         self.bot_filter_name = bot_filter_name
         self.bugzilla_id = bugzilla_id
         self.is_bug_id = is_bug_id
 
-        self.layout_test_repository = WebKitFinder(self.filesystem).path_from_webkit_base("LayoutTests")
+        self.layout_test_repository = port.path_from_webkit_base("LayoutTests")
 
         self.ews_results = None
 
@@ -173,5 +173,8 @@ def main(_argv, _stdout, _stderr):
 
     configure_logging(options.debug)
 
-    updater = TestExpectationUpdater(Host(), options.bugzilla_id, options.is_bug_id, options.bot_filter_name)
+    host = Host()
+    port = host.port_factory.get()
+
+    updater = TestExpectationUpdater(port, options.bugzilla_id, options.is_bug_id, options.bot_filter_name)
     updater.do_update()

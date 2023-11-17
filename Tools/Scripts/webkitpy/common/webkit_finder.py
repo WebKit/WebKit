@@ -51,6 +51,14 @@ class WebKitFinder(object):
         return self._webkit_base
 
     def path_from_webkit_base(self, *comps):
+        if len(comps) > 0:
+            if comps[0] == "LayoutTests":
+                msg = "Cannot construct a path beginning with LayoutTests, use port.layout_tests_dir()"
+                raise ValueError(msg)
+            if comps[0] == "PerformanceTests":
+                msg = "Cannot construct a path beginning with LayoutTests, use port.perf_tests_dir()"
+                raise ValueError(msg)
+
         return self._filesystem.join(self.webkit_base(), *comps)
 
     def path_from_webkit_outputdir(self, *comps):
@@ -62,9 +70,3 @@ class WebKitFinder(object):
         # This is intentionally relative in order to force callers to consider what
         # their current working directory is (and change to the top of the tree if necessary).
         return self._filesystem.join("Tools", "Scripts", script_name)
-
-    def layout_tests_dir(self):
-        return self.path_from_webkit_base('LayoutTests')
-
-    def perf_tests_dir(self):
-        return self.path_from_webkit_base('PerformanceTests')
