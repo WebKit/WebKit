@@ -1238,6 +1238,17 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @end
 
+@protocol UIExtendedTextInputTraits_Staging_117880911<UITextInputTraits>
+@optional
+
+@property (nonatomic, readonly) BOOL isSingleLineDocument;
+@property (nonatomic, readonly) BOOL typingAdaptationDisabled;
+@property (nonatomic, readonly) UIColor *insertionPointColor;
+@property (nonatomic, readonly) UIColor *selectionBarColor;
+@property (nonatomic, readonly) UIColor *selectionHighlightColor;
+
+@end
+
 #if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
 
 typedef struct {

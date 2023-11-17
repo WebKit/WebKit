@@ -277,6 +277,7 @@ struct ImageAnalysisContextMenuActionData {
 
 } // namespace WebKit
 
+@class WKExtendedTextInputTraits;
 @class WKFocusedElementInfo;
 @protocol UIMenuBuilder;
 @protocol WKFormControl;
@@ -346,7 +347,8 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKTextInteractionWrapper> _textInteractionWrapper;
     OptionSet<WebKit::SuppressSelectionAssistantReason> _suppressSelectionAssistantReasons;
 
-    RetainPtr<UITextInputTraits> _traits;
+    RetainPtr<UITextInputTraits> _legacyTextInputTraits;
+    RetainPtr<WKExtendedTextInputTraits> _extendedTextInputTraits;
     RetainPtr<WKFormAccessoryView> _formAccessoryView;
     RetainPtr<WKTapHighlightView> _tapHighlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
