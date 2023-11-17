@@ -169,9 +169,6 @@ Ref<GenericPromise> MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& 
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)
 {
-    if (!m_client)
-        return;
-
     SourceBufferPrivateClient::InitializationSegment segment;
     segment.duration = initBox.duration();
 
@@ -200,9 +197,6 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
 {
-    if (!m_client)
-        return;
-
     SourceBufferPrivate::didReceiveSample(MockMediaSample::create(sampleBox));
 }
 

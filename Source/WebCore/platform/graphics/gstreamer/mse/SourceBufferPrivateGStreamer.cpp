@@ -84,8 +84,6 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 Ref<GenericPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());
-    ASSERT(m_mediaSource);
-    ASSERT(m_client);
 
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data->size());
 
@@ -253,7 +251,7 @@ WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
 size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
 {
 #if PLATFORM(WPE)
-    if (!m_client)
+    if (!isAttached())
         return 0;
 
     static size_t maxBufferSizeVideo = 0;

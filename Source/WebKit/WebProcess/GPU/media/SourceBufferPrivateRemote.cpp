@@ -72,7 +72,6 @@ SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuPr
 SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    ASSERT(!m_client);
 
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection)
@@ -412,7 +411,7 @@ void SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trac
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResultPromise::Result&&)>&& completionHandler)
 {
-    if (!m_client || !m_mediaPlayerPrivate) {
+    if (!isAttached() || !m_mediaPlayerPrivate) {
         completionHandler(makeUnexpected(WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected));
         return;
     }
@@ -448,28 +447,28 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         return info;
     });
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    client().sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-    if (m_client) {
+    if (isAttached()) {
         setTimestampOffset(timestampOffset);
-        m_client->sourceBufferPrivateAppendComplete(appendResult);
+        client().sourceBufferPrivateAppendComplete(appendResult);
     }
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    if (m_client)
-        m_client->sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
+    if (isAttached())
+        client().sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_client)
-        m_client->sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    if (isAttached())
+        client().sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
     else
         completionHandler();
 }
@@ -486,26 +485,26 @@ void SourceBufferPrivateRemote::sourceBufferPrivateTrackBuffersChanged(Vector<We
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)
 {
-    if (m_client)
-        m_client->sourceBufferPrivateDidParseSample(sampleDuration);
+    if (isAttached())
+        client().sourceBufferPrivateDidParseSample(sampleDuration);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample()
 {
-    if (m_client)
-        m_client->sourceBufferPrivateDidDropSample();
+    if (isAttached())
+        client().sourceBufferPrivateDidDropSample();
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+    if (isAttached())
+        client().sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 {
-    if (m_client)
-        m_client->sourceBufferPrivateReportExtraMemoryCost(extraMemory);
+    if (isAttached())
+        client().sourceBufferPrivateReportExtraMemoryCost(extraMemory);
 }
 
 uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const

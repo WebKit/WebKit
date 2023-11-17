@@ -210,7 +210,8 @@ protected:
     // Must be called once all samples have been processed.
     WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, Function<void()>&& = [] { });
 
-    WeakPtr<SourceBufferPrivateClient> m_client;
+    WEBCORE_EXPORT bool isAttached() const;
+    WEBCORE_EXPORT SourceBufferPrivateClient& client() const;
 
     WeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
 
@@ -224,13 +225,14 @@ private:
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
     bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
-    bool isAttached() const;
     virtual Vector<PlatformTimeRanges> trackBuffersRanges() const;
     bool hasTooManySamples() const;
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_isActive { false };
+
+    WeakPtr<SourceBufferPrivateClient> m_client;
 
     MemoryCompactRobinHoodHashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 

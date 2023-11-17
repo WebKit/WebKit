@@ -608,9 +608,6 @@ Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);
 
-    if (m_client)
-        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-
     m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }] (InitializationSegment&& segment) {
         ASSERT(isMainThread());
         if (!weakThis)
@@ -1068,8 +1065,8 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
     int errorCode = [[[error userInfo] valueForKey:@"OSStatus"] intValue];
 
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+    if (isAttached())
+        client().sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
