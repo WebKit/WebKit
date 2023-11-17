@@ -54,6 +54,7 @@ class HTMLPlugInElement;
 class ResourceResponse;
 class Scrollbar;
 class SharedBuffer;
+enum class PlatformCursorType : uint8_t;
 }
 
 namespace WebKit {
@@ -166,6 +167,8 @@ public:
     virtual void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) = 0;
     virtual void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) = 0;
 #endif
+
+    void notifyCursorChanged(WebCore::PlatformCursorType);
 
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);

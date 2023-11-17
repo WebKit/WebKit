@@ -98,7 +98,6 @@ public:
     void notifyDisplayModeChanged(int);
 
     void notifySelectionChanged(PDFSelection *);
-    void notifyCursorChanged(uint64_t /* PDFLayerControllerCursorType */);
 
     // HUD Actions.
 #if ENABLE(PDF_HUD)

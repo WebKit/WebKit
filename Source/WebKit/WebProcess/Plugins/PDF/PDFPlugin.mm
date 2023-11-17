@@ -428,6 +428,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
+static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cursorType)
+{
+    switch (cursorType) {
+    case kPDFLayerControllerCursorTypePointer: return WebCore::Cursor::Type::Pointer;
+    case kPDFLayerControllerCursorTypeHand: return WebCore::Cursor::Type::Hand;
+    case kPDFLayerControllerCursorTypeIBeam: return WebCore::Cursor::Type::IBeam;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return WebCore::Cursor::Type::Pointer;
+}
+
 @implementation WKPDFLayerControllerDelegate
 
 @synthesize pdfPlugin = _pdfPlugin;
@@ -519,7 +531,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType
 {
-    _pdfPlugin->notifyCursorChanged(cursorType);
+    _pdfPlugin->notifyCursorChanged(toWebCoreCursorType(cursorType));
 }
 
 - (void)didChangeAnnotationState
@@ -2290,27 +2302,6 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
     if (!m_frame || !m_frame->page())
         return;
     m_frame->page()->didChangeSelection(*m_frame->coreLocalFrame());
-}
-
-static const WebCore::Cursor& coreCursor(PDFLayerControllerCursorType type)
-{
-    switch (type) {
-    case kPDFLayerControllerCursorTypeHand:
-        return WebCore::handCursor();
-    case kPDFLayerControllerCursorTypeIBeam:
-        return WebCore::iBeamCursor();
-    case kPDFLayerControllerCursorTypePointer:
-    default:
-        return WebCore::pointerCursor();
-    }
-}
-
-void PDFPlugin::notifyCursorChanged(uint64_t type)
-{
-    if (!m_frame || !m_frame->page())
-        return;
-
-    m_frame->page()->send(Messages::WebPageProxy::SetCursor(coreCursor(static_cast<PDFLayerControllerCursorType>(type))));
 }
 
 String PDFPlugin::getSelectionString() const

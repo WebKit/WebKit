@@ -28,14 +28,17 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#import "MessageSenderInlines.h"
 #import "PluginView.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
 #import "WebPage.h"
+#import "WebPageProxyMessages.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/Cursor.h>
 #import <WebCore/Document.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
@@ -557,6 +560,14 @@ bool PDFPluginBase::hudEnabled() const
 }
 
 #endif // ENABLE(PDF_HUD)
+
+void PDFPluginBase::notifyCursorChanged(WebCore::PlatformCursorType cursorType)
+{
+    if (!m_frame || !m_frame->page())
+        return;
+
+    m_frame->protectedPage()->send(Messages::WebPageProxy::SetCursor(WebCore::Cursor::fromType(cursorType)));
+}
 
 } // namespace WebKit
 
