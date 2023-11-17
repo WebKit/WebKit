@@ -132,4 +132,22 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
     return useGraphicsElement;
 }
 
+FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
+{
+    FloatRect clipContentRepaintRect;
+    // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
+    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+        auto* renderer = childNode->renderer();
+        if (!childNode->isSVGElement() || !renderer)
+            continue;
+        if (!renderer->isRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
+            continue;
+        auto& style = renderer->style();
+        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+            continue;
+        clipContentRepaintRect.unite(renderer->repaintRectInLocalCoordinates(repaintRectCalculation));
+    }
+    return clipContentRepaintRect;
+}
+
 }

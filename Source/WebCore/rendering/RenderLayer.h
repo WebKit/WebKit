@@ -420,6 +420,8 @@ public:
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool isPaintingSVGResourceLayer() const { return m_isPaintingSVGResourceLayer; }
+
+    inline RenderSVGHiddenContainer* enclosingSVGHiddenOrResourceContainer() const;
 #endif
 
     void repaintIncludingDescendants();

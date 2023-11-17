@@ -211,7 +211,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
     return layer()->hitTest(hitType, result);
 }
 
-FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
+FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     FloatRect targetBoundingBox = object.objectBoundingBox();
 
@@ -219,19 +219,16 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     if (selfNeedsLayout())
         return targetBoundingBox;
 
-    FloatRect clipRect = object.strokeBoundingBox();
-
-    if (layer()->isTransformed())
-        clipRect = layer()->currentTransform(RenderStyle::individualTransformOperations()).mapRect(clipRect);
+    auto clipContentRepaintRect = clipPathElement().calculateClipContentRepaintRect(repaintRectCalculation);
 
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());
         contentTransform.scale(targetBoundingBox.size());
-        clipRect = contentTransform.mapRect(clipRect);
+        return contentTransform.mapRect(clipContentRepaintRect);
     }
 
-    return clipRect;
+    return clipContentRepaintRect;
 }
 
 }

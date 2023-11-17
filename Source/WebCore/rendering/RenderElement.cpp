@@ -67,6 +67,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -1479,6 +1480,10 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
 
 bool RenderElement::isInsideEntirelyHiddenLayer() const
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (isSVGLayerAwareRenderer() && document().settings().layerBasedSVGEngineEnabled() && enclosingLayer()->enclosingSVGHiddenOrResourceContainer())
+        return true;
+#endif
     return style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent();
 }
 
