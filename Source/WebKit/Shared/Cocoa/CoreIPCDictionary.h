@@ -38,6 +38,7 @@ namespace WebKit {
 class CoreIPCNSCFObject;
 
 class CoreIPCDictionary {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCDictionary(NSDictionary *);
 

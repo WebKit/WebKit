@@ -277,7 +277,7 @@ Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
     if (layer()->isTransformed())
         transform.multiply(layer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
 
-    return pathFromGraphicsElement(&downcast<SVGGraphicsElement>(element()));
+    return pathFromGraphicsElement(downcast<SVGGraphicsElement>(element()));
 }
 
 } // namespace WebCore

@@ -85,20 +85,6 @@ bool Effects::interferes(const Effects& other) const
         || (fence && other.fence);
 }
 
-bool Effects::operator==(const Effects& other) const
-{
-    return terminal == other.terminal
-        && exitsSideways == other.exitsSideways
-        && controlDependent == other.controlDependent
-        && writesLocalState == other.writesLocalState
-        && readsLocalState == other.readsLocalState
-        && writesPinned == other.writesPinned
-        && readsPinned == other.readsPinned
-        && writes == other.writes
-        && reads == other.reads
-        && fence == other.fence;
-}
-
 void Effects::dump(PrintStream& out) const
 {
     CommaPrinter comma("|");

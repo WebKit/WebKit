@@ -79,55 +79,58 @@ using PlatformCursor = GRefPtr<GdkCursor>;
 using PlatformCursor = void*;
 #endif
 
+enum class PlatformCursorType : uint8_t {
+    Invalid,
+    Pointer,
+    Cross,
+    Hand,
+    IBeam,
+    Wait,
+    Help,
+    EastResize,
+    NorthResize,
+    NorthEastResize,
+    NorthWestResize,
+    SouthResize,
+    SouthEastResize,
+    SouthWestResize,
+    WestResize,
+    NorthSouthResize,
+    EastWestResize,
+    NorthEastSouthWestResize,
+    NorthWestSouthEastResize,
+    ColumnResize,
+    RowResize,
+    MiddlePanning,
+    EastPanning,
+    NorthPanning,
+    NorthEastPanning,
+    NorthWestPanning,
+    SouthPanning,
+    SouthEastPanning,
+    SouthWestPanning,
+    WestPanning,
+    Move,
+    VerticalText,
+    Cell,
+    ContextMenu,
+    Alias,
+    Progress,
+    NoDrop,
+    Copy,
+    None,
+    NotAllowed,
+    ZoomIn,
+    ZoomOut,
+    Grab,
+    Grabbing,
+    Custom
+};
+
 class Cursor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Type {
-        Pointer = 0,
-        Cross,
-        Hand,
-        IBeam,
-        Wait,
-        Help,
-        EastResize,
-        NorthResize,
-        NorthEastResize,
-        NorthWestResize,
-        SouthResize,
-        SouthEastResize,
-        SouthWestResize,
-        WestResize,
-        NorthSouthResize,
-        EastWestResize,
-        NorthEastSouthWestResize,
-        NorthWestSouthEastResize,
-        ColumnResize,
-        RowResize,
-        MiddlePanning,
-        EastPanning,
-        NorthPanning,
-        NorthEastPanning,
-        NorthWestPanning,
-        SouthPanning,
-        SouthEastPanning,
-        SouthWestPanning,
-        WestPanning,
-        Move,
-        VerticalText,
-        Cell,
-        ContextMenu,
-        Alias,
-        Progress,
-        NoDrop,
-        Copy,
-        None,
-        NotAllowed,
-        ZoomIn,
-        ZoomOut,
-        Grab,
-        Grabbing,
-        Custom
-    };
+    using Type = PlatformCursorType;
 
     Cursor() = default;
 
@@ -158,8 +161,7 @@ public:
 private:
     void ensurePlatformCursor() const;
 
-    // The type of -1 indicates an invalid Cursor that should never actually get used.
-    Type m_type { static_cast<Type>(-1) };
+    Type m_type { Type::Invalid };
     RefPtr<Image> m_image;
     IntPoint m_hotSpot;
 
@@ -223,8 +225,8 @@ const Cursor& grabbingCursor();
 
 inline Cursor::Type Cursor::type() const
 {
-    ASSERT(m_type >= 0);
-    ASSERT(m_type <= Custom);
+    ASSERT(m_type > Type::Invalid);
+    ASSERT(m_type <= Type::Custom);
     return m_type;
 }
 

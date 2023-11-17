@@ -42,6 +42,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
+        this._failedSourceMapURLs = new Set;
 
         this._localResourceOverrides = [];
         this._harImportLocalResourceMap = new Set;
@@ -326,6 +327,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         loadAndParseSourceMap();
+    }
+
+    isSourceMapURL(url)
+    {
+        return this._downloadingSourceMaps.has(url) || this._failedSourceMapURLs.has(url);
     }
 
     get bootstrapScriptEnabled()
@@ -1561,6 +1567,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     _sourceMapLoadAndParseFailed(sourceMapURL)
     {
         this._downloadingSourceMaps.delete(sourceMapURL);
+        this._failedSourceMapURLs.add(sourceMapURL);
     }
 
     _sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap)
@@ -1663,6 +1670,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._sourceMapURLMap.clear();
         this._downloadingSourceMaps.clear();
+        this._failedSourceMapURLs.clear();
     }
 };
 

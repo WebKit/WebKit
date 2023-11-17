@@ -9296,20 +9296,20 @@ void Document::updateServiceWorkerClientData()
     serviceWorkerConnection->registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, userAgent(url()));
 }
 
-void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(bool)>&& callback)
+void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(ScheduleLocationChangeResult)>&& callback)
 {
     if (activeDOMObjectsAreSuspended() || activeDOMObjectsAreStopped()) {
-        callback(false);
+        callback(ScheduleLocationChangeResult::Stopped);
         return;
     }
     eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTFMove(callback)]() mutable {
         RefPtr frame = weakThis ? weakThis->frame() : nullptr;
         if (!frame) {
-            callback(false);
+            callback(ScheduleLocationChangeResult::Stopped);
             return;
         }
-        frame->navigationScheduler().scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, [callback = WTFMove(callback)]() mutable {
-            callback(true);
+        frame->navigationScheduler().scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, [callback = WTFMove(callback)](auto result) mutable {
+            callback(result);
         });
     });
 }

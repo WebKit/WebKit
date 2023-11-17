@@ -402,6 +402,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
         let initialValues = new Map;
+        
+        let consoleGroup = experimentalSettingsView.addGroup(WI.UIString("Console:"));
+        consoleGroup.addSetting(WI.settings.experimentalGroupSourceMapErrors, WI.UIString("Group source map network errors"));
+        
+        experimentalSettingsView.addSeparator();
+
 
         let hasCSSDomain = InspectorBackend.hasDomain("CSS");
         if (hasCSSDomain) {

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGPathData.h"
 
+#include "NodeName.h"
 #include "Path.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
@@ -182,26 +183,27 @@ static Path pathFromRectElement(const SVGElement& element)
     return path;
 }
 
-Path pathFromGraphicsElement(const SVGElement* element)
+Path pathFromGraphicsElement(const SVGElement& element)
 {
-    ASSERT(element);
-
-    typedef Path (*PathFromFunction)(const SVGElement&);
-    static HashMap<AtomStringImpl*, PathFromFunction>* map = 0;
-    if (!map) {
-        map = new HashMap<AtomStringImpl*, PathFromFunction>;
-        map->set(SVGNames::circleTag->localName().impl(), pathFromCircleElement);
-        map->set(SVGNames::ellipseTag->localName().impl(), pathFromEllipseElement);
-        map->set(SVGNames::lineTag->localName().impl(), pathFromLineElement);
-        map->set(SVGNames::pathTag->localName().impl(), pathFromPathElement);
-        map->set(SVGNames::polygonTag->localName().impl(), pathFromPolygonElement);
-        map->set(SVGNames::polylineTag->localName().impl(), pathFromPolylineElement);
-        map->set(SVGNames::rectTag->localName().impl(), pathFromRectElement);
+    switch (element.tagQName().nodeName()) {
+    case ElementNames::SVG::circle:
+        return pathFromCircleElement(element);
+    case ElementNames::SVG::ellipse:
+        return pathFromEllipseElement(element);
+    case ElementNames::SVG::line:
+        return pathFromLineElement(element);
+    case ElementNames::SVG::path:
+        return pathFromPathElement(element);
+    case ElementNames::SVG::polygon:
+        return pathFromPolygonElement(element);
+    case ElementNames::SVG::polyline:
+        return pathFromPolylineElement(element);
+    case ElementNames::SVG::rect:
+        return pathFromRectElement(element);
+    default:
+        break;
     }
 
-    if (PathFromFunction pathFromFunction = map->get(element->localName().impl()))
-        return (*pathFromFunction)(*element);
-    
     return { };
 }
 

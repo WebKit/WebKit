@@ -50,6 +50,14 @@ enum class WebExtensionWindowTypeFilter : uint8_t {
     Popup  = 1 << 1,
 };
 
+static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTypeFilters()
+{
+    return {
+        WebExtensionWindowTypeFilter::Normal,
+        WebExtensionWindowTypeFilter::Popup
+    };
+}
+
 class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
     WTF_MAKE_FAST_ALLOCATED;

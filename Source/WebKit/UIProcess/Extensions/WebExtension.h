@@ -128,6 +128,16 @@ public:
         Command = 1 << 20
     };
 
+    static constexpr OptionSet<ModifierFlags> allModifierFlags()
+    {
+        return {
+            ModifierFlags::Shift,
+            ModifierFlags::Control,
+            ModifierFlags::Option,
+            ModifierFlags::Command
+        };
+    }
+
     struct CommandData {
         String identifier;
         String description;

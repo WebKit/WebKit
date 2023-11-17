@@ -223,6 +223,8 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
         // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
 
+        loadDeclarativeNetRequestRules();
+
         addInjectedContent();
     });
 
@@ -2633,6 +2635,41 @@ void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& u
         for (auto& userStyleSheet : entry.value)
             userContentController.removeUserStyleSheet(userStyleSheet);
     }
+}
+
+void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
+{
+    // FIXME: rdar://114823294 - Implement this.
+}
+
+void WebExtensionContext::loadDeclarativeNetRequestRules()
+{
+    // FIXME: rdar://118476702 - Load dynamic rules here.
+    // FIXME: rdar://118476774 - Load session rules here.
+    // FIXME: rdar://118476776 - Set state if the extension should show the blocked resource count as its badge text.
+
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+        return;
+
+    auto *allJSONData = [NSMutableArray array];
+
+    for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
+        if (!ruleset.enabled)
+            continue;
+
+        auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
+        if (!jsonData)
+            continue;
+
+        [allJSONData addObject:jsonData];
+    }
+
+    if (!allJSONData.count) {
+        // FIXME: When dynamic/session rules are supported, we should remove the content blocker if there are no rules.
+        return;
+    }
+
+    compileDeclarativeNetRequestRules(allJSONData);
 }
 
 } // namespace WebKit

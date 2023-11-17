@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateFixedNode.h"
+#include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include <wtf/text/TextStream.h>
 

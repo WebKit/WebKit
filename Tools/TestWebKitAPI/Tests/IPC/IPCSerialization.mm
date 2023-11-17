@@ -34,6 +34,7 @@
 #import <Foundation/NSValue.h>
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -146,7 +147,11 @@ struct ObjCHolderForTesting {
         RetainPtr<NSArray>,
         RetainPtr<NSDictionary>,
         RetainPtr<WebCore::CocoaFont>,
-        RetainPtr<NSError>
+        RetainPtr<NSError>,
+#if ENABLE(DATA_DETECTION)
+        RetainPtr<DDScannerResult>,
+#endif
+        RetainPtr<NSValue>
     > ValueType;
 
     ValueType value;
@@ -403,24 +408,30 @@ TEST(IPCSerialization, Basic)
     auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
     runTestCF({ cgColor.get() });
 
+    auto runNumberTest = [&](NSNumber *number) {
+        ObjCHolderForTesting::ValueType numberVariant;
+        numberVariant.emplace<RetainPtr<NSNumber>>(number);
+        runTestNS({ numberVariant });
+    };
+
     // NSNumber
-    runTestNS({ [NSNumber numberWithChar: CHAR_MIN] });
-    runTestNS({ [NSNumber numberWithUnsignedChar: CHAR_MAX] });
-    runTestNS({ [NSNumber numberWithShort: SHRT_MIN] });
-    runTestNS({ [NSNumber numberWithUnsignedShort: SHRT_MAX] });
-    runTestNS({ [NSNumber numberWithInt: INT_MIN] });
-    runTestNS({ [NSNumber numberWithUnsignedInt: UINT_MAX] });
-    runTestNS({ [NSNumber numberWithLong: LONG_MIN] });
-    runTestNS({ [NSNumber numberWithUnsignedLong: ULONG_MAX] });
-    runTestNS({ [NSNumber numberWithLongLong: LLONG_MIN] });
-    runTestNS({ [NSNumber numberWithUnsignedLongLong: ULLONG_MAX] });
-    runTestNS({ [NSNumber numberWithFloat: 3.14159] });
-    runTestNS({ [NSNumber numberWithDouble: 9.98989898989] });
-    runTestNS({ [NSNumber numberWithBool: true] });
-    runTestNS({ [NSNumber numberWithBool: false] });
-    runTestNS({ [NSNumber numberWithInteger: NSIntegerMax] });
-    runTestNS({ [NSNumber numberWithInteger: NSIntegerMin] });
-    runTestNS({ [NSNumber numberWithUnsignedInteger: NSUIntegerMax] });
+    runNumberTest([NSNumber numberWithChar: CHAR_MIN]);
+    runNumberTest([NSNumber numberWithUnsignedChar: CHAR_MAX]);
+    runNumberTest([NSNumber numberWithShort: SHRT_MIN]);
+    runNumberTest([NSNumber numberWithUnsignedShort: SHRT_MAX]);
+    runNumberTest([NSNumber numberWithInt: INT_MIN]);
+    runNumberTest([NSNumber numberWithUnsignedInt: UINT_MAX]);
+    runNumberTest([NSNumber numberWithLong: LONG_MIN]);
+    runNumberTest([NSNumber numberWithUnsignedLong: ULONG_MAX]);
+    runNumberTest([NSNumber numberWithLongLong: LLONG_MIN]);
+    runNumberTest([NSNumber numberWithUnsignedLongLong: ULLONG_MAX]);
+    runNumberTest([NSNumber numberWithFloat: 3.14159]);
+    runNumberTest([NSNumber numberWithDouble: 9.98989898989]);
+    runNumberTest([NSNumber numberWithBool: true]);
+    runNumberTest([NSNumber numberWithBool: false]);
+    runNumberTest([NSNumber numberWithInteger: NSIntegerMax]);
+    runNumberTest([NSNumber numberWithInteger: NSIntegerMin]);
+    runNumberTest([NSNumber numberWithUnsignedInteger: NSUIntegerMax]);
 
     // NSArray
     runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
@@ -505,4 +516,54 @@ TEST(IPCSerialization, Basic)
     RetainPtr<id> error12 = filteredError11.toID();
     EXPECT_EQ([[[error12.get() userInfo] objectForKey:@"NSErrorPeerCertificateChainKey"] count], (NSUInteger)1);
     runTestNS({ (NSError *)error12.get() });
+
+    auto runValueTest = [&](NSValue *value) {
+        ObjCHolderForTesting::ValueType valueVariant;
+        valueVariant.emplace<RetainPtr<NSValue>>(value);
+        runTestNS({ valueVariant });
+    };
+
+    // NSValue, wrapping any of the following classes:
+    //   - NSRange
+    runValueTest([NSValue valueWithRange:NSMakeRange(1, 2)]);
 }
+
+#if PLATFORM(MAC)
+
+static DDScannerResult *fakeDataDetectorResultForTesting()
+{
+    auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+    auto stringToScan = CFSTR("webkit.org");
+    auto query = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, stringToScan, CFRangeMake(0, CFStringGetLength(stringToScan))));
+    if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), query.get()))
+        return nil;
+
+    auto results = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
+    if (!CFArrayGetCount(results.get()))
+        return nil;
+
+    return [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject];
+}
+
+TEST(IPCSerialization, SecureCoding)
+{
+    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
+        __block bool done = false;
+        __block ObjCHolderForTesting holder = WTFMove(holderArg);
+        auto sender = SerializationTestSender { };
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
+            EXPECT_TRUE(holder == result);
+            done = true;
+        });
+
+        // The completion handler should be called synchronously, so this should be true already.
+        EXPECT_TRUE(done);
+    };
+
+    // DDScannerResult
+    //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
+    runTestNS({ fakeDataDetectorResultForTesting() });
+}
+
+#endif // PLATFORM(MAC)
+

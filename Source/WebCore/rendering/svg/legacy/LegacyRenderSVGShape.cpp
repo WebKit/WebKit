@@ -445,7 +445,7 @@ Path& LegacyRenderSVGShape::ensurePath()
 
 std::unique_ptr<Path> LegacyRenderSVGShape::createPath() const
 {
-    return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
+    return makeUnique<Path>(pathFromGraphicsElement(graphicsElement()));
 }
 
 }

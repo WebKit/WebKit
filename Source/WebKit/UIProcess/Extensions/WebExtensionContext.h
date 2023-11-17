@@ -65,6 +65,7 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMutableDictionary;
@@ -409,6 +410,9 @@ private:
     void removeInjectedContent();
     void removeInjectedContent(MatchPatternSet&);
     void removeInjectedContent(WebExtensionMatchPattern&);
+
+    void loadDeclarativeNetRequestRules();
+    void compileDeclarativeNetRequestRules(NSArray *);
 
     // Action APIs
     void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);

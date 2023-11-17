@@ -146,6 +146,7 @@ $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in
 $(PROJECT_DIR)/NetworkProcess/webtransport/NetworkTransportSession.messages.in
 $(PROJECT_DIR)/Platform/IPC/FormDataReference.serialization.in
+$(PROJECT_DIR)/Platform/IPC/IPCSemaphore.serialization.in
 $(PROJECT_DIR)/Platform/IPC/StreamServerConnection.serialization.in
 $(PROJECT_DIR)/Platform/SharedMemory.serialization.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
@@ -197,12 +198,14 @@ $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDScannerResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDictionary.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCError.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSValue.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCSecureCoding.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in

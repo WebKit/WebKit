@@ -286,6 +286,7 @@ enum class ReferrerPolicySource : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
 enum class RenderingUpdateStep : uint32_t;
+enum class ScheduleLocationChangeResult : uint8_t;
 enum class StyleColorOptions : uint8_t;
 enum class MutationObserverOptionType : uint8_t;
 enum class ViolationReportType : uint8_t;
@@ -1704,7 +1705,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void setServiceWorkerConnection(RefPtr<SWClientConnection>&&);
     void updateServiceWorkerClientData() final;
-    WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(ScheduleLocationChangeResult)>&&);
 #endif
 
 #if ENABLE(VIDEO)

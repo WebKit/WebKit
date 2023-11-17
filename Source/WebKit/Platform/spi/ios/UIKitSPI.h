@@ -1253,6 +1253,10 @@ typedef struct {
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
+@interface UIResponder (Staging_118307558)
+- (void)replace:(id)sender;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

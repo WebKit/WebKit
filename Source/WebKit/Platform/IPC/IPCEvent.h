@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Decoder.h"
+#include "Encoder.h"
 #include "IPCSemaphore.h"
 
 namespace IPC {
@@ -57,12 +59,12 @@ public:
 
     void encode(Encoder& encoder) &&
     {
-        m_semaphore.encode(encoder);
+        encoder << m_semaphore;
     }
 
     static std::optional<Signal> decode(Decoder& decoder)
     {
-        std::optional<Semaphore> semaphore = Semaphore::decode(decoder);
+        std::optional<Semaphore> semaphore = decoder.decode<Semaphore>();
         if (!semaphore)
             return std::nullopt;
 

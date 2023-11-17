@@ -248,6 +248,7 @@ enum class LinkDecorationFilteringTrigger : uint8_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMutedState : uint8_t;
+enum class ScheduleLocationChangeResult : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class SyntheticClickType : uint8_t;
@@ -1019,7 +1020,7 @@ public:
     void didUpdateComposition();
     void didEndUserTriggeredSelectionChanges();
 
-    void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(bool)>&&);
+    void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(WebCore::ScheduleLocationChangeResult)>&&);
 
 #if PLATFORM(COCOA)
     void platformInitializeAccessibility();

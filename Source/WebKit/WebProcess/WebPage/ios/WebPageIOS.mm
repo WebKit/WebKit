@@ -3259,10 +3259,10 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
 
     bool lineContainsRequestPoint = info.lineCaretExtent.contains(request.point);
     // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
-    if (lineContainsRequestPoint && info.cursor->type() != Cursor::Hand && canForceCaretForPosition(position))
-        info.cursor = Cursor::fromType(Cursor::IBeam);
+    if (lineContainsRequestPoint && info.cursor->type() != Cursor::Type::Hand && canForceCaretForPosition(position))
+        info.cursor = Cursor::fromType(Cursor::Type::IBeam);
 
-    if (!lineContainsRequestPoint && info.cursor->type() == Cursor::IBeam) {
+    if (!lineContainsRequestPoint && info.cursor->type() == Cursor::Type::IBeam) {
         auto approximateLineRectInContentCoordinates = renderer->absoluteBoundingBoxRect();
         approximateLineRectInContentCoordinates.setHeight(renderer->style().computedLineHeight());
         info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);

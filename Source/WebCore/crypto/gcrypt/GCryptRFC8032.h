@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 namespace GCrypt {
 namespace RFC8032 {
 
-static bool validateEd25519KeyPair(const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey);
+bool validateEd25519KeyPair(const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey);
 
 } } } // namespace WebCore::GCrypt::RFC8032

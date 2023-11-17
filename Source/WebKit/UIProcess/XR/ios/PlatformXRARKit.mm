@@ -34,6 +34,7 @@
 
 #import <Metal/MTLEvent_Private.h>
 #import <Metal/MTLTexture_Private.h>
+#import <WebCore/PlatformXRPose.h>
 
 #import "ARKitSoftLink.h"
 
@@ -172,7 +173,6 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::De
             }
 
             active.onFrameUpdate = WTFMove(onFrameUpdateCallback);
-            active.renderSemaphore->signal();
         },
         [&](Terminating&) {
             RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame for terminating session");
@@ -194,8 +194,10 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
                 return;
             }
 
-            // FIXME: What to do here? The frame is submitted on the signalling of
-            // of active.presentationSession.completionEvent
+            // FIXME: rdar://118492973 (Re-enable MTLSharedEvent completion sync)
+            // Replace frame presentation to depend on
+            // active.presentationSession.completionEvent
+            active.renderSemaphore->signal();
         },
         [&](Terminating&) {
             RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for a terminating session");
@@ -236,15 +238,29 @@ void ARKitCoordinator::renderLoop()
             break;
 
         auto& active = *maybeActive;
-        active.renderSemaphore->wait();
         if (!active.onFrameUpdate)
-            break;
+            continue;
 
         @autoreleasepool {
             [active.presentationSession startFrame];
 
-            PlatformXR::Device::FrameData frameData = { };
+            ARFrame* frame = [active.presentationSession currentFrame];
+            ARCamera* camera = frame.camera;
 
+            PlatformXR::Device::FrameData frameData = { };
+            // FIXME: Use ARSession state to calculate correct values.
+            frameData.isTrackingValid = true;
+            frameData.isPositionValid = true;
+            frameData.predictedDisplayTime = frame.timestamp;
+            frameData.origin = PlatformXRPose(camera.transform).pose();
+
+            // Only one view
+            frameData.views.append({
+                .offset = { },
+                .projection = {
+                    PlatformXRPose(frame.camera.projectionMatrix).toColumnMajorFloatArray()
+                },
+            });
             auto colorTexture = makeMachSendRight([active.presentationSession colorTexture]);
             auto renderingFrameIndex = [active.presentationSession renderingFrameIndex];
             // FIXME: Send this event once at setup time, not every frame.
@@ -262,6 +278,8 @@ void ARKitCoordinator::renderLoop()
             callOnMainRunLoop([callback = WTFMove(active.onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
                 callback(WTFMove(frameData));
             });
+
+            active.renderSemaphore->wait();
 
             [active.presentationSession present];
         }

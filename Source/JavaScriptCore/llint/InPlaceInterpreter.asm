@@ -4277,7 +4277,7 @@ instructionLabel(_memory_atomic_notify)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_notify) end)
-    bib r0, 0, .atomic_notify_throw
+    bilt r0, 0, .atomic_notify_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -4302,7 +4302,7 @@ instructionLabel(_memory_atomic_wait32)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_wait32) end)
-    bib r0, 0, .atomic_wait32_throw
+    bilt r0, 0, .atomic_wait32_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -4327,7 +4327,7 @@ instructionLabel(_memory_atomic_wait64)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_wait64) end)
-    bib r0, 0, .atomic_wait64_throw
+    bilt r0, 0, .atomic_wait64_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -5530,13 +5530,9 @@ instructionLabel(_i64_atomic_rmw_cmpxchg)
 
 instructionLabel(_i32_atomic_rmw8_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck1, macro(mem, value, expected, scratch2)
+        andq 0xff, expected
         if ARM64E or X86_64
-            bqa expected , 0xff, .fail
             atomicweakcasb expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadb [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeByte(mem, value, expected, scratch2)
         else
@@ -5547,13 +5543,9 @@ instructionLabel(_i32_atomic_rmw8_cmpxchg_u)
 
 instructionLabel(_i32_atomic_rmw16_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck2, macro(mem, value, expected, scratch2)
+        andq 0xffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffff, .fail
             atomicweakcash expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadh [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeHalf(mem, value, expected, scratch2)
         else
@@ -5564,13 +5556,9 @@ instructionLabel(_i32_atomic_rmw16_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw8_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck1, macro(mem, value, expected, scratch2)
+        andq 0xff, expected
         if ARM64E or X86_64
-            bqa expected , 0xff, .fail
             atomicweakcasb expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadb [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeByte(mem, value, expected, scratch2)
         else
@@ -5581,13 +5569,9 @@ instructionLabel(_i64_atomic_rmw8_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw16_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck2, macro(mem, value, expected, scratch2)
+        andq 0xffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffff, .fail
             atomicweakcash expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadh [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeHalf(mem, value, expected, scratch2)
         else
@@ -5598,13 +5582,9 @@ instructionLabel(_i64_atomic_rmw16_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw32_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck4, macro(mem, value, expected, scratch2)
+        andq 0xffffffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffffffff, .fail
             atomicweakcasi expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadi [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeInt(mem, value, expected, scratch2)
         else

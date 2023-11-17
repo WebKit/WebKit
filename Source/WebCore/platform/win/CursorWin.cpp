@@ -141,127 +141,128 @@ void Cursor::ensurePlatformCursor() const
         return;
 
     switch (m_type) {
-    case Cursor::Pointer:
-    case Cursor::Cell:
-    case Cursor::ContextMenu:
-    case Cursor::Alias:
-    case Cursor::Copy:
-    case Cursor::None:
-    case Cursor::Grab:
-    case Cursor::Grabbing:
+    case Type::Pointer:
+    case Type::Cell:
+    case Type::ContextMenu:
+    case Type::Alias:
+    case Type::Copy:
+    case Type::None:
+    case Type::Grab:
+    case Type::Grabbing:
         m_platformCursor = loadSharedCursor(0, IDC_ARROW);
         break;
-    case Cursor::Cross:
+    case Type::Cross:
         m_platformCursor = loadSharedCursor(0, IDC_CROSS);
         break;
-    case Cursor::Hand:
+    case Type::Hand:
         m_platformCursor = loadSharedCursor(0, IDC_HAND);
         break;
-    case Cursor::IBeam:
+    case Type::IBeam:
         m_platformCursor = loadSharedCursor(0, IDC_IBEAM);
         break;
-    case Cursor::Wait:
+    case Type::Wait:
         m_platformCursor = loadSharedCursor(0, IDC_WAIT);
         break;
-    case Cursor::Help:
+    case Type::Help:
         m_platformCursor = loadSharedCursor(0, IDC_HELP);
         break;
-    case Cursor::Move:
+    case Type::Move:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEALL);
         break;
-    case Cursor::MiddlePanning:
+    case Type::MiddlePanning:
         m_platformCursor = loadCursorByName("panIcon", 8, 8);
         break;
-    case Cursor::EastResize:
+    case Type::EastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
-    case Cursor::EastPanning:
+    case Type::EastPanning:
         m_platformCursor = loadCursorByName("panEastCursor", 7, 7);
         break;
-    case Cursor::NorthResize:
+    case Type::NorthResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
-    case Cursor::NorthPanning:
+    case Type::NorthPanning:
         m_platformCursor = loadCursorByName("panNorthCursor", 7, 7);
         break;
-    case Cursor::NorthEastResize:
+    case Type::NorthEastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
         break;
-    case Cursor::NorthEastPanning:
+    case Type::NorthEastPanning:
         m_platformCursor = loadCursorByName("panNorthEastCursor", 7, 7);
         break;
-    case Cursor::NorthWestResize:
+    case Type::NorthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENWSE);
         break;
-    case Cursor::NorthWestPanning:
+    case Type::NorthWestPanning:
         m_platformCursor = loadCursorByName("panNorthWestCursor", 7, 7);
         break;
-    case Cursor::SouthResize:
+    case Type::SouthResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
-    case Cursor::SouthPanning:
+    case Type::SouthPanning:
         m_platformCursor = loadCursorByName("panSouthCursor", 7, 7);
         break;
-    case Cursor::SouthEastResize:
+    case Type::SouthEastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENWSE);
         break;
-    case Cursor::SouthEastPanning:
+    case Type::SouthEastPanning:
         m_platformCursor = loadCursorByName("panSouthEastCursor", 7, 7);
         break;
-    case Cursor::SouthWestResize:
+    case Type::SouthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
         break;
-    case Cursor::SouthWestPanning:
+    case Type::SouthWestPanning:
         m_platformCursor = loadCursorByName("panSouthWestCursor", 7, 7);
         break;
-    case Cursor::WestResize:
+    case Type::WestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
-    case Cursor::NorthSouthResize:
+    case Type::NorthSouthResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
-    case Cursor::EastWestResize:
+    case Type::EastWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
-    case Cursor::WestPanning:
+    case Type::WestPanning:
         m_platformCursor = loadCursorByName("panWestCursor", 7, 7);
         break;
-    case Cursor::NorthEastSouthWestResize:
+    case Type::NorthEastSouthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
         break;
-    case Cursor::NorthWestSouthEastResize:
+    case Type::NorthWestSouthEastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENWSE);
         break;
-    case Cursor::ColumnResize:
+    case Type::ColumnResize:
         // FIXME: Windows does not have a standard column resize cursor <rdar://problem/5018591>
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
-    case Cursor::RowResize:
+    case Type::RowResize:
         // FIXME: Windows does not have a standard row resize cursor <rdar://problem/5018591>
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
-    case Cursor::VerticalText:
+    case Type::VerticalText:
         m_platformCursor = loadCursorByName("verticalTextCursor", 7, 7);
         break;
-    case Cursor::Progress:
+    case Type::Progress:
         m_platformCursor = loadSharedCursor(0, IDC_APPSTARTING);
         break;
-    case Cursor::NoDrop:
-    case Cursor::NotAllowed:
+    case Type::NoDrop:
+    case Type::NotAllowed:
         m_platformCursor = loadSharedCursor(0, IDC_NO);
         break;
-    case Cursor::ZoomIn:
+    case Type::ZoomIn:
         m_platformCursor = loadCursorByName("zoomInCursor", 7, 7);
         break;
-    case Cursor::ZoomOut:
+    case Type::ZoomOut:
         m_platformCursor = loadCursorByName("zoomOutCursor", 7, 7);
         break;
-    case Cursor::Custom:
+    case Type::Custom:
         if (m_image->isNull())
             m_platformCursor = loadSharedCursor(0, IDC_ARROW);
         else
             m_platformCursor = createSharedCursor(m_image.get(), m_hotSpot);
         break;
+    case Type::Invalid:
     default:
         ASSERT_NOT_REACHED();
         m_platformCursor = loadSharedCursor(0, IDC_ARROW);

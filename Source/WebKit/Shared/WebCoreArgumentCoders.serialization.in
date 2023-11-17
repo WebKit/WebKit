@@ -5226,6 +5226,13 @@ enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldAllow,
 };
 
+header: <WebCore/NavigationScheduler.h>
+enum class WebCore::ScheduleLocationChangeResult : uint8_t {
+    Stopped,
+    Completed,
+    Started
+};
+
 header: <WebCore/DocumentLoader.h>
 [CustomHeader] enum class WebCore::MouseEventPolicy : uint8_t {
     Default,
@@ -6811,3 +6818,9 @@ struct WebCore::MarkupExclusionRule {
     AtomString elementLocalName;
     Vector<std::pair<AtomString, AtomString>> attributes;
 };
+
+header: <WebCore/Font.h>
+[Nested] enum class WebCore::FontOrigin : bool;
+[Nested] enum class WebCore::FontIsInterstitial : bool;
+[Nested] enum class WebCore::FontVisibility : bool;
+[Nested] enum class WebCore::FontIsOrientationFallback : bool;

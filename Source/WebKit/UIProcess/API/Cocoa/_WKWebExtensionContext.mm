@@ -720,7 +720,7 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
         return { };
 
     if (properties == _WKWebExtensionTabChangedPropertiesAll)
-        return OptionSet<WebKit::WebExtensionTab::ChangedProperties>::all();
+        return WebKit::WebExtensionTab::allChangedProperties();
 
     OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 

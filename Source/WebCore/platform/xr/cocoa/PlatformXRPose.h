@@ -20,6 +20,9 @@ public:
     WEBCORE_EXPORT PlatformXR::Device::FrameData::FloatQuaternion orientation() const;
     WEBCORE_EXPORT PlatformXR::Device::FrameData::Pose pose() const;
 
+    using FloatMatrix4 = std::array<float, 16>;
+    WEBCORE_EXPORT FloatMatrix4 toColumnMajorFloatArray() const;
+
     WEBCORE_EXPORT float distanceToPose(const PlatformXRPose&) const;
     WEBCORE_EXPORT PlatformXRPose verticalTransformPose() const;
 

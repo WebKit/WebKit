@@ -430,7 +430,7 @@ Path& RenderSVGShape::ensurePath()
 
 std::unique_ptr<Path> RenderSVGShape::createPath() const
 {
-    return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
+    return makeUnique<Path>(pathFromGraphicsElement(graphicsElement()));
 }
 
 void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

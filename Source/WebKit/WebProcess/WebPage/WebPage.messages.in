@@ -707,7 +707,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
-    NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
+    NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (enum:uint8_t WebCore::ScheduleLocationChangeResult result)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     ModelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)

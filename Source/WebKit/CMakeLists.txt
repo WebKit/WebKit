@@ -375,6 +375,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     NetworkProcess/storage/FileSystemStorageError.serialization.in
 
     Platform/IPC/FormDataReference.serialization.in
+    Platform/IPC/IPCSemaphore.serialization.in
     Platform/IPC/StreamServerConnection.serialization.in
 
     Platform/SharedMemory.serialization.in

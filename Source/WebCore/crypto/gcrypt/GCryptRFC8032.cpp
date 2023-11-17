@@ -20,6 +20,9 @@
 #include "config.h"
 #include "GCryptRFC8032.h"
 
+#include <pal/crypto/gcrypt/Handle.h>
+#include <pal/crypto/gcrypt/Utilities.h>
+
 namespace WebCore {
 namespace GCrypt {
 namespace RFC8032 {

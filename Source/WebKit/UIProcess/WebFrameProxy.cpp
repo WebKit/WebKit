@@ -50,6 +50,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/NavigationScheduler.h>
 #include <stdio.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
@@ -160,21 +161,26 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](bool result) mutable {
-        if (!result) {
+    m_page->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
+        switch (result) {
+        case WebCore::ScheduleLocationChangeResult::Stopped:
             callback({ }, { });
             return;
-        }
-
-        if (!m_activeListener) {
+        case WebCore::ScheduleLocationChangeResult::Completed:
             callback(pageIdentifier(), frameID());
             return;
+        case WebCore::ScheduleLocationChangeResult::Started:
+            if (!m_activeListener) {
+                callback(pageIdentifier(), frameID());
+                return;
+            }
+
+            if (m_navigateCallback)
+                m_navigateCallback({ }, { });
+
+            m_navigateCallback = WTFMove(callback);
+            return;
         }
-
-        if (m_navigateCallback)
-            m_navigateCallback({ }, { });
-
-        m_navigateCallback = WTFMove(callback);
     });
 }
 

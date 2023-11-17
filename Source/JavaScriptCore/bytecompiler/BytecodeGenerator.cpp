@@ -2321,24 +2321,26 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     RegisterID* loopScope = stackEntry.m_scope;
     ASSERT(symbolTable->scopeSize());
     ASSERT(loopScope);
-    Vector<std::pair<RegisterID*, Identifier>> activationValuesToCopyOver;
 
-    {
-        activationValuesToCopyOver.reserveInitialCapacity(symbolTable->scopeSize());
+    struct SymbolTableNoLocks {
+        auto begin() const { return symbolTable->begin(NoLockingNecessary); }
+        auto end() const { return symbolTable->end(NoLockingNecessary); }
+        size_t size() const { return symbolTable->scopeSize(); }
+        SymbolTable* symbolTable;
+    } symbolTableWithoutLocks { symbolTable };
 
-        for (auto end = symbolTable->end(NoLockingNecessary), ptr = symbolTable->begin(NoLockingNecessary); ptr != end; ++ptr) {
-            if (!ptr->value.varOffset().isScope())
-                continue;
+    auto activationValuesToCopyOver = WTF::compactMap(symbolTableWithoutLocks, [&](auto& pair) -> std::optional<std::pair<RegisterID*, Identifier>> {
+        if (!pair.value.varOffset().isScope())
+            return std::nullopt;
 
-            RefPtr<UniquedStringImpl> ident = ptr->key;
-            Identifier identifier = Identifier::fromUid(m_vm, ident.get());
+        RefPtr ident = pair.key;
+        auto identifier = Identifier::fromUid(m_vm, ident.get());
 
-            RegisterID* transitionValue = newBlockScopeVariable();
-            transitionValue->ref();
-            emitGetFromScope(transitionValue, loopScope, variableForLocalEntry(identifier, ptr->value, loopSymbolTable->index(), true), DoNotThrowIfNotFound);
-            activationValuesToCopyOver.unsafeAppendWithoutCapacityCheck(std::make_pair(transitionValue, identifier));
-        }
-    }
+        auto* transitionValue = newBlockScopeVariable();
+        transitionValue->ref();
+        emitGetFromScope(transitionValue, loopScope, variableForLocalEntry(identifier, pair.value, loopSymbolTable->index(), true), DoNotThrowIfNotFound);
+        return std::make_pair(transitionValue, identifier);
+    });
 
     // We need this dynamic behavior of the executing code to ensure
     // each loop iteration has a new activation object. (It's pretty ugly).
