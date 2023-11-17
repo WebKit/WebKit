@@ -139,7 +139,7 @@ class TestImporterTest(unittest.TestCase):
         importer.do_import()
         return host.filesystem
 
-    def import_downloaded_tests(self, args, files):
+    def import_downloaded_tests(self, args, files, test_port=False):
         # files are passed as parameter as we cannot clone/fetch/checkout a repo in mock system.
 
         class TestDownloaderMock(TestDownloader):
@@ -150,7 +150,10 @@ class TestImporterTest(unittest.TestCase):
                 return 'adb4d391a69877d4a1eaaf51d1725c99a5b8ed84 tools/resources'
 
         host = MockHost()
-        port = host.port_factory.get()
+        if test_port:
+            port = TestPort(host)
+        else:
+            port = host.port_factory.get()
         fs = host.filesystem
         for path, contents in files.items():
             fs.write_binary_file(path, contents)
@@ -632,3 +635,22 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_1-10-expected.txt'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_11-20-expected.txt'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_21-30-expected.txt'))
+
+    def test_non_dangling_platform(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+            '/test.checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '{}',
+            '/test.checkout/LayoutTests/w3c/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+            '/test.checkout/LayoutTests/w3c/web-platform-tests/t/test-expected.txt': '1',
+            '/test.checkout/LayoutTests/platform/test-mac-leopard/w3c/web-platform-tests/t/test-expected.txt': '2',
+            '/test.checkout/LayoutTests/platform/test-linux-x86_64/w3c/web-platform-tests/t/test-expected.txt': '3',
+            '/test.checkout/LayoutTests/platform/unknown-platform/w3c/web-platform-tests/t/test-expected.txt': '4',
+        }
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', '-d', 'w3c'], FAKE_FILES, test_port=True)
+
+        self.assertTrue(fs.exists('/test.checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
+        self.assertTrue(fs.exists('/test.checkout/LayoutTests/w3c/web-platform-tests/t/test-expected.txt'))
+        self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/test-mac-leopard/w3c/web-platform-tests/t/test-expected.txt'))
+        self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/test-linux-x86_64/w3c/web-platform-tests/t/test-expected.txt'))
+        self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/unknown-platform/w3c/web-platform-tests/t/test-expected.txt'))
