@@ -425,9 +425,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         return true;
     }
 
-    bool isDetachable = !m_pinCount && !m_locked;
-
-    if (!isDetachable) {
+    if (!isDetachable()) {
         m_contents.copyTo(result);
         if (!result.m_data)
             return false;

@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :mappedAtCreation:oom=false;size=16
+PASS :mappedAtCreation:oom=true;size=9007199254740984
+PASS :mappedAtCreation:oom=true;size=137438953472
+
