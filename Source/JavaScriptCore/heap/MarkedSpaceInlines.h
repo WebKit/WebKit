@@ -101,7 +101,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
                         continue;
                     results[resultsSize++] = block;
                     if (resultsSize == batchSize)
-                        return std::span { results.begin(), resultsSize };
+                        return std::span { results.data(), resultsSize };
                     continue;
                 }
 
@@ -116,7 +116,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
                     ++m_activeCursor;
                     continue;
                 }
-                return std::span { results.begin(), resultsSize };
+                return std::span { results.data(), resultsSize };
             }
         }
 
