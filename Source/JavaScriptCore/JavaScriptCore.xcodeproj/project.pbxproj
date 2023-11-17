@@ -2183,6 +2183,7 @@
 		FEF90A8D28AC135F00C14B84 /* APIIntegrityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF90A8C28AC135C00C14B84 /* APIIntegrityPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF7CB4332AC21E4A00E34656 /* JSFastIterable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF7CB4312AC21E4A00E34656 /* JSFastIterable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -6040,6 +6041,8 @@
 		FEF90A8E28AC187A00C14B84 /* APIIntegrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIIntegrity.cpp; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
 		FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaiterListManager.h; sourceTree = "<group>"; };
+		FF7CB4302AC21E4900E34656 /* JSFastIterable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFastIterable.cpp; sourceTree = "<group>"; };
+		FF7CB4312AC21E4A00E34656 /* JSFastIterable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFastIterable.h; sourceTree = "<group>"; };
 		FFB77C2828FF561B00F3C55B /* WaiterListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaiterListManager.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -8289,6 +8292,8 @@
 				0F7DF1391E29710E0095951B /* JSDestructibleObjectHeapCellType.cpp */,
 				0F7DF13A1E29710E0095951B /* JSDestructibleObjectHeapCellType.h */,
 				A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */,
+				FF7CB4302AC21E4900E34656 /* JSFastIterable.cpp */,
+				FF7CB4312AC21E4A00E34656 /* JSFastIterable.h */,
 				5300740C22DD6F6600B9ACB3 /* JSFinalizationRegistry.cpp */,
 				533D074622C2D9D1004D2FE2 /* JSFinalizationRegistry.h */,
 				0F2B66C117B6B5AB00A7AE3F /* JSFloat32Array.h */,
@@ -11160,6 +11165,7 @@
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
+				FF7CB4332AC21E4A00E34656 /* JSFastIterable.h in Headers */,
 				533D074722C2D9D2004D2FE2 /* JSFinalizationRegistry.h in Headers */,
 				0F2B66EF17B6B5AB00A7AE3F /* JSFloat32Array.h in Headers */,
 				0F2B66F017B6B5AB00A7AE3F /* JSFloat64Array.h in Headers */,

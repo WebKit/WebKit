@@ -123,6 +123,12 @@ struct MethodTable {
 
     ALWAYS_INLINE void visitOutputConstraints(JSCell* cell, SlotVisitor& visitor) const { visitOutputConstraintsWithSlotVisitor(cell, visitor); }
     ALWAYS_INLINE void visitOutputConstraints(JSCell* cell, AbstractSlotVisitor& visitor) const { visitOutputConstraintsWithAbstractSlotVisitor(cell, visitor); }
+
+    using GetFastIterableLengthPtr = unsigned (*)(JSObject*);
+    GetFastIterableLengthPtr METHOD_TABLE_ENTRY(getFastIterableLength);
+
+    using GetFastIterableIndexedElementPtr = JSValue (*)(JSGlobalObject*, JSObject*, unsigned index);
+    GetFastIterableIndexedElementPtr METHOD_TABLE_ENTRY(getFastIterableIndexedElement);
 };
 
 #undef METHOD_TABLE_ENTRY
@@ -173,6 +179,8 @@ struct MethodTable {
         &ClassName::visitChildren, \
         &ClassName::visitOutputConstraints, \
         &ClassName::visitOutputConstraints, \
+        &ClassName::getFastIterableLength, \
+        &ClassName::getFastIterableIndexedElement, \
     }, \
     sizeof(ClassName), \
     ClassName::isResizableOrGrowableSharedTypedArray, \

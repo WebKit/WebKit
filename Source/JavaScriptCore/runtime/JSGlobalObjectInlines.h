@@ -122,14 +122,14 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
     // carefully set up watchpoints to have correct ordering while JS code is
     // executing concurrently.
 
-    return arrayIteratorProtocolWatchpointSet().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
+    return isArrayIteratorProtocolWatchpointSetsStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isArgumentsPrototypeIteratorProtocolFastAndNonObservable()
 {
-    // Since Arguments iteration uses ArrayIterator, we need to check the state of ArrayIteratorProtocolWatchpointSet.
+    // Since Arguments iteration uses ArrayIterator, we need to check the state of array iterator protocol watch point sets.
     // But we do not need to check isHavingABadTime() and array prototype's chain.
-    if (!arrayIteratorProtocolWatchpointSet().isStillValid())
+    if (!isArrayIteratorProtocolWatchpointSetsStillValid())
         return false;
 
     if (isHavingABadTime())
@@ -148,9 +148,9 @@ ALWAYS_INLINE bool JSGlobalObject::isTypedArrayPrototypeIteratorProtocolFastAndN
 
     typedArrayPrototype(typedArrayType); // Materialize WatchpointSet.
 
-    // Since TypedArray iteration uses ArrayIterator, we need to check the state of ArrayIteratorProtocolWatchpointSet.
+    // Since TypedArray iteration uses ArrayIterator, we need to check the state of array iterator protocol watch point sets.
     // But we do not need to check isHavingABadTime() and array prototype's chain.
-    if (!arrayIteratorProtocolWatchpointSet().isStillValid())
+    if (!isArrayIteratorProtocolWatchpointSetsStillValid())
         return false;
 
     // This WatchpointSet ensures that

@@ -424,7 +424,8 @@ public:
 
     // If this hasn't been invalidated, it means the array iterator protocol
     // is not observable to user code yet.
-    InlineWatchpointSet m_arrayIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_arrayIteratorNextWatchpointSet { IsWatched };
+    InlineWatchpointSet m_arrayIteratorWatchpointSet { IsWatched };
     InlineWatchpointSet m_mapIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_setIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringIteratorProtocolWatchpointSet { IsWatched };
@@ -493,7 +494,9 @@ public:
 public:
     JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
 
-    InlineWatchpointSet& arrayIteratorProtocolWatchpointSet() { return m_arrayIteratorProtocolWatchpointSet; }
+    bool isArrayIteratorProtocolWatchpointSetsStillValid() { return m_arrayIteratorNextWatchpointSet.isStillValid() && m_arrayIteratorWatchpointSet.isStillValid(); }
+    InlineWatchpointSet& arrayIteratorNextWatchpointSet() { return m_arrayIteratorNextWatchpointSet; }
+    InlineWatchpointSet& arrayIteratorWatchpointSet() { return m_arrayIteratorWatchpointSet; }
     InlineWatchpointSet& mapIteratorProtocolWatchpointSet() { return m_mapIteratorProtocolWatchpointSet; }
     InlineWatchpointSet& setIteratorProtocolWatchpointSet() { return m_setIteratorProtocolWatchpointSet; }
     InlineWatchpointSet& stringIteratorProtocolWatchpointSet() { return m_stringIteratorProtocolWatchpointSet; }

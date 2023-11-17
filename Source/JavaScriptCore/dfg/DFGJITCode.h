@@ -104,7 +104,8 @@ public:
         // WatchpointSet.
         HavingABadTimeWatchpointSet,
         MasqueradesAsUndefinedWatchpointSet,
-        ArrayIteratorProtocolWatchpointSet,
+        ArrayIteratorNextWatchpointSet,
+        ArrayIteratorWatchpointSet,
         NumberToStringWatchpointSet,
         StructureCacheClearedWatchpointSet,
         StringSymbolReplaceWatchpointSet,

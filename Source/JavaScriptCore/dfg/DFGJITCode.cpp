@@ -46,7 +46,8 @@ JITData::JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode& jitCod
         switch (entry.type()) {
         case LinkerIR::Type::HavingABadTimeWatchpointSet:
         case LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet:
-        case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet:
+        case LinkerIR::Type::ArrayIteratorNextWatchpointSet:
+        case LinkerIR::Type::ArrayIteratorWatchpointSet:
         case LinkerIR::Type::NumberToStringWatchpointSet:
         case LinkerIR::Type::StructureCacheClearedWatchpointSet:
         case LinkerIR::Type::StringSymbolReplaceWatchpointSet:
@@ -123,9 +124,14 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
             success &= attemptToWatch(codeBlock, m_globalObject->masqueradesAsUndefinedWatchpointSet(), watchpoint);
             break;
         }
-        case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet: {
+        case LinkerIR::Type::ArrayIteratorNextWatchpointSet: {
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorProtocolWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorNextWatchpointSet(), watchpoint);
+            break;
+        }
+        case LinkerIR::Type::ArrayIteratorWatchpointSet: {
+            auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::NumberToStringWatchpointSet: {

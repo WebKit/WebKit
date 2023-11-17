@@ -243,6 +243,16 @@ JSValue JSCell::getPrototype(JSObject*, JSGlobalObject*)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+unsigned JSCell::getFastIterableLength(JSObject*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+JSValue JSCell::getFastIterableIndexedElement(JSGlobalObject*, JSObject*, unsigned)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 JSString* JSCell::toStringSlowCase(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();

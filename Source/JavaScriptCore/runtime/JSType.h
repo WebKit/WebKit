@@ -59,6 +59,7 @@ namespace JSC {
     /* The ObjectType value must come before any JSType that is a subclass of JSObject. */ \
     macro(ObjectType, SpecObjectOther) \
     macro(FinalObjectType, SpecFinalObject) \
+    macro(FastIterableType, SpecObjectOther) \
     macro(JSCalleeType, SpecObjectOther) \
     macro(JSFunctionType, SpecFunction) \
     macro(InternalFunctionType, SpecObjectOther) \
