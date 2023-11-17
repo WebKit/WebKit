@@ -1,0 +1,4 @@
+
+
+PASS using window.open() to navigate cross-document targeting a cross-origin window
+

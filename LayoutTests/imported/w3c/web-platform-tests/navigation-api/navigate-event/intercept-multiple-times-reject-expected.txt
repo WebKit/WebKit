@@ -1,0 +1,3 @@
+
+FAIL event.intercept() is called multiple times and one of the promises rejects promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigation.navigate("#1").finished.catch')"
+

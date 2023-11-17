@@ -386,4 +386,153 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()
     return selectedCells;
 }
 
+#if PLATFORM(COCOA)
+static bool isVisibleText(AccessibilityTextSource textSource)
+{
+    switch (textSource) {
+    case AccessibilityTextSource::Visible:
+    case AccessibilityTextSource::Children:
+    case AccessibilityTextSource::LabelByElement:
+        return true;
+    case AccessibilityTextSource::Alternative:
+    case AccessibilityTextSource::Summary:
+    case AccessibilityTextSource::Help:
+    case AccessibilityTextSource::TitleTag:
+    case AccessibilityTextSource::Placeholder:
+    case AccessibilityTextSource::Title:
+    case AccessibilityTextSource::Subtitle:
+    case AccessibilityTextSource::Action:
+        return false;
+    }
+}
+
+static bool isDescriptiveText(AccessibilityTextSource textSource)
+{
+    switch (textSource) {
+    case AccessibilityTextSource::Alternative:
+    case AccessibilityTextSource::Visible:
+    case AccessibilityTextSource::Children:
+    case AccessibilityTextSource::LabelByElement:
+        return true;
+    case AccessibilityTextSource::Summary:
+    case AccessibilityTextSource::Help:
+    case AccessibilityTextSource::TitleTag:
+    case AccessibilityTextSource::Placeholder:
+    case AccessibilityTextSource::Title:
+    case AccessibilityTextSource::Subtitle:
+    case AccessibilityTextSource::Action:
+        return false;
+    }
+}
+
+String AXCoreObject::descriptionAttributeValue() const
+{
+    if (!shouldComputeDescriptionAttributeValue())
+        return { };
+
+    Vector<AccessibilityText> textOrder;
+    accessibilityText(textOrder);
+
+    // Determine if any visible text is available, which influences our usage of title tag.
+    bool visibleTextAvailable = false;
+    for (const auto& text : textOrder) {
+        if (isVisibleText(text.textSource) && !text.text.isEmpty()) {
+            visibleTextAvailable = true;
+            break;
+        }
+    }
+
+    StringBuilder returnText;
+    for (const auto& text : textOrder) {
+        if (text.textSource == AccessibilityTextSource::Alternative) {
+            returnText.append(text.text);
+            break;
+        }
+
+        switch (text.textSource) {
+        // These are sub-components of one element (Attachment) that are re-combined in OSX and iOS.
+        case AccessibilityTextSource::Title:
+        case AccessibilityTextSource::Subtitle:
+        case AccessibilityTextSource::Action: {
+            if (!text.text.length())
+                break;
+            if (returnText.length())
+                returnText.append(", "_s);
+            returnText.append(text.text);
+            break;
+        }
+        default:
+            break;
+        }
+
+        if (text.textSource == AccessibilityTextSource::TitleTag && !visibleTextAvailable) {
+            returnText.append(text.text);
+            break;
+        }
+    }
+
+    return returnText.toString();
+}
+
+String AXCoreObject::titleAttributeValue() const
+{
+    // Meter elements should communicate their content via AXValueDescription.
+    if (!shouldComputeTitleAttributeValue() || isMeter())
+        return { };
+
+    // A file upload button presents a challenge because it has button text and a value, but the
+    // API doesn't support this paradigm.
+    // The compromise is to return the button type in the role description and the value of the file path in the title
+    if (isFileUploadButton() && fileUploadButtonReturnsValueInTitle())
+        return stringValue();
+
+    Vector<AccessibilityText> textOrder;
+    accessibilityText(textOrder);
+
+    for (const auto& text : textOrder) {
+        // If we have alternative text, then we should not expose a title.
+        if (text.textSource == AccessibilityTextSource::Alternative)
+            break;
+
+        // Once we encounter visible text, or the text from our children that should be used foremost.
+        if (text.textSource == AccessibilityTextSource::Visible || text.textSource == AccessibilityTextSource::Children)
+            return text.text;
+
+        // If there's an element that labels this object and it's not exposed, then we should use
+        // that text as our title.
+        if (text.textSource == AccessibilityTextSource::LabelByElement)
+            return text.text;
+    }
+
+    return { };
+}
+
+String AXCoreObject::helpTextAttributeValue() const
+{
+    Vector<AccessibilityText> textOrder;
+    accessibilityText(textOrder);
+
+    // Determine if any descriptive text is available, which influences our usage of title tag.
+    bool descriptiveTextAvailable = false;
+    for (const auto& text : textOrder) {
+        if (isDescriptiveText(text.textSource) && !text.text.isEmpty()) {
+            descriptiveTextAvailable = true;
+            break;
+        }
+    }
+
+    for (const auto& text : textOrder) {
+        if (text.textSource == AccessibilityTextSource::Help || text.textSource == AccessibilityTextSource::Summary)
+            return text.text;
+
+        // If an element does NOT have other descriptive text the title tag should be used as its descriptive text.
+        // But, if those ARE available, then the title tag should be used for help text instead.
+        if (text.textSource == AccessibilityTextSource::TitleTag && descriptiveTextAvailable)
+            return text.text;
+    }
+
+    return { };
+}
+#endif // PLATFORM(COCOA)
+
 } // namespace WebCore

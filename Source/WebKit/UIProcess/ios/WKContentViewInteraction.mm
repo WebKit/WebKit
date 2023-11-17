@@ -54,6 +54,7 @@
 #import "WKDatePickerViewController.h"
 #import "WKDateTimeInputControl.h"
 #import "WKError.h"
+#import "WKExtendedTextInputTraits.h"
 #import "WKFocusedFormControlView.h"
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
@@ -4243,9 +4244,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return caretColorFromStyle.autorelease() ?: tintColorFromNativeView;
 }
 
-- (void)_updateInteractionTintColor:(UITextInputTraits *)traits
+- (void)_updateTextInputTraitsForInteractionTintColor
 {
-    [traits _setColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
+#if !PLATFORM(WATCHOS)
+    auto tintColor = [self _cascadeInteractionTintColor];
+    [_legacyTextInputTraits _setColorsToMatchTintColor:tintColor];
+    [_extendedTextInputTraits setSelectionColorsToMatchTintColor:tintColor];
+#endif
 }
 
 - (void)tintColorDidChange
@@ -4257,7 +4262,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
     if (shouldUpdateTextSelection)
         [_textInteractionWrapper deactivateSelection];
-    [self _updateInteractionTintColor:_traits.get()];
+    [self _updateTextInputTraitsForInteractionTintColor];
     if (shouldUpdateTextSelection)
         [_textInteractionWrapper activateSelection];
 
@@ -6510,21 +6515,22 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 // Direct access to the (private) UITextInputTraits object.
 - (UITextInputTraits *)textInputTraits
 {
-    _traits = [_webView _textInputTraits];
-    return _traits.get();
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    _legacyTextInputTraits = [_webView _textInputTraits];
+    return _legacyTextInputTraits.get();
 }
 
 - (UITextInputTraits *)textInputTraitsForWebView
 {
-    if (!_traits)
-        _traits = adoptNS([[UITextInputTraits alloc] init]);
+    if (!_legacyTextInputTraits)
+        _legacyTextInputTraits = adoptNS([UITextInputTraits new]);
 
     // Do not change traits when dismissing the keyboard.
-    if (_isBlurringFocusedElement)
-        return _traits.get();
+    if (!_isBlurringFocusedElement)
+        [self _updateTextInputTraits:_legacyTextInputTraits.get()];
 
-    [self _updateTextInputTraits:_traits.get()];
-    return _traits.get();
+    return _legacyTextInputTraits.get();
 }
 
 - (void)_updateTextInputTraits:(id<UITextInputTraits>)traits
@@ -6639,11 +6645,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     traits.textContentType = [self contentTypeFromFieldName:_focusedElementInformation.autofillFieldName];
 #endif
 
+    auto extendedTraits = dynamic_objc_cast<WKExtendedTextInputTraits>(traits);
     auto privateTraits = (id <UITextInputTraits_Private>)traits;
     if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)]) {
         switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::ContentEditable:
         case WebKit::InputType::TextArea:
+            extendedTraits.singleLineDocument = NO;
             privateTraits.isSingleLineDocument = NO;
             break;
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -6664,6 +6672,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         case WebKit::InputType::Time:
         case WebKit::InputType::URL:
         case WebKit::InputType::Week:
+            extendedTraits.singleLineDocument = YES;
             privateTraits.isSingleLineDocument = YES;
             break;
         case WebKit::InputType::None:
@@ -6671,8 +6680,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         }
     }
 
-    if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)] && _focusedElementInformation.hasEverBeenPasswordField)
-        privateTraits.learnsCorrections = NO;
+    if (_focusedElementInformation.hasEverBeenPasswordField) {
+        if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])
+            privateTraits.learnsCorrections = NO;
+        extendedTraits.typingAdaptationDisabled = YES;
+    }
 
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
         privateTraits.shortcutConversionType = _focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault;
@@ -6681,8 +6693,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     traits.inlinePredictionType = (self.webView.configuration.allowsInlinePredictions || _page->preferences().inlinePredictionsInAllEditableElementsEnabled()) ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
 #endif
 
-    if ([traits isKindOfClass:UITextInputTraits.class])
-        [self _updateInteractionTintColor:(UITextInputTraits *)traits];
+    [self _updateTextInputTraitsForInteractionTintColor];
 }
 
 - (UITextInteractionAssistant *)interactionAssistant
@@ -7686,7 +7697,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     BOOL requiresKeyboard = mayContainSelectableText(information.elementType);
     BOOL editableChanged = [self setIsEditable:requiresKeyboard];
     _focusedElementInformation = information;
-    _traits = nil;
+    _legacyTextInputTraits = nil;
 
     if (![self isFirstResponder])
         [self becomeFirstResponder];
@@ -12467,6 +12478,17 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)adjustSelection:(UIDirectionalTextRange)range completionHandler:(void (^)(void))completionHandler
 {
     [self _internalAdjustSelectionWithOffset:range.offset lengthDelta:range.length completionHandler:completionHandler];
+}
+
+- (WKExtendedTextInputTraits *)extendedTraitsDelegate
+{
+    if (!_extendedTextInputTraits)
+        _extendedTextInputTraits = adoptNS([WKExtendedTextInputTraits new]);
+
+    if (!_isBlurringFocusedElement)
+        [self _updateTextInputTraits:_extendedTextInputTraits.get()];
+
+    return _extendedTextInputTraits.get();
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

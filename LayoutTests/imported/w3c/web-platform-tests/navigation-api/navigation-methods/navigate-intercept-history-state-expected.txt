@@ -1,0 +1,3 @@
+
+FAIL history.story should be nulled by navigate() handled by intercept() assert_equals: expected "#2" but got "#1"
+

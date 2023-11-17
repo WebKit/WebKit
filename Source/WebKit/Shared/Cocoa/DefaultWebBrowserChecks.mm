@@ -111,7 +111,7 @@ static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter,
         return true;
 
     TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
     result = TCCAccessPreflight(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
 #endif
     return result != kTCCAccessPreflightDenied;
@@ -164,7 +164,7 @@ bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess& auxiliaryP
     dispatch_once(&once, ^{
 
         TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
         RefPtr<IPC::Connection> connection = auxiliaryProcess.parentProcessConnection();
         if (!connection) {
             ASSERT_NOT_REACHED();

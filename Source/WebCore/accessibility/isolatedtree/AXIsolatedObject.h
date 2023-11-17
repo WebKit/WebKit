@@ -192,6 +192,8 @@ private:
     bool isRequired() const final { return boolAttributeValue(AXPropertyName::IsRequired); }
     bool supportsRequiredAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const final { return boolAttributeValue(AXPropertyName::IsExpanded); }
+    bool isFileUploadButton() const final { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
+    bool isMeter() const final { return boolAttributeValue(AXPropertyName::IsMeter); };
     FloatPoint screenRelativePosition() const final;
     FloatRect relativeFrame() const final;
 #if PLATFORM(MAC)
@@ -297,10 +299,8 @@ private:
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) final;
 #if PLATFORM(COCOA)
     String speechHintAttributeValue() const final { return stringAttributeValue(AXPropertyName::SpeechHint); }
-    String descriptionAttributeValue() const final;
-    String helpTextAttributeValue() const final;
-    String titleAttributeValue() const final;
 #endif
+    bool fileUploadButtonReturnsValueInTitle() const final;
 #if PLATFORM(MAC)
     bool caretBrowsingEnabled() const final { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
 #endif

@@ -1,0 +1,4 @@
+
+
+FAIL navigation.entries() should only contain entries that are both same-origin and contiguous null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')
+

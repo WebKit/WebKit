@@ -145,6 +145,7 @@
     "web-platform-tests/mimesniff": "import",
     "web-platform-tests/mixed-content": "import",
     "web-platform-tests/mst-content-hint": "import",
+    "web-platform-tests/navigation-api": "import",
     "web-platform-tests/navigation-timing": "import",
     "web-platform-tests/netinfo": "skip",
     "web-platform-tests/notifications": "import",

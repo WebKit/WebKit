@@ -1,0 +1,4 @@
+
+
+FAIL entry.getState() behavior after cross-document location API navigation assert_equals: expected 1 but got 0
+

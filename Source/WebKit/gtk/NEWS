@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.43.1
+================
+
+What's new in WebKitGTK 2.43.1?
+
+  - Improve vblank synchronization when rendering.
+  - Improve DMA-BUF buffers handling for video frames.
+  - Use the buffer format preferred by the driver in DMA-BUF renderer.
+  - Do not block the compositing thread waiting for rendering threads.
+  - Improve performance when scaling images in a canvas.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish.
+
+================
 WebKitGTK 2.41.6
 ================
 

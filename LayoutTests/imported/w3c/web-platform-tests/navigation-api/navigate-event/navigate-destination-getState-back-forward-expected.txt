@@ -1,0 +1,3 @@
+
+FAIL navigate event destination.getState() on back/forward navigation null is not an object (evaluating 'navigation.currentEntry.key')
+

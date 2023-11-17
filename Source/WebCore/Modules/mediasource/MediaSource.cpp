@@ -188,10 +188,10 @@ const PlatformTimeRanges& MediaSource::buffered() const
     return m_buffered;
 }
 
-Ref<MediaSource::MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
+Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
 {
     if (isClosed())
-        return MediaTimePromise::createAndReject(-1);
+        return MediaTimePromise::createAndReject(PlatformMediaError::SourceRemoved);
 
     ALWAYS_LOG(LOGIDENTIFIER, target.time);
 
@@ -200,7 +200,7 @@ Ref<MediaSource::MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& 
 
     if (m_seekTargetPromise) {
         ALWAYS_LOG(LOGIDENTIFIER, "Previous seeking to ", m_pendingSeekTarget->time, "pending, cancelling it");
-        m_seekTargetPromise->reject(-1);
+        m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
     }
     m_seekTargetPromise.emplace();
     m_pendingSeekTarget = target;
@@ -251,7 +251,7 @@ void MediaSource::completeSeek()
         return sourceBuffer->computeSeekTime(seekTarget);
     }))->whenSettled(RunLoop::current(), [time = seekTarget.time, protectedThis = Ref { *this }] (auto&& results) mutable {
         if (!results)
-            return MediaTimePromise::createAndReject(-1);
+            return MediaTimePromise::createAndReject(results.error());
         auto seekTime = time;
         for (auto& result : *results) {
             if (abs(time - result) > abs(time - seekTime))
@@ -267,13 +267,13 @@ void MediaSource::completeSeek()
     m_seekTargetPromise.reset();
 }
 
-Ref<GenericPromise> MediaSource::seekToTime(const MediaTime& time)
+Ref<MediaPromise> MediaSource::seekToTime(const MediaTime& time)
 {
     if (isClosed())
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::SourceRemoved);
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->seekToTime(time);
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 Ref<TimeRanges> MediaSource::seekable()
@@ -1000,7 +1000,7 @@ void MediaSource::detachFromElement(HTMLMediaElement& element)
     m_mediaElement = nullptr;
 
     if (m_seekTargetPromise) {
-        m_seekTargetPromise->reject(-1);
+        m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
         m_seekTargetPromise.reset();
     }
 }
@@ -1069,7 +1069,7 @@ void MediaSource::stop()
     if (m_mediaElement)
         m_mediaElement->detachMediaSource();
     if (m_seekTargetPromise)
-        m_seekTargetPromise->reject(-1);
+        m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
     m_seekTargetPromise.reset();
     m_readyState = ReadyState::Closed;
     m_private = nullptr;
@@ -1113,7 +1113,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
     } else {
         ASSERT(isClosed());
         if (m_seekTargetPromise)
-            m_seekTargetPromise->reject(-1);
+            m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
         m_seekTargetPromise.reset();
         scheduleEvent(eventNames().sourcecloseEvent);
     }

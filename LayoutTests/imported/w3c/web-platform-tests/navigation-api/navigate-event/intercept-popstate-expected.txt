@@ -1,0 +1,3 @@
+
+FAIL event.intercept() should provide popstate with a valid state object assert_true: expected true got false
+

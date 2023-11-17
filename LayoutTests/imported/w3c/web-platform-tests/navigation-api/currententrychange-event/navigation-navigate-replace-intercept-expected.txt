@@ -1,0 +1,4 @@
+
+
+FAIL currententrychange fires for navigation.navigate() with replace intercepted by intercept() assert_true: expected true got false
+

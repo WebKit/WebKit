@@ -1,0 +1,4 @@
+
+
+FAIL reload() with an unserializable state inside onbeforeunload throws "DataCloneError", not "InvalidStateError" assert_not_equals: got disallowed value undefined
+

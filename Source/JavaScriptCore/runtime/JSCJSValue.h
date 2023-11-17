@@ -134,6 +134,9 @@ enum class SourceCodeRepresentation : uint8_t {
 };
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
+#if HAVE(OS_SIGNPOST)
+extern JS_EXPORT_PRIVATE std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount;
+#endif
 
 class JSValue {
     friend struct EncodedJSValueHashTraits;

@@ -50,7 +50,7 @@ private:
     MockMediaSourcePrivate* mediaSourcePrivate() const;
 
     // SourceBufferPrivate overrides
-    Ref<GenericPromise> appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
@@ -63,7 +63,7 @@ private:
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
 
-    void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) final;
 

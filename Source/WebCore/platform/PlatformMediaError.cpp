@@ -24,31 +24,36 @@
  */
 
 #include "config.h"
-#include "SourceBufferPrivateClient.h"
-#include <wtf/NeverDestroyed.h>
+#include "PlatformMediaError.h"
 
-#if ENABLE(MEDIA_SOURCE)
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult enumerationValue)
+String convertEnumerationToString(PlatformMediaError enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("Succeeded"),
         MAKE_STATIC_STRING_IMPL("AppendError"),
         MAKE_STATIC_STRING_IMPL("ClientDisconnected"),
         MAKE_STATIC_STRING_IMPL("BufferRemoved"),
+        MAKE_STATIC_STRING_IMPL("SourceRemoved"),
         MAKE_STATIC_STRING_IMPL("IPCError"),
+        MAKE_STATIC_STRING_IMPL("ParsingError"),
+        MAKE_STATIC_STRING_IMPL("MemoryError"),
+        MAKE_STATIC_STRING_IMPL("Cancelled"),
+        MAKE_STATIC_STRING_IMPL("LogicError"),
     };
-    static_assert(!static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::Succeeded), "ReceiveResult::Succeeded is not 0 as expected");
-    static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::AppendError) == 1, "ReceiveResult::AppendError is not 1 as expected");
-    static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::ClientDisconnected) == 2, "ReceiveResult::ClientDisconnected is not 2 as expected");
-    static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::BufferRemoved) == 3, "ReceiveResult::BufferRemoved is not 3 as expected");
-    static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::IPCError) == 4, "ReceiveResult::IPCError is not 4 as expected");
+    static_assert(!static_cast<size_t>(PlatformMediaError::AppendError), "PlatformMediaError::AppendError is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::ClientDisconnected) == 1, "PlatformMediaError::ClientDisconnected is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::BufferRemoved) == 2, "PlatformMediaError::BufferRemoved is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::SourceRemoved) == 3, "PlatformMediaError::SourceRemoved is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::IPCError) == 4, "PlatformMediaError::IPCError is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::ParsingError) == 5, "PlatformMediaError::ParsingError is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::MemoryError) == 6, "PlatformMediaError::MemoryError is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::Cancelled) == 7, "PlatformMediaError::Cancelled is not 7 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaError::LogicError) == 8, "PlatformMediaError::LogicError is not 8 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_SOURCE)

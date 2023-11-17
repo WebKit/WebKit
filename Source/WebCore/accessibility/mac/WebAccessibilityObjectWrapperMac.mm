@@ -235,10 +235,6 @@ using namespace WebCore;
 #endif
 
 
-#ifndef NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
-#define NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute @"AXUIElementCountForSearchPredicate"
-#endif
-
 #ifndef NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
 #endif
@@ -2396,7 +2392,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             AXLengthForTextMarkerRangeAttribute,
             NSAccessibilityBoundsForRangeParameterizedAttribute,
             NSAccessibilityStringForRangeParameterizedAttribute,
-            NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute,
             NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
             AXEndTextMarkerForBoundsAttribute,
             AXStartTextMarkerForBoundsAttribute,
@@ -3103,25 +3098,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (operationResult.isEmpty())
             return nil;
         return createNSArray(operationResult).autorelease();
-    }
-
-    if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
-        AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
-        NSUInteger widgetChildrenSize = 0;
-        if (isMatchingPlugin(*backingObject, criteria)) {
-            // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
-            // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
-            if (auto* widgetChildren = [self renderWidgetChildren]) {
-                widgetChildrenSize = [widgetChildren count];
-                if (widgetChildrenSize >= criteria.resultsLimit)
-                    return @(std::min(widgetChildrenSize, NSUInteger(criteria.resultsLimit)));
-                criteria.resultsLimit -= widgetChildrenSize;
-            }
-        }
-
-        AccessibilityObject::AccessibilityChildrenVector results;
-        backingObject->findMatchingObjects(&criteria, results);
-        return @(results.size() + widgetChildrenSize);
     }
 
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {

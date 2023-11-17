@@ -341,8 +341,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
         return adjustButtonStyle(style, element);
-    case StyleAppearance::InnerSpinButton:
-        return adjustInnerSpinButtonStyle(style, element);
 #endif
     case StyleAppearance::TextField:
         return adjustTextFieldStyle(style, element);
@@ -896,8 +894,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
         return paintButton(box, paintInfo, integralSnappedRect);
-    case StyleAppearance::InnerSpinButton:
-        return paintInnerSpinButton(box, paintInfo, integralSnappedRect);
 #endif
     case StyleAppearance::Menulist:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
@@ -1426,44 +1422,16 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 
 void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element*) const
 {
-    // A summary of the rules for checkbox designed to match WinIE:
-    // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
-    // font-size - not honored (control has no text), but we use it to decide which control size to use.
-    setCheckboxSize(style);
-
-    // padding - not honored by WinIE, needs to be removed.
     style.resetPadding();
-
-    // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
-    // for now, we will not honor it.
     style.resetBorder();
-
     style.setBoxShadow(nullptr);
 }
 
 void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element*) const
 {
-    // A summary of the rules for checkbox designed to match WinIE:
-    // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
-    // font-size - not honored (control has no text), but we use it to decide which control size to use.
-    setRadioSize(style);
-
-    // padding - not honored by WinIE, needs to be removed.
     style.resetPadding();
-
-    // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
-    // for now, we will not honor it.
     style.resetBorder();
-
     style.setBoxShadow(nullptr);
-}
-
-void RenderTheme::adjustButtonStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const
-{
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -1478,17 +1446,9 @@ bool RenderTheme::paintColorWell(const RenderObject& box, const PaintInfo& paint
     return paintButton(box, paintInfo, rect);
 }
 
-#endif
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
-#endif
-
-void RenderTheme::adjustTextFieldStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustTextAreaStyle(RenderStyle&, const Element*) const
-{
-}
+#endif // !USE(NEW_THEME)
 
 void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
 {
@@ -1506,31 +1466,12 @@ FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& b
     return bounds.size();
 }
 
-bool RenderTheme::supportsMeter(StyleAppearance, const HTMLMeterElement&) const
-{
-    return false;
-}
-
-bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return true;
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     paintButtonDecorations(box, paintInfo, snappedIntRect(LayoutRect(rect)));
 }
-#endif
-
-void RenderTheme::adjustCapsLockIndicatorStyle(RenderStyle&, const Element*) const
-{
-}
-
-bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return false;
-}
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
@@ -1540,12 +1481,7 @@ String RenderTheme::attachmentStyleSheet() const
     return "attachment { appearance: auto; }"_s;
 }
 
-bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return false;
-}
-
-#endif
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
@@ -1561,15 +1497,6 @@ String RenderTheme::colorInputStyleSheet(const Settings&) const
 String RenderTheme::dataListStyleSheet() const
 {
     return "datalist { display: none; }"_s;
-}
-
-void RenderTheme::adjustListButtonStyle(RenderStyle&, const Element*) const
-{
-}
-
-LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
-{
-    return 0;
 }
 
 void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -1649,13 +1576,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     }
 }
 
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-void RenderTheme::adjustImageControlsButtonStyle(RenderStyle&, const Element*) const
-{
-}
-#endif
+#endif // ENABLE(DATALIST_ELEMENT)
 
 Seconds RenderTheme::animationRepeatIntervalForProgressBar(const RenderProgress&) const
 {
@@ -1665,10 +1586,6 @@ Seconds RenderTheme::animationRepeatIntervalForProgressBar(const RenderProgress&
 Seconds RenderTheme::animationDurationForProgressBar(const RenderProgress&) const
 {
     return 0_s;
-}
-
-void RenderTheme::adjustProgressBarStyle(RenderStyle&, const Element*) const
-{
 }
 
 IntRect RenderTheme::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
@@ -1681,46 +1598,9 @@ bool RenderTheme::shouldHaveSpinButton(const HTMLInputElement& inputElement) con
     return inputElement.isSteppable() && !inputElement.isRangeControl();
 }
 
-bool RenderTheme::shouldHaveCapsLockIndicator(const HTMLInputElement&) const
-{
-    return false;
-}
-
-void RenderTheme::adjustMenuListButtonStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSliderTrackStyle(RenderStyle&, const Element*) const
-{
-}
-
 void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
     adjustSliderThumbSize(style, element);
-}
-
-void RenderTheme::adjustSliderThumbSize(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSearchFieldStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const
-{
 }
 
 void RenderTheme::purgeCaches()

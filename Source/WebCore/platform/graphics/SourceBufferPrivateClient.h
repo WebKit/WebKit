@@ -28,7 +28,9 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaDescription.h"
+#include "PlatformMediaError.h"
 #include <wtf/MediaTime.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -67,24 +69,10 @@ public:
         Vector<TextTrackInformation> textTracks;
     };
 
-    enum class ReceiveResult : uint8_t {
-        Succeeded,
-        AppendError,
-        ClientDisconnected,
-        BufferRemoved,
-        IPCError,
-    };
-    using ReceiveResultPromise = NativePromise<void, ReceiveResult>;
-    virtual Ref<ReceiveResultPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) = 0;
-    enum class AppendResult : uint8_t {
-        Succeeded,
-        ReadStreamFailed,
-        ParsingFailed
-    };
-    virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
-    virtual Ref<GenericPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) = 0;
+    virtual Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) = 0;
+    virtual Ref<MediaPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) = 0;
     virtual void sourceBufferPrivateTrackBuffersChanged(const Vector<PlatformTimeRanges>&) { };
-    virtual Ref<GenericPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
+    virtual Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;
@@ -92,43 +80,6 @@ public:
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
 };
 
-String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult);
-
 } // namespace WebCore
-
-namespace WTF {
-
-template<typename Type>
-struct LogArgument;
-
-template <>
-struct LogArgument<WebCore::SourceBufferPrivateClient::ReceiveResult> {
-    static String toString(const WebCore::SourceBufferPrivateClient::ReceiveResult result)
-    {
-        return convertEnumerationToString(result);
-    }
-};
-
-template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> {
-    using values = EnumValues<
-        WebCore::SourceBufferPrivateClient::ReceiveResult,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::Succeeded,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::AppendError,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::BufferRemoved,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::IPCError
-    >;
-};
-
-template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::AppendResult> {
-    using values = EnumValues<
-        WebCore::SourceBufferPrivateClient::AppendResult,
-        WebCore::SourceBufferPrivateClient::AppendResult::Succeeded,
-        WebCore::SourceBufferPrivateClient::AppendResult::ReadStreamFailed,
-        WebCore::SourceBufferPrivateClient::AppendResult::ParsingFailed
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(MEDIA_SOURCE)

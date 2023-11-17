@@ -3,7 +3,7 @@ include(VersioningUtils)
 
 WEBKIT_OPTION_BEGIN()
 
-SET_PROJECT_VERSION(2 43 0)
+SET_PROJECT_VERSION(2 43 1)
 
 # This is required because we use the DEPFILE argument to add_custom_command().
 # Remove after upgrading cmake_minimum_required() to 3.20.

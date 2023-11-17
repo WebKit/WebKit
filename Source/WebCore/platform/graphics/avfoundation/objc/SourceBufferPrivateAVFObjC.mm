@@ -601,15 +601,12 @@ bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
     return sampleBufferRenderersSupportKeySession();
 }
 
-Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
+Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);
-
-    if (m_client)
-        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
     m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }] (InitializationSegment&& segment) {
         ASSERT(isMainThread());
@@ -682,17 +679,15 @@ Ref<GenericPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>
     });
 
     return invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser]() mutable {
-        return GenericPromise::createAndSettle(parser->appendData(WTFMove(data)));
+        return MediaPromise::createAndSettle(parser->appendData(WTFMove(data)));
     })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }](auto&& result) {
-        if (weakThis) {
-            weakThis->m_parsingSucceeded = !!result;
-            weakThis->appendCompleted();
-        }
-        return GenericPromise::createAndSettle(WTFMove(result));
+        if (weakThis)
+            weakThis->appendCompleted(!!result);
+        return MediaPromise::createAndSettle(WTFMove(result));
     });
 }
 
-void SourceBufferPrivateAVFObjC::appendCompleted()
+void SourceBufferPrivateAVFObjC::appendCompleted(bool success)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -706,7 +701,7 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
         m_hasSessionSemaphore = nil;
     }
 
-    if (auto player = this->player(); player && m_parsingSucceeded)
+    if (auto player = this->player(); player && success)
         player->setLoadingProgresssed(true);
 }
 
@@ -1068,8 +1063,8 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
     int errorCode = [[[error userInfo] valueForKey:@"OSStatus"] intValue];
 
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+    if (isAttached())
+        client().sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)

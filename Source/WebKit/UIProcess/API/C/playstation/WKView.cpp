@@ -44,11 +44,11 @@ template<> struct ClientTraits<WKViewClientBase> {
 WKCursorType toWKCursorType(const WebCore::Cursor& cursor)
 {
     switch (cursor.type()) {
-    case WebCore::Cursor::Hand:
+    case WebCore::Cursor::Type::Hand:
         return kWKCursorTypeHand;
-    case WebCore::Cursor::None:
+    case WebCore::Cursor::Type::None:
         return kWKCursorTypeNone;
-    case WebCore::Cursor::Pointer:
+    case WebCore::Cursor::Type::Pointer:
     default:
         return kWKCursorTypePointer;
     }

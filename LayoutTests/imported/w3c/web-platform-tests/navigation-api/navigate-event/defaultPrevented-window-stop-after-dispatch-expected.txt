@@ -1,0 +1,3 @@
+
+FAIL window.stop() doesn't affect navigateEvent.defaultPrevented after dispatch undefined is not an object (evaluating 'navigateEvent.defaultPrevented')
+

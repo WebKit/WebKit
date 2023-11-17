@@ -209,9 +209,6 @@
 
 (allow file-read*
        (subpath "/Library/Preferences/Logging")      ; Logging Rethink
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-       (subpath "/private/var/db/dyld")
-#endif
        (subpath "/private/var/db/timezone")
        (subpath "/usr/lib")
        (subpath "/usr/share"))
@@ -402,9 +399,6 @@
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cfnetwork.cfnetworkagent")
     (global-name "com.apple.ciphermld") ;; <rdar://106216542>
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-    (global-name "com.apple.cookied")
-#endif
     (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events")
@@ -841,9 +835,6 @@
             MSC_task_dyld_process_info_notify_get
             MSC_task_self_trap
             MSC_thread_get_special_reply_port
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-            MSC_thread_self_trap
-#endif
     ))
             
     (when (defined? 'MSC_mach_msg2_trap)

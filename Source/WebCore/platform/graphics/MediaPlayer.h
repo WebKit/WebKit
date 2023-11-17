@@ -34,6 +34,7 @@
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
+#include "MediaPromiseTypes.h"
 #include "PlatformLayer.h"
 #include "PlatformTextTrack.h"
 #include "ProcessIdentity.h"

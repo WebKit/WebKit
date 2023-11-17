@@ -136,7 +136,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     struct gbm_bo* bo = nullptr;
     uint64_t modifier = DRM_FORMAT_MOD_INVALID;
     uint32_t flags = dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? GBM_BO_USE_SCANOUT : GBM_BO_USE_RENDERING;
-    if (dmabufFormat.modifiers[0] != DRM_FORMAT_MOD_INVALID) {
+    if (!dmabufFormat.modifiers.isEmpty() && dmabufFormat.modifiers[0] != DRM_FORMAT_MOD_INVALID) {
         bo = gbm_bo_create_with_modifiers2(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size(), flags);
         if (bo)
             modifier = gbm_bo_get_modifier(bo);

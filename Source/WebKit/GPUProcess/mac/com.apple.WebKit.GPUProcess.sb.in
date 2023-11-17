@@ -105,9 +105,6 @@
     (require-all (file-mode #o0004)
     (require-any
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-    (subpath "/private/var/db/dyld")
-#endif
     (subpath "/private/var/db/timezone")
     (subpath "/usr/lib")
     (subpath "/usr/share"))))
@@ -479,9 +476,6 @@
     (iokit-property "mt-device-id")
     (iokit-property "name")
     (iokit-property "nv-stats")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-    (iokit-property "od-server-name") ;; Needed by LaunchServices
-#endif
     (iokit-property "parser-options")
     (iokit-property "parser-type")
     (iokit-property "pci-aspm-default")
@@ -507,9 +501,7 @@
     (iokit-property "PanicOnGPUHang")
     (iokit-property "TelemetryDisable")
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
-#endif
 )
 
 ;; <rdar://problem/60088861>
@@ -777,9 +769,6 @@
 (allow mach-lookup
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-       (global-name "com.apple.lsd.mapdb")
-#endif
        (global-name "com.apple.fonts")
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.trustd.agent")
@@ -842,17 +831,8 @@
 
 ;; Networking
 (allow network-outbound
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
-       ;; Local mDNSResponder for DNS, arbitrary outbound TCP
-       ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
-       ;; Remove this permission when <rdar://problem/38240572> is fixed.
-       (literal "/private/var/run/mDNSResponder")
-#endif
        ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
        (literal "/private/var/run/syslog")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
-       (remote tcp)
-#endif
 )
 
 ;; CFNetwork
@@ -900,9 +880,7 @@
     ; <rdar://problem/35509194>
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.routediscoverer.xpc")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
     (global-name "com.apple.coremedia.samplebufferconsumer.xpc")
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
     (global-name "com.apple.coremedia.shaphelper.xpc")
 #endif

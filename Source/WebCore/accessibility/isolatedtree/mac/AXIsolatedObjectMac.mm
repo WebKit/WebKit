@@ -327,27 +327,6 @@ String AXIsolatedObject::computedRoleString() const
 }
 // End purposely un-cached properties block.
 
-String AXIsolatedObject::descriptionAttributeValue() const
-{
-    if (!shouldComputeDescriptionAttributeValue())
-        return { };
-
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::DescriptionAttributeValue);
-}
-
-String AXIsolatedObject::helpTextAttributeValue() const
-{
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::HelpText);
-}
-
-String AXIsolatedObject::titleAttributeValue() const
-{
-    if (!shouldComputeTitleAttributeValue())
-        return { };
-
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::TitleAttributeValue);
-}
-
 } // WebCore
 
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)

@@ -1,0 +1,3 @@
+
+FAIL navigateEvent.defaultPrevented isn't affected when the navigation is preempted after dispatch undefined is not an object (evaluating 'navigateEvent.defaultPrevented')
+

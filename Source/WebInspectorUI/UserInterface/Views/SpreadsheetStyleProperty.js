@@ -672,6 +672,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._property.isVariable || WI.CSSKeywordCompletions.isTimingFunctionAwareProperty(this._property.name)) {
             tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
+            tokens = this._addTimingFunctionTokens(tokens, "linear");
             tokens = this._addTimingFunctionTokens(tokens, "spring");
             tokens = this._addTimingFunctionTokens(tokens, "steps");
         }
@@ -796,52 +797,81 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
-            if (token.value === tokenType && token.type && token.type.includes("atom")) {
-                startIndex = i;
-                openParenthesis = 0;
-            } else if (token.value === "(" && !isNaN(startIndex))
-                openParenthesis++;
-            else if (token.value === ")" && !isNaN(startIndex)) {
 
-                openParenthesis--;
-                if (openParenthesis > 0)
+            if (tokens[i + 1]?.value !== "(") {
+                if (token.value in WI.CubicBezierTimingFunction.keywordValues) {
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.CubicBezierTimingFunction, [token], WI.CubicBezierTimingFunction.fromString(token.value)));
                     continue;
-
-                let rawTokens = tokens.slice(startIndex, i + 1);
-
-                let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
-                rawTokens = this._addVariableTokens(rawTokens);
-
-                let valueObject = null;
-                let inlineSwatchType;
-                switch (tokenType) {
-                case "cubic-bezier":
-                    valueObject = WI.CubicBezierTimingFunction.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.CubicBezierTimingFunction;
-                    break;
-
-                case "spring":
-                    valueObject = WI.SpringTimingFunction.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.SpringTimingFunction;
-                    break;
-
-                case "steps":
-                    valueObject = WI.StepsTimingFunction.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.StepsTimingFunction;
                 }
 
-                if (valueObject)
-                    newTokens.push(this._createInlineSwatch(inlineSwatchType, rawTokens, valueObject));
-                else
-                    newTokens.pushAll(rawTokens);
+                if (token.value in WI.LinearTimingFunction.keywordValues) {
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.LinearTimingFunction, [token], WI.LinearTimingFunction.fromString(token.value)));
+                    continue;
+                }
 
-                startIndex = NaN;
-            } else if (token.value in WI.CubicBezierTimingFunction.keywordValues)
-                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.CubicBezierTimingFunction, [token], WI.CubicBezierTimingFunction.fromString(token.value)));
-            else if (token.value in WI.StepsTimingFunction.keywordValues)
-                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.StepsTimingFunction, [token], WI.StepsTimingFunction.fromString(token.value)));
-            else if (isNaN(startIndex))
-                newTokens.push(token);
+                if (token.value in WI.StepsTimingFunction.keywordValues) {
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.StepsTimingFunction, [token], WI.StepsTimingFunction.fromString(token.value)));
+                    continue;
+                }
+            }
+
+            if (token.value === tokenType && token.type?.includes("atom")) {
+                startIndex = i;
+                openParenthesis = 0;
+                continue;
+            }
+
+            if (!isNaN(startIndex)) {
+                switch (token.value) {
+                case "(":
+                    ++openParenthesis;
+                    break;
+
+                case ")":
+                    if (!--openParenthesis) {
+                        let rawTokens = tokens.slice(startIndex, i + 1);
+
+                        let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
+                        rawTokens = this._addVariableTokens(rawTokens);
+
+                        let valueObject = null;
+                        let inlineSwatchType;
+                        switch (tokenType) {
+                        case "cubic-bezier":
+                            valueObject = WI.CubicBezierTimingFunction.fromString(text);
+                            inlineSwatchType = WI.InlineSwatch.Type.CubicBezierTimingFunction;
+                            break;
+
+                        case "linear":
+                            valueObject = WI.LinearTimingFunction.fromString(text);
+                            inlineSwatchType = WI.InlineSwatch.Type.LinearTimingFunction;
+                            break;
+
+                        case "spring":
+                            valueObject = WI.SpringTimingFunction.fromString(text);
+                            inlineSwatchType = WI.InlineSwatch.Type.SpringTimingFunction;
+                            break;
+
+                        case "steps":
+                            valueObject = WI.StepsTimingFunction.fromString(text);
+                            inlineSwatchType = WI.InlineSwatch.Type.StepsTimingFunction;
+                            break;
+                        }
+
+                        if (valueObject)
+                            newTokens.push(this._createInlineSwatch(inlineSwatchType, rawTokens, valueObject));
+                        else
+                            newTokens.pushAll(rawTokens);
+
+                        startIndex = NaN;
+                    }
+                    break;
+                }
+
+                continue;
+            }
+
+            newTokens.push(token);
         }
 
         return newTokens;
@@ -963,6 +993,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                         fallbackTokens = this._addGradientTokens(fallbackTokens);
                         fallbackTokens = this._addColorTokens(fallbackTokens);
                         fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "cubic-bezier");
+                        fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "linear");
                         fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "spring");
                         fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "steps");
                         fallbackTokens = this._addVariableTokens(fallbackTokens);

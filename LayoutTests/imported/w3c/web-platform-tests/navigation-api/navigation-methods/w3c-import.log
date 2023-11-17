@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/back-forward-multiple-frames.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-traverseTo-back-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-traverseTo-forward-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/forward-to-pruned-entry.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-gc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-src.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-push-not-loaded.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-push-same-url-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-push-same-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-state-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-history-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-info-and-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-intercept-history-state.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated-await.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-info.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-navigation-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-no-args.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-service-worker-fetch-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-state-and-info.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-state-undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-back-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-back-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-after-adding-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-after-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-detach-between-navigate-and-navigatesuccess.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-multiple-steps.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-navigates-multiple-iframes.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-with-cross-origin-in-history.html

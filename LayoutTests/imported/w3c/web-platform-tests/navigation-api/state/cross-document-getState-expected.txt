@@ -1,0 +1,4 @@
+
+
+FAIL entry.getState() still works for a non-current cross-document entry assert_equals: expected 1 but got 0
+

@@ -1583,7 +1583,7 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
     m_queuedAudioDuration = { };
 }
 
-Expected<void, int> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
+Expected<void, PlatformMediaError> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -1593,15 +1593,8 @@ Expected<void, int> SourceBufferParserWebM::appendData(Segment&& segment, Append
     }
 
     auto result = m_parser.parse(WTFMove(segment));
-    if (result.hasException()) {
-        return makeUnexpected(int(result.exception().code()));
-    }
-
-    if (result.returnValue()) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", result.returnValue(), ")");
-
-        return makeUnexpected(result.returnValue());
-    }
+    if (result.hasException() || result.returnValue())
+        return makeUnexpected(PlatformMediaError::ParsingError);
 
     // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
     // But at the end of a file, no more audio data may be incoming, so flush and emit any pending

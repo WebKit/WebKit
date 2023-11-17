@@ -1,0 +1,3 @@
+
+FAIL currententrychange fires before popstate for navigation.back() and navigation.forward() assert_equals: expected 1 but got 0
+

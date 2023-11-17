@@ -1,0 +1,9 @@
+
+
+FAIL updateCurrentEntry() must throw if state is unserializable (WritableStream) assert_throws_dom: function "() => {
+      iframe.contentWindow.navigation.updateCurrentEntry({ state: new WritableStream() });
+    }" did not throw
+FAIL updateCurrentEntry() must throw if state is unserializable (SharedArrayBuffer) assert_throws_dom: function "() => {
+      iframe.contentWindow.navigation.updateCurrentEntry({ state: buffer });
+    }" did not throw
+

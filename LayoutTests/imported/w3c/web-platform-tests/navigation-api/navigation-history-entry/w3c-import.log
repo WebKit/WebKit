@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/after-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/current-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-across-origins.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-bfcache-in-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-bfcache.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-blank-navigation-from-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-blank-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-blob-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-cross-document-forward-pruning.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-javascript-url-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-srcdoc-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-array-equality.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-in-new-javascript-url-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-in-new-srcdoc-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-when-inactive.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entry-after-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/index-not-in-entries.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-back-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-back-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-from-meta-url-censored.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-url-censored.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/opaque-origin-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/sameDocument-after-fragment-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/sameDocument-after-navigate-restore.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/sameDocument-after-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/state-after-navigate-restore.html

@@ -1,0 +1,4 @@
+
+
+FAIL navigation.traverseTo() should work in an iframe that started at a data: url assert_equals: expected 1 but got 0
+

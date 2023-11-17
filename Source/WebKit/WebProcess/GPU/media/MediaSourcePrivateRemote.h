@@ -71,8 +71,8 @@ public:
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
 
-    Ref<MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
-    Ref<GenericPromise> seekToTime(const MediaTime&) final;
+    Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
+    Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
 
@@ -89,8 +89,8 @@ public:
 #endif
 
     // IPC Methods
-    void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(MediaTimePromise::Result&&)>&&);
-    void proxySeekToTime(const MediaTime&, CompletionHandler<void(GenericPromise::Result&&)>&&);
+    void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
+    void proxySeekToTime(const MediaTime&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
 
 private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);

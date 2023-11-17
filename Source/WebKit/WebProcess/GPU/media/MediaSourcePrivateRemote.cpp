@@ -166,29 +166,29 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
-Ref<MediaSourcePrivate::MediaTimePromise> MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target)
+Ref<MediaTimePromise> MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target)
 {
     ASSERT_NOT_REACHED();
-    return MediaTimePromise::createAndReject(-1);
+    return MediaTimePromise::createAndReject(PlatformMediaError::LogicError);
 }
 
 void MediaSourcePrivateRemote::proxyWaitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(MediaTimePromise::Result&&)>&& completionHandler)
 {
     if (!m_client)
-        return completionHandler(makeUnexpected(-1));
+        return completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));
     m_client->waitForTarget(target)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
-Ref<GenericPromise> MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
+Ref<MediaPromise> MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
 {
     ASSERT_NOT_REACHED();
-    return GenericPromise::createAndReject(-1);
+    return MediaPromise::createAndReject(PlatformMediaError::LogicError);
 }
 
-void MediaSourcePrivateRemote::proxySeekToTime(const MediaTime& time, CompletionHandler<void(GenericPromise::Result&&)>&& completionHandler)
+void MediaSourcePrivateRemote::proxySeekToTime(const MediaTime& time, CompletionHandler<void(MediaPromise::Result&&)>&& completionHandler)
 {
     if (!m_client)
-        return completionHandler(makeUnexpected(-1));
+        return completionHandler(makeUnexpected(PlatformMediaError::SourceRemoved));
     m_client->seekToTime(time)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 

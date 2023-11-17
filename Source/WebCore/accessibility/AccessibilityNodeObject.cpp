@@ -1945,6 +1945,11 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         if (node->hasTagName(selectTag))
             break;
         FALLTHROUGH;
+    case AccessibilityRole::Summary:
+        // The text node for a <summary> element should be included in its visible text, unless a title attribute is present.
+        if (!hasAttribute(titleAttr))
+            useTextUnderElement = true;
+        break;
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
     case AccessibilityRole::Checkbox:

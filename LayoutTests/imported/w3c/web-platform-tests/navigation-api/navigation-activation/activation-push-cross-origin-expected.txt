@@ -1,0 +1,4 @@
+
+
+FAIL navigation.activation after push cross-origin assert_equals: expected 1 but got 0
+

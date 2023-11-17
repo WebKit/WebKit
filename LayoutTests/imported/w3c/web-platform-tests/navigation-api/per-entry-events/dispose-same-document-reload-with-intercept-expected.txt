@@ -1,0 +1,3 @@
+
+FAIL dispose events are not fired when doing a same-document reload using navigation.reload() and intercept() promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.ondispose = t.unreached_func("dispose must not happen for reloads")')"
+

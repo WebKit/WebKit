@@ -1,0 +1,4 @@
+
+
+FAIL cross-document traverseTo(), back(), and forward() assert_equals: expected 1 but got 0
+

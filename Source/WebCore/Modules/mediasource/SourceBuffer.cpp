@@ -63,6 +63,7 @@
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/WeakPtr.h>
 
@@ -84,14 +85,10 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_private(WTFMove(sourceBufferPrivate))
     , m_source(&source)
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
-    , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
     , m_timeOfBufferingMonitor(MonotonicTime::fromRawSeconds(0))
-    , m_pendingRemoveStart(MediaTime::invalidTime())
-    , m_pendingRemoveEnd(MediaTime::invalidTime())
-    , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
     , m_buffered(TimeRanges::create())
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_private->sourceBufferLogger())
@@ -109,6 +106,12 @@ SourceBuffer::~SourceBuffer()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_private->detach();
+
+    if (m_appendBufferPromise)
+        m_appendBufferPromise.disconnect();
+
+    if (m_removeCodedFramesPromise)
+        m_removeCodedFramesPromise.disconnect();
 }
 
 ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
@@ -264,7 +267,7 @@ ExceptionOr<void> SourceBuffer::abort()
         return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If the range removal algorithm is running, then throw an InvalidStateError exception and abort these steps.
-    if (m_removeTimer.isActive())
+    if (m_removeCodedFramesPromise)
         return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
@@ -339,9 +342,28 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     scheduleEvent(eventNames().updatestartEvent);
 
     // 5. Return control to the caller and run the rest of the steps asynchronously.
-    m_pendingRemoveStart = start;
-    m_pendingRemoveEnd = end;
-    m_removeTimer.startOneShot(0_s);
+    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this, start, end] {
+        if (isRemoved())
+            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
+        return m_private->removeCodedFrames(start, end, m_source->currentTime());
+    })->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }] {
+        m_removeCodedFramesPromise.complete();
+
+        if (isRemoved())
+            return;
+
+        // 7. Set the updating attribute to false.
+        m_updating = false;
+
+        // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
+        scheduleEvent(eventNames().updateEvent);
+
+        // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+        scheduleEvent(eventNames().updateendEvent);
+
+        m_source->monitorSourceBuffers();
+    })->track(m_removeCodedFramesPromise);
 }
 
 ExceptionOr<void> SourceBuffer::changeType(const String& type)
@@ -411,7 +433,8 @@ void SourceBuffer::abortIfUpdating()
         return;
 
     // 4.1. Abort the buffer append algorithm if it is running.
-    m_appendBufferTimer.stop();
+    if (m_appendBufferPromise)
+        m_appendBufferPromise.disconnect();
     m_pendingAppendData = nullptr;
     m_private->abort();
 
@@ -434,6 +457,9 @@ void SourceBuffer::removedFromMediaSource()
 {
     if (isRemoved())
         return;
+
+    if (m_removeCodedFramesPromise)
+        m_removeCodedFramesPromise.disconnect();
 
     abortIfUpdating();
 
@@ -458,12 +484,6 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 bool SourceBuffer::virtualHasPendingActivity() const
 {
     return m_source;
-}
-
-void SourceBuffer::stop()
-{
-    m_appendBufferTimer.stop();
-    m_removeTimer.stop();
 }
 
 const char* SourceBuffer::activeDOMObjectName() const
@@ -524,39 +544,20 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     scheduleEvent(eventNames().updatestartEvent);
 
     // 6. Asynchronously run the buffer append algorithm.
-    m_appendBufferTimer.startOneShot(0_s);
+    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this]() mutable {
+        // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
+        if (!m_pendingAppendData || m_pendingAppendData->isEmpty())
+            return MediaPromise::createAndResolve();
+        return m_private->append(m_pendingAppendData.releaseNonNull());
+    })->whenSettled(RunLoop::current(), *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
 
     return { };
 }
 
-void SourceBuffer::appendBufferTimerFired()
+void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& result)
 {
-    if (isRemoved())
-        return;
+    m_appendBufferPromise.complete();
 
-    ASSERT(m_updating);
-
-    // Section 3.5.5 Buffer Append Algorithm
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
-
-    // 1. Run the segment parser loop algorithm.
-
-    // Section 3.5.1 Segment Parser Loop
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
-    // When the segment parser loop algorithm is invoked, run the following steps:
-
-    RefPtr<SharedBuffer> appendData = WTFMove(m_pendingAppendData);
-    // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
-    if (!appendData || !appendData->size()) {
-        sourceBufferPrivateAppendComplete(AppendResult::Succeeded);
-        return;
-    }
-
-    m_private->append(appendData.releaseNonNull());
-}
-
-void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
-{
     if (isRemoved())
         return;
 
@@ -565,7 +566,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
     // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
-    if (result == AppendResult::ParsingFailed) {
+    if (!result) {
         ERROR_LOG(LOGIDENTIFIER, "ParsingFailed");
         appendError(true);
         return;
@@ -578,8 +579,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != AppendResult::Succeeded)
-        return;
+    // When aborted, the appendBuffer promise got disconnected
 
     // 3. Set the updating attribute to false.
     m_updating = false;
@@ -607,39 +607,6 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 
     if (!isRemoved())
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
-}
-
-void SourceBuffer::removeTimerFired()
-{
-    if (isRemoved())
-        return;
-
-    ASSERT(m_updating);
-    ASSERT(m_pendingRemoveStart.isValid());
-    ASSERT(m_pendingRemoveStart < m_pendingRemoveEnd);
-
-    // Section 3.5.7 Range Removal
-    // http://w3c.github.io/media-source/#sourcebuffer-range-removal
-
-    // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
-
-    m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), [this, protectedThis = Ref { *this }] {
-        if (isRemoved())
-            return;
-
-        // 7. Set the updating attribute to false.
-        m_updating = false;
-        m_pendingRemoveStart = MediaTime::invalidTime();
-        m_pendingRemoveEnd = MediaTime::invalidTime();
-
-        // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
-        scheduleEvent(eventNames().updateEvent);
-
-        // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
-        scheduleEvent(eventNames().updateendEvent);
-
-        m_source->monitorSourceBuffers();
-    });
 }
 
 uint64_t SourceBuffer::maximumBufferSize() const
@@ -696,10 +663,10 @@ void SourceBuffer::setActive(bool active)
         m_source->sourceBufferDidChangeActiveState(*this, active);
 }
 
-Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
 {
     if (isRemoved())
-        return ReceiveResultPromise::createAndReject(ReceiveResult::BufferRemoved);
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -722,7 +689,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
     // with the decode error parameter set to true and abort these steps.
     if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
         // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-        return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+        return MediaPromise::createAndReject(PlatformMediaError::AppendError);
     }
 
     // 3. If the first initialization segment flag is true, then run the following steps:
@@ -731,7 +698,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
         // with the decode error parameter set to true and abort these steps.
         if (!validateInitializationSegment(segment)) {
             // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-            return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+            return MediaPromise::createAndReject(PlatformMediaError::AppendError);
         }
 
         Vector<std::pair<AtomString, AtomString>> trackIdPairs;
@@ -808,7 +775,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
             for (auto& audioTrackInfo : segment.audioTracks) {
                 if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                     continue;
-                return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
             }
         }
 
@@ -816,7 +783,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
             for (auto& videoTrackInfo : segment.videoTracks) {
                 if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                     continue;
-                return ReceiveResultPromise::createAndReject(ReceiveResult::AppendError);
+                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
             }
         }
 
@@ -945,7 +912,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
         for (auto& sourceBuffer : *m_source->sourceBuffers()) {
             if (!sourceBuffer->m_receivedFirstInitializationSegment)
-                return ReceiveResultPromise::createAndResolve();
+                return MediaPromise::createAndResolve();
         }
 
         // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
@@ -959,7 +926,7 @@ Ref<SourceBufferPrivateClient::ReceiveResultPromise> SourceBuffer::sourceBufferP
     if (activeTrackFlag && m_private->readyState() > MediaPlayer::ReadyState::HaveCurrentData)
         m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
-    return ReceiveResultPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
@@ -1171,15 +1138,15 @@ void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
     m_bufferedSinceLastMonitor += frameDuration;
 }
 
-Ref<GenericPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
     if (isRemoved())
-        return GenericPromise::createAndReject(-1);
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
     m_source->setDurationInternal(duration);
     if (m_textTracks)
         m_textTracks->setDuration(duration);
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
@@ -1265,14 +1232,14 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-void SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID)
 {
-    m_private->bufferedSamplesForTrackId(trackID, WTFMove(completionHandler));
+    return m_private->bufferedSamplesForTrackId(trackID);
 }
 
-void SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
 {
-    return m_private->enqueuedSamplesForTrackID(trackID, WTFMove(completionHandler));
+    return m_private->enqueuedSamplesForTrackID(trackID);
 }
 
 MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
@@ -1340,7 +1307,7 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-Ref<GenericPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
 {
     ASSERT(ranges != m_buffered->ranges(), "sourceBufferPrivateBufferedChanged should only be called if the ranges did change");
 #if ENABLE(MANAGED_MEDIA_SOURCE)
@@ -1358,7 +1325,7 @@ Ref<GenericPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const Platf
 #endif
     m_buffered = TimeRanges::create(ranges);
     setBufferedDirty(true);
-    return GenericPromise::createAndResolve();
+    return MediaPromise::createAndResolve();
 }
 
 bool SourceBuffer::isBufferedDirty() const

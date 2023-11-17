@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-after-bfcache-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-after-bfcache.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-push-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-same-document-then-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-traverse-not-in-entries.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-traverse-then-clobber.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-traverse.html

@@ -1,0 +1,6 @@
+
+
+FAIL navigation.updateCurrentEntry() in an opaque origin iframe assert_throws_dom: function "() => {
+    navigation.updateCurrentEntry({ state: 1 });
+  }" did not throw
+

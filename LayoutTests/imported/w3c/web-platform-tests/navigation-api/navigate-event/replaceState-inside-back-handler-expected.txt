@@ -1,0 +1,3 @@
+
+FAIL replaceState inside a navigate event for navigation.back() assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+
