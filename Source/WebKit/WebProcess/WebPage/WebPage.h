@@ -1973,7 +1973,7 @@ private:
     void didCancelForOpenPanel();
 
 #if PLATFORM(IOS_FAMILY)
-    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&&, WebKit::SandboxExtension::Handle&&, WebKit::SandboxExtension::Handle&&);
+    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&&, WebKit::SandboxExtension::Handle&&);
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
