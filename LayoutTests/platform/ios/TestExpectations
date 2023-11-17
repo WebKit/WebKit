@@ -4663,4 +4663,4 @@ webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-b
 
 webkit.org/b/264527 imported/w3c/web-platform-tests/css/css-cascade/idlharness.html [ Pass Failure ]
 
-webkit.org/b/264992 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ ImageOnlyFailure ]
+webkit.org/b/264992 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ Pass Failure ]
