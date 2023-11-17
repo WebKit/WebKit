@@ -307,7 +307,9 @@ static DataRemovalPeriod toDataRemovalPeriod(int value)
     case 0: return DataRemovalPeriod::None;
     case 1: return DataRemovalPeriod::Short;
     case 2: return DataRemovalPeriod::Long;
-    default: ASSERT_NOT_REACHED(); return DataRemovalPeriod::Short;
+    default:
+        ASSERT_NOT_REACHED();
+        return DataRemovalPeriod::Short;
     };
 }
 

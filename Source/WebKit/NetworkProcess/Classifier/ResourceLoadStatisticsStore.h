@@ -302,7 +302,7 @@ private:
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldEnforceSameSiteStrictFor(DomainData&, bool shouldCheckForGrandfathering);
     void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, DataRemovalPeriod);
-    DataRemovalPeriod isScheduledForAllButCookieDataRemoval(const RegistrableDomain& domain) const;
+    DataRemovalPeriod isScheduledForAllButCookieDataRemoval(const RegistrableDomain&) const;
     void clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const NavigatedToDomain&, CompletionHandler<void()>&&);
     bool shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor();

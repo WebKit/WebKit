@@ -1536,7 +1536,7 @@ public:
 
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
-    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger, bool* appliedFiltering);
+    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger, bool* appliedFiltering = nullptr);
     URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&);
 
 #if ENABLE(IMAGE_ANALYSIS)
