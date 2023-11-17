@@ -30,6 +30,7 @@ import logging
 import os
 import unittest
 
+from webkitpy.common.host_mock import MockHost
 from webkitpy.w3c.test_parser import TestParser
 
 from webkitcorepy import OutputCapture
@@ -352,10 +353,11 @@ CONTENT OF TEST
 
         self.assertTrue('referencefile' in test_info, 'test should be detected as reference file')
 
-    def _test_info_from_test_with_contents(self, test_contents):
+    def _fuzzy_metadata_from_test_with_contents(self, test_contents):
         test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
         parser = TestParser({'all': True}, os.path.join(test_path, 'test-fuzzy.html'))
-        return parser.analyze_test(test_contents=test_contents)
+        parser.analyze_test(test_contents=test_contents)  # We need to analyze the test_contents
+        return parser.fuzzy_metadata()
 
     def test_simple_fuzzy_data(self):
         """ Tests basic form of fuzzy_metadata()"""
@@ -365,10 +367,10 @@ CONTENT OF TEST
 </head>
 <body>CONTENT OF TEST</body></html>
 """
-        test_info = self._test_info_from_test_with_contents(test_html)
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
 
         expected_fuzzy = {None: [[15, 15], [300, 300]]}
-        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
 
     def test_nameless_fuzzy_data(self):
         """ Tests fuzzy_metadata() in short form"""
@@ -378,9 +380,9 @@ CONTENT OF TEST
 </head>
 <body>CONTENT OF TEST</body></html>
 """
-        test_info = self._test_info_from_test_with_contents(test_html)
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
         expected_fuzzy = {None: [[15, 15], [300, 300]]}
-        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
 
     def test_range_fuzzy_data(self):
         """ Tests fuzzy_metadata() in range form"""
@@ -390,10 +392,10 @@ CONTENT OF TEST
 </head>
 <body>CONTENT OF TEST</body></html>
 """
-        test_info = self._test_info_from_test_with_contents(test_html)
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
 
         expected_fuzzy = {None: [[5, 15], [200, 300]]}
-        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
 
     def test_nameless_range_fuzzy_data(self):
         """ Tests fuzzy_metadata() in short range form"""
@@ -403,10 +405,10 @@ CONTENT OF TEST
 </head>
 <body>CONTENT OF TEST</body></html>
 """
-        test_info = self._test_info_from_test_with_contents(test_html)
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
 
         expected_fuzzy = {None: [[5, 15], [200, 300]]}
-        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
 
     def test_per_ref_fuzzy_data(self):
         """ Tests fuzzy_metadata() with values for difference reference files"""
@@ -418,11 +420,11 @@ CONTENT OF TEST
 </head>
 <body>CONTENT OF TEST</body></html>
 """
-        test_info = self._test_info_from_test_with_contents(test_html)
+        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
 
         expected_fuzzy = {
             None: [[5, 15], [200, 300]],
             'close-match-ref.html': [[5, 5], [20, 20]],
             'worse-match-ref.html': [[15, 15], [30, 30]]
         }
-        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
