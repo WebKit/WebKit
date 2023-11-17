@@ -61,6 +61,8 @@ public:
 
     // AST::<type>::Ref whenever it can return multiple types.
     Result<AST::Identifier> parseIdentifier();
+    Result<void> parseEnableDirective();
+    Result<void> parseRequireDirective();
     Result<void> parseGlobalDecl();
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
@@ -102,6 +104,7 @@ public:
     Result<AST::Expression::Ref> parseLHSExpression();
     Result<AST::Expression::Ref> parseCoreLHSExpression();
     Result<AST::Expression::List> parseArgumentExpressionList();
+    Result<AST::Diagnostic> parseDiagnostic();
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);

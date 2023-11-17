@@ -55,7 +55,20 @@ void Visitor::visit(ShaderModule& shaderModule)
         checkErrorAndVisit(function);
 }
 
-void Visitor::visit(AST::Directive&)
+// Directive
+
+void Visitor::visit(AST::Directive& directive)
+{
+    switch (directive.kind()) {
+    case AST::NodeKind::DiagnosticDirective:
+        checkErrorAndVisit(downcast<AST::DiagnosticDirective>(directive));
+        break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled Directive");
+    }
+}
+
+void Visitor::visit(AST::DiagnosticDirective&)
 {
 }
 

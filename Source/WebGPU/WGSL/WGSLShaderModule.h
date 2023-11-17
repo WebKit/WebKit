@@ -33,7 +33,9 @@
 #include "ASTVariable.h"
 #include "TypeStore.h"
 #include "WGSL.h"
+#include "WGSLEnums.h"
 
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -219,6 +221,9 @@ public:
         AST::Builder::State m_builderState;
     };
 
+    OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
+    OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
+
 private:
     String m_source;
     bool m_usesExternalTextures { false };
@@ -229,6 +234,8 @@ private:
     bool m_usesDivision { false };
     bool m_usesModulo { false };
     bool m_usesFrexp { false };
+    OptionSet<Extension> m_enabledExtensions;
+    OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
     AST::Directive::List m_directives;
     AST::Function::List m_functions;

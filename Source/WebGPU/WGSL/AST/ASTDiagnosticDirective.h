@@ -25,20 +25,20 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
 #include "ASTBuilder.h"
 #include "ASTDiagnostic.h"
+#include "ASTDirective.h"
 
 namespace WGSL::AST {
 
-class DiagnosticAttribute final : public Attribute {
-    WGSL_AST_BUILDER_NODE(DiagnosticAttribute);
+class DiagnosticDirective final : public Directive {
+    WGSL_AST_BUILDER_NODE(DiagnosticDirective);
 public:
     NodeKind kind() const override;
 
 private:
-    DiagnosticAttribute(SourceSpan span, Diagnostic&& diagnostic)
-        : Attribute(span)
+    DiagnosticDirective(SourceSpan span, Diagnostic&& diagnostic)
+        : Directive(span)
         , m_diagnostic(WTFMove(diagnostic))
     { }
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(DiagnosticAttribute)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(DiagnosticDirective)

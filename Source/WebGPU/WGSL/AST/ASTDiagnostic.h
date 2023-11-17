@@ -25,26 +25,18 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
-#include "ASTBuilder.h"
-#include "ASTDiagnostic.h"
+#include "WGSLEnums.h"
 
 namespace WGSL::AST {
 
-class DiagnosticAttribute final : public Attribute {
-    WGSL_AST_BUILDER_NODE(DiagnosticAttribute);
-public:
-    NodeKind kind() const override;
+struct TriggeringRule {
+    Identifier name;
+    std::optional<Identifier> suffix;
+};
 
-private:
-    DiagnosticAttribute(SourceSpan span, Diagnostic&& diagnostic)
-        : Attribute(span)
-        , m_diagnostic(WTFMove(diagnostic))
-    { }
-
-    Diagnostic m_diagnostic;
+struct Diagnostic {
+    SeverityControl severity;
+    TriggeringRule triggeringRule;
 };
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(DiagnosticAttribute)

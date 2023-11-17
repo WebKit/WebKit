@@ -45,7 +45,9 @@ public:
 
     // Visitor
     void visit(ShaderModule&) override;
-    void visit(Directive&) override;
+
+    // Directive
+    void visit(DiagnosticDirective&) override;
 
     // Attribute
     void visit(BindingAttribute&) override;
