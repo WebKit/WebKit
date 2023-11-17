@@ -24,6 +24,7 @@
 #include "AudioSourceProviderClient.h"
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
+#include "WebAudioSourceProvider.h"
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -32,7 +33,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerAudioStreamDescription.h"
 #include "MediaStreamTrackPrivate.h"
-#include "WebAudioSourceProvider.h"
 #endif
 
 typedef struct _GstAdapter GstAdapter;
