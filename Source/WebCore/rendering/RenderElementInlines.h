@@ -90,12 +90,12 @@ inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAcco
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint() || style().contentVisibility() != ContentVisibility::Visible);
+    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplyPaintContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment(style().containsPaint() || style().contentVisibility() != ContentVisibility::Visible);
+    return shouldApplyLayoutOrPaintContainment(style().containsPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplySizeContainment() const
@@ -108,6 +108,7 @@ inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
     return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
 }
 
+// FIXME: try to avoid duplication with isSkippedContentRoot.
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
 {
     return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRenderRubyText() && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
