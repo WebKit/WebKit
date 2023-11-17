@@ -395,7 +395,10 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
         };
         m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier() willInvalidate: willInvalidateBlock didInvalidate: didInvalidateBlock];
 #else
-        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier()];
+        if ([get_SECapabilitiesClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
+            m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier()];
+        else
+            m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName];
 #endif
         m_process = process.extensionProcess();
         if (m_capabilities)
