@@ -465,7 +465,7 @@ private:
     void textAutosizingUsesIdempotentModeChanged() final;
 #endif
 
-    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger) const final;
+    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger, bool*) const final;
     URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const final;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

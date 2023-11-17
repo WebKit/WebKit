@@ -1697,9 +1697,9 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 
 #endif
 
-URL WebChromeClient::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const
+URL WebChromeClient::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger, bool* appliedFilter) const
 {
-    return protectedPage()->applyLinkDecorationFiltering(url, trigger);
+    return protectedPage()->applyLinkDecorationFiltering(url, trigger, appliedFilter);
 }
 
 URL WebChromeClient::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const

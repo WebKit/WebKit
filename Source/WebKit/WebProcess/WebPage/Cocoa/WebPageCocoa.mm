@@ -708,7 +708,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
-URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger)
+URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger, bool* appliedFiltering)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (m_linkDecorationFilteringData.isEmpty() && m_domainScopedLinkDecorationFilteringData.isEmpty()) {
@@ -724,18 +724,18 @@ URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilterin
         if (!loader)
             return false;
         auto effectivePolicies = trigger == LinkDecorationFilteringTrigger::Navigation ? loader->originatorAdvancedPrivacyProtections() : loader->advancedPrivacyProtections();
-        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering);
+        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering) || m_page->settings().filterLinkDecorationOnNavigationEnabled();
     };
 
     bool shouldApplyLinkDecorationFiltering = [&] {
-        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().documentLoader() }.get()))
-            return true;
-
-        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().provisionalDocumentLoader() }.get()))
+        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().activeDocumentLoader() }.get()))
             return true;
 
         return isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().policyDocumentLoader() }.get());
     }();
+
+    if (appliedFiltering)
+        *appliedFiltering = shouldApplyLinkDecorationFiltering;
 
     if (!shouldApplyLinkDecorationFiltering)
         return url;

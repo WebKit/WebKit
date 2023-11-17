@@ -65,6 +65,7 @@ class NetworkSession;
 class ResourceLoadStatisticsStore;
 class WebFrameProxy;
 class WebProcessProxy;
+enum class DataRemovalPeriod : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
@@ -129,7 +130,7 @@ public:
 
     void logFrameNavigation(NavigatedToDomain&&, TopFrameDomain&&, NavigatedFromDomain&&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
     void logUserInteraction(TopFrameDomain&&, CompletionHandler<void()>&&);
-    void logCrossSiteLoadWithLinkDecoration(NavigatedFromDomain&&, NavigatedToDomain&&, CompletionHandler<void()>&&);
+    void logCrossSiteLoadWithLinkDecoration(NavigatedFromDomain&&, NavigatedToDomain&&, DataRemovalPeriod, CompletionHandler<void()>&&);
     void clearUserInteraction(TopFrameDomain&&, CompletionHandler<void()>&&);
     void setTimeAdvanceForTesting(Seconds, CompletionHandler<void()>&&);
     void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);

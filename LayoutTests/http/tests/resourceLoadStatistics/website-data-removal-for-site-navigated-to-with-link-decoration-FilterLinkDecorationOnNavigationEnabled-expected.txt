@@ -24,7 +24,7 @@ After deletion: IDB entry does not exist.
 Resource load statistics:
 
 Registrable domain: 127.0.0.1
-    hadUserInteraction: Yes
+    hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
     TopFrameUniqueRedirectsFrom:

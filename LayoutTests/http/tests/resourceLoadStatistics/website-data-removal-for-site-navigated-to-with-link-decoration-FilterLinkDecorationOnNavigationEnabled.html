@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ FilterLinkDecorationOnNavigationEnabled=false ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ FilterLinkDecorationOnNavigationEnabled=true ] -->
 <html>
 <head>
     <script src="/cookies/resources/cookie-utilities.js"></script>
@@ -253,7 +253,7 @@
     }
 
     const advanceTimeSecondsPerDay = 60 * 60 * 24;
-    const expectDeletionAfterDays = advanceTimeSecondsPerDay*7;
+    const expectDeletionAfterDays = advanceTimeSecondsPerDay*30;
     let currentAdvancedTime = 0;
     function checkWebsiteDataAndContinue() {
         let isAfterDeletion = currentAdvancedTime >= expectDeletionAfterDays;

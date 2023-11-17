@@ -99,6 +99,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setIsAppInitiated(other.isAppInitiated());
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
     setUseAdvancedPrivacyProtections(other.useAdvancedPrivacyProtections());
+    setDidFilterLinkDecoration(other.didFilterLinkDecoration());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -127,6 +128,7 @@ void ResourceRequestBase::setURL(const URL& url)
     updateResourceRequest(); 
 
     m_requestData.m_url = url;
+    m_requestData.m_didFilterLinkDecoration = false;
     
     m_platformRequestUpdated = false;
 }
@@ -659,6 +661,18 @@ void ResourceRequestBase::setUseAdvancedPrivacyProtections(bool useAdvancedPriva
         return;
 
     m_requestData.m_useAdvancedPrivacyProtections = useAdvancedPrivacyProtections;
+
+    m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::setDidFilterLinkDecoration(bool didFilterLinkDecoration)
+{
+    updateResourceRequest();
+
+    if (m_requestData.m_didFilterLinkDecoration == didFilterLinkDecoration)
+        return;
+
+    m_requestData.m_didFilterLinkDecoration = didFilterLinkDecoration;
 
     m_platformRequestUpdated = false;
 }

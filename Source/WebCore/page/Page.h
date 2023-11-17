@@ -1016,7 +1016,7 @@ public:
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
-    URL applyLinkDecorationFiltering(const URL&, LinkDecorationFilteringTrigger) const;
+    URL applyLinkDecorationFiltering(const URL&, LinkDecorationFilteringTrigger, bool* appliedFiltering = nullptr) const;
     String applyLinkDecorationFiltering(const String&, LinkDecorationFilteringTrigger) const;
     URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const;
 

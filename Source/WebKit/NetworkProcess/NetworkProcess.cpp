@@ -59,6 +59,7 @@
 #include "ProcessAssertion.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "RemoteWorkerType.h"
+#include "ResourceLoadStatisticsStore.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebCookieManager.h"
@@ -1258,7 +1259,7 @@ void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID ses
     completionHandler();
 }
 
-void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID)
+void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, bool didFilterLinkDecoration)
 {
     ASSERT(!navigationDataTransfer.isEmpty());
 
@@ -1277,7 +1278,7 @@ void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessi
     if (navigationDataTransfer.contains(CrossSiteNavigationDataTransfer::Flag::DestinationLinkDecoration)) {
         if (auto* session = networkSession(sessionID)) {
             if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
-                resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(WTFMove(fromDomain), WTFMove(toDomain), [] { });
+                resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(WTFMove(fromDomain), WTFMove(toDomain), didFilterLinkDecoration ? DataRemovalPeriod::Long : DataRemovalPeriod::Short, [] { });
         } else
             ASSERT_NOT_REACHED();
     }
@@ -1287,7 +1288,7 @@ void NetworkProcess::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID
 {
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
-            resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(WTFMove(fromDomain), WTFMove(toDomain), WTFMove(completionHandler));
+            resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(WTFMove(fromDomain), WTFMove(toDomain), DataRemovalPeriod::Short, WTFMove(completionHandler));
         else
             completionHandler();
     } else {
