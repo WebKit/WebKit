@@ -113,7 +113,7 @@ private:
     void recordStrokeEllipse(const FloatRect&) final;
     void recordClearRect(const FloatRect&) final;
     void recordDrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
-    void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) final;
+    void recordDrawDisplayList(DisplayList&, const FloatPoint& destination) final;
 #if USE(CG)
     void recordApplyStrokePattern() final;
     void recordApplyFillPattern() final;
@@ -127,6 +127,7 @@ private:
     bool recordResourceUse(DecomposedGlyphs&) final;
     bool recordResourceUse(Gradient&) final;
     bool recordResourceUse(Filter&) final;
+    bool recordResourceUse(DisplayList&) final;
 
     void append(Item&& item)
     {

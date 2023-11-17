@@ -134,6 +134,16 @@ inline static std::optional<RenderingResourceIdentifier> applyDrawDecomposedGlyp
     return std::nullopt;
 }
 
+inline static std::optional<RenderingResourceIdentifier> applyDrawDisplayListItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const DrawDisplayList& item)
+{
+    auto resourceIdentifier = item.displayListIdentifier();
+    if (auto* displayList = resourceHeap.getDisplayList(resourceIdentifier)) {
+        item.apply(context, *displayList);
+        return std::nullopt;
+    }
+    return resourceIdentifier;
+}
+
 ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const Item& item)
 {
     if (!isValid(item))
@@ -152,8 +162,9 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
             if (auto missingCachedResourceIdentifier = applyDrawDecomposedGlyphs(context, resourceHeap, item))
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
             return { };
-        }, [&](const DrawDisplayListItems& item) -> ApplyItemResult {
-            item.apply(context, resourceHeap);
+        }, [&](const DrawDisplayList& item) -> ApplyItemResult {
+            if (auto missingCachedResourceIdentifier = applyDrawDisplayListItem(context, resourceHeap, item))
+                return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
             return { };
         }, [&](const DrawImageBuffer& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyImageBufferItem(context, resourceHeap, item))

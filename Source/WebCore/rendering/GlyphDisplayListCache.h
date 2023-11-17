@@ -28,6 +28,7 @@
 #include "DisplayList.h"
 #include "FloatSizeHash.h"
 #include "FontCascade.h"
+#include "GraphicsContext.h"
 #include "Logging.h"
 #include "TextRun.h"
 #include "TextRunHash.h"
@@ -49,7 +50,7 @@ class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>
     friend struct GlyphDisplayListCacheKeyTranslator;
     friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
 public:
-    static Ref<GlyphDisplayListCacheEntry> create(std::unique_ptr<DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
+    static Ref<GlyphDisplayListCacheEntry> create(Ref<DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
     {
         return adoptRef(*new GlyphDisplayListCacheEntry(WTFMove(displayList), textRun, font, context));
     }
@@ -64,20 +65,19 @@ public:
             && m_shouldSubpixelQuantizeFont == other.m_shouldSubpixelQuantizeFont;
     }
 
-    DisplayList::DisplayList& displayList() { return *m_displayList.get(); }
+    DisplayList::DisplayList& displayList() { return m_displayList; }
 
 private:
-    GlyphDisplayListCacheEntry(std::unique_ptr<DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
+    GlyphDisplayListCacheEntry(Ref<DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
         : m_displayList(WTFMove(displayList))
         , m_textRun(textRun.isolatedCopy())
         , m_scaleFactor(context.scaleFactor())
         , m_fontCascadeGeneration(font.generation())
         , m_shouldSubpixelQuantizeFont(context.shouldSubpixelQuantizeFonts())
     {
-        ASSERT(m_displayList.get());
     }
 
-    std::unique_ptr<DisplayList::DisplayList> m_displayList;
+    Ref<DisplayList::DisplayList> m_displayList;
 
     TextRun m_textRun;
     FloatSize m_scaleFactor;

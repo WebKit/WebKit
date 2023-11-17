@@ -324,9 +324,15 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier
     handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier, decomposedGlyphsIdentifier), *font, *decomposedGlyphs);
 }
 
-void RemoteDisplayListRecorder::drawDisplayListItems(Vector<WebCore::DisplayList::Item>&& items, const FloatPoint& destination)
+void RemoteDisplayListRecorder::drawDisplayList(RenderingResourceIdentifier displayListIdentifier, const FloatPoint& destination)
 {
-    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap());
+    RefPtr displayList = resourceCache().cachedDisplayList(displayListIdentifier);
+    if (!displayList) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    handleItem(DisplayList::DrawDisplayList(displayListIdentifier, destination), *displayList);
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)

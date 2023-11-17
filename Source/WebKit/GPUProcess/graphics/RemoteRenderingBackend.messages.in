@@ -32,6 +32,7 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
+    CacheDisplayList(Vector<WebCore::DisplayList::Item> items, Vector<WebCore::RenderingResourceIdentifier> resourceIdentifiers, WebCore::RenderingResourceIdentifier displayListIdentifier) NotStreamEncodable
     ReleaseAllDrawingResources()
     ReleaseAllImageResources()
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)

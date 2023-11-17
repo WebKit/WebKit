@@ -51,7 +51,7 @@ TEST(BifurcatedGraphicsContextTests, Basic)
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
-    DisplayList displayList;
+    auto displayList = DisplayList::create();
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -66,10 +66,10 @@ TEST(BifurcatedGraphicsContextTests, Basic)
     EXPECT_EQ(primaryData[2], 0);
 
     // The secondary context should have a red FillRectWithColor.
-    EXPECT_FALSE(displayList.isEmpty());
+    EXPECT_FALSE(displayList->isEmpty());
     bool sawFillRect = false;
 
-    for (auto& item : displayList.items()) {
+    for (auto& item : displayList->items()) {
         if (auto* fillRect = std::get_if<FillRectWithColor>(&item)) {
             sawFillRect = true;
             EXPECT_EQ(fillRect->rect(), FloatRect(0, 0, contextWidth, contextHeight));
@@ -82,10 +82,10 @@ TEST(BifurcatedGraphicsContextTests, Basic)
 
 TEST(BifurcatedGraphicsContextTests, Text)
 {
-    DisplayList primaryDisplayList;
+    auto primaryDisplayList = DisplayList::create();
     RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
-    DisplayList secondaryDisplayList;
+    auto secondaryDisplayList = DisplayList::create();
     RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -187,7 +187,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
-    DisplayList displayList;
+    auto displayList = DisplayList::create();
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -214,7 +214,7 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    DisplayList displayList;
+    auto displayList = DisplayList::create();
     RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
     GraphicsContext& secondaryContext = secondaryContextDL;
 
@@ -273,7 +273,7 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    DisplayList displayList;
+    auto displayList = DisplayList::create();
     RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
     GraphicsContext& secondaryContext = secondaryContextDL;
 
@@ -293,10 +293,10 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
 
 TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 {
-    DisplayList primaryDisplayList;
+    auto primaryDisplayList = DisplayList::create();
     RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
-    DisplayList secondaryDisplayList;
+    auto secondaryDisplayList = DisplayList::create();
     RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);

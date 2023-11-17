@@ -221,9 +221,9 @@ void RemoteDisplayListRecorderProxy::recordDrawDecomposedGlyphs(const Font& font
     send(Messages::RemoteDisplayListRecorder::DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier()));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawDisplayListItems(const Vector<DisplayList::Item>& items, const FloatPoint& destination)
+void RemoteDisplayListRecorderProxy::recordDrawDisplayList(DisplayList::DisplayList& displayList, const FloatPoint& destination)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawDisplayListItems(items, destination));
+    send(Messages::RemoteDisplayListRecorder::DrawDisplayList(displayList.renderingResourceIdentifier(), destination));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -543,6 +543,18 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Filter& filter)
     m_renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
     return true;
 }
+
+bool RemoteDisplayListRecorderProxy::recordResourceUse(DisplayList::DisplayList& displayList)
+{
+    if (UNLIKELY(!m_renderingBackend)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    m_renderingBackend->remoteResourceCacheProxy().recordDisplayListUse(displayList);
+    return true;
+}
+
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {

@@ -144,7 +144,7 @@ protected:
 
     virtual void recordDrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) = 0;
 
-    virtual void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) = 0;
+    virtual void recordDrawDisplayList(DisplayList&, const FloatPoint& destination) = 0;
 
 #if USE(CG)
     virtual void recordApplyStrokePattern() = 0;
@@ -159,6 +159,7 @@ protected:
     virtual bool recordResourceUse(DecomposedGlyphs&) = 0;
     virtual bool recordResourceUse(Gradient&) = 0;
     virtual bool recordResourceUse(Filter&) = 0;
+    virtual bool recordResourceUse(DisplayList&) = 0;
 
     struct ContextState {
         GraphicsContextState state;
@@ -234,7 +235,7 @@ private:
     WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
 
-    WEBCORE_EXPORT void drawDisplayListItems(const Vector<Item>&, const ResourceHeap&, const FloatPoint& destination) final;
+    WEBCORE_EXPORT void drawDisplayList(DisplayList&, const FloatPoint& destination) final;
 
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;

@@ -27,7 +27,6 @@
 #include "DisplayListItems.h"
 
 #include "DecomposedGlyphs.h"
-#include "DisplayListReplayer.h"
 #include "Filter.h"
 #include "FontCascade.h"
 #include "ImageBuffer.h"
@@ -327,31 +326,21 @@ void DrawDecomposedGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag> flags) con
     }
 }
 
-DrawDisplayListItems::DrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
-    : m_items(items)
+DrawDisplayList::DrawDisplayList(RenderingResourceIdentifier displayListIdentifier, const FloatPoint& destination)
+    : m_displayListIdentifier(displayListIdentifier)
     , m_destination(destination)
 {
 }
 
-DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoint& destination)
-    : m_items(WTFMove(items))
-    , m_destination(destination)
+void DrawDisplayList::apply(GraphicsContext& context, DisplayList& displayList) const
 {
+    context.drawDisplayList(displayList, m_destination);
 }
 
-void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap) const
+void DrawDisplayList::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    context.drawDisplayListItems(m_items, resourceHeap, m_destination);
-}
-
-NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts << items();
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("display-list-identifier", displayListIdentifier());
     ts.dumpProperty("destination", destination());
 }
 

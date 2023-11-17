@@ -94,7 +94,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::get(const void* run, const Font
         return &m_entriesForLayoutRun.add(run, Ref { **entry }).iterator->value->displayList();
 
     if (auto displayList = font.displayListForTextRun(context, textRun)) {
-        auto entry = GlyphDisplayListCacheEntry::create(WTFMove(displayList), textRun, font, context);
+        auto entry = GlyphDisplayListCacheEntry::create(displayList.releaseNonNull(), textRun, font, context);
         if (canShareDisplayList(entry->displayList()))
             m_entries.add(entry.ptr());
         return &m_entriesForLayoutRun.add(run, WTFMove(entry)).iterator->value->displayList();

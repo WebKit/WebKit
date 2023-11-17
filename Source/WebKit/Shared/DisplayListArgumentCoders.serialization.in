@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+headers: <WebCore/DisplayList.h>
 headers: <WebCore/DisplayListItem.h>
 headers: <WebCore/DisplayListItems.h>
 
@@ -132,8 +133,8 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier();
 };
 
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDisplayListItems {
-    Vector<WebCore::DisplayList::Item> items();
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDisplayList {
+    WebCore::RenderingResourceIdentifier displayListIdentifier();
     WebCore::FloatPoint destination();
 };
 

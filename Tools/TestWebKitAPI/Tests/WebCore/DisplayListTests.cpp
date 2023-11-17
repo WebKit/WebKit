@@ -56,27 +56,27 @@ static Path createComplexPath()
 
 TEST(DisplayListTests, AppendItems)
 {
-    DisplayList list;
+    auto list = DisplayList::create();
 
-    EXPECT_TRUE(list.isEmpty());
+    EXPECT_TRUE(list->isEmpty());
 
     auto gradient = createGradient();
     auto path = createComplexPath();
 
     for (int i = 0; i < 50; ++i) {
-        list.append(SetInlineStroke(1.5));
-        list.append(FillPath(path));
-        list.append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
-        list.append(SetInlineFillColor(Color::red));
+        list->append(SetInlineStroke(1.5));
+        list->append(FillPath(path));
+        list->append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
+        list->append(SetInlineFillColor(Color::red));
 #if ENABLE(INLINE_PATH_DATA)
-        list.append(StrokeLine(PathDataLine { { 0., 0. }, { 10., 15. } }));
+        list->append(StrokeLine(PathDataLine { { 0., 0. }, { 10., 15. } }));
 #endif
     }
 
-    EXPECT_FALSE(list.isEmpty());
+    EXPECT_FALSE(list->isEmpty());
 
     bool observedUnexpectedItem = false;
-    for (const auto& item : list.items()) {
+    for (const auto& item : list->items()) {
         WTF::switchOn(item,
         [&](const SetInlineStroke& item) {
             EXPECT_EQ(item.thickness(), 1.5);
@@ -99,13 +99,13 @@ TEST(DisplayListTests, AppendItems)
 
     EXPECT_FALSE(observedUnexpectedItem);
 
-    list.clear();
-    EXPECT_TRUE(list.isEmpty());
+    list->clear();
+    EXPECT_TRUE(list->isEmpty());
 
-    list.append(FillRectWithColor(FloatRect { 0, 0, 100, 100 }, Color::black));
-    EXPECT_FALSE(list.isEmpty());
+    list->append(FillRectWithColor(FloatRect { 0, 0, 100, 100 }, Color::black));
+    EXPECT_FALSE(list->isEmpty());
 
-    auto* item = get_if<FillRectWithColor>(&list.items()[0]);
+    auto* item = get_if<FillRectWithColor>(&list->items()[0]);
     EXPECT_TRUE(item != nullptr);
 
     if (item) {

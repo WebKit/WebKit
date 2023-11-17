@@ -28,13 +28,13 @@
 
 #include "AffineTransform.h"
 #include "DisplayListRecorderImpl.h"
-#include "DisplayListReplayer.h"
 
 namespace WebCore {
 namespace DisplayList {
 
 DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace)
-    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, colorSpace)
+    : m_displayList(DisplayList::create())
+    , m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, colorSpace)
 {
 }
 
@@ -43,20 +43,20 @@ DrawingContext::~DrawingContext() = default;
 void DrawingContext::setTracksDisplayListReplay(bool tracksDisplayListReplay)
 {
     m_tracksDisplayListReplay = tracksDisplayListReplay;
-    m_replayedDisplayList.reset();
+    m_replayedDisplayList = nullptr;
 }
 
 void DrawingContext::replayDisplayList(GraphicsContext& destContext)
 {
-    if (m_displayList.isEmpty())
+    if (m_displayList->isEmpty())
         return;
 
-    Replayer replayer(destContext, m_displayList);
     if (m_tracksDisplayListReplay)
-        m_replayedDisplayList = replayer.replay({ }, m_tracksDisplayListReplay).trackedDisplayList;
+        m_replayedDisplayList = m_displayList->replay(destContext, { }, m_tracksDisplayListReplay).trackedDisplayList;
     else
-        replayer.replay();
-    m_displayList.clear();
+        m_displayList->replay(destContext);
+
+    m_displayList->clear();
 }
 
 } // DisplayList
