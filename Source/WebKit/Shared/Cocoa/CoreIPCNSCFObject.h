@@ -30,7 +30,6 @@
 #include "CoreIPCArray.h"
 #include "CoreIPCCFType.h"
 #include "CoreIPCColor.h"
-#include "CoreIPCDDScannerResult.h"
 #include "CoreIPCData.h"
 #include "CoreIPCDate.h"
 #include "CoreIPCDictionary.h"
@@ -41,6 +40,7 @@
 #include "CoreIPCSecureCoding.h"
 #include "CoreIPCString.h"
 #include "CoreIPCURL.h"
+#include "CoreIPCWebKitSecureCoding.h"
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {
@@ -54,7 +54,7 @@ public:
         CoreIPCCFType,
         CoreIPCColor,
 #if ENABLE(DATA_DETECTION)
-        CoreIPCDDScannerResult,
+        CoreIPCWebKitSecureCoding,
 #endif
         CoreIPCData,
         CoreIPCDate,

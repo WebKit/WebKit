@@ -45,7 +45,7 @@ static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
         return CoreIPCColor((WebCore::CocoaColor *)object);
 #if ENABLE(DATA_DETECTION)
     case IPC::NSType::DDScannerResult:
-        return CoreIPCDDScannerResult((DDScannerResult *)object);
+        return CoreIPCWebKitSecureCoding((NSObject<NSSecureCoding> *)object);
 #endif
     case IPC::NSType::Data:
         return CoreIPCData((NSData *)object);

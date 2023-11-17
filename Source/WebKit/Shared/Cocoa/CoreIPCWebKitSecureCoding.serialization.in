@@ -22,10 +22,11 @@
 
 #if PLATFORM(COCOA) && ENABLE(DATA_DETECTION)
 
-webkit_platform_headers: "CoreIPCDDScannerResult.h"
+webkit_platform_headers: "CoreIPCWebKitSecureCoding.h"
 
-[WebKitPlatform] class WebKit::CoreIPCDDScannerResult {
-    WebKit::CoreIPCDDScannerResult::Value m_value
+[WebKitPlatform] class WebKit::CoreIPCWebKitSecureCoding {
+    IPC::NSType m_type;
+    WebKit::CoreIPCWebKitSecureCoding::Value m_value;
 }
 
 #endif // PLATFORM(COCOA) && ENABLE(DATA_DETECTION)

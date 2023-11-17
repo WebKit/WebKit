@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "CoreIPCDDScannerResult.h"
+#import "CoreIPCWebKitSecureCoding.h"
 
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(COCOA)
@@ -33,46 +33,51 @@
 #import "CoreIPCNSCFObject.h"
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
-@interface DDScannerResult ()
+@interface NSObject ()
 - (NSDictionary *)_webKitPropertyListData;
 - (id)_initWithWebKitPropertyListData:(NSDictionary *)plist;
 @end
 
 namespace WebKit {
 
-static bool shouldWrapDDScannerResult()
+static Class webKitSecureCodingClassFromNSType(IPC::NSType type)
 {
-    static std::once_flag onceFlag;
-    static bool shouldWrap;
-    std::call_once(onceFlag, [&] {
-        shouldWrap = PAL::getDDScannerResultClass()
-            && [PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_webKitPropertyListData)]
-            && [PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)];
-    });
-
-    return shouldWrap;
+    switch (type) {
+    case IPC::NSType::DDScannerResult:
+        return PAL::getDDScannerResultClass();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
-CoreIPCDDScannerResult::Value CoreIPCDDScannerResult::valueFromDDScannerResult(DDScannerResult *result)
+static bool shouldWrapWithPropertyList(id object)
 {
-    if (shouldWrapDDScannerResult())
-        return CoreIPCDictionary { [result _webKitPropertyListData] };
-    return CoreIPCSecureCoding { result };
+    auto objectClass = [object class];
+    return [objectClass instancesRespondToSelector:@selector(_webKitPropertyListData)]
+        && [objectClass instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)];
 }
 
-CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *result)
-    : m_value(valueFromDDScannerResult(result))
+CoreIPCWebKitSecureCoding::Value CoreIPCWebKitSecureCoding::valueFromNSSecureCoding(NSObject<NSSecureCoding> *object)
+{
+    if (shouldWrapWithPropertyList(object))
+        return CoreIPCDictionary { [object _webKitPropertyListData] };
+    return CoreIPCSecureCoding { object };
+}
+
+CoreIPCWebKitSecureCoding::CoreIPCWebKitSecureCoding(NSObject<NSSecureCoding> *object)
+    : m_type(IPC::typeFromObject(object))
+    , m_value(valueFromNSSecureCoding(object))
 {
 }
 
-RetainPtr<id> CoreIPCDDScannerResult::toID() const
+RetainPtr<id> CoreIPCWebKitSecureCoding::toID() const
 {
     RetainPtr<id> result;
 
     WTF::switchOn(m_value,
         [&](const CoreIPCDictionary& dictionary) {
-            ASSERT(shouldWrapDDScannerResult());
-            result = adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:dictionary.toID().get()]);
+            ASSERT([webKitSecureCodingClassFromNSType(m_type) instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
+            result = adoptNS([[webKitSecureCodingClassFromNSType(m_type) alloc] _initWithWebKitPropertyListData:dictionary.toID().get()]);
         }, [&](const CoreIPCSecureCoding& secureCoding) {
             result = secureCoding.toID();
         }

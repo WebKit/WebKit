@@ -26,45 +26,43 @@
 #pragma once
 
 #if ENABLE(DATA_DETECTION)
-#if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
 #include "CoreIPCDictionary.h"
 #include "CoreIPCSecureCoding.h"
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS DDScannerResult;
-
 namespace WebKit {
 
 class CoreIPCNSCFObject;
 
-class CoreIPCDDScannerResult {
+class CoreIPCWebKitSecureCoding {
 public:
-    CoreIPCDDScannerResult(DDScannerResult *);
-    CoreIPCDDScannerResult(const RetainPtr<DDScannerResult>& result)
-        : CoreIPCDDScannerResult(result.get())
+    CoreIPCWebKitSecureCoding(NSObject<NSSecureCoding> *);
+    CoreIPCWebKitSecureCoding(const RetainPtr<NSObject<NSSecureCoding>>& object)
+        : CoreIPCWebKitSecureCoding(object.get())
     {
     }
 
     RetainPtr<id> toID() const;
 
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCDDScannerResult, void>;
+    friend struct IPC::ArgumentCoder<CoreIPCWebKitSecureCoding, void>;
 
     using Value = std::variant<CoreIPCDictionary, CoreIPCSecureCoding>;
 
-    static Value valueFromDDScannerResult(DDScannerResult *);
+    static Value valueFromNSSecureCoding(NSObject<NSSecureCoding> *);
 
-    CoreIPCDDScannerResult(Value&& value)
-        : m_value(WTFMove(value))
+    CoreIPCWebKitSecureCoding(IPC::NSType type, Value&& value)
+        : m_type(type)
+        , m_value(WTFMove(value))
     {
     }
 
+    IPC::NSType m_type;
     Value m_value;
 };
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
 #endif // ENABLE(DATA_DETECTION)
