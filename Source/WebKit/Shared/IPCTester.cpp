@@ -134,10 +134,10 @@ void IPCTester::stopMessageTesting(CompletionHandler<void()>&& completionHandler
     completionHandler();
 }
 
-void IPCTester::createStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
+void IPCTester::createStreamTester(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
 {
     auto addResult = m_streamTesters.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(identifier, WTFMove(serverConnection)) };
+        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(identifier, WTFMove(serverConnection), connection.ignoreInvalidMessageForTesting()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }

@@ -42,16 +42,16 @@
 
 namespace WebKit {
 
-RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, bool ignoreInvalidMessageForTesting)
 {
-    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle)));
+    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle), ignoreInvalidMessageForTesting));
     tester->initialize();
     return tester;
 }
 
-IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, bool ignoreInvalidMessageForTesting)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("IPCStreamTester work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle)).releaseNonNull())
+    , m_streamConnection(IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), { ignoreInvalidMessageForTesting }).releaseNonNull())
     , m_identifier(identifier)
 {
 }
@@ -91,6 +91,11 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         return WTFMove(*handle);
     }();
     completionHandler(WTFMove(result));
+}
+
+void IPCStreamTester::syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int32_t)>&& completionHandler)

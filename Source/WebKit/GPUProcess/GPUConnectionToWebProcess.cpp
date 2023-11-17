@@ -597,7 +597,11 @@ RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 
 void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle));
+    IPC::StreamServerConnectionParameters params;
+#if ENABLE(IPC_TESTING_API)
+    params.ignoreInvalidMessageForTesting = connection().ignoreInvalidMessageForTesting();
+#endif
+    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
     auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
@@ -628,7 +632,11 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
         return;
     auto* renderingBackend = it->value.get();
 
-    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle));
+    IPC::StreamServerConnectionParameters params;
+#if ENABLE(IPC_TESTING_API)
+    params.ignoreInvalidMessageForTesting = connection().ignoreInvalidMessageForTesting();
+#endif
+    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
     auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
@@ -679,7 +687,11 @@ void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, Ren
         return;
     auto* renderingBackend = it->value.get();
 
-    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle));
+    IPC::StreamServerConnectionParameters params;
+#if ENABLE(IPC_TESTING_API)
+    params.ignoreInvalidMessageForTesting = connection().ignoreInvalidMessageForTesting();
+#endif
+    auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
     auto addResult = m_remoteGPUMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
