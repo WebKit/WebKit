@@ -104,32 +104,6 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 class VideoFrame;
 #endif
 
-class InspectorScopedShaderProgramHighlight {
-public:
-    InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase&, WebGLProgram*);
-
-    ~InspectorScopedShaderProgramHighlight();
-
-private:
-    void showHighlight();
-    void hideHighlight();
-
-    struct {
-        GCGLfloat color[4];
-        GCGLenum equationRGB;
-        GCGLenum equationAlpha;
-        GCGLenum srcRGB;
-        GCGLenum dstRGB;
-        GCGLenum srcAlpha;
-        GCGLenum dstAlpha;
-        GCGLboolean enabled;
-    } m_savedBlend;
-
-    WebGLRenderingContextBase& m_context;
-    WebGLProgram* m_program { nullptr };
-    bool m_didApply { false };
-};
-
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
@@ -479,10 +453,13 @@ protected:
     friend class WebGLVertexArrayObjectOES;
 
     // Implementation helpers.
-    friend class InspectorScopedShaderProgramHighlight;
     friend class ScopedDisableRasterizerDiscard;
-    friend class ScopedEnableBackbuffer;
     friend class ScopedDisableScissorTest;
+    friend class ScopedEnableBackbuffer;
+    friend class ScopedInspectorShaderProgramHighlight;
+    friend class ScopedWebGLRestoreFramebuffer;
+    friend class ScopedWebGLRestoreRenderbuffer;
+    friend class ScopedWebGLRestoreTexture;
 
     void initializeNewContext(Ref<GraphicsContextGL>);
     virtual void initializeContextState();

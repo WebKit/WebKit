@@ -30,6 +30,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "WebGLExtensionAnyInlines.h"
+#include "WebGLUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
     context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
+        ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
         context.graphicsContextGL()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) });
     }
@@ -109,7 +110,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
     context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
+        ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
         context.graphicsContextGL()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, baseVerticesList.data() + baseVerticesOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) }, type);
     }

@@ -34,6 +34,7 @@
 #include "WebGL2RenderingContext.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLUtilities.h"
 #include <wtf/Scope.h>
 
 #if PLATFORM(COCOA)
@@ -133,15 +134,9 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
 
-    GCGLint boundFBO = gl.getInteger(GL::FRAMEBUFFER_BINDING);
-    GCGLint boundRenderbuffer = gl.getInteger(GL::RENDERBUFFER_BINDING);
-    GCGLint boundTexture = gl.getInteger(textureTargetBinding);
-
-    auto scopedBindings = makeScopeExit([=, textureTarget = textureTarget, &gl]() {
-        gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
-        gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
-        gl.bindTexture(textureTarget, boundTexture);
-    });
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
+    ScopedWebGLRestoreTexture restoreTexture { m_context, textureTarget };
+    ScopedWebGLRestoreRenderbuffer restoreRenderBuffer { m_context };
 
     gl.bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
     // https://immersive-web.github.io/webxr/#opaque-framebuffer
@@ -201,25 +196,7 @@ void WebXROpaqueFramebuffer::endFrame()
     auto& gl = *m_context.graphicsContextGL();
 
     if (m_multisampleColorBuffer) {
-        // FIXME: These may be needed when using ANGLE, but it didn't compile in the initial implementation.
-        // https://bugs.webkit.org/show_bug.cgi?id=245210
-        // TemporaryOpenGLSetting scopedScissor(GL::SCISSOR_TEST, 0);
-        // TemporaryOpenGLSetting scopedDither(GL::DITHER, 0);
-        // TemporaryOpenGLSetting scopedDepth(GL::DEPTH_TEST, 0);
-        // TemporaryOpenGLSetting scopedStencil(GL::STENCIL_TEST, 0);
-
-        GCGLint boundFBO { 0 };
-        GCGLint boundReadFBO { 0 };
-        GCGLint boundDrawFBO { 0 };
-        gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
-        gl.getIntegerv(GL::READ_FRAMEBUFFER_BINDING, std::span(&boundReadFBO, 1));
-        gl.getIntegerv(GL::DRAW_FRAMEBUFFER_BINDING, std::span(&boundDrawFBO, 1));
-
-        auto scopedBindings = makeScopeExit([&gl, boundFBO, boundReadFBO, boundDrawFBO]() {
-            gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
-            gl.bindFramebuffer(GL::READ_FRAMEBUFFER, boundReadFBO);
-            gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, boundDrawFBO);
-        });
+        ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
 
         GCGLbitfield buffers = GL::COLOR_BUFFER_BIT;
         if (m_depthStencilBuffer)
@@ -263,14 +240,8 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         return false;
     auto& gl = *m_context.graphicsContextGL();
 
-    // Restore bindings when exiting the function.
-    GCGLint boundFBO = gl.getInteger(GL::FRAMEBUFFER_BINDING);
-    GCGLint boundRenderbuffer = gl.getInteger(GL::RENDERBUFFER_BINDING);
-
-    auto scopedBindings = makeScopeExit([=, &gl]() {
-        gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
-        gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
-    });
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
+    ScopedWebGLRestoreRenderbuffer restoreRenderbuffer { m_context };
 
     // Set up color, depth and stencil formats
     const bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;

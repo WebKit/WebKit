@@ -29,7 +29,7 @@
 #include "WebGLDrawInstancedBaseVertexBaseInstance.h"
 
 #include "InspectorInstrumentation.h"
-
+#include "WebGLUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -64,7 +64,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWE
     context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
+        ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
         context.graphicsContextGL()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
     }
@@ -87,7 +87,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBa
     context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
+        ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
         context.graphicsContextGL()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
     }
