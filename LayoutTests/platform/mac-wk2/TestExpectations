@@ -1542,6 +1542,9 @@ webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ F
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
+# Need to handle object fit MSE for non UI-side compositing
+webkit.org/b/264944 [ Monterey Ventura ] http/tests/media/media-source/media-source-video-fit-fill.html [ Failure ]
+
 fast/text/install-font-style-recalc.html [ Pass ]
 
 webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ImageOnlyFailure ]
