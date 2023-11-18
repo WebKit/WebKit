@@ -41,19 +41,34 @@ from webkitbugspy import radar
 
 def set_env_variables_from_branch_config():
     BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], **ENCODING_KWARGS).strip()
-    for name, variable in dict(
-        title='COMMIT_MESSAGE_TITLE',
-        bug='COMMIT_MESSAGE_BUG',
-        cherry_picked='GIT_WEBKIT_CHERRY_PICKED',
+    for name, data in dict(
+        title=('COMMIT_MESSAGE_TITLE', 1),
+        bug=('COMMIT_MESSAGE_BUG', re.compile(r'^(\D+)\d+$')),
+        cherry_picked=('GIT_WEBKIT_CHERRY_PICKED', 1),
     ).items():
+        variable, mode = data
         if variable in os.environ:
             continue
         try:
-            value = subprocess.check_output(
+            value = ''
+            count = 0
+            for line in reversed(subprocess.check_output(
                 ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
                 stderr=subprocess.PIPE,
                 **ENCODING_KWARGS
-            ).strip()
+            ).strip().splitlines()):
+                if isinstance(mode, int) and count >= mode:
+                    break
+                elif isinstance(mode, re.Pattern):
+                    match = mode.match(line)
+                    if match and match.group(1) in value:
+                        continue
+
+                if line:
+                    value += line + '\n'
+                    count += 1
+
+            value = value.strip()
             if value:
                 os.environ[variable] = value
         except subprocess.CalledProcessError as error:
