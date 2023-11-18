@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 200px">
+    <defs>
+      <clipPath id="clip" clipPathUnits="objectBoundingBox">
+        <rect id="clipContent" x="0.25" y="0.25" width=".5" height=".5"></rect>
+      </clipPath>
+    </defs>
+    <rect id="target" x="0" y="0" width="100" height="100" clip-path="url(#clip)" fill="red"/>
+</svg>
+<script>
+    function repaintTest() {
+        document.getElementById("clipContent").setAttribute('fill', 'green');
+    }
+</script>
+</body>
+</html>

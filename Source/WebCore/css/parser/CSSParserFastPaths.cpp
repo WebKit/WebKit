@@ -901,6 +901,47 @@ static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, StringVie
     return parseSimpleTransformList(string.characters16(), string.length());
 }
 
+static RefPtr<CSSValue> parseDisplay(StringView string)
+{
+    ASSERT(!string.isEmpty());
+    auto valueID = cssValueKeywordID(string);
+
+    switch (valueID) {
+    // <display-outside>
+    case CSSValueBlock:
+    case CSSValueInline:
+    // <display-inside> (except for CSSValueFlow since it becomes "block")
+    case CSSValueFlex:
+    case CSSValueFlowRoot:
+    case CSSValueGrid:
+    case CSSValueTable:
+    // <display-internal>
+    case CSSValueTableCaption:
+    case CSSValueTableCell:
+    case CSSValueTableColumnGroup:
+    case CSSValueTableColumn:
+    case CSSValueTableHeaderGroup:
+    case CSSValueTableFooterGroup:
+    case CSSValueTableRow:
+    case CSSValueTableRowGroup:
+    // <display-legacy>
+    case CSSValueInlineBlock:
+    case CSSValueInlineFlex:
+    case CSSValueInlineGrid:
+    case CSSValueInlineTable:
+    // Prefixed values
+    case CSSValueWebkitInlineBox:
+    case CSSValueWebkitBox:
+    // No layout support for the full <display-listitem> syntax, so treat it as <display-legacy>
+    case CSSValueListItem:
+        return CSSPrimitiveValue::create(valueID);
+    default:
+        if (isCSSWideKeyword(valueID))
+            return CSSPrimitiveValue::create(valueID);
+        return nullptr;
+    }
+}
+
 static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
@@ -913,6 +954,8 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 {
     if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
         return result;
+    if (propertyID == CSSPropertyDisplay)
+        return parseDisplay(string);
     if ((propertyID == CSSPropertyCaretColor || propertyID == CSSPropertyAccentColor) && isExposed(propertyID, &context.propertySettings))
         return parseColorWithAuto(string, context);
     if (CSSProperty::isColorProperty(propertyID))

@@ -2749,6 +2749,9 @@ bool JSTestObj::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyN
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
 
     throwScope.assertNoException();
+    if (!parseIndex(propertyName))
+        RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));
+
     PropertyDescriptor ownDescriptor;
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);;
     bool ignoreNamedProperties = true;

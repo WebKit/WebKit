@@ -34,6 +34,7 @@
 #import "WKFullscreenStackView.h"
 #import "WKScrollView.h"
 #import "WKWebView.h"
+#import "WKWebViewIOS.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebFullScreenManagerProxy.h"

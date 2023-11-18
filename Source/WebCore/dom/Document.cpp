@@ -1696,6 +1696,12 @@ String Document::contentType() const
     return "application/xml"_s;
 }
 
+AtomString Document::encoding() const
+{
+    auto encoding = textEncoding().domName();
+    return encoding.isNull() ? nullAtom() : AtomString { encoding };
+}
+
 RefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
     auto boundary = caretPositionFromPoint(LayoutPoint(x, y));

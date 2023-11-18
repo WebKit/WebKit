@@ -61,6 +61,9 @@ public:
 
     const String& pluginReplacementTextIfUnavailable() const { return m_unavailablePluginReplacementText; }
 
+    bool usesAsyncScrolling() const;
+    ScrollingNodeID scrollingNodeID() const;
+
 private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
     void paint(PaintInfo&, const LayoutPoint&) final;

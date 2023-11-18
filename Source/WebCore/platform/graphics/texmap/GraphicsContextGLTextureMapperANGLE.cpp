@@ -39,16 +39,15 @@
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
 #endif
 
 #if USE(NICOSIA)
 #include "NicosiaGCGLANGLELayer.h"
 #else
 #include "TextureMapperGCGLPlatformLayer.h"
-#endif
-
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
-#include "VideoFrameGStreamer.h"
 #endif
 
 #if USE(ANGLE_GBM)

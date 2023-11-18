@@ -63,6 +63,9 @@ public:
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
     virtual void willDetachRenderer() { }
 
+    virtual bool usesAsyncScrolling() const { return false; }
+    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif

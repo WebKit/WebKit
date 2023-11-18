@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "WKFrameInfoInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"

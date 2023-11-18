@@ -99,6 +99,12 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
     case ScrollingNodeType::FrameHosting:
         ts << "frame-hosting";
         break;
+    case ScrollingNodeType::PluginScrolling:
+        ts << "plugin-scrolling";
+        break;
+    case ScrollingNodeType::PluginHosting:
+        ts << "plugin-hosting";
+        break;
     case ScrollingNodeType::Overflow:
         ts << "overflow-scrolling";
         break;

@@ -420,6 +420,8 @@ public:
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool isPaintingSVGResourceLayer() const { return m_isPaintingSVGResourceLayer; }
+
+    inline RenderSVGHiddenContainer* enclosingSVGHiddenOrResourceContainer() const;
 #endif
 
     void repaintIncludingDescendants();
@@ -490,8 +492,8 @@ public:
     bool isForcedStackingContext() const { return m_forcedStackingContext; }
     bool isOpportunisticStackingContext() const { return m_isOpportunisticStackingContext; }
 
-    RenderLayerCompositor& compositor() const;
-    
+    WEBCORE_EXPORT RenderLayerCompositor& compositor() const;
+
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.
     void contentChanged(ContentChangeType);

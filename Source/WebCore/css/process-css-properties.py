@@ -3012,7 +3012,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_names_h_property_settings(self, *, to):
-        settings_variable_declarations = (f"bool {flag} {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
+        settings_variable_declarations = (f"bool {flag} : 1 {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
 
         to.write(f"struct CSSPropertySettings {{")
         with to.indent():

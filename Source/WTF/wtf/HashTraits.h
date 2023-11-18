@@ -26,6 +26,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #ifdef __OBJC__
 #include <CoreFoundation/CoreFoundation.h>
@@ -199,6 +200,13 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
     using TakeType = std::unique_ptr<T>;
     static TakeType take(UniqueRef<T>&& value) { return value.moveToUniquePtr(); }
     static TakeType take(std::nullptr_t) { return nullptr; }
+};
+
+template<> struct HashTraits<ASCIILiteral> : SimpleClassHashTraits<ASCIILiteral> {
+    static ASCIILiteral emptyValue() { return { }; }
+
+    static void constructDeletedValue(ASCIILiteral& slot) { slot = ASCIILiteral::fromLiteralUnsafe(reinterpret_cast<const char*>(-1)); }
+    static bool isDeletedValue(const ASCIILiteral& value) { return value.characters() == reinterpret_cast<const char*>(-1); }
 };
 
 template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : SimpleClassHashTraits<RefPtr<P, Q, R>> {

@@ -87,6 +87,7 @@ PluginInfo PDFPluginBase::pluginInfo()
 
 PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
+    , m_element(element)
     , m_identifier(PDFPluginIdentifier::generate())
 {
 }

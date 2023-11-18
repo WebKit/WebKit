@@ -1122,17 +1122,6 @@ AXID AXObjectCache::generateNewObjectID() const
     return axID;
 }
 
-Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& axIDs) const
-{
-    ASSERT(isMainThread());
-
-    return WTF::compactMap(axIDs, [&](auto& axID) -> std::optional<RefPtr<AXCoreObject>> {
-        if (auto* object = objectForID(axID))
-            return RefPtr { object };
-        return std::nullopt;
-    });
-}
-
 AXID AXObjectCache::getAXID(AccessibilityObject* object)
 {
     // check for already-assigned ID
@@ -4634,7 +4623,7 @@ static bool relationCausesCycle(AccessibilityObject* origin, AccessibilityObject
     return false;
 }
 
-void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType, AddingSymmetricRelation addingSymmetricRelation)
+void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType, AddSymmetricRelation addSymmetricRelation)
 {
     if (!validRelation(origin, target, relationType))
         return;
@@ -4648,7 +4637,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         m_relations.add(origin->objectID(), AXRelations { { static_cast<uint8_t>(relationType), { target->objectID() } } });
     } else if (auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType)); targetsIterator == relationsIterator->value.end()) {
         // No relation of this type for this object, add the first one.
-        relationsIterator->value.add(static_cast<uint8_t>(relationType), Vector<AXID> { target->objectID() });
+        relationsIterator->value.add(static_cast<uint8_t>(relationType), ListHashSet { target->objectID() });
     } else {
         // There are already relations of this type for the object. Add the new relation.
         if (relationType == AXRelationType::ActiveDescendant
@@ -4656,7 +4645,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
             // There should be only one active descendant and only one owner. Enforce that by removing any existing targets.
             targetsIterator->value.clear();
         }
-        targetsIterator->value.append(target->objectID());
+        targetsIterator->value.add(target->objectID());
     }
     m_relationTargets.add(target->objectID());
 
@@ -4678,9 +4667,9 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
             childrenChanged(parentObject);
     }
 
-    if (addingSymmetricRelation == AddingSymmetricRelation::No) {
+    if (addSymmetricRelation == AddSymmetricRelation::Yes) {
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
-            addRelation(target, origin, symmetric, AddingSymmetricRelation::Yes);
+            addRelation(target, origin, symmetric, AddSymmetricRelation::No);
     }
 }
 
@@ -4715,10 +4704,7 @@ void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationT
     auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
     if (targetsIterator == relationsIterator->value.end())
         return;
-
-    targetsIterator->value.removeAllMatching([targetID] (const AXID axID) {
-        return axID == targetID;
-    });
+    targetsIterator->value.remove(targetID);
 }
 
 void AXObjectCache::updateRelationsIfNeeded()
@@ -4834,7 +4820,7 @@ const HashSet<AXID>& AXObjectCache::relationTargetIDs()
     return m_relationTargets;
 }
 
-std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)
+std::optional<ListHashSet<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)
 {
     updateRelationsIfNeeded();
     auto relationsIterator = m_relations.find(object.objectID());

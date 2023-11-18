@@ -29,55 +29,76 @@
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
+namespace EnumNamespace {
 #if ENABLE(BOOL_ENUM)
-namespace EnumNamespace { enum class BoolEnumType : bool; }
+enum class BoolEnumType : bool;
 #endif
-enum class EnumWithoutNamespace : uint8_t;
 #if ENABLE(UINT16_ENUM)
-namespace EnumNamespace { enum class EnumType : uint16_t; }
+enum class EnumType : uint16_t;
 #endif
+}
+
+namespace JSC {
+enum class Incredible;
+}
+
+namespace Namespace {
+class ReturnRefClass;
+struct EmptyConstructorStruct;
+class EmptyConstructorWithIf;
+#if ENABLE(TEST_FEATURE)
+class ConditionalCommonClass;
+#endif
+class CommonClass;
+class AnotherCommonClass;
+}
+
+namespace Namespace::Subnamespace {
+#if ENABLE(TEST_FEATURE)
+struct StructName;
+#endif
+}
+
+namespace Testing {
+enum class StorageSize : uint8_t;
+}
+
+namespace WTF {
+class Seconds;
+class CreateUsingClass;
+}
+
+namespace WebCore {
+class InheritsFrom;
+class InheritanceGrandchild;
+template<typename, typename> class ScrollSnapOffsetsInfo;
+using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
+class TimingFunction;
+class MoveOnlyBaseClass;
+class MoveOnlyDerivedClass;
+class ScrollingStateFrameHostingNode;
+class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
+struct Amazing;
+}
+
+namespace WebKit {
+class PlatformClass;
+class CustomEncoded;
+class LayerProperties;
+class RValueWithFunctionCalls;
+class Fabulous;
+}
+
+enum class EnumWithoutNamespace : uint8_t;
 enum class OptionSetEnumFirstCondition : uint32_t;
 enum class OptionSetEnumLastCondition : uint32_t;
 enum class OptionSetEnumAllCondition : uint32_t;
-#if ENABLE(TEST_FEATURE)
-namespace Namespace::Subnamespace { struct StructName; }
-#endif
-namespace Namespace { class ReturnRefClass; }
-namespace Namespace { struct EmptyConstructorStruct; }
-namespace Namespace { class EmptyConstructorWithIf; }
 class WithoutNamespace;
 class WithoutNamespaceWithAttributes;
-namespace WebCore { class InheritsFrom; }
-namespace WebCore { class InheritanceGrandchild; }
-namespace WTF { class Seconds; }
-namespace WTF { class CreateUsingClass; }
-namespace WebCore {
-template<typename, typename> class ScrollSnapOffsetsInfo;
-using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
-}
 struct SoftLinkedMember;
-namespace WebCore { class TimingFunction; }
-#if ENABLE(TEST_FEATURE)
-namespace Namespace { class ConditionalCommonClass; }
-#endif
-namespace Namespace { class CommonClass; }
-namespace Namespace { class AnotherCommonClass; }
-namespace WebCore { class MoveOnlyBaseClass; }
-namespace WebCore { class MoveOnlyDerivedClass; }
-namespace WebKit { class PlatformClass; }
-namespace WebKit { class CustomEncoded; }
-namespace WebKit { class LayerProperties; }
-namespace WebKit { class Fabulous; }
-namespace WebCore { struct Amazing; }
-namespace JSC { enum class Incredible; }
-namespace Testing { enum class StorageSize : uint8_t; }
-namespace WebCore { class ScrollingStateFrameHostingNode; }
-namespace WebCore { class ScrollingStateFrameHostingNodeWithStuffAfterTuple; }
 struct RequestEncodedWithBody;
 struct RequestEncodedWithBodyRValue;
-#if USE(CFBAR)
-#endif
-namespace WebKit { class RValueWithFunctionCalls; }
+
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
 #endif

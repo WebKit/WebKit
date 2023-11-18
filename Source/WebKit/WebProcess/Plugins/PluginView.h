@@ -142,6 +142,9 @@ private:
     bool shouldAllowNavigationFromDrags() const final;
     void willDetachRenderer() final;
 
+    bool usesAsyncScrolling() const final;
+    WebCore::ScrollingNodeID scrollingNodeID() const final;
+
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;
     void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::RegionContext*) final;

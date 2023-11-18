@@ -215,7 +215,9 @@ protected:
         const auto& adjacentsOfU = m_adjacencyList[u];
         const auto& adjacentsOfV = m_adjacencyList[v];
 
-        Vector<IndexType, MacroAssembler::numGPRs + MacroAssembler::numFPRs> highOrderAdjacents;
+        std::array<IndexType, MacroAssembler::numGPRs + MacroAssembler::numFPRs> highOrderAdjacents;
+        size_t highOrderAdjacentsSize = 0;
+
         RELEASE_ASSERT(registerCount() <= MacroAssembler::numGPRs + MacroAssembler::numFPRs);
         unsigned numCandidates = adjacentsOfU.size() + adjacentsOfV.size();
         if (numCandidates < registerCount()) {
@@ -228,16 +230,16 @@ protected:
             ASSERT(adjacentTmpIndex != u);
             numCandidates--;
             if (!hasBeenSimplified(adjacentTmpIndex) && m_degrees[adjacentTmpIndex] >= registerCount()) {
-                ASSERT(std::find(highOrderAdjacents.begin(), highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
-                highOrderAdjacents.unsafeAppendWithoutCapacityCheck(adjacentTmpIndex);
-                if (highOrderAdjacents.size() >= registerCount())
+                ASSERT(std::find(highOrderAdjacents.begin(), highOrderAdjacents.begin() + highOrderAdjacentsSize, adjacentTmpIndex) == highOrderAdjacents.begin() + highOrderAdjacentsSize);
+                highOrderAdjacents[highOrderAdjacentsSize++] = adjacentTmpIndex;
+                if (highOrderAdjacentsSize >= registerCount())
                     return false;
-            } else if (highOrderAdjacents.size() + numCandidates < registerCount())
+            } else if (highOrderAdjacentsSize + numCandidates < registerCount())
                 return true;
         }
         ASSERT(numCandidates == adjacentsOfV.size());
 
-        auto iteratorEndHighOrderAdjacentsOfU = highOrderAdjacents.end();
+        auto iteratorEndHighOrderAdjacentsOfU = highOrderAdjacents.begin() + highOrderAdjacentsSize;
         for (IndexType adjacentTmpIndex : adjacentsOfV) {
             ASSERT(adjacentTmpIndex != u);
             ASSERT(adjacentTmpIndex != v);
@@ -245,16 +247,16 @@ protected:
             if (!hasBeenSimplified(adjacentTmpIndex)
                 && m_degrees[adjacentTmpIndex] >= registerCount()
                 && std::find(highOrderAdjacents.begin(), iteratorEndHighOrderAdjacentsOfU, adjacentTmpIndex) == iteratorEndHighOrderAdjacentsOfU) {
-                ASSERT(std::find(iteratorEndHighOrderAdjacentsOfU, highOrderAdjacents.end(), adjacentTmpIndex) == highOrderAdjacents.end());
-                highOrderAdjacents.unsafeAppendWithoutCapacityCheck(adjacentTmpIndex);
-                if (highOrderAdjacents.size() >= registerCount())
+                ASSERT(std::find(iteratorEndHighOrderAdjacentsOfU, highOrderAdjacents.begin() + highOrderAdjacentsSize, adjacentTmpIndex) == highOrderAdjacents.begin() + highOrderAdjacentsSize);
+                highOrderAdjacents[highOrderAdjacentsSize++] = adjacentTmpIndex;
+                if (highOrderAdjacentsSize >= registerCount())
                     return false;
-            } else if (highOrderAdjacents.size() + numCandidates < registerCount())
+            } else if (highOrderAdjacentsSize + numCandidates < registerCount())
                 return true;
         }
 
         ASSERT(!numCandidates);
-        ASSERT(highOrderAdjacents.size() < registerCount());
+        ASSERT(highOrderAdjacentsSize < registerCount());
         return true;
     }
 

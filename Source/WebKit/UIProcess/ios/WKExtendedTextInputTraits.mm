@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <wtf/RetainPtr.h>
+
 namespace WebKit {
 
 static constexpr auto selectionHighlightAlphaComponent = 0.2;

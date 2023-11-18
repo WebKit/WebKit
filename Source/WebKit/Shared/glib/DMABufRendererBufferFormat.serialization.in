@@ -30,4 +30,10 @@ struct WebKit::DMABufRendererBufferFormat {
     Vector<uint64_t, 1> modifiers;
 };
 
+[Nested] enum class WebKit::DMABufRendererBufferFormatUsage : uint8_t {
+    Rendering,
+    Mapping,
+    Scanout
+};
+
 #endif

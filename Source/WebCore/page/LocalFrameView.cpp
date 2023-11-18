@@ -886,6 +886,9 @@ ScrollableArea* LocalFrameView::scrollableAreaForScrollingNodeID(ScrollingNodeID
     if (!renderView)
         return nullptr;
 
+    if (auto area = m_scrollingNodeIDToPluginScrollableAreaMap.get(nodeID))
+        return area.get();
+
     return renderView->compositor().scrollableAreaForScrollingNodeID(nodeID);
 }
 

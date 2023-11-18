@@ -47,12 +47,12 @@ class RenderStyle;
 
 class EventRegionContext : public RegionContext {
 public:
-    explicit EventRegionContext(EventRegion&);
-    virtual ~EventRegionContext();
+    WEBCORE_EXPORT explicit EventRegionContext(EventRegion&);
+    WEBCORE_EXPORT virtual ~EventRegionContext();
 
     bool isEventRegionContext() const final { return true; }
 
-    void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
+    WEBCORE_EXPORT void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     bool contains(const IntRect&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

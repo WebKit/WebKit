@@ -388,7 +388,6 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
 #if !HAVE(SHARING_SERVICE_PICKER_STANDARD_SHARE_MENU_ITEM)
 static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(NSMenuItem *))
 {
-#if HAVE(NSSHARINGSERVICEPICKER_ASYNC_MENUS)
     // FIXME (<rdar://problem/54551500>): Replace this with the async variant of +[NSMenuItem standardShareMenuItemForItems:] when it's available.
     auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
     [sharingServicePicker setStyle:NSSharingServicePickerStyleMenu];
@@ -400,9 +399,6 @@ static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(N
         [shareMenuItem setSubmenu:shareMenu];
         completionHandler(shareMenuItem.get());
     }];
-#else
-    completionHandler([NSMenuItem standardShareMenuItemForItems:items]);
-#endif
 }
 #endif
 

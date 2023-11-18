@@ -282,7 +282,7 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
-    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
+    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
 
     void generateSubtree(AccessibilityObject&);
     void labelCreated(AccessibilityObject&);
@@ -313,7 +313,7 @@ public:
     void setFocusedNodeID(AXID);
 
     // Relationships between objects.
-    std::optional<Vector<AXID>> relatedObjectIDsFor(const AXIsolatedObject&, AXRelationType);
+    std::optional<ListHashSet<AXID>> relatedObjectIDsFor(const AXIsolatedObject&, AXRelationType);
     void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.

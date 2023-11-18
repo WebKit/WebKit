@@ -35,12 +35,12 @@ namespace PAL {
 
 void TextCodecUserDefined::registerEncodingNames(EncodingNameRegistrar registrar)
 {
-    registrar("x-user-defined", "x-user-defined");
+    registrar("x-user-defined"_s, "x-user-defined"_s);
 }
 
 void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("x-user-defined", [] {
+    registrar("x-user-defined"_s, [] {
         return makeUnique<TextCodecUserDefined>();
     });
 }

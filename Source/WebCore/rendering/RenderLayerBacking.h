@@ -134,6 +134,8 @@ public:
             return 0;
         case ScrollCoordinationRole::FrameHosting:
             return m_frameHostingNodeID;
+        case ScrollCoordinationRole::PluginHosting:
+            return m_pluginHostingNodeID;
         case ScrollCoordinationRole::ViewportConstrained:
             return m_viewportConstrainedNodeID;
         case ScrollCoordinationRole::Positioning:
@@ -441,6 +443,7 @@ private:
     ScrollingNodeID m_viewportConstrainedNodeID { 0 };
     ScrollingNodeID m_scrollingNodeID { 0 };
     ScrollingNodeID m_frameHostingNodeID { 0 };
+    ScrollingNodeID m_pluginHostingNodeID { 0 };
     ScrollingNodeID m_positioningNodeID { 0 };
 
     bool m_artificiallyInflatedBounds { false }; // bounds had to be made non-zero to make transform-origin work

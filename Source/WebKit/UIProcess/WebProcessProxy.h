@@ -399,10 +399,6 @@ public:
     void enableRemoteInspectorIfNeeded();
 #endif
     
-#if PLATFORM(COCOA)
-    void unblockAccessibilityServerIfNeeded();
-#endif
-
     void updateAudibleMediaAssertions();
     void updateMediaStreamingActivity();
 
@@ -679,10 +675,6 @@ private:
 
 #if HAVE(DISPLAY_LINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;
-#endif
-
-#if PLATFORM(COCOA)
-    bool m_hasSentMessageToUnblockAccessibilityServer { false };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

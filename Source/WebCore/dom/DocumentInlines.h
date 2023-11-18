@@ -51,8 +51,6 @@ inline PAL::TextEncoding Document::textEncoding() const
     return PAL::TextEncoding();
 }
 
-inline AtomString Document::encoding() const { return AtomString::fromLatin1(textEncoding().domName()); }
-
 inline String Document::charset() const { return Document::encoding(); }
 
 inline const Document* Document::templateDocument() const

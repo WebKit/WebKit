@@ -60,8 +60,8 @@ class Template(object):
 
     def forward_declaration(self):
         if self.enum_storage:
-            return 'namespace ' + self.namespace + ' { ' + self.type + ' ' + self.name + ' : ' + self.enum_storage + '; }'
-        return 'namespace ' + self.namespace + ' { ' + self.type + ' ' + self.name + '; }'
+            return self.type + ' ' + self.name + ' : ' + self.enum_storage + ';'
+        return self.type + ' ' + self.name + ';'
 
     def specialization(self):
         return self.namespace + '::' + self.name
@@ -408,6 +408,69 @@ def alias_struct_or_class(alias):
     return match.groups()[0]
 
 
+def generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations):
+    result = []
+    result.append('')
+    serialized_enums_by_namespace = dict()
+    serialized_types_by_namespace = dict()
+    template_types_by_namespace = dict()
+    for enum in serialized_enums:
+        if enum.is_nested():
+            continue
+        if enum.namespace in serialized_enums_by_namespace:
+            serialized_enums_by_namespace[enum.namespace] += [enum, ]
+        else:
+            serialized_enums_by_namespace[enum.namespace] = [enum, ]
+    for type in serialized_types:
+        for template in type.templates:
+            if template.namespace in template_types_by_namespace:
+                template_types_by_namespace[template.namespace] += [template, ]
+            else:
+                template_types_by_namespace[template.namespace] = [template, ]
+        if type.should_skip_forward_declare():
+            continue
+        if type.alias is None and type.cf_type is not None:
+            continue
+        if type.namespace in serialized_types_by_namespace:
+            serialized_types_by_namespace[type.namespace] += [type, ]
+        else:
+            serialized_types_by_namespace[type.namespace] = [type, ]
+    all_namespaces = set(serialized_enums_by_namespace.keys())
+    all_namespaces = all_namespaces.union(set(serialized_types_by_namespace.keys()))
+    all_namespaces = all_namespaces.union(set(template_types_by_namespace.keys()))
+    for namespace in sorted(all_namespaces, key=lambda x: (x is None, x)):
+        if namespace is not None:
+            result.append('namespace ' + namespace + ' {')
+        for enum in serialized_enums_by_namespace.get(namespace, []):
+            if enum.condition is not None:
+                result.append('#if ' + enum.condition)
+            result.append('enum class ' + enum.name + ' : ' + enum.underlying_type + ';')
+            if enum.condition is not None:
+                result.append('#endif')
+        for type in serialized_types_by_namespace.get(namespace, []):
+            if type.condition is not None:
+                result.append('#if ' + type.condition)
+            if type.alias is not None:
+                result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
+                result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
+            elif type.cf_type is None:
+                result.append(type.struct_or_class + ' ' + type.name + ';')
+            if type.condition is not None:
+                result.append('#endif')
+        for template in template_types_by_namespace.get(namespace, []):
+            result.append(template.forward_declaration())
+        if namespace is not None:
+            result.append('}')
+        result.append('')
+    for declaration in additional_forward_declarations:
+        if declaration.condition is not None:
+            result.append('#if ' + declaration.condition)
+        result.append(declaration.declaration + ';')
+        if declaration.condition is not None:
+            result.append('#endif')
+    return result
+
+
 def generate_header(serialized_types, serialized_enums, additional_forward_declarations):
     result = []
     result.append(_license_header)
@@ -416,43 +479,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     for header in ['<wtf/ArgumentCoder.h>', '<wtf/OptionSet.h>', '<wtf/Ref.h>', '<wtf/RetainPtr.h>']:
         result.append('#include ' + header)
 
-    result.append('')
-    for enum in serialized_enums:
-        if enum.is_nested():
-            continue
-        if enum.condition is not None:
-            result.append('#if ' + enum.condition)
-        if enum.namespace is None:
-            result.append('enum class ' + enum.name + ' : ' + enum.underlying_type + ';')
-        else:
-            result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
-        if enum.condition is not None:
-            result.append('#endif')
-    for type in serialized_types:
-        if type.condition is not None:
-            result.append('#if ' + type.condition)
-
-        if not type.should_skip_forward_declare():
-            if type.alias is not None:
-                result.append('namespace ' + type.namespace + ' {')
-                result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
-                result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
-                result.append('}')
-            elif type.cf_type is None:
-                if type.namespace is None:
-                    result.append(type.struct_or_class + ' ' + type.name + ';')
-                else:
-                    result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')
-        for template in type.templates:
-            result.append(template.forward_declaration())
-        if type.condition is not None:
-            result.append('#endif')
-    for declaration in additional_forward_declarations:
-        if declaration.condition is not None:
-            result.append('#if ' + declaration.condition)
-        result.append(declaration.declaration + ';')
-        if declaration.condition is not None:
-            result.append('#endif')
+    result += generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations)
     result.append('')
     result.append('namespace IPC {')
     result.append('')

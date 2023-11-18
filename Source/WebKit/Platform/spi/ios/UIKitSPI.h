@@ -375,7 +375,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 - (BOOL)handleKeyInputMethodCommandForCurrentEvent;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 - (BOOL)autocorrectSpellingEnabled;
-- (void)clearShiftState;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;
 - (void)replaceText:(id)replacement;
 @property (nonatomic, readwrite, retain) UIResponder <UIKeyInput> *delegate;

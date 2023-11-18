@@ -111,6 +111,22 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
 }
 
+bool RenderEmbeddedObject::usesAsyncScrolling() const
+{
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return false;
+    return pluginViewBase->usesAsyncScrolling();
+}
+
+ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
+{
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return false;
+    return pluginViewBase->scrollingNodeID();
+}
+
 #if !PLATFORM(IOS_FAMILY)
 static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
 {

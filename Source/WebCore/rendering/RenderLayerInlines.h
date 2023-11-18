@@ -72,4 +72,11 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
     return false;
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContainer() const
+{
+    return m_enclosingSVGHiddenOrResourceContainer.get();
+}
+#endif
+
 } // namespace WebCore
