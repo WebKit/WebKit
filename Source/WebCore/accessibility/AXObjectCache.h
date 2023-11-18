@@ -836,7 +836,6 @@ inline void AXObjectCache::onScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::liveRegionChangedNotificationPostTimerFired() { }
 inline void AXObjectCache::notificationPostTimerFired() { }
-inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>&) const { return { }; }
 inline void AXObjectCache::passwordNotificationPostTimerFired() { }
 inline void AXObjectCache::performDeferredCacheUpdate() { }
 inline void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject*) { }
@@ -854,7 +853,7 @@ inline void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable&) { }
 inline void AXObjectCache::onRendererCreated(Element&) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
-inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
+inline std::optional<ListHashSet<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
 inline void AXObjectCache::updateRelations(Element&, const QualifiedName&) { }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
