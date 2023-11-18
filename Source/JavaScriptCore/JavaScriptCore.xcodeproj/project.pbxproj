@@ -939,6 +939,7 @@
 		43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		4469970B2AFEF6CF008B930C /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		4487DB832AF825C800AFECAE /* Fuzzilli.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4487DB812AF825C700AFECAE /* Fuzzilli.cpp */; };
 		44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3950,6 +3951,8 @@
 		43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerCommon.h; sourceTree = "<group>"; };
 		442FBD852149D1E00073519C /* hasher.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = hasher.py; path = yarr/hasher.py; sourceTree = "<group>"; };
 		443CB47A2AE8A4E100878CC0 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		4487DB812AF825C700AFECAE /* Fuzzilli.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fuzzilli.cpp; sourceTree = "<group>"; };
+		4487DB822AF825C800AFECAE /* Fuzzilli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fuzzilli.h; sourceTree = "<group>"; };
 		44F93DFD2AE71EBD00FFA37C /* libJavaScriptCore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libJavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		44F93E022AE71F5400FFA37C /* libJavaScriptCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libJavaScriptCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCoreFramework.cpp; sourceTree = "<group>"; };
@@ -6218,6 +6221,7 @@
 				E3FF752D1D9CE9EA00C7E16D /* domjit */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				0FEA09FC1705137F00BB722C /* ftl */,
+				4487DB802AF8257200AFECAE /* fuzzilli */,
 				FE35C2EF21B1E650000F4CA8 /* generator */,
 				142E312A134FF0A600AFADB5 /* heap */,
 				A5BA15DF1823409200A82E69 /* inspector */,
@@ -7317,6 +7321,15 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		4487DB802AF8257200AFECAE /* fuzzilli */ = {
+			isa = PBXGroup;
+			children = (
+				4487DB812AF825C700AFECAE /* Fuzzilli.cpp */,
+				4487DB822AF825C800AFECAE /* Fuzzilli.h */,
+			);
+			path = fuzzilli;
+			sourceTree = "<group>";
 		};
 		534E03521E53BBA900213F64 /* accessCase */ = {
 			isa = PBXGroup;
@@ -13137,6 +13150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4487DB832AF825C800AFECAE /* Fuzzilli.cpp in Sources */,
 				932F5BDD0822A1C700736975 /* jsc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
