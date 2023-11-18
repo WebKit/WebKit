@@ -42,33 +42,4 @@ float SVGTextLayoutAttributes::emptyValue()
     return s_emptyValue;
 }
 
-static inline void dumpSVGCharacterDataMapValue(const char* identifier, float value, bool appendSpace = true)
-{
-    if (value == SVGTextLayoutAttributes::emptyValue()) {
-        fprintf(stderr, "%s=x", identifier);
-        if (appendSpace)
-            fprintf(stderr, " ");
-        return;
-    }
-    fprintf(stderr, "%s=%lf", identifier, value);
-    if (appendSpace)
-        fprintf(stderr, " ");
-}
-
-void SVGTextLayoutAttributes::dump() const
-{
-    fprintf(stderr, "context: %p\n", &m_context);
-    const SVGCharacterDataMap::const_iterator end = m_characterDataMap.end();
-    for (SVGCharacterDataMap::const_iterator it = m_characterDataMap.begin(); it != end; ++it) {
-        const SVGCharacterData& data = it->value;
-        fprintf(stderr, " ---> pos=%i, data={", it->key);
-        dumpSVGCharacterDataMapValue("x", data.x);
-        dumpSVGCharacterDataMapValue("y", data.y);
-        dumpSVGCharacterDataMapValue("dx", data.dx);
-        dumpSVGCharacterDataMapValue("dy", data.dy);
-        dumpSVGCharacterDataMapValue("rotate", data.rotate, false);
-        fprintf(stderr, "}\n");
-    }
-}
-
 }
