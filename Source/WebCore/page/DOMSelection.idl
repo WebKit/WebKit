@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://www.w3.org/TR/selection-api/#idl-def-Selection
+// https://w3c.github.io/selection-api/#selection-interface
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     InterfaceName=Selection,
@@ -67,7 +67,7 @@
     [CEReactions=Needed] undefined deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartialContainment = false);
 
-    [NotEnumerable] DOMString toString();
+    DOMString toString();
 
     // Non-standard methods and attributes.
 
