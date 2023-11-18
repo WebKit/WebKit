@@ -2179,6 +2179,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionDeclarativeNetRequestRule {
+    header "_WKWebExtensionDeclarativeNetRequestRule.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestTranslator {
+    header "_WKWebExtensionDeclarativeNetRequestTranslator.h"
+    export *
+  }
+
   explicit module _WKWebExtensionMatchPattern {
     header "_WKWebExtensionMatchPattern.h"
     export *

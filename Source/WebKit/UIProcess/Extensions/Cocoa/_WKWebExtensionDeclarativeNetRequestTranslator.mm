@@ -31,8 +31,6 @@
 #import "CocoaHelpers.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 
-NSString * const currentDeclarativeNetRequestHashVersion = @"3";
-
 static const NSUInteger maximumNumberOfDeclarativeNetRequestErrorsToSurface = 50;
 
 using namespace WebKit;
@@ -79,7 +77,7 @@ using namespace WebKit;
     return translatedRules;
 }
 
-+ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray<NSString *> **)outErrorStrings
++ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray **)outErrorStrings
 {
     NSMutableArray *allJSONObjects = [NSMutableArray array];
     NSMutableArray<NSString *> *errors = [NSMutableArray array];
@@ -97,6 +95,22 @@ using namespace WebKit;
         *outErrorStrings = [errors copy];
 
     return allJSONObjects;
+}
+
+@end
+
+#else
+
+@implementation _WKWebExtensionDeclarativeNetRequestTranslator
+
++ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSArray<NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray **)outErrorStrings
+{
+    return nil;
+}
+
++ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray **)outErrorStrings
+{
+    return nil;
 }
 
 @end
