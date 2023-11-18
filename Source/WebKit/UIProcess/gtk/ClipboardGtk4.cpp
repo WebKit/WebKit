@@ -77,21 +77,27 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
 struct ReadTextAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler)
+    explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler, GRefPtr<GMainLoop> mainLoop)
         : completionHandler(WTFMove(handler))
+        , loop(mainLoop)
     {
     }
 
     CompletionHandler<void(String&&)> completionHandler;
+    GRefPtr<GMainLoop> loop;
 };
 
 void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler)
 {
+    GRefPtr<GMainLoop> loop = adoptGRef(g_main_loop_new(0, FALSE));
     gdk_clipboard_read_text_async(m_clipboard, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
         std::unique_ptr<ReadTextAsyncData> data(static_cast<ReadTextAsyncData*>(userData));
         GUniquePtr<char> text(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(clipboard), result, nullptr));
         data->completionHandler(String::fromUTF8(text.get()));
-    }, new ReadTextAsyncData(WTFMove(completionHandler)));
+        g_main_loop_quit(data->loop.get());
+    }, new ReadTextAsyncData(WTFMove(completionHandler), loop));
+
+    g_main_loop_run(loop.get());
 }
 
 struct ReadFilePathsAsyncData {
@@ -129,22 +135,26 @@ void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& comple
 struct ReadBufferAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler)
+    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler, GRefPtr<GMainLoop> mainLoop)
         : completionHandler(WTFMove(handler))
+        , loop(mainLoop)
     {
     }
 
     CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)> completionHandler;
+    GRefPtr<GMainLoop> loop;
 };
 
 void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     const char* mimeTypes[] = { format, nullptr };
+    GRefPtr<GMainLoop> loop = adoptGRef(g_main_loop_new(0, FALSE));
     gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
         std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
         GRefPtr<GInputStream> inputStream = adoptGRef(gdk_clipboard_read_finish(GDK_CLIPBOARD(clipboard), result, nullptr, nullptr));
         if (!inputStream) {
             data->completionHandler(WebCore::SharedBuffer::create());
+            g_main_loop_quit(data->loop.get());
             return;
         }
 
@@ -156,13 +166,16 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
                 gssize writtenBytes = g_output_stream_splice_finish(G_OUTPUT_STREAM(stream), result, nullptr);
                 if (writtenBytes <= 0) {
                     data->completionHandler(WebCore::SharedBuffer::create());
+                    g_main_loop_quit(data->loop.get());
                     return;
                 }
 
                 GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
                 data->completionHandler(WebCore::SharedBuffer::create(bytes.get()));
+                g_main_loop_quit(data->loop.get());
             }, data.release());
-    }, new ReadBufferAsyncData(WTFMove(completionHandler)));
+    }, new ReadBufferAsyncData(WTFMove(completionHandler), loop));
+    g_main_loop_run(loop.get());
 }
 
 struct ReadURLAsyncData {
