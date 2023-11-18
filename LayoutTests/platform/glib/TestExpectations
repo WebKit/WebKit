@@ -1220,6 +1220,7 @@ webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [
 
 webkit.org/b/264708 [ Debug ] media/media-source/media-source-error-crash.html [ Pass Crash ]
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Pass Crash ]
+webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Pass Crash ]
 
 webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
 
