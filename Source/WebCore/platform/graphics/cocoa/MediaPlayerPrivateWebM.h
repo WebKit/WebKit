@@ -199,7 +199,7 @@ private:
 
     bool isReadyForMoreSamples(uint64_t);
     void didBecomeReadyForMoreSamples(uint64_t);
-    void appendCompleted();
+    void appendCompleted(bool);
     void provideMediaData(uint64_t);
     void provideMediaData(TrackBuffer&, uint64_t);
 
@@ -310,6 +310,7 @@ private:
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
     bool m_delayedIdle { false };
+    bool m_errored { false };
     bool m_processingInitializationSegment { false };
 };
 

@@ -1023,6 +1023,9 @@ media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failu
 
 # CRABS WebM isn't supported in WK1
 media/media-webm-opus-buffered.html [ Failure ]
+media/media-webm-opus-error.html [ Failure ]
+media/media-webm-opus-variable-length.html [ Failure ]
+media/media-webm-no-duration.html [ Failure ]
 
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]

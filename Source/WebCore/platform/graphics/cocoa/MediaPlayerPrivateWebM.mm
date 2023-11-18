@@ -888,19 +888,26 @@ void MediaPlayerPrivateWebM::didBecomeReadyForMoreSamples(uint64_t trackId)
     provideMediaData(trackId);
 }
 
-void MediaPlayerPrivateWebM::appendCompleted()
+void MediaPlayerPrivateWebM::appendCompleted(bool success)
 {
     ASSERT(m_pendingAppends > 0);
     m_pendingAppends--;
     INFO_LOG(LOGIDENTIFIER, "pending appends = ", m_pendingAppends);
     setLoadingProgresssed(true);
-    updateBufferedFromTrackBuffers(m_loadFinished && !m_pendingAppends);
+    m_errored |= !success;
+    if (!m_errored)
+        updateBufferedFromTrackBuffers(m_loadFinished && !m_pendingAppends);
+
     if (m_loadFinished && !m_pendingAppends) {
         if (!m_hasVideo && !m_hasAudio) {
             ERROR_LOG(LOGIDENTIFIER, "could not load audio or video tracks");
             setNetworkState(MediaPlayer::NetworkState::FormatError);
             setReadyState(MediaPlayer::ReadyState::HaveNothing);
-            setNetworkState(MediaPlayer::NetworkState::Idle);
+            return;
+        }
+        if (m_errored) {
+            ERROR_LOG(LOGIDENTIFIER, "parsing error");
+            setNetworkState(m_readyState >= MediaPlayer::ReadyState::HaveMetadata ? MediaPlayer::NetworkState::DecodeError : MediaPlayer::NetworkState::FormatError);
             return;
         }
         if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata)
@@ -1157,10 +1164,10 @@ void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
     SourceBufferParser::Segment segment(Ref { buffer });
     invokeAsync(m_appendQueue, [segment = WTFMove(segment), parser = m_parser]() mutable {
         return MediaPromise::createAndSettle(parser->appendData(WTFMove(segment)));
-    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }] {
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }](auto&& result) {
         if (!weakThis)
             return;
-        weakThis->appendCompleted();
+        weakThis->appendCompleted(!!result);
     });
 }
 
