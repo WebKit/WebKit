@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+#import "_WKWebExtensionDeclarativeNetRequestRule.h"
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #if !__has_feature(objc_arc)
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
-
-#import "config.h"
-#import "_WKWebExtensionDeclarativeNetRequestRule.h"
 
 #import "CocoaHelpers.h"
 #import "WKContentRuleListInternal.h"
@@ -337,7 +337,7 @@ using namespace WebKit;
         NSString *urlString = objectForKey<NSString>(redirectDictionary, declarativeNetRequestRuleRedirectURL, true);
         NSString *extensionPathString = objectForKey<NSString>(redirectDictionary, declarativeNetRequestRuleRedirectExtensionPath, true);
         NSString *regexSubstitutionString = objectForKey<NSString>(redirectDictionary, declarativeNetRequestRuleRedirectRegexSubstitution, true);
-        NSDictionary<NSString *, id> *transformDictionary = objectForKey<NSDictionary>(redirectDictionary, declarativeNetRequestRuleRedirectTransform);
+        NSDictionary<NSString *, id> *transformDictionary = objectForKey<NSDictionary>(redirectDictionary, declarativeNetRequestRuleRedirectTransform, false);
 
         if (!urlString && !extensionPathString && !transformDictionary && !regexSubstitutionString) {
             if (outErrorString)
@@ -408,7 +408,7 @@ using namespace WebKit;
             return nil;
         }
 
-        NSDictionary<NSString *, id> *queryTransformDictionary = objectForKey<NSDictionary>(transformDictionary, declarativeNetRequestRuleURLTransformQueryTransform);
+        NSDictionary<NSString *, id> *queryTransformDictionary = objectForKey<NSDictionary>(transformDictionary, declarativeNetRequestRuleURLTransformQueryTransform, false);
         if (queryTransformDictionary && !queryTransformDictionary.count) {
             if (outErrorString)
                 *outErrorString = [NSString stringWithFormat:@"Rule with id %ld is invalid. `transform` specified an invalid or empty `queryTransform`.", (long)_ruleID];
@@ -1026,6 +1026,22 @@ static NSInteger priorityForRuleType(NSString *ruleType)
         @"action": _action,
         @"condition" : _condition,
     }];
+}
+
+@end
+
+#else
+
+@implementation _WKWebExtensionDeclarativeNetRequestRule
+
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString
+{
+    return nil;
+}
+
+- (NSComparisonResult)compare:(_WKWebExtensionDeclarativeNetRequestRule *)rule
+{
+    return NSOrderedSame;
 }
 
 @end

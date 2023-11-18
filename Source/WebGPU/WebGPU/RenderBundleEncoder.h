@@ -98,6 +98,9 @@ public:
     bool isValid() const { return m_indirectCommandBuffer; }
     void replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
 
+    static constexpr auto startIndexForFragmentDynamicOffsets = 3;
+    static constexpr uint32_t defaultSampleMask = UINT32_MAX;
+
 private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
     RenderBundleEncoder(Device&);
@@ -155,6 +158,7 @@ private:
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
     bool m_requiresCommandReplay { false };
     bool m_requiresMetalWorkaround { true };
+    uint32_t m_sampleMask { defaultSampleMask };
 };
 
 } // namespace WebGPU

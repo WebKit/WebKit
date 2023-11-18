@@ -41,7 +41,7 @@ class JSPromise;
 class VM;
 class JSCell;
 
-class JS_EXPORT_PRIVATE DeferredWorkTimer final : public JSRunLoopTimer {
+class DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
@@ -65,7 +65,7 @@ public:
 
     void doWork(VM&) final;
 
-    Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
+    JS_EXPORT_PRIVATE Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
     bool hasAnyPendingWork() const;
     bool hasPendingWork(Ticket);
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
@@ -77,11 +77,11 @@ public:
     // this occurs. The easiest way is to make sure everything is either owned
     // by a GC'd value in dependencies or by the Task lambda.
     using Task = Function<void(Ticket)>;
-    void scheduleWorkSoon(Ticket, Task&&);
-    void didResumeScriptExecutionOwner();
+    JS_EXPORT_PRIVATE void scheduleWorkSoon(Ticket, Task&&);
+    JS_EXPORT_PRIVATE void didResumeScriptExecutionOwner();
 
     void stopRunningTasks() { m_runTasks = false; }
-    void runRunLoop();
+    JS_EXPORT_PRIVATE void runRunLoop();
 
     static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
 private:

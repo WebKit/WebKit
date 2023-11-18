@@ -67,8 +67,6 @@
 
 namespace WebGPU {
 
-constexpr auto startIndexForFragmentDynamicOffsets = 2;
-
 static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer)
 {
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
@@ -217,7 +215,7 @@ void RenderBundleEncoder::executePreDrawCommands()
             if (m_dynamicOffsetsFragmentBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
                 auto bufferOffset = fragmentDynamicOffset;
-                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset + startIndexForFragmentDynamicOffsets * sizeof(float);
+                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float);
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
@@ -372,10 +370,13 @@ void RenderBundleEncoder::endCurrentICB()
     m_vertexDynamicOffset = 0;
 
     if (!m_dynamicOffsetsFragmentBuffer) {
-        m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset + startIndexForFragmentDynamicOffsets * sizeof(float) options:MTLResourceStorageModeShared];
-        RELEASE_ASSERT(m_dynamicOffsetsFragmentBuffer.contents);
-        static_cast<float*>(m_dynamicOffsetsFragmentBuffer.contents)[0] = 0.f;
-        static_cast<float*>(m_dynamicOffsetsFragmentBuffer.contents)[1] = 1.f;
+        m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float) options:MTLResourceStorageModeShared];
+        auto* fragmentBufferPtr = m_dynamicOffsetsFragmentBuffer.contents;
+        RELEASE_ASSERT(fragmentBufferPtr);
+        static_assert(sizeof(float) == sizeof(uint32_t));
+        static_cast<float*>(fragmentBufferPtr)[0] = 0.f;
+        static_cast<float*>(fragmentBufferPtr)[1] = 1.f;
+        static_cast<uint32_t*>(fragmentBufferPtr)[2] = m_sampleMask;
         addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment);
     }
     m_fragmentDynamicOffset = 0;
@@ -554,6 +555,9 @@ bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const Rende
     if (&a == &b)
         return false;
 
+    if (a.sampleMask() != b.sampleMask())
+        return true;
+
     if (a.cullMode() != b.cullMode())
         return true;
 
@@ -602,6 +606,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         m_depthBias = pipeline.depthBias();
         m_depthBiasSlopeScale = pipeline.depthBiasSlopeScale();
         m_depthBiasClamp = pipeline.depthBiasClamp();
+        m_sampleMask = pipeline.sampleMask();
 
         if (m_commandEncoder) {
             id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
@@ -621,6 +626,10 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
                 [m_commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
         }
     } else {
+        // FIXME: Remove after https://bugs.webkit.org/show_bug.cgi?id=26499 is implemented
+        if (pipeline.sampleMask() != defaultSampleMask)
+            m_requiresCommandReplay = true;
+
         if (m_pipeline && icbNeedsToBeSplit(*m_pipeline, pipeline) && !m_requiresMetalWorkaround)
             endCurrentICB();
 

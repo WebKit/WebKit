@@ -1673,7 +1673,7 @@ webkit.org/b/257624 fast/canvas/webgl/webgl-drawarrays-crash-2.html [ Failure Pa
 webkit.org/b/257624 fast/canvas/webgl/webgl-drawarrays-crash.html [ Failure Pass ]
 webkit.org/b/257624 fast/mediastream/MediaStream-video-element-track-stop.html [ Failure Timeout ]
 webkit.org/b/257624 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Failure Pass ]
-webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout ]
+webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout Crash ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections.html [ Pass Timeout ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Pass Timeout ]
 webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]

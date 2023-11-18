@@ -277,7 +277,8 @@ class Tracker(GenericTracker):
         if member == 'duplicates':
             issue._duplicates = []
             for r in radar.relationships([self.radarclient().Relationship.TYPE_ORIGINAL_OF]):
-                issue._duplicates.append(self.issue(r.related_radar.id))
+                if r.related_radar:
+                    issue._duplicates.append(self.issue(r.related_radar.id))
 
         return issue
 

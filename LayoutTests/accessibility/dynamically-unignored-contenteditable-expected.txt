@@ -6,7 +6,7 @@ This test ensures that we properly change an object's ignored status after dynam
 Adding contenteditable='true' to #div.
 #div is ignored: false
 #wrapper children:
-AXRole: AXTextArea
+AXRole: AXGroup
 
 Removing contenteditable='true' from #div.
 #div is ignored: true

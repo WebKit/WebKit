@@ -6664,6 +6664,7 @@ enum class WebCore::ExceptionCode : uint8_t {
     ExistingExceptionError,
 }
 
+#if ENABLE(SERVICE_WORKER)
 header: <WebCore/BackgroundFetchFailureReason.h>
 enum class WebCore::BackgroundFetchFailureReason : uint8_t {
     EmptyString,
@@ -6673,13 +6674,16 @@ enum class WebCore::BackgroundFetchFailureReason : uint8_t {
     QuotaExceeded,
     DownloadTotalExceeded
 };
+#endif
 
+#if ENABLE(SERVICE_WORKER)
 header: <WebCore/BackgroundFetchResult.h>
 enum class WebCore::BackgroundFetchResult : uint8_t {
     EmptyString,
     Success,
     Failure
 };
+#endif
 
 enum class WebCore::ResourceErrorBaseType : uint8_t {
      Null,

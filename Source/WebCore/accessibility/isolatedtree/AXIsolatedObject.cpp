@@ -168,6 +168,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
+    setProperty(AXPropertyName::IsNonNativeTextControl, object.isNonNativeTextControl());
 
     RefPtr geometryManager = tree()->geometryManager();
     std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
@@ -1517,12 +1518,6 @@ bool AXIsolatedObject::isListBoxOption() const
 }
 
 bool AXIsolatedObject::isMockObject() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isNonNativeTextControl() const
 {
     ASSERT_NOT_REACHED();
     return false;

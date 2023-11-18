@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="editable1" contenteditable="true">
+    <p id="text1">Text inside</p>
+    <div>
+        <p id="text2">Nested text inside</p>
+    </div>
+</div>
+
+<p id="text3">Text outside</p>
+
+<script>
+var output = "This test makes sure that the content editable method on iOS works as expected.\n";
+
+if (window.accessibilityController) {
+    var text1 = accessibilityController.accessibleElementById("text1").childAtIndex(0);
+    output += expect("text1.isInNonNativeTextControl", "true");
+
+    var text2 = accessibilityController.accessibleElementById("text2").childAtIndex(0);
+    output += expect("text2.isInNonNativeTextControl", "true");
+
+    var text3 = accessibilityController.accessibleElementById("text3").childAtIndex(0);
+    output += expect("text3.isInNonNativeTextControl", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

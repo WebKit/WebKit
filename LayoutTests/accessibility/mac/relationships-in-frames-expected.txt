@@ -1,4 +1,4 @@
-controller role: AXRole: AXTextArea
+controller role: AXRole: AXTextField
 controller controls role: listbox
 listbox role: AXRole: AXList
 aria-controls textbox->listbox : true

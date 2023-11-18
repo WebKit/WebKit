@@ -1,0 +1,13 @@
+This test makes sure that the content editable method on iOS works as expected.
+PASS: text1.isInNonNativeTextControl === true
+PASS: text2.isInNonNativeTextControl === true
+PASS: text3.isInNonNativeTextControl === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text inside
+
+Nested text inside
+
+Text outside

@@ -38,6 +38,7 @@
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
+#include "Fuzzilli.h"
 #include "GlobalObjectMethodTable.h"
 #include "HeapSnapshotBuilder.h"
 #include "InitializeThreading.h"
@@ -410,6 +411,10 @@ static JSC_DECLARE_HOST_FUNCTION(functionAsDoubleNumber);
 
 static JSC_DECLARE_HOST_FUNCTION(functionDropAllLocks);
 
+#if ENABLE(FUZZILLI)
+static JSC_DECLARE_HOST_FUNCTION(functionFuzzilli);
+#endif
+
 struct Script {
     enum class StrictMode {
         Strict,
@@ -423,7 +428,10 @@ struct Script {
 
     enum class CodeSource {
         File,
-        CommandLine
+        CommandLine,
+#if ENABLE(FUZZILLI)
+        Reprl,
+#endif
     };
 
     StrictMode strictMode;
@@ -468,6 +476,7 @@ public:
     bool m_dumpSamplingProfilerData { false };
     bool m_inspectable { false };
     bool m_canBlockIsFalse { false };
+    bool m_reprl { false }; // Set to true to use Fuzzilli.
 
     void parseArguments(int, char**);
 };
@@ -773,6 +782,10 @@ private:
 
         addFunction(vm, "dropAllLocks"_s, functionDropAllLocks, 1);
 
+#if ENABLE(FUZZILLI)
+        addFunction(vm, "fuzzilli"_s, functionFuzzilli, 2);
+#endif
+
         if (Options::exposeCustomSettersOnGlobalObjectForTesting()) {
             auto putDirectCustomAccessor = [&] (VM& vm, PropertyName propertyName, JSValue value, unsigned attributes) -> bool {
                 return putDirectCustomAccessorImpl(filter, vm, propertyName, value, attributes);
@@ -877,6 +890,10 @@ private:
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
 
+#if ENABLE(FUZZILLI)
+    static void promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation);
+#endif
+
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
@@ -899,7 +916,11 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &moduleLoaderFetch,
     &moduleLoaderCreateImportMetaProperties,
     nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
+#if ENABLE(FUZZILLI)
+    &promiseRejectionTracker,
+#else
+    nullptr,
+#endif
     &reportUncaughtExceptionAtEventLoop,
     &currentScriptExecutionOwner,
     &scriptExecutionStatus,
@@ -1441,6 +1462,22 @@ JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* g
 
     return metaProperties;
 }
+
+#if ENABLE(FUZZILLI)
+
+void GlobalObject::promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation operation)
+{
+    switch (operation) {
+    case JSPromiseRejectionOperation::Reject:
+        Fuzzilli::numPendingRejectedPromises += 1;
+        break;
+    case JSPromiseRejectionOperation::Handle:
+        Fuzzilli::numPendingRejectedPromises -= 1;
+        break;
+    }
+}
+
+#endif // ENABLE(FUZZILLI)
 
 template <typename T>
 static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
@@ -3189,6 +3226,54 @@ JSC_DEFINE_HOST_FUNCTION(functionDropAllLocks, (JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsUndefined());
 }
 
+#if ENABLE(FUZZILLI)
+
+// We have to assume that the fuzzer will be able to call this function e.g. by
+// enumerating the properties of the global object and eval'ing them. As such
+// this function is implemented in a way that requires passing some magic value
+// as first argument (with the idea being that the fuzzer won't be able to
+// generate this value) which then also acts as a selector for the operation
+// to perform.
+JSC_DEFINE_HOST_FUNCTION(functionFuzzilli, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!callFrame->argument(0).isString()) {
+        // We directly require a string as argument for simplicity.
+        return JSValue::encode(jsUndefined());
+    }
+    auto operation = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (operation == "FUZZILLI_CRASH"_s) {
+        int32_t command = callFrame->argument(1).toInt32(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        switch (command) {
+        case 0:
+            *reinterpret_cast<int32_t*>(0x41414141) = 0x1337;
+            break;
+        case 1:
+            RELEASE_ASSERT(0);
+            break;
+        case 2:
+            ASSERT(0);
+            break;
+        }
+
+    } else if (operation == "FUZZILLI_PRINT"_s) {
+        String string = callFrame->argument(1).toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        Fuzzilli::logFile().println(string);
+        Fuzzilli::logFile().flush();
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
+#endif // ENABLE(FUZZILLI)
+
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to
 // be in a separate main function because the jscmain function requires object
@@ -3561,7 +3646,9 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
     for (size_t i = 0; i < scripts.size(); i++) {
         JSInternalPromise* promise = nullptr;
         bool isModule = options.m_module || scripts[i].scriptType == Script::ScriptType::Module;
-        if (scripts[i].codeSource == Script::CodeSource::File) {
+
+        switch (scripts[i].codeSource) {
+        case Script::CodeSource::File: {
             fileName = String::fromLatin1(scripts[i].argument);
             if (scripts[i].strictMode == Script::StrictMode::Strict)
                 scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
@@ -3577,11 +3664,22 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
                     return;
                 }
             }
-        } else {
+            break;
+        }
+        case Script::CodeSource::CommandLine: {
             size_t commandLineLength = strlen(scripts[i].argument);
             scriptBuffer.resize(commandLineLength);
             std::copy_n(scripts[i].argument, commandLineLength, scriptBuffer.begin());
             fileName = "[Command Line]"_s;
+            break;
+        }
+#if ENABLE(FUZZILLI)
+        case Script::CodeSource::Reprl: {
+            Fuzzilli::readInput(&scriptBuffer);
+            fileName = "[REPRL]"_s;
+            break;
+        }
+#endif // ENABLE(FUZZILLI)
         }
 
         bool isLastFile = i == scripts.size() - 1;
@@ -3715,6 +3813,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -e         Evaluate argument as script code\n");
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
+    fprintf(stderr, "  --reprl    Enables REPRL mode (used by the Fuzzilli fuzzer)\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -m         Execute as a module\n");
 #if OS(UNIX)
@@ -3795,6 +3894,13 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_scripts.append(Script(Script::StrictMode::Sloppy, Script::CodeSource::CommandLine, Script::ScriptType::Script, argv[i]));
             continue;
         }
+#if ENABLE(FUZZILLI)
+        if (!strcmp(arg, "--reprl") && !m_reprl) {
+            m_reprl = true;
+            m_scripts.append(Script(Script::StrictMode::Sloppy, Script::CodeSource::Reprl, Script::ScriptType::Script, nullptr));
+            continue;
+        }
+#endif // ENABLE(FUZZILLI)
         if (!strcmp(arg, "-i")) {
             m_interactive = true;
             continue;
@@ -3997,88 +4103,111 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         vm.m_typedArrayController = adoptRef(new JSC::SimpleTypedArrayController(false));
 
     int result;
-    bool success = true;
-    GlobalObject* globalObject = nullptr;
-    {
-        JSLockHolder locker(vm);
+    bool success;
 
-        startTimeoutThreadIfNeeded(vm);
-        globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
-        globalObject->setInspectable(options.m_inspectable);
-        func(vm, globalObject, success);
-        vm.drainMicrotasks();
+#if ENABLE(FUZZILLI)
+    // Let parent know we are ready.
+    if (options.m_reprl) {
+        Fuzzilli::initializeReprl();
     }
-    vm.deferredWorkTimer->runRunLoop();
-    {
-        JSLockHolder locker(vm);
-        if (options.m_interactive && success)
-            runInteractive(globalObject);
-    }
+#endif // ENABLE(FUZZILLI)
 
-    result = success && (asyncTestExpectedPasses == asyncTestPasses) ? 0 : 3;
+    do {
+#if ENABLE(FUZZILLI)
+        if (options.m_reprl)
+            Fuzzilli::waitForCommand();
+#endif // ENABLE(FUZZILLI)
 
-    if (options.m_exitCode) {
-        printf("jsc exiting %d", result);
-        if (asyncTestExpectedPasses != asyncTestPasses)
-            printf(" because expected: %d async test passes but got: %d async test passes", asyncTestExpectedPasses, asyncTestPasses);
-        printf("\n");
-    }
+        success = true;
+        GlobalObject* globalObject = nullptr;
+        {
+            JSLockHolder locker(vm);
 
-    if (Options::useProfiler()) {
-        JSLockHolder locker(vm);
-        if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
-            fprintf(stderr, "could not save profiler output.\n");
-    }
+            startTimeoutThreadIfNeeded(vm);
+            globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
+            globalObject->setInspectable(options.m_inspectable);
+            func(vm, globalObject, success);
+            vm.drainMicrotasks();
+        }
+        vm.deferredWorkTimer->runRunLoop();
+        {
+            JSLockHolder locker(vm);
+
+            if (!options.m_reprl && options.m_interactive && success)
+                runInteractive(globalObject);
+        }
+
+        result = success && (asyncTestExpectedPasses == asyncTestPasses) ? 0 : 3;
+
+        if (options.m_exitCode) {
+            printf("jsc exiting %d", result);
+            if (asyncTestExpectedPasses != asyncTestPasses)
+                printf(" because expected: %d async test passes but got: %d async test passes", asyncTestExpectedPasses, asyncTestPasses);
+            printf("\n");
+        }
+
+        if (Options::useProfiler()) {
+            JSLockHolder locker(vm);
+            if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
+                fprintf(stderr, "could not save profiler output.\n");
+        }
 
 #if ENABLE(JIT)
-    {
-        JSLockHolder locker(vm);
-        if (Options::useExceptionFuzz())
-            printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
-        bool fireAtEnabled = Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
-        if (Options::verboseExecutableAllocationFuzz() && Options::useExecutableAllocationFuzz() && !fireAtEnabled)
-            printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
-        if (Options::useOSRExitFuzz() && Options::verboseOSRExitFuzz()) {
-            printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
-            printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
-        }
+        {
+            JSLockHolder locker(vm);
+            if (Options::useExceptionFuzz())
+                printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
+            bool fireAtEnabled = Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
+            if (Options::verboseExecutableAllocationFuzz() && Options::useExecutableAllocationFuzz() && !fireAtEnabled)
+                printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
+            if (Options::useOSRExitFuzz() && Options::verboseOSRExitFuzz()) {
+                printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
+                printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
+            }
 
-        
-        auto compileTimeStats = JIT::compileTimeStats();
-        Vector<CString> compileTimeKeys;
-        for (auto& entry : compileTimeStats)
-            compileTimeKeys.append(entry.key);
-        std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
-        for (const CString& key : compileTimeKeys) {
-            if (key.data())
-                printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
-        }
+            auto compileTimeStats = JIT::compileTimeStats();
+            Vector<CString> compileTimeKeys;
+            for (auto& entry : compileTimeStats)
+                compileTimeKeys.append(entry.key);
+            std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
+            for (const CString& key : compileTimeKeys) {
+                if (key.data())
+                    printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
+            }
 
-        if (Options::reportTotalPhaseTimes())
-            logTotalPhaseTimes();
-    }
+            if (Options::reportTotalPhaseTimes())
+                logTotalPhaseTimes();
+        }
 #endif
 
-    if (Options::gcAtEnd()) {
-        // We need to hold the API lock to do a GC.
-        JSLockHolder locker(&vm);
-        vm.heap.collectNow(Sync, CollectionScope::Full);
-    }
+        if (Options::gcAtEnd()) {
+            // We need to hold the API lock to do a GC.
+            JSLockHolder locker(&vm);
+            vm.heap.collectNow(Sync, CollectionScope::Full);
+        }
 
-    if (options.m_dumpSamplingProfilerData) {
+        if (options.m_dumpSamplingProfilerData) {
 #if ENABLE(SAMPLING_PROFILER)
-        JSLockHolder locker(&vm);
-        vm.samplingProfiler()->reportTopFunctions();
-        vm.samplingProfiler()->reportTopBytecodes();
+            JSLockHolder locker(&vm);
+            vm.samplingProfiler()->reportTopFunctions();
+            vm.samplingProfiler()->reportTopBytecodes();
 #else
-        dataLog("Sampling profiler is not enabled on this platform\n");
+            dataLog("Sampling profiler is not enabled on this platform\n");
 #endif
-    }
+        }
 
 #if ENABLE(JIT)
-    if (vm.jitSizeStatistics)
-        dataLogLn(*vm.jitSizeStatistics);
+        if (vm.jitSizeStatistics)
+            dataLogLn(*vm.jitSizeStatistics);
 #endif
+
+#if ENABLE(FUZZILLI)
+        if (options.m_reprl) {
+            Fuzzilli::flushReprl(result);
+            continue;
+        }
+#endif // ENABLE(FUZZILLI)
+    } while (options.m_reprl);
 
     vm.codeCache()->write();
 

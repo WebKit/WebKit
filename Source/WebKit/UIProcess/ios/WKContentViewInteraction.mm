@@ -628,7 +628,7 @@ inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range,
 
 - (BOOL)isEmpty
 {
-    return [_start offset] == [_end offset];
+    return [_start anchors] == [_end anchors] && [_start offset] == [_end offset];
 }
 
 - (NSString *)description
@@ -4065,12 +4065,12 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)replaceForWebView:(id)sender
 {
-    static BOOL responderSupportsReplace = [UIResponder instancesRespondToSelector:@selector(replace:)];
-    if (!responderSupportsReplace) {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        [_asyncSystemInputDelegate replaceText:sender];
+    else
+#endif
         [[UIKeyboardImpl sharedInstance] replaceText:sender];
-        return;
-    }
-    [super replace:sender];
 }
 
 #define WEBCORE_COMMAND_FOR_WEBVIEW(command) \
@@ -5976,12 +5976,12 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    return ((WKTextPosition *)position).positionRect;
+    return dynamic_objc_cast<WKTextPosition>(position).positionRect;
 }
 
 - (NSArray *)selectionRectsForRange:(UITextRange *)range
 {
-    return [(WKTextRange *)range selectionRects];
+    return dynamic_objc_cast<WKTextRange>(range).selectionRects;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)range
@@ -6186,13 +6186,24 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     return nil;
 }
 
+- (BOOL)_isAnchoredToCurrentSelection:(UITextPosition *)position
+{
+    return [position isKindOfClass:WKRelativeTextPosition.class] || [position isEqual:self.selectedTextRange.start] || [position isEqual:self.selectedTextRange.end];
+}
+
 - (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition
 {
+    if (![self _isAnchoredToCurrentSelection:fromPosition] || ![self _isAnchoredToCurrentSelection:toPosition])
+        return nil;
+
     return adoptNS([[WKRelativeTextRange alloc] initWithStart:fromPosition end:toPosition]).autorelease();
 }
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset
 {
+    if (![self _isAnchoredToCurrentSelection:position])
+        return nil;
+
     return positionWithOffsetFrom(position, offset);
 }
 
@@ -7849,7 +7860,12 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (!self._hasFocusedElement || !_suppressSelectionAssistantReasons)
         return;
 
-    [UIKeyboardImpl.activeInstance updateForChangedSelection];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        [_asyncSystemInputDelegate invalidateTextEntryContext];
+    else
+#endif
+        [UIKeyboardImpl.activeInstance updateForChangedSelection];
 }
 
 - (BOOL)shouldIgnoreKeyboardWillHideNotification
@@ -8441,8 +8457,16 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
     if (_candidateViewNeedsUpdate) {
         _candidateViewNeedsUpdate = NO;
-        if ([self.inputDelegate respondsToSelector:@selector(layoutHasChanged)])
-            [(id <UITextInputDelegatePrivate>)self.inputDelegate layoutHasChanged];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+        if (self.shouldUseAsyncInteractions)
+            [_asyncSystemInputDelegate invalidateTextEntryContext];
+        else
+#endif
+        {
+            auto inputDelegate = self.inputDelegate;
+            if ([inputDelegate respondsToSelector:@selector(layoutHasChanged)])
+                [(id<UITextInputDelegatePrivate>)inputDelegate layoutHasChanged];
+        }
     }
     
     [_webView _didChangeEditorState];
@@ -12268,7 +12292,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (void)setAsyncSystemInputDelegate:(id<UIAsyncTextInputDelegate>)delegate
 {
-    _asyncSystemInputDelegate = delegate;
+    _asyncSystemInputDelegate = static_cast<id<UIAsyncTextInputDelegate_Staging>>(delegate);
 }
 
 - (void)handleAsyncKeyEvent:(UIKeyEvent *)event withCompletionHandler:(void(^)(UIKeyEvent *, BOOL))completionHandler

@@ -197,7 +197,7 @@ TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromPopup)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
@@ -380,7 +380,7 @@ TEST(WKWebExtensionAPIExtension, GetViewsForPopup)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {

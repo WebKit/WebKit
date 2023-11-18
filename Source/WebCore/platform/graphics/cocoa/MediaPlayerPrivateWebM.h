@@ -199,7 +199,7 @@ private:
 
     bool isReadyForMoreSamples(uint64_t);
     void didBecomeReadyForMoreSamples(uint64_t);
-    void appendCompleted();
+    void appendCompleted(bool);
     void provideMediaData(uint64_t);
     void provideMediaData(TrackBuffer&, uint64_t);
 
@@ -211,7 +211,6 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
 
     void append(SharedBuffer&);
-    void resetParserState();
 
     void flush();
 #if PLATFORM(IOS_FAMILY)
@@ -310,6 +309,8 @@ private:
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
+    bool m_delayedIdle { false };
+    bool m_errored { false };
     bool m_processingInitializationSegment { false };
 };
 

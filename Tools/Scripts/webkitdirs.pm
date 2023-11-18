@@ -95,6 +95,7 @@ BEGIN {
        &configuration
        &configuredXcodeWorkspace
        &coverageIsEnabled
+       &fuzzilliIsEnabled
        &currentPerlPath
        &currentSVNRevision
        &debugMiniBrowser
@@ -251,6 +252,7 @@ my $tsanIsEnabled;
 my $ubsanIsEnabled;
 my $libFuzzerIsEnabled;
 my $coverageIsEnabled;
+my $fuzzilliIsEnabled;
 my $forceOptimizationLevel;
 my $ltoMode;
 my $numberOfCPUs;
@@ -651,6 +653,18 @@ sub determineCoverageIsEnabled
         $coverageIsEnabled = <Coverage>;
         close Coverage;
         chomp $coverageIsEnabled;
+    }
+}
+
+sub determineFuzzilliIsEnabled
+{
+    return if defined $fuzzilliIsEnabled;
+    determineBaseProductDir();
+
+    if (open Fuzzilli, "$baseProductDir/Fuzzilli") {
+        $fuzzilliIsEnabled = <Fuzzilli>;
+        close Fuzzilli;
+        chomp $fuzzilliIsEnabled;
     }
 }
 
@@ -1154,6 +1168,12 @@ sub coverageIsEnabled()
     return $coverageIsEnabled;
 }
 
+sub fuzzilliIsEnabled()
+{
+    determineFuzzilliIsEnabled();
+    return $fuzzilliIsEnabled;
+}
+
 sub forceOptimizationLevel()
 {
     determineForceOptimizationLevel();
@@ -1231,6 +1251,7 @@ sub XcodeOptions
     determineLibFuzzerIsEnabled();
     determineForceOptimizationLevel();
     determineCoverageIsEnabled();
+    determineFuzzilliIsEnabled();
     determineLTOMode();
     if (isAppleCocoaWebKit()) {
       determineXcodeSDK();
@@ -1248,6 +1269,7 @@ sub XcodeOptions
     push @options, ("ENABLE_ADDRESS_SANITIZER=YES") if $asanIsEnabled;
     push @options, ("ENABLE_THREAD_SANITIZER=YES") if $tsanIsEnabled;
     push @options, ("ENABLE_UNDEFINED_BEHAVIOR_SANITIZER=YES") if $ubsanIsEnabled;
+    push @options, ("ENABLE_FUZZILLI=YES") if $fuzzilliIsEnabled;
     push @options, ("ENABLE_LIBFUZZER=YES") if $libFuzzerIsEnabled;
     push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
     push @options, "GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel" if $forceOptimizationLevel;

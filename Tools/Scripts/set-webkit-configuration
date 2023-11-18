@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2021 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2023 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,6 +46,8 @@ Usage: $programName [options]
   --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
   --[no-]libFuzzer                   Enable or disable clang libFuzzer
   --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
+  --[no-]fuzzilli                    Enable or disable Fuzzilli support; enabling Fuzzilli
+                                     implies disabling clang libFuzzer
   --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
@@ -71,6 +73,9 @@ my $enableLibFuzzer = checkForArgumentAndRemoveFromARGV("--libFuzzer");
 my $disableLibFuzzer = checkForArgumentAndRemoveFromARGV("--no-libFuzzer");
 my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
+my $enableFuzzilli = checkForArgumentAndRemoveFromARGV("--fuzzilli");
+$enableLibFuzzer = 0 if ($enableFuzzilli);
+my $disableFuzzilli = checkForArgumentAndRemoveFromARGV("--no-fuzzilli");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -114,7 +119,7 @@ if (isAppleCocoaWebKit() && !isCMakeBuild()) {
 }
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LibFuzzer LTO TSan UBSan Workspace)) {
+    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel Fuzzilli LibFuzzer LTO TSan UBSan Workspace)) {
         unlink File::Spec->catfile($baseProductDir, $fileName);
     }
     printCurrentSettings();
@@ -163,6 +168,7 @@ if ($architecture) {
 
 updateOrDeleteConfigurationFile("ASan", $enableASAN, $disableASAN);
 updateOrDeleteConfigurationFile("Coverage", $enableCoverage, $disableCoverage);
+updateOrDeleteConfigurationFile("Fuzzilli", $enableFuzzilli, $disableFuzzilli);
 updateOrDeleteConfigurationFile("TSan", $enableTSAN, $disableTSAN);
 updateOrDeleteConfigurationFile("UBSan", $enableUBSAN, $disableUBSAN);
 updateOrDeleteConfigurationFile("LibFuzzer", $enableLibFuzzer, $disableLibFuzzer);
@@ -193,6 +199,7 @@ sub printCurrentSettings()
     $result .= " ASan" if asanIsEnabled();
     $result .= " TSan" if tsanIsEnabled();
     $result .= " UBSan" if ubsanIsEnabled();
+    $result .= " Fuzzilli" if fuzzilliIsEnabled();
     $result .= " LibFuzzer" if libFuzzerIsEnabled();
     $result .= " Coverage" if coverageIsEnabled();
     $result .= " LTOMode:" . ltoMode() if ltoMode();

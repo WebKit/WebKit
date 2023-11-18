@@ -31,15 +31,17 @@
 
 namespace JSC {
 
-FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
+FullGCActivityCallback::FullGCActivityCallback(Heap& heap)
     : GCActivityCallback(heap)
 {
 }
 
+FullGCActivityCallback::~FullGCActivityCallback() = default;
+
 void FullGCActivityCallback::doCollection(VM& vm)
 {
     Heap& heap = vm.heap;
-    m_didGCRecently = false;
+    setDidGCRecently(false);
 
 #if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
     MonotonicTime startTime = MonotonicTime::now();

@@ -23,11 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import <WebKit/WKFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+WK_EXTERN
 @interface _WKWebExtensionDeclarativeNetRequestRule : NSObject
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString * _Nullable * _Nullable)outErrorString NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -42,4 +45,4 @@
 
 @end
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+NS_ASSUME_NONNULL_END

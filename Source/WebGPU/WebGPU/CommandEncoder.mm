@@ -102,10 +102,10 @@ CommandEncoder::~CommandEncoder()
     finalizeBlitCommandEncoder();
 }
 
-void CommandEncoder::ensureBlitCommandEncoder()
+id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
 {
     if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty())
-        return;
+        return m_blitCommandEncoder;
 
     auto pendingTimestampWrites = std::exchange(m_pendingTimestampWrites, { });
     if (m_blitCommandEncoder && !pendingTimestampWrites.isEmpty())
@@ -120,6 +120,8 @@ void CommandEncoder::ensureBlitCommandEncoder()
         descriptor.sampleBufferAttachments[i].startOfEncoderSampleIndex = pendingTimestampWrite.queryIndex;
     }
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
+
+    return m_blitCommandEncoder;
 }
 
 void CommandEncoder::finalizeBlitCommandEncoder()
@@ -300,9 +302,11 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     size_t visibilityResultBufferSize = 0;
+    id<MTLBuffer> visibilityResultBuffer = nil;
     if (auto* wgpuOcclusionQuery = descriptor.occlusionQuerySet) {
         const auto& occlusionQuery = fromAPI(wgpuOcclusionQuery);
         mtlDescriptor.visibilityResultBuffer = occlusionQuery.visibilityBuffer();
+        visibilityResultBuffer = mtlDescriptor.visibilityResultBuffer;
         visibilityResultBufferSize = occlusionQuery.visibilityBuffer().length;
     }
 
@@ -341,7 +345,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
 
-    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, m_device);
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)

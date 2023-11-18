@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import <WebKit/WKFoundation.h>
 
-// Increase this version number when making changes to how Chrome's rules are translated into WebKit rules.
-extern NSString * const currentDeclarativeNetRequestHashVersion;
+NS_ASSUME_NONNULL_BEGIN
 
+WK_EXTERN
 @interface _WKWebExtensionDeclarativeNetRequestTranslator : NSObject
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSArray<NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray **)outErrorStrings;
-+ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray<NSString *> **)outErrorStrings;
++ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSArray<NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings;
++ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings;
 
 - (instancetype)init NS_UNAVAILABLE;
 
 @end
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+NS_ASSUME_NONNULL_END

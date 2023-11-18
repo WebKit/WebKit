@@ -25,6 +25,7 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/disassembler/zydis/Zydis"
     "${JAVASCRIPTCORE_DIR}/domjit"
     "${JAVASCRIPTCORE_DIR}/ftl"
+    "${JAVASCRIPTCORE_DIR}/fuzzilli"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/inspector"
@@ -764,9 +765,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/DeferGCInlines.h
     heap/DeleteAllCodeEffort.h
     heap/DestructionMode.h
+    heap/EdenGCActivityCallback.h
     heap/FastMallocAlignedMemoryAllocator.h
     heap/FreeList.h
     heap/FreeListInlines.h
+    heap/FullGCActivityCallback.h
     heap/GCActivityCallback.h
     heap/GCAssertions.h
     heap/GCConductor.h

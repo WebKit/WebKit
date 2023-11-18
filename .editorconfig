@@ -1,6 +1,6 @@
 # Editor configuration, see https://editorconfig.org
 
-[*.{c,cpp,h,rb}]
+[*.{c,cpp,h,rb,py,pl}]
 indent_style = space
 indent_size = 4
 tab_width = 4

@@ -291,8 +291,8 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_jitStubRoutines(makeUnique<JITStubRoutineSet>())
     // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously
     // schedule the timer if we've never done a collection.
-    , m_fullActivityCallback(GCActivityCallback::tryCreateFullTimer(this))
-    , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
+    , m_fullActivityCallback(FullGCActivityCallback::tryCreate(*this))
+    , m_edenActivityCallback(EdenGCActivityCallback::tryCreate(*this))
     , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
     , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
@@ -1199,9 +1199,10 @@ void Heap::collect(Synchronousness synchronousness, GCRequest request)
         return;
 
     switch (synchronousness) {
-    case Async:
+    case Async: {
         collectAsync(request);
         return;
+    }
     case Sync:
         collectSync(request);
         return;
@@ -2392,10 +2393,7 @@ void Heap::updateAllocationLimits()
 {
     constexpr bool verbose = false;
     
-    if (verbose) {
-        dataLog("\n");
-        dataLog("bytesAllocatedThisCycle = ", m_bytesAllocatedThisCycle, "\n");
-    }
+    dataLogLnIf(verbose, "\nbytesAllocatedThisCycle = ", m_bytesAllocatedThisCycle);
     
     // Calculate our current heap size threshold for the purpose of figuring out when we should
     // run another collection. This isn't the same as either size() or capacity(), though it should
@@ -2410,8 +2408,7 @@ void Heap::updateAllocationLimits()
     // of fragmentation, this may be substantial. Fortunately, marked space rarely fragments because
     // cells usually have a narrow range of sizes. So, the underestimation is probably OK.
     currentHeapSize += m_totalBytesVisited;
-    if (verbose)
-        dataLog("totalBytesVisited = ", m_totalBytesVisited, ", currentHeapSize = ", currentHeapSize, "\n");
+    dataLogLnIf(verbose, "totalBytesVisited = ", m_totalBytesVisited, ", currentHeapSize = ", currentHeapSize);
 
     // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
     // extra memory reporting.
@@ -2422,48 +2419,38 @@ void Heap::updateAllocationLimits()
         ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize == currentHeapSize);
     }
 
-    if (verbose)
-        dataLog("extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize, "\n");
+    dataLogLnIf(verbose, "extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize);
     
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        if (!m_isInOpportunisticTask) {
+        if (!m_isInOpportunisticTask)
             m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
-            if (verbose)
-                dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
-        }
+        dataLogLnIf(verbose, "Full: maxHeapSize = ", m_maxHeapSize);
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
-        if (verbose)
-            dataLog("Full: maxEdenSize = ", m_maxEdenSize, "\n");
+        dataLogLnIf(verbose, "Full: maxEdenSize = ", m_maxEdenSize);
         m_sizeAfterLastFullCollect = currentHeapSize;
-        if (verbose)
-            dataLog("Full: sizeAfterLastFullCollect = ", currentHeapSize, "\n");
+        dataLogLnIf(verbose, "Full: sizeAfterLastFullCollect = ", currentHeapSize);
         m_bytesAbandonedSinceLastFullCollect = 0;
-        if (verbose)
-            dataLog("Full: bytesAbandonedSinceLastFullCollect = ", 0, "\n");
+        dataLogLnIf(verbose, "Full: bytesAbandonedSinceLastFullCollect = ", 0);
     } else {
         ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
         // Theoretically, we shouldn't ever scan more memory than the heap size we planned to have.
         // But we are sloppy, so we have to defend against the overflow.
         m_maxEdenSize = currentHeapSize > m_maxHeapSize ? 0 : m_maxHeapSize - currentHeapSize;
-        if (verbose)
-            dataLog("Eden: maxEdenSize = ", m_maxEdenSize, "\n");
+        dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
         m_sizeAfterLastEdenCollect = currentHeapSize;
-        if (verbose)
-            dataLog("Eden: sizeAfterLastEdenCollect = ", currentHeapSize, "\n");
+        dataLogLnIf(verbose, "Eden: sizeAfterLastEdenCollect = ", currentHeapSize);
         double edenToOldGenerationRatio = (double)m_maxEdenSize / (double)m_maxHeapSize;
         double minEdenToOldGenerationRatio = 1.0 / 3.0;
         if (edenToOldGenerationRatio < minEdenToOldGenerationRatio)
             m_shouldDoFullCollection = true;
         // This seems suspect at first, but what it does is ensure that the nursery size is fixed.
         m_maxHeapSize += currentHeapSize - m_sizeAfterLastCollect;
-        if (verbose)
-            dataLog("Eden: maxHeapSize = ", m_maxHeapSize, "\n");
+        dataLogLnIf(verbose, "Eden: maxHeapSize = ", m_maxHeapSize);
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
-        if (verbose)
-            dataLog("Eden: maxEdenSize = ", m_maxEdenSize, "\n");
+        dataLogLnIf(verbose, "Eden: maxEdenSize = ", m_maxEdenSize);
         if (m_fullActivityCallback) {
             ASSERT(currentHeapSize >= m_sizeAfterLastFullCollect);
             m_fullActivityCallback->didAllocate(*this, currentHeapSize - m_sizeAfterLastFullCollect);
@@ -2476,8 +2463,7 @@ void Heap::updateAllocationLimits()
 #endif
 
     m_sizeAfterLastCollect = currentHeapSize;
-    if (verbose)
-        dataLog("sizeAfterLastCollect = ", m_sizeAfterLastCollect, "\n");
+    dataLogLnIf(verbose, "sizeAfterLastCollect = ", m_sizeAfterLastCollect);
     m_bytesAllocatedThisCycle = 0;
 
     dataLogIf(Options::logGC(), "=> ", currentHeapSize / 1024, "kb, ");
@@ -2591,8 +2577,18 @@ void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)
         return;
     }
 
-    m_fullActivityCallback->setDidGCRecently();
+    m_fullActivityCallback->setDidGCRecently(true);
     collectNow(synchronousness, CollectionScope::Full);
+}
+
+void Heap::setFullActivityCallback(RefPtr<GCActivityCallback>&& callback)
+{
+    m_fullActivityCallback = WTFMove(callback);
+}
+
+void Heap::setEdenActivityCallback(RefPtr<GCActivityCallback>&& callback)
+{
+    m_edenActivityCallback = WTFMove(callback);
 }
 
 bool Heap::useGenerationalGC()

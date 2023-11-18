@@ -864,6 +864,9 @@ svg/text/selection-doubleclick.svg [ Skip ]
 svg/text/selection-tripleclick.svg [ Skip ]
 imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html [ Skip ]
 
+# No test_driver.click() support for iOS testing
+webkit.org/b/264285 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ Skip ]
+
 # Overscroll-behavior on iOS needs SkyEcho19E179/StarE21E168a: https://bugs.webkit.org/show_bug.cgi?id=235852
 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Skip ]
 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]

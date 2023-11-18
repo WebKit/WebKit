@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 RemoteLayerWithRemoteRenderingBackingStoreCollection::RemoteLayerWithRemoteRenderingBackingStoreCollection(RemoteLayerTreeContext& layerTreeContext)
     : RemoteLayerBackingStoreCollection(layerTreeContext)
 {

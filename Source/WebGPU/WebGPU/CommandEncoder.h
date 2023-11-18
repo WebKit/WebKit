@@ -78,6 +78,9 @@ public:
     bool isValid() const { return m_commandBuffer; }
     void lock(bool);
 
+    id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
+    void finalizeBlitCommandEncoder();
+
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
@@ -90,9 +93,6 @@ private:
     bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void makeInvalid() { m_commandBuffer = nil; }
-
-    void ensureBlitCommandEncoder();
-    void finalizeBlitCommandEncoder();
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };

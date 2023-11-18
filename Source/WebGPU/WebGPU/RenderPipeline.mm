@@ -30,6 +30,7 @@
 #import "BindGroupLayout.h"
 #import "Device.h"
 #import "Pipeline.h"
+#import "RenderBundleEncoder.h"
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
 @interface NSObject ()
@@ -653,8 +654,11 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
     RELEASE_ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
-    if (auto mask = descriptor.multisample.mask; mask != 0xFFFFFFFF)
+    uint32_t sampleMask = RenderBundleEncoder::defaultSampleMask;
+    if (auto mask = descriptor.multisample.mask; mask != sampleMask) {
         [mtlRenderPipelineDescriptor setSampleMask:mask];
+        sampleMask = mask;
+    }
 
     if (descriptor.vertex.bufferCount)
         mtlRenderPipelineDescriptor.vertexDescriptor = createVertexDescriptor(descriptor.vertex);
@@ -686,9 +690,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         return RenderPipeline::createInvalid(*this);
 
     if (!pipelineLayout)
-        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, generatePipelineLayout(bindGroupEntries), depthBias, depthBiasSlopeScale, depthBiasClamp, *this);
+        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, generatePipelineLayout(bindGroupEntries), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, *this);
 
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, const_cast<PipelineLayout&>(*pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, const_cast<PipelineLayout&>(*pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -699,7 +703,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
@@ -710,6 +714,7 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_depthBias(depthBias)
     , m_depthBiasSlopeScale(depthBiasSlopeScale)
     , m_depthBiasClamp(depthBiasClamp)
+    , m_sampleMask(sampleMask)
     , m_depthStencilDescriptor(depthStencilDescriptor)
     , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
     , m_pipelineLayout(WTFMove(pipelineLayout))

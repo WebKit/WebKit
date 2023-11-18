@@ -569,7 +569,7 @@ struct ImageAnalysisContextMenuActionData {
     std::optional<WebKit::RemoveBackgroundData> _removeBackgroundData;
 #endif
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    __weak id<UIAsyncTextInputDelegate> _asyncSystemInputDelegate;
+    __weak id<UIAsyncTextInputDelegate_Staging> _asyncSystemInputDelegate;
 #endif
 }
 

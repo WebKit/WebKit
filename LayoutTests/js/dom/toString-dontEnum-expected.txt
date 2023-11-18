@@ -1,6 +1,5 @@
 This tests that the toString() function does not enumerate.
 
-PASS: the toString function is not enumerable for Selection.
 PASS: the toString function is not enumerable for HTMLDivElement.
 PASS: the toString function is not enumerable for HTMLDocument.
 PASS: the toString function is not enumerable for Object.
