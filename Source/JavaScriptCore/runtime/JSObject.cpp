@@ -4064,8 +4064,8 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
     unsigned i = 0;
     Structure* structure = this->structure();
     if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumerationCommon())) {
-        Vector<PropertyOffset, 16> offsets;
-        offsets.reserveInitialCapacity(size);
+        std::array<PropertyOffset, 16> offsets;
+        unsigned offsetsSize = 0;
 
         for (unsigned index = 0; index < size; ++index) {
             PropertyName propertyName(properties[index].get());
@@ -4073,7 +4073,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             PropertyOffset offset;
             if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
                 structure = newStructure;
-                offsets.unsafeAppendWithoutCapacityCheck(offset);
+                offsets[offsetsSize++] = offset;
                 continue;
             }
 
@@ -4081,7 +4081,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             offset = structure->get(vm, propertyName, currentAttributes);
             if (offset != invalidOffset) {
                 structure->didReplaceProperty(offset);
-                offsets.unsafeAppendWithoutCapacityCheck(offset);
+                offsets[offsetsSize++] = offset;
                 continue;
             }
 
@@ -4101,7 +4101,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             ASSERT(newStructure->isValidOffset(offset));
 
             structure = newStructure;
-            offsets.unsafeAppendWithoutCapacityCheck(offset);
+            offsets[offsetsSize++] = offset;
         }
 
         // Flush batching here. Note that it is possible that offsets.size() is not equal to size, if we stop batching due to transition-watchpoint-firing.
@@ -4114,12 +4114,12 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
         }
 
-        for (unsigned index = 0; index < offsets.size(); ++index)
+        for (unsigned index = 0; index < offsetsSize; ++index)
             putDirectOffset(vm, offsets[index], JSValue::decode(values[index]));
         setStructure(vm, structure);
 
         // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.
-        i = offsets.size();
+        i = offsetsSize;
 
         if (mayBePrototype())
             vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
