@@ -733,20 +733,32 @@ bool Line::lineHasVisuallyNonEmptyContent() const
 
 bool Line::restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList& runs)
 {
+    auto restore = [&](auto& trailingRun) {
+        ASSERT(trailingRun.isText());
+        auto& layoutBox = downcast<InlineTextBox>(trailingRun.layoutBox());
+        if (trailingRun.m_textContent->start + trailingRun.m_textContent->length == layoutBox.content().length()) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        trailingRun.m_logicalWidth += trimmedTrailingWhitespaceWidth;
+        // This must be collapsed whitespace.
+        trailingRun.m_textContent->length += 1;
+        return true;
+    };
+
     auto& lastRun = runs.last();
-    if (!lastRun.isText()) {
-        ASSERT_NOT_REACHED();
-        return false;
+    if (lastRun.isText())
+        return restore(lastRun);
+
+    auto isHardLineBreakWithTrailingTextRun = lastRun.isHardLineBreak() && runs.size() > 1 && runs[runs.size() - 2].isText();
+    if (isHardLineBreakWithTrailingTextRun) {
+        if (!restore(runs[runs.size() - 2]))
+            return false;
+        lastRun.moveHorizontally(trimmedTrailingWhitespaceWidth);
+        return true;
     }
-    auto& layoutBox = downcast<InlineTextBox>(lastRun.layoutBox());
-    if (lastRun.m_textContent->start + lastRun.m_textContent->length == layoutBox.content().length()) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    lastRun.m_logicalWidth += trimmedTrailingWhitespaceWidth;
-    // This must be collapsed whitespace.
-    lastRun.m_textContent->length += 1;
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 const InlineFormattingContext& Line::formattingContext() const

@@ -2758,7 +2758,7 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (BOOL)accessibilityIsInNonNativeTextControl
 {
-    return Accessibility::findAncestor(*self.axBackingObject, true, [] (const auto& object) {
+    return !!Accessibility::findAncestor(*self.axBackingObject, true, [] (const auto& object) {
         return object.isNonNativeTextControl();
     });
 }
