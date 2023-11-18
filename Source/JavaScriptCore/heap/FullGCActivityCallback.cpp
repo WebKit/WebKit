@@ -36,6 +36,8 @@ FullGCActivityCallback::FullGCActivityCallback(Heap& heap)
 {
 }
 
+FullGCActivityCallback::~FullGCActivityCallback() = default;
+
 void FullGCActivityCallback::doCollection(VM& vm)
 {
     Heap& heap = vm.heap;

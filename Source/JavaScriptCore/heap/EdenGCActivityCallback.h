@@ -39,6 +39,7 @@ public:
     JS_EXPORT_PRIVATE void doCollection(VM&) override;
 
     JS_EXPORT_PRIVATE EdenGCActivityCallback(Heap&);
+    JS_EXPORT_PRIVATE ~EdenGCActivityCallback();
 
 private:
     JS_EXPORT_PRIVATE Seconds lastGCLength(Heap&) final;

@@ -35,6 +35,8 @@ EdenGCActivityCallback::EdenGCActivityCallback(Heap& heap)
 {
 }
 
+EdenGCActivityCallback::~EdenGCActivityCallback() = default;
+
 void EdenGCActivityCallback::doCollection(VM& vm)
 {
     setDidGCRecently(false);

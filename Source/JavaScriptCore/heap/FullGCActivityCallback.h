@@ -39,6 +39,7 @@ public:
     JS_EXPORT_PRIVATE void doCollection(VM&) override;
 
     JS_EXPORT_PRIVATE FullGCActivityCallback(Heap&);
+    JS_EXPORT_PRIVATE ~FullGCActivityCallback();
 
 private:
     JS_EXPORT_PRIVATE Seconds lastGCLength(Heap&) final;
