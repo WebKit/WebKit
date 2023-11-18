@@ -1261,11 +1261,12 @@ typedef struct {
 @property (nonatomic, assign, readwrite) BOOL shouldEvaluateForInputSystemHandling;
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
-
-@interface UIResponder (Staging_118307558)
-- (void)replace:(id)sender;
+@protocol UIAsyncTextInputDelegate_Staging<UIAsyncTextInputDelegate>
+- (void)invalidateTextEntryContext; // Added in rdar://118536368.
+- (void)replaceText:(id)sender; // Added in rdar://118307558.
 @end
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 WTF_EXTERN_C_BEGIN
 
