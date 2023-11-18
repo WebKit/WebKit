@@ -52,6 +52,13 @@ class Revert(Command):
         )
 
         parser.add_argument(
+            '--revert-issue',
+            dest='revert_issue',
+            type=str,
+            help='Issue for the revert'
+        )
+
+        parser.add_argument(
             '--pr',
             default=False,
             action='store_true',
@@ -59,11 +66,34 @@ class Revert(Command):
         )
 
     @classmethod
-    def revert_commit(cls, args, repository, **kwargs):
-        # Check if there are any outstanding changes:
-        if repository.modified():
-            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(args.commit))
-            return 1
+    def get_issue_info(cls, args, repository, **kwargs):
+        # Can give either a bug URL or a title of the new issue.
+        # Using --revert-issue to differentiate from PR arg --issue/-i
+        if not args.revert_issue:
+            prompt = 'Enter issue URL or title of new issue for the revert: '
+            args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
+        else:
+            args.issue = args.revert_issue
+
+        issue = Tracker.from_string(args.issue)
+
+        if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
+            if getattr(Tracker.instance(), 'credentials', None):
+                Tracker.instance().credentials(required=True, validate=True)
+            issue = Tracker.instance().create(
+                title=args.issue,
+                description=Terminal.input('Issue description: '),
+            )
+            if not issue:
+                sys.stderr.write('Failed to create new issue\n')
+                return None
+            print("Created '{}'".format(issue))
+        elif not Tracker.instance():
+            sys.stderr.write('Could not find tracker instance.\n')
+        return issue
+
+    @classmethod
+    def create_revert_commit_msg(cls, args, repository, **kwargs):
         # Make sure we have the commit that user want to revert
         try:
             commit = repository.find(args.commit, include_log=True)
@@ -72,37 +102,6 @@ class Revert(Command):
             # to the user as an error
             sys.stderr.write('Could not find "{}"'.format(args.commit) + '\n')
             return 1
-
-        result = run([repository.executable(), 'revert', '--no-commit'] + [commit.hash], cwd=repository.root_path, capture_output=True)
-        if result.returncode:
-            # git revert will output nothing if this commit is already reverted
-            if not result.stdout.strip():
-                sys.stderr.write('The commits you spiecfied seems already be reverted.')
-                return 2
-            # print out
-            sys.stderr.write(result.stdout.decode('utf-8'))
-            sys.stderr.write(result.stderr.decode('utf-8'))
-            sys.stderr.write('If you have merge conflicts, after resolving them, please use git-webkit pfr to publish your pull request')
-            return 1
-        # restore all ChangeLog changes, we should not revert those entries
-        modifiled_files = repository.modified()
-        if not modifiled_files:
-            sys.stderr.write('Failed to detect any diff after revert.')
-            return 1
-        for file in modifiled_files:
-            if 'ChangeLog' in file:
-                result = run([repository.executable(), 'restore', '--staged', file], cwd=repository.root_path)
-                if result.returncode:
-                    sys.stderr.write('Failed to restore staged file: {}'.format(file))
-                    run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
-                    return 1
-
-                result = run([repository.executable(), 'checkout', file], cwd=repository.root_path)
-                if result.returncode:
-                    sys.stderr.write('Failed to checkout file: {}'.format(file))
-                    run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
-                    return 1
-
         bug_urls = []
         commit_title = None
         for line in commit.message.splitlines():
@@ -111,9 +110,36 @@ class Revert(Command):
             tracker = Tracker.from_string(line)
             if tracker:
                 bug_urls.append(line)
+        revert_issue = Tracker.from_string(args.issue)
+        if not revert_issue:
+            sys.stderr.write('Could not find issue {}'.format(revert_issue))
+
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title)
+        env['COMMIT_MESSAGE_REVERT'] = '{}\n\n{}\n\nReverted changeset:\n\n{}'.format(revert_issue.link, revert_issue.title, commit_title)
         env['COMMIT_MESSAGE_BUG'] = '\n'.join(bug_urls)
+
+        if commit.identifier and commit.branch:
+            env['COMMIT_MESSAGE_BUG'] += '\nhttps://commits.webkit.org/{}@{}'.format(commit.identifier, commit.branch)
+        else:
+            sys.stderr.write('Could not find "{}"'.format(args.commit) + '\n')
+            return 1
+
+        return commit, commit_title, bug_urls
+
+    @classmethod
+    def revert_commit(cls, args, repository, issue, commit, commit_title, bug_urls, **kwargs):
+        result = run([repository.executable(), 'revert', '--no-commit'] + [commit.hash], cwd=repository.root_path, capture_output=True)
+        if result.returncode:
+            # git revert will output nothing if this commit is already reverted
+            if not result.stdout.strip():
+                sys.stderr.write('The commit(s) you specified seem(s) to be already reverted.')
+                return 2
+            # print out
+            sys.stderr.write(result.stdout.decode('utf-8'))
+            sys.stderr.write(result.stderr.decode('utf-8'))
+            sys.stderr.write('If you have merge conflicts, after resolving them, please use git-webkit pfr to publish your pull request')
+            return 1
 
         cls.write_branch_variables(
             repository, repository.branch,
@@ -121,7 +147,7 @@ class Revert(Command):
             bug=bug_urls,
         )
 
-        result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=env)
+        result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
         if result.returncode:
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
@@ -135,14 +161,27 @@ class Revert(Command):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
 
+        # Check if there are any outstanding changes:
+        if repository.modified():
+            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(args.commit))
+            return 1
+
         if not PullRequest.check_pull_request_args(repository, args):
+            return 1
+
+        issue = cls.get_issue_info(args, repository, **kwargs)
+        if not issue:
+            return 1
+
+        commit, commit_title, bug_urls = cls.create_revert_commit_msg(args, repository, **kwargs)
+        if not commit or not commit_title:
             return 1
 
         branch_point = PullRequest.pull_request_branch_point(repository, args, **kwargs)
         if not branch_point:
             return 1
 
-        result = cls.revert_commit(args, repository, **kwargs)
+        result = cls.revert_commit(args, repository, issue, commit, commit_title, bug_urls, **kwargs)
         if result:
             return result
 
