@@ -1675,6 +1675,11 @@ static JSValueRef getIsMarkAnnotationCallback(JSContextRef context, JSObjectRef 
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isMarkAnnotation());
 }
 
+static JSValueRef getIsInNonNativeTextControlCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isInNonNativeTextControl());
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
@@ -2050,6 +2055,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "isFirstItemInSuggesiton", getIsFirstItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isLastItemInSuggesiton", getIsLastItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isMarkAnnotation", getIsMarkAnnotationCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isInNonNativeTextControl", getIsInNonNativeTextControlCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

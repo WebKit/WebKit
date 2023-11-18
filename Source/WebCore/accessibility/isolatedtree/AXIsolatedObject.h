@@ -441,7 +441,7 @@ private:
     bool isNativeTextControl() const final;
     bool isListBoxOption() const final;
     bool isMockObject() const final;
-    bool isNonNativeTextControl() const final;
+    bool isNonNativeTextControl() const final { return boolAttributeValue(AXPropertyName::IsNonNativeTextControl); }
     bool isIndeterminate() const final { return boolAttributeValue(AXPropertyName::IsIndeterminate); }
     bool isLoaded() const final { return loadingProgress() >= 1; }
     bool isOnScreen() const final;

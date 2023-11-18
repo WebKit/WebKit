@@ -1544,6 +1544,7 @@ accessibility/focusable-ancestor.html [ Skip ]
 
 # Missing AccessibilityUIElement::{editableAncestor, highestEditableAncestor} implementations.
 accessibility/editable-ancestor.html [ Skip ]
+accessibility/content-editable-property-change.html [ Skip ]
 
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way
 # to have platform specific results that are different between WK1 and WK2.

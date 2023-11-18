@@ -347,6 +347,7 @@ public:
         AXColumnCountChanged,
         AXColumnIndexChanged,
         AXColumnSpanChanged,
+        AXContentEditableAttributeChanged,
         AXControlledObjectsChanged,
         AXCurrentStateChanged,
         AXDescribedByChanged,

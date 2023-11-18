@@ -1071,6 +1071,12 @@ bool AccessibilityUIElement::isLastItemInSuggestion() const
     return false;
 }
 
+bool AccessibilityUIElement::isInNonNativeTextControl() const
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace  WTF
 
 #endif // ENABLE(ACCESSIBILITY)

@@ -1,0 +1,9 @@
+This test ensures that changes to the contenteditable property are reflected in accessibility
+
+PASS: button.editableAncestor() === null
+PASS: button.editableAncestor().domIdentifier === 'content'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press Me
