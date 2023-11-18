@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>font-size-adjust with the ic-height metric</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org" />
+<link rel="help" href="https://www.w3.org/TR/css-fonts-5/#valdef-font-size-adjust-ic-height" />
+<link rel="match" href="font-size-adjust-ic-height-ref.html" />
+<meta name="assert" content="Test checks whether font-size-adjust with the ic-height metric adjusts font size.">
+<style>
+@font-face {
+  font-family: IcTestFullWidth;
+  src: url(../css-values/resources/IcTestFullWidth.woff2);
+}
+div {
+  font-family: IcTestFullWidth;
+  font-size: 100px;
+  background: green;
+  color: green;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+.value {
+  /* The IcTestFullWidth font has an aspect value of 1.0 for ic-height.
+     Therefore, an ic-height 2.0 means a 200% scaling up. */
+  font-size-adjust: ic-height 2.0;
+}
+.fromFont {
+  /* Likewise, ic-height from-font means 100% of the specified font size. */
+  font-size-adjust: ic-height from-font;
+}
+</style>
+<div class="value">水</div>
+<div class="fromFont">水</div>

@@ -22,6 +22,7 @@
 
 #include "FontBaseline.h"
 #include <optional>
+#include <wtf/Function.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -29,6 +30,8 @@ namespace WebCore {
 class FontMetrics {
 public:
     static const unsigned defaultUnitsPerEm = 1000;
+
+    using IdeogramHeightCallback = Function<float()>;
 
     unsigned unitsPerEm() const { return m_unitsPerEm; }
     void setUnitsPerEm(unsigned unitsPerEm) { m_unitsPerEm = unitsPerEm; }
@@ -126,6 +129,14 @@ public:
     float ideogramWidth() const { return m_ideogramWidth; }
     void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
+    float ideogramHeight() const
+    {
+        if (!m_ideogramHeight && m_ideogramHeightCallback)
+            m_ideogramHeight = m_ideogramHeightCallback();
+        return m_ideogramHeight.has_value() ? m_ideogramHeight.value() : 0;
+    };
+    void setIdeogramHeightCallback(IdeogramHeightCallback&& callback) { m_ideogramHeightCallback = WTFMove(callback); }
+
     float underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
 
@@ -151,6 +162,7 @@ private:
         m_xHeight = 0;
         m_zeroWidth = std::nullopt;
         m_ideogramWidth = 0;
+        m_ideogramHeight = std::nullopt;
         m_underlinePosition = 0;
         m_underlineThickness = 0;
     }
@@ -175,6 +187,9 @@ private:
     float m_xHeight { 0 };
     float m_underlinePosition { 0 };
     float m_underlineThickness { 0 };
+
+    mutable std::optional<float> m_ideogramHeight;
+    IdeogramHeightCallback m_ideogramHeightCallback;
 };
 
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm)
