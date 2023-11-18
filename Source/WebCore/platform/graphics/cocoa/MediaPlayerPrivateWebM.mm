@@ -112,7 +112,6 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
     clearTracks();
 
     cancelLoad();
-    resetParserState();
 }
 
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
@@ -213,8 +212,6 @@ void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
 void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer&)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata)
-        setNetworkState(MediaPlayer::NetworkState::Idle);
     m_loadFinished = true;
 }
 
@@ -331,7 +328,13 @@ const PlatformTimeRanges& MediaPlayerPrivateWebM::buffered() const
 
 void MediaPlayerPrivateWebM::setBufferedRanges(PlatformTimeRanges timeRanges)
 {
+    if (m_buffered == timeRanges)
+        return;
     m_buffered = WTFMove(timeRanges);
+    if (auto player = m_player.get()) {
+        player->bufferedTimeRangesChanged();
+        player->seekableTimeRangesChanged();
+    }
 }
 
 void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
@@ -375,7 +378,7 @@ void MediaPlayerPrivateWebM::updateDurationFromTrackBuffers()
             continue;
         highestEndTime = std::max(highestEndTime, trackBuffer->highestPresentationTimestamp());
     }
-    
+
     setDuration(WTFMove(highestEndTime));
 }
 
@@ -517,7 +520,7 @@ void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)
     if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
         setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
-    if (m_loadFinished)
+    if (m_delayedIdle)
         setNetworkState(MediaPlayer::NetworkState::Idle);
 }
 
@@ -593,6 +596,8 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
 
 void MediaPlayerPrivateWebM::setNetworkState(MediaPlayer::NetworkState state)
 {
+    if (state == MediaPlayer::NetworkState::Idle)
+        m_delayedIdle = false;
     if (state == m_networkState)
         return;
 
@@ -889,15 +894,20 @@ void MediaPlayerPrivateWebM::appendCompleted()
     m_pendingAppends--;
     INFO_LOG(LOGIDENTIFIER, "pending appends = ", m_pendingAppends);
     setLoadingProgresssed(true);
-    updateBufferedFromTrackBuffers(true);
+    updateBufferedFromTrackBuffers(m_loadFinished && !m_pendingAppends);
     if (m_loadFinished && !m_pendingAppends) {
         if (!m_hasVideo && !m_hasAudio) {
             ERROR_LOG(LOGIDENTIFIER, "could not load audio or video tracks");
             setNetworkState(MediaPlayer::NetworkState::FormatError);
             setReadyState(MediaPlayer::ReadyState::HaveNothing);
+            setNetworkState(MediaPlayer::NetworkState::Idle);
             return;
         }
-        
+        if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata)
+            setNetworkState(MediaPlayer::NetworkState::Idle);
+        else
+            m_delayedIdle = true;
+
         updateDurationFromTrackBuffers();
     }
 }
@@ -1075,7 +1085,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
                 player->addAudioTrack(*track);
         }
     }
-    
+
     if (m_hasAudio && !m_hasVideo)
         setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 }
@@ -1152,16 +1162,6 @@ void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
             return;
         weakThis->appendCompleted();
     });
-}
-
-void MediaPlayerPrivateWebM::resetParserState()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    // Wait until all tasks in the workqueue have run.
-    m_appendQueue->dispatchSync([] { });
-    m_processingInitializationSegment = false;
-    m_parser->resetParserState();
 }
 
 void MediaPlayerPrivateWebM::flush()

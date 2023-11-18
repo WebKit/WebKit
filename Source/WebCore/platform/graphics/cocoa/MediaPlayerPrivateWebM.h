@@ -211,7 +211,6 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
 
     void append(SharedBuffer&);
-    void resetParserState();
 
     void flush();
 #if PLATFORM(IOS_FAMILY)
@@ -310,6 +309,7 @@ private:
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
+    bool m_delayedIdle { false };
     bool m_processingInitializationSegment { false };
 };
 
