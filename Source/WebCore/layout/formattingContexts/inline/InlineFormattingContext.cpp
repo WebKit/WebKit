@@ -378,6 +378,8 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
 
     auto& lineBreakingResult = maximumIntrinsicWidthResultForSingleLine->result;
     auto restoreTrimmedTrailingWhitespaceIfApplicable = [&] {
+        // Special 'line-break: after-white-space' behavior where min/max width trims trailing whitespace, while
+        // layout should preserve _overflowing_ trailing whitespace.
         if (root().style().lineBreak() != LineBreak::AfterWhiteSpace || !lineBreakingResult.trimmedTrailingWhitespaceWidth)
             return;
         if (ceiledLayoutUnit(lineBreakingResult.contentGeometry.logicalWidth) + LayoutUnit::epsilon() <= horizontalAvailableSpace)
