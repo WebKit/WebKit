@@ -103,7 +103,6 @@ if (length($fontNamesIn)) {
     printLicenseHeader($F);
     printHeaderHead($F, "CSS", $familyNamesFileBase, <<END, "");
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 END
@@ -593,7 +592,7 @@ sub printFunctionTable
 
 sub printTagNameCases
 {
-    my ($F, $tagConstructorMap) = @_;
+    my ($F, $tagConstructorMap, $usePassedName) = @_;
     my %tagConstructorMap = %$tagConstructorMap;
 
     my $argumentList;
@@ -614,7 +613,11 @@ sub printTagNameCases
         }
 
         print F "    case TagName::$allElements{$elementKey}{tagEnumValue}:\n";
-        print F "        return $tagConstructorMap{$elementKey}Constructor($parameters{namespace}Names::$allElements{$elementKey}{identifier}Tag, $argumentList);\n";
+        if ($usePassedName) {
+            print F "        return $tagConstructorMap{$elementKey}Constructor(name, $argumentList);\n";
+        } else {
+            print F "        return $tagConstructorMap{$elementKey}Constructor($parameters{namespace}Names::$allElements{$elementKey}{identifier}Tag, $argumentList);\n";
+        }
 
         if ($conditional) {
             print F "#endif\n";
@@ -814,7 +817,6 @@ sub printNamesHeaderFile
     printLicenseHeader($F);
     printHeaderHead($F, "DOM", $parameters{namespace}, <<END, "class $parameters{namespace}QualifiedName : public QualifiedName { };\n\n");
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include "QualifiedName.h"
 END
@@ -1112,6 +1114,9 @@ sub printNodeNameHeaderFile
     print F "NodeName findNodeName(Namespace, const String&);\n";
     print F "ElementName findHTMLElementName(std::span<const LChar>);\n";
     print F "ElementName findHTMLElementName(std::span<const UChar>);\n";
+    print F "ElementName findHTMLElementName(const String&);\n";
+    print F "ElementName findSVGElementName(const String&);\n";
+    print F "ElementName findMathMLElementName(const String&);\n";
     print F "TagName tagNameForElementName(ElementName);\n";
     print F "ElementName elementNameForTag(Namespace, TagName);\n";
     print F "const QualifiedName& qualifiedNameForNodeName(NodeName);\n";
@@ -1253,6 +1258,27 @@ sub printNodeNameCppFile
     print F "ElementName findHTMLElementName(std::span<const UChar> buffer)\n";
     print F "{\n";
     print F "    return findHTMLNodeName(buffer);\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findHTMLElementName(const String& name)\n";
+    print F "{\n";
+    print F "    if (name.is8Bit())\n";
+    print F "        return findHTMLNodeName(std::span(name.characters8(), name.length()));\n";
+    print F "    return findHTMLNodeName(std::span(name.characters16(), name.length()));\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findSVGElementName(const String& name)\n";
+    print F "{\n";
+    print F "    if (name.is8Bit())\n";
+    print F "        return findSVGNodeName(std::span(name.characters8(), name.length()));\n";
+    print F "    return findSVGNodeName(std::span(name.characters16(), name.length()));\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findMathMLElementName(const String& name)\n";
+    print F "{\n";
+    print F "    if (name.is8Bit())\n";
+    print F "        return findMathMLNodeName(std::span(name.characters8(), name.length()));\n";
+    print F "    return findMathMLNodeName(std::span(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "\n";
     print F "const QualifiedName& qualifiedNameForNodeName(NodeName nodeName)\n";
@@ -1695,12 +1721,8 @@ END
 #include "NodeName.h"
 #include "Settings.h"
 #include "TagName.h"
-#include <wtf/RobinHoodHashMap.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-
-using $parameters{namespace}ConstructorFunction = Ref<$parameters{namespace}Element> (*)(const QualifiedName&, Document&$formElementArgumentForDeclaration, bool createdByParser);
 
 END
     ;
@@ -1709,9 +1731,9 @@ END
     my $argumentList;
 
     if ($parameters{namespace} eq "HTML") {
-        $argumentList = "name, document, formElement, createdByParser";
+        $argumentList = "document, formElement, createdByParser";
     } else {
-        $argumentList = "name, document, createdByParser";
+        $argumentList = "document, createdByParser";
     }
 
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
@@ -1726,65 +1748,13 @@ END
 
     print F <<END
 
-struct $parameters{namespace}ConstructorFunctionMapEntry {
-    $parameters{namespace}ConstructorFunction function { nullptr };
-    const QualifiedName* qualifiedName { nullptr }; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
-};
-
-static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> create$parameters{namespace}FactoryMap()
-{
-    struct TableEntry {
-        decltype($parameters{namespace}Names::${firstTagIdentifier}Tag)& name;
-        $parameters{namespace}ConstructorFunction function;
-    };
-
-    static constexpr TableEntry table[] = {
-END
-    ;
-
-    printFunctionTable($F, \%tagConstructorMap);
-
-    print F <<END
-    };
-
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> map;
-    for (auto& entry : table)
-        map.add(entry.name.get().localName(), $parameters{namespace}ConstructorFunctionMapEntry { entry.function, &entry.name.get() });
-    return map;
-}
-
-static $parameters{namespace}ConstructorFunctionMapEntry find$parameters{namespace}ElementConstructorFunction(const AtomString& localName)
-{
-    static NeverDestroyed map = create$parameters{namespace}FactoryMap();
-    return map.get().get(localName);
-}
-
-RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const AtomString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
-{
-    const $parameters{namespace}ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(localName);
-    if (LIKELY(entry.function)) {
-        ASSERT(entry.qualifiedName);
-        const auto& name = *entry.qualifiedName;
-        return entry.function($argumentList);
-    }
-    return nullptr;
-}
-
-RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
-{
-    const $parameters{namespace}ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(name.localName());
-    if (LIKELY(entry.function))
-        return entry.function($argumentList);
-    return nullptr;
-}
-
 RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(TagName tagName, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
     switch (tagName) {
 END
     ;
 
-    printTagNameCases($F, \%tagConstructorMap);
+    printTagNameCases($F, \%tagConstructorMap, 0);
 
     print F <<END
     default:
@@ -1792,22 +1762,43 @@ END
     }
 }
 
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElementWithName(TagName tagName, const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    switch (tagName) {
+END
+    ;
+
+    printTagNameCases($F, \%tagConstructorMap, 1);
+
+    print F <<END
+    default:
+        return nullptr;
+    }
+}
+
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const AtomString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    return createKnownElement(tagNameForElementName(find$parameters{namespace}ElementName(localName)), $argumentList);
+}
+
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    return createKnownElementWithName(tagNameForElementName(name.nodeName()), name, $argumentList);
+}
+
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const AtomString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
-    const $parameters{namespace}ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(localName);
-    if (LIKELY(entry.function)) {
-        ASSERT(entry.qualifiedName);
-        const auto& name = *entry.qualifiedName;
-        return entry.function($argumentList);
-    }
+    auto elementName = find$parameters{namespace}ElementName(localName);
+    if (elementName != ElementName::Unknown)
+        return createKnownElement(tagNameForElementName(elementName), $argumentList).releaseNonNull();
     return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom(), localName, $parameters{namespace}Names::${lowercaseNamespacePrefix}NamespaceURI), document);
 }
 
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
-    const $parameters{namespace}ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(name.localName());
-    if (LIKELY(entry.function))
-        return entry.function($argumentList);
+    auto elementName = name.nodeName();
+    if (elementName != ElementName::Unknown)
+        return createKnownElementWithName(tagNameForElementName(elementName), name, $argumentList).releaseNonNull();
     return $parameters{fallbackInterfaceName}::create(name, document);
 }
 
@@ -1858,6 +1849,10 @@ print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";
 
 print F "    static RefPtr<$parameters{namespace}Element> createKnownElement(TagName, Document&";
+print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
+print F ", bool createdByParser = false);\n";
+
+print F "    static RefPtr<$parameters{namespace}Element> createKnownElementWithName(TagName, const QualifiedName&, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";
 
