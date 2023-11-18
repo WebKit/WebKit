@@ -1672,26 +1672,35 @@ void VM::removeDebugger(Debugger& debugger)
 
 void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions> options)
 {
+    constexpr bool verbose = false;
+
+    dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] QUERY");
     JSLockHolder locker { *this };
-    if (deferredWorkTimer->hasAnyPendingWork())
+    if (deferredWorkTimer->hasAnyPendingWork()) {
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: No pending tasks");
         return;
+    }
 
     SetForScope insideOpportunisticTaskScope { heap.m_isInOpportunisticTask, true };
     [&] {
-        if (options.contains(SchedulerOptions::HasImminentlyScheduledWork))
+        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
+        auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
+
+        if (options.contains(SchedulerOptions::HasImminentlyScheduledWork)) {
+            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: HasImminentlyScheduledWork ", remainingTime);
             return;
+        }
 
         static constexpr auto minimumDelayBeforeOpportunisticFullGC = 30_ms;
         static constexpr auto minimumDelayBeforeOpportunisticEdenGC = 10_ms;
         static constexpr auto extraDurationToAvoidExceedingDeadlineDuringFullGC = 2_ms;
         static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
 
-        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
         auto timeSinceFinishingLastFullGC = secondsSinceEpoch - heap.m_lastFullGCEndTime.secondsSinceEpoch();
-        auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
         if (timeSinceFinishingLastFullGC > minimumDelayBeforeOpportunisticFullGC && heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) {
             auto estimatedGCDuration = (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
+                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] FULL");
                 heap.collectSync(CollectionScope::Full);
                 heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
@@ -1702,11 +1711,14 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
         if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
             auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
+                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect);
                 heap.collectSync(CollectionScope::Eden);
                 heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
             }
         }
+
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: nothing met. ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect);
     }();
 
     heap.sweeper().doWorkUntil(*this, deadline);

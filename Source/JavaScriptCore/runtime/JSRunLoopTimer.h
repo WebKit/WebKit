@@ -83,7 +83,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
     virtual void doWork(VM&) = 0;
 
-    void setTimeUntilFire(Seconds intervalInSeconds);
+    JS_EXPORT_PRIVATE void setTimeUntilFire(Seconds intervalInSeconds);
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
 

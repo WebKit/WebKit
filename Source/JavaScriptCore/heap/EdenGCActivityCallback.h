@@ -29,21 +29,21 @@
 
 namespace JSC {
 
-class JS_EXPORT_PRIVATE EdenGCActivityCallback final : public GCActivityCallback {
+class EdenGCActivityCallback : public GCActivityCallback {
 public:
-    EdenGCActivityCallback(Heap*);
+    static RefPtr<EdenGCActivityCallback> tryCreate(Heap& heap)
+    {
+        return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
+    }
 
-    void doCollection(VM&) final;
+    JS_EXPORT_PRIVATE void doCollection(VM&) override;
+
+    JS_EXPORT_PRIVATE EdenGCActivityCallback(Heap&);
 
 private:
-    Seconds lastGCLength(Heap&) final;
-    double gcTimeSlice(size_t bytes) final;
-    double deathRate(Heap&) final;
+    JS_EXPORT_PRIVATE Seconds lastGCLength(Heap&) final;
+    JS_EXPORT_PRIVATE double gcTimeSlice(size_t bytes) final;
+    JS_EXPORT_PRIVATE double deathRate(Heap&) final;
 };
-
-inline RefPtr<GCActivityCallback> GCActivityCallback::tryCreateEdenTimer(Heap* heap)
-{
-    return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
-}
 
 } // namespace JSC

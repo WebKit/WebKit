@@ -30,13 +30,14 @@
 
 namespace JSC {
 
-EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
+EdenGCActivityCallback::EdenGCActivityCallback(Heap& heap)
     : GCActivityCallback(heap)
 {
 }
 
 void EdenGCActivityCallback::doCollection(VM& vm)
 {
+    setDidGCRecently(false);
     vm.heap.collectAsync(CollectionScope::Eden);
 }
 

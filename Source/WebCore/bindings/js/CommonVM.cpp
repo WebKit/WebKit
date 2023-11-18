@@ -28,8 +28,11 @@
 
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "OpportunisticTaskScheduler.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/EdenGCActivityCallback.h>
+#include <JavaScriptCore/FullGCActivityCallback.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/MachineStackMarker.h>
 #include <JavaScriptCore/VM.h>
@@ -62,6 +65,10 @@ JSC::VM& commonVMSlow()
 #endif
 
     auto& vm = JSC::VM::create(JSC::HeapType::Large, runLoop).leakRef();
+#if !PLATFORM(IOS_FAMILY)
+    vm.heap.setFullActivityCallback(OpportunisticTaskScheduler::FullGCActivityCallback::create(vm.heap));
+    vm.heap.setEdenActivityCallback(OpportunisticTaskScheduler::EdenGCActivityCallback::create(vm.heap));
+#endif
 
     g_commonVMOrNull = &vm;
 
