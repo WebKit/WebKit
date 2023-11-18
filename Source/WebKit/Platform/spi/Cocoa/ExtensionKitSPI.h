@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if USE(EXTENSIONKIT)
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _SEServiceConfiguration: NSObject
@@ -82,3 +84,5 @@ NS_REFINED_FOR_SWIFT
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // USE(EXTENSIONKIT)

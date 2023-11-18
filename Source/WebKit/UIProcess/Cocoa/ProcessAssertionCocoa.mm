@@ -28,6 +28,8 @@
 
 #if USE(RUNNINGBOARD)
 
+#import "AssertionCapability.h"
+#import "ExtensionKitSPI.h"
 #import "Logging.h"
 #import "ProcessStateMonitor.h"
 #import "RunningBoardServicesSPI.h"
@@ -45,13 +47,6 @@
 #import <UIKit/UIApplication.h>
 
 using WebKit::ProcessAndUIAssertion;
-#endif
-
-#if USE(EXTENSIONKIT)
-#import "ExtensionKitSPI.h"
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SECapabilities);
 #endif
 
 static WorkQueue& assertionsWorkQueue()
@@ -323,32 +318,32 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 
 namespace WebKit {
 
-static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertionType)
+static ASCIILiteral runningBoardNameForAssertionType(ProcessAssertionType assertionType)
 {
     switch (assertionType) {
     case ProcessAssertionType::NearSuspended:
-        return @"Suspended"; // FIXME: This name is confusing since it doesn't cause suspension.
+        return "Suspended"_s; // FIXME: This name is confusing since it doesn't cause suspension.
     case ProcessAssertionType::Background:
 #if PLATFORM(MAC)
         // The background assertions time out after 30 seconds on iOS but not macOS.
-        return @"IndefiniteBackground";
+        return "IndefiniteBackground"_s;
 #else
-        return @"Background";
+        return "Background"_s;
 #endif
     case ProcessAssertionType::UnboundedNetworking:
-        return @"UnboundedNetworking";
+        return "UnboundedNetworking"_s;
     case ProcessAssertionType::Foreground:
-        return @"Foreground";
+        return "Foreground"_s;
     case ProcessAssertionType::MediaPlayback:
-        return @"MediaPlayback";
+        return "MediaPlayback"_s;
     case ProcessAssertionType::FinishTaskInterruptable:
-        return @"FinishTaskInterruptable";
+        return "FinishTaskInterruptable"_s;
     case ProcessAssertionType::BoostedJetsam:
-        return @"BoostedJetsam";
+        return "BoostedJetsam"_s;
     }
 }
 
-static NSString *runningBoardDomainForAssertionType(ProcessAssertionType assertionType)
+static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType assertionType)
 {
     switch (assertionType) {
     case ProcessAssertionType::NearSuspended:
@@ -357,9 +352,9 @@ static NSString *runningBoardDomainForAssertionType(ProcessAssertionType asserti
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
     case ProcessAssertionType::BoostedJetsam:
-        return @"com.apple.webkit";
+        return "com.apple.webkit"_s;
     case ProcessAssertionType::FinishTaskInterruptable:
-        return @"com.apple.common";
+        return "com.apple.common"_s;
     }
 }
 
@@ -378,32 +373,26 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
 {
 #if USE(EXTENSIONKIT)
     if (process.extensionProcess()) {
-        NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
-        NSString *runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
-#if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)
-        auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName = RetainPtr<NSString>(runningBoardAssertionName)] () {
+        ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
+        ASCIILiteral runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
+        auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
             auto strongThis = weakThis.get();
-            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.get(), strongThis ? strongThis->m_pid : 0);
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}s assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
             if (strongThis)
                 strongThis->processAssertionWasInvalidated();
         };
-        auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName = RetainPtr<NSString>(runningBoardAssertionName)] () {
+        auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
             auto strongThis = weakThis.get();
-            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.get(), strongThis ? strongThis->m_pid : 0);
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}s assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
             if (strongThis)
                 strongThis->processAssertionWillBeInvalidated();
         };
-        m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier() willInvalidate: willInvalidateBlock didInvalidate: didInvalidateBlock];
-#else
-        if ([get_SECapabilitiesClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
-            m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName environmentIdentifier: process.environmentIdentifier()];
-        else
-            m_capabilities = [get_SECapabilitiesClass() assertionWithDomain:runningBoardDomain name:runningBoardAssertionName];
-#endif
+        AssertionCapability capability { String(runningBoardDomain), String(runningBoardAssertionName), process.environmentIdentifier(), WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
+        m_capabilities = capability.platformCapability();
         m_process = process.extensionProcess();
         if (m_capabilities)
             return;
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %@", this, runningBoardAssertionName);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
     }
 #endif
     init(process.environmentIdentifier());
@@ -411,10 +400,10 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
 
 void ProcessAssertion::init(const String& environmentIdentifier)
 {
-    NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
-    ASSERT(runningBoardAssertionName);
+    ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
+    ASSERT(!runningBoardAssertionName.isEmpty());
     if (m_pid <= 0) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName, m_reason.utf8().data(), m_pid);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}s assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName.characters(), m_reason.utf8().data(), m_pid);
         m_wasInvalidated = true;
         return;
     }
@@ -425,17 +414,17 @@ void ProcessAssertion::init(const String& environmentIdentifier)
     else
         target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier];
 
-    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType) name:runningBoardAssertionName];
+    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:String(runningBoardDomainForAssertionType(m_assertionType)) name:String(runningBoardAssertionName)];
     m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason target:target attributes:@[domainAttribute]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
     m_delegate.get().invalidationCallback = ^{
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", this, runningBoardAssertionName, m_pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}s assertion for process with PID=%d was invalidated", this, runningBoardAssertionName.characters(), m_pid);
         processAssertionWasInvalidated();
     };
     m_delegate.get().prepareForInvalidationCallback = ^{
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, m_pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}s assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName.characters(), m_pid);
         processAssertionWillBeInvalidated();
     };
 }
@@ -480,8 +469,8 @@ void ProcessAssertion::acquireSync()
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;
         }
-        NSString *runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability %@ with error %@", this, runningBoardAssertionName, error);
+        ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability %s with error %@", this, runningBoardAssertionName.characters(), error);
     }
 #endif
     NSError *acquisitionError = nil;
