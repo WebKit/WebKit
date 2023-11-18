@@ -1797,8 +1797,10 @@ Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createE
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
     auto elementName = name.nodeName();
-    if (elementName != ElementName::Unknown)
-        return createKnownElementWithName(tagNameForElementName(elementName), name, $argumentList).releaseNonNull();
+    if (elementName != ElementName::Unknown) {
+        if (auto result = createKnownElementWithName(tagNameForElementName(elementName), name, $argumentList))
+            return result.releaseNonNull();
+    }
     return $parameters{fallbackInterfaceName}::create(name, document);
 }
 
