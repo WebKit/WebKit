@@ -225,6 +225,7 @@ private:
     void setBufferedDirty(bool);
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
+    Ref<MediaPromise> removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
     virtual Vector<PlatformTimeRanges> trackBuffersRanges() const;
     bool hasTooManySamples() const;

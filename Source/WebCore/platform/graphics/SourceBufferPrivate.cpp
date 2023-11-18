@@ -409,6 +409,22 @@ MediaTime SourceBufferPrivate::findPreviousSyncSamplePresentationTime(const Medi
 
 Ref<MediaPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
 {
+    MediaPromise::Producer producer;
+    Ref promise = producer.promise();
+
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, start, end, currentTime](auto&& result) mutable {
+        if (!weakThis || !result)
+            return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+        return removeCodedFramesInternal(start, end, currentTime);
+    })->whenSettled(RunLoop::current(), [producer = WTFMove(producer)](auto&& result) mutable {
+        producer.settle(result);
+        return MediaPromise::createAndSettle(WTFMove(result));
+    });
+    return promise;
+}
+
+Ref<MediaPromise> SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
+{
     ASSERT(start < end);
     if (start >= end)
         return MediaPromise::createAndResolve();
@@ -439,7 +455,7 @@ Ref<MediaPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start,
 
     updateHighestPresentationTimestamp();
 
-    LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
+    LOG(Media, "SourceBuffer::removeCodedFramesInternal(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
 
     auto trackBuffers = trackBuffersRanges();
     if (isAttached()) {
@@ -581,27 +597,32 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
 {
     processPendingMediaSamples();
 
-    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [segment = WTFMove(segment), weakThis = WeakPtr { *this }, this](auto&& result) mutable -> Ref<MediaPromise> {
+    auto segmentCopy = segment;
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [segment = WTFMove(segment), weakThis = WeakPtr { *this }, this, abortCount = m_abortCount](auto&& result) mutable {
         if (!weakThis || !isAttached())
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
+        if (abortCount != m_abortCount) {
+            processInitialisationSegment({ });
+            return MediaPromise::createAndResolve();
+        }
         if (!result || ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment)) || !precheckInitialisationSegment(segment))) {
             processInitialisationSegment({ });
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::ParsingError);
         }
 
-        auto segmentCopy = segment;
-        return client().sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable -> Ref<MediaPromise> {
-            if (!weakThis)
-                return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        return client().sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment));
+    })->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable {
+        if (!weakThis)
+            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
-            m_receivedFirstInitializationSegment = true;
-            m_pendingInitializationSegmentForChangeType = false;
+        // We don't check for abort here as we need to complete the already started initialization segment.
+        m_receivedFirstInitializationSegment = true;
+        m_pendingInitializationSegmentForChangeType = false;
 
-            processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+        processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
 
-            return MediaPromise::createAndSettle(WTFMove(result));
-        });
+        return MediaPromise::createAndSettle(WTFMove(result));
     });
 }
 
@@ -656,9 +677,9 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
 Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
     MediaPromise::Producer producer;
-    Ref<MediaPromise> promise = producer.promise();
+    Ref promise = producer.promise();
 
-    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable -> Ref<MediaPromise> {
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable {
         if (!weakThis || !result)
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
 
@@ -717,9 +738,12 @@ void SourceBufferPrivate::processPendingMediaSamples()
     if (m_pendingSamples.isEmpty())
         return;
     auto samples = std::exchange(m_pendingSamples, { });
-    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, samples = WTFMove(samples)](auto&& result) mutable {
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, samples = WTFMove(samples), abortCount = m_abortCount](auto&& result) mutable {
         if (!weakThis || !result || !isAttached())
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+        if (abortCount != m_abortCount)
+            return MediaPromise::createAndResolve();
+
         for (auto& sample : samples) {
             if (!processMediaSample(WTFMove(sample)))
                 return MediaPromise::createAndReject(PlatformMediaError::ParsingError);
@@ -1208,7 +1232,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
 
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
-            removeCodedFrames(rangeStart, rangeEnd, currentTime);
+            removeCodedFramesInternal(rangeStart, rangeEnd, currentTime);
             if (m_buffered.minimumBufferedTime() == rangeStart)
                 break; // Nothing evicted.
 
@@ -1244,7 +1268,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
 
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
-            removeCodedFrames(rangeStart, rangeEnd, currentTime);
+            removeCodedFramesInternal(rangeStart, rangeEnd, currentTime);
             if (m_buffered.maximumBufferedTime() == rangeEnd)
                 break; // Nothing evicted.
 
