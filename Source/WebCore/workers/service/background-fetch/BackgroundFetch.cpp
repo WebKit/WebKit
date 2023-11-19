@@ -581,8 +581,9 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<cons
         if (!responseHeaders)
             return nullptr;
 
-        WebCore::ResourceResponse response;
-        if (!WebCore::ResourceResponse::decode(decoder, response))
+        std::optional<ResourceResponse> unusedResponseData;
+        decoder >> unusedResponseData;
+        if (!unusedResponseData)
             return nullptr;
 
         std::optional<bool> isCompleted;
