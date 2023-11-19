@@ -27,10 +27,6 @@
 
 #include "AbstractLineBuilder.h"
 #include "FloatingContext.h"
-#include "FormattingConstraints.h"
-#include "InlineLayoutState.h"
-#include "InlineLine.h"
-#include "InlineLineTypes.h"
 
 namespace WebCore {
 namespace Layout {
@@ -89,36 +85,17 @@ private:
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;
 
     bool isLineConstrainedByFloat() const { return !m_lineIsConstrainedByFloat.isEmpty(); }
-    bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
-
-    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const FloatingContext& floatingContext() const { return m_floatingContext; }
 
-    const InlineLayoutState& layoutState() const;
-    InlineLayoutState& layoutState();
-    const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
-    const ElementBox& root() const;
-    const RenderStyle& rootStyle() const;
-
 private:
-    std::optional<PreviousLine> m_previousLine { };
-    InlineFormattingContext& m_inlineFormattingContext;
-    std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
-
-    Line m_line;
     const FloatingContext& m_floatingContext;
     InlineRect m_lineInitialLogicalRect;
-    InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     InlineLayoutUnit m_candidateContentMaximumHeight { 0.f };
-    const InlineItemList& m_inlineItemList;
     LineLayoutResult::PlacedFloatList m_placedFloats;
     LineLayoutResult::SuspendedFloatList m_suspendedFloats;
-    std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
-    Vector<const InlineItem*> m_wrapOpportunityList;
     Vector<InlineItem> m_lineSpanningInlineBoxes;
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;

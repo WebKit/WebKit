@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
+#include "InlineLayoutState.h"
+#include "InlineLine.h"
+#include "InlineLineTypes.h"
 #include "LineLayoutResult.h"
 
 namespace WebCore {
@@ -44,17 +48,42 @@ public:
     void setIntrinsicWidthMode(IntrinsicWidthMode);
 
 protected:
+    AbstractLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+
+    void reset();
+
     std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result&, bool) const;
 
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
+    bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
+
     InlineContentBreaker& inlineContentBreaker() { return m_inlineContentBreaker; }
 
+    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const HorizontalConstraints& rootHorizontalConstraints() const { return m_rootHorizontalConstraints; }
+    const InlineLayoutState& layoutState() const;
+    InlineLayoutState& layoutState();
+    const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
+    const ElementBox& root() const;
+    const RenderStyle& rootStyle() const;
+
+protected:
+    Line m_line;
+    InlineRect m_lineLogicalRect;
+    const InlineItemList& m_inlineItemList;
+    Vector<const InlineItem*> m_wrapOpportunityList;
+    std::optional<InlineTextItem> m_partialLeadingTextItem;
+    std::optional<PreviousLine> m_previousLine { };
+
 private:
+    InlineFormattingContext& m_inlineFormattingContext;
+    HorizontalConstraints m_rootHorizontalConstraints;
+
     InlineContentBreaker m_inlineContentBreaker;
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
-
 };
 
 
