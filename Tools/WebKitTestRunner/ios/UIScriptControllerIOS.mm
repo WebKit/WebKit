@@ -1498,6 +1498,11 @@ void UIScriptControllerIOS::copyText(JSStringRef text)
     UIPasteboard.generalPasteboard.string = text->string();
 }
 
+int64_t UIScriptControllerIOS::pasteboardChangeCount() const
+{
+    return UIPasteboard.generalPasteboard.changeCount;
+}
+
 void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
 {
     m_context->registerCallback(callback, CallbackTypeWindowTapRecognized);

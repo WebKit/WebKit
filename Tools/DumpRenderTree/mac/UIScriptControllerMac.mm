@@ -313,6 +313,11 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
     });
 }
 
+int64_t UIScriptControllerMac::pasteboardChangeCount() const
+{
+    return NSPasteboard.generalPasteboard.changeCount;
+}
+
 } // namespace WTR
 
 #endif // PLATFORM(MAC)

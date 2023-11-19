@@ -54,6 +54,8 @@ public:
     void activateDataListSuggestion(unsigned, JSValueRef) override;
     void setSpellCheckerResults(JSValueRef) override;
     void sendEventStream(JSStringRef, JSValueRef) override;
+
+    int64_t pasteboardChangeCount() const final;
 };
 
 }

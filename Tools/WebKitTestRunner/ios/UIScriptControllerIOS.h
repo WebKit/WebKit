@@ -191,6 +191,8 @@ private:
 
     void simulateRotation(DeviceOrientation, JSValueRef callback);
 
+    int64_t pasteboardChangeCount() const final;
+
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     UITextSelectionDisplayInteraction *textSelectionDisplayInteraction() const;
 #endif

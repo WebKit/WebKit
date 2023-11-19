@@ -70,6 +70,8 @@ private:
 
     NSTableView *dataListSuggestionsTableView() const;
     JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long, bool) const override;
+
+    int64_t pasteboardChangeCount() const final;
 };
 
 } // namespace WTR

@@ -314,6 +314,11 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
     });
 }
 
+int64_t UIScriptControllerMac::pasteboardChangeCount() const
+{
+    return NSPasteboard.generalPasteboard.changeCount;
+}
+
 void UIScriptControllerMac::copyText(JSStringRef text)
 {
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
