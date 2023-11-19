@@ -80,11 +80,6 @@ void MediaController::removeMediaElement(HTMLMediaElement& element)
     m_mediaElements.remove(m_mediaElements.find(&element));
 }
 
-bool MediaController::containsMediaElement(HTMLMediaElement& element) const
-{
-    return m_mediaElements.contains(&element);
-}
-
 Ref<TimeRanges> MediaController::buffered() const
 {
     if (m_mediaElements.isEmpty())

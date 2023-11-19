@@ -46,9 +46,6 @@ public:
 
     void setPluginElement(HTMLPlugInElement&);
     void detachFromPluginElement();
-
-    void cancelManualPluginLoad();
-
     bool shouldLoadPluginManually() const { return m_shouldLoadPluginManually; }
 
 private:

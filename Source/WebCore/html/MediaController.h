@@ -104,7 +104,6 @@ private:
 
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
-    bool containsMediaElement(HTMLMediaElement&) const;
 
     const String& mediaGroup() const { return m_mediaGroup; }
 
