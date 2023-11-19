@@ -122,6 +122,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/pt-to-px-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/range-bounding-client-rect-with-display-contents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resize-event-on-initial-layout.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/screen-detached-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/screenLeftTop.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scroll-back-to-initial-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-default-css.html
@@ -183,3 +184,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-width-immutable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-scrollBy-display-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-scrollBy-display-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-scrollBy-display-change.html
