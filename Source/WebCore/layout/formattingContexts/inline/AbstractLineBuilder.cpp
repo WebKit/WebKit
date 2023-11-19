@@ -28,9 +28,25 @@
 
 #include "FontCascade.h"
 #include "InlineContentBreaker.h"
+#include "InlineFormattingContext.h"
 
 namespace WebCore {
 namespace Layout {
+
+AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+    : m_line(inlineFormattingContext)
+    , m_inlineItemList(inlineItemList)
+    , m_inlineFormattingContext(inlineFormattingContext)
+    , m_rootHorizontalConstraints(rootHorizontalConstraints)
+{
+}
+
+void AbstractLineBuilder::reset()
+{
+    m_wrapOpportunityList = { };
+    m_partialLeadingTextItem = { };
+    m_previousLine = { };
+}
 
 std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineContentBreaker::Result& lineBreakingResult, bool isFirstFormattedLine) const
 {
@@ -77,6 +93,26 @@ void AbstractLineBuilder::setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidt
 {
     m_intrinsicWidthMode = intrinsicWidthMode;
     m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(m_intrinsicWidthMode == IntrinsicWidthMode::Minimum);
+}
+
+const ElementBox& AbstractLineBuilder::root() const
+{
+    return formattingContext().root();
+}
+
+const RenderStyle& AbstractLineBuilder::rootStyle() const
+{
+    return isFirstFormattedLine() ? root().firstLineStyle() : root().style();
+}
+
+const InlineLayoutState& AbstractLineBuilder::layoutState() const
+{
+    return formattingContext().layoutState();
+}
+
+InlineLayoutState& AbstractLineBuilder::layoutState()
+{
+    return formattingContext().layoutState();
 }
 
 }

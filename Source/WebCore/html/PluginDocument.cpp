@@ -192,17 +192,4 @@ void PluginDocument::detachFromPluginElement()
     m_pluginElement = nullptr;
 }
 
-void PluginDocument::cancelManualPluginLoad()
-{
-    // PluginDocument::cancelManualPluginLoad should only be called once, but there are issues
-    // with how many times we call beforeload on object elements. <rdar://problem/8441094>.
-    if (!shouldLoadPluginManually())
-        return;
-
-    auto& frameLoader = frame()->loader();
-    if (auto documentLoader = frameLoader.activeDocumentLoader())
-        documentLoader->cancelMainResourceLoad(frameLoader.cancelledError(documentLoader->request()));
-    m_shouldLoadPluginManually = false;
-}
-
 }

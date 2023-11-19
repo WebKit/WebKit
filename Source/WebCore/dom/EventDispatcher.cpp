@@ -158,7 +158,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     EventPath eventPath { node, event };
 
     if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && event.isMouseEvent()
-        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent)) {
+        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent || event.type() == eventNames().dblclickEvent)) {
         eventPath.adjustForDisabledFormControl();
     }
 

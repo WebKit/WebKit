@@ -4492,6 +4492,7 @@
         "web-platform-tests/css/cssom-view/scrollTop-display-change-ref.html",
         "web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001-ref.html",
         "web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002-ref.html",
+        "web-platform-tests/css/cssom-view/window-scrollBy-display-change-ref.html",
         "web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat-ref.html",
         "web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-ref.html",
         "web-platform-tests/css/cssom/insertRule-from-script-ref.html",

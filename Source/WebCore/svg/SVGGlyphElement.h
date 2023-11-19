@@ -30,9 +30,6 @@ class SVGGlyphElement final : public SVGElement {
 public:
     static Ref<SVGGlyphElement> create(const QualifiedName&, Document&);
 
-    // Helper function used by SVGFont
-    static String querySVGFontLanguage(const SVGElement*);
-
 private:
     SVGGlyphElement(const QualifiedName&, Document&);
 

@@ -226,11 +226,8 @@ inline void LineCandidate::reset()
 
 
 LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
-    : m_inlineFormattingContext(inlineFormattingContext)
-    , m_rootHorizontalConstraints(rootHorizontalConstraints)
-    , m_line(inlineFormattingContext)
+    : AbstractLineBuilder(inlineFormattingContext, rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
-    , m_inlineItemList(inlineItemList)
 {
 }
 
@@ -275,12 +272,12 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
 {
     ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
+    reset();
 
     m_previousLine = previousLine;
     m_placedFloats.clear();
     m_suspendedFloats.clear();
     m_lineSpanningInlineBoxes.clear();
-    m_wrapOpportunityList.clear();
     m_overflowingLogicalWidth = { };
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
@@ -444,7 +441,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     };
     layoutInlineAndFloatContent();
 
-    auto comutePlacedInlineItemRange = [&] {
+    auto computePlacedInlineItemRange = [&] {
         lineContent.range = { needsLayoutRange.start, { needsLayoutRange.startIndex() + placedInlineItemCount, { } } };
         if (!placedInlineItemCount || placedInlineItemCount == m_placedFloats.size() || !lineContent.partialTrailingContentLength)
             return;
@@ -454,7 +451,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         ASSERT(lineContent.partialTrailingContentLength && lineContent.partialTrailingContentLength < overflowingInlineTextItemLength);
         lineContent.range.end = { trailingInlineItemIndex, overflowingInlineTextItemLength - lineContent.partialTrailingContentLength };
     };
-    comutePlacedInlineItemRange();
+    computePlacedInlineItemRange();
 
     ASSERT(lineContent.range.endIndex() <= needsLayoutRange.endIndex());
 
@@ -929,7 +926,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
-        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, *m_rootHorizontalConstraints);
+        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, rootHorizontalConstraints());
         boxGeometry.setTopLeft(floatingPosition);
     };
     computeFloatBoxPosition();
@@ -1229,26 +1226,6 @@ bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, si
     // There has to be at least one non-float item.
     ASSERT_NOT_REACHED();
     return false;
-}
-
-const ElementBox& LineBuilder::root() const
-{
-    return formattingContext().root();
-}
-
-const RenderStyle& LineBuilder::rootStyle() const
-{
-    return isFirstFormattedLine() ? root().firstLineStyle() : root().style();
-}
-
-const InlineLayoutState& LineBuilder::layoutState() const
-{
-    return formattingContext().layoutState();
-}
-
-InlineLayoutState& LineBuilder::layoutState()
-{
-    return formattingContext().layoutState();
 }
 
 }
