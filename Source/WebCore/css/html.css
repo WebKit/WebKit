@@ -469,6 +469,7 @@ input::-webkit-textfield-decoration-container {
     display: flex;
     align-items: center;
     content: none !important;
+    writing-mode: inherit !important;
 }
 
 input[type="search"]::-webkit-search-cancel-button,
