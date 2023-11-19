@@ -178,7 +178,7 @@ static bool isBusyForTimerBasedGC()
 void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& vm)
 {
     constexpr Seconds delay { 100_ms };
-    constexpr unsigned deferCountThreshold = 5;
+    constexpr unsigned deferCountThreshold = 3;
 
     if (isBusyForTimerBasedGC()) {
         if (!m_version || m_version != vm.heap.objectSpace().markingVersion()) {
@@ -203,8 +203,8 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
 
 void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& vm)
 {
-    constexpr Seconds delay { 20_ms };
-    constexpr unsigned deferCountThreshold = 3;
+    constexpr Seconds delay { 10_ms };
+    constexpr unsigned deferCountThreshold = 5;
 
     if (isBusyForTimerBasedGC()) {
         if (!m_version || m_version != vm.heap.objectSpace().edenVersion()) {
