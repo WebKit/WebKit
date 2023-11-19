@@ -145,6 +145,11 @@ void UIScriptControllerIOS::copyText(JSStringRef text)
     UIPasteboard.generalPasteboard.string = text->string();
 }
 
+int64_t UIScriptControllerIOS::pasteboardChangeCount() const
+{
+    return UIPasteboard.generalPasteboard.changeCount;
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

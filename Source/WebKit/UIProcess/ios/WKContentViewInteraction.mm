@@ -313,6 +313,45 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 namespace WebKit {
 using namespace WebCore;
 
+static NSArray<NSString *> *supportedPlainTextPasteboardTypes()
+{
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
+        [types addObject:UTTypeURL.identifier];
+        [types addObjectsFromArray:UIPasteboardTypeListString];
+        return types;
+    }();
+    return supportedTypes.get().get();
+}
+
+static NSArray<NSString *> *supportedRichTextPasteboardTypes()
+{
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObject:WebCore::WebArchivePboardType];
+        [types addObjectsFromArray:UIPasteboardTypeListImage];
+        [types addObjectsFromArray:supportedPlainTextPasteboardTypes()];
+        return types;
+    }();
+    return supportedTypes.get().get();
+}
+
+#if HAVE(UI_PASTE_CONFIGURATION)
+
+static NSArray<NSString *> *supportedRichTextPasteboardTypesWithAttachments()
+{
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObjectsFromArray:supportedRichTextPasteboardTypes()];
+        [types addObjectsFromArray:WebCore::Pasteboard::supportedFileUploadPasteboardTypes()];
+        return types;
+    }();
+    return supportedTypes.get().get();
+}
+
+#endif // HAVE(UI_PASTE_CONFIGURATION)
+
 WKSelectionDrawingInfo::WKSelectionDrawingInfo()
     : type(SelectionType::None)
 {
@@ -1333,6 +1372,14 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     // FIXME: This should be called when we get notified that loading has completed.
     [self setUpTextSelectionAssistant];
 
+#if HAVE(UI_PASTE_CONFIGURATION)
+    self.pasteConfiguration = adoptNS([[UIPasteConfiguration alloc] initWithAcceptableTypeIdentifiers:[&] {
+        if (_page->preferences().attachmentElementEnabled())
+            return WebKit::supportedRichTextPasteboardTypesWithAttachments();
+        return WebKit::supportedRichTextPasteboardTypes();
+    }()]).get();
+#endif
+
 #if HAVE(LINK_PREVIEW)
     [self _registerPreview];
 #endif
@@ -1555,6 +1602,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _resetPanningPreventionFlags];
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
+
+#if HAVE(UI_PASTE_CONFIGURATION)
+    self.pasteConfiguration = nil;
+#endif
 
     _cachedHasCustomTintColor = std::nullopt;
     _cachedSelectedTextRange = nil;
@@ -3896,26 +3947,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (_page->editorState().selectionIsNone)
         return nil;
 
-    static NeverDestroyed supportedTypes = [] {
-        auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [types addObject:(id)kUTTypeURL];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        [types addObjectsFromArray:UIPasteboardTypeListString];
-        return types;
-    }();
-    static NeverDestroyed supportedTypesWithImageAndWebArchive = [] {
-        auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObject:WebCore::WebArchivePboardType];
-        [types addObjectsFromArray:UIPasteboardTypeListImage];
-        [types addObjectsFromArray:supportedTypes.get().get()];
-        return types;
-    }();
-
     if (_page->editorState().isContentRichlyEditable)
-        return supportedTypesWithImageAndWebArchive.get().get();
-    return supportedTypes.get().get();
+        return WebKit::supportedRichTextPasteboardTypes();
+
+    return WebKit::supportedPlainTextPasteboardTypes();
 }
 
 #define FORWARD_ACTION_TO_WKWEBVIEW(_action) \
@@ -4346,7 +4381,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return YES;
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-        if (editorState.isContentRichlyEditable && self.webView.configuration._attachmentElementEnabled) {
+        if (editorState.isContentRichlyEditable && _page->preferences().attachmentElementEnabled()) {
             for (NSItemProvider *itemProvider in pasteboard.itemProviders) {
                 auto preferredPresentationStyle = itemProvider.preferredPresentationStyle;
                 if (preferredPresentationStyle == UIPreferredPresentationStyleInline)
@@ -7709,6 +7744,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     BOOL editableChanged = [self setIsEditable:requiresKeyboard];
     _focusedElementInformation = information;
     _legacyTextInputTraits = nil;
+    _extendedTextInputTraits = nil;
 
     if (![self isFirstResponder])
         [self becomeFirstResponder];
@@ -9960,11 +9996,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         context.get()[@"_credential_type"] = WebCore::nonAutofillCredentialTypeString(_focusedElementInformation.nonAutofillCredentialType);
     }
     return context.autorelease();
-}
-
-- (BOOL)supportsImagePaste
-{
-    return mayContainSelectableText(_focusedElementInformation.elementType);
 }
 
 #if USE(UICONTEXTMENU)

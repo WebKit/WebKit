@@ -296,6 +296,7 @@ interface UIScriptController {
 
     undefined copyText(DOMString text);
     undefined paste();
+    readonly attribute long long pasteboardChangeCount;
 
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;

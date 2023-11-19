@@ -1842,6 +1842,12 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.paste()`, resolve));
     }
 
+    static async pasteboardChangeCount() {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.pasteboardChangeCount`, (result) => {
+            resolve(parseInt(result))
+        }));
+    }
+
     static async setContinuousSpellCheckingEnabled(enabled) {
         return new Promise(resolve => {
             testRunner.runUIScript(`uiController.setContinuousSpellCheckingEnabled(${enabled})`, resolve);

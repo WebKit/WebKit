@@ -113,6 +113,7 @@ public:
 
     virtual void copyText(JSStringRef) { notImplemented(); }
     virtual void paste() { notImplemented(); }
+    virtual int64_t pasteboardChangeCount() const { return 0; }
 
     virtual void chooseMenuAction(JSStringRef, JSValueRef);
     virtual void dismissMenu();
