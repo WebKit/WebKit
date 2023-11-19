@@ -43,6 +43,7 @@
 #include <wtf/Logger.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Unexpected.h>
@@ -380,6 +381,7 @@ private:
             return *this;
         }
 
+        explicit operator bool() const { return !!m_ptr; }
         VisibleType* operator->() { return m_ptr; }
         VisibleType& operator*() const { return *m_ptr; }
     private:
@@ -677,7 +679,7 @@ private:
 
             ASSERT(!promise.isNothing());
 
-            if (UNLIKELY(promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget) && m_targetQueue->isCurrent()) {
+            if (UNLIKELY(!m_targetQueue || (promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget && m_targetQueue->isCurrent()))) {
                 PROMISE_LOG(*promise.m_result ? "Resolving" : "Rejecting", " synchronous then() call made from ", m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
                 if (m_disconnected) {
                     PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
@@ -747,7 +749,8 @@ private:
 
         void processResult(Result& result) override
         {
-            assertIsCurrent(*ThenCallbackBase::m_targetQueue);
+            if (ThenCallbackBase::m_targetQueue)
+                assertIsCurrent(*ThenCallbackBase::m_targetQueue);
             ASSERT(m_settleFunction);
             if constexpr (IsChaining) {
                 auto p = m_settleFunction(maybeMove(result));
@@ -786,7 +789,7 @@ private:
         NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, VoidPlaceholder> m_lock;
         NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, VoidPlaceholder> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
     private:
-        CallBackType m_settleFunction WTF_GUARDED_BY_CAPABILITY(*ThenCallbackBase::m_targetQueue);
+        CallBackType m_settleFunction;
     };
 
     void maybeSettle(Ref<ThenCallbackBase>&& thenCallback, const Logger::LogSiteIdentifier& callSite)
@@ -921,6 +924,17 @@ private:
             return std::invoke(m, thisVal, std::forward<Arg>(arg));
     }
 
+    template<typename SettleFunction>
+    auto whenSettled(SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    {
+        ManagedSerialFunctionDispatcher dispatcher { static_cast<RunLoop*>(nullptr) };
+        using ThenCallbackType = ThenCallback<false, void>;
+        using ReturnType = ThenCommand<ThenCallbackType>;
+
+        auto thenCallback = adoptRef(*new ThenCallbackType(WTFMove(dispatcher), WTFMove(settleFunction), callSite));
+        return ReturnType(*this, WTFMove(thenCallback), callSite);
+    }
+
 public:
     template<class DispatcherType, typename SettleFunction>
     auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
@@ -1037,6 +1051,17 @@ public:
     {
         Locker lock { m_lock };
         return !isNothing();
+    }
+
+    template<unsigned newOptions, typename = std::enable_if<!IsExclusive>>
+    operator Ref<NativePromise<ResolveValueT, RejectValueT, newOptions>>()
+    {
+        typename NativePromise<ResolveValueT, RejectValueT, newOptions>::Producer producer { PromiseDispatchMode::Default, Logger::LogSiteIdentifier { "<conversion` promise>", nullptr } };
+        Ref promise = producer.promise();
+        whenSettled([producer = WTFMove(producer)](auto&& result) {
+            producer.settle(maybeMove(result));
+        });
+        return promise;
     }
 
 private:
@@ -1228,13 +1253,15 @@ public:
     operator Ref<PromiseType>() const
     {
         ASSERT(m_promise, "used after move");
-        return *m_promise;
+        RefPtr promise = m_promise;
+        return promise.releaseNonNull();
     }
 
     Ref<PromiseType> promise() const
     {
         ASSERT(m_promise, "used after move");
-        return *m_promise;
+        RefPtr promise = m_promise;
+        return promise.releaseNonNull();
     }
 
     // Allow calling ->then()/whenSettled() again for more promise chaining.

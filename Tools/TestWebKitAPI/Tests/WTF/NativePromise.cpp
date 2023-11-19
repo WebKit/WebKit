@@ -1435,6 +1435,24 @@ TEST(NativePromise, RunSynchronouslyOnTarget)
     });
 }
 
+// Test that you can convert a NativePromise of different types (exclusive vs non-exclusive)
+TEST(NativePromise, PromiseConversion)
+{
+    using MyPromise = NativePromise<void, int>;
+    using MyNonExclusivePromise = NativePromise<void, int, PromiseOption::Default | PromiseOption::NonExclusive>;
+    runInCurrentRunLoop([](auto& runLoop) {
+        auto nonExclusivePromise = MyNonExclusivePromise::createAndResolve();
+        Ref<MyPromise> promise1 = nonExclusivePromise.get();
+        promise1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        Ref<MyPromise> promise2 = nonExclusivePromise.get();
+        promise2->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+    });
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
