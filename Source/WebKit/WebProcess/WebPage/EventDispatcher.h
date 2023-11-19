@@ -46,10 +46,20 @@
 #include "WebGestureEvent.h"
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include "WebTouchEvent.h"
+#include <WebCore/FrameIdentifier.h>
+#include <wtf/CompletionHandler.h>
+#endif
+
 namespace WebCore {
 struct DisplayUpdate;
 class ThreadedScrollingTree;
 using PlatformDisplayID = uint32_t;
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+struct RemoteUserInputEventData;
+#endif
 }
 
 namespace WebKit {
@@ -58,10 +68,6 @@ class MomentumEventDispatcher;
 class ScrollingAccelerationCurve;
 class WebPage;
 class WebWheelEvent;
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-class WebTouchEvent;
-#endif
 
 class EventDispatcher final :
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
@@ -82,7 +88,12 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    using TouchEventQueue = Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>;
+    struct TouchEventData {
+        WebCore::FrameIdentifier frameID;
+        WebTouchEvent event;
+        CompletionHandler<void(bool, std::optional<WebCore::RemoteUserInputEventData>)> completionHandler;
+    };
+    using TouchEventQueue = Vector<TouchEventData, 1>;
     void takeQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
 #endif
 
@@ -100,8 +111,7 @@ private:
     void setScrollingAccelerationCurve(WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>);
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, CompletionHandler<void(bool)>&&);
-    void touchEventWithoutCallback(WebCore::PageIdentifier, const WebTouchEvent&);
+    void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);

@@ -130,6 +130,7 @@ public:
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
     WebCore::IntPoint position() const { return m_position; }
+    void setPosition(WebCore::IntPoint position) { m_position = position; }
 
     bool isPotentialTap() const { return m_isPotentialTap; }
 
