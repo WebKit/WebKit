@@ -252,7 +252,7 @@ auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhot
 
     return invokeAsync(takePhotoRunLoop(), [this, protectedThis = Ref { *this }] () mutable {
         if (auto currentImage = generatePhoto())
-            return TakePhotoNativePromise::createAndResolve(std::make_pair(ImageBuffer::toData(*currentImage, "image/jpeg"_s), "image/jpeg"_s));
+            return TakePhotoNativePromise::createAndResolve(std::make_pair(ImageBuffer::toData(*currentImage, "image/png"_s), "image/png"_s));
         return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
     });
 }
