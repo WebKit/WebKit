@@ -71,7 +71,7 @@ function testArrayDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Arrayref is not a (I32, mutable), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null array) is not a (ref null <array:0>), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -82,7 +82,7 @@ function testArrayDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (I32, mutable) is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 }
 
@@ -400,7 +400,7 @@ function testArraySet() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.set arrayref to type ((I32, immutable)) expected arrayref, in function at index 0"
+    "WebAssembly.Module doesn't validate: array.set arrayref to type (ref null <array:0>) expected arrayref, in function at index 0"
   );
 
   {

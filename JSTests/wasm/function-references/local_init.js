@@ -64,7 +64,7 @@ async function testLocalInit() {
   assert.throws(
     () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x64\x6f\x00\x03\x82\x80\x80\x80\x00\x01\x00\x0a\x8f\x80\x80\x80\x00\x01\x89\x80\x80\x80\x00\x01\x01\x64\x6f\xd0\x6f\x21\x01\x0b"),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: set_local to type Externref expected Externref, in function at index 0"
+    "WebAssembly.Module doesn't validate: set_local to type (ref null extern) expected (ref extern), in function at index 0"
   );
 
   /*

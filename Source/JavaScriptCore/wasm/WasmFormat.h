@@ -367,6 +367,37 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     return false;
 }
 
+// FIXME: separating out heap types in wasm.json could be cleaner in the long term.
+inline const char* heapTypeKindAsString(TypeKind kind)
+{
+    ASSERT(isValidHeapTypeKind(kind));
+    switch (kind) {
+    case TypeKind::Funcref:
+        return "func";
+    case TypeKind::Externref:
+        return "extern";
+    case TypeKind::I31ref:
+        return "i31";
+    case TypeKind::Arrayref:
+        return "array";
+    case TypeKind::Structref:
+        return "struct";
+    case TypeKind::Eqref:
+        return "eq";
+    case TypeKind::Anyref:
+        return "any";
+    case TypeKind::Nullref:
+        return "none";
+    case TypeKind::Nullfuncref:
+        return "nofunc";
+    case TypeKind::Nullexternref:
+        return "noextern";
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return "";
+    }
+}
+
 inline bool isDefaultableType(Type type)
 {
     return !type.isRef();

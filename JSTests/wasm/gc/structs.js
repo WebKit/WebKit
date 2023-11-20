@@ -106,7 +106,7 @@ function testStructDeclaration() {
         )
       `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (I32, mutable) is not a Structref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <array:0>) is not a (ref null struct), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   // Invalid subtyping for structref.
@@ -120,7 +120,7 @@ function testStructDeclaration() {
         )
       `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Structref is not a (), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null struct) is not a (ref null <struct:0>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 }
 
@@ -726,7 +726,7 @@ function testStructGet() {
         )
       `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get invalid index: Structref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: struct.get invalid index: (ref null struct), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   // Test null checks.
@@ -1184,7 +1184,7 @@ function testStructTable() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get invalid index: Structref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: struct.get invalid index: (ref null struct), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   // Invalid non-defaultable table type.

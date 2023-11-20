@@ -206,7 +206,7 @@ async function testInvalidConstExprs() {
         (global (export "g") i32 (struct.new 0 (i32.const 1))))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (I32, mutable) is not a I32"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <struct:0>) is not a I32"
   );
 
   assert.throws(
