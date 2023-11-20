@@ -359,15 +359,15 @@ void BaseDateAndTimeInputType::updateInnerTextValue()
     createShadowSubtreeIfNeeded();
 
     if (!m_dateTimeEditElement) {
-        auto node = element()->userAgentShadowRoot()->firstChild();
-        if (!is<HTMLElement>(node))
+        RefPtr firstChildElement = dynamicDowncast<HTMLElement>(element()->userAgentShadowRoot()->firstChild());
+        if (!firstChildElement)
             return;
         auto displayValue = visibleValue();
         if (displayValue.isEmpty()) {
             // Need to put something to keep text baseline.
             displayValue = " "_s;
         }
-        downcast<HTMLElement>(*node).setInnerText(WTFMove(displayValue));
+        firstChildElement->setInnerText(WTFMove(displayValue));
         return;
     }
 

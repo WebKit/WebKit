@@ -50,8 +50,16 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLAudioElement)
     static bool isType(const WebCore::HTMLMediaElement& element) { return element.hasTagName(WebCore::HTMLNames::audioTag); }
-    static bool isType(const WebCore::Element& element) { return is<WebCore::HTMLMediaElement>(element) && isType(downcast<WebCore::HTMLMediaElement>(element)); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLMediaElement>(node) && isType(downcast<WebCore::HTMLMediaElement>(node)); }
+    static bool isType(const WebCore::Element& element)
+    {
+        auto* mediaElement = dynamicDowncast<WebCore::HTMLMediaElement>(element);
+        return mediaElement && isType(*mediaElement);
+    }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* mediaElement = dynamicDowncast<WebCore::HTMLMediaElement>(node);
+        return mediaElement && isType(*mediaElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)

@@ -134,8 +134,8 @@ std::optional<std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLColl
     }
 
     auto& element = *documentNamedItem(name);
-    if (UNLIKELY(is<HTMLIFrameElement>(element))) {
-        if (RefPtr domWindow = downcast<HTMLIFrameElement>(element).contentWindow())
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element); UNLIKELY(iframe)) {
+        if (RefPtr domWindow = iframe->contentWindow())
             return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
     }
 

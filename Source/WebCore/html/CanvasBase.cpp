@@ -229,10 +229,11 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
     HashSet<Element*> cssCanvasClients;
     for (auto& observer : m_observers) {
-        if (!is<StyleCanvasImage>(observer))
+        auto* image = dynamicDowncast<StyleCanvasImage>(observer);
+        if (!image)
             continue;
 
-        for (auto entry : downcast<StyleCanvasImage>(observer).clients()) {
+        for (auto entry : image->clients()) {
             auto& client = entry.key;
             if (auto element = client.element())
                 cssCanvasClients.add(element);

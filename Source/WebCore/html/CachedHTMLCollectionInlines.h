@@ -92,7 +92,8 @@ static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement& element)
 
 static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
 {
-    return is<HTMLElement>(element) && nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element));
+    auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+    return htmlElement && nameShouldBeVisibleInDocumentAll(*htmlElement);
 }
 
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>

@@ -72,9 +72,7 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
 
 const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
 {
-    auto& parent = *child.parentNode();
-    ASSERT(is<HTMLDetailsElement>(parent));
-    auto& details = downcast<HTMLDetailsElement>(parent);
+    auto& details = downcast<HTMLDetailsElement>(*child.parentNode());
 
     // The first summary child gets assigned to the summary slot.
     if (is<HTMLSummaryElement>(child)) {

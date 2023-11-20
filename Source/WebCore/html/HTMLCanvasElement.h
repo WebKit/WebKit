@@ -219,6 +219,10 @@ private:
     static bool checkTagName(const WebCore::CanvasBase& base) { return base.isHTMLCanvasElement(); }
     static bool checkTagName(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::canvasTag); }
     static bool checkTagName(const WebCore::Node& node) { return node.hasTagName(WebCore::HTMLNames::canvasTag); }
-    static bool checkTagName(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && checkTagName(downcast<WebCore::Node>(target)); }
+    static bool checkTagName(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && checkTagName(*node);
+    }
 };
 }

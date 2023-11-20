@@ -227,16 +227,16 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         if (m_context->isPlaceholder())
             return Exception { ExceptionCode::InvalidStateError };
 
-        if (m_context->is2d()) {
+        if (auto* context = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
             if (!is2dType(contextId))
                 return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*m_context) } };
+            return std::optional<RenderingContext> { RefPtr { context } };
         }
 
-        if (m_context->isBitmapRenderer()) {
+        if (auto* context = dynamicDowncast<ImageBitmapRenderingContext>(*m_context)) {
             if (!isBitmapRendererType(contextId))
                 return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*m_context) } };
+            return std::optional<RenderingContext> { RefPtr { context } };
         }
 
 #if ENABLE(WEBGL)
@@ -246,17 +246,16 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
             auto version = toWebGLVersion(contextId);
             if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
                 return std::optional<RenderingContext> { std::nullopt };
-            if (is<WebGLRenderingContext>(*m_context))
-                return std::optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
-            ASSERT(is<WebGL2RenderingContext>(*m_context));
-            return std::optional<RenderingContext> { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*m_context) } };
+            if (auto* context = dynamicDowncast<WebGLRenderingContext>(*m_context))
+                return std::optional<RenderingContext> { RefPtr { context } };
+            return std::optional<RenderingContext> { RefPtr { &checkedDowncast<WebGL2RenderingContext>(*m_context) } };
         }
 #endif
 
-        if (m_context->isWebGPU()) {
+        if (auto* context = dynamicDowncast<GPUCanvasContext>(m_context.get())) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
-            return { downcast<GPUCanvasContext>(m_context.get()) };
+            return { context };
         }
 
         ASSERT_NOT_REACHED();
@@ -295,11 +294,10 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
 
-        if (is<WebGLRenderingContext>(*context))
-            return std::optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
+        if (auto* webGLContext = dynamicDowncast<WebGLRenderingContext>(*context))
+            return std::optional<RenderingContext> { RefPtr { webGLContext } };
 
-        ASSERT(is<WebGL2RenderingContext>(*context));
-        return std::optional<RenderingContext> { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
+        return std::optional<RenderingContext> { RefPtr { &downcast<WebGL2RenderingContext>(*context) } };
     }
 #endif
 
@@ -554,10 +552,10 @@ void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldAppl
     }
 
     auto dirtyRect = rect.value();
-    if (auto* renderer = renderBox()) {
+    if (CheckedPtr renderer = renderBox()) {
         FloatRect destRect;
-        if (is<RenderReplaced>(renderer))
-            destRect = downcast<RenderReplaced>(renderer)->replacedContentRect();
+        if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer))
+            destRect = renderReplaced->replacedContentRect();
         else
             destRect = renderer->contentBoxRect();
 
@@ -584,8 +582,8 @@ void HTMLCanvasElement::reset()
     int w = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(widthAttr), defaultWidth);
     int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
-    if (is<CanvasRenderingContext2D>(m_context))
-        downcast<CanvasRenderingContext2D>(*m_context).reset();
+    if (RefPtr context = dynamicDowncast<CanvasRenderingContext2D>(m_context.get()))
+        context->reset();
     else
         resetGraphicsContextState();
 
@@ -604,16 +602,14 @@ void HTMLCanvasElement::reset()
     if (isGPUBased() && oldSize != size())
         downcast<GPUBasedCanvasRenderingContext>(*m_context).reshape(width(), height());
 
-    auto renderer = this->renderer();
-    if (is<RenderHTMLCanvas>(renderer)) {
-        auto& canvasRenderer = downcast<RenderHTMLCanvas>(*renderer);
+    if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {
         if (oldSize != size()) {
-            canvasRenderer.canvasSizeChanged();
-            if (canvasRenderer.hasAcceleratedCompositing())
-                canvasRenderer.contentChanged(CanvasChanged);
+            canvasRenderer->canvasSizeChanged();
+            if (canvasRenderer->hasAcceleratedCompositing())
+                canvasRenderer->contentChanged(CanvasChanged);
         }
         if (hadImageBuffer)
-            canvasRenderer.repaint();
+            canvasRenderer->repaint();
     }
 
     notifyObserversCanvasResized();
@@ -794,20 +790,19 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (!is<WebGLRenderingContextBase>(m_context))
+    RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get());
+    if (!context)
         return nullptr;
 
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).drawingBufferToPixelBuffer(GraphicsContextGL::FlipY::Yes);
-    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
+    RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(context->drawingBufferToPixelBuffer(GraphicsContextGL::FlipY::Yes));
+    if (!pixelBuffer)
         return nullptr;
 
-    if (pixelBuffer)
-        postProcessPixelBufferResults(*pixelBuffer);
-
-    return ImageData::create(downcast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
+    postProcessPixelBufferResults(*pixelBuffer);
+    return ImageData::create(pixelBuffer.releaseNonNull());
 #else
     return nullptr;
 #endif
@@ -819,10 +814,10 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER)
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context.get())) {
+    if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get())) {
         if (document().settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+        return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
     }
 #endif
 
@@ -908,11 +903,9 @@ void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
         setAttributeWithoutSynchronization(widthAttr, AtomString::number(width()));
         setAttributeWithoutSynchronization(heightAttr, AtomString::number(height()));
 
-        auto renderer = this->renderer();
-        if (is<RenderHTMLCanvas>(renderer)) {
-            auto& canvasRenderer = downcast<RenderHTMLCanvas>(*renderer);
-            canvasRenderer.canvasSizeChanged();
-            canvasRenderer.contentChanged(CanvasChanged);
+        if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {
+            canvasRenderer->canvasSizeChanged();
+            canvasRenderer->contentChanged(CanvasChanged);
         }
 
         notifyObserversCanvasResized();
@@ -939,9 +932,9 @@ void HTMLCanvasElement::clearImageBuffer() const
 
     m_didClearImageBuffer = true;
 
-    if (is<CanvasRenderingContext2D>(*m_context)) {
+    if (RefPtr canvas = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
         // No need to undo transforms/clip/etc. because we are called right after the context is reset.
-        downcast<CanvasRenderingContext2D>(*m_context).clearRect(0, 0, width(), height());
+        canvas->clearRect(0, 0, width(), height());
     }
 }
 
@@ -959,9 +952,10 @@ const char* HTMLCanvasElement::activeDOMObjectName() const
 bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context)) {
+    if (m_hasRelevantWebGLEventListener) {
+        auto* context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get());
         // WebGL rendering context may fire contextlost / contextrestored events at any point.
-        return m_hasRelevantWebGLEventListener && !downcast<WebGLRenderingContextBase>(*m_context).isContextUnrecoverablyLost();
+        return context && !context->isContextUnrecoverablyLost();
     }
 #endif
 
