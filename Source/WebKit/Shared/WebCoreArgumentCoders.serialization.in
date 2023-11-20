@@ -6803,3 +6803,11 @@ header: <WebCore/Font.h>
 [Nested] enum class WebCore::FontIsInterstitial : bool;
 [Nested] enum class WebCore::FontVisibility : bool;
 [Nested] enum class WebCore::FontIsOrientationFallback : bool;
+
+header: <WebCore/CaptionUserPreferences.h>
+enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
+    Automatic,
+    ForcedOnly,
+    AlwaysOn,
+    Manual,
+};

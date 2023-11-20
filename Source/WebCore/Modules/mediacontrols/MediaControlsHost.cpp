@@ -194,13 +194,13 @@ AtomString MediaControlsHost::captionDisplayMode() const
         return emptyAtom();
 
     switch (page->group().ensureCaptionPreferences().captionDisplayMode()) {
-    case CaptionUserPreferences::Automatic:
+    case CaptionUserPreferences::CaptionDisplayMode::Automatic:
         return automaticKeyword();
-    case CaptionUserPreferences::ForcedOnly:
+    case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
         return forcedOnlyKeyword();
-    case CaptionUserPreferences::AlwaysOn:
+    case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
         return alwaysOnKeyword();
-    case CaptionUserPreferences::Manual:
+    case CaptionUserPreferences::CaptionDisplayMode::Manual:
         return manualKeyword();
     default:
         ASSERT_NOT_REACHED();
@@ -575,10 +575,10 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
             bool allTracksDisabled = notFound == sortedTextTracks.findIf([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });
-            bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::Automatic && allTracksDisabled;
+            bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Automatic && allTracksDisabled;
             auto subtitleMenuItems = sortedTextTracks.map([&](auto& textTrack) {
                 bool checked = false;
-                if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::Manual))
+                if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Manual))
                     checked = true;
                 else if (usesAutomaticTrack && textTrack == &TextTrack::captionMenuAutomaticItem())
                     checked = true;
