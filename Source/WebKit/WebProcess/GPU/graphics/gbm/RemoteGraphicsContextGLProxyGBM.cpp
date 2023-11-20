@@ -128,7 +128,7 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
         return;
 
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return;
     }
