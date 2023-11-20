@@ -59,7 +59,11 @@ void XSLTProcessor::genericErrorFunc(void*, const char*, ...)
     // It would be nice to do something with this error message.
 }
 
+#if LIBXML_VERSION >= 21200
+void XSLTProcessor::parseErrorFunc(void* userData, const xmlError* error)
+#else
 void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
+#endif
 {
     PageConsoleClient* console = static_cast<PageConsoleClient*>(userData);
     if (!console)
