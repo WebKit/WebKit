@@ -62,6 +62,7 @@
 #include "UserContentTypes.h"
 #include "UserScript.h"
 #include "UserScriptTypes.h"
+#include <JavaScriptCore/JSLock.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -1613,6 +1614,8 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         auto* globalObject = m_document->globalObject();
         if (!globalObject)
             return false;
+
+        JSC::JSLockHolder lock(globalObject->vm());
         auto tableauPrepProperty = JSC::Identifier::fromString(globalObject->vm(), "tableauPrep"_s);
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
     }();
