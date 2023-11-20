@@ -47,6 +47,7 @@ namespace Types {
     f(I32, "i32") \
     f(U32, "u32") \
     f(AbstractFloat, "<AbstractFloat>") \
+    f(F16, "f16") \
     f(F32, "f32") \
     f(Void, "void") \
     f(Bool, "bool") \

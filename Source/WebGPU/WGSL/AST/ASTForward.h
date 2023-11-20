@@ -55,6 +55,7 @@ class BoolLiteral;
 class CallExpression;
 class FieldAccessExpression;
 class Float32Literal;
+class Float16Literal;
 class IdentifierExpression;
 class IdentityExpression;
 class IndexAccessExpression;

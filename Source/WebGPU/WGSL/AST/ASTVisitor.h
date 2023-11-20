@@ -75,6 +75,7 @@ public:
     virtual void visit(AST::CallExpression&);
     virtual void visit(AST::FieldAccessExpression&);
     virtual void visit(AST::Float32Literal&);
+    virtual void visit(AST::Float16Literal&);
     virtual void visit(AST::IdentifierExpression&);
     virtual void visit(AST::IdentityExpression&);
     virtual void visit(AST::IndexAccessExpression&);

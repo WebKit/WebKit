@@ -945,7 +945,8 @@ Token Lexer<T>::lexNumber()
             break;
         }
         case 'h':
-            // FIXME: add support for f16
+            if (auto result = convertFloat<half>(value))
+                return makeLiteralToken(TokenType::HalfLiteral, *result);
             break;
         default:
             if constexpr (std::is_floating_point_v<decltype(value)>) {

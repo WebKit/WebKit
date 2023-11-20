@@ -1663,3 +1663,7 @@
 #if __has_include(<UIKit/UIAsyncTextInteractionDelegate.h>)
 #define HAVE_UI_ASYNC_TEXT_INTERACTION_DELEGATE 1
 #endif
+
+#if CPU(ARM64)
+#define HAVE_FP16_HALF_SUPPORT 1
+#endif

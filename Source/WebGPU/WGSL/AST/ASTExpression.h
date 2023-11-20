@@ -89,6 +89,7 @@ static bool isType(const WGSL::AST::Node& node)
     case WGSL::AST::NodeKind::AbstractIntegerLiteral:
     case WGSL::AST::NodeKind::BoolLiteral:
     case WGSL::AST::NodeKind::Float32Literal:
+    case WGSL::AST::NodeKind::Float16Literal:
     case WGSL::AST::NodeKind::Signed32Literal:
     case WGSL::AST::NodeKind::Unsigned32Literal:
         return true;

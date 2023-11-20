@@ -79,6 +79,8 @@ static ConstantValue zeroValue(const Type* type)
                 return 0.0;
             case Types::Primitive::F32:
                 return 0.0f;
+            case Types::Primitive::F16:
+                return static_cast<half>(0.0);
             case Types::Primitive::Bool:
                 return false;
             case Types::Primitive::Void:
@@ -112,8 +114,7 @@ static ConstantValue zeroValue(const Type* type)
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Types::PrimitiveStruct&) -> ConstantValue {
-            // FIXME: this is valid and needs to be implemented, but we don't
-            // yet have ConstantStruct
+            // Primitive structs can't be zero initialized
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Types::Matrix& matrix) -> ConstantValue {
@@ -175,10 +176,13 @@ static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& a
             if (auto* abstractInt = std::get_if<int64_t>(&arg))
                 return { { fn(*abstractInt) } };
         }
-        // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* f32 = std::get_if<float>(&arg))
                 return { { fn(*f32) } };
+        }
+        if constexpr (constraint & Constraints::F16) {
+            if (auto* f16 = std::get_if<half>(&arg))
+                return { { fn(*f16) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* abstractFloat = std::get_if<double>(&arg))
@@ -209,10 +213,13 @@ static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& 
             if (auto* leftAbstractInt = std::get_if<int64_t>(&left))
                 return { { fn(*leftAbstractInt, std::get<int64_t>(right)) } };
         }
-        // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* leftF32 = std::get_if<float>(&left))
                 return { { fn(*leftF32, std::get<float>(right)) } };
+        }
+        if constexpr (constraint & Constraints::F16) {
+            if (auto* leftF16 = std::get_if<half>(&left))
+                return { { fn(*leftF16, std::get<half>(right)) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* leftAbstractFloat = std::get_if<double>(&left))
@@ -243,10 +250,13 @@ static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>&
             if (auto* firstAbstractInt = std::get_if<int64_t>(&first))
                 return { { fn(*firstAbstractInt, std::get<int64_t>(second), std::get<int64_t>(third)) } };
         }
-        // FIXME: implement f16
         if constexpr (constraint & Constraints::F32) {
             if (auto* firstF32 = std::get_if<float>(&first))
                 return { { fn(*firstF32, std::get<float>(second), std::get<float>(third)) } };
+        }
+        if constexpr (constraint & Constraints::F16) {
+            if (auto* firstF16 = std::get_if<half>(&first))
+                return { { fn(*firstF16, std::get<half>(second), std::get<half>(third)) } };
         }
         if constexpr (constraint & Constraints::AbstractFloat) {
             if (auto* firstAbstractFloat = std::get_if<double>(&first))
@@ -273,9 +283,10 @@ static ConstantValue constantConstructor(const Type* resultType, const FixedVect
         return static_cast<DestinationType>(*u32);
     if (auto* abstractInt = std::get_if<int64_t>(&arg))
         return static_cast<DestinationType>(*abstractInt);
-    // FIXME: implement f16
     if (auto* f32 = std::get_if<float>(&arg))
         return static_cast<DestinationType>(*f32);
+    if (auto* f16 = std::get_if<half>(&arg))
+        return static_cast<DestinationType>(*f16);
     if (auto* abstractFloat = std::get_if<double>(&arg))
         return static_cast<DestinationType>(*abstractFloat);
     RELEASE_ASSERT_NOT_REACHED();
@@ -438,7 +449,7 @@ CONSTANT_FUNCTION(Minus)
 {
     UNUSED_PARAM(resultType);
     if (arguments.size() == 1) {
-        return constantUnaryOperation<Constraints::Number>(arguments, [&](auto arg) {
+        return constantUnaryOperation<Constraints::Number>(arguments, [&]<typename T>(T arg) -> T {
             return -arg;
         });
     }
@@ -454,7 +465,7 @@ CONSTANT_FUNCTION(Minus)
         return { { result } };
     }
 
-    return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
+    return constantBinaryOperation<Constraints::Number>(arguments, [&]<typename T>(T left, T right) -> T {
         return left - right;
     });
 }
@@ -530,7 +541,7 @@ CONSTANT_FUNCTION(Multiply)
         return { { result } };
     }
 
-    return constantBinaryOperation<Constraints::Number>(arguments, [&](auto left, auto right) {
+    return constantBinaryOperation<Constraints::Number>(arguments, [&]<typename T>(T left, T right) -> T {
         return left * right;
     });
 }
@@ -544,12 +555,12 @@ BINARY_OPERATION(Divide, Number, [&]<typename T>(T left, T right) -> ConstantRes
                 return makeUnexpected("invalid division overflow"_s);
         }
     }
-    return { { left / right } };
+    return { { static_cast<T>(left / right) } };
 });
 
 BINARY_OPERATION(Modulo, Number, [&]<typename T>(T left, T right) -> ConstantResult {
-    if constexpr (std::is_floating_point_v<decltype(left)>)
-        return { { fmod(left, right) } };
+    if constexpr (std::is_floating_point_v<decltype(left)> || std::is_same_v<T, half>)
+        return { { static_cast<T>(fmod(left, right)) } };
     else {
         if (!right)
             return makeUnexpected("invalid modulo by zero"_s);
@@ -665,6 +676,7 @@ CONSTANT_CONSTRUCTOR(Bool, bool)
 CONSTANT_CONSTRUCTOR(I32, int32_t)
 CONSTANT_CONSTRUCTOR(U32, uint32_t)
 CONSTANT_CONSTRUCTOR(F32, float)
+CONSTANT_CONSTRUCTOR(F16, half)
 
 CONSTANT_FUNCTION(Vec2)
 {
@@ -818,9 +830,10 @@ CONSTANT_FUNCTION(Cross)
 
     if (std::holds_alternative<float>(lhs.elements[0]))
         return cross.operator()<float>();
+    if (std::holds_alternative<half>(lhs.elements[0]))
+        return cross.operator()<half>();
     if (std::holds_alternative<double>(lhs.elements[0]))
         return cross.operator()<double>();
-    // FIXME: implement f16
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -884,9 +897,10 @@ CONSTANT_FUNCTION(Determinant)
 
     if (std::holds_alternative<float>(matrix.elements[0]))
         return { { determinant.operator()<float>() } };
+    if (std::holds_alternative<half>(matrix.elements[0]))
+        return { { determinant.operator()<half>() } };
     if (std::holds_alternative<double>(matrix.elements[0]))
         return { { determinant.operator()<double>() } };
-    // FIXME: implement f16
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -1032,9 +1046,10 @@ CONSTANT_FUNCTION(Frexp)
     const auto& frexpScalar = [&](auto value) {
         if (auto* f32 = std::get_if<float>(&value))
             return frexpValue(*f32);
+        if (auto* f16 = std::get_if<half>(&value))
+            return frexpValue(*f16);
         if (auto* abstractFloat = std::get_if<double>(&value))
             return frexpValue(*abstractFloat);
-        // FIXME: implement f16
         RELEASE_ASSERT_NOT_REACHED();
     };
 
@@ -1098,7 +1113,8 @@ CONSTANT_FUNCTION(Ldexp)
             return std::get<double>(e1) * std::pow(2.0, static_cast<double>(*abstractE2));
         if (auto* f32E1 = std::get_if<float>(&e1))
             return *f32E1 * std::pow(2.f, static_cast<float>(std::get<int32_t>(e2)));
-        // FIXME: implement f16
+        if (auto* f16E1 = std::get_if<half>(&e1))
+            return *f16E1 * std::pow(2.f, static_cast<half>(std::get<int32_t>(e2)));
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
@@ -1155,9 +1171,10 @@ CONSTANT_FUNCTION(Reflect)
 
     if (primitive.kind == Types::Primitive::F32)
         return reflect.operator()<float>();
+    if (primitive.kind == Types::Primitive::F16)
+        return reflect.operator()<half>();
     if (primitive.kind == Types::Primitive::AbstractFloat)
         return reflect.operator()<double>();
-    // FIXME: implement f16
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -1195,9 +1212,10 @@ CONSTANT_FUNCTION(Refract)
 
     if (auto* f32 = std::get_if<float>(&e3))
         return refract(*f32);
+    if (auto* f16 = std::get_if<half>(&e3))
+        return refract(*f16);
     if (auto* abstractFloat = std::get_if<double>(&e3))
         return refract(*abstractFloat);
-    // FIXME: implement f16
     RELEASE_ASSERT_NOT_REACHED();
 }
 

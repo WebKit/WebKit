@@ -1,5 +1,6 @@
 suffixes = {
     f: f32,
+    h: f16,
     i: i32,
     u: u32,
 }
@@ -10,9 +11,8 @@ suffixes = {
     end
 
     [2, 3, 4].each do |m|
-        # FIXME: add alias for F16 once we support it
-        #type_alias :"mat#{n}x#{m}f", mat[n][m](f32)[f32, n, m]
         type_alias :"mat#{n}x#{m}f", mat[n,m][f32]
+        type_alias :"mat#{n}x#{m}h", mat[n,m][f16]
     end
 end
 
@@ -248,6 +248,13 @@ constructor :f32, {
     [].() => f32,
 }
 
+constructor :f16, {
+    must_use: true,
+    const: true,
+
+    [].() => f16,
+}
+
 constructor :vec2, {
     must_use: true,
     const: true,
@@ -293,8 +300,13 @@ constructor :bool, {
     [T < ConcreteScalar].(T) => bool,
 }
 
-# 16.1.2.3. f16
-# FIXME: add support for f16
+# 16.1.2.3.
+constructor :f16, {
+    must_use: true,
+    const: true,
+
+    [T < ConcreteScalar].(T) => f16,
+}
 
 # 16.1.2.4.
 constructor :f32, {

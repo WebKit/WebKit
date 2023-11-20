@@ -53,8 +53,8 @@ bool satisfies(const Type* type, Constraint constraint)
         return constraint & Constraints::U32;
     case Types::Primitive::F32:
         return constraint & Constraints::F32;
-    // FIXME: Add F16 support
-    // https://bugs.webkit.org/show_bug.cgi?id=254668
+    case Types::Primitive::F16:
+        return constraint & Constraints::F16;
     case Types::Primitive::Bool:
         return constraint & Constraints::Bool;
 
@@ -95,11 +95,8 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
             return types.abstractFloatType();
         if (constraint & Constraints::F32)
             return types.f32Type();
-        if (constraint & Constraints::F16) {
-            // FIXME: Add F16 support
-            // https://bugs.webkit.org/show_bug.cgi?id=254668
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        if (constraint & Constraints::F16)
+            return types.f16Type();
         RELEASE_ASSERT_NOT_REACHED();
     case Types::Primitive::AbstractFloat:
         if (constraint < Constraints::AbstractFloat)
@@ -108,11 +105,8 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
             return type;
         if (constraint & Constraints::F32)
             return types.f32Type();
-        if (constraint & Constraints::F16) {
-            // FIXME: Add F16 support
-            // https://bugs.webkit.org/show_bug.cgi?id=254668
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        if (constraint & Constraints::F16)
+            return types.f16Type();
         RELEASE_ASSERT_NOT_REACHED();
     case Types::Primitive::I32:
         if (!(constraint & Constraints::I32))
@@ -126,8 +120,10 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
         if (!(constraint & Constraints::F32))
             return nullptr;
         return type;
-    // FIXME: Add F16 support
-    // https://bugs.webkit.org/show_bug.cgi?id=254668
+    case Types::Primitive::F16:
+        if (!(constraint & Constraints::F16))
+            return nullptr;
+        return type;
     case Types::Primitive::Bool:
         if (!(constraint & Constraints::Bool))
             return nullptr;

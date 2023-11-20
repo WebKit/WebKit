@@ -51,6 +51,7 @@
 #include "ASTElaboratedTypeExpression.h"
 #include "ASTExpression.h"
 #include "ASTFieldAccessExpression.h"
+#include "ASTFloat16Literal.h"
 #include "ASTFloat32Literal.h"
 #include "ASTForStatement.h"
 #include "ASTFunction.h"
