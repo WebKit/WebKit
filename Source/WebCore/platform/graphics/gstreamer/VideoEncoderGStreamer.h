@@ -35,11 +35,10 @@ class GStreamerVideoEncoder : public VideoEncoder {
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    GStreamerVideoEncoder(const String& codecName, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    GStreamerVideoEncoder(DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     ~GStreamerVideoEncoder();
 
 private:
-    String initialize(const VideoEncoder::Config&);
     void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) final;
     void flush(Function<void()>&&) final;
     void reset() final;
